@@ -11,49 +11,48 @@ import { IssuePropertyDate } from "../properties/date";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite, TIssuePriorities } from "types";
 
 export interface IKanBanProperties {
   columnId: string;
-  issue: any;
-  handleIssues?: (group_by: string | null, issue: IIssue) => void;
+  issue: IIssue;
+  handleIssues: (group_by: string | null, issue: IIssue) => void;
   display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  priorities: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties, states, labels, members, priorities } = props;
+  const { columnId: group_id, issue, handleIssues, display_properties, states, labels, members, estimates } = props;
 
-  const handleState = (id: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: id });
+  const handleState = (state: IState) => {
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
   };
 
-  const handlePriority = (id: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, priority: id });
+  const handlePriority = (value: TIssuePriorities) => {
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, priority: value });
   };
 
   const handleLabel = (ids: string[]) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
   };
 
   const handleStartDate = (date: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, start_date: date });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, start_date: date });
   };
 
   const handleTargetDate = (date: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, target_date: date });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, target_date: date });
   };
 
-  const handleEstimate = (id: string) => {
-    if (handleIssues)
-      handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, estimate_point: id });
+  const handleEstimate = (value: number | null) => {
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, estimate_point: value });
   };
 
   return (
@@ -62,22 +61,21 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* state */}
       {display_properties && display_properties?.state && states && (
         <IssuePropertyState
-          value={issue?.state || null}
-          dropdownArrow={false}
-          onChange={(id: string) => handleState(id)}
+          value={issue?.state_detail || null}
+          hideDropdownArrow={true}
+          onChange={handleState}
           disabled={false}
-          list={states}
+          states={states}
         />
       )}
 
       {/* priority */}
-      {display_properties && display_properties?.priority && priorities && (
+      {display_properties && display_properties?.priority && (
         <IssuePropertyPriority
           value={issue?.priority || null}
-          dropdownArrow={false}
-          onChange={(id: string) => handlePriority(id)}
+          onChange={handlePriority}
           disabled={false}
-          list={priorities}
+          hideDropdownArrow={true}
         />
       )}
 
@@ -96,10 +94,10 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {display_properties && display_properties?.assignee && members && (
         <IssuePropertyAssignee
           value={issue?.assignees || null}
-          dropdownArrow={false}
-          onChange={(ids: string[]) => handleAssignee(ids)}
+          hideDropdownArrow={true}
+          onChange={handleAssignee}
           disabled={false}
-          list={members}
+          members={members}
         />
       )}
 
@@ -126,12 +124,11 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* estimates */}
       {display_properties && display_properties?.estimate && (
         <IssuePropertyEstimates
-          value={issue?.estimate_point?.toString() || null}
-          dropdownArrow={false}
-          onChange={(id: string) => handleEstimate(id)}
+          value={issue?.estimate_point || null}
+          estimatePoints={estimates}
+          hideDropdownArrow={true}
+          onChange={handleEstimate}
           disabled={false}
-          workspaceSlug={issue?.workspace_detail?.slug || null}
-          projectId={issue?.project_detail?.id || null}
         />
       )}
 

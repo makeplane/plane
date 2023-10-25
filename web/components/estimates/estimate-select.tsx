@@ -1,49 +1,38 @@
 import React, { useState } from "react";
 import { usePopper } from "react-popper";
-import { Placement } from "@popperjs/core";
-
-// headless ui
 import { Combobox } from "@headlessui/react";
-// components
-import { AssigneesList, Avatar, Tooltip } from "components/ui";
-// icons
-import { Check, ChevronDown, Search, User2 } from "lucide-react";
+import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 // types
-import { IUserLite } from "types";
+import { Tooltip } from "components/ui";
+import { Placement } from "@popperjs/core";
+// constants
+import { IEstimatePoint } from "types";
 
 type Props = {
-  members: IUserLite[] | undefined;
+  value: number | null;
+  onChange: (value: number | null) => void;
+  estimatePoints: IEstimatePoint[] | undefined;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
   placement?: Placement;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
-} & (
-  | {
-      value: string[];
-      onChange: (data: string[]) => void;
-      multiple: true;
-    }
-  | {
-      value: string;
-      onChange: (data: string) => void;
-      multiple: false;
-    }
-);
+};
 
-export const MembersSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  members,
-  className = "",
-  buttonClassName = "",
-  optionsClassName = "",
-  placement,
-  hideDropdownArrow = false,
-  disabled = false,
-  multiple = true,
-}) => {
+export const EstimateSelect: React.FC<Props> = (props) => {
+  const {
+    value,
+    onChange,
+    estimatePoints,
+    className = "",
+    buttonClassName = "",
+    optionsClassName = "",
+    placement,
+    hideDropdownArrow = false,
+    disabled = false,
+  } = props;
+
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -61,58 +50,57 @@ export const MembersSelect: React.FC<Props> = ({
     ],
   });
 
-  const options = members?.map((member) => ({
-    value: member.id,
-    query: member.display_name,
+  const options: { value: number | null; query: string; content: any }[] | undefined = estimatePoints?.map(
+    (estimate) => ({
+      value: estimate.key,
+      query: estimate.value,
+      content: (
+        <div className="flex items-center gap-2">
+          <Triangle className="h-3 w-3" strokeWidth={2} />
+          {estimate.value}
+        </div>
+      ),
+    })
+  );
+  options?.unshift({
+    value: null,
+    query: "none",
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member} />
-        {member.display_name}
+        <Triangle className="h-3 w-3" strokeWidth={2} />
+        None
       </div>
     ),
-  }));
+  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
+  const selectedEstimate = estimatePoints?.find((e) => e.key === value);
   const label = (
-    <Tooltip
-      tooltipHeading="Assignee"
-      tooltipContent={
-        value && value.length > 0
-          ? members
-              ?.filter((m) => value.includes(m.display_name))
-              .map((m) => m.display_name)
-              .join(", ")
-          : "No Assignee"
-      }
-      position="top"
-    >
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
-        {value && value.length > 0 && Array.isArray(value) ? (
-          <AssigneesList userIds={value} length={3} showLength={true} />
-        ) : (
-          <span
-            className="flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none
-          "
-          >
-            <User2 className="h-3.5 w-3.5" />
-          </span>
-        )}
+    <Tooltip tooltipHeading="Estimate" tooltipContent={selectedEstimate?.value ?? "None"} position="top">
+      <div className="flex items-center cursor-pointer w-full gap-1.5 text-custom-text-200">
+        <span className="h-3.5 w-3.5">
+          <Triangle className="h-3 w-3" strokeWidth={2} />
+        </span>
+        <span className="truncate">{selectedEstimate?.value ?? "None"}</span>
       </div>
     </Tooltip>
   );
 
-  const comboboxProps: any = { value, onChange, disabled };
-  if (multiple) comboboxProps.multiple = true;
-
   return (
-    <Combobox as="div" className={`flex-shrink-0 text-left ${className}`} {...comboboxProps}>
+    <Combobox
+      as="div"
+      className={`flex-shrink-0 text-left ${className}`}
+      value={value}
+      onChange={(val) => onChange(val as number | null)}
+      disabled={disabled}
+    >
       <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs ${
+          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
         >
@@ -146,14 +134,14 @@ export const MembersSelect: React.FC<Props> = ({
                     value={option.value}
                     className={({ active, selected }) =>
                       `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
+                        active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
                   >
                     {({ selected }) => (
                       <>
                         {option.content}
-                        {selected && <Check className={`h-3.5 w-3.5`} />}
+                        {selected && <Check className="h-3.5 w-3.5" />}
                       </>
                     )}
                   </Combobox.Option>

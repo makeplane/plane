@@ -17,7 +17,7 @@ import { PRIORITIES } from "constants/project";
 
 type Props = {
   value: TIssuePriorities;
-  onChange: (data: any) => void;
+  onChange: (data: TIssuePriorities) => void;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -43,6 +43,14 @@ export const PrioritySelect: React.FC<Props> = ({
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
   });
 
   const options = PRIORITIES?.map((priority) => ({
@@ -64,14 +72,14 @@ export const PrioritySelect: React.FC<Props> = ({
   const label = (
     <Tooltip tooltipHeading="Priority" tooltipContent={selectedOption} position="top">
       <div
-        className={`grid place-items-center rounded "h-6 w-6 border shadow-sm ${
-          value === "urgent" ? "border-red-500/20 bg-red-500" : "border-custom-border-300 bg-custom-background-100"
+        className={`grid place-items-center rounded h-6 w-6 border shadow-sm ${
+          value === "urgent" ? "border-red-500/20 bg-red-500" : "border-custom-border-300"
         } items-center`}
       >
         <span className="flex gap-1 items-center text-custom-text-200 ">
           <PriorityIcon
             priority={value}
-            className={`w-3.5 ${
+            className={`h-3.5 w-3.5 ${
               value === "urgent"
                 ? "text-white"
                 : value === "high"
@@ -108,9 +116,9 @@ export const PrioritySelect: React.FC<Props> = ({
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
-      <Combobox.Options>
+      <Combobox.Options className="fixed z-10">
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}

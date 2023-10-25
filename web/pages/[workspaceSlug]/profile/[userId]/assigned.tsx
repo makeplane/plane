@@ -8,8 +8,8 @@ import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";
-import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/profile-issues-root";
+import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
+import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
