@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 // contexts
 import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
 // layouts
-import { ProfileAuthWrapper } from "layouts/profile-layout";
+import { ProfileAuthWrapper } from "layouts/profile-layout/layout";
 // components
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/profile-issues-root";

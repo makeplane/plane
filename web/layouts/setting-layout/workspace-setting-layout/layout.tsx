@@ -1,8 +1,7 @@
 import { FC, ReactNode } from "react";
 // layouts
-import { UserAuthWrapper, WorkspaceAuthWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
-import { AppSidebar } from "layouts/app-layout";
 import { WorkspaceSettingsSidebar } from "./sidebar";
 
 export interface IWorkspaceSettingLayout {
@@ -15,24 +14,14 @@ export const WorkspaceSettingLayout: FC<IWorkspaceSettingLayout> = (props) => {
 
   return (
     <>
-      <UserAuthWrapper>
-        <WorkspaceAuthWrapper>
-          <div className="relative flex h-screen w-full overflow-hidden">
-            <AppSidebar />
-            <main className="relative flex flex-col h-full w-full overflow-hidden bg-custom-background-100">
-              {header}
-              <div className="h-full w-full overflow-hidden">
-                <div className="flex gap-2 relative h-full w-full overflow-x-hidden overflow-y-scroll">
-                  <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-                    <WorkspaceSettingsSidebar />
-                  </div>
-                  {children}
-                </div>
-              </div>
-            </main>
+      <AppLayout header={header}>
+        <div className="flex gap-2 h-full w-full overflow-x-hidden overflow-y-scroll">
+          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+            <WorkspaceSettingsSidebar />
           </div>
-        </WorkspaceAuthWrapper>
-      </UserAuthWrapper>
+          {children}
+        </div>
+      </AppLayout>
     </>
   );
 };

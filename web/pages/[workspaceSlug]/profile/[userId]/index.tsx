@@ -7,7 +7,7 @@ import useSWR from "swr";
 // services
 import { UserService } from "services/user.service";
 // layouts
-import { ProfileAuthWrapper } from "layouts/profile-layout";
+import { ProfileAuthWrapper } from "layouts/profile-layout/layout";
 // components
 import {
   ProfileActivity,
