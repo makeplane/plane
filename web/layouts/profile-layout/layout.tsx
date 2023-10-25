@@ -1,12 +1,9 @@
 import useSWR from "swr";
 import { useRouter } from "next/router";
-// layouts
-import { AppLayout } from "layouts/app-layout";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
-import { UserProfileHeader } from "components/headers";
 // constants
 import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
@@ -15,16 +12,10 @@ type Props = {
   className?: string;
 };
 
-export const ProfileAuthWrapper = (props: Props) => (
-  <AppLayout header={<UserProfileHeader />}>
-    <ProfileLayout {...props} />
-  </AppLayout>
-);
-
 // services
 const workspaceService = new WorkspaceService();
 
-const ProfileLayout: React.FC<Props> = ({ children, className }) => {
+export const ProfileAuthWrapper: React.FC<Props> = ({ children, className }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
