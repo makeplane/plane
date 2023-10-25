@@ -119,7 +119,7 @@ export const CycleIssueQuickActions: React.FC<Props> = (props) => {
             setDeleteIssueModal(true);
           }}
         >
-          <div className="flex items-center gap-2 text-red-500">
+          <div className="flex items-center gap-2">
             <Trash2 className="h-3 w-3" />
             Delete issue
           </div>

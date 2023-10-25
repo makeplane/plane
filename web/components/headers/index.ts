@@ -10,7 +10,7 @@ export * from "./workspace-dashboard";
 export * from "./projects";
 export * from "./profile-preferences";
 export * from "./cycles";
-export * from "./modules";
+export * from "./modules-list";
 export * from "./project-settings";
 export * from "./workspace-settings";
 export * from "./pages";

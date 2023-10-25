@@ -10,6 +10,7 @@ import {
   IIssueGroupedStructure,
   IIssueUnGroupedStructure,
 } from "../issue/issue.store";
+import { IBlockUpdateData } from "components/gantt-chart";
 
 export interface IModuleStore {
   // states
@@ -41,10 +42,21 @@ export interface IModuleStore {
   fetchModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<IModule>;
 
   createModule: (workspaceSlug: string, projectId: string, data: Partial<IModule>) => Promise<IModule>;
-  updateModuleDetails: (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IModule>) => void;
-  deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => void;
-  addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
-  removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => void;
+  updateModuleDetails: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    data: Partial<IModule>
+  ) => Promise<IModule>;
+  deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
+  addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
+  removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
+  updateModuleGanttStructure: (
+    workspaceSlug: string,
+    projectId: string,
+    module: IModule,
+    payload: IBlockUpdateData
+  ) => void;
 
   // computed
   projectModules: IModule[] | null;
@@ -109,6 +121,7 @@ export class ModuleStore implements IModuleStore {
       deleteModule: action,
       addModuleToFavorites: action,
       removeModuleFromFavorites: action,
+      updateModuleGanttStructure: action,
 
       // computed
       projectModules: computed,
@@ -242,7 +255,11 @@ export class ModuleStore implements IModuleStore {
           });
       });
 
-      await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data, this.rootStore.user.currentUser);
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data, user);
+
+      return response;
     } catch (error) {
       console.error("Failed to update module in module store", error);
 
@@ -252,6 +269,8 @@ export class ModuleStore implements IModuleStore {
       runInAction(() => {
         this.error = error;
       });
+
+      throw error;
     }
   };
 
@@ -332,6 +351,48 @@ export class ModuleStore implements IModuleStore {
           })),
         };
       });
+    }
+  };
+
+  updateModuleGanttStructure = (
+    workspaceSlug: string,
+    projectId: string,
+    module: IModule,
+    payload: IBlockUpdateData
+  ) => {
+    const modulesList = this.modules[projectId];
+
+    try {
+      const newModules = modulesList?.map((p: any) => ({
+        ...p,
+        ...(p.id === module.id
+          ? {
+              start_date: payload.start_date ? payload.start_date : p.start_date,
+              target_date: payload.target_date ? payload.target_date : p.target_date,
+              sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
+            }
+          : {}),
+      }));
+
+      if (payload.sort_order) {
+        const removedElement = newModules.splice(payload.sort_order.sourceIndex, 1)[0];
+        newModules.splice(payload.sort_order.destinationIndex, 0, removedElement);
+      }
+
+      runInAction(() => {
+        this.modules = {
+          ...this.modules,
+          [projectId]: newModules,
+        };
+      });
+
+      const newPayload: any = { ...payload };
+
+      if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
+
+      this.updateModuleDetails(workspaceSlug, module.project, module.id, newPayload);
+    } catch (error) {
+      console.error("Failed to update module gantt structure in module store", error);
     }
   };
 }

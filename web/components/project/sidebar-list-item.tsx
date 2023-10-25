@@ -205,6 +205,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   className="hidden group-hover:block flex-shrink-0"
                   buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
                   ellipsis
+                  placement="bottom-start"
                 >
                   {!shortContextMenu && isAdmin && (
                     <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>

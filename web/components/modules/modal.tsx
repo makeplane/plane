@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 import { useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ModuleForm } from "components/modules";
-// services
-import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import type { IUser, IModule } from "types";
-// fetch-keys
-import { MODULE_LIST } from "constants/fetch-keys";
-import { useMobxStore } from "lib/mobx/store-provider";
+import type { IModule } from "types";
 
 type Props = {
   isOpen: boolean;
@@ -30,14 +27,12 @@ const defaultValues: Partial<IModule> = {
   members_list: [],
 };
 
-const moduleService = new ModuleService();
-
-export const CreateUpdateModuleModal: React.FC<Props> = (props) => {
+export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, data, workspaceSlug, projectId } = props;
 
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, module: moduleStore } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
@@ -53,10 +48,11 @@ export const CreateUpdateModuleModal: React.FC<Props> = (props) => {
   });
 
   const createModule = async (payload: Partial<IModule>) => {
-    await moduleService
-      .createModule(workspaceSlug as string, projectId as string, payload, {} as IUser)
+    if (!workspaceSlug || !projectId) return;
+
+    await moduleStore
+      .createModule(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
-        mutate(MODULE_LIST(projectId as string));
         handleClose();
 
         setToastAlert({
@@ -75,19 +71,11 @@ export const CreateUpdateModuleModal: React.FC<Props> = (props) => {
   };
 
   const updateModule = async (payload: Partial<IModule>) => {
-    await moduleService
-      .updateModule(workspaceSlug as string, projectId as string, data?.id ?? "", payload, {} as IUser)
-      .then((res) => {
-        mutate<IModule[]>(
-          MODULE_LIST(projectId as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payload };
+    if (!workspaceSlug || !projectId || !data) return;
 
-              return p;
-            }),
-          false
-        );
+    await moduleStore
+      .updateModuleDetails(workspaceSlug.toString(), projectId.toString(), data.id, payload)
+      .then(() => {
         handleClose();
 
         setToastAlert({
@@ -180,4 +168,4 @@ export const CreateUpdateModuleModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});
