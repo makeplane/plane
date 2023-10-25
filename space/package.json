@@ -16,6 +16,8 @@
     "@emotion/styled": "^11.11.0",
     "@headlessui/react": "^1.7.13",
     "@mui/material": "^5.14.1",
+    "@plane/ui" : "*",
+    "@plane/lite-text-editor" : "*",
     "@plane/rich-text-editor": "*",
     "axios": "^1.3.4",
     "clsx": "^2.0.0",
