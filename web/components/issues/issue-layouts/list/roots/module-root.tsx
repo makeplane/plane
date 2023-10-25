@@ -4,27 +4,27 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { List } from "./default";
-import { CycleIssueQuickActions } from "components/issues";
+import { List } from "../default";
+import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
-export interface ICycleListLayout {}
+export interface IModuleListLayout {}
 
-export const CycleListLayout: React.FC = observer(() => {
+export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   const {
     project: projectStore,
     issueFilter: issueFilterStore,
-    cycleIssue: cycleIssueStore,
+    moduleIssue: moduleIssueStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
 
-  const issues = cycleIssueStore?.getIssues;
+  const issues = moduleIssueStore?.getIssues;
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
@@ -32,24 +32,24 @@ export const CycleListLayout: React.FC = observer(() => {
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
-      if (!workspaceSlug || !cycleId) return;
+      if (!workspaceSlug || !moduleId) return;
 
       if (action === "update") {
-        cycleIssueStore.updateIssueStructure(group_by, null, issue);
+        moduleIssueStore.updateIssueStructure(group_by, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") cycleIssueStore.deleteIssue(group_by, null, issue);
+      if (action === "delete") moduleIssueStore.deleteIssue(group_by, null, issue);
       if (action === "remove" && issue.bridge_id) {
-        cycleIssueStore.deleteIssue(group_by, null, issue);
-        cycleIssueStore.removeIssueFromCycle(
+        moduleIssueStore.deleteIssue(group_by, null, issue);
+        moduleIssueStore.removeIssueFromModule(
           workspaceSlug.toString(),
           issue.project,
-          cycleId.toString(),
+          moduleId.toString(),
           issue.bridge_id
         );
       }
     },
-    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
+    [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
   const states = projectStore?.projectStates || null;
@@ -61,17 +61,17 @@ export const CycleListLayout: React.FC = observer(() => {
   const estimates = null;
 
   return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
+    <div className="relative w-full h-full bg-custom-background-90">
       <List
         issues={issues}
         group_by={group_by}
         handleIssues={handleIssues}
         quickActions={(group_by, issue) => (
-          <CycleIssueQuickActions
+          <ModuleIssueQuickActions
             issue={issue}
             handleDelete={async () => handleIssues(group_by, issue, "delete")}
             handleUpdate={async (data) => handleIssues(group_by, data, "update")}
-            handleRemoveFromCycle={async () => handleIssues(group_by, issue, "remove")}
+            handleRemoveFromModule={async () => handleIssues(group_by, issue, "remove")}
           />
         )}
         display_properties={display_properties}

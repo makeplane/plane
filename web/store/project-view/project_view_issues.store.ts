@@ -37,6 +37,7 @@ export interface IProjectViewIssuesStore {
 
   // computed
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+  getIssuesCount: number;
 }
 
 export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
@@ -76,6 +77,7 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
 
       // computed
       getIssues: computed,
+      getIssuesCount: computed,
     });
 
     this.rootStore = _rootStore;
@@ -115,6 +117,44 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
     if (!viewId || !issueType) return null;
 
     return this.viewIssues?.[viewId]?.[issueType] || null;
+  }
+
+  get getIssuesCount() {
+    const issueType = this.rootStore.issue.getIssueType;
+
+    let issuesCount = 0;
+
+    if (issueType === "grouped") {
+      const issues = this.getIssues as IIssueGroupedStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((group_id) => {
+        issuesCount += issues[group_id].length;
+      });
+    }
+
+    if (issueType === "groupWithSubGroups") {
+      const issues = this.getIssues as IIssueGroupWithSubGroupsStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((sub_group_id) => {
+        Object.keys(issues[sub_group_id]).map((group_id) => {
+          issuesCount += issues[sub_group_id][group_id].length;
+        });
+      });
+    }
+
+    if (issueType === "ungrouped") {
+      const issues = this.getIssues as IIssueUnGroupedStructure;
+
+      if (!issues) return 0;
+
+      issuesCount = issues.length;
+    }
+
+    return issuesCount;
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {

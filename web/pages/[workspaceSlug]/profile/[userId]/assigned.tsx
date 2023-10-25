@@ -8,7 +8,7 @@ import { ProfileIssuesContextProvider } from "contexts/profile-issues-context";
 // layouts
 import { ProfileAuthWrapper } from "layouts/profile-layout";
 // components
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/profile-issues-root";
+import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/profile-issues-root";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";

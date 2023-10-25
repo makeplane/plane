@@ -5,7 +5,7 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { GlobalViewsAppliedFiltersRoot, SpreadsheetView } from "components/issues";
+import { GlobalViewEmptyState, GlobalViewsAppliedFiltersRoot, SpreadsheetView } from "components/issues";
 // types
 import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
 
@@ -81,19 +81,23 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <GlobalViewsAppliedFiltersRoot />
-      <div className="h-full w-full overflow-auto">
-        <SpreadsheetView
-          displayProperties={workspaceFilterStore.workspaceDisplayProperties}
-          displayFilters={workspaceFilterStore.workspaceDisplayFilters}
-          handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-          issues={issues}
-          members={workspaceStore.workspaceMembers ? workspaceStore.workspaceMembers.map((m) => m.member) : undefined}
-          labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
-          handleIssueAction={() => {}}
-          handleUpdateIssue={handleUpdateIssue}
-          disableUserActions={false}
-        />
-      </div>
+      {issues?.length === 0 ? (
+        <GlobalViewEmptyState />
+      ) : (
+        <div className="h-full w-full overflow-auto">
+          <SpreadsheetView
+            displayProperties={workspaceFilterStore.workspaceDisplayProperties}
+            displayFilters={workspaceFilterStore.workspaceDisplayFilters}
+            handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
+            issues={issues}
+            members={workspaceStore.workspaceMembers ? workspaceStore.workspaceMembers.map((m) => m.member) : undefined}
+            labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
+            handleIssueAction={() => {}}
+            handleUpdateIssue={handleUpdateIssue}
+            disableUserActions={false}
+          />
+        </div>
+      )}
     </div>
   );
 });

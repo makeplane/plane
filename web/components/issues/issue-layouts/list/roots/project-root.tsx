@@ -1,59 +1,56 @@
 import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { List } from "./default";
+import { List } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
-export interface IProfileIssuesListLayout {}
-
-export const ProfileIssuesListLayout: FC = observer(() => {
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    profileIssueFilters: profileIssueFiltersStore,
-    profileIssues: profileIssuesStore,
-    issueDetail: issueDetailStore,
-  } = useMobxStore();
-
+export const ListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const issues = profileIssuesStore?.getIssues;
+  const {
+    project: projectStore,
+    issue: issueStore,
+    issueDetail: issueDetailStore,
+    issueFilter: issueFilterStore,
+  } = useMobxStore();
 
-  const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
+  const issues = issueStore?.getIssues;
 
-  const display_properties = profileIssueFiltersStore?.userDisplayProperties || null;
+  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+
+  const display_properties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
       if (!workspaceSlug) return;
 
       if (action === "update") {
-        profileIssuesStore.updateIssueStructure(group_by, null, issue);
+        issueStore.updateIssueStructure(group_by, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") profileIssuesStore.deleteIssue(group_by, null, issue);
+      if (action === "delete") issueStore.deleteIssue(group_by, null, issue);
     },
-    [profileIssuesStore, issueDetailStore, workspaceSlug]
+    [issueStore, issueDetailStore, workspaceSlug]
   );
 
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = workspaceStore.workspaceLabels || null;
+  const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.workspaceProjects || null;
+  const projects = projectStore?.projectStates || null;
   const estimates = null;
 
   return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
+    <div className="relative w-full h-full bg-custom-background-90">
       <List
         issues={issues}
         group_by={group_by}
