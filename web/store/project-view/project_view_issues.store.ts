@@ -6,9 +6,17 @@ import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 // types
 import { RootStore } from "../root";
-import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store/issue";
 import { IIssue, IIssueFilterOptions } from "types";
 import { IBlockUpdateData } from "components/gantt-chart";
+
+export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
+export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
+export type IIssueGroupWithSubGroupsStructure = {
+  [group_id: string]: {
+    [sub_group_id: string]: IIssue[];
+  };
+};
+export type IIssueUnGroupedStructure = IIssue[];
 
 export interface IProjectViewIssuesStore {
   // states
@@ -37,6 +45,7 @@ export interface IProjectViewIssuesStore {
 
   // computed
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+  getIssueType: IIssueType | null;
 }
 
 export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
@@ -75,6 +84,7 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
       fetchViewIssues: action,
 
       // computed
+      getIssueType: computed,
       getIssues: computed,
     });
 
@@ -107,6 +117,26 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
 
     return computedFilters;
   };
+
+  get getIssueType() {
+    const groupedLayouts = ["kanban", "list", "calendar"];
+    const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
+
+    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
+    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
+
+    if (!issueLayout) return null;
+
+    const _issueState = groupedLayouts.includes(issueLayout)
+      ? issueSubGroup
+        ? "groupWithSubGroups"
+        : "grouped"
+      : ungroupedLayouts.includes(issueLayout)
+      ? "ungrouped"
+      : null;
+
+    return _issueState || null;
+  }
 
   get getIssues() {
     const viewId: string | null = this.rootStore.projectViews.viewId;
