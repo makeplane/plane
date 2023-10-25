@@ -1,6 +1,7 @@
 import requests
 import uuid
 import hashlib
+import json
 
 # Django imports
 from django.conf import settings
@@ -14,13 +15,13 @@ from plane.db.models import Webhook, WebhookLog
 
 @shared_task(
     bind=True,
+    autoretry_for=(requests.RequestException,),
     retry_backoff=5,
+    max_retries=5,
     retry_jitter=True,
-    retry_kwargs={"max_retries": 5},
 )
 def webhook_task(self, webhook, slug, event, event_data, action):
     try:
-
         webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
 
         headers = {
@@ -41,6 +42,8 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             signature = sha256.hexdigest()
             headers["X-Plane-Signature"] = signature
 
+        event_data = json.loads(event_data) if event_data is not None else None
+
         payload = {
             "event": event,
             "action": action,
@@ -48,50 +51,50 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             "workspace_id": str(webhook.workspace_id),
             "data": event_data,
         }
-        try:
-            # Send the webhook event 
-            response = requests.post(
-                webhook.url,
-                headers=headers,
-                json=payload,
-                timeout=30,
-            )
 
-            # Log the webhook request
-            WebhookLog.objects.create(
-                workspace_id=str(webhook.workspace_id),
-                webhook_id=str(webhook.id),
-                event_type=str(event),
-                request_method=str(action),
-                request_headers=str(headers),
-                request_body=str(payload),
-                response_status=str(response.status_code),
-                response_headers=str(response.headers),
-                response_body=str(response.text),  # Use .text to get response content
-                retry_count=str(self.request.retries),
-            )
-        except requests.RequestException as e:
-            # Log the webhook request
-            WebhookLog.objects.create(
-                workspace_id=str(webhook.workspace_id),
-                webhook_id=str(webhook.id),
-                event_type=str(event),
-                request_method=str(action),
-                request_headers=str(headers),
-                request_body=str(payload),
-                response_status=str(response.status_code),
-                response_headers=str(response.headers),
-                response_body=str(response.text),  # Use .text to get response content
-                retry_count=str(self.request.retries),
-            )
+        # Send the webhook event
+        response = requests.post(
+            webhook.url,
+            headers=headers,
+            json=payload,
+            timeout=30,
+        )
 
-            # Retry logic
-            if self.request.retries >= self.max_retries:
-                print(f"Webhook {self.max_retries}")
-                Webhook.objects.filter(pk=webhook.id).update(is_active=False)
-                return
-            raise self.retry(exc=e)
-    
+        # Log the webhook request
+        WebhookLog.objects.create(
+            workspace_id=str(webhook.workspace_id),
+            webhook_id=str(webhook.id),
+            event_type=str(event),
+            request_method=str(action),
+            request_headers=str(headers),
+            request_body=str(payload),
+            response_status=str(response.status_code),
+            response_headers=str(response.headers),
+            response_body=str(response.text),
+            retry_count=str(self.request.retries),
+        )
+
+    except requests.RequestException as e:
+        # Log the failed webhook request
+        WebhookLog.objects.create(
+            workspace_id=str(webhook.workspace_id),
+            webhook_id=str(webhook.id),
+            event_type=str(event),
+            request_method=str(action),
+            request_headers=str(headers),
+            request_body=str(payload),
+            response_status=500,
+            response_headers="",
+            response_body=str(e),
+            retry_count=str(self.request.retries),
+        )
+
+        # Retry logic
+        if self.request.retries >= self.max_retries:
+            Webhook.objects.filter(pk=webhook.id).update(is_active=False)
+            return
+        raise requests.RequestException()
+
     except Exception as e:
         if settings.DEBUG:
             print(e)
