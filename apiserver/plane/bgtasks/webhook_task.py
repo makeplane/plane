@@ -16,7 +16,7 @@ from plane.db.models import Webhook, WebhookLog
 @shared_task(
     bind=True,
     autoretry_for=(requests.RequestException,),
-    retry_backoff=5,
+    retry_backoff=180,
     max_retries=5,
     retry_jitter=True,
 )
@@ -43,6 +43,13 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             headers["X-Plane-Signature"] = signature
 
         event_data = json.loads(event_data) if event_data is not None else None
+
+        action = {
+            "POST": "create",
+            "PATCH": "update",
+            "PUT": "update",
+            "DELETE": "delete",
+        }.get(action, action)
 
         payload = {
             "event": event,
@@ -107,19 +114,19 @@ def send_webhook(event, event_data, action, slug):
     try:
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
-        if event == "Project":
+        if event == "project":
             webhooks = webhooks.filter(project=True)
 
-        if event == "Issue":
+        if event == "issue":
             webhooks = webhooks.filter(issue=True)
 
-        if event == "Module":
+        if event == "module":
             webhooks = webhooks.filter(module=True)
 
-        if event == "Cycle":
+        if event == "cycle":
             webhooks = webhooks.filter(cycle=True)
 
-        if event == "IssueComment":
+        if event == "issue-comment":
             webhooks = webhooks.filter(issue_comment=True)
 
         for webhook in webhooks:

@@ -75,7 +75,7 @@ from plane.bgtasks.project_invitation_task import project_invitation
 class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectSerializer
     model = Project
-    webhook_event = "Project"
+    webhook_event = "project"
 
     permission_classes = [
         ProjectBasePermission,
