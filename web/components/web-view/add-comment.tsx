@@ -12,6 +12,7 @@ import { Send } from "lucide-react";
 import type { IIssueComment } from "types";
 // services
 import { FileService } from "services/file.service";
+import useEditorSuggestions from "hooks/user-editor-suggestions";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -52,6 +53,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
 
   const { projectDetails } = useProjectDetails();
 
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectDetails?.id)
+
   const showAccessSpecifier = projectDetails?.is_deployed || false;
 
   const {
@@ -88,6 +91,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit }) => {
                   value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                   customClassName="p-3 min-h-[100px] shadow-sm"
                   debouncedUpdatesEnabled={false}
+                  mentionSuggestions={editorSuggestions.mentionSuggestions}
+                  mentionHighlights={editorSuggestions.mentionHighlights}
                   onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                   commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
                 />

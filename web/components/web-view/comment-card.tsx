@@ -35,6 +35,8 @@ export const CommentCard: React.FC<Props> = (props) => {
 
   const { user } = useUser();
 
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, comment.project_detail.id)
+
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
 
@@ -111,6 +113,8 @@ export const CommentCard: React.FC<Props> = (props) => {
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
                 }}
+                mentionSuggestions={editorSuggestions.mentionSuggestions}
+                mentionHighlights={editorSuggestions.mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">
