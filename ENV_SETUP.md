@@ -116,9 +116,6 @@ USE_MINIO=1
 # Nginx Configuration
 NGINX_PORT=80
 ​
-# Default Creds
-DEFAULT_EMAIL="captain@plane.so"
-DEFAULT_PASSWORD="password123"
 ​
 # SignUps
 ENABLE_SIGNUP="1"
