@@ -27,6 +27,7 @@
     "next-themes": "^0.2.1"
   },
   "dependencies": {
+    "react-moveable" : "^0.54.2",
     "@blueprintjs/popover2": "^2.0.10",
     "@tiptap/core": "^2.1.7",
     "@tiptap/extension-color": "^2.1.11",

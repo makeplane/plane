@@ -16,6 +16,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
+    "@types/react-color" : "^3.0.9",
     "@types/node": "^20.5.2",
     "@types/react": "18.2.0",
     "@types/react-dom": "18.2.0",
