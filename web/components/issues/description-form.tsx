@@ -51,7 +51,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
 
   const [localValue, setLocalValue] = useState("");
   const nameValue = watch("name");
-
   useEffect(() => {
     if (localValue === "" && nameValue !== "") {
       setLocalValue(nameValue);

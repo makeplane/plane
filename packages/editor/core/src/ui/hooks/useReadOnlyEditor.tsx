@@ -1,5 +1,10 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject, useEffect } from "react";
+import {
+  useImperativeHandle,
+  useRef,
+  MutableRefObject,
+  useEffect,
+} from "react";
 import { CoreReadOnlyEditorExtensions } from "../../ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "../../ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
@@ -29,10 +34,8 @@ export const useReadOnlyEditor = ({
   });
 
   const hasIntiliazedContent = useRef(false);
-
   useEffect(() => {
     if (editor && !value && !hasIntiliazedContent.current) {
-      console.log("setting content");
       editor.commands.setContent(value);
       hasIntiliazedContent.current = true;
     }
