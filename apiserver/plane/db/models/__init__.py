@@ -33,6 +33,7 @@ from .issue import (
     Label,
     IssueBlocker,
     IssueRelation,
+    IssueMention,
     IssueLink,
     IssueSequence,
     IssueAttachment,

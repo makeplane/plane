@@ -77,6 +77,13 @@ class Issue(ProjectBaseModel):
         through="IssueAssignee",
         through_fields=("issue", "assignee"),
     )
+    mentions = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="mention",
+        through="IssueMention",
+        through_fields=("issue", "mention"),
+    )
     sequence_id = models.IntegerField(default=1, verbose_name="Issue Sequence ID")
     labels = models.ManyToManyField(
         "db.Label", blank=True, related_name="labels", through="IssueLabel"
@@ -209,6 +216,25 @@ class IssueRelation(ProjectBaseModel):
 
     def __str__(self):
         return f"{self.issue.name} {self.related_issue.name}"    
+    
+class IssueMention(ProjectBaseModel):
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_mention"
+    )
+    mention = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="issue_mention",
+    )
+    class Meta:
+        unique_together = ["issue", "mention"]
+        verbose_name = "Issue Mention"
+        verbose_name_plural = "Issue Mentions"
+        db_table = "issue_mentions"
+        ordering = ("-created_at",)
+
+    def __str__(self):
+        return f"{self.issue.name} {self.mention.email}" 
 
 
 class IssueAssignee(ProjectBaseModel):
