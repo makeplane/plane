@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanbanIssueBlocksList } from "components/issues";
 // types
-import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 
@@ -29,11 +29,6 @@ export interface IGroupByKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  priorities: any;
-  estimates: IEstimatePoint[] | null;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -50,11 +45,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
-    states,
-    labels,
-    members,
-    priorities,
-    estimates,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -103,10 +93,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         handleIssues={handleIssues}
                         quickActions={quickActions}
                         display_properties={display_properties}
-                        states={states}
-                        labels={labels}
-                        members={members}
-                        estimates={estimates}
                       />
                     ) : (
                       isDragDisabled && (
@@ -142,13 +128,6 @@ export interface IKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  states: IState[] | null;
-  stateGroups: any;
-  priorities: any;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  projects: IProject[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -162,13 +141,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
-    states,
-    stateGroups,
-    priorities,
-    labels,
-    members,
-    projects,
-    estimates,
   } = props;
 
   const { project: projectStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -189,11 +161,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
-          states={states}
-          labels={labels}
-          members={members}
-          priorities={priorities}
-          estimates={estimates}
         />
       )}
 
@@ -211,11 +178,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
-          states={states}
-          labels={labels}
-          members={members}
-          priorities={priorities}
-          estimates={estimates}
         />
       )}
 
@@ -233,11 +195,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
-          states={states}
-          labels={labels}
-          members={members}
-          priorities={priorities}
-          estimates={estimates}
         />
       )}
 
@@ -255,11 +212,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
-          states={states}
-          labels={labels}
-          members={members}
-          priorities={priorities}
-          estimates={estimates}
         />
       )}
 
@@ -277,11 +229,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
-          states={states}
-          labels={labels}
-          members={members}
-          priorities={priorities}
-          estimates={estimates}
         />
       )}
 
@@ -299,11 +246,6 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
-          states={states}
-          labels={labels}
-          members={members}
-          priorities={priorities}
-          estimates={estimates}
         />
       )}
     </div>

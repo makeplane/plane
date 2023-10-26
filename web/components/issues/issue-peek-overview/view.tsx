@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
 import { Maximize2, ArrowRight, Link, Trash, PanelRightOpen, Square, SquareCode } from "lucide-react";
 import { observer } from "mobx-react-lite";
@@ -25,9 +25,6 @@ interface IIssueView {
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
-  states: any;
-  members: any;
-  priorities: any;
   children: ReactNode;
 }
 
@@ -64,9 +61,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentRemove,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
-    states,
-    members,
-    priorities,
     children,
   } = props;
 
@@ -202,13 +196,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         issueReactionRemove={issueReactionRemove}
                       />
 
-                      <PeekOverviewProperties
-                        issue={issue}
-                        issueUpdate={issueUpdate}
-                        states={states}
-                        members={members}
-                        priorities={priorities}
-                      />
+                      <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} />
 
                       <div className="border-t border-custom-border-400" />
 
@@ -254,13 +242,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         />
                       </div>
                       <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
-                        <PeekOverviewProperties
-                          issue={issue}
-                          issueUpdate={issueUpdate}
-                          states={states}
-                          members={members}
-                          priorities={priorities}
-                        />
+                        <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} />
                       </div>
                     </div>
                   )}

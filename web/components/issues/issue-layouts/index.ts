@@ -9,4 +9,7 @@ export * from "./gantt";
 export * from "./kanban";
 export * from "./spreadsheet";
 
+// properties
+export * from "./properties";
+
 export * from "./roots";

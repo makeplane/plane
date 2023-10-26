@@ -10,7 +10,7 @@ import { IssuePropertyAssignee } from "../properties/assignee";
 import { IssuePropertyEstimates } from "../properties/estimates";
 import { IssuePropertyDate } from "../properties/date";
 import { Tooltip } from "@plane/ui";
-import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite, TIssuePriorities } from "types";
+import { IIssue, IState, TIssuePriorities } from "types";
 
 export interface IKanBanProperties {
   sub_group_id: string;
@@ -18,24 +18,10 @@ export interface IKanBanProperties {
   issue: IIssue;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
   display_properties: any;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const {
-    sub_group_id,
-    columnId: group_id,
-    issue,
-    handleIssues,
-    display_properties,
-    states,
-    labels,
-    members,
-    estimates,
-  } = props;
+  const { sub_group_id, columnId: group_id, issue, handleIssues, display_properties } = props;
 
   const handleState = (state: IState) => {
     handleIssues(
@@ -99,9 +85,9 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {/* state */}
       {display_properties && display_properties?.state && (
         <IssuePropertyState
+          projectId={issue?.project_detail?.id || null}
           value={issue?.state_detail || null}
           onChange={handleState}
-          states={states}
           disabled={false}
           hideDropdownArrow={true}
         />
@@ -120,9 +106,9 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {/* label */}
       {display_properties && display_properties?.labels && (
         <IssuePropertyLabels
+          projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
           onChange={handleLabel}
-          labels={labels}
           disabled={false}
           hideDropdownArrow={true}
         />
@@ -131,10 +117,10 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {/* assignee */}
       {display_properties && display_properties?.assignee && (
         <IssuePropertyAssignee
+          projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
           hideDropdownArrow={true}
           onChange={handleAssignee}
-          members={members}
           disabled={false}
         />
       )}
@@ -162,9 +148,9 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {/* estimates */}
       {display_properties && display_properties?.estimate && (
         <IssuePropertyEstimates
+          projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
           onChange={handleEstimate}
-          estimatePoints={estimates}
           disabled={false}
           hideDropdownArrow={true}
         />

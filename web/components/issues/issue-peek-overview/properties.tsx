@@ -8,18 +8,15 @@ import { IssuePropertyPriority } from "components/issues/issue-layouts/propertie
 import { IssuePropertyAssignee } from "components/issues/issue-layouts/properties/assignee";
 import { IssuePropertyDate } from "components/issues/issue-layouts/properties/date";
 // types
-import { IIssue, IState, IUserLite, TIssuePriorities } from "types";
+import { IIssue, IState, TIssuePriorities } from "types";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
   issueUpdate: (issue: Partial<IIssue>) => void;
-  states: IState[] | null;
-  members: IUserLite[] | null;
-  priorities: any;
 }
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
-  const { issue, issueUpdate, states, members, priorities } = props;
+  const { issue, issueUpdate } = props;
 
   const handleState = (_state: IState) => {
     issueUpdate({ ...issue, state: _state.id });
@@ -53,9 +50,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
         </div>
         <div className="w-full">
           <IssuePropertyState
+            projectId={issue?.project_detail?.id || null}
             value={issue?.state_detail || null}
             onChange={handleState}
-            states={states}
             disabled={false}
             hideDropdownArrow={true}
           />
@@ -72,11 +69,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
         </div>
         <div className="w-full">
           <IssuePropertyAssignee
+            projectId={issue?.project_detail?.id || null}
             value={issue?.assignees || null}
             onChange={(ids: string[]) => handleAssignee(ids)}
             disabled={false}
             hideDropdownArrow={true}
-            members={members}
           />
         </div>
       </div>
