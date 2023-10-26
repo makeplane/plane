@@ -87,6 +87,15 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const completedModuleCheck = module.status === "completed" && module.total_issues - module.completed_issues;
 
+  const openModuleOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekModule: module.id },
+    });
+  };
+
   return (
     <>
       {workspaceSlug && projectId && (
@@ -100,7 +109,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <a className="group flex flex-col items-center justify-between px-10 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-200 md:flex-row">
+        <a className="group flex items-center justify-between gap-5 px-10 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100">
           <div className="flex items-center gap-3 w-full truncate">
             <div className="flex items-center gap-4 truncate">
               <span className="flex-shrink-0">
@@ -122,7 +131,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                console.log("clicked");
+                openModuleOverview();
               }}
               className="flex-shrink-0 hidden group-hover:flex z-10"
             >
@@ -130,17 +139,19 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             </button>
           </div>
 
-          <div className="flex items-center gap-4 justify-end w-full md:w-auto md:flex-shrink-0 ">
-            <div className="flex items-center justify-center w-32">
+          <div className="flex items-center gap-2.5 justify-end w-full md:w-auto md:flex-shrink-0 ">
+            <div className="flex items-center justify-center">
               {moduleStatus && (
-                <span className={`rounded-sm text-xs px-4 py-1 ${moduleStatus.textColor} ${moduleStatus.bgColor}`}>
+                <span
+                  className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                >
                   {moduleStatus.label}
                 </span>
               )}
             </div>
 
             {renderDate && (
-              <span className="flex items-center justify-center gap-2 w-32 text-xs text-custom-text-300">
+              <span className="flex items-center justify-center gap-2 w-28 text-xs text-custom-text-300">
                 {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
                 {" - "}
                 {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
@@ -167,7 +178,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   e.preventDefault();
                   handleRemoveFromFavorites();
                 }}
-                className="z-10"
+                className="z-[1]"
               >
                 <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />
               </button>
@@ -179,13 +190,13 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   e.preventDefault();
                   handleAddToFavorites();
                 }}
-                className="z-10"
+                className="z-[1]"
               >
                 <Star className="h-3.5 w-3.5 text-custom-text-300" />
               </button>
             )}
 
-            <CustomMenu width="auto" verticalEllipsis className="z-10">
+            <CustomMenu width="auto" verticalEllipsis buttonClassName="z-[1]">
               <CustomMenu.MenuItem
                 onClick={(e) => {
                   e.preventDefault();

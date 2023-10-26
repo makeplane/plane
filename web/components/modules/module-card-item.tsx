@@ -74,6 +74,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
+  const openModuleOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekModule: module.id },
+    });
+  };
+
   const endDate = new Date(module.target_date ?? "");
   const startDate = new Date(module.start_date ?? "");
 
@@ -103,7 +112,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <a className="flex flex-col justify-between p-3 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-200">
+        <a className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100">
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="auto">
@@ -111,12 +120,21 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </Tooltip>
               <div className="flex items-center gap-2">
                 {moduleStatus && (
-                  <span className={`rounded-sm text-xs px-4 py-1 ${moduleStatus.textColor} ${moduleStatus.bgColor}`}>
+                  <span
+                    className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                  >
                     {moduleStatus.label}
                   </span>
                 )}
-
-                <Info className="h-4 w-4 text-custom-text-400" />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openModuleOverview();
+                  }}
+                >
+                  <Info className="h-4 w-4 text-custom-text-400" />
+                </button>
               </div>
             </div>
           </div>
