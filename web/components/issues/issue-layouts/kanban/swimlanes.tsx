@@ -148,6 +148,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   members={members}
                   projects={projects}
                   estimates={estimates}
+                  enableQuickIssueCreate
                 />
               </div>
             )}
