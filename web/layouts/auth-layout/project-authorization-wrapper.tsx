@@ -116,7 +116,7 @@ const ProjectAuthorizationWrapped: React.FC<Props> = ({
               noHeader={noHeader}
             />
             <div className="h-full w-full overflow-hidden">
-              <div className="h-full w-full overflow-x-hidden overflow-y-scroll">{children}</div>
+              <div className="h-full w-full overflow-x-hidden overflow-y-hidden">{children}</div>
             </div>
           </main>
         )}
