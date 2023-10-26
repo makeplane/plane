@@ -89,6 +89,7 @@ export const CoreEditorExtensions = (
     Markdown.configure({
       html: true,
       transformCopiedText: true,
+      transformPastedText: true,
     }),
     Table,
     TableHeader,
