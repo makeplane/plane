@@ -4,7 +4,6 @@ import CommandPaletteStore, { ICommandPaletteStore } from "./command-palette.sto
 import UserStore, { IUserStore } from "store/user.store";
 import ThemeStore, { IThemeStore } from "store/theme.store";
 import {
-  DraftIssuesStore,
   IIssueDetailStore,
   IIssueFilterStore,
   IIssueKanBanViewStore,
@@ -73,7 +72,7 @@ import {
   ArchivedIssueFilterStore,
   IArchivedIssueFilterStore,
 } from "store/archived-issues";
-import { DraftIssueStore, IDraftIssueStore, DraftIssueFilterStore, IDraftIssueFilterStore } from "store/draft-issues";
+import { DraftIssueFilterStore, IDraftIssueFilterStore, IssueDraftStore, IIssueDraftStore } from "store/draft-issues";
 import {
   IInboxFiltersStore,
   IInboxIssueDetailsStore,
@@ -120,7 +119,6 @@ export class RootStore {
   issueDetail: IIssueDetailStore;
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: IIssueCalendarViewStore;
-  draftIssuesStore: DraftIssuesStore;
 
   calendar: ICalendarStore;
 
@@ -134,7 +132,7 @@ export class RootStore {
   archivedIssues: IArchivedIssueStore;
   archivedIssueFilters: IArchivedIssueFilterStore;
 
-  draftIssues: IDraftIssueStore;
+  draftIssues: IIssueDraftStore;
   draftIssueFilters: IDraftIssueFilterStore;
 
   inbox: IInboxStore;
@@ -175,7 +173,6 @@ export class RootStore {
     this.issueDetail = new IssueDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new IssueCalendarViewStore(this);
-    this.draftIssuesStore = new DraftIssuesStore(this);
 
     this.calendar = new CalendarStore(this);
 
@@ -189,7 +186,7 @@ export class RootStore {
     this.archivedIssues = new ArchivedIssueStore(this);
     this.archivedIssueFilters = new ArchivedIssueFilterStore(this);
 
-    this.draftIssues = new DraftIssueStore(this);
+    this.draftIssues = new IssueDraftStore(this);
     this.draftIssueFilters = new DraftIssueFilterStore(this);
 
     this.inbox = new InboxStore(this);

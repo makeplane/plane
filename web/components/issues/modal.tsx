@@ -61,6 +61,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     cycleIssue: cycleIssueStore,
     moduleIssue: moduleIssueStore,
     user: userStore,
+    draftIssues: draftIssuesStore,
   } = useMobxStore();
 
   const user = userStore.currentUser;
@@ -215,9 +216,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
       ...formDirtyState,
     };
 
-    await issueDraftService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
-      .then(() => {
+    await draftIssuesStore
+      .createDraftIssue(workspaceSlug.toString(), activeProject, payload)
+      .then((response) => {
+        // TODO: replace with actual group id and sub group id
+        draftIssuesStore.updateIssueStructure(null, null, response);
+
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -228,11 +232,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         setActiveProject(null);
         setFormDirtyState(null);
         setShowConfirmDiscard(false);
-
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
-
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
       .catch(() => {
         setToastAlert({
