@@ -37,7 +37,7 @@ export interface IIssueDraftStore {
 
   // computed
   getIssueType: IIssueType | null;
-  getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+  getDraftIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
 
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -67,7 +67,7 @@ export class IssueDraftStore implements IIssueDraftStore {
       draftIssues: observable.ref,
       // computed
       getIssueType: computed,
-      getIssues: computed,
+      getDraftIssues: computed,
       // actions
       fetchIssues: action,
       createDraftIssue: action,
@@ -105,14 +105,6 @@ export class IssueDraftStore implements IIssueDraftStore {
   get getDraftIssues() {
     const issueType = this.getIssueType;
     const projectId = this.rootStore?.project?.projectId;
-    if (!projectId || !issueType) return null;
-
-    return this.draftIssues?.[projectId]?.[issueType] || null;
-  }
-
-  get getIssues() {
-    const projectId: string | null = this.rootStore?.project?.projectId;
-    const issueType = this.getIssueType;
     if (!projectId || !issueType) return null;
 
     return this.draftIssues?.[projectId]?.[issueType] || null;
