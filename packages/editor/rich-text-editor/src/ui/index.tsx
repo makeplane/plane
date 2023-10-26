@@ -7,6 +7,17 @@ import { RichTextEditorExtensions } from './extensions';
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
+export type IMentionSuggestion = {
+  id: string;
+  type: string;
+  avatar: string;
+  title: string;
+  subtitle: string;
+  redirect_uri: string;
+}
+
+export type IMentionHighlight = string
+
 interface IRichTextEditor {
   value: string;
   uploadFile: UploadImage;
@@ -20,6 +31,8 @@ interface IRichTextEditor {
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
+  mentionHighlights?: string[];
+  mentionSuggestions?: IMentionSuggestion[];
 }
 
 interface RichTextEditorProps extends IRichTextEditor {
@@ -44,6 +57,8 @@ const RichTextEditor = ({
   borderOnFocus,
   customClassName,
   forwardedRef,
+  mentionHighlights,
+  mentionSuggestions
 }: RichTextEditorProps) => {
   const editor = useEditor({
     onChange,
@@ -54,7 +69,9 @@ const RichTextEditor = ({
     uploadFile,
     deleteFile,
     forwardedRef,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting)
+    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting),
+    mentionHighlights,
+    mentionSuggestions
   });
 
   const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });
