@@ -9,6 +9,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
+import useEditorSuggestions from "hooks/user-editor-suggestions";
 
 const fileService = new FileService();
 
@@ -24,6 +25,8 @@ interface IPeekOverviewIssueDetails {
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
   const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, issue.project_detail.id)
 
   const debouncedIssueDescription = useDebouncedCallback(async (_data: any) => {
     issueUpdate({ ...issue, description_html: _data });
@@ -47,6 +50,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
             debouncedIssueDescription(description_html);
           }}
           customClassName="p-3 min-h-[80px] shadow-sm"
+          mentionHighlights={editorSuggestions.mentionHighlights}
+          mentionSuggestions={editorSuggestions.mentionSuggestions}
         />
 
         <IssueReaction

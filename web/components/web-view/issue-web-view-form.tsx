@@ -14,6 +14,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { Label } from "components/web-view";
 // types
 import type { IIssue } from "types";
+import useEditorSuggestions from "hooks/user-editor-suggestions";
 
 type Props = {
   isAllowed: boolean;
@@ -38,6 +39,8 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
   const { setShowAlert } = useReloadConfirmations();
+
+  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, issueDetails.project_detail.id)
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -136,6 +139,8 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                   onChange(description_html);
                   handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
                 }}
+                mentionSuggestions={editorSuggestion.mentionSuggestions}
+                mentionHighlights={editorSuggestion.mentionHighlights}
               />
             }}
           />
