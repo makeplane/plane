@@ -11,12 +11,16 @@ import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
 
 export const CalendarLayout: React.FC = observer(() => {
-  const { issue: issueStore, issueFilter: issueFilterStore, issueDetail: issueDetailStore } = useMobxStore();
+  const {
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+    issueDetail: issueDetailStore,
+    issueCalendarView: issueCalendarViewStore,
+  } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
     if (!result) return;
 
@@ -26,7 +30,7 @@ export const CalendarLayout: React.FC = observer(() => {
     // return if dropped on the same date
     if (result.destination.droppableId === result.source.droppableId) return;
 
-    // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
+    issueCalendarViewStore?.handleDragDrop(result.source, result.destination);
   };
 
   const issues = issueStore.getIssues;

@@ -15,12 +15,12 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
     projectViewIssues: projectViewIssuesStore,
     issueFilter: issueFilterStore,
     issueDetail: issueDetailStore,
+    projectViewIssueCalendarView: projectViewIssueCalendarViewStore,
   } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
     if (!result) return;
 
@@ -30,7 +30,7 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
     // return if dropped on the same date
     if (result.destination.droppableId === result.source.droppableId) return;
 
-    // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
+    projectViewIssueCalendarViewStore?.handleDragDrop(result.source, result.destination);
   };
 
   const issues = projectViewIssuesStore.getIssues;

@@ -8,38 +8,37 @@ import { IssuePropertyPriority } from "components/issues/issue-layouts/propertie
 import { IssuePropertyAssignee } from "components/issues/issue-layouts/properties/assignee";
 import { IssuePropertyDate } from "components/issues/issue-layouts/properties/date";
 // types
-import { IIssue } from "types";
+import { IIssue, IState, IUserLite, TIssuePriorities } from "types";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
   issueUpdate: (issue: Partial<IIssue>) => void;
-
-  states: any;
-  members: any;
+  states: IState[] | null;
+  members: IUserLite[] | null;
   priorities: any;
 }
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
   const { issue, issueUpdate, states, members, priorities } = props;
 
-  const handleState = (_state: string) => {
-    if (issueUpdate) issueUpdate({ ...issue, state: _state });
+  const handleState = (_state: IState) => {
+    issueUpdate({ ...issue, state: _state.id });
   };
 
-  const handlePriority = (_priority: any) => {
-    if (issueUpdate) issueUpdate({ ...issue, priority: _priority });
+  const handlePriority = (_priority: TIssuePriorities) => {
+    issueUpdate({ ...issue, priority: _priority });
   };
 
   const handleAssignee = (_assignees: string[]) => {
-    if (issueUpdate) issueUpdate({ ...issue, assignees: _assignees });
+    issueUpdate({ ...issue, assignees: _assignees });
   };
 
   const handleStartDate = (_startDate: string) => {
-    if (issueUpdate) issueUpdate({ ...issue, start_date: _startDate });
+    issueUpdate({ ...issue, start_date: _startDate });
   };
 
   const handleTargetDate = (_targetDate: string) => {
-    if (issueUpdate) issueUpdate({ ...issue, target_date: _targetDate });
+    issueUpdate({ ...issue, target_date: _targetDate });
   };
 
   return (
@@ -54,11 +53,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
         </div>
         <div className="w-full">
           <IssuePropertyState
-            value={issue?.state || null}
-            dropdownArrow={false}
-            onChange={(id: string) => handleState(id)}
+            value={issue?.state_detail || null}
+            onChange={handleState}
+            states={states}
             disabled={false}
-            list={states}
+            hideDropdownArrow={true}
           />
         </div>
       </div>
@@ -74,10 +73,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
         <div className="w-full">
           <IssuePropertyAssignee
             value={issue?.assignees || null}
-            dropdownArrow={false}
             onChange={(ids: string[]) => handleAssignee(ids)}
             disabled={false}
-            list={members}
+            hideDropdownArrow={true}
+            members={members}
           />
         </div>
       </div>
@@ -93,10 +92,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
         <div className="w-full">
           <IssuePropertyPriority
             value={issue?.priority || null}
-            dropdownArrow={false}
-            onChange={(id: string) => handlePriority(id)}
+            onChange={handlePriority}
             disabled={false}
-            list={priorities}
+            hideDropdownArrow={true}
           />
         </div>
       </div>

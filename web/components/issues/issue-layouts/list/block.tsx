@@ -4,7 +4,7 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite } from "types";
 
 interface IssueBlockProps {
   columnId: string;
@@ -12,18 +12,17 @@ interface IssueBlockProps {
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  priorities: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
-    props;
+  const { columnId, issue, handleIssues, quickActions, display_properties, states, labels, members, estimates } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    if (issueToUpdate && handleIssues) handleIssues(group_by, issueToUpdate, "update");
+    handleIssues(group_by, issueToUpdate, "update");
   };
 
   return (
@@ -55,7 +54,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             states={states}
             labels={labels}
             members={members}
-            priorities={priorities}
+            estimates={estimates}
           />
           {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
         </div>

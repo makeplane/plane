@@ -15,12 +15,12 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     moduleIssue: moduleIssueStore,
     issueFilter: issueFilterStore,
     issueDetail: issueDetailStore,
+    moduleIssueCalendarView: moduleIssueCalendarViewStore,
   } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, moduleId } = router.query;
 
-  // TODO: add drag and drop functionality
   const onDragEnd = (result: DropResult) => {
     if (!result) return;
 
@@ -30,7 +30,7 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     // return if dropped on the same date
     if (result.destination.droppableId === result.source.droppableId) return;
 
-    // issueKanBanViewStore?.handleDragDrop(result.source, result.destination);
+    moduleIssueCalendarViewStore?.handleDragDrop(result.source, result.destination);
   };
 
   const issues = moduleIssueStore.getIssues;
