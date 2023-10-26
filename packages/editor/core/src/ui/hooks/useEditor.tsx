@@ -7,9 +7,9 @@ import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from '@tiptap/pm/view';
 import { getTrimmedHTML } from "../../lib/utils";
 import { UploadImage } from "../../types/upload-image";
+import { IMentionSuggestion } from "../mentions/mentions";
 
 const DEBOUNCE_DELAY = 1500;
-
 interface CustomEditorProps {
   uploadFile: UploadImage;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
@@ -21,15 +21,17 @@ interface CustomEditorProps {
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: any;
+  mentionHighlights?: string[];
+  mentionSuggestions?: IMentionSuggestion[];
 }
 
-export const useEditor = ({ uploadFile, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, }: CustomEditorProps) => {
+export const useEditor = ({ uploadFile, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, mentionHighlights, mentionSuggestions }: CustomEditorProps) => {
   const editor = useCustomEditor({
     editorProps: {
       ...CoreEditorProps(uploadFile, setIsSubmitting),
       ...editorProps,
     },
-    extensions: [...CoreEditorExtensions(deleteFile), ...extensions],
+    extensions: [...CoreEditorExtensions( { mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []} ,deleteFile), ...extensions],
     content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
     onUpdate: async ({ editor }) => {
       // for instant feedback loop
