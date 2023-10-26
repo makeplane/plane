@@ -61,6 +61,8 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* state */}
       {display_properties && display_properties?.state && states && (
         <IssuePropertyState
+          view="profile"
+          projectId={issue?.project_detail?.id || null}
           value={issue?.state_detail || null}
           hideDropdownArrow={true}
           onChange={handleState}
