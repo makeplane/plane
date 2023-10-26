@@ -48,14 +48,6 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         >
           {date.date.getDate() === 1 && MONTHS_LIST[date.date.getMonth() + 1].shortTitle + " "}
           {date.date.getDate()}
-          {enableQuickIssueCreate && (
-            <CalendarInlineCreateIssueForm
-              groupId={renderDateFormat(date.date)}
-              prePopulatedData={{
-                target_date: renderDateFormat(date.date),
-              }}
-            />
-          )}
         </div>
 
         {/* content */}
@@ -72,6 +64,16 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 ref={provided.innerRef}
               >
                 <CalendarIssueBlocks issues={issuesList} quickActions={quickActions} />
+                {enableQuickIssueCreate && (
+                  <div className="py-1 px-2">
+                    <CalendarInlineCreateIssueForm
+                      groupId={renderDateFormat(date.date)}
+                      prePopulatedData={{
+                        target_date: renderDateFormat(date.date),
+                      }}
+                    />
+                  </div>
+                )}
                 {provided.placeholder}
               </div>
             )}

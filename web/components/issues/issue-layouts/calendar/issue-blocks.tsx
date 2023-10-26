@@ -46,11 +46,6 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                   </div>
                   <h6 className="text-xs flex-grow truncate">{issue.name}</h6>
                   <div className="hidden group-hover/calendar-block:block">{quickActions(issue)}</div>
-                  {/* <IssueQuickActions
-                    issue={issue}
-                    handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
-                    handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
-                  /> */}
                 </a>
               </Link>
             </div>

@@ -74,7 +74,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full pr-2 py-2.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full pr-2 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -220,7 +220,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
         <div className="hidden group-hover:block border-[0.5px] border-custom-border-200 rounded">
           <button
             type="button"
-            className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-1 py-1 rounded-md"
+            className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-1 py-1.5 rounded-md"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-4 w-4" />
