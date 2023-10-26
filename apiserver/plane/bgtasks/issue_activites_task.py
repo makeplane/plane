@@ -1248,6 +1248,19 @@ def get_new_mentions(requested_instance, current_instance):
     
     return new_mentions
      
+# Get Removed Mention
+def get_new_mentions(requested_instance, current_instance):
+    # requested_data is the newer instance of the current issue
+    # current_instance is the older instance of the current issue, saved in the database
+    
+    # extract mentions from both the instance of data
+    mentions_older = extract_mentions(current_instance)
+    mentions_newer = extract_mentions(requested_instance)
+    
+    # Getting Set Difference from mentions_newer
+    removed_mentions = [mention for mention in mentions_older if mention not in mentions_newer]
+    
+    return removed_mentions
 
 # Adds mentions as subscribers
 def extract_mentions_as_subscribers(project, issue, mentions):
@@ -1422,6 +1435,7 @@ def issue_activity(
             
             # Get new mentions from the newer instance
             new_mentions = get_new_mentions(requested_instance=requested_data, current_instance=current_instance)
+            removed_mention = get_removed_mentions(requested_instance=requested_data, current_instance=current_instance)
             
             # Get New Subscribers from the mentions of the newer instance
             requested_mentions = extract_mentions(issue_instance=requested_data)
@@ -1546,6 +1560,7 @@ def issue_activity(
                 )
                 
             IssueMention.objects.bulk_create(aggregated_issue_mentions, batch_size=100)
+            IssueMention.objects.filter(issue=issue.id, mention__in=removed_mention).delete()
 
             # Bulk create notifications
             Notification.objects.bulk_create(
