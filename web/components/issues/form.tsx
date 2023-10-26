@@ -30,7 +30,8 @@ import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 // types
 import type { IIssue, ISearchIssueResponse } from "types";
 // components
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { IMentionHighlight, IMentionSuggestion, RichTextEditorWithRef } from "@plane/rich-text-editor";
+import useProjectMembers from "hooks/use-project-members";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -108,6 +109,20 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const { user: userStore } = useMobxStore();
 
   const user = userStore.currentUser;
+
+  const projectMembers = useProjectMembers( workspaceSlug as string | undefined, projectId ).members
+
+  const mentionSuggestions: IMentionSuggestion[] = !projectMembers ? [] : projectMembers.map((member) => ({
+      id: member.member.id,
+      type: "User",
+      title: member.member.display_name,
+      subtitle: member.member.email,
+      avatar: member.member.avatar,
+      redirect_uri: `/${member.workspace.slug}/profile/${member.member.id}`,
+   })
+  )
+
+  const mentionHighlights: IMentionHighlight[] = user ? [ user.id ] : []
 
   const { setToastAlert } = useToast();
 
@@ -395,6 +410,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
+                        mentionHighlights={mentionHighlights}
+                        mentionSuggestions={mentionSuggestions}
                       />
                     )}
                   />
