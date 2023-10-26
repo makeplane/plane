@@ -2,7 +2,7 @@
 
 import suggestion from "./suggestion";
 import { CustomMention } from "./custom";
-import { IMentionHighlight, IMentionSuggestion } from "./mentions";
+import { IMentionHighlight, IMentionSuggestion } from "../../types/mention-suggestion";
 
 export const Mentions = (mentionSuggestions: IMentionSuggestion[], mentionHighlights: IMentionHighlight[]) => CustomMention.configure({
   HTMLAttributes: {

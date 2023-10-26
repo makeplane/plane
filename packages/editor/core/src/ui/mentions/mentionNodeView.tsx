@@ -1,10 +1,10 @@
 /* eslint-disable react/display-name */
 // @ts-nocheck
 import { NodeViewWrapper } from '@tiptap/react'
-import { cn } from '../utils'
+import { cn } from '../../lib/utils'
 import React from 'react'
 import { useRouter } from 'next/router'
-import { IMentionHighlight } from './mentions'
+import { IMentionHighlight } from '../../types/mention-suggestion'
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default props => {

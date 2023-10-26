@@ -7,7 +7,7 @@ import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from '@tiptap/pm/view';
 import { getTrimmedHTML } from "../../lib/utils";
 import { UploadImage } from "../../types/upload-image";
-import { IMentionSuggestion } from "../mentions/mentions";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
 
 const DEBOUNCE_DELAY = 1500;
 interface CustomEditorProps {

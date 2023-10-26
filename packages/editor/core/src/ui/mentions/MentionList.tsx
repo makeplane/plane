@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react'
 
-import { IMentionSuggestion } from './mentions';
+import { IMentionSuggestion } from '../../types/mention-suggestion';
 
 interface MentionListProps {
   items: IMentionSuggestion[];

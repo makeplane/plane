@@ -17,7 +17,7 @@ import ImageExtension from "./image";
 
 import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
-import { IMentionSuggestion } from "../mentions/mentions";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
 
 
