@@ -12,7 +12,7 @@ module.exports = {
       "./pages/**/*.tsx",
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
-      "../packages/editor/**/*.{js,ts,jsx,tsx}",
+      "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
     ],
   },
   theme: {
