@@ -30,8 +30,6 @@ x-app-env : &app-env
     - EMAIL_FROM=${EMAIL_FROM:-"Team Plane &lt;team@mailer.plane.so&gt;"}
     - EMAIL_USE_TLS=${EMAIL_USE_TLS:-1}
     - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
-    - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
-    - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
     # OPENAI SETTINGS
     - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
     - OPENAI_API_KEY=${OPENAI_API_KEY:-"sk-"}
