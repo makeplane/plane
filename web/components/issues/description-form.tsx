@@ -5,13 +5,12 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { RichTextEditor, IMentionSuggestion } from "@plane/rich-text-editor";
+import { RichTextEditor } from "@plane/rich-text-editor";
 // types
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
-import useProjectMembers from "hooks/use-project-members";
-import useUser from "hooks/use-user";
+import useEditorSuggestions from "hooks/user-editor-suggestions";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -39,20 +38,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
 
   const { setShowAlert } = useReloadConfirmations();
 
-  const projectMembers = useProjectMembers( workspaceSlug, issue.project_id ).members
-  const user = useUser().user
-
-  const mentionSuggestions: IMentionSuggestion[] = !projectMembers ? [] : projectMembers.map((member) => ({
-    id: member.member.id,
-    type: "User",
-    title: member.member.display_name,
-    subtitle: member.member.email,
-    avatar: member.member.avatar,
-    redirect_uri: `/${member.workspace.slug}/profile/${member.member.id}`,
-  })
-  )
-
-  const mentionHighlights = user ? [user.id] : []
+  const editorSuggestion = useEditorSuggestions(workspaceSlug, issue.project_id)
 
   const {
     handleSubmit,
@@ -164,8 +150,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange(description_html);
                 handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
               }}
-              mentionSuggestions={mentionSuggestions}
-              mentionHighlights={mentionHighlights}
+              mentionSuggestions={editorSuggestion.mentionSuggestions}
+              mentionHighlights={editorSuggestion.mentionHighlights}
             />
           )}
         />
