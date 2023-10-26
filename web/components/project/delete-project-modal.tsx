@@ -30,7 +30,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { project: projectStore } = useMobxStore();
   // router
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // toast
   const { setToastAlert } = useToast();
   // form info
@@ -59,6 +59,8 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
     await projectStore
       .deleteProject(workspaceSlug.toString(), project.id)
       .then(() => {
+        if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
+
         handleClose();
       })
       .catch(() => {
