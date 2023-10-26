@@ -102,6 +102,9 @@ export class IssueQuickAddStore implements IIssueQuickAddStore {
       this.rootStore.issue.getIssues;
     if (!issues) return null;
 
+    if (group_id === "null") group_id = null;
+    if (sub_group_id === "null") sub_group_id = null;
+
     if (issueType === "grouped" && group_id) {
       issues = issues as IIssueGroupedStructure;
       const _currentIssueId = issues?.[group_id]?.find((_i) => _i?.id === issue.id);
