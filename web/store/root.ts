@@ -15,6 +15,8 @@ import {
   IIssueCalendarViewStore,
   IssueCalendarViewStore,
   IssueStore,
+  IIssueQuickAddStore,
+  IssueQuickAddStore,
 } from "store/issue";
 import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
 import { IProjectPublishStore, IProjectStore, ProjectPublishStore, ProjectStore } from "store/project";
@@ -121,6 +123,7 @@ export class RootStore {
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: IIssueCalendarViewStore;
   draftIssuesStore: DraftIssuesStore;
+  quickAddIssue: IIssueQuickAddStore;
 
   calendar: ICalendarStore;
 
@@ -176,6 +179,7 @@ export class RootStore {
     this.issueKanBanView = new IssueKanBanViewStore(this);
     this.issueCalendarView = new IssueCalendarViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);
+    this.quickAddIssue = new IssueQuickAddStore(this);
 
     this.calendar = new CalendarStore(this);
 

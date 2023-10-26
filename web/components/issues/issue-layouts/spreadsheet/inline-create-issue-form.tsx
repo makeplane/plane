@@ -61,7 +61,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { issueDetail: issueDetailStore, issue: issueStore, workspace: workspaceStore } = useMobxStore();
+  const { workspace: workspaceStore, quickAddIssue: quickAddStore } = useMobxStore();
 
   const { projectDetails } = useProjectDetails();
 
@@ -121,13 +121,13 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
       ...(prePopulatedData ?? {}),
       ...formData,
       labels_list:
-        formData.labels_list?.length !== 0
+        formData.labels_list && formData.labels_list?.length !== 0
           ? formData.labels_list
           : prePopulatedData?.labels && prePopulatedData?.labels.toString() !== "none"
           ? [prePopulatedData.labels as any]
           : [],
       assignees_list:
-        formData.assignees_list?.length !== 0
+        formData.assignees_list && formData.assignees_list?.length !== 0
           ? formData.assignees_list
           : prePopulatedData?.assignees && prePopulatedData?.assignees.toString() !== "none"
           ? [prePopulatedData.assignees as any]
@@ -135,14 +135,15 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
     });
 
     try {
-      issueDetailStore
-        .optimisticallyCreateIssue(workspaceSlug.toString(), projectId.toString(), payload)
-        .then((response) => {
-          issueStore.removeIssueFromStructure(groupId ?? null, null, payload);
-          issueStore.updateIssueStructure(groupId ?? null, null, response);
-        });
-
-      issueStore.updateIssueStructure(groupId ?? null, null, payload);
+      quickAddStore.createIssue(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        {
+          group_id: groupId ?? null,
+          sub_group_id: null,
+        },
+        payload
+      );
 
       setToastAlert({
         type: "success",

@@ -60,7 +60,7 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { issueDetail: issueDetailStore, issue: issueStore, workspace: workspaceStore } = useMobxStore();
+  const { workspace: workspaceStore, quickAddIssue: quickAddStore } = useMobxStore();
 
   // ref
   const ref = useRef<HTMLFormElement>(null);
@@ -132,14 +132,15 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     });
 
     try {
-      issueDetailStore
-        .optimisticallyCreateIssue(workspaceSlug.toString(), projectId.toString(), payload)
-        .then((response) => {
-          issueStore.removeIssueFromStructure(groupId ?? null, subGroupId ?? null, payload);
-          issueStore.updateIssueStructure(groupId ?? null, subGroupId ?? null, response);
-        });
-
-      issueStore.updateIssueStructure(groupId ?? null, subGroupId ?? null, payload);
+      quickAddStore.createIssue(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        {
+          group_id: groupId ?? null,
+          sub_group_id: subGroupId ?? null,
+        },
+        payload
+      );
 
       setToastAlert({
         type: "success",

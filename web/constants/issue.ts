@@ -483,6 +483,7 @@ export const createIssuePayload: (
     workspace: workspaceDetail.id,
     workspace_detail: workspaceDetail,
     id: uuidv4(),
+    tempId: uuidv4(),
     // to be overridden by the form data
     ...formData,
   } as IIssue;
