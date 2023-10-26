@@ -5,11 +5,13 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { useDebouncedCallback } from "use-debounce";
 // components
 import { TextArea } from "@plane/ui";
-import { RichTextEditor } from "@plane/rich-text-editor";
+import { RichTextEditor, IMentionSuggestion } from "@plane/rich-text-editor";
 // types
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
+import useProjectMembers from "hooks/use-project-members";
+import useUser from "hooks/use-user";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -20,6 +22,7 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    project_id?: string;
   };
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
@@ -35,6 +38,21 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
+
+  const projectMembers = useProjectMembers( workspaceSlug, issue.project_id ).members
+  const user = useUser().user
+
+  const mentionSuggestions: IMentionSuggestion[] = !projectMembers ? [] : projectMembers.map((member) => ({
+    id: member.member.id,
+    type: "User",
+    title: member.member.display_name,
+    subtitle: member.member.email,
+    avatar: member.member.avatar,
+    redirect_uri: `/${member.workspace.slug}/profile/${member.member.id}`,
+  })
+  )
+
+  const mentionHighlights = user ? [user.id] : []
 
   const {
     handleSubmit,
@@ -146,13 +164,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange(description_html);
                 handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
               }}
+              mentionSuggestions={mentionSuggestions}
+              mentionHighlights={mentionHighlights}
             />
           )}
         />
         <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
         >
           {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>
