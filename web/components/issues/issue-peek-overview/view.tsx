@@ -215,6 +215,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       <IssueComment
                         workspaceSlug={workspaceSlug}
                         projectId={projectId}
+                        issueId={issueId}
                         user={user}
                         issueComments={issueComments}
                         issueCommentCreate={issueCommentCreate}
@@ -242,6 +243,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <IssueComment
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
+                          issueId={issueId}
                           user={user}
                           issueComments={issueComments}
                           issueCommentCreate={issueCommentCreate}

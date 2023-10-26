@@ -7,7 +7,7 @@ import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 
@@ -19,6 +19,11 @@ interface ISubGroupSwimlaneHeader {
   listKey: string;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   issues,
@@ -71,13 +76,13 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  states: any;
+  states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: any;
-  members: any;
-  projects: any;
-  estimates: any;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -172,13 +177,13 @@ export interface IKanBanSwimLanes {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  states: any;
+  states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: any;
-  members: any;
-  projects: any;
-  estimates: any;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -214,6 +219,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
 
@@ -226,6 +236,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
 
@@ -238,6 +253,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
 
@@ -250,6 +270,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
 
@@ -262,6 +287,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`member.id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
 
@@ -274,6 +304,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`member.id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            labels={labels}
+            members={members}
+            projects={projects}
+            estimates={estimates}
           />
         )}
       </div>

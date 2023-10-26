@@ -2,12 +2,11 @@ import React from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
-import { IssueBlock } from "./block";
-import { ListInlineCreateIssueForm } from "components/issues";
+import { IssueBlocksList, ListInlineCreateIssueForm } from "components/issues";
+// types
+import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
-import { IIssue } from "types";
-import { IssueBlocksList } from "./blocks-list";
 
 export interface IGroupByList {
   issues: any;
@@ -18,14 +17,14 @@ export interface IGroupByList {
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   is_list?: boolean;
-  states: any;
-  labels: any;
-  members: any;
-  projects: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
   stateGroups: any;
   priorities: any;
-  estimates: any;
   enableQuickIssueCreate?: boolean;
+  estimates: IEstimatePoint[] | null;
 }
 
 const GroupByList: React.FC<IGroupByList> = observer((props) => {
@@ -75,7 +74,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                   states={states}
                   labels={labels}
                   members={members}
-                  priorities={priorities}
+                  estimates={estimates}
                 />
               )}
             </div>
@@ -101,14 +100,14 @@ export interface IList {
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  projects: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
   stateGroups: any;
   priorities: any;
-  estimates: any;
   enableQuickIssueCreate?: boolean;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const List: React.FC<IList> = observer((props) => {

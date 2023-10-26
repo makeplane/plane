@@ -1,21 +1,17 @@
 import React, { useState } from "react";
 import { usePopper } from "react-popper";
-import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, Search } from "lucide-react";
-import { PriorityIcon } from "@plane/ui";
-// components
-import { Tooltip } from "components/ui";
-// helpers
-import { capitalizeFirstLetter } from "helpers/string.helper";
+import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 // types
-import { TIssuePriorities } from "types";
+import { Tooltip } from "components/ui";
+import { Placement } from "@popperjs/core";
 // constants
-import { ISSUE_PRIORITIES } from "constants/issue";
+import { IEstimatePoint } from "types";
 
 type Props = {
-  value: TIssuePriorities;
-  onChange: (data: TIssuePriorities) => void;
+  value: number | null;
+  onChange: (value: number | null) => void;
+  estimatePoints: IEstimatePoint[] | undefined;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -24,16 +20,19 @@ type Props = {
   disabled?: boolean;
 };
 
-export const PrioritySelect: React.FC<Props> = ({
-  value,
-  onChange,
-  className = "",
-  buttonClassName = "",
-  optionsClassName = "",
-  placement,
-  hideDropdownArrow = false,
-  disabled = false,
-}) => {
+export const EstimateSelect: React.FC<Props> = (props) => {
+  const {
+    value,
+    onChange,
+    estimatePoints,
+    className = "",
+    buttonClassName = "",
+    optionsClassName = "",
+    placement,
+    hideDropdownArrow = false,
+    disabled = false,
+  } = props;
+
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -51,38 +50,39 @@ export const PrioritySelect: React.FC<Props> = ({
     ],
   });
 
-  const options = ISSUE_PRIORITIES?.map((priority) => ({
-    value: priority.key,
-    query: priority.key,
+  const options: { value: number | null; query: string; content: any }[] | undefined = estimatePoints?.map(
+    (estimate) => ({
+      value: estimate.key,
+      query: estimate.value,
+      content: (
+        <div className="flex items-center gap-2">
+          <Triangle className="h-3 w-3" strokeWidth={2} />
+          {estimate.value}
+        </div>
+      ),
+    })
+  );
+  options?.unshift({
+    value: null,
+    query: "none",
     content: (
       <div className="flex items-center gap-2">
-        <PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />
-        {priority.title}
+        <Triangle className="h-3 w-3" strokeWidth={2} />
+        None
       </div>
     ),
-  }));
+  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
-  const selectedOption = value ? capitalizeFirstLetter(value) : "None";
-
+  const selectedEstimate = estimatePoints?.find((e) => e.key === value);
   const label = (
-    <Tooltip tooltipHeading="Priority" tooltipContent={selectedOption} position="top">
-      <PriorityIcon
-        priority={value}
-        className={`h-3.5 w-3.5 ${
-          value === "urgent"
-            ? "text-white"
-            : value === "high"
-            ? "text-orange-500"
-            : value === "medium"
-            ? "text-yellow-500"
-            : value === "low"
-            ? "text-green-500"
-            : "text-custom-text-200"
-        }`}
-      />
+    <Tooltip tooltipHeading="Estimate" tooltipContent={selectedEstimate?.value ?? "None"} position="top">
+      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+        <Triangle className="h-3 w-3" strokeWidth={2} />
+        <span className="truncate">{selectedEstimate?.value ?? "None"}</span>
+      </div>
     </Tooltip>
   );
 
@@ -91,21 +91,19 @@ export const PrioritySelect: React.FC<Props> = ({
       as="div"
       className={`flex-shrink-0 text-left ${className}`}
       value={value}
-      onChange={onChange}
+      onChange={(val) => onChange(val as number | null)}
       disabled={disabled}
     >
       <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded border-[0.5px] ${
-            value === "urgent" ? "border-red-500/20 bg-red-500" : "border-custom-border-300"
-          } ${
+          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
         >
           {label}
-          {!hideDropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
+          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
       <Combobox.Options className="fixed z-10">

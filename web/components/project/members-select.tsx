@@ -1,18 +1,15 @@
 import React, { useState } from "react";
 import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
-
-// headless ui
 import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // components
 import { AssigneesList, Avatar, Tooltip } from "components/ui";
-// icons
-import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // types
 import { IUserLite } from "types";
 
 type Props = {
-  members: IUserLite[];
+  members: IUserLite[] | undefined;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -51,6 +48,14 @@ export const MembersSelect: React.FC<Props> = ({
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
   });
 
   const options = members?.map((member) => ({
@@ -73,22 +78,22 @@ export const MembersSelect: React.FC<Props> = ({
       tooltipContent={
         value && value.length > 0
           ? members
-              .filter((m) => value.includes(m.display_name))
+              ?.filter((m) => value.includes(m.display_name))
               .map((m) => m.display_name)
               .join(", ")
           : "No Assignee"
       }
       position="top"
     >
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+      <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AssigneesList userIds={value} length={3} showLength={true} />
         ) : (
           <span
-            className="flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none
+            className="flex items-center justify-between gap-1 h-full w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none
           "
           >
-            <User2 className="h-3.5 w-3.5" />
+            <User2 className="h-3 w-3" />
           </span>
         )}
       </div>
@@ -112,9 +117,9 @@ export const MembersSelect: React.FC<Props> = ({
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
-      <Combobox.Options>
+      <Combobox.Options className="fixed z-10">
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
