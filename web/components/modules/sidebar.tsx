@@ -373,70 +373,34 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     </div>
                     <Transition show={open}>
                       <Disclosure.Panel>
-                        {isStartValid && isEndValid ? (
-                          <div className=" h-full w-full pt-4">
-                            <div className="flex  items-start  gap-4 py-2 text-xs">
-                              <div className="flex items-center gap-3 text-custom-text-100">
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
-                                  <span>Ideal</span>
-                                </div>
-                                <div className="flex items-center justify-center gap-1">
-                                  <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
-                                  <span>Current</span>
+                        <div className="flex flex-col gap-3">
+                          {isStartValid && isEndValid ? (
+                            <div className=" h-full w-full pt-4">
+                              <div className="flex  items-start  gap-4 py-2 text-xs">
+                                <div className="flex items-center gap-3 text-custom-text-100">
+                                  <div className="flex items-center justify-center gap-1">
+                                    <span className="h-2.5 w-2.5 rounded-full bg-[#A9BBD0]" />
+                                    <span>Ideal</span>
+                                  </div>
+                                  <div className="flex items-center justify-center gap-1">
+                                    <span className="h-2.5 w-2.5 rounded-full bg-[#4C8FFF]" />
+                                    <span>Current</span>
+                                  </div>
                                 </div>
                               </div>
+                              <div className="relative h-40 w-80">
+                                <ProgressChart
+                                  distribution={moduleDetails.distribution.completion_chart}
+                                  startDate={moduleDetails.start_date ?? ""}
+                                  endDate={moduleDetails.target_date ?? ""}
+                                  totalIssues={moduleDetails.total_issues}
+                                />
+                              </div>
                             </div>
-                            <div className="relative h-40 w-80">
-                              <ProgressChart
-                                distribution={moduleDetails.distribution.completion_chart}
-                                startDate={moduleDetails.start_date ?? ""}
-                                endDate={moduleDetails.target_date ?? ""}
-                                totalIssues={moduleDetails.total_issues}
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </Disclosure.Panel>
-                    </Transition>
-                  </div>
-                )}
-              </Disclosure>
-            </div>
-
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
-              <Disclosure>
-                {({ open }) => (
-                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-custom-text-200">Other Information</span>
-                      </div>
-
-                      <div className="flex items-center gap-2.5">
-                        {moduleDetails.total_issues > 0 ? (
-                          <Disclosure.Button className="p-1.5">
-                            <ChevronDown
-                              className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </Disclosure.Button>
-                        ) : (
-                          <div className="flex items-center gap-1">
-                            <AlertCircle height={14} width={14} className="text-custom-text-200" />
-                            <span className="text-xs italic text-custom-text-200">
-                              No issues found. Please add issue.
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <Transition show={open}>
-                      <Disclosure.Panel>
-                        {moduleDetails.total_issues > 0 ? (
-                          <>
+                          ) : (
+                            ""
+                          )}
+                          {moduleDetails.total_issues > 0 && (
                             <div className="h-full w-full pt-4">
                               <SidebarProgressStats
                                 distribution={moduleDetails.distribution}
@@ -452,10 +416,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 isPeekModuleDetails={Boolean(peekModule)}
                               />
                             </div>
-                          </>
-                        ) : (
-                          ""
-                        )}
+                          )}
+                        </div>
                       </Disclosure.Panel>
                     </Transition>
                   </div>

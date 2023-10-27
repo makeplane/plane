@@ -125,7 +125,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
-        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-48 overflow-y-auto">
+        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
           {distribution.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
@@ -142,6 +142,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
                             last_name: assignee.last_name ?? "",
                             display_name: assignee.display_name ?? "",
                           }}
+                          height="18px"
+                          width="18px"
                         />
                         <span>{assignee.display_name}</span>
                       </div>
@@ -169,7 +171,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={`unassigned-${index}`}
                     title={
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
+                        <div className="h-4 w-4 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
                           <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                         </div>
                         <span>No assignee</span>
@@ -184,7 +186,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             <span className="flex items-center justify-center h-full w-full text-sm">No assignee</span>
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-48 overflow-y-auto">
+        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
           {distribution.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
               <SingleProgressStats
@@ -218,7 +220,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
             <span className="flex items-center justify-center h-full w-full text-sm">No label</span>
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-48 overflow-y-auto">
+        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
           {Object.keys(groupedIssues).map((group, index) => (
             <SingleProgressStats
               key={index}
