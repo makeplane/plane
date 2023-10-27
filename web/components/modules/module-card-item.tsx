@@ -91,13 +91,15 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
   const issueCount =
-    module.total_issues === 0
-      ? "0 Issue"
-      : module.total_issues === module.completed_issues
-      ? module.total_issues > 1
-        ? `${module.total_issues} Issues`
-        : `${module.total_issues} Issue`
-      : `${module.completed_issues}/${module.total_issues} Issues`;
+    module.completed_issues && module.total_issues
+      ? module.total_issues === 0
+        ? "0 Issue"
+        : module.total_issues === module.completed_issues
+        ? module.total_issues > 1
+          ? `${module.total_issues} Issues`
+          : `${module.total_issues} Issue`
+        : `${module.completed_issues}/${module.total_issues} Issues`
+      : "0 Issue";
 
   return (
     <>
