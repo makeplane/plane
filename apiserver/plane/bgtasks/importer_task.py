@@ -25,6 +25,7 @@ from plane.db.models import (
     WorkspaceIntegration,
     Label,
     User,
+    IssueProperty,
 )
 from .workspace_invitation_task import workspace_invitation
 from plane.bgtasks.user_welcome_task import send_welcome_slack
@@ -95,6 +96,20 @@ def service_importer(service, importer_id):
                         project_id=importer.project_id,
                         workspace_id=importer.workspace_id,
                         member=user,
+                        created_by=importer.created_by,
+                    )
+                    for user in workspace_users
+                ],
+                batch_size=100,
+                ignore_conflicts=True,
+            )
+
+            IssueProperty.objects.bulk_create(
+                [
+                    IssueProperty(
+                        project_id=importer.project_id,
+                        workspace_id=importer.workspace_id,
+                        user=user,
                         created_by=importer.created_by,
                     )
                     for user in workspace_users

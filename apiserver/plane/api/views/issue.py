@@ -132,7 +132,7 @@ class IssueViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-        )
+        ).distinct()
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
@@ -219,6 +219,7 @@ class IssueViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
+        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
@@ -231,12 +232,16 @@ class IssueViewSet(BaseViewSet):
             )
 
         if group_by:
+            grouped_results = group_results(issues, group_by, sub_group_by)
             return Response(
-                group_results(issues, group_by, sub_group_by),
+                {"data": grouped_results, "total_issues": total_issues},
                 status=status.HTTP_200_OK,
             )
 
-        return Response(issues, status=status.HTTP_200_OK)
+        return Response(
+            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+        )
+
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -423,6 +428,7 @@ class UserWorkSpaceIssues(BaseAPIView):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
+        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
@@ -435,12 +441,15 @@ class UserWorkSpaceIssues(BaseAPIView):
             )
 
         if group_by:
+            grouped_results = group_results(issues, group_by, sub_group_by)
             return Response(
-                group_results(issues, group_by, sub_group_by),
+                {"data": grouped_results, "total_issues": total_issues},
                 status=status.HTTP_200_OK,
             )
 
-        return Response(issues, status=status.HTTP_200_OK)
+        return Response(
+            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+        )
 
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
@@ -599,41 +608,12 @@ class IssueCommentViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssuePropertyViewSet(BaseViewSet):
-    serializer_class = IssuePropertySerializer
-    model = IssueProperty
+class IssueUserDisplayPropertyEndpoint(BaseAPIView):
     permission_classes = [
-        ProjectEntityPermission,
+        ProjectLitePermission,
     ]
 
-    filterset_fields = []
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"), user=self.request.user
-        )
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(user=self.request.user)
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-        )
-
-    def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
-        serializer = IssuePropertySerializer(queryset, many=True)
-        return Response(
-            serializer.data[0] if len(serializer.data) > 0 else [],
-            status=status.HTTP_200_OK,
-        )
-
-    def create(self, request, slug, project_id):
+    def post(self, request, slug, project_id):
         issue_property, created = IssueProperty.objects.get_or_create(
             user=request.user,
             project_id=project_id,
@@ -642,14 +622,18 @@ class IssuePropertyViewSet(BaseViewSet):
         if not created:
             issue_property.properties = request.data.get("properties", {})
             issue_property.save()
-
-            serializer = IssuePropertySerializer(issue_property)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
         issue_property.properties = request.data.get("properties", {})
         issue_property.save()
         serializer = IssuePropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+    def get(self, request, slug, project_id):
+            issue_property, _ = IssueProperty.objects.get_or_create(
+                user=request.user, project_id=project_id
+            )
+            serializer = IssuePropertySerializer(issue_property)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LabelViewSet(BaseViewSet):
@@ -965,8 +949,8 @@ class IssueAttachmentEndpoint(BaseAPIView):
         issue_attachments = IssueAttachment.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
         )
-        serilaizer = IssueAttachmentSerializer(issue_attachments, many=True)
-        return Response(serilaizer.data, status=status.HTTP_200_OK)
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueArchiveViewSet(BaseViewSet):
@@ -1167,9 +1151,7 @@ class IssueSubscriberViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         members = (
-            ProjectMember.objects.filter(
-                workspace__slug=slug, project_id=project_id
-            )
+            ProjectMember.objects.filter(workspace__slug=slug, project_id=project_id)
             .annotate(
                 is_subscribed=Exists(
                     IssueSubscriber.objects.filter(
@@ -2171,14 +2153,21 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
+        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
         group_by = request.GET.get("group_by", False)
         if group_by:
-            return Response(group_results(issues, group_by), status=status.HTTP_200_OK)
+            grouped_results = group_results(issues, group_by)
+            return Response(
+                {"data": grouped_results, "total_issues": total_issues},
+                status=status.HTTP_200_OK,
+            )
 
-        return Response(issues, status=status.HTTP_200_OK)
+        return Response(
+            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+        )
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)

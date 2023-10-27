@@ -5,7 +5,7 @@ import { Droppable } from "@hello-pangea/dnd";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { KanbanIssueBlocksList } from "components/issues";
+import { KanbanIssueBlocksList, BoardInlineCreateIssueForm } from "components/issues";
 // types
 import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
@@ -29,6 +29,7 @@ export interface IGroupByKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  enableQuickIssueCreate?: boolean;
   states: IState[] | null;
   labels: IIssueLabels[] | null;
   members: IUserLite[] | null;
@@ -55,6 +56,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     members,
     priorities,
     estimates,
+    enableQuickIssueCreate,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -120,6 +122,16 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                 )}
               </Droppable>
             </div>
+            {enableQuickIssueCreate && (
+              <BoardInlineCreateIssueForm
+                groupId={getValueFromObject(_list, listKey) as string}
+                subGroupId={sub_group_id}
+                prePopulatedData={{
+                  ...(group_by && { [group_by]: getValueFromObject(_list, listKey) }),
+                  ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
+                }}
+              />
+            )}
           </div>
         ))}
     </div>
@@ -149,6 +161,7 @@ export interface IKanBan {
   members: IUserLite[] | null;
   projects: IProject[] | null;
   estimates: IEstimatePoint[] | null;
+  enableQuickIssueCreate?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -169,6 +182,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     members,
     projects,
     estimates,
+    enableQuickIssueCreate,
   } = props;
 
   const { project: projectStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -189,6 +203,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
           states={states}
           labels={labels}
           members={members}
@@ -211,6 +226,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
           states={states}
           labels={labels}
           members={members}
@@ -233,6 +249,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
           states={states}
           labels={labels}
           members={members}
@@ -255,6 +272,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
           states={states}
           labels={labels}
           members={members}
@@ -277,6 +295,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
           states={states}
           labels={labels}
           members={members}
@@ -299,6 +318,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
           states={states}
           labels={labels}
           members={members}
