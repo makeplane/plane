@@ -27,6 +27,10 @@ export const WorkspaceSettingsSidebar = () => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
+      label: "Webhooks",
+      href: `/${workspaceSlug}/settings/webhooks`,
+    },
+    {
       label: "Imports",
       href: `/${workspaceSlug}/settings/imports`,
     },
