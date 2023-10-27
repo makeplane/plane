@@ -1,6 +1,8 @@
 # Django imports
 from django.db import models
 from django.conf import settings
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 # Module imports
 from . import BaseModel
@@ -50,7 +52,7 @@ def get_default_props():
             "state": True,
             "sub_issue_count": True,
             "updated_on": True,
-        }
+        },
     }
 
 
@@ -199,3 +201,23 @@ class WorkspaceTheme(BaseModel):
         verbose_name_plural = "Workspace Themes"
         db_table = "workspace_themes"
         ordering = ("-created_at",)
+
+
+@receiver(post_save, sender=WorkspaceMember)
+def workspace_member_add(sender, instance, created, **kwargs):
+    if created:
+        total_members_count = WorkspaceMember.objects.filter(
+            workspace=instance.workspace_id, member__is_bot=False
+        )
+        action = "add"
+        # Update the license engine
+
+
+@receiver(post_delete, sender=WorkspaceMember)
+def workspace_member_delete(sender, instance, **kwargs):
+        total_members_count = WorkspaceMember.objects.filter(
+            workspace=instance.workspace_id, member__is_bot=False
+        )
+        action = "delete"
+
+        # Update the license engine

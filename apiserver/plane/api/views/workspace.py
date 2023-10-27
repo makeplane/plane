@@ -11,7 +11,6 @@ from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import (
     Prefetch,
     OuterRef,
@@ -34,7 +33,6 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
 
 # Module imports
 from plane.api.serializers import (
