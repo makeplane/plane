@@ -1,10 +1,14 @@
 import React from "react";
 
+import Image from "next/image";
 // headless ui
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useIssuesView from "hooks/use-issues-view";
+// images
+import emptyLabel from "public/empty-state/empty_label.svg";
+import emptyMembers from "public/empty-state/empty_members.svg";
 // components
 import { StateGroupIcon } from "@plane/ui";
 import { SingleProgressStats } from "components/core";
@@ -82,7 +86,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         className={`flex w-full items-center gap-2 justify-between rounded-md ${
           noBackground ? "" : "bg-custom-background-90"
         } p-0.5
-        ${module ? "text-xs" : "text-sm"} `}
+        ${module ? "text-xs" : "text-sm"}`}
       >
         <Tab
           className={({ selected }) =>
@@ -90,8 +94,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
               roundedTab ? "rounded-3xl border border-custom-border-200" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected
-                ? "bg-custom-background-100 text-custom-text-200 shadow-custom-shadow-2xs"
-                : "hover:shadow-custom-shadow-2xs hover:bg-custom-background-100"
+                ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
+                : "text-custom-text-400 hover:text-custom-text-300"
             }`
           }
         >
@@ -103,8 +107,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
               roundedTab ? "rounded-3xl border border-custom-border-200" : "rounded"
             } px-3 py-1 text-custom-text-100 ${
               selected
-                ? "bg-custom-background-100 text-custom-text-200 shadow-custom-shadow-2xs"
-                : "hover:shadow-custom-shadow-2xs hover:bg-custom-background-100"
+                ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
+                : "text-custom-text-400 hover:text-custom-text-300"
             }`
           }
         >
@@ -116,8 +120,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
               roundedTab ? "rounded-3xl border border-custom-border-200" : "rounded"
             } px-3 py-1  text-custom-text-100 ${
               selected
-                ? "bg-custom-background-100 text-custom-text-200 shadow-custom-shadow-2xs"
-                : "hover:shadow-custom-shadow-2xs hover:bg-custom-background-100"
+                ? "bg-custom-background-100 text-custom-text-300 shadow-custom-shadow-2xs"
+                : "text-custom-text-400 hover:text-custom-text-300"
             }`
           }
         >
@@ -183,7 +187,12 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 );
             })
           ) : (
-            <span className="flex items-center justify-center h-full w-full text-sm">No assignee</span>
+            <div className="flex flex-col items-center justify-center gap-2 h-full">
+              <div className="flex items-center justify-center h-20 w-20 bg-custom-background-80 rounded-full">
+                <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
+              </div>
+              <h6 className="text-base text-custom-text-300">No assignees yet</h6>
+            </div>
           )}
         </Tab.Panel>
         <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
@@ -217,7 +226,12 @@ export const SidebarProgressStats: React.FC<Props> = ({
               />
             ))
           ) : (
-            <span className="flex items-center justify-center h-full w-full text-sm">No label</span>
+            <div className="flex flex-col items-center justify-center gap-2 h-full">
+              <div className="flex items-center justify-center h-20 w-20 bg-custom-background-80 rounded-full">
+                <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
+              </div>
+              <h6 className="text-base text-custom-text-300">No labels yet</h6>
+            </div>
           )}
         </Tab.Panel>
         <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">

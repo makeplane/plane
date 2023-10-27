@@ -248,7 +248,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 </button>
               )}
             </div>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3.5">
               <button onClick={handleCopyText}>
                 <LinkIcon className="h-3 w-3 text-custom-text-300" />
               </button>
@@ -268,12 +268,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="flex items-center gap-5">
               {moduleStatus && (
                 <span
-                  className={`flex items-center justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                  className={`flex items-center cursor-default justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
                 >
                   {moduleStatus.label}
                 </span>
               )}
-              <span className="text-sm text-custom-text-300 font-medium">
+              <span className="text-sm text-custom-text-300 font-mediu cursor-default">
                 {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
                 {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
               </span>
@@ -388,7 +388,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             ""
                           )}
                           {moduleDetails.total_issues > 0 && (
-                            <div className="h-full w-full pt-4">
+                            <div className="h-full w-full pt-5 border-t border-custom-border-200">
                               <SidebarProgressStats
                                 distribution={moduleDetails.distribution}
                                 groupedIssues={{
