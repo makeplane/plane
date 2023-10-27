@@ -205,19 +205,37 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                   </button>
                 )}
                 <CustomMenu width="auto" ellipsis className="z-10">
-                  <CustomMenu.MenuItem onClick={() => setEditModuleModal(true)}>
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setEditModuleModal(true);
+                    }}
+                  >
                     <span className="flex items-center justify-start gap-2">
                       <Pencil className="h-3 w-3" />
                       <span>Edit module</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setModuleDeleteModal(true);
+                    }}
+                  >
                     <span className="flex items-center justify-start gap-2">
                       <Trash2 className="h-3 w-3" />
                       <span>Delete module</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleCopyText();
+                    }}
+                  >
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3 w-3" />
                       <span>Copy module link</span>

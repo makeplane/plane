@@ -83,7 +83,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
-  const progress = isNaN(completionPercentage) ? 0 : completionPercentage;
+  const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
 
   const completedModuleCheck = module.status === "completed" && module.total_issues - module.completed_issues;
 
@@ -209,13 +209,25 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   <span>Edit module</span>
                 </span>
               </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+              <CustomMenu.MenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setModuleDeleteModal(true);
+                }}
+              >
                 <span className="flex items-center justify-start gap-2">
                   <Trash2 className="h-3 w-3" />
                   <span>Delete module</span>
                 </span>
               </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleCopyText}>
+              <CustomMenu.MenuItem
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleCopyText();
+                }}
+              >
                 <span className="flex items-center justify-start gap-2">
                   <LinkIcon className="h-3 w-3" />
                   <span>Copy module link</span>
