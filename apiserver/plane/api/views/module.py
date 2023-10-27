@@ -149,6 +149,9 @@ class ModuleViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+
+            module = Module.objects.get(pk=serializer.data["id"])
+            serializer = ModuleSerializer(module)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
