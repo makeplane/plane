@@ -575,6 +575,10 @@ export class ProjectStore implements IProjectStore {
           ...this.projects,
           [workspaceSlug]: this.projects[workspaceSlug].map((p) => (p.id === projectId ? { ...p, ...data } : p)),
         };
+        this.project_details = {
+          ...this.project_details,
+          [projectId]: { ...this.project_details[projectId], ...data },
+        };
       });
 
       const response = await this.projectService.updateProject(
@@ -588,6 +592,7 @@ export class ProjectStore implements IProjectStore {
       console.log("Failed to create project from project store");
 
       this.fetchProjects(workspaceSlug);
+      this.fetchProjectDetails(workspaceSlug, projectId);
       throw error;
     }
   };

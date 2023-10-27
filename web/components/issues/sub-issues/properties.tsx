@@ -10,6 +10,8 @@ import { TrackEventService } from "services/track_event.service";
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
 import { MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // types
 import { IUser, IIssue, IState } from "types";
 // fetch-keys
@@ -115,6 +117,8 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
     );
   };
 
+  const statesList = getStatesList(projectStore.states?.[issue.project]);
+
   return (
     <div className="relative flex items-center gap-1">
       {displayProperties.priority && (
@@ -132,7 +136,7 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
         <div className="flex-shrink-0">
           <StateSelect
             value={issue.state_detail}
-            stateGroups={projectStore.states ? projectStore.states[issue.project] : undefined}
+            states={statesList}
             onChange={(data) => handleStateChange(data)}
             hideDropdownArrow
             disabled={!editable}
