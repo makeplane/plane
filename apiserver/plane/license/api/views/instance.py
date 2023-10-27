@@ -3,6 +3,9 @@ import os
 import json
 import requests
 
+# Django imports
+from django.utils import timezone
+
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
@@ -51,6 +54,7 @@ class InstanceEndpoint(BaseAPIView):
                 api_key=data.get("api_key"),
                 version=data.get("version"),
                 email=data.get("email"),
+                last_checked_at=timezone.now(),
             )
             return Response(
                 {

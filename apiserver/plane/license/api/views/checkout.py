@@ -12,10 +12,16 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.api.views.base import BaseAPIView
+from plane.api.permissions import WorkspaceOwnerPermission
 from plane.db.models import Workspace, WorkspaceMember
 from plane.license.models import License
 
+
 class CheckoutEndpoint(BaseAPIView):
+
+    permission_classes = [
+        WorkspaceOwnerPermission,
+    ]
 
     def post(self, request, slug):
         LICENSE_ENGINE_BASE_URL = os.environ.get("LICENSE_ENGINE_BASE_URL", "")
@@ -23,19 +29,23 @@ class CheckoutEndpoint(BaseAPIView):
         license = License.objects.first()
 
         if license is None:
-            return Response({"error": "Instance is not activated"}, status=status.HTTP_403_FORBIDDEN)
-
+            return Response(
+                {"error": "Instance is not activated"}, status=status.HTTP_403_FORBIDDEN
+            )
 
         price_id = request.data.get("price_id", False)
+        metadata = request.data.get("metadata", {})
 
-        if not price_id :
+        if not price_id:
             return Response(
                 {"error": "Price ID is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         workspace = Workspace.objects.get(slug=slug)
-        total_workspace_members = WorkspaceMember.objects.filter(workspace__slug=slug).count()
+        total_workspace_members = WorkspaceMember.objects.filter(
+            workspace__slug=slug, member__is_bot=False
+        ).count()
 
         payload = {
             "user": {
@@ -50,6 +60,7 @@ class CheckoutEndpoint(BaseAPIView):
                 "slug": str(slug),
             },
             "priceId": price_id,
+            "metadata": metadata,
             "seats": total_workspace_members,
             "return_url": settings.WEB_URL,
         }
@@ -67,5 +78,8 @@ class CheckoutEndpoint(BaseAPIView):
 
         if response.status_code == 200:
             return Response(response.json(), status=status.HTTP_200_OK)
-        
-        return Response({"error": "Unable to create a checkout try again later"}, status=response.status_code)
+
+        return Response(
+            {"error": "Unable to create a checkout try again later"},
+            status=response.status_code,
+        )

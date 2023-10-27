@@ -12,6 +12,20 @@ Member = 10
 Guest = 5
 
 
+class WorkspaceOwnerPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+
+        return WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role__in=[
+                Owner,
+            ],
+        ).exists()
+
+
 # TODO: Move the below logic to python match - python v3.10
 class WorkSpaceBasePermission(BasePermission):
     def has_permission(self, request, view):

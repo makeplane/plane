@@ -33,6 +33,8 @@ class ProductEndpoint(BaseAPIView):
             headers=headers,
         )
 
+        print(response.json())
+
         if response.status_code == 200:
             return Response(response.json(), status=status.HTTP_200_OK)
         return Response(
