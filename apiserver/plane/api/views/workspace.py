@@ -1223,14 +1223,21 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
+        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
         group_by = request.GET.get("group_by", False)
         if group_by:
-            return Response(group_results(issues, group_by), status=status.HTTP_200_OK)
+            grouped_results = group_results(issues, group_by)
+            return Response(
+                {"data": grouped_results, "total_issues": total_issues},
+                status=status.HTTP_200_OK,
+            )
 
-        return Response(issues, status=status.HTTP_200_OK)
+        return Response(
+            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+        )
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
