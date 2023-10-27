@@ -23,7 +23,7 @@ class CheckoutEndpoint(BaseAPIView):
         license = License.objects.first()
 
         if license is None:
-            return Response({"error": "Instance is not activated"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Instance is not activated"}, status=status.HTTP_403_FORBIDDEN)
 
 
         price_id = request.data.get("price_id", False)

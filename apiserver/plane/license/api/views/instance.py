@@ -68,7 +68,7 @@ class InstanceEndpoint(BaseAPIView):
         license = License.objects.first()
 
         if license is None:
-            return Response({"activated": False}, status=status.HTTP_200_OK)
+            return Response({"activated": False}, status=status.HTTP_403_FORBIDDEN)
 
         data = {
             "instance_id": license.instance_id,
