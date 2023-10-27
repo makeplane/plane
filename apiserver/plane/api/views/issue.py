@@ -104,6 +104,7 @@ class IssueViewSet(BaseViewSet):
 
     filterset_fields = [
         "state__name",
+        "mentions__id",
         "assignees__id",
         "workspace__id",
     ]
@@ -122,6 +123,7 @@ class IssueViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("state")
             .select_related("parent")
+            .prefetch_related("mentions")
             .prefetch_related("assignees")
             .prefetch_related("labels")
             .prefetch_related(
