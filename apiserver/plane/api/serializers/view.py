@@ -5,8 +5,37 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import IssueView, IssueViewFavorite
+from plane.db.models import GlobalView, IssueView, IssueViewFavorite
 from plane.utils.issue_filters import issue_filters
+
+
+class GlobalViewSerializer(BaseSerializer):
+    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
+
+    class Meta:
+        model = GlobalView
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "query",
+        ]
+
+    def create(self, validated_data):
+        query_params = validated_data.get("query_data", {})
+        if bool(query_params):
+            validated_data["query"] = issue_filters(query_params, "POST")
+        else:
+            validated_data["query"] = dict()
+        return GlobalView.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        query_params = validated_data.get("query_data", {})
+        if bool(query_params):
+            validated_data["query"] = issue_filters(query_params, "POST")
+        else:
+            validated_data["query"] = dict()
+        validated_data["query"] = issue_filters(query_params, "PATCH")
+        return super().update(instance, validated_data)
 
 
 class IssueViewSerializer(BaseSerializer):

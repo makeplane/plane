@@ -5,14 +5,16 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import userService from "services/user.service";
+import { UserService } from "services/user.service";
 // contexts
 import { profileIssuesContext } from "contexts/profile-issues-context";
+import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // types
 import { IIssue } from "types";
 // fetch-keys
 import { USER_PROFILE_ISSUES } from "constants/fetch-keys";
-import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
+
+const userService = new UserService();
 
 const useProfileIssues = (workspaceSlug: string | undefined, userId: string | undefined) => {
   const {
@@ -84,18 +86,12 @@ const useProfileIssues = (workspaceSlug: string | undefined, userId: string | un
   useEffect(() => {
     if (!userId || !filters) return;
 
-    if (
-      router.pathname.includes("assigned") &&
-      (!filters.assignees || !filters.assignees.includes(userId))
-    ) {
+    if (router.pathname.includes("assigned") && (!filters.assignees || !filters.assignees.includes(userId))) {
       setFilters({ assignees: [...(filters.assignees ?? []), userId] });
       return;
     }
 
-    if (
-      router.pathname.includes("created") &&
-      (!filters.created_by || !filters.created_by.includes(userId))
-    ) {
+    if (router.pathname.includes("created") && (!filters.created_by || !filters.created_by.includes(userId))) {
       setFilters({ created_by: [...(filters.created_by ?? []), userId] });
       return;
     }

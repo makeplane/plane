@@ -1,50 +1,26 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import modulesService from "services/modules.service";
-import issuesService from "services/issues.service";
-import inboxServices from "services/inbox.service";
+import { IssueDraftService } from "services/issue";
 // hooks
-import useUser from "hooks/use-user";
-import useIssuesView from "hooks/use-issues-view";
-import useCalendarIssuesView from "hooks/use-calendar-issues-view";
 import useToast from "hooks/use-toast";
-import useInboxView from "hooks/use-inbox-view";
-import useSpreadsheetIssuesView from "hooks/use-spreadsheet-issues-view";
-import useProjects from "hooks/use-projects";
-import useMyIssues from "hooks/my-issues/use-my-issues";
+import useLocalStorage from "hooks/use-local-storage";
 // components
 import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
 import type { IIssue } from "types";
 // fetch-keys
-import {
-  PROJECT_ISSUES_DETAILS,
-  USER_ISSUE,
-  SUB_ISSUES,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES_WITH_PARAMS,
-  CYCLE_DETAILS,
-  MODULE_DETAILS,
-  VIEW_ISSUES,
-  INBOX_ISSUES,
-  PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
-} from "constants/fetch-keys";
-// constants
-import { INBOX_ISSUE_SOURCE } from "constants/inbox";
+import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
   handleClose: () => void;
   isOpen: boolean;
-  isUpdatingSingleIssue?: boolean;
   prePopulateData?: Partial<IIssue>;
   fieldsToShow?: (
     | "project"
@@ -63,57 +39,106 @@ export interface IssuesModalProps {
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
 
-export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
-  data,
-  handleClose,
-  isOpen,
-  isUpdatingSingleIssue = false,
-  prePopulateData,
-  fieldsToShow = ["all"],
-  onSubmit,
-}) => {
+const issueDraftService = new IssueDraftService();
+
+export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
+  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
+
   // states
   const [createMore, setCreateMore] = useState(false);
   const [formDirtyState, setFormDirtyState] = useState<any>(null);
   const [showConfirmDiscard, setShowConfirmDiscard] = useState(false);
   const [activeProject, setActiveProject] = useState<string | null>(null);
+  const [prePopulateData, setPreloadedData] = useState<Partial<IIssue>>({});
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId, inboxId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { displayFilters, params } = useIssuesView();
-  const { params: calendarParams } = useCalendarIssuesView();
-  const { ...viewGanttParams } = params;
-  const { params: inboxParams } = useInboxView();
-  const { params: spreadsheetParams } = useSpreadsheetIssuesView();
+  const {
+    project: projectStore,
+    issue: issueStore,
+    issueDetail: issueDetailStore,
+    cycleIssue: cycleIssueStore,
+    moduleIssue: moduleIssueStore,
+    user: userStore,
+  } = useMobxStore();
 
-  const { user } = useUser();
-  const { projects } = useProjects();
+  const user = userStore.currentUser;
 
-  const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
+  const { setValue: setValueInLocalStorage, clearValue: clearLocalStorageValue } = useLocalStorage<any>(
+    "draftedIssue",
+    {}
+  );
 
   const { setToastAlert } = useToast();
 
-  if (cycleId) prePopulateData = { ...prePopulateData, cycle: cycleId as string };
-  if (moduleId) prePopulateData = { ...prePopulateData, module: moduleId as string };
-  if (router.asPath.includes("my-issues") || router.asPath.includes("assigned"))
-    prePopulateData = {
-      ...prePopulateData,
-      assignees: [...(prePopulateData?.assignees ?? []), user?.id ?? ""],
-    };
+  useEffect(() => {
+    setPreloadedData(prePopulateDataProps ?? {});
+
+    if (cycleId && !prePopulateDataProps?.cycle) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        cycle: cycleId.toString(),
+      }));
+    }
+    if (moduleId && !prePopulateDataProps?.module) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        module: moduleId.toString(),
+      }));
+    }
+    if (
+      (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
+      !prePopulateDataProps?.assignees
+    ) {
+      setPreloadedData((prevData) => ({
+        ...(prevData ?? {}),
+        ...prePopulateDataProps,
+        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
+      }));
+    }
+  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);
+
+  /**
+   *
+   * @description This function is used to close the modals. This function will show a confirm discard modal if the form is dirty.
+   * @returns void
+   */
 
   const onClose = () => {
+    if (!showConfirmDiscard) handleClose();
+    if (formDirtyState === null) return setActiveProject(null);
+    const data = JSON.stringify(formDirtyState);
+    setValueInLocalStorage(data);
+  };
+
+  /**
+   * @description This function is used to close the modals. This function is to be used when the form is submitted,
+   * meaning we don't need to show the confirm discard modal or store the form data in local storage.
+   */
+
+  const onFormSubmitClose = () => {
+    setFormDirtyState(null);
+    handleClose();
+  };
+
+  /**
+   * @description This function is used to close the modals. This function is to be used when we click outside the modal,
+   * meaning we don't need to show the confirm discard modal but will store the form data in local storage.
+   * Use this function when you want to store the form data in local storage.
+   */
+
+  const onDiscardClose = () => {
     if (formDirtyState !== null) {
       setShowConfirmDiscard(true);
     } else {
       handleClose();
       setActiveProject(null);
     }
-  };
-
-  const onDiscardClose = () => {
-    handleClose();
-    setActiveProject(null);
   };
 
   const handleFormDirty = (data: any) => {
@@ -144,78 +169,33 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await issuesService
-      .addIssueToCycle(
-        workspaceSlug as string,
-        activeProject ?? "",
-        cycleId,
-        {
-          issues: [issueId],
-        },
-        user
-      )
-      .then(() => {
-        if (cycleId) {
-          mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
-          mutate(CYCLE_DETAILS(cycleId as string));
-        }
-      });
+    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), activeProject, cycleId, issueId);
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await modulesService
-      .addIssuesToModule(
-        workspaceSlug as string,
-        activeProject ?? "",
-        moduleId as string,
-        {
-          issues: [issueId],
-        },
-        user
-      )
-      .then(() => {
-        if (moduleId) {
-          mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          mutate(MODULE_DETAILS(moduleId as string));
-        }
-      });
+    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), activeProject, moduleId, issueId);
   };
 
-  const addIssueToInbox = async (formData: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject || !inboxId) return;
+  const createIssue = async (payload: Partial<IIssue>) => {
+    if (!workspaceSlug || !activeProject) return;
 
-    const payload = {
-      issue: {
-        name: formData.name,
-        description: formData.description,
-        description_html: formData.description_html,
-        priority: formData.priority,
-      },
-      source: INBOX_ISSUE_SOURCE,
-    };
+    await issueDetailStore
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
+      .then(async (res) => {
+        issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
-    await inboxServices
-      .createInboxIssue(
-        workspaceSlug.toString(),
-        activeProject.toString(),
-        inboxId.toString(),
-        payload,
-        user
-      )
-      .then((res) => {
+        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Issue created successfully.",
         });
 
-        router.push(
-          `/${workspaceSlug}/projects/${activeProject}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`
-        );
-
-        mutate(INBOX_ISSUES(inboxId.toString(), inboxParams));
+        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
       .catch(() => {
         setToastAlert({
@@ -224,74 +204,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           message: "Issue could not be created. Please try again.",
         });
       });
-  };
 
-  const calendarFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams)
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams)
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), calendarParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", calendarParams);
-
-  const spreadsheetFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams)
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams)
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), spreadsheetParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "", spreadsheetParams);
-
-  const ganttFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "");
-
-  const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject) return;
-
-    if (inboxId) await addIssueToInbox(payload);
-    else
-      await issuesService
-        .createIssues(workspaceSlug as string, activeProject ?? "", payload, user)
-        .then(async (res) => {
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-          if (payload.module && payload.module !== "")
-            await addIssueToModule(res.id, payload.module);
-
-          if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-          if (displayFilters.layout === "gantt_chart")
-            mutate(ganttFetchKey, {
-              start_target_date: true,
-              order_by: "sort_order",
-            });
-          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
-          if (groupedIssues) mutateMyIssues();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "Issue created successfully.",
-          });
-
-          if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-            mutate(USER_ISSUE(workspaceSlug as string));
-
-          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
-        })
-        .catch(() => {
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Issue could not be created. Please try again.",
-          });
-        });
-
-    if (!createMore) onDiscardClose();
+    if (!createMore) onFormSubmitClose();
   };
 
   const createDraftIssue = async () => {
@@ -301,12 +215,9 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       ...formDirtyState,
     };
 
-    await issuesService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload, user)
+    await issueDraftService
+      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(() => {
-        mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        if (groupedIssues) mutateMyIssues();
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -333,24 +244,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {
-    if (!user) return;
+    if (!workspaceSlug || !activeProject || !data) return;
 
-    await issuesService
-      .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
-      .then((res) => {
-        if (isUpdatingSingleIssue) {
-          mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
-        } else {
-          if (displayFilters.layout === "calendar") mutate(calendarFetchKey);
-          if (displayFilters.layout === "spreadsheet") mutate(spreadsheetFetchKey);
-          if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        }
-
-        if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
-
-        if (!createMore) onDiscardClose();
+    await issueDetailStore
+      .updateIssue(workspaceSlug.toString(), activeProject, data.id, payload)
+      .then(() => {
+        if (!createMore) onFormSubmitClose();
 
         setToastAlert({
           type: "success",
@@ -397,6 +296,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
           setActiveProject(null);
           setFormDirtyState(null);
           setShowConfirmDiscard(false);
+          clearLocalStorageValue();
         }}
       />
 
@@ -425,19 +325,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-3xl">
                   <IssueForm
                     handleFormSubmit={handleFormSubmit}
                     initialData={data ?? prePopulateData}
                     createMore={createMore}
                     setCreateMore={setCreateMore}
-                    handleClose={onClose}
                     handleDiscardClose={onDiscardClose}
-                    setIsConfirmDiscardOpen={setShowConfirmDiscard}
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
                     status={data ? true : false}
-                    user={user}
                     fieldsToShow={fieldsToShow}
                     handleFormDirty={handleFormDirty}
                   />
@@ -449,4 +346,4 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = ({
       </Transition.Root>
     </>
   );
-};
+});

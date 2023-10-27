@@ -2,19 +2,13 @@ import { KeyedMutator } from "swr";
 import type {
   IState,
   IUser,
-  IProject,
   ICycle,
   IModule,
   IUserLite,
   IProjectLite,
   IWorkspaceLite,
   IStateLite,
-  TStateGroups,
   Properties,
-  IIssueFilterOptions,
-  TIssueGroupByOptions,
-  TIssueViewOptions,
-  TIssueOrderByOptions,
   IIssueDisplayFilterOptions,
 } from "types";
 
@@ -76,8 +70,10 @@ export type IssueRelationType = "duplicate" | "relates_to" | "blocked_by";
 export interface IssueRelation {
   id: string;
   issue: string;
-  related_issue: string;
+  issue_detail: BlockeIssueDetail;
   relation_type: IssueRelationType;
+  related_issue: string;
+  relation: "blocking" | null;
 }
 
 export interface IIssue {
@@ -87,20 +83,8 @@ export interface IIssue {
   assignees_list: string[];
   attachment_count: number;
   attachments: any[];
-  issue_relations: {
-    id: string;
-    issue: string;
-    issue_detail: BlockeIssueDetail;
-    relation_type: IssueRelationType;
-    related_issue: string;
-  }[];
-  related_issues: {
-    id: string;
-    issue: string;
-    related_issue_detail: BlockeIssueDetail;
-    relation_type: IssueRelationType;
-    related_issue: string;
-  }[];
+  issue_relations: IssueRelation[];
+  related_issues: IssueRelation[];
   bridge_id?: string | null;
   completed_at: Date;
   created_at: string;
@@ -113,6 +97,8 @@ export interface IIssue {
   description_stripped: any;
   estimate_point: number | null;
   id: string;
+  // tempId is used for optimistic updates. It is not a part of the API response.
+  tempId?: string;
   issue_cycle: IIssueCycle | null;
   issue_link: linkDetails[];
   issue_module: IIssueModule | null;

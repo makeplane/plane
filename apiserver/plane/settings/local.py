@@ -12,6 +12,10 @@ from .common import *  # noqa
 
 DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 
+ALLOWED_HOSTS = [
+    "*",
+]
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
@@ -114,3 +118,6 @@ CELERY_BROKER_URL = os.environ.get("REDIS_URL")
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
+
+# Unsplash Access key
+UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

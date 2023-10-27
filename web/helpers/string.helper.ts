@@ -1,3 +1,10 @@
+import {
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
+} from "constants/fetch-keys";
+
 export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
@@ -47,6 +54,19 @@ export const copyTextToClipboard = async (text: string) => {
     return;
   }
   await navigator.clipboard.writeText(text);
+};
+
+/**
+ * @description: This function copies the url to clipboard after prepending the origin URL to it
+ * @param {string} path
+ * @example:
+ * const text = copyUrlToClipboard("path");
+ * copied URL: origin_url/path
+ */
+export const copyUrlToClipboard = async (path: string) => {
+  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+  await copyTextToClipboard(`${originUrl}/${path}`);
 };
 
 export const generateRandomColor = (string: string): string => {
@@ -121,4 +141,27 @@ export const objToQueryParams = (obj: any) => {
   }
 
   return params.toString();
+};
+
+export const getFetchKeysForIssueMutation = (options: {
+  cycleId?: string | string[];
+  moduleId?: string | string[];
+  viewId?: string | string[];
+  projectId: string;
+  viewGanttParams: any;
+  ganttParams: any;
+}) => {
+  const { cycleId, moduleId, viewId, projectId, viewGanttParams, ganttParams } = options;
+
+  const ganttFetchKey = cycleId
+    ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
+    : moduleId
+    ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
+    : viewId
+    ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
+    : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
+
+  return {
+    ...ganttFetchKey,
+  };
 };

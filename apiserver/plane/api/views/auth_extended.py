@@ -127,32 +127,25 @@ class ResetPasswordEndpoint(BaseAPIView):
 
 class ChangePasswordEndpoint(BaseAPIView):
     def post(self, request):
-        try:
-            serializer = ChangePasswordSerializer(data=request.data)
+        serializer = ChangePasswordSerializer(data=request.data)
 
-            user = User.objects.get(pk=request.user.id)
-            if serializer.is_valid():
-                # Check old password
-                if not user.object.check_password(serializer.data.get("old_password")):
-                    return Response(
-                        {"old_password": ["Wrong password."]},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-                # set_password also hashes the password that the user will get
-                self.object.set_password(serializer.data.get("new_password"))
-                self.object.save()
-                response = {
-                    "status": "success",
-                    "code": status.HTTP_200_OK,
-                    "message": "Password updated successfully",
-                }
+        user = User.objects.get(pk=request.user.id)
+        if serializer.is_valid():
+            # Check old password
+            if not user.object.check_password(serializer.data.get("old_password")):
+                return Response(
+                    {"old_password": ["Wrong password."]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # set_password also hashes the password that the user will get
+            self.object.set_password(serializer.data.get("new_password"))
+            self.object.save()
+            response = {
+                "status": "success",
+                "code": status.HTTP_200_OK,
+                "message": "Password updated successfully",
+            }
 
-                return Response(response)
+            return Response(response)
 
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

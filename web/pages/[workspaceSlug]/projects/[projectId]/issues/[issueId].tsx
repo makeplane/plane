@@ -1,22 +1,22 @@
 import React, { useCallback, useEffect } from "react";
 
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
 
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
+import { ProjectIssueDetailsHeader } from "components/headers";
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
-import { EmptyState, Loader } from "components/ui";
-import { Breadcrumbs } from "components/breadcrumbs";
+import { EmptyState } from "components/common";
+import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types
@@ -25,7 +25,6 @@ import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 // helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IIssue> = {
   assignees_list: [],
@@ -42,6 +41,9 @@ const defaultValues: Partial<IIssue> = {
   target_date: null,
 };
 
+// services
+const issueService = new IssueService();
+
 const IssueDetailsPage: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -56,8 +58,7 @@ const IssueDetailsPage: NextPage = () => {
   } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
     workspaceSlug && projectId && issueId
-      ? () =>
-          issuesService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+      ? () => issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
       : null
   );
 
@@ -89,7 +90,7 @@ const IssueDetailsPage: NextPage = () => {
       delete payload.related_issues;
       delete payload.issue_relations;
 
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();
@@ -108,31 +109,14 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
       labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, issueId]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            title={`${truncateText(issueDetails?.project_detail.name ?? "Project", 32)} Issues`}
-            link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
-            linkTruncate
-          />
-          <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
-              issueDetails?.sequence_id ?? "..."
-            } Details`}
-            unshrinkTitle
-          />
-        </Breadcrumbs>
-      }
-    >
+    <AppLayout header={<ProjectIssueDetailsHeader />} withProjectWrapper>
       {error ? (
         <EmptyState
           image={emptyIssue}
@@ -173,7 +157,7 @@ const IssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 

@@ -4,5 +4,6 @@ export * from "./delete-module-modal";
 export * from "./form";
 export * from "./gantt-chart";
 export * from "./modal";
+export * from "./modules-list-view";
 export * from "./sidebar";
-export * from "./single-module-card";
+export * from "./module-card-item";

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
+// react-popper
+import { usePopper } from "react-popper";
 // headless ui
-import { Combobox, Transition } from "@headlessui/react";
+import { Combobox } from "@headlessui/react";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { CheckIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown, Search } from "lucide-react";
 // types
 import { DropdownProps } from "./types";
 
@@ -27,9 +28,11 @@ export type CustomSearchSelectProps = DropdownProps & {
   );
 
 export const CustomSearchSelect = ({
+  customButtonClassName = "",
   buttonClassName = "",
   className = "",
   customButton,
+  placement,
   disabled = false,
   footerOption,
   input = false,
@@ -41,18 +44,20 @@ export const CustomSearchSelect = ({
   options,
   onOpen,
   optionsClassName = "",
-  position = "left",
-  selfPositioned = false,
   value,
-  verticalPosition = "bottom",
   width = "auto",
 }: CustomSearchSelectProps) => {
   const [query, setQuery] = useState("");
 
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+  });
+
   const filteredOptions =
-    query === ""
-      ? options
-      : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const props: any = {
     value,
@@ -63,54 +68,55 @@ export const CustomSearchSelect = ({
   if (multiple) props.multiple = true;
 
   return (
-    <Combobox
-      as="div"
-      className={`${selfPositioned ? "" : "relative"} flex-shrink-0 text-left ${className}`}
-      {...props}
-    >
+    <Combobox as="div" className={`relative flex-shrink-0 text-left ${className}`} {...props}>
       {({ open }: { open: boolean }) => {
         if (open && onOpen) onOpen();
 
         return (
           <>
             {customButton ? (
-              <Combobox.Button as="div">{customButton}</Combobox.Button>
+              <Combobox.Button as={React.Fragment}>
+                <button
+                  ref={setReferenceElement}
+                  type="button"
+                  className={`flex items-center justify-between gap-1 w-full text-xs ${
+                    disabled
+                      ? "cursor-not-allowed text-custom-text-200"
+                      : "cursor-pointer hover:bg-custom-background-80"
+                  }  ${customButtonClassName}`}
+                >
+                  {customButton}
+                </button>
+              </Combobox.Button>
             ) : (
-              <Combobox.Button
-                type="button"
-                className={`flex items-center justify-between gap-1 w-full rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
-                  input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
-                } ${
-                  disabled
-                    ? "cursor-not-allowed text-custom-text-200"
-                    : "cursor-pointer hover:bg-custom-background-80"
-                } ${buttonClassName}`}
-              >
-                {label}
-                {!noChevron && !disabled && (
-                  <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
-                )}
+              <Combobox.Button as={React.Fragment}>
+                <button
+                  ref={setReferenceElement}
+                  type="button"
+                  className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
+                    input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+                  } ${
+                    disabled
+                      ? "cursor-not-allowed text-custom-text-200"
+                      : "cursor-pointer hover:bg-custom-background-80"
+                  } ${buttonClassName}`}
+                >
+                  {label}
+                  {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+                </button>
               </Combobox.Button>
             )}
-            <Transition
-              show={open}
-              as={React.Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Combobox.Options
-                className={`absolute z-10 min-w-[10rem] border border-custom-border-300 p-2 rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none ${
-                  position === "left" ? "left-0 origin-top-left" : "right-0 origin-top-right"
-                } ${verticalPosition === "top" ? "bottom-full mb-1" : "mt-1"} ${
+            <Combobox.Options as={React.Fragment}>
+              <div
+                className={`z-10 min-w-[10rem] border border-custom-border-300 p-2 rounded-md bg-custom-background-90 text-xs shadow-custom-shadow-rg focus:outline-none my-1 ${
                   width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
                 } ${optionsClassName}`}
+                ref={setPopperElement}
+                style={styles.popper}
+                {...attributes.popper}
               >
                 <div className="flex w-full items-center justify-start rounded-sm border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                  <MagnifyingGlassIcon className="h-3 w-3 text-custom-text-200" />
+                  <Search className="h-3 w-3 text-custom-text-200" />
                   <Combobox.Input
                     className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                     value={query}
@@ -153,14 +159,10 @@ export const CustomSearchSelect = ({
                                     active || selected ? "opacity-100" : "opacity-0"
                                   }`}
                                 >
-                                  <CheckIcon
-                                    className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
-                                  />
+                                  <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                                 </div>
                               ) : (
-                                <CheckIcon
-                                  className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`}
-                                />
+                                <Check className={`h-3 w-3 ${selected ? "opacity-100" : "opacity-0"}`} />
                               )}
                             </>
                           )}
@@ -176,8 +178,8 @@ export const CustomSearchSelect = ({
                   )}
                 </div>
                 {footerOption}
-              </Combobox.Options>
-            </Transition>
+              </div>
+            </Combobox.Options>
           </>
         );
       }}

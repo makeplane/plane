@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ProgressBar } from "components/ui";
+import { ProgressBar } from "@plane/ui";
 
 type TSingleProgressStatsProps = {
   title: any;
@@ -30,10 +30,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
           <ProgressBar value={completed} maxValue={total} />
         </span>
         <span className="w-8 text-right">
-          {isNaN(Math.floor((completed / total) * 100))
-            ? "0"
-            : Math.floor((completed / total) * 100)}
-          %
+          {isNaN(Math.floor((completed / total) * 100)) ? "0" : Math.floor((completed / total) * 100)}%
         </span>
       </div>
       <span>of {total}</span>

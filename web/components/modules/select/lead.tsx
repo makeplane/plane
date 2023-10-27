@@ -1,16 +1,13 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-import Image from "next/image";
-
 import useSWR from "swr";
-
 // services
-import projectServices from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
-import { Avatar, CustomSearchSelect } from "components/ui";
+import { Avatar } from "components/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // icons
-import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { UserCircle } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -19,6 +16,8 @@ type Props = {
   onChange: () => void;
 };
 
+const projectService = new ProjectService();
+
 export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -26,7 +25,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -49,16 +48,8 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption ? (
-            <Avatar user={selectedOption} />
-          ) : (
-            <UserCircleIcon className="h-4 w-4 text-custom-text-200" />
-          )}
-          {selectedOption ? (
-            selectedOption?.display_name
-          ) : (
-            <span className="text-custom-text-200">Lead</span>
-          )}
+          {selectedOption ? <Avatar user={selectedOption} /> : <UserCircle className="h-4 w-4 text-custom-text-200" />}
+          {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">Lead</span>}
         </div>
       }
       onChange={onChange}

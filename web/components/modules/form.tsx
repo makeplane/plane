@@ -1,18 +1,20 @@
 import { useEffect } from "react";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // components
 import { ModuleLeadSelect, ModuleMembersSelect, ModuleStatusSelect } from "components/modules";
 // ui
-import { DateSelect, Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { DateSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // types
 import { IModule } from "types";
+import { IssueProjectSelect } from "components/issues/select";
 
 type Props = {
   handleFormSubmit: (values: Partial<IModule>) => Promise<void>;
   handleClose: () => void;
   status: boolean;
+  projectId: string;
+  setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   data?: IModule;
 };
 
@@ -24,16 +26,29 @@ const defaultValues: Partial<IModule> = {
   members_list: [],
 };
 
-export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, status, data }) => {
+export const ModuleForm: React.FC<Props> = ({
+  handleFormSubmit,
+  handleClose,
+  status,
+  projectId,
+  setActiveProject,
+  data,
+}) => {
   const {
-    register,
     formState: { errors, isSubmitting },
     handleSubmit,
     watch,
     control,
     reset,
   } = useForm<IModule>({
-    defaultValues,
+    defaultValues: {
+      project: projectId,
+      name: data?.name || "",
+      description: data?.description || "",
+      status: data?.status || "backlog",
+      lead: data?.lead || null,
+      members_list: data?.members_list || [],
+    },
   });
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
@@ -63,37 +78,65 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
   return (
     <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">
-          {status ? "Update" : "Create"} Module
-        </h3>
+        <div className="flex items-center gap-x-3">
+          <Controller
+            control={control}
+            name="project"
+            render={({ field: { value, onChange } }) => (
+              <IssueProjectSelect
+                value={value}
+                onChange={(val: string) => {
+                  onChange(val);
+                  setActiveProject(val);
+                }}
+              />
+            )}
+          />
+          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
+        </div>
+
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Module Title"
+                  className="resize-none w-full placeholder:text-sm placeholder:font-medium focus:border-blue-400"
+                />
+              )}
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  value={value}
+                  onChange={onChange}
+                  placeholder="Description..."
+                  className="h-24 w-full resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                />
+              )}
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -129,23 +172,21 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             <Controller
               control={control}
               name="lead"
-              render={({ field: { value, onChange } }) => (
-                <ModuleLeadSelect value={value} onChange={onChange} />
-              )}
+              render={({ field: { value, onChange } }) => <ModuleLeadSelect value={value} onChange={onChange} />}
             />
             <Controller
               control={control}
               name="members"
-              render={({ field: { value, onChange } }) => (
-                <ModuleMembersSelect value={value} onChange={onChange} />
-              )}
+              render={({ field: { value, onChange } }) => <ModuleMembersSelect value={value} onChange={onChange} />}
             />
           </div>
         </div>
       </div>
-      <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-custom-border-200 px-5 pt-5">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+      <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-200">
+        <Button variant="neutral-primary" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Module..."
@@ -153,7 +194,7 @@ export const ModuleForm: React.FC<Props> = ({ handleFormSubmit, handleClose, sta
             : isSubmitting
             ? "Creating Module..."
             : "Create Module"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

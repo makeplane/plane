@@ -54,6 +54,13 @@ class WorkSpaceMemberSerializer(BaseSerializer):
         fields = "__all__"
 
 
+class WorkspaceMemberMeSerializer(BaseSerializer):
+
+    class Meta:
+        model = WorkspaceMember
+        fields = "__all__"
+
+
 class WorkspaceMemberAdminSerializer(BaseSerializer):
     member = UserAdminLiteSerializer(read_only=True)
     workspace = WorkspaceLiteSerializer(read_only=True)

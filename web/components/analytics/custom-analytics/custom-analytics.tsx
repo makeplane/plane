@@ -1,133 +1,76 @@
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
-import { Control, UseFormSetValue } from "react-hook-form";
-// hooks
-import useProjects from "hooks/use-projects";
+import useSWR from "swr";
+import { useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+// services
+import { AnalyticsService } from "services/analytics.service";
 // components
-import {
-  AnalyticsGraph,
-  AnalyticsSelectBar,
-  AnalyticsSidebar,
-  AnalyticsTable,
-} from "components/analytics";
-// ui
-import { Loader, PrimaryButton } from "components/ui";
-// helpers
-import { convertResponseToBarGraphData } from "helpers/analytics.helper";
+import { CustomAnalyticsSelectBar, CustomAnalyticsMainContent, CustomAnalyticsSidebar } from "components/analytics";
 // types
-import { IAnalyticsParams, IAnalyticsResponse, ICurrentUserResponse } from "types";
+import { IAnalyticsParams } from "types";
 // fetch-keys
 import { ANALYTICS } from "constants/fetch-keys";
 
 type Props = {
-  analytics: IAnalyticsResponse | undefined;
-  analyticsError: any;
-  params: IAnalyticsParams;
-  control: Control<IAnalyticsParams, any>;
-  setValue: UseFormSetValue<IAnalyticsParams>;
+  additionalParams?: Partial<IAnalyticsParams>;
   fullScreen: boolean;
-  user: ICurrentUserResponse | undefined;
 };
 
-export const CustomAnalytics: React.FC<Props> = ({
-  analytics,
-  analyticsError,
-  params,
-  control,
-  setValue,
-  fullScreen,
-  user,
-}) => {
+const defaultValues: IAnalyticsParams = {
+  x_axis: "priority",
+  y_axis: "issue_count",
+  segment: null,
+  project: null,
+};
+
+const analyticsService = new AnalyticsService();
+
+export const CustomAnalytics: React.FC<Props> = observer((props) => {
+  const { additionalParams, fullScreen } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const { control, watch, setValue } = useForm({ defaultValues });
+
+  const params: IAnalyticsParams = {
+    x_axis: watch("x_axis"),
+    y_axis: watch("y_axis"),
+    segment: watch("segment"),
+    project: projectId ? [projectId.toString()] : watch("project"),
+    ...additionalParams,
+  };
+
+  const { data: analytics, error: analyticsError } = useSWR(
+    workspaceSlug ? ANALYTICS(workspaceSlug.toString(), params) : null,
+    workspaceSlug ? () => analyticsService.getAnalytics(workspaceSlug.toString(), params) : null
+  );
+
   const isProjectLevel = projectId ? true : false;
 
-  const yAxisKey = params.y_axis === "issue_count" ? "count" : "estimate";
-  const barGraphData = convertResponseToBarGraphData(analytics?.distribution, params);
-
-  const { projects } = useProjects();
-
   return (
-    <div
-      className={`overflow-hidden flex flex-col-reverse ${
-        fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""
-      }`}
-    >
+    <div className={`overflow-hidden flex flex-col-reverse ${fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""}`}>
       <div className="col-span-3 flex flex-col h-full overflow-hidden">
-        <AnalyticsSelectBar
+        <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}
-          projects={projects ?? []}
           params={params}
           fullScreen={fullScreen}
           isProjectLevel={isProjectLevel}
         />
-        {!analyticsError ? (
-          analytics ? (
-            analytics.total > 0 ? (
-              <div className="h-full overflow-y-auto">
-                <AnalyticsGraph
-                  analytics={analytics}
-                  barGraphData={barGraphData}
-                  params={params}
-                  yAxisKey={yAxisKey}
-                  fullScreen={fullScreen}
-                />
-                <AnalyticsTable
-                  analytics={analytics}
-                  barGraphData={barGraphData}
-                  params={params}
-                  yAxisKey={yAxisKey}
-                />
-              </div>
-            ) : (
-              <div className="grid h-full place-items-center p-5">
-                <div className="space-y-4 text-custom-text-200">
-                  <p className="text-sm">No matching issues found. Try changing the parameters.</p>
-                </div>
-              </div>
-            )
-          ) : (
-            <Loader className="space-y-6 p-5">
-              <Loader.Item height="300px" />
-              <Loader className="space-y-4">
-                <Loader.Item height="30px" />
-                <Loader.Item height="30px" />
-                <Loader.Item height="30px" />
-                <Loader.Item height="30px" />
-              </Loader>
-            </Loader>
-          )
-        ) : (
-          <div className="grid h-full place-items-center p-5">
-            <div className="space-y-4 text-custom-text-200">
-              <p className="text-sm">There was some error in fetching the data.</p>
-              <div className="flex items-center justify-center gap-2">
-                <PrimaryButton
-                  onClick={() => {
-                    if (!workspaceSlug) return;
-
-                    mutate(ANALYTICS(workspaceSlug.toString(), params));
-                  }}
-                >
-                  Refresh
-                </PrimaryButton>
-              </div>
-            </div>
-          </div>
-        )}
+        <CustomAnalyticsMainContent
+          analytics={analytics}
+          error={analyticsError}
+          fullScreen={fullScreen}
+          params={params}
+        />
       </div>
-      <AnalyticsSidebar
+      <CustomAnalyticsSidebar
         analytics={analytics}
         params={params}
         fullScreen={fullScreen}
         isProjectLevel={isProjectLevel}
-        user={user}
       />
     </div>
   );
-};
+});

@@ -15,17 +15,19 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
     <div className="divide-y divide-custom-border-200">
       <div>
         <h6 className="px-3 text-base font-medium">Pending issues</h6>
-        {defaultAnalytics.pending_issue_user.length > 0 ? (
+        {defaultAnalytics.pending_issue_user && defaultAnalytics.pending_issue_user.length > 0 ? (
           <BarGraph
             data={defaultAnalytics.pending_issue_user}
-            indexBy="assignees__display_name"
+            indexBy="assignees__id"
             keys={["count"]}
             height="250px"
             colors={() => `#f97316`}
-            customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) => d.count)}
+            customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) =>
+              d.count > 0 ? d.count : 50
+            )}
             tooltip={(datum) => {
               const assignee = defaultAnalytics.pending_issue_user.find(
-                (a) => a.assignees__display_name === `${datum.indexValue}`
+                (a) => a.assignees__id === `${datum.indexValue}`
               );
 
               return (
@@ -39,10 +41,9 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
             }}
             axisBottom={{
               renderTick: (datum) => {
-                const avatar =
-                  defaultAnalytics.pending_issue_user[datum.tickIndex]?.assignees__avatar ?? "";
+                const assignee = defaultAnalytics.pending_issue_user[datum.tickIndex] ?? "";
 
-                if (avatar && avatar !== "")
+                if (assignee && assignee?.assignees__avatar && assignee?.assignees__avatar !== "")
                   return (
                     <g transform={`translate(${datum.x},${datum.y})`}>
                       <image
@@ -50,7 +51,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
                         y={10}
                         width={16}
                         height={16}
-                        xlinkHref={avatar}
+                        xlinkHref={assignee?.assignees__avatar}
                         style={{ clipPath: "circle(50%)" }}
                       />
                     </g>
@@ -60,7 +61,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
                     <g transform={`translate(${datum.x},${datum.y})`}>
                       <circle cy={18} r={8} fill="#374151" />
                       <text x={0} y={21} textAnchor="middle" fontSize={9} fill="#ffffff">
-                        {datum.value ? `${datum.value}`.toUpperCase()[0] : "?"}
+                        {datum.value ? `${assignee.assignees__display_name}`.toUpperCase()[0] : "?"}
                       </text>
                     </g>
                   );

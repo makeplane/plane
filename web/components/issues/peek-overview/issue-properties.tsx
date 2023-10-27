@@ -1,25 +1,22 @@
-// mobx
-import { observer } from "mobx-react-lite";
-// headless ui
-import { Disclosure } from "@headlessui/react";
-import { StateGroupIcon } from "components/icons";
+import { FC } from "react";
+// components
+import { DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // components
 import {
   SidebarAssigneeSelect,
-  SidebarEstimateSelect,
   SidebarPrioritySelect,
   SidebarStateSelect,
   TPeekOverviewModes,
 } from "components/issues";
 // ui
-import { CustomDatePicker, Icon } from "components/ui";
+import { CustomDatePicker } from "components/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, TIssuePriorities } from "types";
+import { IIssue } from "types";
+import { CalendarDays, LinkIcon, Signal, Trash2 } from "lucide-react";
 
 type Props = {
   handleDeleteIssue: () => void;
@@ -30,14 +27,9 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PeekOverviewIssueProperties: React.FC<Props> = ({
-  handleDeleteIssue,
-  handleUpdateIssue,
-  issue,
-  mode,
-  readOnly,
-  workspaceSlug,
-}) => {
+export const PeekOverviewIssueProperties: FC<Props> = (props) => {
+  const { handleDeleteIssue, handleUpdateIssue, issue, mode, readOnly } = props;
+  // toast
   const { setToastAlert } = useToast();
 
   const startDate = issue.start_date;
@@ -66,18 +58,15 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
       {mode === "full" && (
         <div className="flex justify-between gap-2 pb-3">
           <h6 className="flex items-center gap-2 font-medium">
-            <StateGroupIcon
-              stateGroup={issue.state_detail.group}
-              color={issue.state_detail.color}
-            />
+            <StateGroupIcon stateGroup={issue.state_detail.group} color={issue.state_detail.color} />
             {issue.project_detail.identifier}-{issue.sequence_id}
           </h6>
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45">
-              <Icon iconName="link" />
+              <LinkIcon className="h-3.5 w-3.5" />
             </button>
             <button type="button" onClick={handleDeleteIssue}>
-              <Icon iconName="delete" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -85,7 +74,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
       <div className={`space-y-4 ${mode === "full" ? "pt-3" : ""}`}>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="radio_button_checked" className="!text-base flex-shrink-0" />
+            <DoubleCircleIcon className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="flex-grow truncate">State</span>
           </div>
           <div className="w-3/4">
@@ -98,7 +87,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="group" className="!text-base flex-shrink-0" />
+            <UserGroupIcon className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Assignees</span>
           </div>
           <div className="w-3/4">
@@ -111,7 +100,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="signal_cellular_alt" className="!text-base flex-shrink-0" />
+            <Signal className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Priority</span>
           </div>
           <div className="w-3/4">
@@ -124,7 +113,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+            <CalendarDays className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Start date</span>
           </div>
           <div>
@@ -144,7 +133,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="flex-shrink-0 w-1/4 flex items-center gap-2 font-medium">
-            <Icon iconName="calendar_today" className="!text-base flex-shrink-0" />
+            <CalendarDays className="h-3.5 w-3.5" />
             <span className="flex-grow truncate">Due date</span>
           </div>
           <div>

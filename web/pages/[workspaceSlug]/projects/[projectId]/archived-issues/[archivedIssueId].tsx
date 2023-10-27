@@ -7,24 +7,24 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import issuesService from "services/issues.service";
+import { IssueService, IssueArchiveService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
+import { ProjectArchivedIssueDetailsHeader } from "components/headers";
 // ui
-import { Icon, Loader } from "components/ui";
-import { Breadcrumbs } from "components/breadcrumbs";
+import { ArchiveIcon, Loader } from "@plane/ui";
+// icons
+import { History } from "lucide-react";
 // types
 import { IIssue } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IIssue> = {
   name: "",
@@ -40,6 +40,10 @@ const defaultValues: Partial<IIssue> = {
   labels_list: [],
 };
 
+// services
+const issueService = new IssueService();
+const issueArchiveService = new IssueArchiveService();
+
 const ArchivedIssueDetailsPage: NextPage = () => {
   const [isRestoring, setIsRestoring] = useState(false);
 
@@ -53,7 +57,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
     workspaceSlug && projectId && archivedIssueId
       ? () =>
-          issuesService.retrieveArchivedIssue(
+          issueArchiveService.retrieveArchivedIssue(
             workspaceSlug as string,
             projectId as string,
             archivedIssueId as string
@@ -86,14 +90,8 @@ const ArchivedIssueDetailsPage: NextPage = () => {
         ...formData,
       };
 
-      await issuesService
-        .patchIssue(
-          workspaceSlug as string,
-          projectId as string,
-          archivedIssueId as string,
-          payload,
-          user
-        )
+      await issueService
+        .patchIssue(workspaceSlug as string, projectId as string, archivedIssueId as string, payload, user)
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
@@ -111,8 +109,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
     reset({
       ...issueDetails,
-      assignees_list:
-        issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
+      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
       labels_list: issueDetails.labels_list ?? issueDetails.labels,
       labels: issueDetails.labels_list ?? issueDetails.labels,
     });
@@ -123,7 +120,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
 
     setIsRestoring(true);
 
-    await issuesService
+    await issueArchiveService
       .unarchiveIssue(workspaceSlug as string, projectId as string, archivedIssueId as string)
       .then(() => {
         setToastAlert({
@@ -144,30 +141,14 @@ const ArchivedIssueDetailsPage: NextPage = () => {
   };
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem
-            title={`${truncateText(issueDetails?.project_detail.name ?? "Project", 32)} Issues`}
-            link={`/${workspaceSlug}/projects/${projectId as string}/issues`}
-            linkTruncate
-          />
-          <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
-              issueDetails?.sequence_id ?? "..."
-            } Details`}
-            unshrinkTitle
-          />
-        </Breadcrumbs>
-      }
-    >
+    <AppLayout header={<ProjectArchivedIssueDetailsHeader />} withProjectWrapper>
       {issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-2 divide-y-2 divide-custom-border-300 p-5">
             {issueDetails.archived_at && (
               <div className="flex items-center justify-between gap-2 px-2.5 py-2 text-sm border rounded-md text-custom-text-200 border-custom-border-200 bg-custom-background-90">
                 <div className="flex gap-2 items-center">
-                  <Icon iconName="archive" className="" />
+                  <ArchiveIcon className="h-3.5 w-3.5" />
                   <p>This issue has been archived by Plane.</p>
                 </div>
                 <button
@@ -175,17 +156,14 @@ const ArchivedIssueDetailsPage: NextPage = () => {
                   onClick={handleUnArchive}
                   disabled={isRestoring}
                 >
-                  <Icon iconName="history" />
+                  <History className="h-3.5 w-3.5" />
+
                   <span>{isRestoring ? "Restoring..." : "Restore Issue"}</span>
                 </button>
               </div>
             )}
             <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60 pointer-events-none">
-              <IssueMainContent
-                issueDetails={issueDetails}
-                submitChanges={submitChanges}
-                uneditable
-              />
+              <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} uneditable />
             </div>
           </div>
           <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">
@@ -214,7 +192,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </AppLayout>
   );
 };
 

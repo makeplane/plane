@@ -1,9 +1,9 @@
 import React from "react";
 
 // ui
-import { CustomSelect } from "components/ui";
+import { CustomSelect } from "@plane/ui";
 // icons
-import { PlayIcon } from "@heroicons/react/24/outline";
+import { Triangle } from "lucide-react";
 // fetch-keys
 import useEstimateOption from "hooks/use-estimate-option";
 
@@ -22,25 +22,20 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
       value={value}
       label={
         <div className="flex items-center gap-2 text-xs">
-          <PlayIcon
-            className={`h-3.5 w-3.5 -rotate-90 ${
-              value !== null ? "text-custom-text-100" : "text-custom-text-200"
-            }`}
-          />
+          <Triangle className={`h-3.5 w-3.5 ${value !== null ? "text-custom-text-100" : "text-custom-text-200"}`} />
           <span className={value !== null ? "text-custom-text-100" : "text-custom-text-200"}>
             {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate"}
           </span>
         </div>
       }
       onChange={onChange}
-      position="right"
       width="w-full min-w-[8rem]"
       noChevron
     >
       <CustomSelect.Option value={null}>
         <>
           <span>
-            <PlayIcon className="h-4 w-4 -rotate-90" />
+            <Triangle className="h-4 w-4" />
           </span>
           None
         </>
@@ -50,7 +45,7 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
           <CustomSelect.Option key={point.key} value={point.key}>
             <>
               <span>
-                <PlayIcon className="h-4 w-4 -rotate-90" />
+                <Triangle className="h-4 w-4" />
               </span>
               {point.value}
             </>

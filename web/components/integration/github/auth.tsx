@@ -1,7 +1,7 @@
 // hooks
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import { IWorkspaceIntegration } from "types";
 
@@ -16,11 +16,13 @@ export const GithubAuth: React.FC<Props> = ({ workspaceIntegration, provider }) 
   return (
     <div>
       {workspaceIntegration && workspaceIntegration?.id ? (
-        <PrimaryButton disabled>Successfully Connected</PrimaryButton>
+        <Button variant="primary" disabled>
+          Successfully Connected
+        </Button>
       ) : (
-        <PrimaryButton onClick={startAuth} loading={isConnecting}>
+        <Button variant="primary" onClick={startAuth} loading={isConnecting}>
           {isConnecting ? "Connecting..." : "Connect"}
-        </PrimaryButton>
+        </Button>
       )}
     </div>
   );

@@ -10,12 +10,12 @@ import useUser from "hooks/use-user";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockerIcon } from "components/icons";
+import { X } from "lucide-react";
+import { BlockerIcon } from "@plane/ui";
 // types
-import { BlockeIssueDetail, IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   issueId?: string;
@@ -24,12 +24,10 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockerSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
+// services
+const issueService = new IssueService();
+
+export const SidebarBlockerSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -42,8 +40,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
     setIsBlockerModalOpen(false);
   };
 
-  const blockerIssue =
-    watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockerIssue = watch("issue_relations")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -71,7 +68,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
     if (!user) return;
 
-    issuesService
+    issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
         related_list: [
           ...selectedIssues.map((issue) => ({
@@ -81,6 +78,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             related_issue_detail: issue.blocker_issue_detail,
           })),
         ],
+        relation: "blocking",
       })
       .then((response) => {
         submitChanges({
@@ -89,7 +87,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             ...(response ?? []).map((i: any) => ({
               id: i.id,
               relation_type: i.relation_type,
-              issue_detail: i.related_issue_detail,
+              issue_detail: i.issue_detail,
               issue: i.related_issue,
             })),
           ],
@@ -118,7 +116,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
             {blockerIssue && blockerIssue.length > 0
               ? blockerIssue.map((relation) => (
                   <div
-                    key={relation.issue_detail?.id}
+                    key={relation.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-1.5 py-0.5 text-xs text-yellow-500 duration-300 hover:border-yellow-500/20 hover:bg-yellow-500/20"
                   >
                     <a
@@ -134,9 +132,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedBlockers = blockerIssue.filter(
-                          (i) => i.issue_detail?.id !== relation.issue_detail?.id
-                        );
+                        const updatedBlockers = blockerIssue.filter((i) => i.id !== relation.id);
 
                         submitChanges({
                           issue_relations: updatedBlockers,
@@ -144,7 +140,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
 
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
+                        issueService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
                           relation.issue_detail?.id as string,
@@ -153,7 +149,7 @@ export const SidebarBlockerSelect: React.FC<Props> = ({
                         );
                       }}
                     >
-                      <XMarkIcon className="h-2 w-2" />
+                      <X className="h-2 w-2" />
                     </button>
                   </div>
                 ))

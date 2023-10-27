@@ -4,6 +4,7 @@ import { Tab, Transition, Popover } from "@headlessui/react";
 // react colors
 import { TwitterPicker } from "react-color";
 // hooks
+import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { Props } from "./types";
@@ -25,19 +26,15 @@ const tabOptions = [
   },
 ];
 
-const EmojiIconPicker: React.FC<Props> = ({
-  label,
-  value,
-  onChange,
-  onIconColorChange,
-  disabled = false,
-}) => {
+const EmojiIconPicker: React.FC<Props> = (props) => {
+  const { label, value, onChange, onIconColorChange, disabled = false } = props;
+  // states
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
   const [activeColor, setActiveColor] = useState<string>("rgb(var(--color-text-200))");
-
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,10 +46,12 @@ const EmojiIconPicker: React.FC<Props> = ({
   }, [value, onChange]);
 
   useOutsideClickDetector(emojiPickerRef, () => setIsOpen(false));
+  useDynamicDropdownPosition(isOpen, () => setIsOpen(false), buttonRef, emojiPickerRef);
 
   return (
     <Popover className="relative z-[1]">
       <Popover.Button
+        ref={buttonRef}
         onClick={() => setIsOpen((prev) => !prev)}
         className="outline-none"
         disabled={disabled}
@@ -61,6 +60,8 @@ const EmojiIconPicker: React.FC<Props> = ({
       </Popover.Button>
       <Transition
         show={isOpen}
+        static
+        as={React.Fragment}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
         enterTo="transform opacity-100 scale-100"
@@ -68,11 +69,11 @@ const EmojiIconPicker: React.FC<Props> = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Popover.Panel className="absolute z-10 mt-2 w-[250px] rounded-[4px] border border-custom-border-200 bg-custom-background-80 shadow-lg">
-          <div
-            ref={emojiPickerRef}
-            className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-200 bg-custom-background-80 p-2 shadow-xl"
-          >
+        <Popover.Panel
+          ref={emojiPickerRef}
+          className="fixed z-10 mt-2 w-[250px] rounded-[4px] border border-custom-border-200 bg-custom-background-80 shadow-lg"
+        >
+          <div className="h-[230px] w-[250px] overflow-auto rounded-[4px] border border-custom-border-200 bg-custom-background-80 p-2 shadow-xl">
             <Tab.Group as="div" className="flex h-full w-full flex-col">
               <Tab.List className="flex-0 -mx-2 flex justify-around gap-1 p-1">
                 {tabOptions.map((tab) => (
@@ -139,15 +140,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                   <Tab.Panel className="flex h-full w-full flex-col justify-center">
                     <div className="relative">
                       <div className="flex items-center justify-between px-1 pb-2">
-                        {[
-                          "#FF6B00",
-                          "#8CC1FF",
-                          "#FCBE1D",
-                          "#18904F",
-                          "#ADF672",
-                          "#05C3FF",
-                          "#000000",
-                        ].map((curCol) => (
+                        {["#FF6B00", "#8CC1FF", "#FCBE1D", "#18904F", "#ADF672", "#05C3FF", "#000000"].map((curCol) => (
                           <span
                             key={curCol}
                             className="h-4 w-4 cursor-pointer rounded-full"
@@ -168,9 +161,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                       </div>
                       <div>
                         <TwitterPicker
-                          className={`!absolute top-4 left-4 z-10 m-2 ${
-                            openColorPicker ? "block" : "hidden"
-                          }`}
+                          className={`!absolute top-4 left-4 z-10 m-2 ${openColorPicker ? "block" : "hidden"}`}
                           color={activeColor}
                           onChange={(color) => {
                             setActiveColor(color.hex);
@@ -193,10 +184,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                             setIsOpen(false);
                           }}
                         >
-                          <span
-                            style={{ color: activeColor }}
-                            className="material-symbols-rounded text-lg"
-                          >
+                          <span style={{ color: activeColor }} className="material-symbols-rounded text-lg">
                             {icon.name}
                           </span>
                         </button>

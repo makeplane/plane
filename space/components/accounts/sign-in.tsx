@@ -1,26 +1,30 @@
-import React, { useEffect } from "react";
-
-import Image from "next/image";
+import React from "react";
+import useSWR from "swr";
 import { useRouter } from "next/router";
-
 // mobx
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import authenticationService from "services/authentication.service";
+import { AppConfigService } from "services/app-config.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { EmailPasswordForm, GithubLoginButton, GoogleLoginButton, EmailCodeForm } from "components/accounts";
+import { EmailPasswordForm, GoogleLoginButton, EmailCodeForm } from "components/accounts";
 // images
 const imagePrefix = Boolean(parseInt(process.env.NEXT_PUBLIC_DEPLOY_WITH_NGINX || "0")) ? "/spaces" : "";
 
+const appConfig = new AppConfigService();
+
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
-
+  // router
   const router = useRouter();
-
+  const { next_path } = router.query as { next_path: string };
+  // toast
   const { setToastAlert } = useToast();
+  // fetch app config
+  const { data } = useSWR("APP_CONFIG", () => appConfig.envConfig());
 
   const onSignInError = (error: any) => {
     setToastAlert({
@@ -31,17 +35,17 @@ export const SignInView = observer(() => {
   };
 
   const onSignInSuccess = (response: any) => {
-    const isOnboarded = response?.user?.onboarding_step?.profile_complete || false;
-
-    const nextPath = router.asPath.includes("next_path") ? router.asPath.split("/?next_path=")[1] : "/";
-
     userStore.setCurrentUser(response?.user);
 
-    if (!isOnboarded) {
-      router.push(`/onboarding?next_path=${nextPath}`);
-      return;
+    const isOnboard = response?.user?.onboarding_step?.profile_complete || false;
+
+    if (isOnboard) {
+      if (next_path) router.push(next_path);
+      else router.push("/login");
+    } else {
+      if (next_path) router.push(`/onboarding?next_path=${next_path}`);
+      else router.push("/onboarding");
     }
-    router.push((nextPath ?? "/").toString());
   };
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
@@ -54,24 +58,6 @@ export const SignInView = observer(() => {
         };
         const response = await authenticationService.socialAuth(socialAuthPayload);
 
-        onSignInSuccess(response);
-      } else {
-        throw Error("Cant find credentials");
-      }
-    } catch (err: any) {
-      onSignInError(err);
-    }
-  };
-
-  const handleGitHubSignIn = async (credential: string) => {
-    try {
-      if (process.env.NEXT_PUBLIC_GITHUB_ID && credential) {
-        const socialAuthPayload = {
-          medium: "github",
-          credential,
-          clientId: process.env.NEXT_PUBLIC_GITHUB_ID,
-        };
-        const response = await authenticationService.socialAuth(socialAuthPayload);
         onSignInSuccess(response);
       } else {
         throw Error("Cant find credentials");
@@ -118,38 +104,32 @@ export const SignInView = observer(() => {
       </div>
       <div className="grid place-items-center h-full overflow-y-auto py-5 px-7">
         <div>
-          {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-            <>
-              <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
-                Sign in to Plane
-              </h1>
-              <div className="flex flex-col divide-y divide-custom-border-200">
-                <div className="pb-7">
-                  <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
-                </div>
-                <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
-                  <GoogleLoginButton handleSignIn={handleGoogleSignIn} />
-                  {/* <GithubLoginButton handleSignIn={handleGitHubSignIn} /> */}
-                </div>
+          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">Sign in to Plane</h1>
+          {data?.email_password_login && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
+
+          {data?.magic_login && (
+            <div className="flex flex-col divide-y divide-custom-border-200">
+              <div className="pb-7">
+                <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
               </div>
-            </>
-          ) : (
-            <EmailPasswordForm onSubmit={handlePasswordSignIn} />
+            </div>
           )}
 
-          {parseInt(process.env.NEXT_PUBLIC_ENABLE_OAUTH || "0") ? (
-            <p className="pt-16 text-custom-text-200 text-sm text-center">
-              By signing up, you agree to the{" "}
-              <a
-                href="https://plane.so/terms-and-conditions"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium underline"
-              >
-                Terms & Conditions
-              </a>
-            </p>
-          ) : null}
+          <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+            {data?.google && <GoogleLoginButton clientId={data.google} handleSignIn={handleGoogleSignIn} />}
+          </div>
+
+          <p className="pt-16 text-custom-text-200 text-sm text-center">
+            By signing up, you agree to the{" "}
+            <a
+              href="https://plane.so/terms-and-conditions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium underline"
+            >
+              Terms & Conditions
+            </a>
+          </p>
         </div>
       </div>
     </div>

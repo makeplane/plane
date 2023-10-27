@@ -1,6 +1,6 @@
 // icons
-import { ArrowTopRightOnSquareIcon, LinkIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Icon } from "components/ui";
+import { ExternalLinkIcon } from "@plane/ui";
+import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
@@ -13,12 +13,7 @@ type Props = {
   userAuth: UserAuth;
 };
 
-export const LinksList: React.FC<Props> = ({
-  links,
-  handleDeleteLink,
-  handleEditLink,
-  userAuth,
-}) => {
+export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEditLink, userAuth }) => {
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
 
   return (
@@ -32,7 +27,7 @@ export const LinksList: React.FC<Props> = ({
                 className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
                 onClick={() => handleEditLink(link)}
               >
-                <Icon iconName="edit" className="text-custom-text-200" />
+                <Pencil className="text-custom-text-200" />
               </button>
               <a
                 href={link.url}
@@ -40,14 +35,14 @@ export const LinksList: React.FC<Props> = ({
                 rel="noopener noreferrer"
                 className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 outline-none hover:bg-custom-background-80"
               >
-                <ArrowTopRightOnSquareIcon className="h-4 w-4 text-custom-text-200" />
+                <ExternalLinkIcon className="h-4 w-4 text-custom-text-200" />
               </a>
               <button
                 type="button"
                 className="grid h-7 w-7 place-items-center rounded bg-custom-background-90 p-1 text-red-500 outline-none duration-300 hover:bg-red-500/20"
                 onClick={() => handleDeleteLink(link.id)}
               >
-                <TrashIcon className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </div>
           )}

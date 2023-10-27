@@ -1,17 +1,11 @@
 import { createContext, useContext } from "react";
-
-// next
 import { useRouter } from "next/router";
-
-// swr
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
-
+import { ProjectService } from "services/project";
 // keys
 import { USER_PROJECT_VIEW } from "constants/fetch-keys";
-
 // types
 import { IProjectMember } from "types";
 
@@ -20,6 +14,9 @@ type ContextType = {
   memberDetails?: IProjectMember;
   error: any;
 };
+
+// services
+const projectService = new ProjectService();
 
 export const ProjectMemberContext = createContext<ContextType>({} as ContextType);
 
@@ -43,17 +40,14 @@ export const ProjectMemberProvider: React.FC<Props> = (props) => {
   const loading = !memberDetails && !error;
 
   return (
-    <ProjectMemberContext.Provider value={{ loading, memberDetails, error }}>
-      {children}
-    </ProjectMemberContext.Provider>
+    <ProjectMemberContext.Provider value={{ loading, memberDetails, error }}>{children}</ProjectMemberContext.Provider>
   );
 };
 
 export const useProjectMyMembership = () => {
   const context = useContext(ProjectMemberContext);
 
-  if (context === undefined)
-    throw new Error(`useProjectMember must be used within a ProjectMemberProvider.`);
+  if (context === undefined) throw new Error(`useProjectMember must be used within a ProjectMemberProvider.`);
 
   return {
     ...context,
