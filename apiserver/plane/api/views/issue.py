@@ -130,7 +130,7 @@ class IssueViewSet(BaseViewSet):
                     queryset=IssueReaction.objects.select_related("actor"),
                 )
             )
-        )
+        ).distinct()
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
