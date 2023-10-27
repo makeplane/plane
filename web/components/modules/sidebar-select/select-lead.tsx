@@ -1,17 +1,13 @@
-import React from "react";
-
-import Image from "next/image";
+import { FC } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
-import { Avatar, CustomSearchSelect } from "components/ui";
+import { Avatar } from "components/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // icons
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import User from "public/user.png";
+import { UserCircle2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -20,10 +16,14 @@ type Props = {
   onChange: (val: string) => void;
 };
 
-export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
+const projectService = new ProjectService();
+
+export const SidebarLeadSelect: FC<Props> = (props) => {
+  const { value, onChange } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // fetch project members
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
@@ -47,7 +47,7 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   return (
     <div className="flex items-center justify-start gap-1">
       <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-        <UserCircleIcon className="h-5 w-5" />
+        <UserCircle2 className="h-5 w-5" />
         <span>Lead</span>
       </div>
       <div className="sm:basis-1/2">
@@ -56,16 +56,11 @@ export const SidebarLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           label={
             <div className="flex items-center gap-2">
               {selectedOption && <Avatar user={selectedOption} />}
-              {selectedOption ? (
-                selectedOption?.display_name
-              ) : (
-                <span className="text-custom-text-200">No lead</span>
-              )}
+              {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">No lead</span>}
             </div>
           }
           options={options}
           maxHeight="md"
-          position="right"
           onChange={onChange}
         />
       </div>

@@ -8,7 +8,7 @@ import { ChevronDown } from "lucide-react";
 import { PRIORITIES } from "constants/project";
 
 // components
-import { PriorityIcon } from "components/icons";
+import { PriorityIcon } from "@plane/ui";
 import { WebViewModal } from "./web-view-modal";
 
 // helpers
@@ -61,7 +61,7 @@ export const PrioritySelect: React.FC<Props> = (props) => {
                       : "border-custom-border-200 text-custom-text-200"
                   }`}
                 >
-                  <PriorityIcon priority={priority} className="text-sm" />
+                  <PriorityIcon priority={priority} className="h-3.5 w-3.5" />
                 </span>
               ),
             })) || []
@@ -73,12 +73,10 @@ export const PrioritySelect: React.FC<Props> = (props) => {
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(true)}
-        className={
-          "relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5 text-custom-text-100"
-        }
+        className={"relative w-full px-2.5 py-0.5 text-base flex justify-between items-center gap-0.5"}
       >
-        {value ? capitalizeFirstLetter(value) : "None"}
-        <ChevronDown className="w-5 h-5" />
+        <span className="text-custom-text-200">{value ? capitalizeFirstLetter(value) : "None"}</span>
+        <ChevronDown className="w-4 h-4 text-custom-text-200" />
       </button>
     </>
   );

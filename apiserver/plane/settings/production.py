@@ -7,6 +7,7 @@ import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from urllib.parse import urlparse
 
 from .common import *  # noqa
 
@@ -135,16 +136,27 @@ CSRF_COOKIE_SECURE = True
 
 REDIS_URL = os.environ.get("REDIS_URL")
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
-        },
+if DOCKERIZED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+            },
+        }
+    }
 
 
 WEB_URL = os.environ.get("WEB_URL", "https://app.plane.so")
@@ -167,8 +179,12 @@ broker_url = (
     f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
 )
 
-CELERY_RESULT_BACKEND = broker_url
-CELERY_BROKER_URL = broker_url
+if DOCKERIZED:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+else:
+    CELERY_BROKER_URL = broker_url
+    CELERY_RESULT_BACKEND = broker_url
 
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
@@ -179,3 +195,7 @@ ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
 SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
 SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
 SCOUT_NAME = "Plane"
+
+# Unsplash Access key
+UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
+

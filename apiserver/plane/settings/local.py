@@ -12,6 +12,10 @@ from .common import *  # noqa
 
 DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 
+ALLOWED_HOSTS = [
+    "*",
+]
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 
@@ -139,3 +143,5 @@ AWS_S3_PRIVATE_FILE_OVERWRITE = False
 AWS_PRIVATE_DEFAULT_ACL = "private"
 PRIVATE_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # End Storage Settings
+# Unsplash Access key
+UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

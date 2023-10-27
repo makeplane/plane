@@ -1,0 +1,178 @@
+version: "3.8"
+
+networks:
+  dev_env:
+    driver: bridge
+
+volumes:
+  redisdata:
+  uploads:
+  pgdata:
+  
+
+services:
+  plane-redis:
+    container_name: plane-redis
+    image: redis:6.2.7-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - redisdata:/data
+ 
+  plane-minio:
+    container_name: plane-minio
+    image: minio/minio
+    restart: unless-stopped
+    networks:
+      - dev_env
+    command: server /export --console-address ":9090"
+    volumes:
+      - uploads:/export
+    env_file:
+      - .env
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+ 
+  createbuckets:
+    image: minio/mc
+    networks:
+      - dev_env
+    entrypoint: >
+      /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
+    env_file:
+      - .env
+    depends_on:
+      - plane-minio
+ 
+  plane-db:
+    container_name: plane-db
+    image: postgres:15.2-alpine
+    restart: unless-stopped
+    networks:
+      - dev_env
+    command: postgres -c 'max_connections=1000'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_DB: ${PGDATABASE}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      PGDATA: /var/lib/postgresql/data
+
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./web/Dockerfile.dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - .:/app
+    command: yarn dev --filter=web
+    env_file:
+      - ./web/.env
+    depends_on:
+      - api
+      - worker
+
+  space:
+    build:
+      context: .
+      dockerfile: ./space/Dockerfile.dev
+    container_name: space
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - .:/app
+    command: yarn dev --filter=space
+    env_file:
+      - ./space/.env
+    depends_on:
+      - api
+      - worker
+      - web
+
+  api:
+    container_name: api
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./apiserver:/code
+    command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
+    env_file:
+      - ./apiserver/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+  
+  worker:
+    container_name: bgworker
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./apiserver:/code
+    command: /bin/sh -c "celery -A plane worker -l info"
+    env_file:
+      - ./apiserver/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  beat-worker:
+    container_name: beatworker
+    build:
+      context: ./apiserver
+      dockerfile: Dockerfile.dev
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - ./apiserver:/code
+    command: /bin/sh -c "celery -A plane beat -l info"
+    env_file:
+      - ./apiserver/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  proxy:
+    container_name: proxy
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    networks:
+      - dev_env
+    ports:
+      - ${NGINX_PORT}:80
+    env_file:
+      - .env
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+    depends_on:
+      - web
+      - api
+      - space

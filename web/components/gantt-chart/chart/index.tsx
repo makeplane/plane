@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
+// next
+import { useRouter } from "next/router";
 // icons
-import { ArrowsPointingInIcon, ArrowsPointingOutIcon } from "@heroicons/react/20/solid";
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
 import { GanttSidebar } from "../sidebar";
@@ -11,20 +12,23 @@ import { GanttSidebar } from "../sidebar";
 import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
 // import { YearChartView } from "./year";
+// icons
+import { Expand, PlusIcon, Shrink } from "lucide-react";
 // views
 import {
   // generateHourChart,
   // generateDayChart,
-  generateWeekChart,
-  generateBiWeekChart,
+  // generateWeekChart,
+  // generateBiWeekChart,
   generateMonthChart,
-  generateQuarterChart,
-  generateYearChart,
+  // generateQuarterChart,
+  // generateYearChart,
   getNumberOfDaysBetweenTwoDatesInMonth,
-  getNumberOfDaysBetweenTwoDatesInQuarter,
-  getNumberOfDaysBetweenTwoDatesInYear,
+  // getNumberOfDaysBetweenTwoDatesInQuarter,
+  // getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
+// import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
@@ -61,14 +65,18 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   enableReorder,
   bottomSpacing,
 }) => {
+  // router
+  const router = useRouter();
+  const { cycleId, moduleId } = router.query;
+  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
+  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
+  // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-
-  // blocks state management starts
-  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null);
-
-  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } =
-    useChart();
+  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
+  const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null); // blocks state management starts
+  // hooks
+  const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } = useChart();
 
   const renderBlockStructure = (view: any, blocks: IGanttBlock[] | null) =>
     blocks && blocks.length > 0
@@ -79,8 +87,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
       : [];
 
   useEffect(() => {
-    if (currentViewData && blocks)
-      setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
+    if (currentViewData && blocks) setChartBlocks(() => renderBlockStructure(currentViewData, blocks));
   }, [currentViewData, blocks]);
 
   // blocks state management ends
@@ -102,8 +109,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     // if (view === "day") currentRender = generateDayChart(selectedCurrentViewData, side);
     // if (view === "week") currentRender = generateWeekChart(selectedCurrentViewData, side);
     // if (view === "bi_week") currentRender = generateBiWeekChart(selectedCurrentViewData, side);
-    if (selectedCurrentView === "month")
-      currentRender = generateMonthChart(selectedCurrentViewData, side);
+    if (selectedCurrentView === "month") currentRender = generateMonthChart(selectedCurrentViewData, side);
     // if (view === "quarter") currentRender = generateQuarterChart(selectedCurrentViewData, side);
     // if (selectedCurrentView === "year")
     //   currentRender = generateYearChart(selectedCurrentViewData, side);
@@ -142,10 +148,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         });
         setItemsContainerWidth(currentRender.scrollWidth);
         setTimeout(() => {
-          handleScrollToCurrentSelectedDate(
-            currentRender.state,
-            currentRender.state.data.currentDate
-          );
+          handleScrollToCurrentSelectedDate(currentRender.state, currentRender.state.data.currentDate);
         }, 50);
       }
     }
@@ -156,6 +159,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // handling the scroll positioning from left and right
   useEffect(() => {
     handleToday();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updatingCurrentLeftScrollPosition = (width: number) => {
@@ -189,8 +193,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
     // if (currentView === "year")
     //   daysDifference = getNumberOfDaysBetweenTwoDatesInYear(currentState.data.startDate, date);
 
-    scrollWidth =
-      daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
+    scrollWidth = daysDifference * currentState.data.width - (clientVisibleWidth / 2 - currentState.data.width);
 
     scrollContainer.scrollLeft = scrollWidth;
   };
@@ -205,22 +208,17 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
     updateScrollLeft(currentScrollPosition);
 
-    const approxRangeLeft: number =
-      scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
+    const approxRangeLeft: number = scrollWidth >= clientVisibleWidth + 1000 ? 1000 : scrollWidth - clientVisibleWidth;
     const approxRangeRight: number = scrollWidth - (approxRangeLeft + clientVisibleWidth);
 
-    if (currentScrollPosition >= approxRangeRight)
-      updateCurrentViewRenderPayload("right", currentView);
-    if (currentScrollPosition <= approxRangeLeft)
-      updateCurrentViewRenderPayload("left", currentView);
+    if (currentScrollPosition >= approxRangeRight) updateCurrentViewRenderPayload("right", currentView);
+    if (currentScrollPosition <= approxRangeLeft) updateCurrentViewRenderPayload("left", currentView);
   };
 
   return (
     <div
       className={`${
-        fullScreenMode
-          ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100`
-          : `relative`
+        fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100` : `relative`
       } ${
         border ? `border border-custom-border-200` : ``
       } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
@@ -249,13 +247,12 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         <div className="flex flex-wrap items-center gap-2">
           {allViews &&
             allViews.length > 0 &&
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             allViews.map((_chatView: any, _idx: any) => (
               <div
                 key={_chatView?.key}
                 className={`cursor-pointer rounded-sm p-1 px-2 text-xs ${
-                  currentView === _chatView?.key
-                    ? `bg-custom-background-80`
-                    : `hover:bg-custom-background-90`
+                  currentView === _chatView?.key ? `bg-custom-background-80` : `hover:bg-custom-background-90`
                 }`}
                 onClick={() => handleChartView(_chatView?.key)}
               >
@@ -277,11 +274,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           className="transition-all border border-custom-border-200 p-1 flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
           onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
-          {fullScreenMode ? (
-            <ArrowsPointingInIcon className="h-4 w-4" />
-          ) : (
-            <ArrowsPointingOutIcon className="h-4 w-4" />
-          )}
+          {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
         </div>
       </div>
 
@@ -292,11 +285,11 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           bottomSpacing ? "mb-8" : ""
         }`}
       >
-        <div
-          id="gantt-sidebar"
-          className="h-full w-1/4 flex flex-col border-r border-custom-border-200 space-y-3"
-        >
-          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0" />
+        <div id="gantt-sidebar" className="h-full w-1/4 flex flex-col border-r border-custom-border-200">
+          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0 flex items-end justify-between gap-2 text-sm text-custom-text-300 font-medium pb-2 pl-10 pr-4">
+            <h6>{title}</h6>
+            <h6>Duration</h6>
+          </div>
           <GanttSidebar
             title={title}
             blockUpdateHandler={blockUpdateHandler}
@@ -304,6 +297,44 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             SidebarBlockRender={SidebarBlockRender}
             enableReorder={enableReorder}
           />
+          {chartBlocks && !(isCyclePage || isModulePage) && (
+            <div className="pl-2.5 py-3">
+              {/* <GanttInlineCreateIssueForm
+                isOpen={isCreateIssueFormOpen}
+                handleClose={() => setIsCreateIssueFormOpen(false)}
+                onSuccess={() => {
+                  const ganttSidebar = document.getElementById(`gantt-sidebar-${cycleId}`);
+
+                  const timeoutId = setTimeout(() => {
+                    if (ganttSidebar)
+                      ganttSidebar.scrollBy({
+                        top: ganttSidebar.scrollHeight,
+                        left: 0,
+                        behavior: "smooth",
+                      });
+                    clearTimeout(timeoutId);
+                  }, 10);
+                }}
+                prePopulatedData={{
+                  start_date: new Date(Date.now()).toISOString().split("T")[0],
+                  target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
+                  ...(cycleId && { cycle: cycleId.toString() }),
+                  ...(moduleId && { module: moduleId.toString() }),
+                }}
+              /> */}
+
+              {!isCreateIssueFormOpen && (
+                <button
+                  type="button"
+                  onClick={() => setIsCreateIssueFormOpen(true)}
+                  className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pl-[1.875rem] py-1 rounded-md"
+                >
+                  <PlusIcon className="h-4 w-4" />
+                  <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+                </button>
+              )}
+            </div>
+          )}
         </div>
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"

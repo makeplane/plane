@@ -1,11 +1,13 @@
-import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
+import { APIService } from "services/api.service";
+import { TrackEventService } from "services/track_event.service";
 // types
-import { ICurrentUserResponse, IGptResponse } from "types";
+import { IUser, IGptResponse } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class AiServices extends APIService {
+const trackEventService = new TrackEventService();
+
+export class AIService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -14,11 +16,11 @@ class AiServices extends APIService {
     workspaceSlug: string,
     projectId: string,
     data: { prompt: string; task: string },
-    user: ICurrentUserResponse | undefined
+    user: IUser | undefined
   ): Promise<IGptResponse> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/ai-assistant/`, data)
       .then((response) => {
-        trackEventServices.trackAskGptEvent(response?.data, "ASK_GPT", user);
+        trackEventService.trackAskGptEvent(response?.data, "ASK_GPT", user as IUser);
         return response?.data;
       })
       .catch((error) => {
@@ -26,5 +28,3 @@ class AiServices extends APIService {
       });
   }
 }
-
-export default new AiServices();

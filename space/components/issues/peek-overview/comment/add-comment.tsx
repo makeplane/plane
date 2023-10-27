@@ -11,7 +11,9 @@ import { SecondaryButton } from "components/ui";
 // types
 import { Comment } from "types/issue";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
+// service
+import fileService from "services/file.service";
 
 const defaultValues: Partial<Comment> = {
   comment_html: "",
@@ -69,8 +71,14 @@ export const AddComment: React.FC<Props> = observer((props) => {
           name="comment_html"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <TipTapEditor
-              workspaceSlug={workspace_slug as string}
+            <LiteTextEditorWithRef
+              onEnterKeyPress={(e) => {
+                userStore.requiredLogin(() => {
+                  handleSubmit(onSubmit)(e);
+                });
+              }}
+              uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
+              deleteFile={fileService.deleteImage}
               ref={editorRef}
               value={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

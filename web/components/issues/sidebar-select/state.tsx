@@ -5,11 +5,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // ui
-import { Spinner, CustomSelect } from "components/ui";
-// icons
-import { StateGroupIcon } from "components/icons";
+import { CustomSelect, Spinner, StateGroupIcon } from "@plane/ui";
 // helpers
 import { getStatesList } from "helpers/state.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
@@ -22,15 +20,16 @@ type Props = {
   disabled?: boolean;
 };
 
+// services
+const stateService = new ProjectStateService();
+
 export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
   const { data: stateGroups } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
   const states = getStatesList(stateGroups);
 
@@ -39,7 +38,7 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
   return (
     <CustomSelect
       customButton={
-        <button type="button" className="bg-custom-background-80 text-xs rounded px-2.5 py-0.5">
+        <div className="bg-custom-background-80 text-xs rounded px-2.5 py-0.5">
           {selectedState ? (
             <div className="flex items-center gap-1.5 text-left text-custom-text-100">
               <StateGroupIcon stateGroup={selectedState.group} color={selectedState.color} />
@@ -53,12 +52,11 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
           ) : (
             "None"
           )}
-        </button>
+        </div>
       }
       value={value}
       onChange={onChange}
       optionsClassName="w-min"
-      position="left"
       disabled={disabled}
     >
       {states ? (

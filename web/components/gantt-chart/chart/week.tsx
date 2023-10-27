@@ -3,6 +3,7 @@ import { FC } from "react";
 import { useChart } from "../hooks";
 
 export const WeekChartView: FC<any> = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentView, currentViewData, renderView, dispatch, allViews } = useChart();
 
   return (
@@ -36,14 +37,10 @@ export const WeekChartView: FC<any> = () => {
                       </div>
                       <div
                         className={`relative h-full w-full flex-1 flex justify-center ${
-                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "")
-                            ? `bg-custom-background-80`
-                            : ``
+                          ["sat", "sun"].includes(_item?.dayData?.shortTitle || "") ? `bg-custom-background-80` : ``
                         }`}
                       >
-                        {_item?.today && (
-                          <div className="absolute top-0 bottom-0 border border-red-500"> </div>
-                        )}
+                        {_item?.today && <div className="absolute top-0 bottom-0 border border-red-500"> </div>}
                       </div>
                     </div>
                   ))}

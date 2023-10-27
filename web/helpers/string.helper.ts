@@ -56,6 +56,19 @@ export const copyTextToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
 
+/**
+ * @description: This function copies the url to clipboard after prepending the origin URL to it
+ * @param {string} path
+ * @example:
+ * const text = copyUrlToClipboard("path");
+ * copied URL: origin_url/path
+ */
+export const copyUrlToClipboard = async (path: string) => {
+  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+  await copyTextToClipboard(`${originUrl}/${path}`);
+};
+
 export const generateRandomColor = (string: string): string => {
   if (!string) return "rgb(var(--color-primary-100))";
 
@@ -135,47 +148,10 @@ export const getFetchKeysForIssueMutation = (options: {
   moduleId?: string | string[];
   viewId?: string | string[];
   projectId: string;
-  calendarParams: any;
-  spreadsheetParams: any;
   viewGanttParams: any;
   ganttParams: any;
 }) => {
-  const {
-    cycleId,
-    moduleId,
-    viewId,
-    projectId,
-    calendarParams,
-    spreadsheetParams,
-    viewGanttParams,
-    ganttParams,
-  } = options;
-
-  const calendarFetchKey = cycleId
-    ? { calendarFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), calendarParams) }
-    : moduleId
-    ? { calendarFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), calendarParams) }
-    : viewId
-    ? { calendarFetchKey: VIEW_ISSUES(viewId.toString(), calendarParams) }
-    : {
-        calendarFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
-          projectId?.toString() ?? "",
-          calendarParams
-        ),
-      };
-
-  const spreadsheetFetchKey = cycleId
-    ? { spreadsheetFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), spreadsheetParams) }
-    : moduleId
-    ? { spreadsheetFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), spreadsheetParams) }
-    : viewId
-    ? { spreadsheetFetchKey: VIEW_ISSUES(viewId.toString(), spreadsheetParams) }
-    : {
-        spreadsheetFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(
-          projectId?.toString() ?? "",
-          spreadsheetParams
-        ),
-      };
+  const { cycleId, moduleId, viewId, projectId, viewGanttParams, ganttParams } = options;
 
   const ganttFetchKey = cycleId
     ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
@@ -186,8 +162,6 @@ export const getFetchKeysForIssueMutation = (options: {
     : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
 
   return {
-    ...calendarFetchKey,
-    ...spreadsheetFetchKey,
     ...ganttFetchKey,
   };
 };

@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 # Module import
 from .base import BaseSerializer
-from plane.db.models import User
+from plane.db.models import User, Workspace, WorkspaceMemberInvite
 
 
 class UserSerializer(BaseSerializer):
@@ -33,6 +33,81 @@ class UserSerializer(BaseSerializer):
             return bool(obj.first_name) or bool(obj.last_name)
 
 
+class UserMeSerializer(BaseSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "avatar",
+            "cover_image",
+            "date_joined",
+            "display_name",
+            "email",
+            "first_name",
+            "last_name",
+            "is_active",
+            "is_bot",
+            "is_email_verified",
+            "is_managed",
+            "is_onboarded",
+            "is_tour_completed",
+            "mobile_number",
+            "role",
+            "onboarding_step",
+            "user_timezone",
+            "username",
+            "theme",
+            "last_workspace_id",
+        ]
+        read_only_fields = fields
+
+
+class UserMeSettingsSerializer(BaseSerializer):
+    workspace = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "email",
+            "workspace",
+        ]
+        read_only_fields = fields
+
+    def get_workspace(self, obj):
+        workspace_invites = WorkspaceMemberInvite.objects.filter(
+            email=obj.email
+        ).count()
+        if obj.last_workspace_id is not None:
+            workspace = Workspace.objects.get(
+                pk=obj.last_workspace_id, workspace_member__member=obj.id
+            )
+            return {
+                "last_workspace_id": obj.last_workspace_id,
+                "last_workspace_slug": workspace.slug,
+                "fallback_workspace_id": obj.last_workspace_id,
+                "fallback_workspace_slug": workspace.slug,
+                "invites": workspace_invites,
+            }
+        else:
+            fallback_workspace = (
+                Workspace.objects.filter(workspace_member__member_id=obj.id)
+                .order_by("created_at")
+                .first()
+            )
+            return {
+                "last_workspace_id": None,
+                "last_workspace_slug": None,
+                "fallback_workspace_id": fallback_workspace.id
+                if fallback_workspace is not None
+                else None,
+                "fallback_workspace_slug": fallback_workspace.slug
+                if fallback_workspace is not None
+                else None,
+                "invites": workspace_invites,
+            }
+
+
 class UserLiteSerializer(BaseSerializer):
     class Meta:
         model = User
@@ -51,7 +126,6 @@ class UserLiteSerializer(BaseSerializer):
 
 
 class UserAdminLiteSerializer(BaseSerializer):
-
     class Meta:
         model = User
         fields = [
