@@ -36,7 +36,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar user={member.member} height="18px" width="18px" />
         {member.member.display_name}
       </div>
     ),
@@ -46,16 +46,17 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-        <UserCircle2 className="h-5 w-5" />
-        <span>Lead</span>
+      <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+        <UserCircle2 className="h-4 w-4" />
+        <span className="text-base">Lead</span>
       </div>
-      <div className="sm:basis-1/2">
+      <div className="flex items-center w-1/2">
         <CustomSearchSelect
+          className="w-full"
           value={value}
           label={
             <div className="flex items-center gap-2">
-              {selectedOption && <Avatar user={selectedOption} />}
+              {selectedOption && <Avatar user={selectedOption} height="18px" width="18px" />}
               {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">No lead</span>}
             </div>
           }

@@ -37,7 +37,7 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar user={member.member} height="18px" width="18px" />
         {member.member.display_name}
       </div>
     ),
@@ -45,18 +45,19 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
 
   return (
     <div className="flex items-center justify-start gap-1">
-      <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-        <UserGroupIcon className="h-5 w-5" />
-        <span>Members</span>
+      <div className="flex w-1/2 items-center justify-start gap-2 text-custom-text-300">
+        <UserGroupIcon className="h-4 w-4" />
+        <span className="text-base">Members</span>
       </div>
-      <div className="sm:basis-1/2">
+      <div className="flex items-center w-1/2">
         <CustomSearchSelect
+          className="w-full"
           value={value ?? []}
           label={
-            <div className="flex items-center gap-2 text-custom-text-200">
+            <div className="flex items-center gap-2 text-xs text-custom-text-200">
               {value && value.length > 0 && Array.isArray(value) ? (
                 <div className="flex items-center justify-center gap-2">
-                  <AssigneesList userIds={value} length={3} showLength={false} />
+                  <AssigneesList userIds={value} height="18px" width="18px" length={3} showLength={false} />
                   <span className="text-custom-text-200">{value.length} Assignees</span>
                 </div>
               ) : (
