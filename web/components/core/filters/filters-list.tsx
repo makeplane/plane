@@ -50,36 +50,36 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                 <div className="flex flex-wrap items-center gap-1">
                   {key === "state"
                     ? filters.state?.map((stateId: string) => {
-                        const state = states?.find((s) => s.id === stateId);
+                      const state = states?.find((s) => s.id === stateId);
 
-                        return (
-                          <p
-                            key={state?.id}
-                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium"
-                            style={{
-                              color: state?.color,
-                              backgroundColor: `${state?.color}20`,
-                            }}
+                      return (
+                        <p
+                          key={state?.id}
+                          className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 font-medium"
+                          style={{
+                            color: state?.color,
+                            backgroundColor: `${state?.color}20`,
+                          }}
+                        >
+                          <span>
+                            <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
+                          </span>
+                          <span>{state?.name ?? ""}</span>
+                          <span
+                            className="cursor-pointer"
+                            onClick={() =>
+                              setFilters({
+                                state: filters.state?.filter((s: any) => s !== stateId),
+                              })
+                            }
                           >
-                            <span>
-                              <StateGroupIcon stateGroup={state?.group ?? "backlog"} color={state?.color} />
-                            </span>
-                            <span>{state?.name ?? ""}</span>
-                            <span
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setFilters({
-                                  state: filters.state?.filter((s: any) => s !== stateId),
-                                })
-                              }
-                            >
-                              <X className="h-3 w-3" />
-                            </span>
-                          </p>
-                        );
-                      })
+                            <X className="h-3 w-3" />
+                          </span>
+                        </p>
+                      );
+                    })
                     : key === "state_group"
-                    ? filters.state_group?.map((stateGroup) => {
+                      ? filters.state_group?.map((stateGroup) => {
                         const group = stateGroup as TStateGroups;
 
                         return (
@@ -108,183 +108,207 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                           </p>
                         );
                       })
-                    : key === "priority"
-                    ? filters.priority?.map((priority: any) => (
-                        <p
-                          key={priority}
-                          className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize ${
-                            priority === "urgent"
-                              ? "bg-red-500/20 text-red-500"
-                              : priority === "high"
-                              ? "bg-orange-500/20 text-orange-500"
-                              : priority === "medium"
-                              ? "bg-yellow-500/20 text-yellow-500"
-                              : priority === "low"
-                              ? "bg-green-500/20 text-green-500"
-                              : "bg-custom-background-90 text-custom-text-200"
-                          }`}
-                        >
-                          <span>
-                            <PriorityIcon priority={priority} className="h-3 w-3" />
-                          </span>
-                          <span>{priority === "null" ? "None" : priority}</span>
-                          <span
-                            className="cursor-pointer"
-                            onClick={() =>
-                              setFilters({
-                                priority: filters.priority?.filter((p: any) => p !== priority),
+                      : key === "priority"
+                        ? filters.priority?.map((priority: any) => (
+                          <p
+                            key={priority}
+                            className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize ${priority === "urgent"
+                                ? "bg-red-500/20 text-red-500"
+                                : priority === "high"
+                                  ? "bg-orange-500/20 text-orange-500"
+                                  : priority === "medium"
+                                    ? "bg-yellow-500/20 text-yellow-500"
+                                    : priority === "low"
+                                      ? "bg-green-500/20 text-green-500"
+                                      : "bg-custom-background-90 text-custom-text-200"
+                              }`}
+                          >
+                            <span>
+                              <PriorityIcon priority={priority} className="h-3 w-3" />
+                            </span>
+                            <span>{priority === "null" ? "None" : priority}</span>
+                            <span
+                              className="cursor-pointer"
+                              onClick={() =>
+                                setFilters({
+                                  priority: filters.priority?.filter((p: any) => p !== priority),
+                                })
+                              }
+                            >
+                              <X className="h-3 w-3" />
+                            </span>
+                          </p>
+                        ))
+                        : key === "mentions"
+                          ? filters.mentions?.map((mentionId: string) => {
+                            const member = members?.find((m) => m.id === mentionId);
+                            return (
+                              <div
+                                key={mentionId}
+                                className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
+                              >
+                                <Avatar user={member} />
+                                <span>{member?.display_name}</span>
+                                <span
+                                  className="cursor-pointer"
+                                  onClick={() =>
+                                    setFilters({
+                                      mentions: filters.mentions?.filter(
+                                        (p: any) => p !== mentionId
+                                      ),
+                                    })
+                                  }
+                                >
+                                  <X className="h-3 w-3" />
+                                </span>
+                              </div>
+                            );
+                          })
+                          : key === "assignees"
+                            ? filters.assignees?.map((memberId: string) => {
+                              const member = members?.find((m) => m.id === memberId);
+
+                              return (
+                                <div
+                                  key={memberId}
+                                  className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
+                                >
+                                  <Avatar user={member} />
+                                  <span>{member?.display_name}</span>
+                                  <span
+                                    className="cursor-pointer"
+                                    onClick={() =>
+                                      setFilters({
+                                        subscriber: filters.subscriber?.filter((p: any) => p !== memberId),
+                                      })
+                                    }
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </span>
+                                </div>
+                              );
+                            })
+                            : key === "created_by"
+                              ? filters.created_by?.map((memberId: string) => {
+                                const member = members?.find((m) => m.id === memberId);
+
+                                return (
+                                  <div
+                                    key={`${memberId}-${key}`}
+                                    className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
+                                  >
+                                    <Avatar user={member} />
+                                    <span>{member?.display_name}</span>
+                                    <span
+                                      className="cursor-pointer"
+                                      onClick={() =>
+                                        setFilters({
+                                          created_by: filters.created_by?.filter((p: any) => p !== memberId),
+                                        })
+                                      }
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </span>
+                                  </div>
+                                );
                               })
-                            }
-                          >
-                            <X className="h-3 w-3" />
-                          </span>
-                        </p>
-                      ))
-                    : key === "assignees"
-                    ? filters.assignees?.map((memberId: string) => {
-                        const member = members?.find((m) => m.id === memberId);
+                              : key === "labels"
+                                ? filters.labels?.map((labelId: string) => {
+                                  const label = labels?.find((l) => l.id === labelId);
 
-                        return (
-                          <div
-                            key={memberId}
-                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
-                          >
-                            <Avatar user={member} />
-                            <span>{member?.display_name}</span>
-                            <span
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setFilters({
-                                  subscriber: filters.subscriber?.filter((p: any) => p !== memberId),
+                                  if (!label) return null;
+                                  const color = label.color !== "" ? label.color : "#0f172a";
+                                  return (
+                                    <div
+                                      className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5"
+                                      style={{
+                                        color: color,
+                                        backgroundColor: `${color}20`, // add 20% opacity
+                                      }}
+                                      key={labelId}
+                                    >
+                                      <div
+                                        className="h-1.5 w-1.5 rounded-full"
+                                        style={{
+                                          backgroundColor: color,
+                                        }}
+                                      />
+                                      <span>{label.name}</span>
+                                      <span
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          setFilters({
+                                            labels: filters.labels?.filter((l: any) => l !== labelId),
+                                          })
+                                        }
+                                      >
+                                        <X
+                                          className="h-3 w-3"
+                                          style={{
+                                            color: color,
+                                          }}
+                                        />
+                                      </span>
+                                    </div>
+                                  );
                                 })
-                              }
-                            >
-                              <X className="h-3 w-3" />
-                            </span>
-                          </div>
-                        );
-                      })
-                    : key === "created_by"
-                    ? filters.created_by?.map((memberId: string) => {
-                        const member = members?.find((m) => m.id === memberId);
+                                : key === "start_date"
+                                  ? filters.start_date?.map((date: string) => {
+                                    if (filters.start_date && filters.start_date.length <= 0) return null;
 
-                        return (
-                          <div
-                            key={`${memberId}-${key}`}
-                            className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
-                          >
-                            <Avatar user={member} />
-                            <span>{member?.display_name}</span>
-                            <span
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setFilters({
-                                  created_by: filters.created_by?.filter((p: any) => p !== memberId),
-                                })
-                              }
-                            >
-                              <X className="h-3 w-3" />
-                            </span>
-                          </div>
-                        );
-                      })
-                    : key === "labels"
-                    ? filters.labels?.map((labelId: string) => {
-                        const label = labels?.find((l) => l.id === labelId);
+                                    const splitDate = date.split(";");
 
-                        if (!label) return null;
-                        const color = label.color !== "" ? label.color : "#0f172a";
-                        return (
-                          <div
-                            className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5"
-                            style={{
-                              color: color,
-                              backgroundColor: `${color}20`, // add 20% opacity
-                            }}
-                            key={labelId}
-                          >
-                            <div
-                              className="h-1.5 w-1.5 rounded-full"
-                              style={{
-                                backgroundColor: color,
-                              }}
-                            />
-                            <span>{label.name}</span>
-                            <span
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setFilters({
-                                  labels: filters.labels?.filter((l: any) => l !== labelId),
-                                })
-                              }
-                            >
-                              <X
-                                className="h-3 w-3"
-                                style={{
-                                  color: color,
-                                }}
-                              />
-                            </span>
-                          </div>
-                        );
-                      })
-                    : key === "start_date"
-                    ? filters.start_date?.map((date: string) => {
-                        if (filters.start_date && filters.start_date.length <= 0) return null;
+                                    return (
+                                      <div
+                                        key={date}
+                                        className="inline-flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-0.5"
+                                      >
+                                        <div className="h-1.5 w-1.5 rounded-full" />
+                                        <span className="capitalize">
+                                          {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
+                                        </span>
+                                        <span
+                                          className="cursor-pointer"
+                                          onClick={() =>
+                                            setFilters({
+                                              start_date: filters.start_date?.filter((d: any) => d !== date),
+                                            })
+                                          }
+                                        >
+                                          <X className="h-3 w-3" />
+                                        </span>
+                                      </div>
+                                    );
+                                  })
+                                  : key === "target_date"
+                                    ? filters.target_date?.map((date: string) => {
+                                      if (filters.target_date && filters.target_date.length <= 0) return null;
 
-                        const splitDate = date.split(";");
+                                      const splitDate = date.split(";");
 
-                        return (
-                          <div
-                            key={date}
-                            className="inline-flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-0.5"
-                          >
-                            <div className="h-1.5 w-1.5 rounded-full" />
-                            <span className="capitalize">
-                              {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
-                            </span>
-                            <span
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setFilters({
-                                  start_date: filters.start_date?.filter((d: any) => d !== date),
-                                })
-                              }
-                            >
-                              <X className="h-3 w-3" />
-                            </span>
-                          </div>
-                        );
-                      })
-                    : key === "target_date"
-                    ? filters.target_date?.map((date: string) => {
-                        if (filters.target_date && filters.target_date.length <= 0) return null;
-
-                        const splitDate = date.split(";");
-
-                        return (
-                          <div
-                            key={date}
-                            className="inline-flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-0.5"
-                          >
-                            <div className="h-1.5 w-1.5 rounded-full" />
-                            <span className="capitalize">
-                              {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
-                            </span>
-                            <span
-                              className="cursor-pointer"
-                              onClick={() =>
-                                setFilters({
-                                  target_date: filters.target_date?.filter((d: any) => d !== date),
-                                })
-                              }
-                            >
-                              <X className="h-3 w-3" />
-                            </span>
-                          </div>
-                        );
-                      })
-                    : (filters[key] as any)?.join(", ")}
+                                      return (
+                                        <div
+                                          key={date}
+                                          className="inline-flex items-center gap-x-1 rounded-full border border-custom-border-200 bg-custom-background-100 px-1 py-0.5"
+                                        >
+                                          <div className="h-1.5 w-1.5 rounded-full" />
+                                          <span className="capitalize">
+                                            {splitDate[1]} {renderShortDateWithYearFormat(splitDate[0])}
+                                          </span>
+                                          <span
+                                            className="cursor-pointer"
+                                            onClick={() =>
+                                              setFilters({
+                                                target_date: filters.target_date?.filter((d: any) => d !== date),
+                                              })
+                                            }
+                                          >
+                                            <X className="h-3 w-3" />
+                                          </span>
+                                        </div>
+                                      );
+                                    })
+                                    : (filters[key] as any)?.join(", ")}
                   <button
                     type="button"
                     onClick={() =>
