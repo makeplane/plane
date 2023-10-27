@@ -606,41 +606,12 @@ class IssueCommentViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssuePropertyViewSet(BaseViewSet):
-    serializer_class = IssuePropertySerializer
-    model = IssueProperty
+class IssueUserDisplayPropertyEndpoint(BaseAPIView):
     permission_classes = [
-        ProjectEntityPermission,
+        ProjectLitePermission,
     ]
 
-    filterset_fields = []
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"), user=self.request.user
-        )
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(user=self.request.user)
-            .filter(project__project_projectmember__member=self.request.user)
-            .select_related("project")
-            .select_related("workspace")
-        )
-
-    def list(self, request, slug, project_id):
-        queryset = self.get_queryset()
-        serializer = IssuePropertySerializer(queryset, many=True)
-        return Response(
-            serializer.data[0] if len(serializer.data) > 0 else [],
-            status=status.HTTP_200_OK,
-        )
-
-    def create(self, request, slug, project_id):
+    def post(self, request, slug, project_id):
         issue_property, created = IssueProperty.objects.get_or_create(
             user=request.user,
             project_id=project_id,
@@ -649,14 +620,18 @@ class IssuePropertyViewSet(BaseViewSet):
         if not created:
             issue_property.properties = request.data.get("properties", {})
             issue_property.save()
-
-            serializer = IssuePropertySerializer(issue_property)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
         issue_property.properties = request.data.get("properties", {})
         issue_property.save()
         serializer = IssuePropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+    def get(self, request, slug, project_id):
+            issue_property, _ = IssueProperty.objects.get_or_create(
+                user=request.user, project_id=project_id
+            )
+            serializer = IssuePropertySerializer(issue_property)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LabelViewSet(BaseViewSet):
@@ -972,8 +947,8 @@ class IssueAttachmentEndpoint(BaseAPIView):
         issue_attachments = IssueAttachment.objects.filter(
             issue_id=issue_id, workspace__slug=slug, project_id=project_id
         )
-        serilaizer = IssueAttachmentSerializer(issue_attachments, many=True)
-        return Response(serilaizer.data, status=status.HTTP_200_OK)
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IssueArchiveViewSet(BaseViewSet):
