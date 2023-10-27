@@ -16,6 +16,24 @@ from . import ProjectBaseModel
 from plane.utils.html_processor import strip_tags
 
 
+def get_default_properties():
+    return {
+        "assignee": True,
+        "start_date": True,
+        "due_date": True,
+        "labels": True,
+        "key": True,
+        "priority": True,
+        "state": True,
+        "sub_issue_count": True,
+        "link": True,
+        "attachment_count": True,
+        "estimate": True,
+        "created_on": True,
+        "updated_on": True,
+    }
+
+
 # TODO: Handle identifiers for Bulk Inserts - nk
 class IssueManager(models.Manager):
     def get_queryset(self):
@@ -39,7 +57,7 @@ class Issue(ProjectBaseModel):
         ("high", "High"),
         ("medium", "Medium"),
         ("low", "Low"),
-        ("none", "None")
+        ("none", "None"),
     )
     parent = models.ForeignKey(
         "self",
@@ -186,7 +204,7 @@ class IssueRelation(ProjectBaseModel):
         ("relates_to", "Relates To"),
         ("blocked_by", "Blocked By"),
     )
-        
+
     issue = models.ForeignKey(
         Issue, related_name="issue_relation", on_delete=models.CASCADE
     )
@@ -208,7 +226,7 @@ class IssueRelation(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.issue.name} {self.related_issue.name}"    
+        return f"{self.issue.name} {self.related_issue.name}"
 
 
 class IssueAssignee(ProjectBaseModel):
@@ -327,7 +345,9 @@ class IssueComment(ProjectBaseModel):
     comment_json = models.JSONField(blank=True, default=dict)
     comment_html = models.TextField(blank=True, default="<p></p>")
     attachments = ArrayField(models.URLField(), size=10, blank=True, default=list)
-    issue = models.ForeignKey(Issue, on_delete=models.CASCADE, related_name="issue_comments")
+    issue = models.ForeignKey(
+        Issue, on_delete=models.CASCADE, related_name="issue_comments"
+    )
     # System can also create comment
     actor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -367,7 +387,7 @@ class IssueProperty(ProjectBaseModel):
         on_delete=models.CASCADE,
         related_name="issue_property_user",
     )
-    properties = models.JSONField(default=dict)
+    properties = models.JSONField(default=get_default_properties)
 
     class Meta:
         verbose_name = "Issue Property"
@@ -515,7 +535,10 @@ class IssueVote(ProjectBaseModel):
     )
 
     class Meta:
-        unique_together = ["issue", "actor",]
+        unique_together = [
+            "issue",
+            "actor",
+        ]
         verbose_name = "Issue Vote"
         verbose_name_plural = "Issue Votes"
         db_table = "issue_votes"
