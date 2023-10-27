@@ -44,6 +44,6 @@ def delete_old_s3_link():
             if settings.DOCKERIZED and settings.USE_MINIO:
                 s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name)
             else:
-                s3.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=file_name)
+                s3.delete_object(Bucket=settings.AWS_PUBLIC_STORAGE_BUCKET_NAME, Key=file_name)
 
         ExporterHistory.objects.filter(id=exporter_id).update(url=None)

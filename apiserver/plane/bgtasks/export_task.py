@@ -106,14 +106,14 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
         )
         s3.upload_fileobj(
             zip_file,
-            settings.AWS_S3_BUCKET_NAME,
+            settings.AWS_PUBLIC_STORAGE_BUCKET_NAME,
             file_name,
             ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
         )
 
         presigned_url = s3.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_S3_BUCKET_NAME, "Key": file_name},
+            Params={"Bucket": settings.AWS_PUBLIC_STORAGE_BUCKET_NAME, "Key": file_name},
             ExpiresIn=expires_in,
         )
 
