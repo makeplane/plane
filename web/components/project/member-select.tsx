@@ -5,9 +5,10 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import projectService from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
-import { Avatar, CustomSearchSelect } from "components/ui";
+import { Avatar } from "components/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // icon
 import { Ban } from "lucide-react";
 // fetch-keys
@@ -16,9 +17,13 @@ import { PROJECT_MEMBERS } from "constants/fetch-keys";
 type Props = {
   value: any;
   onChange: (val: string) => void;
+  isDisabled?: boolean;
 };
 
-export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
+// services
+const projectService = new ProjectService();
+
+export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -76,9 +81,9 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange }) => {
         ]
       }
       maxHeight="md"
-      position="right"
       width="w-full"
       onChange={onChange}
+      disabled={isDisabled}
     />
   );
 };

@@ -1,13 +1,9 @@
-import React, { useCallback, useState } from "react";
-
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-dropzone
 import { useDropzone } from "react-dropzone";
 // services
-import issuesService from "services/issues.service";
+import { IssueAttachmentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -20,6 +16,8 @@ const maxFileSize = 5 * 1024 * 1024; // 5 MB
 type Props = {
   disabled?: boolean;
 };
+
+const issueAttachmentService = new IssueAttachmentService();
 
 export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -43,13 +41,8 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
     );
     setIsLoading(true);
 
-    issuesService
-      .uploadIssueAttachment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        formData
-      )
+    issueAttachmentService
+      .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then((res) => {
         mutate<IIssueAttachment[]>(
           ISSUE_ATTACHMENTS(issueId as string),
@@ -64,7 +57,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
         });
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setIsLoading(false);
         setToastAlert({
           type: "error",
@@ -83,9 +76,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
   });
 
   const fileError =
-    fileRejections.length > 0
-      ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)`
-      : null;
+    fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;
 
   return (
     <div

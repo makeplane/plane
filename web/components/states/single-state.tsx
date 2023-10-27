@@ -5,20 +5,18 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 
 // services
-import stateService from "services/state.service";
+import { ProjectStateService } from "services/project";
 // ui
-import { Tooltip } from "components/ui";
+import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
-import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
-import { Pencil, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Pencil, X } from "lucide-react";
 
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 import { groupBy, orderArrayBy } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 // types
-import { ICurrentUserResponse, IState } from "types";
+import { IUser, IState } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -28,8 +26,11 @@ type Props = {
   statesList: IState[];
   handleEditState: () => void;
   handleDeleteState: () => void;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const projectStateService = new ProjectStateService();
 
 export const SingleState: React.FC<Props> = ({
   index,
@@ -58,14 +59,10 @@ export const SingleState: React.FC<Props> = ({
     }));
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
-    mutate(
-      STATES_LIST(projectId as string),
-      orderStateGroups(groupBy(newStatesList, "group")),
-      false
-    );
+    mutate(STATES_LIST(projectId as string), orderStateGroups(groupBy(newStatesList, "group")), false);
 
     if (currentDefaultState)
-      stateService
+      projectStateService
         .patchState(
           workspaceSlug as string,
           projectId as string,
@@ -76,7 +73,7 @@ export const SingleState: React.FC<Props> = ({
           user
         )
         .then(() => {
-          stateService
+          projectStateService
             .patchState(
               workspaceSlug as string,
               projectId as string,
@@ -95,7 +92,7 @@ export const SingleState: React.FC<Props> = ({
             });
         });
     else
-      stateService
+      projectStateService
         .patchState(
           workspaceSlug as string,
           projectId as string,
@@ -131,13 +128,9 @@ export const SingleState: React.FC<Props> = ({
     }));
     newStatesList = orderArrayBy(newStatesList, "sequence", "ascending");
 
-    mutate(
-      STATES_LIST(projectId as string),
-      orderStateGroups(groupBy(newStatesList, "group")),
-      false
-    );
+    mutate(STATES_LIST(projectId as string), orderStateGroups(groupBy(newStatesList, "group")), false);
 
-    stateService
+    projectStateService
       .patchState(
         workspaceSlug as string,
         projectId as string,
@@ -172,7 +165,7 @@ export const SingleState: React.FC<Props> = ({
             className="hidden text-custom-text-200 group-hover:inline-block"
             onClick={() => handleMove(state, "up")}
           >
-            <ArrowUpIcon className="h-4 w-4" />
+            <ArrowUp className="h-4 w-4" />
           </button>
         )}
         {!(index === groupLength - 1) && (
@@ -181,7 +174,7 @@ export const SingleState: React.FC<Props> = ({
             className="hidden text-custom-text-200 group-hover:inline-block"
             onClick={() => handleMove(state, "down")}
           >
-            <ArrowDownIcon className="h-4 w-4" />
+            <ArrowDown className="h-4 w-4" />
           </button>
         )}
 
@@ -216,26 +209,14 @@ export const SingleState: React.FC<Props> = ({
           >
             {state.default ? (
               <Tooltip tooltipContent="Cannot delete the default state.">
-                <X
-                  className={`h-4 w-4 ${
-                    groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
-                  }`}
-                />
+                <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : groupLength === 1 ? (
               <Tooltip tooltipContent="Cannot have an empty group.">
-                <X
-                  className={`h-4 w-4 ${
-                    groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
-                  }`}
-                />
+                <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
               </Tooltip>
             ) : (
-              <X
-                className={`h-4 w-4 ${
-                  groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"
-                }`}
-              />
+              <X className={`h-4 w-4 ${groupLength < 1 ? "text-custom-sidebar-text-400" : "text-red-500"}`} />
             )}
           </button>
         </div>

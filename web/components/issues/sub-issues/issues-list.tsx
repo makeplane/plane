@@ -1,13 +1,13 @@
-import React from "react";
+import { useEffect } from "react";
 // swr
 import useSWR from "swr";
 // components
 import { SubIssues } from "./issue";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 
@@ -16,7 +16,7 @@ export interface ISubIssuesRootList {
   projectId: string;
   parentIssue: IIssue;
   spacingLeft?: number;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
@@ -27,8 +27,9 @@ export interface ISubIssuesRootList {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  setPeekParentId: (id: string) => void;
 }
+
+const issueService = new IssueService();
 
 export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   workspaceSlug,
@@ -42,18 +43,15 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
   handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
-  setPeekParentId,
 }) => {
   const { data: issues, isLoading } = useSWR(
+    workspaceSlug && projectId && parentIssue && parentIssue?.id ? SUB_ISSUES(parentIssue?.id) : null,
     workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? SUB_ISSUES(parentIssue?.id)
-      : null,
-    workspaceSlug && projectId && parentIssue && parentIssue?.id
-      ? () => issuesService.subIssues(workspaceSlug, projectId, parentIssue.id)
+      ? () => issueService.subIssues(workspaceSlug, projectId, parentIssue.id)
       : null
   );
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoading) {
       handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
     } else {
@@ -61,6 +59,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
         handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
   return (
@@ -83,14 +82,11 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
             handleIssuesLoader={handleIssuesLoader}
             copyText={copyText}
             handleIssueCrudOperation={handleIssueCrudOperation}
-            setPeekParentId={setPeekParentId}
           />
         ))}
 
       <div
-        className={`absolute top-0 bottom-0  ${
-          spacingLeft > 10 ? `border-l border-custom-border-100` : ``
-        }`}
+        className={`absolute top-0 bottom-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
         style={{ left: `${spacingLeft - 12}px` }}
       />
     </div>

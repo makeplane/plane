@@ -1,25 +1,21 @@
 import React from "react";
 // next imports
-import Link from "next/link";
 import { useRouter } from "next/router";
+// swr
+import { mutate } from "swr";
 // lucide icons
-import {
-  ChevronDown,
-  ChevronRight,
-  X,
-  Pencil,
-  Trash,
-  Link as LinkIcon,
-  Loader,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // components
+import { IssuePeekOverview } from "components/issues/peek-overview";
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
-import { Tooltip, CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
+// fetch keys
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -27,7 +23,7 @@ export interface ISubIssues {
   parentIssue: IIssue;
   issue: any;
   spacingLeft?: number;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
@@ -38,7 +34,6 @@ export interface ISubIssues {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  setPeekParentId: (id: string) => void;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -54,14 +49,12 @@ export const SubIssues: React.FC<ISubIssues> = ({
   handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
-  setPeekParentId,
 }) => {
   const router = useRouter();
+  const { query } = router;
+  const { peekIssue } = query as { peekIssue: string };
 
   const openPeekOverview = (issue_id: string) => {
-    const { query } = router;
-
-    setPeekParentId(parentIssue?.id);
     router.push({
       pathname: router.pathname,
       query: { ...query, peekIssue: issue_id },
@@ -98,10 +91,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
             )}
           </div>
 
-          <div
-            className="w-full flex items-center gap-2 cursor-pointer"
-            onClick={() => openPeekOverview(issue?.id)}
-          >
+          <div className="w-full flex items-center gap-2 cursor-pointer" onClick={() => openPeekOverview(issue?.id)}>
             <div
               className="flex-shrink-0 w-[6px] h-[6px] rounded-full"
               style={{
@@ -119,7 +109,6 @@ export const SubIssues: React.FC<ISubIssues> = ({
           <div className="flex-shrink-0 text-sm">
             <IssueProperty
               workspaceSlug={workspaceSlug}
-              projectId={projectId}
               parentIssue={parentIssue}
               issue={issue}
               user={user}
@@ -130,9 +119,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
           <div className="flex-shrink-0 text-sm">
             <CustomMenu width="auto" ellipsis>
               {editable && (
-                <CustomMenu.MenuItem
-                  onClick={() => handleIssueCrudOperation("edit", parentIssue?.id, issue)}
-                >
+                <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("edit", parentIssue?.id, issue)}>
                   <div className="flex items-center justify-start gap-2">
                     <Pencil width={14} strokeWidth={2} />
                     <span>Edit issue</span>
@@ -141,9 +128,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
               )}
 
               {editable && (
-                <CustomMenu.MenuItem
-                  onClick={() => handleIssueCrudOperation("delete", parentIssue?.id, issue)}
-                >
+                <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("delete", parentIssue?.id, issue)}>
                   <div className="flex items-center justify-start gap-2">
                     <Trash width={14} strokeWidth={2} />
                     <span>Delete issue</span>
@@ -152,9 +137,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
               )}
 
               <CustomMenu.MenuItem
-                onClick={() =>
-                  copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)
-                }
+                onClick={() => copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)}
               >
                 <div className="flex items-center justify-start gap-2">
                   <LinkIcon width={14} strokeWidth={2} />
@@ -199,7 +182,15 @@ export const SubIssues: React.FC<ISubIssues> = ({
           handleIssuesLoader={handleIssuesLoader}
           copyText={copyText}
           handleIssueCrudOperation={handleIssueCrudOperation}
-          setPeekParentId={setPeekParentId}
+        />
+      )}
+
+      {peekIssue && peekIssue === issue?.id && (
+        <IssuePeekOverview
+          handleMutation={() => parentIssue && parentIssue?.id && mutate(SUB_ISSUES(parentIssue?.id))}
+          projectId={issue?.project ?? ""}
+          workspaceSlug={workspaceSlug ?? ""}
+          readOnly={!editable}
         />
       )}
     </div>

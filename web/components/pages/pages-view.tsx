@@ -4,22 +4,18 @@ import useSWR, { mutate } from "swr";
 import { useRouter } from "next/router";
 
 // services
-import pagesService from "services/pages.service";
-import projectService from "services/project.service";
+import { PageService } from "services/page.service";
+import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // components
-import {
-  CreateUpdatePageModal,
-  DeletePageModal,
-  SinglePageDetailedItem,
-  SinglePageListItem,
-} from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
 // ui
-import { EmptyState, Loader } from "components/ui";
+import { EmptyState } from "components/common";
+import { Loader } from "@plane/ui";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Plus } from "lucide-react";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // types
@@ -37,15 +33,19 @@ type Props = {
   viewType: TPageViewProps;
 };
 
+// services
+const pageService = new PageService();
+const projectService = new ProjectService();
+
 export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
-  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
-
-  const [deletePageModal, setDeletePageModal] = useState(false);
-  const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // states
+  const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
+  const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
+  const [deletePageModal, setDeletePageModal] = useState(false);
+  const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
 
   const { user } = useUserAuth();
 
@@ -91,13 +91,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         }),
       false
     );
-    mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId.toString()),
-      (prevData) => [page, ...(prevData ?? [])],
-      false
-    );
+    mutate<IPage[]>(FAVORITE_PAGES_LIST(projectId.toString()), (prevData) => [page, ...(prevData ?? [])], false);
 
-    pagesService
+    pageService
       .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), {
         page: page.id,
       })
@@ -147,7 +143,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
+    pageService
       .removePageFromFavorites(workspaceSlug.toString(), projectId.toString(), page.id)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
@@ -185,27 +181,32 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user)
-      .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId.toString()));
-      });
+    pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user).then(() => {
+      mutate(RECENT_PAGES_LIST(projectId.toString()));
+    });
   };
 
   return (
     <>
-      <CreateUpdatePageModal
-        isOpen={createUpdatePageModal}
-        handleClose={() => setCreateUpdatePageModal(false)}
-        data={selectedPageToUpdate}
-        user={user}
-      />
-      <DeletePageModal
-        isOpen={deletePageModal}
-        setIsOpen={setDeletePageModal}
-        data={selectedPageToDelete}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <>
+          <CreateUpdatePageModal
+            isOpen={createUpdatePageModal}
+            handleClose={() => setCreateUpdatePageModal(false)}
+            data={selectedPageToUpdate}
+            user={user}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+          />
+          <DeletePageModal
+            isOpen={deletePageModal}
+            setIsOpen={setDeletePageModal}
+            data={selectedPageToDelete}
+            user={user}
+          />
+        </>
+      )}
+
       {pages ? (
         <div className="space-y-4 h-full overflow-y-auto">
           {pages.length > 0 ? (
@@ -261,7 +262,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               description="You can think of Pages as an AI-powered notepad."
               image={emptyPage}
               primaryButton={{
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Page",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {

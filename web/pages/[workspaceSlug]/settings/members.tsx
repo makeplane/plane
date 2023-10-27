@@ -6,34 +6,32 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 import useWorkspaceMembers from "hooks/use-workspace-members";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout";
 // components
 import ConfirmWorkspaceMemberRemove from "components/workspace/confirm-workspace-member-remove";
 import SendWorkspaceInvitationModal from "components/workspace/send-workspace-invitation-modal";
-import { SettingsSidebar } from "components/project";
+import { WorkspaceSettingHeader } from "components/headers";
 // ui
-import { CustomMenu, CustomSelect, Icon, Loader, PrimaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { Button, CustomMenu, CustomSelect, Loader } from "@plane/ui";
 // icons
-import { XMarkIcon } from "components/icons";
+import { ChevronDown, X } from "lucide-react";
 // types
 import type { NextPage } from "next";
 // fetch-keys
-import {
-  WORKSPACE_DETAILS,
-  WORKSPACE_INVITATION_WITH_EMAIL,
-  WORKSPACE_MEMBERS_WITH_EMAIL,
-} from "constants/fetch-keys";
+import { WORKSPACE_INVITATION_WITH_EMAIL, WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
 // helper
-import { truncateText } from "helpers/string.helper";
+
+// services
+const workspaceService = new WorkspaceService();
 
 const MembersSettings: NextPage = () => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<string | null>(null);
@@ -49,23 +47,14 @@ const MembersSettings: NextPage = () => {
 
   const { isOwner } = useWorkspaceMembers(workspaceSlug?.toString(), Boolean(workspaceSlug));
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug.toString()) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug.toString()) : null)
-  );
-
   const { data: workspaceMembers, mutate: mutateMembers } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug.toString()) : null,
-    workspaceSlug
-      ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug.toString())
-      : null
+    workspaceSlug ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug.toString()) : null
   );
 
   const { data: workspaceInvitations, mutate: mutateInvitations } = useSWR(
     workspaceSlug ? WORKSPACE_INVITATION_WITH_EMAIL(workspaceSlug.toString()) : null,
-    workspaceSlug
-      ? () => workspaceService.workspaceInvitationsWithEmail(workspaceSlug.toString())
-      : null
+    workspaceSlug ? () => workspaceService.workspaceInvitationsWithEmail(workspaceSlug.toString()) : null
   );
 
   const members = [
@@ -104,96 +93,81 @@ const MembersSettings: NextPage = () => {
   };
 
   return (
-    <WorkspaceAuthorizationLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
-            link={`/${workspaceSlug}`}
-            linkTruncate
-          />
-          <BreadcrumbItem title="Members Settings" unshrinkTitle />
-        </Breadcrumbs>
-      }
-    >
-      <ConfirmWorkspaceMemberRemove
-        isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
-        onClose={() => {
-          setSelectedRemoveMember(null);
-          setSelectedInviteRemoveMember(null);
-        }}
-        data={
-          selectedRemoveMember
-            ? members.find((item) => item.id === selectedRemoveMember)
-            : selectedInviteRemoveMember
-            ? members.find((item) => item.id === selectedInviteRemoveMember)
-            : null
-        }
-        handleDelete={async () => {
-          if (!workspaceSlug) return;
-          if (selectedRemoveMember) {
-            workspaceService
-              .deleteWorkspaceMember(workspaceSlug as string, selectedRemoveMember)
-              .catch((err) => {
-                const error = err?.error;
-                setToastAlert({
-                  type: "error",
-                  title: "Error",
-                  message: error || "Something went wrong",
-                });
-              })
-              .finally(() => {
-                mutateMembers((prevData: any) =>
-                  prevData?.filter((item: any) => item.id !== selectedRemoveMember)
-                );
-              });
+    <AppLayout header={<WorkspaceSettingHeader title="Members Settings" />}>
+      <WorkspaceSettingLayout>
+        <ConfirmWorkspaceMemberRemove
+          isOpen={Boolean(selectedRemoveMember) || Boolean(selectedInviteRemoveMember)}
+          onClose={() => {
+            setSelectedRemoveMember(null);
+            setSelectedInviteRemoveMember(null);
+          }}
+          data={
+            selectedRemoveMember
+              ? members.find((item) => item.id === selectedRemoveMember)
+              : selectedInviteRemoveMember
+              ? members.find((item) => item.id === selectedInviteRemoveMember)
+              : null
           }
-          if (selectedInviteRemoveMember) {
-            mutateInvitations(
-              (prevData: any) =>
-                prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
-              false
-            );
-            workspaceService
-              .deleteWorkspaceInvitations(workspaceSlug as string, selectedInviteRemoveMember)
-              .then(() => {
-                setToastAlert({
-                  type: "success",
-                  title: "Success",
-                  message: "Member removed successfully",
+          handleDelete={async () => {
+            if (!workspaceSlug) return;
+            if (selectedRemoveMember) {
+              workspaceService
+                .deleteWorkspaceMember(workspaceSlug as string, selectedRemoveMember)
+                .catch((err) => {
+                  const error = err?.error;
+                  setToastAlert({
+                    type: "error",
+                    title: "Error",
+                    message: error || "Something went wrong",
+                  });
+                })
+                .finally(() => {
+                  mutateMembers((prevData: any) => prevData?.filter((item: any) => item.id !== selectedRemoveMember));
                 });
-              })
-              .catch((err) => {
-                const error = err?.error;
-                setToastAlert({
-                  type: "error",
-                  title: "Error",
-                  message: error || "Something went wrong",
+            }
+            if (selectedInviteRemoveMember) {
+              mutateInvitations(
+                (prevData: any) => prevData?.filter((item: any) => item.id !== selectedInviteRemoveMember),
+                false
+              );
+              workspaceService
+                .deleteWorkspaceInvitations(workspaceSlug as string, selectedInviteRemoveMember)
+                .then(() => {
+                  setToastAlert({
+                    type: "success",
+                    title: "Success",
+                    message: "Member removed successfully",
+                  });
+                })
+                .catch((err) => {
+                  const error = err?.error;
+                  setToastAlert({
+                    type: "error",
+                    title: "Error",
+                    message: error || "Something went wrong",
+                  });
+                })
+                .finally(() => {
+                  mutateInvitations();
                 });
-              })
-              .finally(() => {
-                mutateInvitations();
-              });
-          }
-          setSelectedRemoveMember(null);
-          setSelectedInviteRemoveMember(null);
-        }}
-      />
-      <SendWorkspaceInvitationModal
-        isOpen={inviteModal}
-        setIsOpen={setInviteModal}
-        workspace_slug={workspaceSlug as string}
-        user={user}
-        onSuccess={handleInviteModalSuccess}
-      />
-      <div className="flex flex-row gap-2 h-full">
-        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-          <SettingsSidebar />
-        </div>
+            }
+            setSelectedRemoveMember(null);
+            setSelectedInviteRemoveMember(null);
+          }}
+        />
+        <SendWorkspaceInvitationModal
+          isOpen={inviteModal}
+          setIsOpen={setInviteModal}
+          workspace_slug={workspaceSlug as string}
+          user={user}
+          onSuccess={handleInviteModalSuccess}
+        />
         <section className="pr-9 py-8 w-full overflow-y-auto">
-          <div className="flex items-center justify-between gap-4 pt-2 pb-3.5 border-b border-custom-border-200">
+          <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
             <h4 className="text-xl font-medium">Members</h4>
-            <PrimaryButton onClick={() => setInviteModal(true)}>Add Member</PrimaryButton>
+            <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
+              Add Member
+            </Button>
           </div>
           {!workspaceMembers || !workspaceInvitations ? (
             <Loader className="space-y-5">
@@ -206,10 +180,7 @@ const MembersSettings: NextPage = () => {
             <div className="divide-y divide-custom-border-200">
               {members.length > 0
                 ? members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="group flex items-center justify-between px-3.5 py-[18px]"
-                    >
+                    <div key={member.id} className="group flex items-center justify-between px-3.5 py-[18px]">
                       <div className="flex items-center gap-x-8 gap-y-2">
                         {member.avatar && member.avatar !== "" ? (
                           <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
@@ -239,21 +210,13 @@ const MembersSettings: NextPage = () => {
                                 <span>
                                   {member.first_name} {member.last_name}
                                 </span>
-                                <span className="text-custom-text-300 text-sm ml-2">
-                                  ({member.display_name})
-                                </span>
+                                <span className="text-custom-text-300 text-sm ml-2">({member.display_name})</span>
                               </a>
                             </Link>
                           ) : (
-                            <h4 className="text-sm cursor-default">
-                              {member.display_name || member.email}
-                            </h4>
+                            <h4 className="text-sm cursor-default">{member.display_name || member.email}</h4>
                           )}
-                          {isOwner && (
-                            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">
-                              {member.email}
-                            </p>
-                          )}
+                          {isOwner && <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email}</p>}
                         </div>
                       </div>
                       <div className="flex items-center gap-3 text-xs">
@@ -269,7 +232,7 @@ const MembersSettings: NextPage = () => {
                         )}
                         <CustomSelect
                           customButton={
-                            <button className="flex item-center gap-1">
+                            <div className="flex item-center gap-1">
                               <span
                                 className={`flex items-center text-sm font-medium ${
                                   member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
@@ -277,10 +240,8 @@ const MembersSettings: NextPage = () => {
                               >
                                 {ROLE[member.role as keyof typeof ROLE]}
                               </span>
-                              {member.memberId !== user?.id && (
-                                <Icon iconName="expand_more" className="text-lg font-medium" />
-                              )}
-                            </button>
+                              {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
+                            </div>
                           }
                           value={member.role}
                           onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
@@ -288,9 +249,7 @@ const MembersSettings: NextPage = () => {
 
                             mutateMembers(
                               (prevData: any) =>
-                                prevData?.map((m: any) =>
-                                  m.id === member.id ? { ...m, role: value } : m
-                                ),
+                                prevData?.map((m: any) => (m.id === member.id ? { ...m, role: value } : m)),
                               false
                             );
 
@@ -302,27 +261,18 @@ const MembersSettings: NextPage = () => {
                                 setToastAlert({
                                   type: "error",
                                   title: "Error!",
-                                  message:
-                                    "An error occurred while updating member role. Please try again.",
+                                  message: "An error occurred while updating member role. Please try again.",
                                 });
                               });
                           }}
-                          position="right"
                           disabled={
                             member.memberId === currentUser?.member.id ||
                             !member.status ||
-                            (currentUser &&
-                              currentUser.role !== 20 &&
-                              currentUser.role < member.role)
+                            (currentUser && currentUser.role !== 20 && currentUser.role < member.role)
                           }
                         >
                           {Object.keys(ROLE).map((key) => {
-                            if (
-                              currentUser &&
-                              currentUser.role !== 20 &&
-                              currentUser.role < parseInt(key)
-                            )
-                              return null;
+                            if (currentUser && currentUser.role !== 20 && currentUser.role < parseInt(key)) return null;
 
                             return (
                               <CustomSelect.Option key={key} value={key}>
@@ -342,12 +292,9 @@ const MembersSettings: NextPage = () => {
                             }}
                           >
                             <span className="flex items-center justify-start gap-2">
-                              <XMarkIcon className="h-4 w-4" />
+                              <X className="h-4 w-4" />
 
-                              <span>
-                                {" "}
-                                {user?.id === member.memberId ? "Leave" : "Remove member"}
-                              </span>
+                              <span> {user?.id === member.memberId ? "Leave" : "Remove member"}</span>
                             </span>
                           </CustomMenu.MenuItem>
                         </CustomMenu>
@@ -358,8 +305,8 @@ const MembersSettings: NextPage = () => {
             </div>
           )}
         </section>
-      </div>
-    </WorkspaceAuthorizationLayout>
+      </WorkspaceSettingLayout>
+    </AppLayout>
   );
 };
 

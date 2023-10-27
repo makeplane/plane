@@ -1,7 +1,8 @@
-import React from "react";
-
+import { FC, Fragment } from "react";
 // react-form
 import {
+  Control,
+  Controller,
   FieldError,
   FieldErrorsImpl,
   Merge,
@@ -13,35 +14,31 @@ import {
 import { ColorResult, SketchPicker } from "react-color";
 // component
 import { Popover, Transition } from "@headlessui/react";
-import { Input } from "components/ui";
+import { Input } from "@plane/ui";
 // icons
-import { ColorPickerIcon } from "components/icons";
+import { Palette } from "lucide-react";
 // types
-import { ICustomTheme } from "types";
+import { IUserTheme } from "types";
 
 type Props = {
-  name: keyof ICustomTheme;
+  name: keyof IUserTheme;
   position?: "left" | "right";
   watch: UseFormWatch<any>;
   setValue: UseFormSetValue<any>;
+  control: Control<IUserTheme, any>;
   error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
   register: UseFormRegister<any>;
 };
 
-export const ColorPickerInput: React.FC<Props> = ({
-  name,
-  position = "left",
-  watch,
-  setValue,
-  error,
-  register,
-}) => {
+export const ColorPickerInput: FC<Props> = (props) => {
+  const { name, position = "left", watch, setValue, error, control } = props;
+
   const handleColorChange = (newColor: ColorResult) => {
     const { hex } = newColor;
     setValue(name, hex);
   };
 
-  const getColorText = (colorName: keyof ICustomTheme) => {
+  const getColorText = (colorName: keyof IUserTheme) => {
     switch (colorName) {
       case "background":
         return "Background";
@@ -60,22 +57,28 @@ export const ColorPickerInput: React.FC<Props> = ({
 
   return (
     <div className="relative">
-      <Input
-        id={name}
+      <Controller
+        control={control}
         name={name}
-        type="name"
-        placeholder="#FFFFFF"
-        autoComplete="off"
-        error={error}
-        value={watch(name)}
-        register={register}
-        validations={{
+        rules={{
           required: `${getColorText(name)} color is required`,
           pattern: {
             value: /^#(?:[0-9a-fA-F]{3}){1,2}$/g,
             message: `${getColorText(name)} color should be hex format`,
           },
         }}
+        render={({ field: { onChange, ref } }) => (
+          <Input
+            id={name}
+            name={name}
+            type="text"
+            value={watch("name")}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(error)}
+            placeholder="#FFFFFF"
+          />
+        )}
       />
       <div className="absolute right-4 top-2.5">
         <Popover className="relative grid place-items-center">
@@ -95,16 +98,12 @@ export const ColorPickerInput: React.FC<Props> = ({
                     }}
                   />
                 ) : (
-                  <ColorPickerIcon
-                    height={14}
-                    width={14}
-                    className="fill-current text-custom-text-100"
-                  />
+                  <Palette className="h-3.5 w-3.5 text-custom-text-100" />
                 )}
               </Popover.Button>
 
               <Transition
-                as={React.Fragment}
+                as={Fragment}
                 enter="transition ease-out duration-200"
                 enterFrom="opacity-0 translate-y-1"
                 enterTo="opacity-100 translate-y-0"

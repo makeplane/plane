@@ -7,10 +7,10 @@ import useSWR from "swr";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
-import projectService from "services/project.service";
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // components
 import {
   CreateUpdateLabelInline,
@@ -19,21 +19,20 @@ import {
   SingleLabel,
   SingleLabelGroup,
 } from "components/labels";
-import { SettingsSidebar } from "components/project";
+import { ProjectSettingHeader } from "components/headers";
 // ui
-import { EmptyState, Loader, PrimaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Button, Loader } from "@plane/ui";
+import { EmptyState } from "components/common";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabels } from "types";
 import type { NextPage } from "next";
 // fetch-keys
-import { PROJECT_DETAILS, PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+
+// services
+const issueLabelService = new IssueLabelService();
 
 const LabelsSettings: NextPage = () => {
   // create/edit label form
@@ -57,17 +56,10 @@ const LabelsSettings: NextPage = () => {
 
   const scrollToRef = useRef<HTMLDivElement>(null);
 
-  const { data: projectDetails } = useSWR(
-    workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const { data: issueLabels } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -101,33 +93,15 @@ const LabelsSettings: NextPage = () => {
         onClose={() => setSelectDeleteLabel(null)}
         user={user}
       />
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${truncateText(projectDetails?.name ?? "Project", 32)}`}
-              link={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
-              linkTruncate
-            />
-            <BreadcrumbItem title="Labels Settings" unshrinkTitle />
-          </Breadcrumbs>
-        }
-      >
-        <div className="flex flex-row gap-2 h-full">
-          <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-            <SettingsSidebar />
-          </div>
+      <AppLayout header={<ProjectSettingHeader title="Labels Settings" />}>
+        <ProjectSettingLayout>
           <section className="pr-9 py-8 gap-10 w-full overflow-y-auto">
-            <div className="flex items-center justify-between pt-2 pb-3.5 border-b border-custom-border-200">
+            <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200">
               <h3 className="text-xl font-medium">Labels</h3>
 
-              <PrimaryButton
-                onClick={newLabel}
-                size="sm"
-                className="flex items-center justify-center"
-              >
+              <Button variant="primary" onClick={newLabel} size="sm">
                 Add label
-              </PrimaryButton>
+              </Button>
             </div>
             <div className="space-y-3 py-6 h-full w-full">
               {labelForm && (
@@ -193,7 +167,6 @@ const LabelsSettings: NextPage = () => {
                         text: "Add label",
                         onClick: () => newLabel(),
                       }}
-                      isFullScreen={false}
                     />
                   )
                 ) : (
@@ -207,8 +180,8 @@ const LabelsSettings: NextPage = () => {
               </>
             </div>
           </section>
-        </div>
-      </ProjectAuthorizationWrapper>
+        </ProjectSettingLayout>
+      </AppLayout>
     </>
   );
 };

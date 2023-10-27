@@ -1,17 +1,13 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 // services
-import trackEventServices from "services/track-event.service";
+import { TrackEventService } from "services/track_event.service";
 // ui
-import { CustomSelect, Tooltip } from "components/ui";
-// icons
-import { PriorityIcon } from "components/icons/priority-icon";
+import { CustomSelect, Tooltip, PriorityIcon } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
-import { ICurrentUserResponse, IIssue, TIssuePriorities } from "types";
+import { IUser, IIssue, TIssuePriorities } from "types";
 // constants
 import { PRIORITIES } from "constants/project";
 
@@ -22,16 +18,18 @@ type Props = {
   tooltipPosition?: "top" | "bottom";
   selfPositioned?: boolean;
   noBorder?: boolean;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   isNotAllowed: boolean;
 };
+
+const trackEventService = new TrackEventService();
 
 export const ViewPrioritySelect: React.FC<Props> = ({
   issue,
   partialUpdateIssue,
-  position = "left",
+  // position = "left",
   tooltipPosition = "top",
-  selfPositioned = false,
+  // selfPositioned = false,
   noBorder = false,
   user,
   isNotAllowed,
@@ -44,7 +42,7 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       value={issue.priority}
       onChange={(data: TIssuePriorities) => {
         partialUpdateIssue({ priority: data }, issue);
-        trackEventServices.trackIssuePartialPropertyUpdateEvent(
+        trackEventService.trackIssuePartialPropertyUpdateEvent(
           {
             workspaceSlug,
             workspaceId: issue.workspace,
@@ -54,16 +52,16 @@ export const ViewPrioritySelect: React.FC<Props> = ({
             issueId: issue.id,
           },
           "ISSUE_PROPERTY_UPDATE_PRIORITY",
-          user
+          user as IUser
         );
       }}
       maxHeight="md"
       customButton={
         <button
           type="button"
-          className={`grid place-items-center rounded ${
-            isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"
-          } ${noBorder ? "" : "h-6 w-6 border shadow-sm"} ${
+          className={`grid place-items-center rounded ${isNotAllowed ? "cursor-not-allowed" : "cursor-pointer"} ${
+            noBorder ? "" : "h-6 w-6 border shadow-sm"
+          } ${
             noBorder
               ? ""
               : issue.priority === "urgent"
@@ -71,15 +69,11 @@ export const ViewPrioritySelect: React.FC<Props> = ({
               : "border-custom-border-300 bg-custom-background-100"
           } items-center`}
         >
-          <Tooltip
-            tooltipHeading="Priority"
-            tooltipContent={issue.priority ?? "None"}
-            position={tooltipPosition}
-          >
+          <Tooltip tooltipHeading="Priority" tooltipContent={issue.priority ?? "None"} position={tooltipPosition}>
             <span className="flex gap-1 items-center text-custom-text-200 text-xs">
               <PriorityIcon
                 priority={issue.priority}
-                className={`text-sm ${
+                className={`h-3.5 w-3.5 ${
                   issue.priority === "urgent"
                     ? "text-white"
                     : issue.priority === "high"
@@ -98,13 +92,11 @@ export const ViewPrioritySelect: React.FC<Props> = ({
       }
       noChevron
       disabled={isNotAllowed}
-      position={position}
-      selfPositioned={selfPositioned}
     >
       {PRIORITIES?.map((priority) => (
         <CustomSelect.Option key={priority} value={priority} className="capitalize">
           <>
-            <PriorityIcon priority={priority} className="text-sm" />
+            <PriorityIcon priority={priority} className="h-3.5 w-3.5" />
             {priority ?? "None"}
           </>
         </CustomSelect.Option>

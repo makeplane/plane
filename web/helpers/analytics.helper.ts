@@ -1,7 +1,7 @@
 // nivo
 import { BarDatum } from "@nivo/bar";
 // helpers
-import { capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
+import { addSpaceIfCamelCase, capitalizeFirstLetter, generateRandomColor } from "helpers/string.helper";
 // types
 import { IAnalyticsData, IAnalyticsParams, IAnalyticsResponse, TStateGroups } from "types";
 // constants
@@ -69,11 +69,13 @@ export const generateBarColor = (
 
   if (!analytics) return color;
 
-  if (params[type] === "state__name" || params[type] === "labels__name")
-    color = analytics?.extras?.colors.find((c) => c.name === value)?.color;
+  if (params[type] === "state_id")
+    color = analytics?.extras.state_details.find((s) => s.state_id === value)?.state__color;
 
-  if (params[type] === "state__group")
-    color = STATE_GROUP_COLORS[value.toLowerCase() as TStateGroups];
+  if (params[type] === "labels__id")
+    color = analytics?.extras.label_details.find((l) => l.labels__id === value)?.labels__color ?? undefined;
+
+  if (params[type] === "state__group") color = STATE_GROUP_COLORS[value.toLowerCase() as TStateGroups];
 
   if (params[type] === "priority") {
     const priority = value.toLowerCase();
@@ -93,11 +95,47 @@ export const generateBarColor = (
   return color ?? generateRandomColor(value);
 };
 
+export const generateDisplayName = (
+  value: string,
+  analytics: IAnalyticsResponse,
+  params: IAnalyticsParams,
+  type: "x_axis" | "segment"
+): string => {
+  let displayName = addSpaceIfCamelCase(value);
+
+  if (!analytics) return displayName;
+
+  if (params[type] === "assignees__id")
+    displayName =
+      analytics?.extras.assignee_details.find((a) => a.assignees__id === value)?.assignees__display_name ??
+      "No assignee";
+
+  if (params[type] === "issue_cycle__cycle_id")
+    displayName =
+      analytics?.extras.cycle_details.find((c) => c.issue_cycle__cycle_id === value)?.issue_cycle__cycle__name ??
+      "None";
+
+  if (params[type] === "issue_module__module_id")
+    displayName =
+      analytics?.extras.module_details.find((m) => m.issue_module__module_id === value)?.issue_module__module__name ??
+      "None";
+
+  if (params[type] === "labels__id")
+    displayName = analytics?.extras.label_details.find((l) => l.labels__id === value)?.labels__name ?? "None";
+
+  if (params[type] === "state_id")
+    displayName = analytics?.extras.state_details.find((s) => s.state_id === value)?.state__name ?? "None";
+
+  if (DATE_KEYS.includes(params.segment ?? "")) displayName = renderMonthAndYear(value);
+
+  return displayName;
+};
+
 export const renderMonthAndYear = (date: string | number | null): string => {
   if (!date || date === "") return "";
 
-  return (
-    (MONTHS_LIST.find((m) => `${m.value}` === `${date}`.split("-")[1])?.label.substring(0, 3) ??
-      "None") + ` ${date}`.split("-")[0] ?? ""
-  );
+  const monthNumber = parseInt(`${date}`.split("-")[1], 10);
+  const year = `${date}`.split("-")[0];
+
+  return (MONTHS_LIST[monthNumber]?.shortTitle ?? "None") + ` ${year}` ?? "";
 };

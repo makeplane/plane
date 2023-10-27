@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 
 // ui
-import { Icon } from "components/ui";
-import { ChevronDown, PenSquare } from "lucide-react";
+import { ChevronDown, PenSquare, Search } from "lucide-react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -52,13 +51,8 @@ export const WorkspaceSidebarQuickAction = () => {
               document.dispatchEvent(e);
             }}
           >
-            <Icon
-              iconName="edit_square"
-              className="!text-lg !leading-4 text-custom-sidebar-text-300"
-            />
-            {!store?.theme?.sidebarCollapsed && (
-              <span className="text-sm font-medium">New Issue</span>
-            )}
+            <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
+            {!store?.theme?.sidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
           </button>
 
           {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
@@ -91,10 +85,7 @@ export const WorkspaceSidebarQuickAction = () => {
                     onClick={() => setIsDraftIssueModalOpen(true)}
                     className="w-full flex text-sm items-center rounded flex-shrink-0 py-[10px] px-3 bg-custom-background-100 shadow border-[0.5px] border-custom-border-300 text-custom-text-300"
                   >
-                    <PenSquare
-                      size={16}
-                      className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2"
-                    />
+                    <PenSquare size={16} className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2" />
                     Last Drafted Issue
                   </button>
                 </div>
@@ -114,7 +105,7 @@ export const WorkspaceSidebarQuickAction = () => {
             document.dispatchEvent(e);
           }}
         >
-          <Icon iconName="search" className="!text-lg !leading-4 text-custom-sidebar-text-300" />
+          <Search className="h-4 w-4 text-custom-sidebar-text-300" />
         </button>
       </div>
     </>

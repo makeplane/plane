@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// react-hook-form
 import { Controller, UseFormWatch, useForm } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
 // headless ui
 import { Listbox, Popover, Transition } from "@headlessui/react";
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { Input, Spinner } from "components/ui";
+import { Input, Spinner } from "@plane/ui";
 // icons
-import { PlusIcon, RectangleGroupIcon, TagIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Component, Plus, Tag, X } from "lucide-react";
 // types
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
@@ -37,6 +32,8 @@ const defaultValues: Partial<IIssueLabels> = {
   color: "#ff0000",
 };
 
+const issueLabelService = new IssueLabelService();
+
 export const SidebarLabelSelect: React.FC<Props> = ({
   issueDetails,
   issueControl,
@@ -51,12 +48,11 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
     reset,
     watch,
-    control: labelControl,
+    control,
     setFocus,
   } = useForm<Partial<IIssueLabels>>({
     defaultValues,
@@ -67,14 +63,14 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
   const handleNewLabel = async (formData: Partial<IIssueLabels>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await issuesService
+    await issueLabelService
       .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
       .then((res) => {
         reset(defaultValues);
@@ -98,7 +94,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     <div className={`space-y-3 py-3 ${uneditable ? "opacity-60" : ""}`}>
       <div className="flex items-start justify-between">
         <div className="flex basis-1/2 items-center gap-x-2 text-sm text-custom-text-200">
-          <TagIcon className="h-4 w-4" />
+          <Tag className="h-4 w-4" />
           <p>Label</p>
         </div>
         <div className="basis-1/2">
@@ -125,7 +121,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                       }}
                     />
                     {label.name}
-                    <XMarkIcon className="h-2 w-2 group-hover:text-red-500" />
+                    <X className="h-2 w-2 group-hover:text-red-500" />
                   </span>
                 );
             })}
@@ -165,9 +161,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                             {issueLabels ? (
                               issueLabels.length > 0 ? (
                                 issueLabels.map((label: IIssueLabels) => {
-                                  const children = issueLabels?.filter(
-                                    (l) => l.parent === label.id
-                                  );
+                                  const children = issueLabels?.filter((l) => l.parent === label.id);
 
                                   if (children.length === 0) {
                                     if (!label.parent)
@@ -175,9 +169,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                         <Listbox.Option
                                           key={label.id}
                                           className={({ active, selected }) =>
-                                            `${
-                                              active || selected ? "bg-custom-background-90" : ""
-                                            } ${
+                                            `${active || selected ? "bg-custom-background-90" : ""} ${
                                               selected ? "" : "text-custom-text-200"
                                             } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                           }
@@ -186,10 +178,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                           <span
                                             className="h-2 w-2 flex-shrink-0 rounded-full"
                                             style={{
-                                              backgroundColor:
-                                                label.color && label.color !== ""
-                                                  ? label.color
-                                                  : "#000",
+                                              backgroundColor: label.color && label.color !== "" ? label.color : "#000",
                                             }}
                                           />
                                           {label.name}
@@ -199,7 +188,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                     return (
                                       <div className="border-y border-custom-border-100 bg-custom-background-90">
                                         <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
-                                          <RectangleGroupIcon className="h-3 w-3" />
+                                          <Component className="h-3 w-3" />
                                           {label.name}
                                         </div>
                                         <div>
@@ -207,11 +196,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                                             <Listbox.Option
                                               key={child.id}
                                               className={({ active, selected }) =>
-                                                `${
-                                                  active || selected
-                                                    ? "bg-custom-background-100"
-                                                    : ""
-                                                } ${
+                                                `${active || selected ? "bg-custom-background-100" : ""} ${
                                                   selected ? "" : "text-custom-text-200"
                                                 } flex cursor-pointer select-none items-center gap-2 truncate p-2`
                                               }
@@ -248,20 +233,18 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               <button
                 type="button"
                 className={`flex ${
-                  isNotAllowed || uneditable
-                    ? "cursor-not-allowed"
-                    : "cursor-pointer hover:bg-custom-background-90"
+                  isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
                 } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
                 onClick={() => setCreateLabelForm((prevData) => !prevData)}
                 disabled={uneditable}
               >
                 {createLabelForm ? (
                   <>
-                    <XMarkIcon className="h-3 w-3" /> Cancel
+                    <X className="h-3 w-3" /> Cancel
                   </>
                 ) : (
                   <>
-                    <PlusIcon className="h-3 w-3" /> New
+                    <Plus className="h-3 w-3" /> New
                   </>
                 )}
               </button>
@@ -273,7 +256,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleNewLabel)}>
           <div>
             <Popover className="relative">
-              {({ open }) => (
+              {({}) => (
                 <>
                   <Popover.Button className="grid place-items-center outline-none">
                     {watch("color") && watch("color") !== "" && (
@@ -298,7 +281,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                     <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
                       <Controller
                         name="color"
-                        control={labelControl}
+                        control={control}
                         render={({ field: { value, onChange } }) => (
                           <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
                         )}
@@ -309,29 +292,35 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               )}
             </Popover>
           </div>
-          <Input
-            id="name"
+          <Controller
+            control={control}
             name="name"
-            placeholder="Title"
-            register={register}
-            validations={{
+            rules={{
               required: "This is required",
             }}
-            autoComplete="off"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                value={value ?? ""}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.name)}
+                placeholder="Title"
+                className="w-full"
+              />
+            )}
           />
           <button
             type="button"
             className="grid place-items-center rounded bg-red-500 p-2.5"
             onClick={() => setCreateLabelForm(false)}
           >
-            <XMarkIcon className="h-4 w-4 text-white" />
+            <X className="h-4 w-4 text-white" />
           </button>
-          <button
-            type="submit"
-            className="grid place-items-center rounded bg-green-500 p-2.5"
-            disabled={isSubmitting}
-          >
-            <PlusIcon className="h-4 w-4 text-white" />
+          <button type="submit" className="grid place-items-center rounded bg-green-500 p-2.5" disabled={isSubmitting}>
+            <Plus className="h-4 w-4 text-white" />
           </button>
         </form>
       )}

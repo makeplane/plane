@@ -1,0 +1,52 @@
+FROM python:3.11.1-alpine3.17 AS backend
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
+
+RUN apk --no-cache add \
+    "bash~=5.2" \
+    "libpq~=15" \
+    "libxslt~=1.1" \
+    "nodejs-current~=19" \
+    "xmlsec~=1.2" \
+    "libffi-dev" \
+    "bash~=5.2" \
+    "g++~=12.2" \
+    "gcc~=12.2" \
+    "cargo~=1.64" \
+    "git~=2" \
+    "make~=4.3" \
+    "postgresql13-dev~=13" \
+    "libc-dev" \
+    "linux-headers"
+
+WORKDIR /code
+
+COPY requirements.txt ./requirements.txt
+ADD requirements ./requirements
+
+RUN pip install -r requirements.txt --compile --no-cache-dir
+
+RUN addgroup -S plane && \
+    adduser -S captain -G plane
+
+RUN chown captain.plane /code
+
+USER captain
+
+# Add in Django deps and generate Django's static files
+
+USER root
+
+# RUN chmod +x ./bin/takeoff ./bin/worker ./bin/beat
+RUN chmod -R 777 /code
+
+USER captain
+
+# Expose container port and run entry point script
+EXPOSE 8000
+
+# CMD [ "./bin/takeoff" ]
+

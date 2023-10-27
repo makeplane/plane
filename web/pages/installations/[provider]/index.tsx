@@ -3,9 +3,12 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 // services
-import appInstallationsService from "services/app-installations.service";
+import { AppInstallationService } from "services/app_installation.service";
 // ui
-import { Spinner } from "components/ui";
+import { Spinner } from "@plane/ui";
+
+// services
+const appInstallationService = new AppInstallationService();
 
 const AppPostInstallation = () => {
   const router = useRouter();
@@ -13,7 +16,7 @@ const AppPostInstallation = () => {
 
   useEffect(() => {
     if (provider === "github" && state && installation_id) {
-      appInstallationsService
+      appInstallationService
         .addInstallationApp(state.toString(), provider, { installation_id })
         .then(() => {
           window.opener = null;
@@ -24,7 +27,7 @@ const AppPostInstallation = () => {
           console.log(err);
         });
     } else if (provider === "slack" && state && code) {
-      appInstallationsService
+      appInstallationService
         .getSlackAuthDetails(code.toString())
         .then((res) => {
           const [workspaceSlug, projectId, integrationId] = state.toString().split(",");
@@ -36,7 +39,7 @@ const AppPostInstallation = () => {
               },
             };
 
-            appInstallationsService
+            appInstallationService
               .addInstallationApp(state.toString(), provider, payload)
               .then((r) => {
                 window.opener = null;
@@ -56,7 +59,7 @@ const AppPostInstallation = () => {
               team_name: res.team.name,
               scopes: res.scope,
             };
-            appInstallationsService
+            appInstallationService
               .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
               .then((r) => {
                 window.opener = null;

@@ -1,19 +1,14 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-import useUserAuth from "hooks/use-user-auth";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { PlusIcon } from "@heroicons/react/24/outline";
-import { CyclesIcon } from "components/icons";
+import { ContrastIcon } from "@plane/ui";
+import { Plus } from "lucide-react";
 // services
-import cycleServices from "services/cycles.service";
+import { CycleService } from "services/cycle.service";
 // components
-import { CreateUpdateCycleModal } from "components/cycles";
+import { CycleCreateUpdateModal } from "components/cycles";
 // fetch-keys
 import { CYCLES_LIST } from "constants/fetch-keys";
 
@@ -24,24 +19,19 @@ export type IssueCycleSelectProps = {
   multiple?: boolean;
 };
 
-export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
-  projectId,
-  value,
-  onChange,
-  multiple = false,
-}) => {
+const cycleService = new CycleService();
+
+export const CycleSelect: React.FC<IssueCycleSelectProps> = ({ projectId, value, onChange, multiple = false }) => {
   // states
   const [isCycleModalActive, setCycleModalActive] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { user } = useUserAuth();
-
   const { data: cycles } = useSWR(
     workspaceSlug && projectId ? CYCLES_LIST(projectId) : null,
     workspaceSlug && projectId
-      ? () => cycleServices.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
+      ? () => cycleService.getCyclesWithParams(workspaceSlug as string, projectId as string, "all")
       : null
   );
 
@@ -57,18 +47,21 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
 
   return (
     <>
-      <CreateUpdateCycleModal
-        isOpen={isCycleModalActive}
-        handleClose={closeCycleModal}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <CycleCreateUpdateModal
+          isOpen={isCycleModalActive}
+          handleClose={closeCycleModal}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+        />
+      )}
       <Listbox as="div" className="relative" value={value} onChange={onChange} multiple={multiple}>
         {({ open }) => (
           <>
             <Listbox.Button
               className={`flex cursor-pointer items-center gap-1 rounded-md border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-300 hover:bg-custom-background-90 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500`}
             >
-              <CyclesIcon className="h-3 w-3 text-custom-text-200" />
+              <ContrastIcon className="h-3 w-3 text-custom-text-200" />
               <div className="flex items-center gap-2 truncate">
                 {cycles?.find((c) => c.id === value)?.name ?? "Cycles"}
               </div>
@@ -92,10 +85,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                           key={option.value}
                           className={({ selected, active }) =>
                             `${
-                              selected ||
-                              (Array.isArray(value)
-                                ? value.includes(option.value)
-                                : value === option.value)
+                              selected || (Array.isArray(value) ? value.includes(option.value) : value === option.value)
                                 ? "bg-indigo-50 font-medium"
                                 : ""
                             } ${
@@ -104,9 +94,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                           }
                           value={option.value}
                         >
-                          <span className={` flex items-center gap-2 truncate`}>
-                            {option.display}
-                          </span>
+                          <span className={` flex items-center gap-2 truncate`}>{option.display}</span>
                         </Listbox.Option>
                       ))
                     ) : (
@@ -120,7 +108,7 @@ export const CycleSelect: React.FC<IssueCycleSelectProps> = ({
                     className="relative w-full flex select-none items-center gap-x-2 p-2 text-gray-400 hover:bg-indigo-50 hover:text-custom-text-100"
                     onClick={openCycleModal}
                   >
-                    <PlusIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
+                    <Plus className="h-4 w-4 text-gray-400" aria-hidden="true" />
                     <span>Create cycle</span>
                   </button>
                 </div>

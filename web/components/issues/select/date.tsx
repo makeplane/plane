@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Popover, Transition } from "@headlessui/react";
-import { CalendarDaysIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { CalendarDays, X } from "lucide-react";
 // react-datepicker
 import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
@@ -25,12 +25,12 @@ export const IssueDateSelect: React.FC<Props> = ({ label, maxDate, minDate, onCh
               <>
                 <span className="text-custom-text-100">{renderShortDateWithYearFormat(value)}</span>
                 <button onClick={() => onChange(null)}>
-                  <XMarkIcon className="h-3 w-3" />
+                  <X className="h-3 w-3" />
                 </button>
               </>
             ) : (
               <>
-                <CalendarDaysIcon className="h-3.5 w-3.5 flex-shrink-0" />
+                <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" />
                 <span>{label}</span>
               </>
             )}

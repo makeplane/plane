@@ -1,42 +1,44 @@
 import React from "react";
-// swr
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// services
+import { IssueService } from "services/issue";
+import { TrackEventService } from "services/track_event.service";
 // components
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
 import { MembersSelect, PrioritySelect } from "components/project";
 import { StateSelect } from "components/states";
-// hooks
-import useIssuesProperties from "hooks/use-issue-properties";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // types
-import { ICurrentUserResponse, IIssue, IState } from "types";
+import { IUser, IIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-// services
-import issuesService from "services/issues.service";
-import trackEventServices from "services/track-event.service";
 
 export interface IIssueProperty {
   workspaceSlug: string;
-  projectId: string;
   parentIssue: IIssue;
   issue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
 }
 
-export const IssueProperty: React.FC<IIssueProperty> = ({
-  workspaceSlug,
-  projectId,
-  parentIssue,
-  issue,
-  user,
-  editable,
-}) => {
-  const [properties] = useIssuesProperties(workspaceSlug, projectId);
+// services
+const issueService = new IssueService();
+const trackEventService = new TrackEventService();
+
+export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
+  const { workspaceSlug, parentIssue, issue, user, editable } = props;
+
+  const { project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
+
+  const displayProperties = issueFilterStore.userDisplayProperties ?? {};
 
   const handlePriorityChange = (data: any) => {
     partialUpdateIssue({ priority: data });
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -46,19 +48,16 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user
+      user as IUser
     );
   };
 
-  const handleStateChange = (data: string, states: IState[] | undefined) => {
-    const oldState = states?.find((s) => s.id === issue.state);
-    const newState = states?.find((s) => s.id === data);
-
+  const handleStateChange = (data: IState) => {
     partialUpdateIssue({
-      state: data,
-      state_detail: newState,
+      state: data.id,
+      state_detail: data,
     });
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -68,34 +67,14 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_STATE",
-      user
+      user as IUser
     );
-    if (oldState?.group !== "completed" && newState?.group !== "completed") {
-      trackEventServices.trackIssueMarkedAsDoneEvent(
-        {
-          workspaceSlug: issue.workspace_detail.slug,
-          workspaceId: issue.workspace_detail.id,
-          projectId: issue.project_detail.id,
-          projectIdentifier: issue.project_detail.identifier,
-          projectName: issue.project_detail.name,
-          issueId: issue.id,
-        },
-        user
-      );
-    }
   };
 
-  const handleAssigneeChange = (data: any) => {
-    let newData = issue.assignees ?? [];
-
-    if (newData && newData.length > 0) {
-      if (newData.includes(data)) newData = newData.splice(newData.indexOf(data), 1);
-      else newData = [...newData, data];
-    } else newData = [...newData, data];
-
+  const handleAssigneeChange = (data: string[]) => {
     partialUpdateIssue({ assignees_list: data, assignees: data });
 
-    trackEventServices.trackIssuePartialPropertyUpdateEvent(
+    trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
         workspaceSlug,
         workspaceId: issue.workspace,
@@ -105,7 +84,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         issueId: issue.id,
       },
       "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user
+      user as IUser
     );
   };
 
@@ -123,13 +102,7 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
       false
     );
 
-    const issueResponse = await issuesService.patchIssue(
-      workspaceSlug as string,
-      issue.project,
-      issue.id,
-      data,
-      user
-    );
+    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project, issue.id, data, user);
 
     mutate(
       SUB_ISSUES(parentIssue.id),
@@ -144,9 +117,11 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
     );
   };
 
+  const statesList = getStatesList(projectStore.states?.[issue.project]);
+
   return (
     <div className="relative flex items-center gap-1">
-      {properties.priority && (
+      {displayProperties.priority && (
         <div className="flex-shrink-0">
           <PrioritySelect
             value={issue.priority}
@@ -157,52 +132,52 @@ export const IssueProperty: React.FC<IIssueProperty> = ({
         </div>
       )}
 
-      {properties.state && (
+      {displayProperties.state && (
         <div className="flex-shrink-0">
           <StateSelect
             value={issue.state_detail}
-            projectId={issue.project_detail.id}
-            onChange={handleStateChange}
+            states={statesList}
+            onChange={(data) => handleStateChange(data)}
             hideDropdownArrow
             disabled={!editable}
           />
         </div>
       )}
 
-      {properties.start_date && issue.start_date && (
+      {displayProperties.start_date && issue.start_date && (
         <div className="flex-shrink-0 w-[104px]">
           <ViewStartDateSelect
             issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            user={user}
-            isNotAllowed={!editable}
+            onChange={(val) => partialUpdateIssue({ start_date: val })}
+            disabled={!editable}
           />
         </div>
       )}
 
-      {properties.due_date && issue.target_date && (
+      {displayProperties.due_date && issue.target_date && (
         <div className="flex-shrink-0 w-[104px]">
-          <ViewDueDateSelect
-            issue={issue}
-            partialUpdateIssue={partialUpdateIssue}
-            user={user}
-            isNotAllowed={!editable}
-          />
+          {user && (
+            <ViewDueDateSelect
+              issue={issue}
+              onChange={(val) => partialUpdateIssue({ target_date: val })}
+              disabled={!editable}
+            />
+          )}
         </div>
       )}
 
-      {properties.assignee && (
+      {displayProperties.assignee && (
         <div className="flex-shrink-0">
           <MembersSelect
             value={issue.assignees}
-            projectId={issue.project_detail.id}
-            onChange={handleAssigneeChange}
-            membersDetails={issue.assignee_details}
+            onChange={(val) => handleAssigneeChange(val)}
+            members={projectStore.members ? (projectStore.members[issue.project] ?? []).map((m) => m.member) : []}
             hideDropdownArrow
             disabled={!editable}
+            multiple
           />
         </div>
       )}
     </div>
   );
-};
+});
