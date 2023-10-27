@@ -92,7 +92,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         )}
       </div>
       <div className="space-y-2.5 w-full overflow-hidden">
-        <div className="text-sm w-full break-words">
+        { !notification.message ? <div className="text-sm w-full break-words">
           <span className="font-semibold">
             {notification.triggered_by_details.is_bot
               ? notification.triggered_by_details.first_name
@@ -133,7 +133,11 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               "the issue and assigned it to you."
             )}
           </span>
-        </div>
+        </div> : <div className="text-sm w-full break-words">
+           <span className="semi-bold">
+               { notification.message }
+           </span>
+         </div> }
 
         <div className="flex justify-between gap-2 text-xs">
           <p className="text-custom-text-300">
