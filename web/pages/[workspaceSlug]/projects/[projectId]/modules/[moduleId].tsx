@@ -27,7 +27,7 @@ const ModuleIssuesPage: NextPage = () => {
 
   const { module: moduleStore } = useMobxStore();
 
-  const { storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
+  const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
   const { error } = useSWR(
@@ -60,6 +60,10 @@ const ModuleIssuesPage: NextPage = () => {
   //   setModuleIssuesListModal(true);
   // };
 
+  const toggleSidebar = () => {
+    setValue(`${!isSidebarCollapsed}`);
+  };
+
   return (
     <>
       <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
@@ -87,13 +91,13 @@ const ModuleIssuesPage: NextPage = () => {
             </div>
             {moduleId && !isSidebarCollapsed && (
               <div
-                className="h-full w-[24rem] z-10 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 pt-5 pb-10 duration-300 flex-shrink-0"
+                className="flex flex-col gap-3.5 h-full w-[24rem] z-10 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 py-3.5 duration-300 flex-shrink-0"
                 style={{
                   boxShadow:
                     "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
                 }}
               >
-                <ModuleDetailsSidebar isOpen={!isSidebarCollapsed} moduleId={moduleId.toString()} />
+                <ModuleDetailsSidebar moduleId={moduleId.toString()} handleClose={toggleSidebar} />
               </div>
             )}
           </div>
