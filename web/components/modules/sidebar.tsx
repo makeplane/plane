@@ -318,22 +318,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <span className="text-base">Issues</span>
               </div>
               <div className="flex items-center w-1/2">
-                <span className="text-sm text-custom-text-300">{issueCount}</span>
+                <span className="text-sm text-custom-text-300 px-1.5">{issueCount}</span>
               </div>
             </div>
-            {/* <div className="flex items-center justify-start gap-1">
-              <div className="flex w-40 items-center justify-start gap-2 text-custom-text-200">
-                <PieChart className="h-5 w-5" />
-                <span>Progress</span>
-              </div>
-
-              <div className="flex items-center gap-2.5 text-custom-text-200">
-                <span className="h-4 w-4">
-                  <ProgressBar value={moduleDetails.completed_issues} maxValue={moduleDetails.total_issues} />
-                </span>
-                {moduleDetails.completed_issues}/{moduleDetails.total_issues}
-              </div>
-            </div> */}
           </div>
 
           <div className="flex flex-col">

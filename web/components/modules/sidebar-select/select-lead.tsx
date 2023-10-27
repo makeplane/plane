@@ -7,7 +7,7 @@ import { ProjectService } from "services/project";
 import { Avatar } from "components/ui";
 import { CustomSearchSelect } from "@plane/ui";
 // icons
-import { UserCircle2 } from "lucide-react";
+import { ChevronDown, UserCircle2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -50,15 +50,23 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
         <UserCircle2 className="h-4 w-4" />
         <span className="text-base">Lead</span>
       </div>
-      <div className="flex items-center w-1/2">
+      <div className="flex items-center w-1/2 rounded-sm">
         <CustomSearchSelect
-          className="w-full"
+          className="w-full rounded-sm"
           value={value}
-          label={
-            <div className="flex items-center gap-2">
-              {selectedOption && <Avatar user={selectedOption} height="18px" width="18px" />}
-              {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">No lead</span>}
-            </div>
+          customButtonClassName="rounded-sm"
+          customButton={
+            selectedOption ? (
+              <div className="flex items-center justify-start gap-2 p-0.5 w-full">
+                <Avatar user={selectedOption} />
+                <span className="text-sm text-custom-text-200">{selectedOption?.display_name}</span>
+              </div>
+            ) : (
+              <div className="group flex items-center justify-between gap-2 p-1 text-sm text-custom-text-400 w-full">
+                <span>No lead</span>
+                <ChevronDown className="h-3.5 w-3.5 hidden group-hover:flex" />
+              </div>
+            )
           }
           options={options}
           maxHeight="md"
