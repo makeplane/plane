@@ -8,6 +8,7 @@ export type TIssueGroupByOptions =
   | "state_detail.group"
   | "project"
   | "assignees"
+  | "mentions"
   | null;
 
 export type TIssueOrderByOptions =
@@ -40,6 +41,7 @@ export type TIssueParams =
   | "state_group"
   | "state"
   | "assignees"
+  | "mentions"
   | "created_by"
   | "subscriber"
   | "labels"
