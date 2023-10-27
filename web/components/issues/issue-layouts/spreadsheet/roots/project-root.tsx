@@ -66,6 +66,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
       handleIssueAction={() => {}}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
+      enableQuickCreateIssue
     />
   );
 });
