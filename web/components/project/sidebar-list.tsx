@@ -1,6 +1,5 @@
 import React, { useState, FC, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
@@ -12,7 +11,7 @@ import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 // icons
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
@@ -24,11 +23,7 @@ export const ProjectSidebarList: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // swr
-  useSWR(
-    workspaceSlug ? "PROJECTS_LIST" : null,
-    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug?.toString()) : null
-  );
+
   // states
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
@@ -50,8 +45,7 @@ export const ProjectSidebarList: FC = observer(() => {
     : undefined;
 
   const handleCopyText = (projectId: string) => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",

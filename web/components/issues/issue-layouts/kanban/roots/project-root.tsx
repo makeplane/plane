@@ -1,42 +1,43 @@
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { DragDropContext } from "@hello-pangea/dnd";
+import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { KanBanSwimLanes } from "./swimlanes";
-import { KanBan } from "./default";
+import { KanBanSwimLanes } from "../swimlanes";
+import { KanBan } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
-// constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
+// constants
+import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
-export interface IProfileIssuesKanBanLayout {}
+export interface IKanBanLayout {}
 
-export const ProfileIssuesKanBanLayout: FC = observer(() => {
+export const KanBanLayout: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
   const {
-    workspace: workspaceStore,
     project: projectStore,
-    profileIssues: profileIssuesStore,
-    profileIssueFilters: profileIssueFiltersStore,
+    issue: issueStore,
+    issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const issues = issueStore?.getIssues;
 
-  const issues = profileIssuesStore?.getIssues;
+  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 
-  const sub_group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.sub_group_by || null;
+  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
-  const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
+  const display_properties = issueFilterStore?.userDisplayProperties || null;
 
-  const display_properties = profileIssueFiltersStore?.userDisplayProperties || null;
-
-  const currentKanBanView: "swimlanes" | "default" = profileIssueFiltersStore?.userDisplayFilters?.sub_group_by
+  const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
     : "default";
 
@@ -61,25 +62,30 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
       if (!workspaceSlug) return;
 
       if (action === "update") {
-        profileIssuesStore.updateIssueStructure(group_by, sub_group_by, issue);
+        issueStore.updateIssueStructure(group_by, sub_group_by, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") profileIssuesStore.deleteIssue(group_by, sub_group_by, issue);
+      if (action === "delete") issueStore.deleteIssue(group_by, sub_group_by, issue);
     },
-    [profileIssuesStore, issueDetailStore, workspaceSlug]
+    [issueStore, issueDetailStore, workspaceSlug]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
+  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
+
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = workspaceStore.workspaceLabels || null;
+  const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.workspaceProjects || null;
-  const estimates = null;
+  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const estimates =
+    projectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+      : null;
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
@@ -104,9 +110,10 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            enableQuickIssueCreate
+            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
           />
         ) : (
           <KanBanSwimLanes
@@ -128,9 +135,9 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
           />
         )}
       </DragDropContext>

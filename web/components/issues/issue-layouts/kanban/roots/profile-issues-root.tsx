@@ -1,41 +1,42 @@
-import React, { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { DragDropContext } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { KanBanSwimLanes } from "./swimlanes";
-import { KanBan } from "./default";
-import { CycleIssueQuickActions } from "components/issues";
-// types
-import { IIssue } from "types";
+import { KanBanSwimLanes } from "../swimlanes";
+import { KanBan } from "../default";
+import { ProjectIssueQuickActions } from "components/issues";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
+// types
+import { IIssue } from "types";
 
-export interface ICycleKanBanLayout {}
+export interface IProfileIssuesKanBanLayout {}
 
-export const CycleKanBanLayout: React.FC = observer(() => {
+export const ProfileIssuesKanBanLayout: FC = observer(() => {
   const {
+    workspace: workspaceStore,
     project: projectStore,
-    cycleIssue: cycleIssueStore,
-    issueFilter: issueFilterStore,
-    cycleIssueKanBanView: cycleIssueKanBanViewStore,
+    profileIssues: profileIssuesStore,
+    profileIssueFilters: profileIssueFiltersStore,
+    issueKanBanView: issueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const issues = cycleIssueStore?.getIssues;
+  const issues = profileIssuesStore?.getIssues;
 
-  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
+  const sub_group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.sub_group_by || null;
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+  const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const display_properties = profileIssueFiltersStore?.userDisplayProperties || null;
 
-  const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
+  const currentKanBanView: "swimlanes" | "default" = profileIssueFiltersStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
     : "default";
 
@@ -51,43 +52,33 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       return;
 
     currentKanBanView === "default"
-      ? cycleIssueKanBanViewStore?.handleDragDrop(result.source, result.destination)
-      : cycleIssueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
+      ? issueKanBanViewStore?.handleDragDrop(result.source, result.destination)
+      : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
   const handleIssues = useCallback(
-    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
-      if (!workspaceSlug || !cycleId) return;
+    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: "update" | "delete") => {
+      if (!workspaceSlug) return;
 
       if (action === "update") {
-        cycleIssueStore.updateIssueStructure(group_by, null, issue);
+        profileIssuesStore.updateIssueStructure(group_by, sub_group_by, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") cycleIssueStore.deleteIssue(group_by, null, issue);
-      if (action === "remove" && issue.bridge_id) {
-        cycleIssueStore.deleteIssue(group_by, null, issue);
-        cycleIssueStore.removeIssueFromCycle(
-          workspaceSlug.toString(),
-          issue.project,
-          cycleId.toString(),
-          issue.bridge_id
-        );
-      }
+      if (action === "delete") profileIssuesStore.deleteIssue(group_by, sub_group_by, issue);
     },
-    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
+    [profileIssuesStore, issueDetailStore, workspaceSlug]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
-    cycleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
+    issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
+  const labels = workspaceStore.workspaceLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.projectStates || null;
-  const estimates = null;
+  const projects = projectStore?.workspaceProjects || null;
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
@@ -99,23 +90,22 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={handleIssues}
             quickActions={(sub_group_by, group_by, issue) => (
-              <CycleIssueQuickActions
+              <ProjectIssueQuickActions
                 issue={issue}
                 handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-                handleRemoveFromCycle={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
               />
             )}
             display_properties={display_properties}
-            kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
+            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={null}
           />
         ) : (
           <KanBanSwimLanes
@@ -124,23 +114,22 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={handleIssues}
             quickActions={(sub_group_by, group_by, issue) => (
-              <CycleIssueQuickActions
+              <ProjectIssueQuickActions
                 issue={issue}
                 handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-                handleRemoveFromCycle={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
               />
             )}
             display_properties={display_properties}
-            kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
+            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={null}
           />
         )}
       </DragDropContext>

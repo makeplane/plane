@@ -5,29 +5,31 @@ import { DragDropContext } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { KanBanSwimLanes } from "./swimlanes";
-import { KanBan } from "./default";
-import { ModuleIssueQuickActions } from "components/issues";
+import { KanBanSwimLanes } from "../swimlanes";
+import { KanBan } from "../default";
+import { CycleIssueQuickActions } from "components/issues";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
-export interface IModuleKanBanLayout {}
+export interface ICycleKanBanLayout {}
 
-export const ModuleKanBanLayout: React.FC = observer(() => {
+export const CycleKanBanLayout: React.FC = observer(() => {
   const {
     project: projectStore,
-    moduleIssue: moduleIssueStore,
+    cycleIssue: cycleIssueStore,
     issueFilter: issueFilterStore,
-    moduleIssueKanBanView: moduleIssueKanBanViewStore,
+    cycleIssueKanBanView: cycleIssueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const issues = moduleIssueStore?.getIssues;
+  const issues = cycleIssueStore?.getIssues;
 
   const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 
@@ -51,43 +53,48 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       return;
 
     currentKanBanView === "default"
-      ? moduleIssueKanBanViewStore?.handleDragDrop(result.source, result.destination)
-      : moduleIssueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
+      ? cycleIssueKanBanViewStore?.handleDragDrop(result.source, result.destination)
+      : cycleIssueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
   };
 
   const handleIssues = useCallback(
     (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
-      if (!workspaceSlug || !moduleId) return;
+      if (!workspaceSlug || !cycleId) return;
 
       if (action === "update") {
-        moduleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
+        cycleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       }
-      if (action === "delete") moduleIssueStore.deleteIssue(group_by, sub_group_by, issue);
+      if (action === "delete") cycleIssueStore.deleteIssue(group_by, sub_group_by, issue);
       if (action === "remove" && issue.bridge_id) {
-        moduleIssueStore.deleteIssue(group_by, null, issue);
-        moduleIssueStore.removeIssueFromModule(
+        cycleIssueStore.deleteIssue(group_by, sub_group_by, issue);
+        cycleIssueStore.removeIssueFromCycle(
           workspaceSlug.toString(),
           issue.project,
-          moduleId.toString(),
+          cycleId.toString(),
           issue.bridge_id
         );
       }
     },
-    [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
+    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
-    moduleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
+    cycleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
+
+  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
 
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.projectStates || null;
-  const estimates = null;
+  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const estimates =
+    projectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+      : null;
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
@@ -99,23 +106,23 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={handleIssues}
             quickActions={(sub_group_by, group_by, issue) => (
-              <ModuleIssueQuickActions
+              <CycleIssueQuickActions
                 issue={issue}
                 handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-                handleRemoveFromModule={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
+                handleRemoveFromCycle={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
               />
             )}
             display_properties={display_properties}
-            kanBanToggle={moduleIssueKanBanViewStore?.kanBanToggle}
+            kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
           />
         ) : (
           <KanBanSwimLanes
@@ -124,23 +131,23 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
             group_by={group_by}
             handleIssues={handleIssues}
             quickActions={(sub_group_by, group_by, issue) => (
-              <ModuleIssueQuickActions
+              <CycleIssueQuickActions
                 issue={issue}
                 handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-                handleRemoveFromModule={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
+                handleRemoveFromCycle={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
               />
             )}
             display_properties={display_properties}
-            kanBanToggle={moduleIssueKanBanViewStore?.kanBanToggle}
+            kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
-            members={members}
+            members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates}
+            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
           />
         )}
       </DragDropContext>

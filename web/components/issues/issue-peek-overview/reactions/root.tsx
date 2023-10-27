@@ -15,7 +15,7 @@ export const IssueReaction: FC<IIssueReaction> = (props) => {
 
   const handleReaction = (reaction: string) => {
     const isReactionAvailable =
-      issueReactions[reaction].find((_reaction: any) => _reaction.actor === user?.id) ?? false;
+      issueReactions?.[reaction].find((_reaction: any) => _reaction.actor === user?.id) ?? false;
 
     if (isReactionAvailable) issueReactionRemove(reaction);
     else issueReactionCreate(reaction);

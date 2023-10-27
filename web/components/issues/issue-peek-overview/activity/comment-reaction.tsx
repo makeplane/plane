@@ -9,8 +9,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
 interface IIssueCommentReaction {
-  workspaceSlug: any;
-  projectId: any;
+  workspaceSlug: string;
+  projectId: string;
+  issueId: string;
   user: any;
 
   comment: any;
@@ -19,7 +20,8 @@ interface IIssueCommentReaction {
 }
 
 export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) => {
-  const { workspaceSlug, projectId, user, comment, issueCommentReactionCreate, issueCommentReactionRemove } = props;
+  const { workspaceSlug, projectId, issueId, user, comment, issueCommentReactionCreate, issueCommentReactionRemove } =
+    props;
 
   const { issueDetail: issueDetailStore }: RootStore = useMobxStore();
 
@@ -32,15 +34,18 @@ export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) 
   };
 
   useSWR(
-    workspaceSlug && projectId && comment && comment?.id ? `ISSUE+PEEK_OVERVIEW_COMMENT_${comment?.id}` : null,
+    workspaceSlug && projectId && issueId && comment && comment?.id
+      ? `ISSUE+PEEK_OVERVIEW_COMMENT_${comment?.id}`
+      : null,
     () => {
-      if (workspaceSlug && projectId && comment && comment.id) {
-        issueDetailStore.fetchIssueCommentReactions(workspaceSlug, projectId, comment?.id);
+      if (workspaceSlug && projectId && issueId && comment && comment.id) {
+        issueDetailStore.fetchIssueCommentReactions(workspaceSlug, projectId, issueId, comment?.id);
       }
     }
   );
 
-  const issueReactions = issueDetailStore?.getIssueCommentReactionsByCommentId(comment.id) || [];
+  let issueReactions = issueDetailStore?.getIssueCommentReactions || null;
+  issueReactions = issueReactions && comment.id ? issueReactions?.[comment.id] : [];
 
   return (
     <div>

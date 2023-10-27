@@ -6,6 +6,8 @@ import { RootStore } from "../root";
 import { IIssue } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
+// uuid
+import { v4 as uuidv4 } from "uuid";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -22,7 +24,9 @@ export interface IIssueDetailStore {
     [issueId: string]: any;
   };
   issue_comment_reactions: {
-    [issueId: string]: any;
+    [issueId: string]: {
+      [comment_id: string]: any;
+    };
   };
 
   setPeekId: (issueId: string | null) => void;
@@ -31,12 +35,13 @@ export interface IIssueDetailStore {
   getIssue: IIssue | null;
   getIssueReactions: any | null;
   getIssueComments: any | null;
-  getIssueCommentReactionsByCommentId: any | null;
+  getIssueCommentReactions: any | null;
 
   // fetch issue details
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   // creating issue
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
+  optimisticallyCreateIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // updating issue
   updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // deleting issue
@@ -59,16 +64,23 @@ export interface IIssueDetailStore {
   ) => Promise<void>;
   removeIssueComment: (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => Promise<void>;
 
-  fetchIssueCommentReactions: (workspaceSlug: string, projectId: string, commentId: string) => Promise<void>;
+  fetchIssueCommentReactions: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    commentId: string
+  ) => Promise<void>;
   creationIssueCommentReaction: (
     workspaceSlug: string,
     projectId: string,
+    issueId: string,
     commentId: string,
     reaction: string
   ) => Promise<void>;
   removeIssueCommentReaction: (
     workspaceSlug: string,
     projectId: string,
+    issueId: string,
     commentId: string,
     reaction: string
   ) => Promise<void>;
@@ -114,13 +126,13 @@ export class IssueDetailStore implements IIssueDetailStore {
       getIssue: computed,
       getIssueReactions: computed,
       getIssueComments: computed,
+      getIssueCommentReactions: computed,
 
       setPeekId: action,
 
-      getIssueCommentReactionsByCommentId: action,
-
       fetchIssueDetails: action,
       createIssue: action,
+      optimisticallyCreateIssue: action,
       updateIssue: action,
       deleteIssue: action,
 
@@ -164,11 +176,11 @@ export class IssueDetailStore implements IIssueDetailStore {
     return _comments || null;
   }
 
-  getIssueCommentReactionsByCommentId = (commentId: string) => {
-    if (!commentId) return null;
-    const _reactions = this.issue_comment_reactions[commentId];
-    return _reactions || null;
-  };
+  get getIssueCommentReactions() {
+    if (!this.peekId) return null;
+    const _commentReactions = this.issue_comment_reactions[this.peekId];
+    return _commentReactions || null;
+  }
 
   setPeekId = (issueId: string | null) => (this.peekId = issueId);
 
@@ -195,6 +207,44 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.loader = false;
         this.error = error;
       });
+
+      throw error;
+    }
+  };
+
+  optimisticallyCreateIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
+    const tempId = data?.id || uuidv4();
+
+    runInAction(() => {
+      this.loader = true;
+      this.error = null;
+      this.issues = {
+        ...this.issues,
+        [tempId]: data as IIssue,
+      };
+    });
+
+    try {
+      const response = await this.issueService.createIssue(
+        workspaceSlug,
+        projectId,
+        data,
+        this.rootStore.user.currentUser!
+      );
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+        this.issues = {
+          ...this.issues,
+          [response.id]: response,
+        };
+      });
+
+      return response;
+    } catch (error) {
+      this.loader = false;
+      this.error = error;
 
       throw error;
     }
@@ -513,13 +563,16 @@ export class IssueDetailStore implements IIssueDetailStore {
   };
 
   // comment reaction
-  fetchIssueCommentReactions = async (workspaceSlug: string, projectId: string, commentId: string) => {
+  fetchIssueCommentReactions = async (workspaceSlug: string, projectId: string, issueId: string, commentId: string) => {
     try {
       const _reactions = await this.issueReactionService.listIssueCommentReactions(workspaceSlug, projectId, commentId);
 
       const _issue_comment_reactions = {
         ...this.issue_comment_reactions,
-        [commentId]: groupReactionEmojis(_reactions),
+        [issueId]: {
+          ...this.issue_comment_reactions[issueId],
+          [commentId]: groupReactionEmojis(_reactions),
+        },
       };
 
       runInAction(() => {
@@ -533,10 +586,12 @@ export class IssueDetailStore implements IIssueDetailStore {
   creationIssueCommentReaction = async (
     workspaceSlug: string,
     projectId: string,
+    issueId: string,
     commentId: string,
     reaction: string
   ) => {
-    let _currentReactions = this.getIssueCommentReactionsByCommentId(commentId);
+    let _currentReactions = this.getIssueCommentReactions;
+    _currentReactions = _currentReactions && commentId ? _currentReactions?.[commentId] : null;
 
     try {
       const _reaction = await this.issueReactionService.createIssueCommentReaction(
@@ -550,14 +605,19 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       _currentReactions = {
         ..._currentReactions,
-        [reaction]: [..._currentReactions[reaction], { ..._reaction }],
+        [reaction]: [..._currentReactions?.[reaction], { ..._reaction }],
+      };
+
+      const _issue_comment_reactions = {
+        ...this.issue_comment_reactions,
+        [issueId]: {
+          ...this.issue_comment_reactions[issueId],
+          [commentId]: _currentReactions,
+        },
       };
 
       runInAction(() => {
-        this.issue_comment_reactions = {
-          ...this.issue_comment_reactions,
-          [commentId]: _currentReactions,
-        };
+        this.issue_comment_reactions = _issue_comment_reactions;
       });
     } catch (error) {
       console.warn("error removing the issue comment", error);
@@ -567,10 +627,12 @@ export class IssueDetailStore implements IIssueDetailStore {
   removeIssueCommentReaction = async (
     workspaceSlug: string,
     projectId: string,
+    issueId: string,
     commentId: string,
     reaction: string
   ) => {
-    let _currentReactions = this.getIssueCommentReactionsByCommentId(commentId);
+    let _currentReactions = this.getIssueCommentReactions;
+    _currentReactions = _currentReactions && commentId ? _currentReactions?.[commentId] : null;
 
     try {
       const user = this.rootStore.user.currentUser;
@@ -578,14 +640,19 @@ export class IssueDetailStore implements IIssueDetailStore {
       if (user) {
         _currentReactions = {
           ..._currentReactions,
-          [reaction]: [..._currentReactions[reaction].filter((r: any) => r.actor !== user.id)],
+          [reaction]: [..._currentReactions?.[reaction].filter((r: any) => r.actor !== user.id)],
+        };
+
+        const _issue_comment_reactions = {
+          ...this.issue_comment_reactions,
+          [issueId]: {
+            ...this.issue_comment_reactions[issueId],
+            [commentId]: _currentReactions,
+          },
         };
 
         runInAction(() => {
-          this.issue_comment_reactions = {
-            ...this.issue_comment_reactions,
-            [commentId]: _currentReactions,
-          };
+          this.issue_comment_reactions = _issue_comment_reactions;
         });
 
         await this.issueReactionService.deleteIssueCommentReaction(workspaceSlug, projectId, commentId, reaction);

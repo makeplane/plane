@@ -9,7 +9,8 @@ import useUserAuth from "hooks/use-user-auth";
 // services
 import { IssueLabelService } from "services/issue";
 // layouts
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // components
 import {
   CreateUpdateLabelInline,
@@ -92,43 +93,60 @@ const LabelsSettings: NextPage = () => {
         onClose={() => setSelectDeleteLabel(null)}
         user={user}
       />
-      <ProjectSettingLayout header={<ProjectSettingHeader title="Labels Settings" />}>
-        <section className="pr-9 py-8 gap-10 w-full overflow-y-auto">
-          <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Labels</h3>
+      <AppLayout header={<ProjectSettingHeader title="Labels Settings" />}>
+        <ProjectSettingLayout>
+          <section className="pr-9 py-8 gap-10 w-full overflow-y-auto">
+            <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200">
+              <h3 className="text-xl font-medium">Labels</h3>
 
-            <Button variant="primary" onClick={newLabel} size="sm">
-              Add label
-            </Button>
-          </div>
-          <div className="space-y-3 py-6 h-full w-full">
-            {labelForm && (
-              <CreateUpdateLabelInline
-                labelForm={labelForm}
-                setLabelForm={setLabelForm}
-                isUpdating={isUpdating}
-                labelToUpdate={labelToUpdate}
-                onClose={() => {
-                  setLabelForm(false);
-                  setIsUpdating(false);
-                  setLabelToUpdate(null);
-                }}
-                ref={scrollToRef}
-              />
-            )}
-            <>
-              {issueLabels ? (
-                issueLabels.length > 0 ? (
-                  issueLabels.map((label) => {
-                    const children = issueLabels?.filter((l) => l.parent === label.id);
+              <Button variant="primary" onClick={newLabel} size="sm">
+                Add label
+              </Button>
+            </div>
+            <div className="space-y-3 py-6 h-full w-full">
+              {labelForm && (
+                <CreateUpdateLabelInline
+                  labelForm={labelForm}
+                  setLabelForm={setLabelForm}
+                  isUpdating={isUpdating}
+                  labelToUpdate={labelToUpdate}
+                  onClose={() => {
+                    setLabelForm(false);
+                    setIsUpdating(false);
+                    setLabelToUpdate(null);
+                  }}
+                  ref={scrollToRef}
+                />
+              )}
+              <>
+                {issueLabels ? (
+                  issueLabels.length > 0 ? (
+                    issueLabels.map((label) => {
+                      const children = issueLabels?.filter((l) => l.parent === label.id);
 
-                    if (children && children.length === 0) {
-                      if (!label.parent)
+                      if (children && children.length === 0) {
+                        if (!label.parent)
+                          return (
+                            <SingleLabel
+                              key={label.id}
+                              label={label}
+                              addLabelToGroup={() => addLabelToGroup(label)}
+                              editLabel={(label) => {
+                                editLabel(label);
+                                scrollToRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                });
+                              }}
+                              handleLabelDelete={() => setSelectDeleteLabel(label)}
+                            />
+                          );
+                      } else
                         return (
-                          <SingleLabel
+                          <SingleLabelGroup
                             key={label.id}
                             label={label}
-                            addLabelToGroup={() => addLabelToGroup(label)}
+                            labelChildren={children}
+                            addLabelToGroup={addLabelToGroup}
                             editLabel={(label) => {
                               editLabel(label);
                               scrollToRef.current?.scrollIntoView({
@@ -136,49 +154,34 @@ const LabelsSettings: NextPage = () => {
                               });
                             }}
                             handleLabelDelete={() => setSelectDeleteLabel(label)}
+                            user={user}
                           />
                         );
-                    } else
-                      return (
-                        <SingleLabelGroup
-                          key={label.id}
-                          label={label}
-                          labelChildren={children}
-                          addLabelToGroup={addLabelToGroup}
-                          editLabel={(label) => {
-                            editLabel(label);
-                            scrollToRef.current?.scrollIntoView({
-                              behavior: "smooth",
-                            });
-                          }}
-                          handleLabelDelete={() => setSelectDeleteLabel(label)}
-                          user={user}
-                        />
-                      );
-                  })
+                    })
+                  ) : (
+                    <EmptyState
+                      title="No labels yet"
+                      description="Create labels to help organize and filter issues in you project"
+                      image={emptyLabel}
+                      primaryButton={{
+                        text: "Add label",
+                        onClick: () => newLabel(),
+                      }}
+                    />
+                  )
                 ) : (
-                  <EmptyState
-                    title="No labels yet"
-                    description="Create labels to help organize and filter issues in you project"
-                    image={emptyLabel}
-                    primaryButton={{
-                      text: "Add label",
-                      onClick: () => newLabel(),
-                    }}
-                  />
-                )
-              ) : (
-                <Loader className="space-y-5">
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                </Loader>
-              )}
-            </>
-          </div>
-        </section>
-      </ProjectSettingLayout>
+                  <Loader className="space-y-5">
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                    <Loader.Item height="40px" />
+                  </Loader>
+                )}
+              </>
+            </div>
+          </section>
+        </ProjectSettingLayout>
+      </AppLayout>
     </>
   );
 };
