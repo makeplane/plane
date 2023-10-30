@@ -11,7 +11,9 @@ class License(BaseModel):
     api_key = models.CharField(max_length=16)
     version = models.CharField(max_length=10)
     email = models.CharField(max_length=256)
-    # last_checked_at = models.DateTimeField(null=True)
+    last_checked_at = models.DateTimeField(null=True)
+    check_frequency = models.CharField(null=True)
+
 
     class Meta:
         verbose_name = "License"

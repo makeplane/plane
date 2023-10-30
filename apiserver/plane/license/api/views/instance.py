@@ -40,32 +40,34 @@ class InstanceEndpoint(BaseAPIView):
 
         payload = {"email": email, "version": data.get("version", 0.1)}
 
-        response = requests.post(
-            f"{LICENSE_ENGINE_BASE_URL}/api/instances",
-            headers=headers,
-            data=json.dumps(payload),
-        )
+        print(request.get_host())
 
-        if response.status_code == 201:
-            data = response.json()
-            license = License.objects.create(
-                instance_id=data.get("id"),
-                license_key=data.get("license_key"),
-                api_key=data.get("api_key"),
-                version=data.get("version"),
-                email=data.get("email"),
-                last_checked_at=timezone.now(),
-            )
-            return Response(
-                {
-                    "id": str(license.instance_id),
-                    "message": "Instance registered succesfully",
-                },
-                status=status.HTTP_200_OK,
-            )
+        # response = requests.post(
+        #     f"{LICENSE_ENGINE_BASE_URL}/api/instances",
+        #     headers=headers,
+        #     data=json.dumps(payload),
+        # )
+
+        # if response.status_code == 201:
+        #     data = response.json()
+        #     license = License.objects.create(
+        #         instance_id=data.get("id"),
+        #         license_key=data.get("license_key"),
+        #         api_key=data.get("api_key"),
+        #         version=data.get("version"),
+        #         email=data.get("email"),
+        #         last_checked_at=timezone.now(),
+        #     )
+            # return Response(
+            #     {
+            #         "id": str(license.instance_id),
+            #         "message": "Instance registered succesfully",
+            #     },
+            #     status=status.HTTP_200_OK,
+            # )
 
         return Response(
-            {"error": "Unable to create instance"}, status=response.status_code
+            {"error": "Unable to create instance"}, status=200
         )
 
     def get(self, request):
