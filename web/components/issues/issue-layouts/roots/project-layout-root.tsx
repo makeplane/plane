@@ -12,6 +12,7 @@ import {
   KanBanLayout,
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
+  ProjectEmptyState,
 } from "components/issues";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
@@ -30,22 +31,28 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
+  const issueCount = issueStore.getIssuesCount;
+
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
-      <div className="w-full h-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ListLayout />
-        ) : activeLayout === "kanban" ? (
-          <KanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <CalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <GanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ProjectSpreadsheetLayout />
-        ) : null}
-      </div>
+      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
+        <ProjectEmptyState />
+      ) : (
+        <div className="w-full h-full overflow-auto">
+          {activeLayout === "list" ? (
+            <ListLayout />
+          ) : activeLayout === "kanban" ? (
+            <KanBanLayout />
+          ) : activeLayout === "calendar" ? (
+            <CalendarLayout />
+          ) : activeLayout === "gantt_chart" ? (
+            <GanttLayout />
+          ) : activeLayout === "spreadsheet" ? (
+            <ProjectSpreadsheetLayout />
+          ) : null}
+        </div>
+      )}
     </div>
   );
 });
