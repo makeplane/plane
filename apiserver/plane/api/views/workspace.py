@@ -1228,9 +1228,15 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         ## Grouping the results
         group_by = request.GET.get("group_by", False)
         if group_by:
-            return Response(group_results(issues, group_by), status=status.HTTP_200_OK)
+            grouped_results = group_results(issues, group_by)
+            return Response(
+                grouped_results,
+                status=status.HTTP_200_OK,
+            )
 
-        return Response(issues, status=status.HTTP_200_OK)
+        return Response(
+            issues, status=status.HTTP_200_OK
+        )
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):

@@ -1,9 +1,23 @@
 import re
+import uuid
 from datetime import timedelta
 from django.utils import timezone
 
+
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
+
+# check the valid uuids
+def filter_valid_uuids(uuid_list):
+    valid_uuids = []
+    for uuid_str in uuid_list:
+        try:
+            uuid_obj = uuid.UUID(uuid_str)
+            valid_uuids.append(uuid_obj)
+        except ValueError:
+            # ignore the invalid uuids
+            pass
+    return valid_uuids
 
 
 # Get the 2_weeks, 3_months
@@ -61,40 +75,41 @@ def date_filter(filter, date_term, queries):
 
 def filter_state(params, filter, method):
     if method == "GET":
-        states = params.get("state").split(",")
+        states = [item for item in params.get("state").split(",") if item != 'null']
+        states = filter_valid_uuids(states)
         if len(states) and "" not in states:
             filter["state__in"] = states
     else:
-        if params.get("state", None) and len(params.get("state")):
+        if params.get("state", None) and len(params.get("state")) and params.get("state") != 'null':
             filter["state__in"] = params.get("state")
     return filter
 
 
 def filter_state_group(params, filter, method):
     if method == "GET":
-        state_group = params.get("state_group").split(",")
+        state_group = [item for item in params.get("state_group").split(",") if item != 'null']
         if len(state_group) and "" not in state_group:
             filter["state__group__in"] = state_group
     else:
-        if params.get("state_group", None) and len(params.get("state_group")):
+        if params.get("state_group", None) and len(params.get("state_group")) and params.get("state_group") != 'null':
             filter["state__group__in"] = params.get("state_group")
     return filter
 
 
 def filter_estimate_point(params, filter, method):
     if method == "GET":
-        estimate_points = params.get("estimate_point").split(",")
+        estimate_points = [item for item in params.get("estimate_point").split(",") if item != 'null']
         if len(estimate_points) and "" not in estimate_points:
             filter["estimate_point__in"] = estimate_points
     else:
-        if params.get("estimate_point", None) and len(params.get("estimate_point")):
+        if params.get("estimate_point", None) and len(params.get("estimate_point")) and params.get("estimate_point") != 'null':
             filter["estimate_point__in"] = params.get("estimate_point")
     return filter
 
 
 def filter_priority(params, filter, method):
     if method == "GET":
-        priorities = params.get("priority").split(",")
+        priorities = [item for item in params.get("priority").split(",") if item != 'null']
         if len(priorities) and "" not in priorities:
             filter["priority__in"] = priorities
     return filter
@@ -102,44 +117,48 @@ def filter_priority(params, filter, method):
 
 def filter_parent(params, filter, method):
     if method == "GET":
-        parents = params.get("parent").split(",")
+        parents = [item for item in params.get("parent").split(",") if item != 'null']
+        parents = filter_valid_uuids(parents)
         if len(parents) and "" not in parents:
             filter["parent__in"] = parents
     else:
-        if params.get("parent", None) and len(params.get("parent")):
+        if params.get("parent", None) and len(params.get("parent")) and params.get("parent") != 'null':
             filter["parent__in"] = params.get("parent")
     return filter
 
 
 def filter_labels(params, filter, method):
     if method == "GET":
-        labels = params.get("labels").split(",")
+        labels = [item for item in params.get("labels").split(",") if item != 'null']
+        labels = filter_valid_uuids(labels)
         if len(labels) and "" not in labels:
             filter["labels__in"] = labels
     else:
-        if params.get("labels", None) and len(params.get("labels")):
+        if params.get("labels", None) and len(params.get("labels")) and params.get("labels") != 'null':
             filter["labels__in"] = params.get("labels")
     return filter
 
 
 def filter_assignees(params, filter, method):
     if method == "GET":
-        assignees = params.get("assignees").split(",")
+        assignees = [item for item in params.get("assignees").split(",") if item != 'null']
+        assignees = filter_valid_uuids(assignees)
         if len(assignees) and "" not in assignees:
             filter["assignees__in"] = assignees
     else:
-        if params.get("assignees", None) and len(params.get("assignees")):
+        if params.get("assignees", None) and len(params.get("assignees")) and params.get("assignees") != 'null':
             filter["assignees__in"] = params.get("assignees")
     return filter
 
 
 def filter_created_by(params, filter, method):
     if method == "GET":
-        created_bys = params.get("created_by").split(",")
+        created_bys = [item for item in params.get("created_by").split(",") if item != 'null']
+        created_bys = filter_valid_uuids(created_bys)
         if len(created_bys) and "" not in created_bys:
             filter["created_by__in"] = created_bys
     else:
-        if params.get("created_by", None) and len(params.get("created_by")):
+        if params.get("created_by", None) and len(params.get("created_by")) and params.get("created_by") != 'null':
             filter["created_by__in"] = params.get("created_by")
     return filter
 
@@ -219,44 +238,47 @@ def filter_issue_state_type(params, filter, method):
 
 def filter_project(params, filter, method):
     if method == "GET":
-        projects = params.get("project").split(",")
+        projects = [item for item in params.get("project").split(",") if item != 'null']
+        projects = filter_valid_uuids(projects)
         if len(projects) and "" not in projects:
             filter["project__in"] = projects
     else:
-        if params.get("project", None) and len(params.get("project")):
+        if params.get("project", None) and len(params.get("project")) and params.get("project") != 'null':
             filter["project__in"] = params.get("project")
     return filter
 
 
 def filter_cycle(params, filter, method):
     if method == "GET":
-        cycles = params.get("cycle").split(",")
+        cycles = [item for item in params.get("cycle").split(",") if item != 'null']
+        cycles = filter_valid_uuids(cycles)
         if len(cycles) and "" not in cycles:
             filter["issue_cycle__cycle_id__in"] = cycles
     else:
-        if params.get("cycle", None) and len(params.get("cycle")):
+        if params.get("cycle", None) and len(params.get("cycle")) and params.get("cycle") != 'null':
             filter["issue_cycle__cycle_id__in"] = params.get("cycle")
     return filter
 
 
 def filter_module(params, filter, method):
     if method == "GET":
-        modules = params.get("module").split(",")
+        modules = [item for item in params.get("module").split(",") if item != 'null']
+        modules = filter_valid_uuids(modules)
         if len(modules) and "" not in modules:
             filter["issue_module__module_id__in"] = modules
     else:
-        if params.get("module", None) and len(params.get("module")):
+        if params.get("module", None) and len(params.get("module")) and params.get("module") != 'null':
             filter["issue_module__module_id__in"] = params.get("module")
     return filter
 
 
 def filter_inbox_status(params, filter, method):
     if method == "GET":
-        status = params.get("inbox_status").split(",")
+        status = [item for item in params.get("inbox_status").split(",") if item != 'null']
         if len(status) and "" not in status:
             filter["issue_inbox__status__in"] = status
     else:
-        if params.get("inbox_status", None) and len(params.get("inbox_status")):
+        if params.get("inbox_status", None) and len(params.get("inbox_status")) and params.get("inbox_status") != 'null':
             filter["issue_inbox__status__in"] = params.get("inbox_status")
     return filter
 
@@ -275,11 +297,12 @@ def filter_sub_issue_toggle(params, filter, method):
 
 def filter_subscribed_issues(params, filter, method):
     if method == "GET":
-        subscribers = params.get("subscriber").split(",")
+        subscribers = [item for item in params.get("subscriber").split(",") if item != 'null']
+        subscribers = filter_valid_uuids(subscribers)
         if len(subscribers) and "" not in subscribers:
             filter["issue_subscribers__subscriber_id__in"] = subscribers
     else:
-        if params.get("subscriber", None) and len(params.get("subscriber")):
+        if params.get("subscriber", None) and len(params.get("subscriber")) and params.get("subscriber") != 'null':
             filter["issue_subscribers__subscriber_id__in"] = params.get("subscriber")
     return filter
 
