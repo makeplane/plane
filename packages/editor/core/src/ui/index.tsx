@@ -8,7 +8,7 @@ import { EditorProps } from '@tiptap/pm/view';
 import { useEditor } from './hooks/useEditor';
 import { EditorContainer } from '../ui/components/editor-container';
 import { EditorContentWrapper } from '../ui/components/editor-content';
-import { IMentionSuggestion } from './mentions/mentions';
+import { IMentionSuggestion } from '../types/mention-suggestion';
 
 interface ICoreEditor {
   value: string;

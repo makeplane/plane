@@ -1,18 +1,24 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import { useImperativeHandle, useRef, MutableRefObject } from "react";
-import { useDebouncedCallback } from "use-debounce";
-import { DeleteImage } from '../../types/delete-image';
+import {
+  useImperativeHandle,
+  useRef,
+  MutableRefObject,
+  useEffect,
+} from "react";
+import { DeleteImage } from "../../types/delete-image";
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
-import { EditorProps } from '@tiptap/pm/view';
+import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
 import { UploadImage } from "../../types/upload-image";
+import { useInitializedContent } from "./useInitializedContent";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 
-const DEBOUNCE_DELAY = 1500;
 interface CustomEditorProps {
   uploadFile: UploadImage;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
+  setIsSubmitting?: (
+    isSubmitting: "submitting" | "submitted" | "saved",
+  ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   value: string;
   deleteFile: DeleteImage;
@@ -25,25 +31,39 @@ interface CustomEditorProps {
   mentionSuggestions?: IMentionSuggestion[];
 }
 
-export const useEditor = ({ uploadFile, deleteFile, editorProps = {}, value, extensions = [], onChange, setIsSubmitting, debouncedUpdatesEnabled, forwardedRef, setShouldShowAlert, mentionHighlights, mentionSuggestions }: CustomEditorProps) => {
-  const editor = useCustomEditor({
-    editorProps: {
-      ...CoreEditorProps(uploadFile, setIsSubmitting),
-      ...editorProps,
-    },
-    extensions: [...CoreEditorExtensions( { mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []} ,deleteFile), ...extensions],
-    content: (typeof value === "string" && value.trim() !== "") ? value : "<p></p>",
-    onUpdate: async ({ editor }) => {
-      // for instant feedback loop
-      setIsSubmitting?.("submitting");
-      setShouldShowAlert?.(true);
-      if (debouncedUpdatesEnabled) {
-        debouncedUpdates({ onChange: onChange, editor });
-      } else {
+export const useEditor = ({
+  uploadFile,
+  deleteFile,
+  editorProps = {},
+  value,
+  extensions = [],
+  onChange,
+  setIsSubmitting,
+  forwardedRef,
+  setShouldShowAlert,
+  mentionHighlights,
+  mentionSuggestions
+}: CustomEditorProps) => {
+  const editor = useCustomEditor(
+    {
+      editorProps: {
+        ...CoreEditorProps(uploadFile, setIsSubmitting),
+        ...editorProps,
+      },
+      extensions: [...CoreEditorExtensions({ mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []}, deleteFile), ...extensions],
+      content:
+        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      onUpdate: async ({ editor }) => {
+        // for instant feedback loop
+        setIsSubmitting?.("submitting");
+        setShouldShowAlert?.(true);
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-      }
+      },
     },
-  });
+    [],
+  );
+
+  useInitializedContent(editor, value);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
@@ -56,12 +76,6 @@ export const useEditor = ({ uploadFile, deleteFile, editorProps = {}, value, ext
       editorRef.current?.commands.setContent(content);
     },
   }));
-
-  const debouncedUpdates = useDebouncedCallback(async ({ onChange, editor }) => {
-    if (onChange) {
-      onChange(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-    }
-  }, DEBOUNCE_DELAY);
 
   if (!editor) {
     return null;
