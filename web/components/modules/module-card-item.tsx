@@ -10,14 +10,16 @@ import useToast from "hooks/use-toast";
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
 import { AssigneesList } from "components/ui";
-import { CustomMenu, Tooltip } from "@plane/ui";
+import { CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
 // icons
-import { CalendarDays, LinkIcon, Pencil, Star, Target, Trash2 } from "lucide-react";
+import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
-import { copyUrlToClipboard, truncateText } from "helpers/string.helper";
-import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
+import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
 // types
 import { IModule } from "types";
+// constants
+import { MODULE_STATUS } from "constants/module";
 
 type Props = {
   module: IModule;
@@ -72,9 +74,32 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
+  const openModuleOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekModule: module.id },
+    });
+  };
+
   const endDate = new Date(module.target_date ?? "");
   const startDate = new Date(module.start_date ?? "");
-  const lastUpdated = new Date(module.updated_at ?? "");
+
+  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+
+  const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
+
+  const issueCount =
+    module.completed_issues && module.total_issues
+      ? module.total_issues === 0
+        ? "0 Issue"
+        : module.total_issues === module.completed_issues
+        ? module.total_issues > 1
+          ? `${module.total_issues} Issues`
+          : `${module.total_issues} Issue`
+        : `${module.completed_issues}/${module.total_issues} Issues`
+      : "0 Issue";
 
   return (
     <>
@@ -88,96 +113,142 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteModuleModal data={module} isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} />
-      <div className="flex flex-col divide-y divide-custom-border-200 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 text-xs">
-        <div className="p-4">
-          <div className="flex w-full flex-col gap-5">
-            <div className="flex items-start justify-between gap-2">
-              <Tooltip tooltipContent={module.name} position="top-left">
-                <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-                  <a className="w-auto max-w-[calc(100%-9rem)]">
-                    <h3 className="truncate break-words text-lg font-semibold text-custom-text-100">
-                      {truncateText(module.name, 75)}
-                    </h3>
-                  </a>
-                </Link>
+      <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
+        <a className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
+          <div>
+            <div className="flex items-center justify-between gap-2">
+              <Tooltip tooltipContent={module.name} position="auto">
+                <span className="text-base font-medium truncate">{module.name}</span>
               </Tooltip>
+              <div className="flex items-center gap-2">
+                {moduleStatus && (
+                  <span
+                    className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                  >
+                    {moduleStatus.label}
+                  </span>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    openModuleOverview();
+                  }}
+                >
+                  <Info className="h-4 w-4 text-custom-text-400" />
+                </button>
+              </div>
+            </div>
+          </div>
 
-              <div className="flex items-center gap-1">
-                <div className="mr-2 flex whitespace-nowrap rounded bg-custom-background-90 px-2.5 py-2 text-custom-text-200">
-                  <span className="capitalize">{module?.status?.replace("-", " ")}</span>
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-custom-text-200">
+                <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                <span className="text-xs text-custom-text-300">{issueCount}</span>
+              </div>
+              {module.members_detail.length > 0 && (
+                <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
+                  <div className="flex items-center gap-1 cursor-default">
+                    <AssigneesList users={module.members_detail} length={3} />
+                  </div>
+                </Tooltip>
+              )}
+            </div>
+
+            <Tooltip
+              tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
+              position="top-left"
+            >
+              <div className="flex items-center w-full">
+                <div
+                  className="bar relative h-1.5 w-full rounded bg-custom-background-90"
+                  style={{
+                    boxShadow: "1px 1px 4px 0px rgba(161, 169, 191, 0.35) inset",
+                  }}
+                >
+                  <div
+                    className="absolute top-0 left-0 h-1.5 rounded bg-blue-600 duration-300"
+                    style={{
+                      width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
+                    }}
+                  />
                 </div>
+              </div>
+            </Tooltip>
+
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-custom-text-300">
+                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
+                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+              </span>
+              <div className="flex items-center gap-1.5 z-10">
                 {module.is_favorite ? (
-                  <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleRemoveFromFavorites();
+                    }}
+                  >
+                    <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />
                   </button>
                 ) : (
-                  <button type="button" onClick={handleAddToFavorites}>
-                    <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      handleAddToFavorites();
+                    }}
+                  >
+                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
                   </button>
                 )}
-
-                <CustomMenu width="auto" verticalEllipsis placement="bottom-end">
-                  <CustomMenu.MenuItem onClick={handleCopyText}>
+                <CustomMenu width="auto" ellipsis className="z-10">
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setEditModuleModal(true);
+                    }}
+                  >
                     <span className="flex items-center justify-start gap-2">
-                      <LinkIcon className="h-3 w-3" strokeWidth={2} />
-                      <span>Copy link</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={() => setEditModuleModal(true)}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Pencil className="h-3 w-3" strokeWidth={2} />
+                      <Pencil className="h-3 w-3" />
                       <span>Edit module</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setModuleDeleteModal(true);
+                    }}
+                  >
                     <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-3 w-3" strokeWidth={2} />
+                      <Trash2 className="h-3 w-3" />
                       <span>Delete module</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleCopyText();
+                    }}
+                  >
+                    <span className="flex items-center justify-start gap-2">
+                      <LinkIcon className="h-3 w-3" />
+                      <span>Copy module link</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 text-custom-text-200">
-              <div className="flex items-start gap-1">
-                <CalendarDays className="h-4 w-4" />
-                <span>Start:</span>
-                <span>{renderShortDateWithYearFormat(startDate, "Not set")}</span>
-              </div>
-              <div className="flex items-start gap-1">
-                <Target className="h-4 w-4" />
-                <span>End:</span>
-                <span>{renderShortDateWithYearFormat(endDate, "Not set")}</span>
-              </div>
-            </div>
           </div>
-        </div>
-        <div className="flex h-20 flex-col items-end bg-custom-background-80">
-          <div className="flex w-full items-center justify-between gap-2 justify-self-end p-4 text-custom-text-200">
-            <span>Progress</span>
-            <div className="bar relative h-1 w-full rounded bg-custom-background-90">
-              <div
-                className="absolute top-0 left-0 h-1 rounded bg-green-500 duration-300"
-                style={{
-                  width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
-                }}
-              />
-            </div>
-            <span>{isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%</span>
-          </div>
-          <div className="item-center flex h-full w-full justify-between px-4 pb-4 text-custom-text-200">
-            <p>
-              Last updated:
-              <span className="font-medium">{renderShortDateWithYearFormat(lastUpdated)}</span>
-            </p>
-            {module.members_detail.length > 0 && (
-              <div className="flex items-center gap-1">
-                <AssigneesList users={module.members_detail} length={4} />
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+        </a>
+      </Link>
     </>
   );
 });

@@ -11,7 +11,7 @@ import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
 
 // helper
-import { stripHTML, replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
+import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 import {
   formatDateDistance,
   render12HourFormatTime,
@@ -115,10 +115,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                   renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
                 ) : notification.data.issue_activity.field === "attachment" ? (
                   "the issue"
-                ) : stripHTML(notification.data.issue_activity.new_value).length > 55 ? (
-                  stripHTML(notification.data.issue_activity.new_value).slice(0, 50) + "..."
+                ) : notification.data.issue_activity.field === "description" ? (
+                  stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
                 ) : (
-                  stripHTML(notification.data.issue_activity.new_value)
+                  notification.data.issue_activity.new_value
                 )
               ) : (
                 <span>
