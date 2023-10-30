@@ -14,19 +14,21 @@ from .common import *  # noqa
 # Database
 DEBUG = int(os.environ.get("DEBUG", 0)) == 1
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "plane",
-        "USER": os.environ.get("PGUSER", ""),
-        "PASSWORD": os.environ.get("PGPASSWORD", ""),
-        "HOST": os.environ.get("PGHOST", ""),
+if bool(os.environ.get("DATABASE_URL")):
+    # Parse database configuration from $DATABASE_URL
+    DATABASES["default"] = dj_database_url.config()
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_DB"),
+            "USER": os.environ.get("POSTGRES_USER"),
+            "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+            "HOST": os.environ.get("POSTGRES_HOST"),
+        }
     }
-}
 
 
-# Parse database configuration from $DATABASE_URL
-DATABASES["default"] = dj_database_url.config()
 SITE_ID = 1
 
 # Set the variable true if running in docker environment
@@ -278,4 +280,3 @@ SCOUT_NAME = "Plane"
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
-

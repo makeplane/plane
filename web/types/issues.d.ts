@@ -97,6 +97,8 @@ export interface IIssue {
   description_stripped: any;
   estimate_point: number | null;
   id: string;
+  // tempId is used for optimistic updates. It is not a part of the API response.
+  tempId?: string;
   issue_cycle: IIssueCycle | null;
   issue_link: linkDetails[];
   issue_module: IIssueModule | null;

@@ -8,6 +8,9 @@ const nextConfig = {
   experimental: {
     outputFileTracingRoot: path.join(__dirname, "../"),
   },
+  images: {
+    unoptimized: true,
+  },
   output: "standalone",
 };
 

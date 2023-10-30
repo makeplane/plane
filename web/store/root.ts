@@ -12,7 +12,11 @@ import {
   IssueDetailStore,
   IssueFilterStore,
   IssueKanBanViewStore,
+  IIssueCalendarViewStore,
+  IssueCalendarViewStore,
   IssueStore,
+  IIssueQuickAddStore,
+  IssueQuickAddStore,
 } from "store/issue";
 import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
 import { IProjectPublishStore, IProjectStore, ProjectPublishStore, ProjectStore } from "store/project";
@@ -24,6 +28,8 @@ import {
   ModuleFilterStore,
   ModuleIssueKanBanViewStore,
   ModuleIssueStore,
+  IModuleIssueCalendarViewStore,
+  ModuleIssueCalendarViewStore,
   ModuleStore,
 } from "store/module";
 import {
@@ -33,6 +39,8 @@ import {
   CycleStore,
   ICycleIssueFilterStore,
   ICycleIssueKanBanViewStore,
+  ICycleIssueCalendarViewStore,
+  CycleIssueCalendarViewStore,
   ICycleIssueStore,
   ICycleStore,
 } from "store/cycle";
@@ -43,6 +51,8 @@ import {
   ProjectViewFiltersStore,
   ProjectViewIssuesStore,
   ProjectViewsStore,
+  IProjectViewIssueCalendarViewStore,
+  ProjectViewIssueCalendarViewStore,
 } from "store/project-view";
 import CalendarStore, { ICalendarStore } from "store/calendar.store";
 import {
@@ -95,20 +105,25 @@ export class RootStore {
   moduleIssue: IModuleIssueStore;
   moduleFilter: IModuleFilterStore;
   moduleIssueKanBanView: IModuleIssueKanBanViewStore;
+  moduleIssueCalendarView: IModuleIssueCalendarViewStore;
 
   cycle: ICycleStore;
   cycleIssue: ICycleIssueStore;
   cycleIssueFilter: ICycleIssueFilterStore;
   cycleIssueKanBanView: ICycleIssueKanBanViewStore;
+  cycleIssueCalendarView: ICycleIssueCalendarViewStore;
 
   projectViews: IProjectViewsStore;
   projectViewIssues: IProjectViewIssuesStore;
   projectViewFilters: IProjectViewFiltersStore;
+  projectViewIssueCalendarView: IProjectViewIssueCalendarViewStore;
 
   issueFilter: IIssueFilterStore;
   issueDetail: IIssueDetailStore;
   issueKanBanView: IIssueKanBanViewStore;
+  issueCalendarView: IIssueCalendarViewStore;
   draftIssuesStore: DraftIssuesStore;
+  quickAddIssue: IIssueQuickAddStore;
 
   calendar: ICalendarStore;
 
@@ -145,21 +160,26 @@ export class RootStore {
     this.moduleIssue = new ModuleIssueStore(this);
     this.moduleFilter = new ModuleFilterStore(this);
     this.moduleIssueKanBanView = new ModuleIssueKanBanViewStore(this);
+    this.moduleIssueCalendarView = new ModuleIssueCalendarViewStore(this);
 
     this.cycle = new CycleStore(this);
     this.cycleIssue = new CycleIssueStore(this);
     this.cycleIssueFilter = new CycleIssueFilterStore(this);
     this.cycleIssueKanBanView = new CycleIssueKanBanViewStore(this);
+    this.cycleIssueCalendarView = new CycleIssueCalendarViewStore(this);
 
     this.projectViews = new ProjectViewsStore(this);
     this.projectViewIssues = new ProjectViewIssuesStore(this);
     this.projectViewFilters = new ProjectViewFiltersStore(this);
+    this.projectViewIssueCalendarView = new ProjectViewIssueCalendarViewStore(this);
 
     this.issue = new IssueStore(this);
     this.issueFilter = new IssueFilterStore(this);
     this.issueDetail = new IssueDetailStore(this);
     this.issueKanBanView = new IssueKanBanViewStore(this);
+    this.issueCalendarView = new IssueCalendarViewStore(this);
     this.draftIssuesStore = new DraftIssuesStore(this);
+    this.quickAddIssue = new IssueQuickAddStore(this);
 
     this.calendar = new CalendarStore(this);
 

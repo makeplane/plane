@@ -213,7 +213,9 @@ module.exports = {
           },
         },
       }),
-
+      screens: {
+        "3xl": "1792px",
+      },
       // scale down font sizes to 90% of default
       fontSize: {
         xs: "0.675rem",

@@ -207,14 +207,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   ellipsis
                   placement="bottom-start"
                 >
-                  {!shortContextMenu && isAdmin && (
-                    <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
-                      <span className="flex items-center justify-start gap-2 ">
-                        <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Delete project</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  )}
                   {!project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleAddToFavorites}>
                       <span className="flex items-center justify-start gap-2">
@@ -284,6 +276,15 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />
                         <span>Leave Project</span>
                       </div>
+                    </CustomMenu.MenuItem>
+                  )}
+
+                  {!shortContextMenu && isAdmin && (
+                    <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
+                      <span className="flex items-center justify-start gap-2 ">
+                        <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>Delete project</span>
+                      </span>
                     </CustomMenu.MenuItem>
                   )}
                 </CustomMenu>

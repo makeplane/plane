@@ -1,21 +1,18 @@
 import React, { useState } from "react";
 import { usePopper } from "react-popper";
+import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // ui
 import { StateGroupIcon } from "@plane/ui";
-// helpers
-import { getStatesList } from "helpers/state.helper";
-// types
 import { Tooltip } from "components/ui";
-import { Placement } from "@popperjs/core";
-// constants
-import { IState, IStateResponse } from "types";
+// types
+import { IState } from "types";
 
 type Props = {
   value: IState;
   onChange: (state: IState) => void;
-  stateGroups: IStateResponse | undefined;
+  states: IState[] | undefined;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
@@ -27,7 +24,7 @@ type Props = {
 export const StateSelect: React.FC<Props> = ({
   value,
   onChange,
-  stateGroups,
+  states,
   className = "",
   buttonClassName = "",
   optionsClassName = "",
@@ -42,9 +39,15 @@ export const StateSelect: React.FC<Props> = ({
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
   });
-
-  const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -63,7 +66,7 @@ export const StateSelect: React.FC<Props> = ({
   const label = (
     <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
-        <span className="h-3.5 w-3.5">{value && <StateGroupIcon stateGroup={value.group} color={value.color} />}</span>
+        {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
         <span className="truncate">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
@@ -85,7 +88,7 @@ export const StateSelect: React.FC<Props> = ({
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded-md shadow-sm border border-custom-border-300 duration-300 focus:outline-none ${
+          className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
         >
@@ -93,9 +96,9 @@ export const StateSelect: React.FC<Props> = ({
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
-      <Combobox.Options>
+      <Combobox.Options className="fixed z-10">
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -119,7 +122,7 @@ export const StateSelect: React.FC<Props> = ({
                     value={option.value}
                     className={({ active, selected }) =>
                       `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
+                        active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
                   >
