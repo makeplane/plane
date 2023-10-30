@@ -130,10 +130,6 @@ export interface IIssue {
   workspace_detail: IWorkspaceLite;
 }
 
-export interface IDraftIssueResponse {
-  data: IIssue[];
-  total_issues: number;
-}
 
 export interface ISubIssuesState {
   backlog: number;
