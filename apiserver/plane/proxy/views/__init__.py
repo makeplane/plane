@@ -4,7 +4,6 @@ from .issue import (
     IssueAPIEndpoint,
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,
-    IssueAttachmentAPIEndpoint,
     IssueCommentAPIEndpoint,
 )
 

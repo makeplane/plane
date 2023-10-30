@@ -4,7 +4,6 @@ from plane.proxy.views import (
     IssueAPIEndpoint,
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,
-    IssueAttachmentAPIEndpoint,
     IssueCommentAPIEndpoint,
 )
 
@@ -38,16 +37,6 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
         IssueLinkAPIEndpoint.as_view(),
         name="issue-links",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
-        IssueAttachmentAPIEndpoint.as_view(),
-        name="issue-attachments",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
-        IssueAttachmentAPIEndpoint.as_view(),
-        name="issue-attachments",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/",

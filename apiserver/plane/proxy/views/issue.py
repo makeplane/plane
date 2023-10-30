@@ -28,15 +28,6 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     pass
 
 
-class IssueAttachmentAPIEndpoint(BaseAPIView):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to attachments of the particular issue.
-
-    """
-    pass
-
-
 class IssueCommentAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
