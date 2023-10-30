@@ -49,13 +49,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     },
   });
 
-  const [localValue, setLocalValue] = useState("");
-  const nameValue = watch("name");
+  const [localTitleValue, setLocalTitleValue] = useState("");
+  const issueTitleCurrentValue = watch("name");
   useEffect(() => {
-    if (localValue === "" && nameValue !== "") {
-      setLocalValue(nameValue);
+    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
+      setLocalTitleValue(issueTitleCurrentValue);
     }
-  }, [nameValue, localValue]);
+  }, [issueTitleCurrentValue, localTitleValue]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -102,7 +102,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
             control={control}
             render={({ field: { onChange } }) => (
               <TextArea
-                value={localValue}
+                value={localTitleValue}
                 id="name"
                 name="name"
                 placeholder="Enter issue name"
@@ -110,7 +110,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                   setCharacterLimit(false);
                   setIsSubmitting("submitting");
-                  setLocalValue(e.target.value);
+                  setLocalTitleValue(e.target.value);
                   onChange(e.target.value);
                   debouncedFormSave();
                 }}
