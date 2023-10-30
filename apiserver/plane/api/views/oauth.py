@@ -2,6 +2,7 @@
 import uuid
 import requests
 import os
+import logging
 
 # Django imports
 from django.utils import timezone
@@ -49,6 +50,8 @@ def validate_google_token(token, client_id):
         }
         return data
     except Exception as e:
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         raise exceptions.AuthenticationFailed("Error with Google connection.")
 

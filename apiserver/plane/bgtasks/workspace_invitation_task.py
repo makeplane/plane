@@ -1,3 +1,6 @@
+# Python imports
+import logging
+
 # Django imports
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -66,8 +69,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
         return
     except Exception as e:
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

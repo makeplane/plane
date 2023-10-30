@@ -1,6 +1,7 @@
 # Python imports
 import csv
 import io
+import logging
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives
@@ -420,6 +421,6 @@ def analytic_export_task(email, data, slug):
         csv_buffer = generate_csv_from_rows(rows)
         send_export_email(email, slug, csv_buffer)
     except Exception as e:
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)

@@ -1,6 +1,7 @@
 # Python imports
 import json
 from datetime import timedelta
+import logging
 
 # Django imports
 from django.utils import timezone
@@ -86,8 +87,8 @@ def archive_old_issues():
                     ]
         return
     except Exception as e:
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return
 
@@ -158,7 +159,7 @@ def close_old_issues():
                     ]
         return
     except Exception as e:
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

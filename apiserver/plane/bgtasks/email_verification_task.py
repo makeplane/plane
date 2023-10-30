@@ -1,3 +1,6 @@
+# Python imports
+import logging
+
 # Django imports
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -39,8 +42,7 @@ def email_verification(first_name, email, token, current_site):
         msg.send()
         return
     except Exception as e:
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

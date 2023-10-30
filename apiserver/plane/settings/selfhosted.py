@@ -70,9 +70,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 # The name of the bucket to store files in.
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
 # The full URL to the S3 endpoint. Leave blank to use the default region URL.
-AWS_S3_ENDPOINT_URL = os.environ.get(
-    "AWS_S3_ENDPOINT_URL", "http://plane-minio:9000"
-)
+AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", "http://plane-minio:9000")
 # Default permissions
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
@@ -98,7 +96,7 @@ CSRF_COOKIE_SECURE = True
 # Redis URL
 REDIS_URL = os.environ.get("REDIS_URL")
 
-# Caches 
+# Caches
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -137,31 +135,29 @@ LOGGING = {
             "style": "{",
         },
         "json": {
-            '()': 'pythonjsonlogger.jsonlogger.JsonFormatter',
-            'fmt': '%(levelname)s %(asctime)s %(name)s %(message)s'
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
         },
     },
     "handlers": {
         "console": {
-            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "verbose",
         },
         "file": {
-            "level": "DEBUG",
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': "debug.log",
-            'when': 'midnight',
-            'interval': 1,  # One day
-            'backupCount': 5,  # Keep last 5 days of logs,
-            "formatter": "json"
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": "debug.log",
+            "when": "midnight",
+            "interval": 1,  # One day
+            "backupCount": 5,  # Keep last 5 days of logs,
+            "formatter": "json",
         },
     },
     "loggers": {
         "plane": {
+            "level": "ERROR",
             "handlers": ["console", "file"],
-            "propagate": True,
+            "propagate": False,
         },
     },
 }
-

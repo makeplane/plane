@@ -1,3 +1,6 @@
+# Python imports
+import logging
+
 # Django imports
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -30,8 +33,7 @@ def magic_link(email, key, token, current_site):
         msg.send()
         return
     except Exception as e:
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
         return

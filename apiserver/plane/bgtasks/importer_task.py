@@ -3,6 +3,7 @@ import json
 import requests
 import uuid
 import jwt
+import logging
 from datetime import datetime
 
 # Django imports
@@ -190,8 +191,7 @@ def service_importer(service, importer_id):
         importer = Importer.objects.get(pk=importer_id)
         importer.status = "failed"
         importer.save()
-        # Print logs if in DEBUG mode
-        if settings.DEBUG:
-            print(e)
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

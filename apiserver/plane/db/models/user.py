@@ -3,6 +3,7 @@ import uuid
 import string
 import random
 import pytz
+import logging
 
 # Django imports
 from django.db import models
@@ -139,5 +140,7 @@ def send_welcome_slack(sender, instance, created, **kwargs):
                     print(f"Got an error: {e.response['error']}")
         return
     except Exception as e:
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return

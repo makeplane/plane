@@ -1,5 +1,9 @@
+# Python imports
 import requests
 from requests.auth import HTTPBasicAuth
+import logging
+
+# Third party imports
 from sentry_sdk import capture_exception
 
 
@@ -49,5 +53,7 @@ def jira_project_issue_summary(email, api_token, project_key, hostname):
             ),
         }
     except Exception as e:
+        logger = logging.getLogger("plane")
+        logger.error(e)
         capture_exception(e)
         return {"error": "Something went wrong could not fetch information from jira"}
