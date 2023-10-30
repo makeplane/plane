@@ -21,6 +21,7 @@ const nextConfig = {
       "localhost",
       ...extraImageDomains,
     ],
+    unoptimized: true,
   },
   output: "standalone",
   experimental: {

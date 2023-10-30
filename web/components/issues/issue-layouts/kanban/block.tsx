@@ -54,6 +54,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
             {...provided.dragHandleProps}
             ref={provided.innerRef}
           >
+            {issue.tempId !== undefined && (
+              <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
+            )}
             <div className="absolute top-3 right-3 hidden group-hover/kanban-block:block">
               {quickActions(
                 !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
