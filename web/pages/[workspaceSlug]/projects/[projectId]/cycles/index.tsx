@@ -29,7 +29,11 @@ const ProjectCyclesPage: NextPage = observer(() => {
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId, peekCycle } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    peekCycle: string;
+  };
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
@@ -157,6 +161,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
@@ -172,6 +177,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
@@ -183,6 +189,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
@@ -194,6 +201,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>

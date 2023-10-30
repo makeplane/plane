@@ -9,10 +9,11 @@ export interface ICyclesBoard {
   filter: string;
   workspaceSlug: string;
   projectId: string;
+  peekCycle: string;
 }
 
 export const CyclesBoard: FC<ICyclesBoard> = (props) => {
-  const { cycles, filter, workspaceSlug, projectId } = props;
+  const { cycles, filter, workspaceSlug, projectId, peekCycle } = props;
 
   return (
     <>
@@ -21,7 +22,9 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
           <div className="flex justify-between h-full w-full">
             <div
               className={`grid grid-cols-1 gap-6 p-8 h-full w-full overflow-y-auto ${
-                true ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3" : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
+                peekCycle
+                  ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
+                  : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
               } auto-rows-max transition-all `}
             >
               {cycles.map((cycle) => (
