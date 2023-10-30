@@ -67,7 +67,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
               {issues && (
                 <IssueBlocksList
                   columnId={getValueFromObject(_list, listKey) as string}
-                  issues={is_list ? issues.data : issues.data[getValueFromObject(_list, listKey) as string]}
+                  issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
                   display_properties={display_properties}
