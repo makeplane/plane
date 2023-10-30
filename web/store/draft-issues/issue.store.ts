@@ -57,8 +57,24 @@ export interface IIssueDraftStore {
   createDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   deleteDraftIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
-  updateDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => Promise<any>;
-  convertDraftIssueToIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
+  updateDraftIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    grouping: {
+      group_id: string | null;
+      sub_group_id: string | null;
+    },
+    issueForm: Partial<IIssue>
+  ) => Promise<any>;
+  convertDraftIssueToIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    grouping: {
+      group_id: string | null;
+      sub_group_id: string | null;
+    },
+    issueId: string
+  ) => Promise<any>;
 
   // service
   draftIssueService: IssueDraftService;
@@ -96,8 +112,8 @@ export class IssueDraftStore implements IIssueDraftStore {
 
   get getIssueType() {
     // FIXME: this is temporary for development
-    return "grouped";
-    // return "ungrouped";
+    // return "grouped";
+    return "ungrouped";
 
     const groupedLayouts = ["kanban", "list", "calendar"];
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
@@ -136,7 +152,7 @@ export class IssueDraftStore implements IIssueDraftStore {
       // const params = this.rootStore?.issueFilter?.appliedFilters;
       // TODO: use actual params using applied filters
       const params = {
-        group_by: "state",
+        // group_by: "state",
       };
       const issueResponse = await this.draftIssueService.getDraftIssues(workspaceSlug, projectId, params);
 
@@ -275,12 +291,18 @@ export class IssueDraftStore implements IIssueDraftStore {
     });
   };
 
-  updateDraftIssue = async (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => {
+  updateDraftIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    grouping: {
+      group_id: string | null;
+      sub_group_id: string | null;
+    },
+    issueForm: Partial<IIssue>
+  ) => {
     const originalIssues = { ...this.draftIssues };
 
-    // FIXME: use real group_id and sub_group_id from filters
-    const group_id = "1";
-    const sub_group_id = "1";
+    const { group_id, sub_group_id } = grouping;
 
     runInAction(() => {
       this.loader = true;
@@ -314,9 +336,17 @@ export class IssueDraftStore implements IIssueDraftStore {
     }
   };
 
-  convertDraftIssueToIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
+  convertDraftIssueToIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    grouping: {
+      group_id: string | null;
+      sub_group_id: string | null;
+    },
+    issueId: string
+  ) =>
     // TODO: add removing item from draft issue list
-    await this.updateDraftIssue(workspaceSlug, projectId, { id: issueId, is_draft: false });
+    await this.updateDraftIssue(workspaceSlug, projectId, grouping, { id: issueId, is_draft: false });
 
   deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const originalIssues = { ...this.draftIssues };

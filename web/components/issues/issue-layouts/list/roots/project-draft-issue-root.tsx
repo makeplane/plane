@@ -29,13 +29,18 @@ export const DraftIssueListLayout: FC = observer(() => {
     (group_by: string | null, issue: IIssue, action: "update" | "delete" | "convertToIssue") => {
       if (!workspaceSlug || !projectId) return;
 
+      const grouping = {
+        group_id: group_by,
+        sub_group_id: null,
+      };
+
       if (action === "update") {
-        draftIssuesStore.updateDraftIssue(workspaceSlug.toString(), projectId.toString(), issue);
+        draftIssuesStore.updateDraftIssue(workspaceSlug.toString(), projectId.toString(), grouping, issue);
         draftIssuesStore.updateIssueStructure(group_by, null, issue);
       } else if (action === "delete") {
         draftIssuesStore.deleteDraftIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
       } else if (action === "convertToIssue") {
-        draftIssuesStore.convertDraftIssueToIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
+        draftIssuesStore.convertDraftIssueToIssue(workspaceSlug.toString(), projectId.toString(), grouping, issue.id);
       }
     },
     [workspaceSlug, projectId, draftIssuesStore]
