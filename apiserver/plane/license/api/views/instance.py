@@ -37,56 +37,72 @@ class InstanceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        user = User.objects.filter(email=email).first()
-        if user is None:
-            user = User.objects.create(
-                email=email,
-                username=uuid.uuid4().hex,
+        instance = Instance.objects.first()
+
+        if instance is None:
+            # Register the instance
+            user = User.objects.filter(email=email).first()
+            if user is None:
+                user = User.objects.create(
+                    email=email,
+                    username=uuid.uuid4().hex,
+                )
+                user.set_password(password)
+                user.save()
+            else:
+                if not user.check_password(password):
+                    return Response(
+                        {
+                            "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                        },
+                        status=status.HTTP_401_UNAUTHORIZED,
+                    )
+
+            LICENSE_ENGINE_BASE_URL = os.environ.get("LICENSE_ENGINE_BASE_URL", "")
+
+            headers = {"Content-Type": "application/json"}
+
+            payload = {
+                "email": email,
+                "version": data.get("version", 0.1),
+                "domain": str(request.headers.get("Host")),
+            }
+
+            response = requests.post(
+                f"{LICENSE_ENGINE_BASE_URL}/api/instances",
+                headers=headers,
+                data=json.dumps(payload),
             )
-            user.set_password(password)
-            user.save()
-        else:
-            if not user.check_password(password):
+
+            if response.status_code == 201:
+                data = response.json()
+                instance = Instance.objects.create(
+                    instance_id=data.get("id"),
+                    license_key=data.get("license_key"),
+                    api_key=data.get("api_key"),
+                    version=data.get("version"),
+                    email=data.get("email"),
+                    user=user,
+                    last_checked_at=timezone.now(),
+                )
                 return Response(
                     {
-                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                        "id": str(instance.instance_id),
+                        "message": "Instance registered succesfully",
                     },
-                    status=status.HTTP_401_UNAUTHORIZED,
+                    status=status.HTTP_200_OK,
                 )
 
-        LICENSE_ENGINE_BASE_URL = os.environ.get("LICENSE_ENGINE_BASE_URL", "")
-
-        headers = {"Content-Type": "application/json"}
-
-        payload = {"email": email, "version": data.get("version", 0.1)}
-
-        response = requests.post(
-            f"{LICENSE_ENGINE_BASE_URL}/api/instances",
-            headers=headers,
-            data=json.dumps(payload),
-        )
-
-        if response.status_code == 201:
-            data = response.json()
-            instance = Instance.objects.create(
-                instance_id=data.get("id"),
-                license_key=data.get("license_key"),
-                api_key=data.get("api_key"),
-                version=data.get("version"),
-                email=data.get("email"),
-                user=user,
-                last_checked_at=timezone.now(),
-            )
             return Response(
-                {
-                    "id": str(instance.instance_id),
-                    "message": "Instance registered succesfully",
-                },
-                status=status.HTTP_200_OK,
+                {"error": "Unable to create instance"}, status=response.status_code
             )
 
         return Response(
-            {"error": "Unable to create instance"}, status=response.status_code
+            {
+                "message": "Instance is already registered",
+                "instance_id": str(instance.id),
+            },
+            status=status.HTTP_200_OK,
         )
 
     def get(self, request):
