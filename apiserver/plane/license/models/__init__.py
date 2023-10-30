@@ -1,1 +1,1 @@
-from .license import License
+from .instance import Instance
