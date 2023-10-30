@@ -65,13 +65,18 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
     ) => {
       if (!workspaceSlug) return;
 
+      const grouping = {
+        group_id: group_by,
+        sub_group_id: sub_group_by,
+      };
+
       if (action === "update") {
         draftIssuesStore.updateIssueStructure(group_by, sub_group_by, issue);
-        draftIssuesStore.updateDraftIssue(workspaceSlug.toString(), issue.project, issue);
+        draftIssuesStore.updateDraftIssue(workspaceSlug.toString(), issue.project, grouping, issue);
       }
       if (action === "delete") draftIssuesStore.deleteDraftIssue(workspaceSlug.toString(), issue.project, issue.id);
       if (action === "convertToIssue")
-        draftIssuesStore.convertDraftIssueToIssue(workspaceSlug.toString(), issue.project, issue.id);
+        draftIssuesStore.convertDraftIssueToIssue(workspaceSlug.toString(), issue.project, grouping, issue.id);
     },
     [draftIssuesStore, workspaceSlug]
   );
