@@ -17,7 +17,7 @@ export interface IUserStore {
 
   dashboardInfo: any;
 
-  workspaceMemberInfo: any;
+  workspaceMemberInfo: IWorkspaceMember | null;
   hasPermissionToWorkspace: boolean | null;
 
   projectMemberInfo: IProjectMember | null;
@@ -45,7 +45,7 @@ class UserStore implements IUserStore {
 
   dashboardInfo: any = null;
 
-  workspaceMemberInfo: any = null;
+  workspaceMemberInfo: IWorkspaceMember | null = null;
   hasPermissionToWorkspace: boolean | null = null;
 
   projectMemberInfo: IProjectMember | null = null;

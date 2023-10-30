@@ -1,3 +1,4 @@
+export * from "./settings";
 export * from "./views";
 export * from "./activity-graph";
 export * from "./completed-issues-graph";

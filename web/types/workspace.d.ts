@@ -61,6 +61,7 @@ export interface IWorkspaceMember {
   member: IUserMemberLite;
   role: 5 | 10 | 15 | 20;
   company_role: string | null;
+  default_props: IWorkspaceViewProps;
   view_props: IWorkspaceViewProps;
   created_at: Date;
   updated_at: Date;
