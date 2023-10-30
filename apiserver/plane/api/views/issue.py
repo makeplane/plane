@@ -218,7 +218,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
@@ -233,12 +232,12 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         if group_by:
             grouped_results = group_results(issues, group_by, sub_group_by)
             return Response(
-                {"data": grouped_results, "total_issues": total_issues},
+                grouped_results,
                 status=status.HTTP_200_OK,
             )
 
         return Response(
-            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+            issues, status=status.HTTP_200_OK
         )
 
 
@@ -427,7 +426,6 @@ class UserWorkSpaceIssues(BaseAPIView):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
@@ -442,12 +440,12 @@ class UserWorkSpaceIssues(BaseAPIView):
         if group_by:
             grouped_results = group_results(issues, group_by, sub_group_by)
             return Response(
-                {"data": grouped_results, "total_issues": total_issues},
+                grouped_results,
                 status=status.HTTP_200_OK,
             )
 
         return Response(
-            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+            issues, status=status.HTTP_200_OK
         )
 
 
@@ -2153,7 +2151,6 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        total_issues = issue_queryset.count()
         issues = IssueLiteSerializer(issue_queryset, many=True).data
 
         ## Grouping the results
@@ -2161,12 +2158,12 @@ class IssueDraftViewSet(BaseViewSet):
         if group_by:
             grouped_results = group_results(issues, group_by)
             return Response(
-                {"data": grouped_results, "total_issues": total_issues},
+                grouped_results,
                 status=status.HTTP_200_OK,
             )
 
         return Response(
-            {"data": issues, "total_issues": total_issues}, status=status.HTTP_200_OK
+            issues, status=status.HTTP_200_OK
         )
 
     def create(self, request, slug, project_id):
