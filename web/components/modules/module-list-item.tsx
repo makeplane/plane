@@ -143,7 +143,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                   )}
                 </CircularProgressIndicator>
               </span>
-              <Tooltip tooltipContent={module.name} position="auto">
+              <Tooltip tooltipContent={module.name} position="top">
                 <span className="text-base font-medium truncate">{module.name}</span>
               </Tooltip>
             </div>

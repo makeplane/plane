@@ -163,7 +163,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <span className="flex-shrink-0">
                   <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
                 </span>
-                <Tooltip tooltipContent={cycle.name} position="auto">
+                <Tooltip tooltipContent={cycle.name} position="top">
                   <span className="text-base font-medium truncate">{cycle.name}</span>
                 </Tooltip>
               </div>
