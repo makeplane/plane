@@ -268,7 +268,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
       this.error = null;
 
       const params = this.rootStore?.moduleFilter?.appliedFilters;
-      const issueResponse = await this.moduleService.getModuleIssuesWithParams(
+      const issueResponse: any = await this.moduleService.getModuleIssuesWithParams(
         workspaceSlug,
         projectId,
         moduleId,
@@ -281,7 +281,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
           ...this.issues,
           [moduleId]: {
             ...this.issues[moduleId],
-            [issueType]: issueResponse,
+            [issueType]: issueResponse?.["data"],
           },
         };
         runInAction(() => {
