@@ -399,7 +399,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 }}
                                 totalIssues={moduleDetails.total_issues}
                                 module={moduleDetails}
-                                isPeekModuleDetails={Boolean(peekModule)}
+                                isPeekView={Boolean(peekModule)}
                               />
                             </div>
                           )}
