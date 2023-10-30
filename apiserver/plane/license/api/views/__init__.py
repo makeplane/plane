@@ -1,1 +1,1 @@
-from .instance import InstanceEndpoint
+from .instance import InstanceEndpoint, TransferOwnerEndpoint

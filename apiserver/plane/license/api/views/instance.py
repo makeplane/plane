@@ -10,18 +10,27 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # Module imports
 from plane.api.views import BaseAPIView
 from plane.license.models import Instance
+from plane.license.api.serializers import InstanceSerializer
 from plane.db.models import User
 
 
 class InstanceEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            self.permission_classes = [
+                IsAuthenticated,
+            ]
+        else:
+            self.permission_classes = [
+                AllowAny,
+            ]
+
+        return super(InstanceEndpoint, self).get_permissions()
 
     def post(self, request):
         email = request.data.get("email", False)
@@ -85,9 +94,12 @@ class InstanceEndpoint(BaseAPIView):
                     user=user,
                     last_checked_at=timezone.now(),
                 )
+
+                serializer = InstanceSerializer(instance)
+
                 return Response(
                     {
-                        "id": str(instance.instance_id),
+                        "data": serializer.data,
                         "message": "Instance registered succesfully",
                     },
                     status=status.HTTP_200_OK,
@@ -97,10 +109,12 @@ class InstanceEndpoint(BaseAPIView):
                 {"error": "Unable to create instance"}, status=response.status_code
             )
 
+        serializer = InstanceSerializer(instance)
+
         return Response(
             {
                 "message": "Instance is already registered",
-                "instance_id": str(instance.id),
+                "data": serializer.data,
             },
             status=status.HTTP_200_OK,
         )
@@ -111,10 +125,46 @@ class InstanceEndpoint(BaseAPIView):
         if instance is None:
             return Response({"activated": False}, status=status.HTTP_400_BAD_REQUEST)
 
+        serializer = InstanceSerializer(instance)
+
         data = {
-            "instance_id": instance.instance_id,
-            "version": instance.version,
+            "data": serializer.data,
             "activated": True,
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        instance = Instance.objects.first()
+        serializer = InstanceSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TransferOwnerEndpoint(BaseAPIView):
+    permission_classes = [
+        IsAuthenticated,
+    ]
+
+    def post(self, request):
+        instance = Instance.objects.first()
+
+        if str(instance.user_id) != str(request.user.id):
+            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        user_id = request.data.get("user_id", False)
+
+        if not user_id:
+            return Response(
+                {"error": "User is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = User.objects.get(pk=user_id)
+
+        instance.user = user
+        instance.save()
+        return Response(
+            {"message": "Owner successfully updated"}, status=status.HTTP_200_OK
+        )

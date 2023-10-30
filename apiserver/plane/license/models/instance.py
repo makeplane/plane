@@ -19,6 +19,8 @@ class Instance(BaseModel):
         related_name="instance_owner",
     )
     last_checked_at = models.DateTimeField()
+    is_telemetry_enabled = models.BooleanField(default=True)
+    is_support_required = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = "Instance"
