@@ -90,7 +90,7 @@ export const ViewAssigneeSelect: React.FC<Props> = ({
         if (newData.includes(data)) newData.splice(newData.indexOf(data), 1);
         else newData.push(data);
 
-        partialUpdateIssue({ assignees_list: data }, issue);
+        partialUpdateIssue({ assignees: data }, issue);
 
         trackEventService.trackIssuePartialPropertyUpdateEvent(
           {

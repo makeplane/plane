@@ -139,7 +139,7 @@ export const ViewLabelSelect: FC<Props> = ({
       <CustomSearchSelect
         value={issue.labels}
         onChange={(data: string[]) => {
-          partialUpdateIssue({ labels_list: data }, issue);
+          partialUpdateIssue({ labels: data }, issue);
         }}
         options={options}
         {...(customButton ? { customButton: labelsLabel } : { label: labelsLabel })}

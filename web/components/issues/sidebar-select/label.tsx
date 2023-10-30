@@ -77,7 +77,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
 
         issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
-        submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
+        submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
 
         setCreateLabelForm(false);
       });
@@ -99,7 +99,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         </div>
         <div className="basis-1/2">
           <div className="flex flex-wrap gap-1">
-            {watchIssue("labels_list")?.map((labelId) => {
+            {watchIssue("labels")?.map((labelId) => {
               const label = issueLabels?.find((l) => l.id === labelId);
 
               if (label)
@@ -108,9 +108,9 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                     key={label.id}
                     className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                     onClick={() => {
-                      const updatedLabels = watchIssue("labels_list")?.filter((l) => l !== labelId);
+                      const updatedLabels = watchIssue("labels")?.filter((l) => l !== labelId);
                       submitChanges({
-                        labels_list: updatedLabels,
+                        labels: updatedLabels,
                       });
                     }}
                   >
@@ -127,12 +127,12 @@ export const SidebarLabelSelect: React.FC<Props> = ({
             })}
             <Controller
               control={issueControl}
-              name="labels_list"
+              name="labels"
               render={({ field: { value } }) => (
                 <Listbox
                   as="div"
                   value={value}
-                  onChange={(val: any) => submitChanges({ labels_list: val })}
+                  onChange={(val: any) => submitChanges({ labels: val })}
                   className="flex-shrink-0"
                   multiple
                   disabled={isNotAllowed || uneditable}

@@ -144,7 +144,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
           <div>
             <Controller
               control={control}
-              name="assignees_list"
+              name="assignees"
               render={({ field: { value } }) => (
                 <AssigneeSelect
                   value={value}
@@ -152,7 +152,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                   onChange={(val: string) => {
                     const assignees = value?.includes(val) ? value?.filter((i) => i !== val) : [...(value ?? []), val];
 
-                    submitChanges({ assignees_list: assignees });
+                    submitChanges({ assignees: assignees });
                   }}
                 />
               )}
@@ -232,7 +232,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
-                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`,
                           })
                         )
                       }
@@ -295,7 +295,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
-                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`,
                           })
                         )
                       }
@@ -358,7 +358,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
-                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`,
                           })
                         )
                       }
@@ -421,7 +421,7 @@ export const IssuePropertiesDetail: React.FC<Props> = (props) => {
                           JSON.stringify({
                             issue_id: relation.issue_detail?.id,
                             project_id: relation.issue_detail?.project_detail.id,
-                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`
+                            issue_identifier: `${relation.issue_detail?.project_detail.identifier}-${relation.issue_detail?.sequence_id}`,
                           })
                         )
                       }

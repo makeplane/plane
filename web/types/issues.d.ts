@@ -80,7 +80,6 @@ export interface IIssue {
   archived_at: string;
   assignees: string[];
   assignee_details: IUser[];
-  assignees_list: string[];
   attachment_count: number;
   attachments: any[];
   issue_relations: IssueRelation[];
@@ -103,7 +102,6 @@ export interface IIssue {
   labels: string[];
   label_details: any[];
   is_draft: boolean;
-  labels_list: string[];
   links_list: IIssueLink[];
   link_count: number;
   module: string | null;
