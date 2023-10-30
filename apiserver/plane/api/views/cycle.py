@@ -579,7 +579,6 @@ class CycleIssueViewSet(BaseViewSet):
             )
         )
 
-        total_issues = issues.count()
         issues_data = IssueStateSerializer(issues, many=True).data
 
         if sub_group_by and sub_group_by == group_by:
@@ -591,12 +590,12 @@ class CycleIssueViewSet(BaseViewSet):
         if group_by:
             grouped_results = group_results(issues_data, group_by, sub_group_by)
             return Response(
-                {"data": grouped_results, "total_issues": total_issues},
+                grouped_results,
                 status=status.HTTP_200_OK,
             )
 
         return Response(
-            {"data": issues_data, "total_issues": total_issues}, status=status.HTTP_200_OK
+            issues_data, status=status.HTTP_200_OK
         )
 
     def create(self, request, slug, project_id, cycle_id):
