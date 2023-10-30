@@ -111,10 +111,19 @@ export const getFirstCharacters = (str: string) => {
  */
 
 export const stripHTML = (html: string) => {
-  const tmp = document.createElement("DIV");
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || "";
+  const strippedText = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ""); // Remove script tags
+  return strippedText.replace(/<[^>]*>/g, ""); // Remove all other HTML tags
 };
+
+/**
+ *
+ * @example:
+ * const html = "<p>Some text</p>";
+ * const text = stripAndTruncateHTML(html);
+ * console.log(text); // Some text
+ */
+
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(stripHTML(html), length);
 
 /**
  * @description: This function return number count in string if number is more than 100 then it will return 99+
