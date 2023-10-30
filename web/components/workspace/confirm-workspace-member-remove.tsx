@@ -1,29 +1,37 @@
 import React, { useState } from "react";
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// icons
 import { AlertTriangle } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  handleDelete: () => void;
+  onSubmit: () => Promise<void>;
   data?: any;
 };
 
-const ConfirmWorkspaceMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, handleDelete }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose, data, onSubmit } = props;
+
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const { user: userStore } = useMobxStore();
+  const user = userStore.currentUser;
 
   const handleClose = () => {
     onClose();
-    setIsDeleteLoading(false);
+    setIsRemoving(false);
   };
 
   const handleDeletion = async () => {
-    setIsDeleteLoading(true);
-    handleDelete();
+    setIsRemoving(true);
+
+    await onSubmit();
+
     handleClose();
   };
 
@@ -61,14 +69,21 @@ const ConfirmWorkspaceMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, 
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        Remove {data?.display_name}?
+                        {user?.id === data?.memberId ? "Leave workspace?" : `Remove ${data?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-custom-text-200">
-                          Are you sure you want to remove member-{" "}
-                          <span className="font-bold">{data?.display_name}</span>? They will no longer have access to
-                          this workspace. This action cannot be undone.
-                        </p>
+                        {user?.id === data?.memberId ? (
+                          <p className="text-sm text-custom-text-200">
+                            Are you sure you want to leave the workspace? You will no longer have access to this
+                            workspace. This action cannot be undone.
+                          </p>
+                        ) : (
+                          <p className="text-sm text-custom-text-200">
+                            Are you sure you want to remove member-{" "}
+                            <span className="font-bold">{data?.display_name}</span>? They will no longer have access to
+                            this workspace. This action cannot be undone.
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -77,8 +92,8 @@ const ConfirmWorkspaceMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, 
                   <Button variant="neutral-primary" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Removing..." : "Remove"}
+                  <Button variant="danger" onClick={handleDeletion} loading={isRemoving}>
+                    {isRemoving ? "Removing..." : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>
@@ -88,6 +103,4 @@ const ConfirmWorkspaceMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, 
       </Dialog>
     </Transition.Root>
   );
-};
-
-export default ConfirmWorkspaceMemberRemove;
+});
