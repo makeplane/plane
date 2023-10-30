@@ -50,7 +50,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStore?.workspaceProjects || null;
-  const estimates = null;
 
   return (
     <div className={`relative w-full h-full bg-custom-background-90`}>
@@ -70,9 +69,9 @@ export const ProfileIssuesListLayout: FC = observer(() => {
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members}
+        members={members?.map((m) => m.member) ?? null}
         projects={projects}
-        estimates={estimates}
+        estimates={null}
       />
     </div>
   );

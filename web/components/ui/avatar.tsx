@@ -76,11 +76,20 @@ export const Avatar: React.FC<AvatarProps> = ({
 type AsigneesListProps = {
   users?: Partial<IUser[]> | (Partial<IUserLite> | undefined)[] | Partial<IUserLite>[];
   userIds?: string[];
+  height?: string;
+  width?: string;
   length?: number;
   showLength?: boolean;
 };
 
-export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, length = 3, showLength = true }) => {
+export const AssigneesList: React.FC<AsigneesListProps> = ({
+  users,
+  userIds,
+  height = "24px",
+  width = "24px",
+  length = 3,
+  showLength = true,
+}) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -101,7 +110,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, len
       {users && (
         <>
           {users.slice(0, length).map((user, index) => (
-            <Avatar key={user?.id} user={user} index={index} />
+            <Avatar key={user?.id} user={user} index={index} height={height} width={width} />
           ))}
           {users.length > length ? (
             <div className="-ml-3.5 relative h-6 w-6 rounded">
@@ -118,7 +127,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({ users, userIds, len
           {userIds.slice(0, length).map((userId, index) => {
             const user = people?.find((p) => p.member.id === userId)?.member;
 
-            return <Avatar key={userId} user={user} index={index} />;
+            return <Avatar key={userId} user={user} index={index} height={height} width={width} />;
           })}
           {showLength ? (
             userIds.length > length ? (

@@ -6,6 +6,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { List } from "../default";
 import { ModuleIssueQuickActions } from "components/issues";
+// helpers
+import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -15,7 +17,7 @@ export interface IModuleListLayout {}
 
 export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query;
 
   const {
     project: projectStore,
@@ -52,13 +54,18 @@ export const ModuleListLayout: React.FC = observer(() => {
     [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
+  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
+
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.projectStates || null;
-  const estimates = null;
+  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const estimates =
+    projectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+      : null;
 
   return (
     <div className="relative w-full h-full bg-custom-background-90">
@@ -79,9 +86,9 @@ export const ModuleListLayout: React.FC = observer(() => {
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members}
+        members={members?.map((m) => m.member) ?? null}
         projects={projects}
-        estimates={estimates}
+        estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
       />
     </div>
   );

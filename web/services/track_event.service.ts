@@ -632,8 +632,8 @@ export class TrackEventService extends APIService {
     });
   }
 
-  async trackMiscellaneousEvent(data: any, eventName: MiscellaneousEventType, user: IUser): Promise<any> {
-    if (!trackEvent) return;
+  async trackMiscellaneousEvent(data: any, eventName: MiscellaneousEventType, user: IUser | undefined): Promise<any> {
+    if (!trackEvent || !user) return;
 
     return this.request({
       url: "/api/track-event",

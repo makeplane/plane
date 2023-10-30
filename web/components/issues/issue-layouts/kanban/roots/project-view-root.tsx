@@ -4,8 +4,8 @@ import { DragDropContext } from "@hello-pangea/dnd";
 // mobx
 import { observer } from "mobx-react-lite";
 // components
-import { KanBanSwimLanes } from "./swimlanes";
-import { KanBan } from "./default";
+import { KanBanSwimLanes } from "../swimlanes";
+import { KanBan } from "../default";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -14,7 +14,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export interface IViewKanBanLayout {}
 
-export const ViewKanBanLayout: React.FC = observer(() => {
+export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const {
     project: projectStore,
     issue: issueStore,

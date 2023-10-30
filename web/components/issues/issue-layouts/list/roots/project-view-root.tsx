@@ -10,7 +10,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export interface IViewListLayout {}
 
-export const ViewListLayout: React.FC = observer(() => {
+export const ProjectViewListLayout: React.FC = observer(() => {
   const { project: projectStore, issue: issueStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
 
   const issues = issueStore?.getIssues;
