@@ -150,7 +150,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </div>
 
           <Tab.Panels as={Fragment}>
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"all"}
@@ -165,7 +165,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
               <ActiveCycleDetails workspaceSlug={workspaceSlug} projectId={projectId} />
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"upcoming"}
@@ -176,7 +176,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
               )}
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"completed"}
@@ -187,7 +187,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
               )}
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"draft"}
