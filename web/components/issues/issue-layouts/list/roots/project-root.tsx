@@ -76,6 +76,7 @@ export const ListLayout: FC = observer(() => {
         labels={labels}
         members={members?.map((m) => m.member) ?? null}
         projects={projects}
+        enableQuickIssueCreate
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
       />
     </div>

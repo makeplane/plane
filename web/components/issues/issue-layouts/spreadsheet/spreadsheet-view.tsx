@@ -3,11 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
 // components
-import {
-  SpreadsheetColumnsList,
-  // ListInlineCreateIssueForm,
-  SpreadsheetIssuesColumn,
-} from "components/issues";
+import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetInlineCreateIssueForm } from "components/issues";
 import { CustomMenu, Spinner } from "@plane/ui";
 // types
 import {
@@ -31,6 +27,7 @@ type Props = {
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
   disableUserActions: boolean;
+  enableQuickCreateIssue?: boolean;
 };
 
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
@@ -46,6 +43,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     handleUpdateIssue,
     openIssuesListModal,
     disableUserActions,
+    enableQuickCreateIssue,
   } = props;
 
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
@@ -138,17 +136,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
         <div className="border-t border-custom-border-100">
           <div className="mb-3 z-50 sticky bottom-0 left-0">
-            {/* <ListInlineCreateIssueForm
-                isOpen={isInlineCreateIssueFormOpen}
-                handleClose={() => setIsInlineCreateIssueFormOpen(false)}
-                prePopulatedData={{
-                  ...(cycleId && { cycle: cycleId.toString() }),
-                  ...(moduleId && { module: moduleId.toString() }),
-                }}
-              /> */}
+            {enableQuickCreateIssue && <SpreadsheetInlineCreateIssueForm />}
           </div>
 
-          {!disableUserActions &&
+          {/* {!disableUserActions &&
             !isInlineCreateIssueFormOpen &&
             (type === "issue" ? (
               <button
@@ -180,7 +171,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                   <CustomMenu.MenuItem onClick={openIssuesListModal}>Add an existing issue</CustomMenu.MenuItem>
                 )}
               </CustomMenu>
-            ))}
+            ))} */}
         </div>
       </div>
     </div>

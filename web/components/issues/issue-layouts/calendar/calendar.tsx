@@ -44,12 +44,23 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
-                  <CalendarWeekDays key={weekIndex} week={week} issues={issues} quickActions={quickActions} />
+                  <CalendarWeekDays
+                    key={weekIndex}
+                    week={week}
+                    issues={issues}
+                    enableQuickIssueCreate
+                    quickActions={quickActions}
+                  />
                 ))}
             </div>
           )}
           {layout === "week" && (
-            <CalendarWeekDays week={calendarStore.allDaysOfActiveWeek} issues={issues} quickActions={quickActions} />
+            <CalendarWeekDays
+              week={calendarStore.allDaysOfActiveWeek}
+              issues={issues}
+              enableQuickIssueCreate
+              quickActions={quickActions}
+            />
           )}
         </div>
       </div>

@@ -17,7 +17,7 @@ from plane.api.views import (
     IssueSubscriberViewSet,
     IssueReactionViewSet,
     CommentReactionViewSet,
-    IssuePropertyViewSet,
+    IssueUserDisplayPropertyEndpoint,
     IssueArchiveViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
@@ -235,28 +235,11 @@ urlpatterns = [
     ## End Comment Reactions
     ## IssueProperty
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/",
-        IssuePropertyViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-issue-roadmap",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-display-properties/",
+        IssueUserDisplayPropertyEndpoint.as_view(),
+        name="project-issue-display-properties",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-properties/<uuid:pk>/",
-        IssuePropertyViewSet.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-issue-roadmap",
-    ),
-    ## IssueProperty Ebd
+    ## IssueProperty End
     ## Issue Archives
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/archived-issues/",

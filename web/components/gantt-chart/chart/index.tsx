@@ -1,6 +1,4 @@
 import { FC, useEffect, useState } from "react";
-// next
-import { useRouter } from "next/router";
 // icons
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
@@ -13,7 +11,7 @@ import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
 // import { YearChartView } from "./year";
 // icons
-import { Expand, PlusIcon, Shrink } from "lucide-react";
+import { Expand, Shrink } from "lucide-react";
 // views
 import {
   // generateHourChart,
@@ -28,7 +26,6 @@ import {
   // getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
-// import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
@@ -65,15 +62,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   enableReorder,
   bottomSpacing,
 }) => {
-  // router
-  const router = useRouter();
-  const { cycleId, moduleId } = router.query;
-  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
-  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null); // blocks state management starts
   // hooks
   const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } = useChart();
@@ -297,44 +288,6 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             SidebarBlockRender={SidebarBlockRender}
             enableReorder={enableReorder}
           />
-          {chartBlocks && !(isCyclePage || isModulePage) && (
-            <div className="pl-2.5 py-3">
-              {/* <GanttInlineCreateIssueForm
-                isOpen={isCreateIssueFormOpen}
-                handleClose={() => setIsCreateIssueFormOpen(false)}
-                onSuccess={() => {
-                  const ganttSidebar = document.getElementById(`gantt-sidebar-${cycleId}`);
-
-                  const timeoutId = setTimeout(() => {
-                    if (ganttSidebar)
-                      ganttSidebar.scrollBy({
-                        top: ganttSidebar.scrollHeight,
-                        left: 0,
-                        behavior: "smooth",
-                      });
-                    clearTimeout(timeoutId);
-                  }, 10);
-                }}
-                prePopulatedData={{
-                  start_date: new Date(Date.now()).toISOString().split("T")[0],
-                  target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-                  ...(cycleId && { cycle: cycleId.toString() }),
-                  ...(moduleId && { module: moduleId.toString() }),
-                }}
-              /> */}
-
-              {!isCreateIssueFormOpen && (
-                <button
-                  type="button"
-                  onClick={() => setIsCreateIssueFormOpen(true)}
-                  className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pl-[1.875rem] py-1 rounded-md"
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-                </button>
-              )}
-            </div>
-          )}
         </div>
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
