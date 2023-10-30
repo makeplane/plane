@@ -1,8 +1,8 @@
 import * as React from "react";
 
-import { ISvgIcons } from "./type";
+import { ISvgIcons } from "../type";
 
-export const DoubleCircleIcon: React.FC<ISvgIcons> = ({
+export const CircleDotFullIcon: React.FC<ISvgIcons> = ({
   className = "text-current",
   ...rest
 }) => (
@@ -14,7 +14,7 @@ export const DoubleCircleIcon: React.FC<ISvgIcons> = ({
     xmlns="http://www.w3.org/2000/svg"
     {...rest}
   >
-    <circle cx="12" cy="12" r="9" />
-    <circle cx="12" cy="12" r="5.625" />
+    <circle cx="8.33333" cy="8.33333" r="5.33333" stroke-linecap="round" />
+    <circle cx="8.33333" cy="8.33333" r="4.33333" fill="currentColor" />
   </svg>
 );
