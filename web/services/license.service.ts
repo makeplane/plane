@@ -23,8 +23,14 @@ export class LicenseService extends APIService {
       });
   }
 
-  async createCheckoutSession(priceId: string, seats: number, workspace: IWorkspace, user: IUser): Promise<any> {
-    return this.post(`/api/checkout/create-session/`, { priceId, seats, workspace, user })
+  async createCheckoutSession(
+    priceId: string,
+    seats: number,
+    workspace: IWorkspace,
+    user: IUser,
+    metadata: any
+  ): Promise<any> {
+    return this.post(`/api/checkout/create-session/`, { priceId, seats, workspace, user, metadata })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

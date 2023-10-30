@@ -23,16 +23,16 @@ export const UpgradeWorkspaceModal: FC<IUpgradeWorkspaceModal> = observer((props
   // fetching products
   const { data: products } = useSWR("UPGRADE_PRODUCTS", () => licenseService.getProducts());
 
-  console.log("products", products);
-
   const handleUpgrade = (product: any) => {
     if (currentUser && workspaceMembers && workspaceMembers?.length >= 1 && currentWorkspace) {
-      // licenseService.createSubscription(currentUser, product?.default_price?.id).then((response) => {
-      //   console.log("subscription", response);
-      // });
-
       licenseService
-        .createCheckoutSession(product?.default_price?.id, workspaceMembers?.length, currentWorkspace, currentUser)
+        .createCheckoutSession(
+          product?.default_price?.id,
+          workspaceMembers?.length,
+          currentWorkspace,
+          currentUser,
+          product?.metadata
+        )
         .then((response) => {
           console.log("subscription", response);
           window.open(response.url, "_blank");
