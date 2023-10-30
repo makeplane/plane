@@ -4,9 +4,9 @@ import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { CalendarDays, Signal } from "lucide-react";
 // components
 import { IssuePropertyState } from "components/issues/issue-layouts/properties/state";
-import { IssuePropertyPriority } from "components/issues/issue-layouts/properties/priority";
 import { IssuePropertyAssignee } from "components/issues/issue-layouts/properties/assignee";
-import { IssuePropertyDate } from "components/issues/issue-layouts/properties/date";
+import { IssuePropertyDate } from "../issue-layouts/properties/date";
+import { IssuePropertyPriority } from "../issue-layouts/properties/priority";
 // types
 import { IIssue, IState, IUserLite, TIssuePriorities } from "types";
 
@@ -42,16 +42,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col gap-5 w-80 py-5">
       {/* state */}
-      <div className="flex items-center gap-2">
-        <div className="flex-shrink-0 flex items-center gap-2 w-48 whitespace-nowrap">
-          <div className="w-4 h-4 flex justify-center items-center overflow-hidden">
-            <DoubleCircleIcon className="h-3.5 w-3.5 flex-shrink-0" />
-          </div>
-          <div className="font-medium text-custom-text-200 line-clamp-1">State</div>
+      <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-1/2">
+          <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
+          <span className="text-sm font-medium text-custom-text-200 line-clamp-1">State</span>
         </div>
-        <div className="w-full">
+        <div className="w-1/2">
           <IssuePropertyState
             value={issue?.state_detail || null}
             onChange={handleState}
@@ -63,14 +61,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
       </div>
 
       {/* assignees */}
-      <div className="flex items-center gap-2">
-        <div className="flex-shrink-0 flex items-center gap-2 w-48 whitespace-nowrap">
-          <div className="w-4 h-4 flex justify-center items-center overflow-hidden">
-            <UserGroupIcon className="h-3.5 w-3.5" />
-          </div>
-          <div className="font-medium text-custom-text-200 line-clamp-1">Assignees</div>
+      <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-1/2">
+          <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
+          <span className="text-sm font-medium text-custom-text-200 line-clamp-1">Assignees</span>
         </div>
-        <div className="w-full">
+        <div className="w-1/2">
           <IssuePropertyAssignee
             value={issue?.assignees || null}
             onChange={(ids: string[]) => handleAssignee(ids)}
@@ -82,14 +78,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
       </div>
 
       {/* priority */}
-      <div className="flex items-center gap-2">
-        <div className="flex-shrink-0 flex items-center gap-2 w-48 whitespace-nowrap">
-          <div className="w-4 h-4 flex justify-center items-center overflow-hidden">
-            <Signal className="h-3.5 w-3.5" />
-          </div>
-          <div className="font-medium text-custom-text-200 line-clamp-1">Priority</div>
+      <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-1/2">
+          <Signal className="h-4 w-4 flex-shrink-0" />
+          <span className="text-sm font-medium text-custom-text-200 line-clamp-1">Priority</span>
         </div>
-        <div className="w-full">
+        <div className="w-1/2">
           <IssuePropertyPriority
             value={issue?.priority || null}
             onChange={handlePriority}
@@ -100,14 +94,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
       </div>
 
       {/* start_date */}
-      <div className="flex items-center gap-2">
-        <div className="flex-shrink-0 flex items-center gap-2 w-48 whitespace-nowrap">
-          <div className="w-4 h-4 flex justify-center items-center overflow-hidden">
-            <CalendarDays className="h-3.5 w-3.5" />
-          </div>
-          <div className="font-medium text-custom-text-200 line-clamp-1">Start date</div>
+      <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-1/2">
+          <CalendarDays className="h-4 w-4 flex-shrink-0" />
+          <span className="text-sm font-medium text-custom-text-200 line-clamp-1">Start date</span>
         </div>
-        <div className="w-full">
+        <div className="w-1/2">
           <IssuePropertyDate
             value={issue?.start_date || null}
             onChange={(date: string) => handleStartDate(date)}
@@ -118,14 +110,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
       </div>
 
       {/* target_date */}
-      <div className="flex items-center gap-2">
-        <div className="flex-shrink-0 flex items-center gap-2 w-48 whitespace-nowrap">
-          <div className="w-4 h-4 flex justify-center items-center overflow-hidden">
-            <CalendarDays className="h-3.5 w-3.5" />
-          </div>
-          <div className="font-medium text-custom-text-200 line-clamp-1">Target date</div>
+      <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center gap-2 w-1/2">
+          <CalendarDays className="h-4 w-4 flex-shrink-0" />
+          <span className="text-sm font-medium text-custom-text-200 line-clamp-1">Target date</span>
         </div>
-        <div className="w-full">
+        <div className="w-1/2">
           <IssuePropertyDate
             value={issue?.target_date || null}
             onChange={(date: string) => handleTargetDate(date)}

@@ -30,14 +30,14 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   }, 1500);
 
   return (
-    <div className="space-y-4">
-      <div className="font-medium text-sm text-custom-text-200">
+    <>
+      <span className="font-medium text-base text-custom-text-400">
         {issue?.project_detail?.identifier}-{issue?.sequence_id}
-      </div>
+      </span>
 
-      <div className="font-medium text-xl">{issue?.name}</div>
+      <span className="font-semibold text-2xl">{issue?.name}</span>
 
-      <div className="space-y-2">
+      <span className="text-black">
         <RichTextEditor
           uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
           deleteFile={fileService.deleteImage}
@@ -46,16 +46,17 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           onChange={(description: Object, description_html: string) => {
             debouncedIssueDescription(description_html);
           }}
-          customClassName="p-3 min-h-[80px] shadow-sm"
+          customClassName="!p-0 !text-xs"
+          noBorder
         />
+      </span>
 
-        <IssueReaction
-          issueReactions={issueReactions}
-          user={user}
-          issueReactionCreate={issueReactionCreate}
-          issueReactionRemove={issueReactionRemove}
-        />
-      </div>
-    </div>
+      <IssueReaction
+        issueReactions={issueReactions}
+        user={user}
+        issueReactionCreate={issueReactionCreate}
+        issueReactionRemove={issueReactionRemove}
+      />
+    </>
   );
 };
