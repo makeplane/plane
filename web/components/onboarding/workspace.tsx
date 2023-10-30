@@ -48,7 +48,6 @@ export const Workspace: React.FC<Props> = ({ finishOnboarding, stepChange, updat
           onSubmit={completeStep}
           defaultValues={defaultValues}
           setDefaultValues={setDefaultValues}
-          user={user}
           primaryButtonText={{
             loading: "Creating...",
             default: "Continue",

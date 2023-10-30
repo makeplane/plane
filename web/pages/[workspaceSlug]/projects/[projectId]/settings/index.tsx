@@ -3,7 +3,8 @@ import { useRouter } from "next/router";
 
 import useSWR from "swr";
 // layouts
-import { ProjectSettingLayout } from "layouts/setting-layout/project-setting-layout";
+import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/setting-layout";
 // components
 import { ProjectSettingHeader } from "components/headers";
 import {
@@ -17,9 +18,6 @@ import type { NextPage } from "next";
 // fetch-keys
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
-
-// services
-// const projectService = new ProjectService();
 
 const GeneralSettings: NextPage = observer(() => {
   const { project: projectStore } = useMobxStore();
@@ -42,33 +40,34 @@ const GeneralSettings: NextPage = observer(() => {
   // const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
   const isAdmin = projectDetails?.member_role === 20;
-  console.log("isAdmin", isAdmin);
 
   return (
-    <ProjectSettingLayout header={<ProjectSettingHeader title="General Settings" />}>
-      {projectDetails && (
-        <DeleteProjectModal
-          project={projectDetails}
-          isOpen={Boolean(selectProject)}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
-
-      <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-        {projectDetails && workspaceSlug ? (
-          <ProjectDetailsForm project={projectDetails} workspaceSlug={workspaceSlug.toString()} isAdmin={isAdmin} />
-        ) : (
-          <ProjectDetailsFormLoader />
-        )}
-
-        {isAdmin && (
-          <DeleteProjectSection
-            projectDetails={projectDetails}
-            handleDelete={() => setSelectedProject(projectDetails.id ?? null)}
+    <AppLayout header={<ProjectSettingHeader title="General Settings" />} withProjectWrapper>
+      <ProjectSettingLayout>
+        {projectDetails && (
+          <DeleteProjectModal
+            project={projectDetails}
+            isOpen={Boolean(selectProject)}
+            onClose={() => setSelectedProject(null)}
           />
         )}
-      </div>
-    </ProjectSettingLayout>
+
+        <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+          {projectDetails && workspaceSlug ? (
+            <ProjectDetailsForm project={projectDetails} workspaceSlug={workspaceSlug.toString()} isAdmin={isAdmin} />
+          ) : (
+            <ProjectDetailsFormLoader />
+          )}
+
+          {isAdmin && (
+            <DeleteProjectSection
+              projectDetails={projectDetails}
+              handleDelete={() => setSelectedProject(projectDetails.id ?? null)}
+            />
+          )}
+        </div>
+      </ProjectSettingLayout>
+    </AppLayout>
   );
 });
 

@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { IssueBlock } from "components/issues";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite } from "types";
 
 interface Props {
   columnId: string;
@@ -10,14 +10,14 @@ interface Props {
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  priorities: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issues, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
+  const { columnId, issues, handleIssues, quickActions, display_properties, states, labels, members, estimates } =
     props;
 
   return (
@@ -35,7 +35,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             states={states}
             labels={labels}
             members={members}
-            priorities={priorities}
+            estimates={estimates}
           />
         ))}
     </>

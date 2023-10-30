@@ -1,25 +1,28 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { Plus } from "lucide-react";
+import { GanttChart, LayoutGrid, List, Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // ui
 import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
-import { Icon } from "components/ui";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
 
-const moduleViewOptions: { type: "grid" | "gantt_chart"; icon: any }[] = [
+const moduleViewOptions: { type: "list" | "grid" | "gantt_chart"; icon: any }[] = [
   {
-    type: "gantt_chart",
-    icon: "view_timeline",
+    type: "list",
+    icon: List,
   },
   {
     type: "grid",
-    icon: "table_rows",
+    icon: LayoutGrid,
+  },
+  {
+    type: "gantt_chart",
+    icon: GanttChart,
   },
 ];
 
@@ -67,7 +70,7 @@ export const ModulesListHeader: React.FC = observer(() => {
               }`}
               onClick={() => setModulesView(option.type)}
             >
-              <Icon iconName={option.icon} className={`!text-base ${option.type === "grid" ? "rotate-90" : ""}`} />
+              <option.icon className="h-3.5 w-3.5" />
             </button>
           </Tooltip>
         ))}

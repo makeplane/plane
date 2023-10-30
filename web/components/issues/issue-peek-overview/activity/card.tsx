@@ -12,6 +12,7 @@ import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/d
 interface IssueActivityCard {
   workspaceSlug: string;
   projectId: string;
+  issueId: string;
   user: any;
   issueComments: any;
   issueCommentUpdate: (comment: any) => void;
@@ -24,6 +25,7 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
   const {
     workspaceSlug,
     projectId,
+    issueId,
     user,
     issueComments,
     issueCommentUpdate,
@@ -118,6 +120,7 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
                 <IssueCommentCard
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  issueId={issueId}
                   user={user}
                   comment={activityItem}
                   onSubmit={issueCommentUpdate}

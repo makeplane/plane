@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 // icons
 import { Calendar, GanttChart, Kanban, List, Sheet } from "lucide-react";
 // types
@@ -11,6 +12,9 @@ import {
   TIssuePriorities,
   TIssueTypeFilters,
   TStateGroups,
+  IIssue,
+  IProject,
+  IWorkspace,
 } from "types";
 
 export const ISSUE_PRIORITIES: {
@@ -414,4 +418,75 @@ export const groupReactionEmojis = (reactions: any) => {
   }
 
   return _groupedEmojis;
+};
+
+/**
+ *
+ * @param workspaceDetail workspace detail to be added in the issue payload
+ * @param projectDetail project detail to be added in the issue payload
+ * @param formData partial issue data from the form. This will override the default values
+ * @returns full issue payload with some default values
+ */
+
+export const createIssuePayload: (
+  workspaceDetail: IWorkspace,
+  projectDetail: IProject,
+  formData: Partial<IIssue>
+) => IIssue = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<IIssue>) => {
+  const payload = {
+    archived_at: null,
+    assignees: [],
+    assignee_details: [],
+    assignees_list: [],
+    attachment_count: 0,
+    attachments: [],
+    issue_relations: [],
+    related_issues: [],
+    bridge_id: null,
+    completed_at: new Date(),
+    created_at: "",
+    created_by: "",
+    cycle: null,
+    cycle_id: null,
+    cycle_detail: null,
+    description: {},
+    description_html: "",
+    description_stripped: "",
+    estimate_point: null,
+    issue_cycle: null,
+    issue_link: [],
+    issue_module: null,
+    labels: [],
+    label_details: [],
+    is_draft: false,
+    labels_list: [],
+    links_list: [],
+    link_count: 0,
+    module: null,
+    module_id: null,
+    name: "",
+    parent: null,
+    parent_detail: null,
+    priority: "none",
+    project: projectDetail.id,
+    project_detail: projectDetail,
+    sequence_id: 0,
+    sort_order: 0,
+    sprints: null,
+    start_date: null,
+    state: projectDetail.default_state,
+    state_detail: {} as any,
+    sub_issues_count: 0,
+    target_date: null,
+    updated_at: "",
+    updated_by: "",
+    workspace: workspaceDetail.id,
+    workspace_detail: workspaceDetail,
+    id: uuidv4(),
+    tempId: uuidv4(),
+    // to be overridden by the form data
+    ...formData,
+  } as IIssue;
+
+  return payload;
 };

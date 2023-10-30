@@ -6,7 +6,7 @@ import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
-import { IWorkspaceMember, IProjectMember } from "types";
+import { IWorkspaceMemberMe, IProjectMember } from "types";
 
 export interface IUserStore {
   loader: boolean;
@@ -17,17 +17,17 @@ export interface IUserStore {
 
   dashboardInfo: any;
 
-  workspaceMemberInfo: any;
+  workspaceMemberInfo: IWorkspaceMemberMe | null;
   hasPermissionToWorkspace: boolean | null;
 
-  projectMemberInfo: any;
+  projectMemberInfo: IProjectMember | null;
   projectNotFound: boolean;
   hasPermissionToProject: boolean | null;
 
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
 
-  fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMember>;
+  fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe>;
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember>;
   fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
 
@@ -45,10 +45,10 @@ class UserStore implements IUserStore {
 
   dashboardInfo: any = null;
 
-  workspaceMemberInfo: any = null;
+  workspaceMemberInfo: IWorkspaceMemberMe | null = null;
   hasPermissionToWorkspace: boolean | null = null;
 
-  projectMemberInfo: any = null;
+  projectMemberInfo: IProjectMember | null = null;
   projectNotFound: boolean = false;
   hasPermissionToProject: boolean | null = null;
   // root store

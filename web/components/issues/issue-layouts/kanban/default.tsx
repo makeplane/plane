@@ -5,9 +5,9 @@ import { Droppable } from "@hello-pangea/dnd";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { KanbanIssueBlocksList } from "components/issues";
+import { KanbanIssueBlocksList, BoardInlineCreateIssueForm } from "components/issues";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 
@@ -29,6 +29,12 @@ export interface IGroupByKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  enableQuickIssueCreate?: boolean;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  priorities: any;
+  estimates: IEstimatePoint[] | null;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -45,6 +51,12 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     display_properties,
     kanBanToggle,
     handleKanBanToggle,
+    states,
+    labels,
+    members,
+    priorities,
+    estimates,
+    enableQuickIssueCreate,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -93,6 +105,10 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         handleIssues={handleIssues}
                         quickActions={quickActions}
                         display_properties={display_properties}
+                        states={states}
+                        labels={labels}
+                        members={members}
+                        estimates={estimates}
                       />
                     ) : (
                       isDragDisabled && (
@@ -106,6 +122,16 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                 )}
               </Droppable>
             </div>
+            {enableQuickIssueCreate && (
+              <BoardInlineCreateIssueForm
+                groupId={getValueFromObject(_list, listKey) as string}
+                subGroupId={sub_group_id}
+                prePopulatedData={{
+                  ...(group_by && { [group_by]: getValueFromObject(_list, listKey) }),
+                  ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
+                }}
+              />
+            )}
           </div>
         ))}
     </div>
@@ -128,14 +154,14 @@ export interface IKanBan {
   display_properties: any;
   kanBanToggle: any;
   handleKanBanToggle: any;
-
-  states: any;
+  states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: any;
-  members: any;
-  projects: any;
-  estimates: any;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
+  estimates: IEstimatePoint[] | null;
+  enableQuickIssueCreate?: boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -156,6 +182,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     members,
     projects,
     estimates,
+    enableQuickIssueCreate,
   } = props;
 
   const { project: projectStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -176,6 +203,12 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          states={states}
+          labels={labels}
+          members={members}
+          priorities={priorities}
+          estimates={estimates}
         />
       )}
 
@@ -193,6 +226,12 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          states={states}
+          labels={labels}
+          members={members}
+          priorities={priorities}
+          estimates={estimates}
         />
       )}
 
@@ -210,6 +249,12 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          states={states}
+          labels={labels}
+          members={members}
+          priorities={priorities}
+          estimates={estimates}
         />
       )}
 
@@ -227,6 +272,12 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          states={states}
+          labels={labels}
+          members={members}
+          priorities={priorities}
+          estimates={estimates}
         />
       )}
 
@@ -244,6 +295,12 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          states={states}
+          labels={labels}
+          members={members}
+          priorities={priorities}
+          estimates={estimates}
         />
       )}
 
@@ -261,6 +318,12 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           display_properties={display_properties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          states={states}
+          labels={labels}
+          members={members}
+          priorities={priorities}
+          estimates={estimates}
         />
       )}
     </div>

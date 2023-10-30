@@ -75,13 +75,13 @@ class IssueCreateSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
 
-    assignees_list = serializers.ListField(
+    assignees = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
     )
 
-    labels_list = serializers.ListField(
+    labels = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
         required=False,
@@ -99,6 +99,12 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['assignees'] = [str(assignee.id) for assignee in instance.assignees.all()]
+        data['labels'] = [str(label.id) for label in instance.labels.all()]
+        return data
+
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
@@ -109,8 +115,8 @@ class IssueCreateSerializer(BaseSerializer):
         return data
 
     def create(self, validated_data):
-        assignees = validated_data.pop("assignees_list", None)
-        labels = validated_data.pop("labels_list", None)
+        assignees = validated_data.pop("assignees", None)
+        labels = validated_data.pop("labels", None)
 
         project_id = self.context["project_id"]
         workspace_id = self.context["workspace_id"]
@@ -168,8 +174,8 @@ class IssueCreateSerializer(BaseSerializer):
         return issue
 
     def update(self, instance, validated_data):
-        assignees = validated_data.pop("assignees_list", None)
-        labels = validated_data.pop("labels_list", None)
+        assignees = validated_data.pop("assignees", None)
+        labels = validated_data.pop("labels", None)
 
         # Related models
         project_id = instance.project_id
