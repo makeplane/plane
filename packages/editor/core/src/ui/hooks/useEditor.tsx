@@ -4,6 +4,7 @@ import {
   useRef,
   MutableRefObject,
   useEffect,
+  useState,
 } from "react";
 import { DeleteImage } from "../../types/delete-image";
 import { CoreEditorProps } from "../props";
@@ -38,32 +39,40 @@ export const useEditor = ({
   forwardedRef,
   setShouldShowAlert,
 }: CustomEditorProps) => {
-  const editor = useCustomEditor({
-    editorProps: {
-      ...CoreEditorProps(uploadFile, setIsSubmitting),
-      ...editorProps,
+  const [internalEditorContent, setInternalEditorContent] = useState(value);
+  const editor = useCustomEditor(
+    {
+      editorProps: {
+        ...CoreEditorProps(uploadFile, setIsSubmitting),
+        ...editorProps,
+      },
+      extensions: [...CoreEditorExtensions(deleteFile), ...extensions],
+      content:
+        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      onUpdate: async ({ editor }) => {
+        // for instant feedback loop
+        setIsSubmitting?.("submitting");
+        setShouldShowAlert?.(true);
+        onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
+      },
     },
-    extensions: [...CoreEditorExtensions(deleteFile), ...extensions],
-    content:
-      typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-    onUpdate: async ({ editor }) => {
-      // for instant feedback loop
-      setIsSubmitting?.("submitting");
-      setShouldShowAlert?.(true);
-      onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
-    },
-  });
+    [internalEditorContent],
+  );
 
   const hasIntiliazedContent = useRef(false);
 
   useEffect(() => {
-    if (editor && value!=="" && !hasIntiliazedContent.current) {
-      editor.commands.setContent(
-        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-      );
-      hasIntiliazedContent.current = true;
+    if (editor) {
+      const cleanedValue =
+        typeof value === "string" && value.trim() !== "" ? value : "<p></p>";
+      if (cleanedValue !== "<p></p>" && !hasIntiliazedContent.current) {
+        setInternalEditorContent(cleanedValue);
+        hasIntiliazedContent.current = true;
+      } else if (cleanedValue === "<p></p>" && hasIntiliazedContent.current) {
+        hasIntiliazedContent.current = false;
+      }
     }
-  }, [value]);
+  }, [value, editor]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
