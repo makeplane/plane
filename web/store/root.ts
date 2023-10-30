@@ -72,7 +72,14 @@ import {
   ArchivedIssueFilterStore,
   IArchivedIssueFilterStore,
 } from "store/archived-issues";
-import { DraftIssueFilterStore, IDraftIssueFilterStore, IssueDraftStore, IIssueDraftStore } from "store/draft-issues";
+import {
+  DraftIssueFilterStore,
+  IDraftIssueFilterStore,
+  IssueDraftStore,
+  IIssueDraftStore,
+  DraftIssueKanBanViewStore,
+  IDraftIssueKanBanViewStore,
+} from "store/draft-issues";
 import {
   IInboxFiltersStore,
   IInboxIssueDetailsStore,
@@ -134,6 +141,7 @@ export class RootStore {
 
   draftIssues: IIssueDraftStore;
   draftIssueFilters: IDraftIssueFilterStore;
+  draftIssueKanBanView: IDraftIssueKanBanViewStore;
 
   inbox: IInboxStore;
   inboxIssues: IInboxIssuesStore;
@@ -188,6 +196,7 @@ export class RootStore {
 
     this.draftIssues = new IssueDraftStore(this);
     this.draftIssueFilters = new DraftIssueFilterStore(this);
+    this.draftIssueKanBanView = new DraftIssueKanBanViewStore(this);
 
     this.inbox = new InboxStore(this);
     this.inboxIssues = new InboxIssuesStore(this);

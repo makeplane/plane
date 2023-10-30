@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
+import { Dialog, Transition } from "@headlessui/react";
 
-import { mutate } from "swr";
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 import useUser from "hooks/use-user";
-
-// headless ui
-import { Dialog, Transition } from "@headlessui/react";
-// services
-import { IssueDraftService } from "services/issue";
 // hooks
-import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
@@ -19,31 +15,29 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 // types
 import type { IIssue } from "types";
-// fetch-keys
-import { PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IIssue | null;
-  onSubmit?: () => Promise<void> | void;
+  onSuccess?: () => Promise<void> | void;
 };
 
-const issueDraftService = new IssueDraftService();
+export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
+  const { isOpen, handleClose, data, onSuccess } = props;
 
-export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data, onSubmit } = props;
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
+  // store
+  const { draftIssues: draftIssueStore } = useMobxStore();
+
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { params } = useIssuesView();
-
-  const { setToastAlert } = useToast();
-
   const { user } = useUser();
+  const { setToastAlert } = useToast();
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -58,30 +52,28 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
     if (!workspaceSlug || !data || !user) return;
 
     setIsDeleteLoading(true);
-
-    await issueDraftService
+    await draftIssueStore
       .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
       .then(() => {
-        setIsDeleteLoading(false);
-        handleClose();
-        mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
         setToastAlert({
           title: "Success",
           message: "Draft Issue deleted successfully",
           type: "success",
         });
       })
-      .catch((error) => {
-        console.log(error);
-        handleClose();
+      .catch(() => {
         setToastAlert({
           title: "Error",
           message: "Something went wrong",
           type: "error",
         });
+      })
+      .finally(() => {
+        handleClose();
         setIsDeleteLoading(false);
       });
-    if (onSubmit) await onSubmit();
+
+    if (onSuccess) await onSuccess();
   };
 
   return (
@@ -146,4 +138,4 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

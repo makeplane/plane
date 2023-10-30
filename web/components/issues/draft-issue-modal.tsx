@@ -6,28 +6,22 @@ import { Dialog, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { IssueService, IssueDraftService } from "services/issue";
+import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
 import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
-import useMyIssues from "hooks/my-issues/use-my-issues";
 // components
 import { DraftIssueForm } from "components/issues";
 // types
 import type { IIssue } from "types";
 // fetch-keys
 import {
-  PROJECT_ISSUES_DETAILS,
-  USER_ISSUE,
   SUB_ISSUES,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_ISSUES_WITH_PARAMS,
   MODULE_ISSUES_WITH_PARAMS,
-  VIEW_ISSUES,
-  PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS,
   CYCLE_DETAILS,
   MODULE_DETAILS,
 } from "constants/fetch-keys";
@@ -57,7 +51,6 @@ interface IssuesModalProps {
 
 // services
 const issueService = new IssueService();
-const issueDraftService = new IssueDraftService();
 const moduleService = new ModuleService();
 
 export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer((props) => {
@@ -65,7 +58,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     data,
     handleClose,
     isOpen,
-    isUpdatingSingleIssue = false,
+
     prePopulateData: prePopulateDataProps,
     fieldsToShow = ["all"],
     onSubmit,
@@ -77,20 +70,22 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const [prePopulateData, setPreloadedData] = useState<Partial<IIssue> | undefined>(undefined);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: projectStore,
+    draftIssues: draftIssueStore,
+    issueDetail: issueDetailStore,
+    issue: issueStore,
+  } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
-  const { displayFilters, params } = useIssuesView();
-  const { ...viewGanttParams } = params;
+  const { params } = useIssuesView();
 
   const { user } = useUser();
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
-
-  const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
   const { setToastAlert } = useToast();
 
@@ -103,35 +98,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     clearDraftIssueLocalStorage();
     onClose();
   };
-
-  useEffect(() => {
-    setPreloadedData(prePopulateDataProps ?? {});
-
-    if (cycleId && !prePopulateDataProps?.cycle) {
-      setPreloadedData((prevData) => ({
-        ...(prevData ?? {}),
-        ...prePopulateDataProps,
-        cycle: cycleId.toString(),
-      }));
-    }
-    if (moduleId && !prePopulateDataProps?.module) {
-      setPreloadedData((prevData) => ({
-        ...(prevData ?? {}),
-        ...prePopulateDataProps,
-        module: moduleId.toString(),
-      }));
-    }
-    if (
-      (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
-      !prePopulateDataProps?.assignees
-    ) {
-      setPreloadedData((prevData) => ({
-        ...(prevData ?? {}),
-        ...prePopulateDataProps,
-        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
-      }));
-    }
-  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);
 
   useEffect(() => {
     setPreloadedData(prePopulateDataProps ?? {});
@@ -184,32 +150,19 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
   }, [activeProject, data, projectId, projects, isOpen, prePopulateData]);
 
-  const ganttFetchKey = cycleId
-    ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
-    : moduleId
-    ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
-    : viewId
-    ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
-    : PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject?.toString() ?? "");
-
   const createDraftIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await issueDraftService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
-      .then(async () => {
-        mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-
-        if (groupedIssues) mutateMyIssues();
+    await draftIssueStore
+      .createDraftIssue(workspaceSlug.toString(), activeProject, payload)
+      .then(() => {
+        draftIssueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Issue created successfully.",
         });
-
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
       })
       .catch(() => {
         setToastAlert({
@@ -223,25 +176,20 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   };
 
   const updateDraftIssue = async (payload: Partial<IIssue>) => {
-    if (!user) return;
+    if (!user || !workspaceSlug || !activeProject) return;
 
-    await issueDraftService
-      .updateDraftIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
-      .then((res) => {
-        if (isUpdatingSingleIssue) {
-          mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
-        } else {
-          if (payload.parent) mutate(SUB_ISSUES(payload.parent.toString()));
-          mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-          mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-        }
+    await draftIssueStore
+      .updateDraftIssue(workspaceSlug.toString(), activeProject, payload as IIssue)
+      .then((response) => {
+        if (!createMore) onClose();
+
+        // replace with actual group id and sub group id
+        draftIssueStore.updateIssueStructure(null, null, response);
 
         if (!payload.is_draft) {
-          if (payload.cycle && payload.cycle !== "") addIssueToCycle(res.id, payload.cycle);
-          if (payload.module && payload.module !== "") addIssueToModule(res.id, payload.module);
+          if (payload.cycle && payload.cycle !== "") addIssueToCycle(response.id, payload.cycle);
+          if (payload.module && payload.module !== "") addIssueToModule(response.id, payload.module);
         }
-
-        if (!createMore) onClose();
 
         setToastAlert({
           type: "success",
@@ -261,6 +209,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
+    // TODO: switch to store
     await issueService
       .addIssueToCycle(
         workspaceSlug as string,
@@ -282,6 +231,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
+    // TODO: switch to store
     await moduleService
       .addIssuesToModule(
         workspaceSlug as string,
@@ -303,30 +253,19 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const createIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject) return;
 
-    await issueService
-      .createIssue(workspaceSlug as string, activeProject ?? "", payload, user)
+    await issueDetailStore
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
-        mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
+        issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
+
         if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
-
-        if (displayFilters.layout === "gantt_chart")
-          mutate(ganttFetchKey, {
-            start_target_date: true,
-            order_by: "sort_order",
-          });
-        if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Issue created successfully.",
         });
-
-        if (!createMore) onClose();
-
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
@@ -337,6 +276,19 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
           message: "Issue could not be created. Please try again.",
         });
       });
+
+    if (!createMore) onClose();
+  };
+
+  const convertDraftToIssue = async (payload: Partial<IIssue>) => {
+    if (!workspaceSlug || !activeProject) return;
+    await draftIssueStore.convertDraftIssueToIssue(workspaceSlug.toString(), activeProject, payload?.id!).then(() => {
+      draftIssueStore.fetchIssues(workspaceSlug.toString(), activeProject);
+
+      // adding to cycle or/and module if payload is available for the same
+      if (payload.cycle && payload.cycle !== "") addIssueToCycle(payload?.id!, payload.cycle);
+      if (payload.module && payload.module !== "") addIssueToModule(payload?.id!, payload.module);
+    });
   };
 
   const handleFormSubmit = async (
@@ -354,8 +306,9 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     };
 
     if (action === "createDraft") await createDraftIssue(payload);
-    else if (action === "updateDraft" || action === "convertToNewIssue") await updateDraftIssue(payload);
+    else if (action === "updateDraft") await updateDraftIssue(payload);
     else if (action === "createNewIssue") await createIssue(payload);
+    else if (action === "convertToNewIssue") await convertDraftToIssue(payload);
 
     clearDraftIssueLocalStorage();
 

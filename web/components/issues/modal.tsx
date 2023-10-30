@@ -5,8 +5,6 @@ import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { IssueDraftService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
@@ -15,7 +13,7 @@ import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 // types
 import type { IIssue } from "types";
 // fetch-keys
-import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
@@ -38,8 +36,6 @@ export interface IssuesModalProps {
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
-
-const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
   const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;

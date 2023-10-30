@@ -23,14 +23,23 @@ export interface IIssueDraftStore {
   draftIssues: {
     [project_id: string]: {
       grouped: {
-        [group_id: string]: IIssue[];
+        [group_id: string]: {
+          data: IIssue[];
+          total_issues: number;
+        };
       };
       groupWithSubGroups: {
         [group_id: string]: {
-          [sub_group_id: string]: IIssue[];
+          [sub_group_id: string]: {
+            data: IIssue[];
+            total_issues: number;
+          };
         };
       };
-      ungrouped: IIssue[];
+      ungrouped: {
+        data: IIssue[];
+        total_issues: number;
+      };
     };
   };
   rootStore: RootStore;
@@ -43,9 +52,9 @@ export interface IIssueDraftStore {
   fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
   createDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  deleteDraftIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
-  updateDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => void;
-  convertDraftIssueToIssue: (workspaceSlug: string, projectId: string, issueId: string) => void;
+  deleteDraftIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
+  updateDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => Promise<any>;
+  convertDraftIssueToIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
 
   // service
   draftIssueService: IssueDraftService;
@@ -82,7 +91,8 @@ export class IssueDraftStore implements IIssueDraftStore {
 
   get getIssueType() {
     // FIXME: this is temporary for development
-    return "ungrouped";
+    return "grouped";
+    // return "ungrouped";
 
     const groupedLayouts = ["kanban", "list", "calendar"];
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
@@ -120,7 +130,9 @@ export class IssueDraftStore implements IIssueDraftStore {
 
       // const params = this.rootStore?.issueFilter?.appliedFilters;
       // TODO: use actual params using applied filters
-      const params = {};
+      const params = {
+        group_by: "state",
+      };
       const issueResponse = await this.draftIssueService.getDraftIssues(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
@@ -186,24 +198,47 @@ export class IssueDraftStore implements IIssueDraftStore {
 
     if (issueType === "grouped" && group_id) {
       issues = issues as IIssueGroupedStructure;
-      issues = {
-        ...issues,
-        [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
-      };
+      const currentIssue = issues?.[group_id]?.find((i: IIssue) => i?.id === issue?.id);
+
+      // if issue is already present in the list then update it
+      if (currentIssue)
+        issues = {
+          ...issues,
+          [group_id]: issues[group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
+        };
+      // if issue is not present in the list then append it
+      else issues = { ...issues, [group_id]: [...issues[group_id], issue] };
     }
     if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
       issues = issues as IIssueGroupWithSubGroupsStructure;
-      issues = {
-        ...issues,
-        [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i)),
-        },
-      };
+      const currentIssue = issues?.[sub_group_id]?.[group_id]?.find((i: IIssue) => i?.id === issue?.id);
+
+      // if issue is already present in the list then update it
+      if (currentIssue)
+        issues = {
+          ...issues,
+          [sub_group_id]: {
+            ...issues[sub_group_id],
+            [group_id]: issues[sub_group_id][group_id].map((i: IIssue) =>
+              i?.id === issue?.id ? { ...i, ...issue } : i
+            ),
+          },
+        };
+      // if issue is not present in the list then append it
+      else
+        issues = {
+          ...issues,
+          [sub_group_id]: {
+            ...issues[sub_group_id],
+            [group_id]: [...issues[sub_group_id][group_id], issue],
+          },
+        };
     }
     if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
+      issues = (issues || []) as IIssueUnGroupedStructure;
+      const currentIssue = issues?.find((i: IIssue) => i?.id === issue?.id);
+      if (currentIssue) issues = issues?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
+      else issues = [...issues, issue];
     }
 
     const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
@@ -241,11 +276,18 @@ export class IssueDraftStore implements IIssueDraftStore {
     this.updateIssueStructure(group_id, sub_group_id, issueForm as IIssue);
 
     try {
-      await this.draftIssueService.updateDraftIssue(workspaceSlug, projectId, issueForm?.id!, issueForm);
+      const response = await this.draftIssueService.updateDraftIssue(
+        workspaceSlug,
+        projectId,
+        issueForm?.id!,
+        issueForm
+      );
       runInAction(() => {
         this.loader = false;
         this.error = null;
       });
+
+      return response;
     } catch (error) {
       console.error("Updating issue error", error);
       // reverting back to original issues in case of error
@@ -257,10 +299,9 @@ export class IssueDraftStore implements IIssueDraftStore {
     }
   };
 
-  convertDraftIssueToIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    // update draft issue with is_draft being false
-    this.updateDraftIssue(workspaceSlug, projectId, { id: issueId, is_draft: false });
-  };
+  convertDraftIssueToIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
+    // TODO: add removing item from draft issue list
+    await this.updateDraftIssue(workspaceSlug, projectId, { id: issueId, is_draft: false });
 
   deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const originalIssues = { ...this.draftIssues };

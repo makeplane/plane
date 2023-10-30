@@ -166,25 +166,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(payload), isOpen, data]);
 
-  // const onClose = () => {
-  //   handleClose();
-  // };
-
-  useEffect(() => {
-    if (!isOpen || data) return;
-
-    setLocalStorageValue(
-      JSON.stringify({
-        ...payload,
-      })
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(payload), isOpen, data]);
-
-  // const onClose = () => {
-  //   handleClose();
-  // };
-
   const handleCreateUpdateIssue = async (
     formData: Partial<IIssue>,
     action: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue" = "createDraft"
@@ -193,7 +174,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
       {
         ...(data ?? {}),
         ...formData,
-        is_draft: action === "createDraft" || action === "updateDraft",
       },
       action
     );

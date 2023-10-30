@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { AppLayout } from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+import { DraftIssueLayoutRoot } from "components/issues";
 // ui
 import { ProjectDraftIssueHeader } from "components/headers";
 // icons
@@ -29,6 +30,10 @@ const ProjectDraftIssues: NextPage = () => {
 
               <X className="h-3 w-3" />
             </button>
+          </div>
+
+          <div className="h-full w-full">
+            <DraftIssueLayoutRoot />
           </div>
         </div>
       </AppLayout>
