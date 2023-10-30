@@ -26,7 +26,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
     draftIssues: draftIssuesStore,
   } = useMobxStore();
 
-  const issues = draftIssuesStore.getDraftIssues?.data;
+  const issues = draftIssuesStore.getDraftIssues;
 
   const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 

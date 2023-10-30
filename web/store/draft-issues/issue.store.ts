@@ -23,23 +23,27 @@ export interface IIssueDraftStore {
   draftIssues: {
     [project_id: string]: {
       grouped: {
-        [group_id: string]: {
-          data: IIssue[];
-          total_issues: number;
-        };
+        [group_id: string]: IIssue[];
       };
       groupWithSubGroups: {
         [group_id: string]: {
-          [sub_group_id: string]: {
-            data: IIssue[];
-            total_issues: number;
-          };
+          [sub_group_id: string]: IIssue[];
         };
       };
-      ungrouped: {
-        data: IIssue[];
-        total_issues: number;
+      ungrouped: IIssue[];
+    };
+  };
+  totalIssues: {
+    [project_id: string]: {
+      grouped: {
+        [group_id: string]: number;
       };
+      groupWithSubGroups: {
+        [group_id: string]: {
+          [sub_group_id: string]: number;
+        };
+      };
+      ungrouped: number;
     };
   };
   rootStore: RootStore;
@@ -64,6 +68,7 @@ export class IssueDraftStore implements IIssueDraftStore {
   loader: boolean = false;
   error: any | null = null;
   draftIssues: IIssueDraftStore["draftIssues"] = {};
+  totalIssues: IIssueDraftStore["totalIssues"] = {};
   // service
   draftIssueService: IssueDraftService;
   rootStore;
@@ -141,13 +146,23 @@ export class IssueDraftStore implements IIssueDraftStore {
           ...this.draftIssues,
           [projectId]: {
             ...this.draftIssues[projectId],
-            [issueType]: issueResponse,
+            [issueType]: issueResponse.data,
           },
         };
+
+        const _totalIssues = {
+          ...this.totalIssues,
+          [projectId]: {
+            ...this.totalIssues[projectId],
+            [issueType]: issueResponse.total_issues,
+          },
+        };
+
         runInAction(() => {
-          this.draftIssues = _issues;
           this.loader = false;
           this.error = null;
+          this.draftIssues = _issues;
+          this.totalIssues = _totalIssues;
         });
       }
 
@@ -319,6 +334,7 @@ export class IssueDraftStore implements IIssueDraftStore {
 
     if (issueType) {
       let issues = originalIssues?.[projectId]?.[issueType] || null;
+      let totalIssues = this.totalIssues?.[projectId]?.[issueType] || null;
       if (!issues) return null;
 
       if (issueType === "grouped") {
@@ -327,6 +343,8 @@ export class IssueDraftStore implements IIssueDraftStore {
           ...issues,
           [group_id]: issues[group_id].filter((i) => i?.id !== issueId),
         };
+        totalIssues = totalIssues as { [group_id: string]: number };
+        totalIssues = { ...totalIssues, [group_id]: totalIssues[group_id] - 1 };
       }
 
       if (issueType === "groupWithSubGroups") {
@@ -338,11 +356,21 @@ export class IssueDraftStore implements IIssueDraftStore {
             [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issueId),
           },
         };
+        totalIssues = totalIssues as { [group_id: string]: { [sub_group_id: string]: number } };
+        totalIssues = {
+          ...totalIssues,
+          [sub_group_id]: {
+            ...totalIssues[sub_group_id],
+            [group_id]: totalIssues[sub_group_id][group_id] - 1,
+          },
+        };
       }
 
       if (issueType === "ungrouped") {
         issues = issues as IIssueUnGroupedStructure;
         issues = issues.filter((i) => i?.id !== issueId);
+        totalIssues = totalIssues as number;
+        totalIssues = totalIssues - 1;
       }
 
       // optimistic removing draft issue
@@ -350,6 +378,10 @@ export class IssueDraftStore implements IIssueDraftStore {
         this.draftIssues = {
           ...this.draftIssues,
           [projectId]: { ...this.draftIssues[projectId], [issueType]: issues },
+        };
+        this.totalIssues = {
+          ...this.totalIssues,
+          [projectId]: { ...this.totalIssues[projectId], [issueType]: totalIssues },
         };
       });
     }

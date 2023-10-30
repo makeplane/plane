@@ -19,7 +19,7 @@ export const DraftIssueListLayout: FC = observer(() => {
 
   const { project: projectStore, draftIssues: draftIssuesStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  const issues = draftIssuesStore.getDraftIssues?.data;
+  const issues = draftIssuesStore.getDraftIssues;
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
