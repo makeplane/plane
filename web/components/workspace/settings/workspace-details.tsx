@@ -217,6 +217,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
                     onChange={onChange}
                     label={ORGANIZATION_SIZE.find((c) => c === value) ?? "Select organization size"}
                     width="w-full"
+                    buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
                     disabled={!isAdmin}
                   >
