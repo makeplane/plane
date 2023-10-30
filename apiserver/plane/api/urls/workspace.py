@@ -5,7 +5,6 @@ from plane.api.views import (
     WorkSpaceViewSet,
     InviteWorkspaceEndpoint,
     WorkSpaceMemberViewSet,
-    WorkspaceMembersEndpoint,
     WorkspaceInvitationsViewset,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -85,11 +84,6 @@ urlpatterns = [
             }
         ),
         name="workspace-member",
-    ),
-    path(
-        "workspaces/<str:slug>/workspace-members/",
-        WorkspaceMembersEndpoint.as_view(),
-        name="workspace-members",
     ),
     path(
         "workspaces/<str:slug>/teams/",
