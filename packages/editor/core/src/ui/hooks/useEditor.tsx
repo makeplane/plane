@@ -4,7 +4,6 @@ import {
   useRef,
   MutableRefObject,
   useEffect,
-  useState,
 } from "react";
 import { DeleteImage } from "../../types/delete-image";
 import { CoreEditorProps } from "../props";
@@ -12,6 +11,7 @@ import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
 import { UploadImage } from "../../types/upload-image";
+import { useInitializedContent } from "./useInitializedContent";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -39,7 +39,6 @@ export const useEditor = ({
   forwardedRef,
   setShouldShowAlert,
 }: CustomEditorProps) => {
-  const [internalEditorContent, setInternalEditorContent] = useState(value);
   const editor = useCustomEditor(
     {
       editorProps: {
@@ -56,23 +55,10 @@ export const useEditor = ({
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
     },
-    [internalEditorContent],
+    [],
   );
 
-  const hasIntiliazedContent = useRef(false);
-
-  useEffect(() => {
-    if (editor) {
-      const cleanedValue =
-        typeof value === "string" && value.trim() !== "" ? value : "<p></p>";
-      if (cleanedValue !== "<p></p>" && !hasIntiliazedContent.current) {
-        setInternalEditorContent(cleanedValue);
-        hasIntiliazedContent.current = true;
-      } else if (cleanedValue === "<p></p>" && hasIntiliazedContent.current) {
-        hasIntiliazedContent.current = false;
-      }
-    }
-  }, [value, editor]);
+  useInitializedContent(editor, value);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
