@@ -133,6 +133,7 @@ export const ISSUE_LAYOUTS: {
 ];
 
 export const ISSUE_LIST_FILTERS = [
+  { key: "mentions", title: "Mentions"},
   { key: "priority", title: "Priority" },
   { key: "state", title: "State" },
   { key: "assignees", title: "Assignees" },
