@@ -84,9 +84,9 @@ class UserMeSettingsSerializer(BaseSerializer):
             ).first()
             return {
                 "last_workspace_id": obj.last_workspace_id,
-                "last_workspace_slug": "" if workspace is not None else workspace.slug,
+                "last_workspace_slug": workspace.slug if workspace is not None else "",
                 "fallback_workspace_id": obj.last_workspace_id,
-                "fallback_workspace_slug": "" if workspace is not None else workspace.slug,
+                "fallback_workspace_slug": workspace.slug if workspace is not None else "",
                 "invites": workspace_invites,
             }
         else:
