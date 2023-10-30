@@ -31,7 +31,7 @@ export const JiraImportUsers: FC = () => {
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug?.toString() ?? "") : null,
-    workspaceSlug ? () => workspaceService.workspaceMembersWithEmail(workspaceSlug?.toString() ?? "") : null
+    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug?.toString() ?? "") : null
   );
 
   const options = members?.map((member) => ({
