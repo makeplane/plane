@@ -21,9 +21,8 @@ export const IssueBlocksList: FC<Props> = (props) => {
     props;
 
   return (
-    <>
-      {issues &&
-        issues?.length > 0 &&
+    <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
+      {issues && issues.length > 0 ? (
         issues.map((issue) => (
           <IssueBlock
             key={issue.id}
@@ -37,7 +36,10 @@ export const IssueBlocksList: FC<Props> = (props) => {
             members={members}
             estimates={estimates}
           />
-        ))}
-    </>
+        ))
+      ) : (
+        <div className="bg-custom-background-100 text-custom-text-400 text-sm p-3">No issues</div>
+      )}
+    </div>
   );
 };
