@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { LabelSelect } from "components/project";
+import { LabelSelect } from "components/labels";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
