@@ -1,6 +1,7 @@
 import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // services
 import { IssueService, IssueReactionService, IssueCommentService } from "services/issue";
+import { NotificationService } from "services/notification.service";
 // types
 import { RootStore } from "../root";
 import { IIssue } from "types";
@@ -28,6 +29,9 @@ export interface IIssueDetailStore {
       [comment_id: string]: any;
     };
   };
+  issue_subscription: {
+    [issueId: string]: any;
+  };
 
   setPeekId: (issueId: string | null) => void;
 
@@ -36,6 +40,7 @@ export interface IIssueDetailStore {
   getIssueReactions: any | null;
   getIssueComments: any | null;
   getIssueCommentReactions: any | null;
+  getIssueSubscription: any | null;
 
   // fetch issue details
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
@@ -84,6 +89,10 @@ export interface IIssueDetailStore {
     commentId: string,
     reaction: string
   ) => Promise<void>;
+
+  fetchIssueSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  createIssueSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  removeIssueSubscription: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 export class IssueDetailStore implements IIssueDetailStore {
@@ -103,6 +112,9 @@ export class IssueDetailStore implements IIssueDetailStore {
   issue_comment_reactions: {
     [issueId: string]: any;
   } = {};
+  issue_subscription: {
+    [issueId: string]: any;
+  } = {};
 
   // root store
   rootStore;
@@ -110,6 +122,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   issueService;
   issueReactionService;
   issueCommentService;
+  notificationService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -122,11 +135,13 @@ export class IssueDetailStore implements IIssueDetailStore {
       issue_reactions: observable.ref,
       issue_comments: observable.ref,
       issue_comment_reactions: observable.ref,
+      issue_subscription: observable.ref,
 
       getIssue: computed,
       getIssueReactions: computed,
       getIssueComments: computed,
       getIssueCommentReactions: computed,
+      getIssueSubscription: computed,
 
       setPeekId: action,
 
@@ -150,12 +165,17 @@ export class IssueDetailStore implements IIssueDetailStore {
       fetchIssueCommentReactions: action,
       creationIssueCommentReaction: action,
       removeIssueCommentReaction: action,
+
+      fetchIssueSubscription: action,
+      createIssueSubscription: action,
+      removeIssueSubscription: action,
     });
 
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
     this.issueReactionService = new IssueReactionService();
     this.issueCommentService = new IssueCommentService();
+    this.notificationService = new NotificationService();
   }
 
   get getIssue() {
@@ -180,6 +200,12 @@ export class IssueDetailStore implements IIssueDetailStore {
     if (!this.peekId) return null;
     const _commentReactions = this.issue_comment_reactions[this.peekId];
     return _commentReactions || null;
+  }
+
+  get getIssueSubscription() {
+    if (!this.peekId) return null;
+    const _commentSubscription = this.issue_subscription[this.peekId];
+    return _commentSubscription || null;
   }
 
   setPeekId = (issueId: string | null) => (this.peekId = issueId);
@@ -659,6 +685,63 @@ export class IssueDetailStore implements IIssueDetailStore {
       }
     } catch (error) {
       console.warn("error removing the issue comment", error);
+      throw error;
+    }
+  };
+
+  // subscription
+  fetchIssueSubscription = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const _subscription = await this.notificationService.getIssueNotificationSubscriptionStatus(
+        workspaceSlug,
+        projectId,
+        issueId
+      );
+
+      const _issue_subscription = {
+        ...this.issue_subscription,
+        [issueId]: _subscription,
+      };
+
+      runInAction(() => {
+        this.issue_subscription = _issue_subscription;
+      });
+    } catch (error) {
+      console.warn("error fetching the issue subscription", error);
+      throw error;
+    }
+  };
+  createIssueSubscription = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      await this.notificationService.subscribeToIssueNotifications(workspaceSlug, projectId, issueId);
+
+      const _issue_subscription = {
+        ...this.issue_subscription,
+        [issueId]: { subscribed: true },
+      };
+
+      runInAction(() => {
+        this.issue_subscription = _issue_subscription;
+      });
+    } catch (error) {
+      console.warn("error creating the issue subscription", error);
+      throw error;
+    }
+  };
+  removeIssueSubscription = async (workspaceSlug: string, projectId: string, issueId: string) => {
+    try {
+      const _issue_subscription = {
+        ...this.issue_subscription,
+        [issueId]: { subscribed: false },
+      };
+
+      runInAction(() => {
+        this.issue_subscription = _issue_subscription;
+      });
+
+      await this.notificationService.unsubscribeFromIssueNotifications(workspaceSlug, projectId, issueId);
+    } catch (error) {
+      console.warn("error removing the issue subscription", error);
       throw error;
     }
   };

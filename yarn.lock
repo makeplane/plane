@@ -2755,7 +2755,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-color@^3.0.6":
+"@types/react-color@^3.0.6", "@types/react-color@^3.0.9":
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-3.0.9.tgz#8dbb0d798f2979c3d7e2e26dd46321e80da950b4"
   integrity sha512-Ojyc6jySSKvM6UYQrZxaYe0JZXtgHHXwR2q9H4MhcNCswFdeZH1owYZCvPtdHtMOfh7t8h1fY0Gd0nvU1JGDkQ==
@@ -7393,7 +7393,7 @@ react-markdown@^8.0.7:
     unist-util-visit "^4.0.0"
     vfile "^5.0.0"
 
-react-moveable@^0.54.1:
+react-moveable@^0.54.1, react-moveable@^0.54.2:
   version "0.54.2"
   resolved "https://registry.yarnpkg.com/react-moveable/-/react-moveable-0.54.2.tgz#87ce9af3499dc1c8218bce7e174b10264c1bbecf"
   integrity sha512-NGaVLbn0i9pb3+BWSKGWFqI/Mgm4+WMeWHxXXQ4Qi1tHxWCXrUrbGvpxEpt69G/hR7dez+/m68ex+fabjnvcUg==
