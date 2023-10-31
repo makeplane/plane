@@ -12,7 +12,7 @@ import { Send } from "lucide-react";
 import type { IIssueComment } from "types";
 // services
 import { FileService } from "services/file.service";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",

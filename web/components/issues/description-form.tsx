@@ -10,7 +10,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 export interface IssueDescriptionFormValues {
   name: string;

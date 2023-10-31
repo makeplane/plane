@@ -18,7 +18,7 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   handleClose: () => void;

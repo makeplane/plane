@@ -14,7 +14,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { Label } from "components/web-view";
 // types
 import type { IIssue } from "types";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   isAllowed: boolean;

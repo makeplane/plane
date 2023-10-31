@@ -17,7 +17,7 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   comment: IIssueComment;

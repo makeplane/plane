@@ -12,7 +12,7 @@ import { Globe2, Lock } from "lucide-react";
 
 // types
 import type { IIssueComment } from "types";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",

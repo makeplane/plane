@@ -26,7 +26,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IUser, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   block: IPageBlock;

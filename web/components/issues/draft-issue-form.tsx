@@ -30,7 +30,7 @@ import { Sparkle, X } from "lucide-react";
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const aiService = new AIService();
 const fileService = new FileService();

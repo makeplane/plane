@@ -9,7 +9,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
-import useEditorSuggestions from "hooks/user-editor-suggestions";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 import { useForm, Controller } from "react-hook-form";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 
