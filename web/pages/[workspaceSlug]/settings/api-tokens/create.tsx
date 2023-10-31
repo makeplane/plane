@@ -77,6 +77,7 @@ const CreateApiToken: NextPage = () => {
       })
       .then((res) => {
         setGeneratedToken(res);
+        downloadSecretKey(res);
         setLoading(false);
       })
       .catch((err) => {
@@ -90,6 +91,21 @@ const CreateApiToken: NextPage = () => {
   function renderExpiry(): string {
     return renderDateFormat(addDays({ date: new Date(), days: expiryOptions[selectedExpiry].days }), true);
   }
+
+  const downloadSecretKey = (token: IApiToken) => {
+    const rows = [
+      ["Label", "Description", "Expiry", "Secret Key"],
+      [token.label, token.description, renderDateFormat(token.expired_at ?? null), token.token],
+    ];
+
+    let csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "secret_key.csv");
+    document.body.appendChild(link);
+    link.click();
+  };
 
   return (
     <AppLayout header={<WorkspaceSettingHeader title="Api Tokens" />}>
