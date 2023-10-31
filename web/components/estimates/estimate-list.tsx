@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
-import useSWR from "swr";
 // store
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -35,15 +34,8 @@ export const EstimatesList: React.FC = observer(() => {
   // hooks
   const { setToastAlert } = useToast();
 
-  useSWR(
-    workspaceSlug && projectId ? `ESTIMATES_LIST_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectEstimates(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
   // derived values
-  const estimatesList = projectStore.estimates?.[projectId?.toString()!];
+  const estimatesList = projectStore.projectEstimates;
   const projectDetails = projectStore.project_details?.[projectId?.toString()!];
 
   const editEstimate = (estimate: IEstimate) => {

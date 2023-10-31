@@ -3,7 +3,6 @@ import { observable, action, makeObservable, runInAction } from "mobx";
 import { RootStore } from "../root";
 import { IEstimate, IEstimateFormData } from "types";
 // services
-import { IssueLabelService } from "services/issue";
 import { ProjectService, ProjectEstimateService } from "services/project";
 
 export interface IProjectEstimateStore {
@@ -15,7 +14,7 @@ export interface IProjectEstimateStore {
   updateEstimate: (
     workspaceSlug: string,
     projectId: string,
-    labelId: string,
+    estimateId: string,
     data: IEstimateFormData
   ) => Promise<IEstimate>;
   deleteEstimate: (workspaceSlug: string, projectId: string, estimateId: string) => Promise<void>;
@@ -29,7 +28,6 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
   rootStore;
   // service
   projectService;
-  issueLabelService;
   estimateService;
 
   constructor(_rootStore: RootStore) {
@@ -38,7 +36,7 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
       loader: observable,
       error: observable,
 
-      // labels
+      // estimates
       createEstimate: action,
       updateEstimate: action,
       deleteEstimate: action,
@@ -47,7 +45,6 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
     this.rootStore = _rootStore;
     this.projectService = new ProjectService();
     this.estimateService = new ProjectEstimateService();
-    this.issueLabelService = new IssueLabelService();
   }
 
   createEstimate = async (workspaceSlug: string, projectId: string, data: IEstimateFormData) => {
@@ -73,7 +70,7 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
 
       return response;
     } catch (error) {
-      console.log("Failed to create label from project store");
+      console.log("Failed to create estimate from project store");
       throw error;
     }
   };
@@ -82,12 +79,11 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
     const originalEstimates = this.rootStore.project.getProjectEstimateById(estimateId);
 
     runInAction(() => {
-      this.rootStore.project.labels = {
-        ...this.rootStore.project.labels,
-        [projectId]:
-          this.rootStore.project.labels?.[projectId]?.map((label) =>
-            label.id === estimateId ? { ...label, ...data } : label
-          ) || [],
+      this.rootStore.project.estimates = {
+        ...this.rootStore.project.estimates,
+        [projectId]: (this.rootStore.project.estimates?.[projectId] || [])?.map((estimate) =>
+          estimate.id === estimateId ? { ...estimate, ...data.estimate } : estimate
+        ),
       };
     });
 
@@ -99,17 +95,18 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
         data,
         this.rootStore.user.currentUser!
       );
+      await this.rootStore.project.fetchProjectEstimates(workspaceSlug, projectId);
 
       return response;
     } catch (error) {
-      console.log("Failed to update label from project store");
+      console.log("Failed to update estimate from project store");
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
-          [projectId]: (this.rootStore.project.labels?.[projectId] || [])?.map((label) =>
-            label.id === estimateId ? { ...label, ...originalEstimates } : label
+        this.rootStore.project.estimates = {
+          ...this.rootStore.project.estimates,
+          [projectId]: (this.rootStore.project.estimates?.[projectId] || [])?.map((estimate) =>
+            estimate.id === estimateId ? { ...estimate, ...originalEstimates } : estimate
           ),
-        } as any;
+        };
       });
       throw error;
     }
@@ -131,8 +128,8 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
       // deleting using api
       await this.estimateService.deleteEstimate(workspaceSlug, projectId, estimateId, this.rootStore.user.currentUser!);
     } catch (error) {
-      console.log("Failed to delete label from project store");
-      // reverting back to original label list
+      console.log("Failed to delete estimate from project store");
+      // reverting back to original estimate list
       runInAction(() => {
         this.rootStore.project.estimates = {
           ...this.rootStore.project.estimates,
