@@ -86,6 +86,7 @@ import {
   InboxIssuesStore,
   InboxStore,
 } from "store/inbox";
+import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -145,6 +146,8 @@ export class RootStore {
   inboxIssueDetails: IInboxIssueDetailsStore;
   inboxFilters: IInboxFiltersStore;
 
+  webhook: IWebhookStore;
+
   constructor() {
     this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);
@@ -200,5 +203,7 @@ export class RootStore {
     this.inboxIssues = new InboxIssuesStore(this);
     this.inboxIssueDetails = new InboxIssueDetailsStore(this);
     this.inboxFilters = new InboxFiltersStore(this);
+    
+    this.webhook = new WebhookStore(this);
   }
 }
