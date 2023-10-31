@@ -34,8 +34,6 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
     issueCommentReactionRemove,
   } = props;
 
-  console.log("issueComments", issueComments);
-
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">

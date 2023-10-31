@@ -26,7 +26,11 @@ interface IIssueView {
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
-
+  issueSubscriptionCreate: () => void;
+  issueSubscriptionRemove: () => void;
+  states: any;
+  members: any;
+  priorities: any;
   children: ReactNode;
 }
 
@@ -63,7 +67,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentRemove,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
-
+    issueSubscriptionCreate,
+    issueSubscriptionRemove,
+    states,
+    members,
+    priorities,
     children,
   } = props;
 
@@ -111,9 +119,21 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   );
 
+  useSWR(
+    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
+      ? `ISSUE_PEEK_OVERVIEW_SUBSCRIPTION_${workspaceSlug}_${projectId}_${peekIssueId}`
+      : null,
+    async () => {
+      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
+        await issueDetailStore.fetchIssueSubscription(workspaceSlug, projectId, issueId);
+      }
+    }
+  );
+
   const issue = issueDetailStore.getIssue;
   const issueReactions = issueDetailStore.getIssueReactions;
   const issueComments = issueDetailStore.getIssueComments;
+  const issueSubscription = issueDetailStore.getIssueSubscription;
 
   const user = userStore?.currentUser;
 
@@ -172,8 +192,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             </div>
 
             <div className="flex items-center gap-4">
-              <Button size="sm" prependIcon={<Bell className="h-3 w-3" />} variant="outline-primary">
-                Subscribe
+              <Button
+                size="sm"
+                prependIcon={<Bell className="h-3 w-3" />}
+                variant="outline-primary"
+                onClick={() =>
+                  issueSubscription && issueSubscription.subscribed ? issueSubscriptionRemove : issueSubscriptionCreate
+                }
+              >
+                {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
               </Button>
               <button>
                 <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
