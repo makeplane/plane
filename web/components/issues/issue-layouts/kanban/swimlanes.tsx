@@ -7,7 +7,7 @@ import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
 // types
-import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 
@@ -73,7 +73,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
     action: "update" | "delete"
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
   states: IState[] | null;
@@ -93,7 +93,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     listKey,
     handleIssues,
     quickActions,
-    display_properties,
+    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
     states,
@@ -143,7 +143,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   sub_group_id={getValueFromObject(_list, listKey) as string}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
-                  display_properties={display_properties}
+                  displayProperties={displayProperties}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
                   enableQuickIssueCreate
@@ -167,7 +167,7 @@ export interface IKanBanSwimLanes {
     action: "update" | "delete"
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
   states: IState[] | null;
@@ -186,7 +186,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     group_by,
     handleIssues,
     quickActions,
-    display_properties,
+    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
     states,
@@ -315,7 +315,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           states={states}
@@ -337,7 +337,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           listKey={`key`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           states={states}
@@ -359,7 +359,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           listKey={`key`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           states={states}
@@ -381,7 +381,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           states={states}
@@ -403,7 +403,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           listKey={`member.id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           states={states}
@@ -425,7 +425,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           listKey={`member.id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           states={states}

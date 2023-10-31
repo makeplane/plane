@@ -265,7 +265,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
             <div className="max-w-1/2">
               <SidebarLabelSelect
                 issueDetails={issue}
-                labelList={issue.labels_list}
+                labelList={issue.labels}
                 submitChanges={handleLabels}
                 isNotAllowed={false}
                 uneditable={false}

@@ -25,8 +25,8 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
       <IssuePropertyAssignee
         projectId={issue.project_detail.id ?? null}
         value={issue.assignees}
-        onChange={(data) => onChange({ assignees_list: data })}
-        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+        onChange={(data) => onChange({ assignees: data })}
+        buttonClassName="!p-0 !rounded-none !border-0"
         hideDropdownArrow
         disabled={disabled}
         multiple

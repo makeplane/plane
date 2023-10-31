@@ -75,7 +75,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
 
         issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
-        submitChanges({ labels_list: [...(issueDetails?.labels ?? []), res.id] });
+        submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
 
         setCreateLabelForm(false);
       });
@@ -102,7 +102,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                 onClick={() => {
                   const updatedLabels = labelList?.filter((l) => l !== labelId);
                   submitChanges({
-                    labels_list: updatedLabels,
+                    labels: updatedLabels,
                   });
                 }}
               >
@@ -119,8 +119,8 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         })}
         <Listbox
           as="div"
-          value={issueDetails?.labels_list ?? []}
-          onChange={(val: any) => submitChanges({ labels_list: val })}
+          value={issueDetails?.labels ?? []}
+          onChange={(val: any) => submitChanges({ labels: val })}
           className="flex-shrink-0"
           multiple
           disabled={isNotAllowed || uneditable}

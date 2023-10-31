@@ -32,6 +32,8 @@ export const SignInView = observer(() => {
   const { fetchCurrentUserSettings } = userStore;
   // router
   const router = useRouter();
+  const { next: next_url } = router.query as { next: string };
+
   // states
   const [isLoading, setLoading] = useState(false);
   // toast
@@ -46,15 +48,17 @@ export const SignInView = observer(() => {
   useEffect(() => {
     fetchCurrentUserSettings().then((settings) => {
       setLoading(true);
-      router.push(
-        `/${
-          settings.workspace.last_workspace_slug
-            ? settings.workspace.last_workspace_slug
-            : settings.workspace.fallback_workspace_slug
-        }`
-      );
+      if (next_url) router.push(next_url);
+      else
+        router.push(
+          `/${
+            settings.workspace.last_workspace_slug
+              ? settings.workspace.last_workspace_slug
+              : settings.workspace.fallback_workspace_slug
+          }`
+        );
     });
-  }, [fetchCurrentUserSettings, router]);
+  }, [fetchCurrentUserSettings, router, next_url]);
 
   const handleLoginRedirection = () => {
     userStore.fetchCurrentUser().then((user) => {
@@ -65,7 +69,8 @@ export const SignInView = observer(() => {
           .then((userSettings: IUserSettings) => {
             const workspaceSlug =
               userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-            if (workspaceSlug) router.push(`/${workspaceSlug}`);
+            if (next_url) router.push(next_url);
+            else if (workspaceSlug) router.push(`/${workspaceSlug}`);
             else if (userSettings.workspace.invites > 0) router.push("/invitations");
             else router.push("/create-workspace");
           })

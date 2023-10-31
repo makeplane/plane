@@ -357,11 +357,11 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     <div className="sm:basis-1/2">
                       <Controller
                         control={control}
-                        name="assignees_list"
+                        name="assignees"
                         render={({ field: { value } }) => (
                           <SidebarAssigneeSelect
                             value={value}
-                            onChange={(val: string[]) => submitChanges({ assignees_list: val })}
+                            onChange={(val: string[]) => submitChanges({ assignees: val })}
                             disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
                           />
                         )}
@@ -613,7 +613,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
             <SidebarLabelSelect
               issueDetails={issueDetail}
-              labelList={issueDetail?.labels_list ?? []}
+              labelList={issueDetail?.labels ?? []}
               submitChanges={submitChanges}
               isNotAllowed={isNotAllowed}
               uneditable={uneditable ?? false}

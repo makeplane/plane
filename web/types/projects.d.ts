@@ -108,7 +108,7 @@ export interface IProjectMemberInvitation {
   updated_by: string;
 }
 
-export interface IProjectBulkInviteFormData {
+export interface IProjectBulkAddFormData {
   members: { role: 5 | 10 | 15 | 20; member_id: string }[];
 }
 

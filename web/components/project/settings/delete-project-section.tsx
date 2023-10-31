@@ -15,6 +15,7 @@ export interface IDeleteProjectSection {
 
 export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => {
   const { projectDetails, handleDelete } = props;
+
   return (
     <Disclosure as="div" className="border-t border-custom-border-400">
       {({ open }) => (

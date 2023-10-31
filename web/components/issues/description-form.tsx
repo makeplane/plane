@@ -49,6 +49,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     },
   });
 
+  const [localTitleValue, setLocalTitleValue] = useState("");
+  const issueTitleCurrentValue = watch("name");
+  useEffect(() => {
+    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
+      setLocalTitleValue(issueTitleCurrentValue);
+    }
+  }, [issueTitleCurrentValue, localTitleValue]);
+
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
       if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
@@ -81,7 +89,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     });
   }, [issue, reset]);
 
-  const debouncedTitleSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = useDebouncedCallback(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 
@@ -92,18 +100,19 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           <Controller
             name="name"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
               <TextArea
+                value={localTitleValue}
                 id="name"
                 name="name"
-                value={value}
                 placeholder="Enter issue name"
                 onFocus={() => setCharacterLimit(true)}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                   setCharacterLimit(false);
                   setIsSubmitting("submitting");
-                  debouncedTitleSave();
+                  setLocalTitleValue(e.target.value);
                   onChange(e.target.value);
+                  debouncedFormSave();
                 }}
                 required={true}
                 className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
@@ -135,7 +144,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               value={value}
-              debouncedUpdatesEnabled={true}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
@@ -144,7 +152,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 setShowAlert(true);
                 setIsSubmitting("submitting");
                 onChange(description_html);
-                handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+                debouncedFormSave();
               }}
             />
           )}

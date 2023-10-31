@@ -133,7 +133,6 @@ const SinglePage: NextPage = () => {
       (prevData) => ({
         ...(prevData as IPage),
         ...formData,
-        labels: formData.labels_list ? formData.labels_list : (prevData as IPage).labels,
       }),
       false
     );
@@ -361,7 +360,7 @@ const SinglePage: NextPage = () => {
                             className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
-                              partialUpdatePage({ labels_list: updatedLabels });
+                              partialUpdatePage({ labels: updatedLabels });
                             }}
                             style={{
                               backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"}20`,
@@ -402,7 +401,7 @@ const SinglePage: NextPage = () => {
                         </span>
                       </button>
                     }
-                    onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    onChange={(val: string[]) => partialUpdatePage({ labels: val })}
                     options={options}
                     multiple
                     noChevron
@@ -606,7 +605,7 @@ const SinglePage: NextPage = () => {
                       user={user}
                       onSuccess={(response) => {
                         partialUpdatePage({
-                          labels_list: [...(pageDetails.labels ?? []), response.id],
+                          labels: [...(pageDetails.labels ?? []), response.id],
                         });
                       }}
                     />

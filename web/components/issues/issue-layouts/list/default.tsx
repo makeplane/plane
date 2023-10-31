@@ -39,7 +39,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
         list.length > 0 &&
         list.map((_list: any) => (
           <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
-            <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2] px-3 border-b border-custom-border-100">
+            <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3">
               <ListGroupByHeaderRoot
                 column_id={getValueFromObject(_list, listKey) as string}
                 column_value={_list}
@@ -49,17 +49,15 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                 }
               />
             </div>
-            <div className={`w-full h-full relative transition-all`}>
-              {issues && (
-                <IssueBlocksList
-                  columnId={getValueFromObject(_list, listKey) as string}
-                  issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
-                  handleIssues={handleIssues}
-                  quickActions={quickActions}
-                  display_properties={display_properties}
-                />
-              )}
-            </div>
+            {issues && (
+              <IssueBlocksList
+                columnId={getValueFromObject(_list, listKey) as string}
+                issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
+                handleIssues={handleIssues}
+                quickActions={quickActions}
+                display_properties={display_properties}
+              />
+            )}
             {enableQuickIssueCreate && (
               <ListInlineCreateIssueForm
                 groupId={getValueFromObject(_list, listKey) as string}

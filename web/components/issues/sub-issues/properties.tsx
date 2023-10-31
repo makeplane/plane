@@ -70,7 +70,7 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
   };
 
   const handleAssigneeChange = (data: string[]) => {
-    partialUpdateIssue({ assignees_list: data, assignees: data });
+    partialUpdateIssue({ assignees: data });
 
     trackEventService.trackIssuePartialPropertyUpdateEvent(
       {
