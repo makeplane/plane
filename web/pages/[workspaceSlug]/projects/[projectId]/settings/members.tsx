@@ -30,8 +30,8 @@ import { IProject, IUserLite, IWorkspace } from "types";
 import {
   PROJECTS_LIST,
   PROJECT_DETAILS,
-  PROJECT_INVITATIONS_WITH_EMAIL,
-  PROJECT_MEMBERS_WITH_EMAIL,
+  PROJECT_INVITATIONS,
+  PROJECT_MEMBERS,
   USER_PROJECT_VIEW,
   WORKSPACE_DETAILS,
 } from "constants/fetch-keys";
@@ -68,21 +68,21 @@ const MembersSettings: NextPage = () => {
 
   const { reset, control } = useForm<IProject>({ defaultValues });
 
-  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
-    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
+  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug.toString()) : null, () =>
+    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug.toString()) : null
   );
 
   const { data: projectMembers, mutate: mutateMembers } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembersWithEmail(workspaceSlug as string, projectId as string)
+      ? () => projectService.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
   const { data: projectInvitations, mutate: mutateInvitations } = useSWR(
-    workspaceSlug && projectId ? PROJECT_INVITATIONS_WITH_EMAIL(workspaceSlug.toString(), projectId.toString()) : null,
+    workspaceSlug && projectId ? PROJECT_INVITATIONS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectInvitationService.projectInvitationsWithEmail(workspaceSlug as string, projectId as string)
+      ? () => projectInvitationService.fetchProjectInvitations(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -133,12 +133,12 @@ const MembersSettings: NextPage = () => {
   //   };
 
   //   await projectService
-  //     .updateProject(workspaceSlug as string, projectId as string, payload, user)
+  //     .updateProject(workspaceSlug.toString(), projectId.toString(), payload, user)
   //     .then((res) => {
-  //       mutate(PROJECT_DETAILS(projectId as string));
+  //       mutate(PROJECT_DETAILS(projectId.toString()));
 
   //       mutate(
-  //         PROJECTS_LIST(workspaceSlug as string, {
+  //         PROJECTS_LIST(workspaceSlug.toString(), {
   //           is_favorite: "all",
   //         })
   //       );
@@ -173,12 +173,12 @@ const MembersSettings: NextPage = () => {
     };
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, payload, user)
+      .updateProject(workspaceSlug.toString(), projectId.toString(), payload, user)
       .then(() => {
-        mutate(PROJECT_DETAILS(projectId as string));
+        mutate(PROJECT_DETAILS(projectId.toString()));
 
         mutate(
-          PROJECTS_LIST(workspaceSlug as string, {
+          PROJECTS_LIST(workspaceSlug.toString(), {
             is_favorite: "all",
           })
         );

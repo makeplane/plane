@@ -78,21 +78,21 @@ export class ProjectStore implements IProjectStore {
 
   searchQuery: string = "";
   projectId: string | null = null;
-  projects: { [workspaceSlug: string]: IProject[] } = {}; // workspace_id: project[]
+  projects: { [workspaceSlug: string]: IProject[] } = {}; // workspaceSlug: project[]
   project_details: {
-    [key: string]: IProject; // project_id: project
+    [projectId: string]: IProject; // projectId: project
   } = {};
   states: {
-    [key: string]: IStateResponse; // project_id: states
+    [projectId: string]: IStateResponse; // projectId: states
   } | null = {};
   labels: {
-    [key: string]: IIssueLabels[]; // project_id: labels
+    [projectId: string]: IIssueLabels[]; // projectId: labels
   } | null = {};
   members: {
-    [key: string]: IProjectMember[]; // project_id: members
+    [projectId: string]: IProjectMember[]; // projectId: members
   } | null = {};
   estimates: {
-    [key: string]: IEstimate[]; // project_id: estimates
+    [projectId: string]: IEstimate[]; // projectId: estimates
   } | null = {};
 
   // root store
@@ -370,7 +370,7 @@ export class ProjectStore implements IProjectStore {
       this.loader = true;
       this.error = null;
 
-      const membersResponse = await this.projectService.projectMembers(workspaceSlug, projectId);
+      const membersResponse = await this.projectService.fetchProjectMembers(workspaceSlug, projectId);
       const _members = {
         ...this.members,
         [projectId]: membersResponse,
