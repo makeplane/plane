@@ -128,7 +128,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           {activeLayout === "spreadsheet" && (
             <>
               {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title="Filters" placement="bottom-end">
                   <FilterSelection
                     filters={storedFilters ?? {}}
                     handleFiltersUpdate={handleFiltersUpdate}
@@ -140,7 +140,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                 </FiltersDropdown>
               )}
 
-              <FiltersDropdown title="Display">
+              <FiltersDropdown title="Display" placement="bottom-end">
                 <DisplayFiltersSelection
                   displayFilters={workspaceFilterStore.workspaceDisplayFilters}
                   displayProperties={workspaceFilterStore.workspaceDisplayProperties}
