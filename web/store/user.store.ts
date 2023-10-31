@@ -147,18 +147,19 @@ class UserStore implements IUserStore {
 
       runInAction(() => {
         this.projectMemberInfo = response;
-        this.hasPermissionToWorkspace = true;
+        this.hasPermissionToProject = true;
       });
       return response;
     } catch (error: any) {
       runInAction(() => {
-        this.hasPermissionToWorkspace = false;
+        this.hasPermissionToProject = false;
       });
-      if (error?.status === 404) {
+
+      if (error?.status === 404)
         runInAction(() => {
           this.projectNotFound = true;
         });
-      }
+
       throw error;
     }
   };
