@@ -7,7 +7,6 @@ export * from "./delete-project-modal";
 export * from "./form-loader";
 export * from "./form";
 export * from "./join-project-modal";
-export * from "./label-select";
 export * from "./leave-project-modal";
 export * from "./member-select";
 export * from "./members-select";
