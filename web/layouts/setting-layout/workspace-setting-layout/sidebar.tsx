@@ -27,6 +27,10 @@ export const WorkspaceSettingsSidebar = () => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
+      label: "Api tokens",
+      href: `/${workspaceSlug}/settings/api-tokens`,
+    },
+    {
       label: "Imports",
       href: `/${workspaceSlug}/settings/imports`,
     },
@@ -54,6 +58,13 @@ export const WorkspaceSettingsSidebar = () => {
     },
   ];
 
+  function highlightSetting(label: string, link: string): boolean {
+    if (router.asPath.startsWith(link) && (label === "Imports" || label === "Api tokens")) {
+      return true;
+    }
+    return link === router.asPath;
+  }
+
   return (
     <div className="flex flex-col gap-6 w-80 px-5">
       <div className="flex flex-col gap-2">
@@ -64,7 +75,7 @@ export const WorkspaceSettingsSidebar = () => {
               <a>
                 <div
                   className={`px-4 py-2 text-sm font-medium rounded-md ${
-                    (link.label === "Import" ? router.asPath.includes(link.href) : router.asPath === link.href)
+                    highlightSetting(link.label, link.href)
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   }`}
