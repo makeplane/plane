@@ -5,13 +5,12 @@ import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
@@ -23,7 +22,6 @@ type Props = {
 
 export const IssueColumn: React.FC<Props> = ({
   issue,
-  projectId,
   expanded,
   handleToggleExpand,
   properties,
@@ -50,8 +48,7 @@ export const IssueColumn: React.FC<Props> = ({
   };
 
   const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues/${issue.id}`).then(() => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",

@@ -23,7 +23,7 @@ const defaultValues: Partial<IModule> = {
   description: "",
   status: "backlog",
   lead: null,
-  members_list: [],
+  members: [],
 };
 
 export const ModuleForm: React.FC<Props> = ({
@@ -47,7 +47,7 @@ export const ModuleForm: React.FC<Props> = ({
       description: data?.description || "",
       status: data?.status || "backlog",
       lead: data?.lead || null,
-      members_list: data?.members_list || [],
+      members: data?.members || [],
     },
   });
 

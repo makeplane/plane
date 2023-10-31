@@ -14,7 +14,6 @@ export interface IPage {
   is_favorite: boolean;
   label_details: IIssueLabels[];
   labels: string[];
-  labels_list: string[];
   name: string;
   owned_by: string;
   project: string;

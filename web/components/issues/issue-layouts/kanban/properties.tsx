@@ -65,7 +65,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
     handleIssues(
       !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
       !group_id && group_id === "null" ? null : group_id,
-      { ...issue, labels_list: ids }
+      { ...issue, labels: ids }
     );
   };
 
@@ -73,7 +73,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
     handleIssues(
       !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
       !group_id && group_id === "null" ? null : group_id,
-      { ...issue, assignees_list: ids }
+      { ...issue, assignees: ids }
     );
   };
 
