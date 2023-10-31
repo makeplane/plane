@@ -100,6 +100,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
             </div>
           }
           width="xl"
+          placement="bottom-end"
         >
           <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
             <div
@@ -163,7 +164,9 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
         {issues?.map((issue) => (
           <div
             key={`${property}-${issue.id}`}
-            className="h-11 flex items-center px-4 py-2.5 border-b-[0.5px] border-custom-border-200"
+            className={`h-11 border-b-[0.5px] border-custom-border-200 ${
+              disableUserActions ? "" : "cursor-pointer hover:bg-custom-background-80"
+            }`}
           >
             {property === "state" ? (
               <SpreadsheetStateColumn

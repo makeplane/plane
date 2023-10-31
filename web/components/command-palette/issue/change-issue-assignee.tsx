@@ -79,7 +79,7 @@ export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }
   );
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees_list ?? [];
+    const updatedAssignees = issue.assignees ?? [];
 
     if (updatedAssignees.includes(assignee)) {
       updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
@@ -87,7 +87,7 @@ export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }
       updatedAssignees.push(assignee);
     }
 
-    updateIssue({ assignees_list: updatedAssignees });
+    updateIssue({ assignees: updatedAssignees });
     setIsPaletteOpen(false);
   };
 

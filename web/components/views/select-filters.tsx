@@ -54,7 +54,7 @@ export const SelectFilters: React.FC<Props> = ({ filters, onSelect, direction = 
   const { data: members } = useSWR(
     projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 

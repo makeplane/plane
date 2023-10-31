@@ -24,7 +24,7 @@ const defaultValues: Partial<IModule> = {
   description: "",
   status: "backlog",
   lead: null,
-  members_list: [],
+  members: [],
 };
 
 export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
@@ -98,7 +98,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
     const payload: Partial<IModule> = {
       ...formData,
-      members_list: formData.members,
     };
 
     if (!data) await createModule(payload);

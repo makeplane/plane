@@ -41,7 +41,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters">
+      <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={profileIssueFiltersStore.userFilters}
           handleFiltersUpdate={handleFilters}
@@ -54,7 +54,7 @@ export const ProfileIssuesFilter = observer(() => {
         />
       </FiltersDropdown>
 
-      <FiltersDropdown title="Display">
+      <FiltersDropdown title="Display" placement="bottom-end">
         <DisplayFiltersSelection
           displayFilters={profileIssueFiltersStore.userDisplayFilters}
           displayProperties={profileIssueFiltersStore.userDisplayProperties}

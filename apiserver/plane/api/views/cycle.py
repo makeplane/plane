@@ -589,14 +589,14 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
 
         if group_by:
+            grouped_results = group_results(issues_data, group_by, sub_group_by)
             return Response(
-                group_results(issues_data, group_by, sub_group_by),
+                grouped_results,
                 status=status.HTTP_200_OK,
             )
 
         return Response(
-            issues_data,
-            status=status.HTTP_200_OK,
+            issues_data, status=status.HTTP_200_OK
         )
 
     def create(self, request, slug, project_id, cycle_id):

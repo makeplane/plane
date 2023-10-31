@@ -1,7 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
-import { mutate } from "swr";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
+import { mutate } from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
@@ -9,7 +12,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
-import { IUser, IWorkspace } from "types";
+import { IWorkspace } from "types";
 // fetch-keys
 import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
@@ -23,7 +26,6 @@ type Props = {
     organization_size: string;
   };
   setDefaultValues: Dispatch<SetStateAction<any>>;
-  user: IUser | undefined;
   secondaryButton?: React.ReactNode;
   primaryButtonText?: {
     loading: string;
@@ -49,22 +51,26 @@ const restrictedUrls = [
 
 const workspaceService = new WorkspaceService();
 
-export const CreateWorkspaceForm: FC<Props> = ({
-  onSubmit,
-  defaultValues,
-  setDefaultValues,
-  user,
-  secondaryButton,
-  primaryButtonText = {
-    loading: "Creating...",
-    default: "Create Workspace",
-  },
-}) => {
+export const CreateWorkspaceForm: FC<Props> = observer((props) => {
+  const {
+    onSubmit,
+    defaultValues,
+    setDefaultValues,
+    secondaryButton,
+    primaryButtonText = {
+      loading: "Creating...",
+      default: "Create Workspace",
+    },
+  } = props;
+
   const [slugError, setSlugError] = useState(false);
   const [invalidSlug, setInvalidSlug] = useState(false);
 
-  const { setToastAlert } = useToast();
   const router = useRouter();
+
+  const { workspace: workspaceStore } = useMobxStore();
+
+  const { setToastAlert } = useToast();
 
   const {
     handleSubmit,
@@ -81,8 +87,8 @@ export const CreateWorkspaceForm: FC<Props> = ({
         if (res.status === true && !restrictedUrls.includes(formData.slug)) {
           setSlugError(false);
 
-          await workspaceService
-            .createWorkspace(formData, user)
+          await workspaceStore
+            .createWorkspace(formData)
             .then(async (res) => {
               setToastAlert({
                 type: "success",
@@ -157,7 +163,7 @@ export const CreateWorkspaceForm: FC<Props> = ({
         </div>
         <div className="space-y-1 text-sm">
           <label htmlFor="workspaceUrl">Workspace URL</label>
-          <div className="flex w-full items-center rounded-md border border-custom-border-200 px-3">
+          <div className="flex w-full items-center rounded-md border-[0.5px] border-custom-border-200 px-3">
             <span className="whitespace-nowrap text-sm text-custom-text-200">{window && window.location.host}/</span>
             <Controller
               control={control}
@@ -200,9 +206,10 @@ export const CreateWorkspaceForm: FC<Props> = ({
                   onChange={onChange}
                   label={
                     ORGANIZATION_SIZE.find((c) => c === value) ?? (
-                      <span className="text-custom-text-200">Select organization size</span>
+                      <span className="text-custom-text-400">Select organization size</span>
                     )
                   }
+                  buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                   input
                   width="w-full"
                 >
@@ -232,4 +239,4 @@ export const CreateWorkspaceForm: FC<Props> = ({
       </div>
     </form>
   );
-};
+});

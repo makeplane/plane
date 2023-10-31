@@ -122,7 +122,6 @@ export class DraftIssuesStore {
 
     // immediately update the issue in the store
     const updatedIssue = { ...this.issues[issueId], ...issueForm };
-    if (updatedIssue.assignees_list) updatedIssue.assignees = updatedIssue.assignees_list;
 
     try {
       runInAction(() => {

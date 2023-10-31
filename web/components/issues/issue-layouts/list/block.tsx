@@ -4,7 +4,7 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite } from "types";
 
 interface IssueBlockProps {
   columnId: string;
@@ -12,27 +12,29 @@ interface IssueBlockProps {
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  priorities: any;
+  states: IState[] | null;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  estimates: IEstimatePoint[] | null;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties, states, labels, members, priorities } =
-    props;
+  const { columnId, issue, handleIssues, quickActions, display_properties, states, labels, members, estimates } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    if (issueToUpdate && handleIssues) handleIssues(group_by, issueToUpdate, "update");
+    handleIssues(group_by, issueToUpdate, "update");
   };
 
   return (
     <>
-      <div className="text-sm p-3 shadow-custom-shadow-2xs bg-custom-background-100 flex items-center gap-3 border-b border-custom-border-200 hover:bg-custom-background-80">
+      <div className="text-sm p-3 relative bg-custom-background-100 flex items-center gap-3">
         {display_properties && display_properties?.key && (
           <div className="flex-shrink-0 text-xs text-custom-text-300">
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
+        )}
+        {issue?.tempId !== undefined && (
+          <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
         )}
         <IssuePeekOverview
           workspaceSlug={issue?.workspace_detail?.slug}
@@ -55,7 +57,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             states={states}
             labels={labels}
             members={members}
-            priorities={priorities}
+            estimates={estimates}
           />
           {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
         </div>

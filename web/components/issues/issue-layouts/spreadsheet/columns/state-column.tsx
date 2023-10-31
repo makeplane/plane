@@ -4,6 +4,8 @@ import React from "react";
 import { StateSelect } from "components/states";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
+// helpers
+import { getStatesList } from "helpers/state.helper";
 // types
 import { IIssue, IStateResponse } from "types";
 
@@ -22,13 +24,16 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
+  const statesList = getStatesList(states);
+
   return (
     <>
       <StateSelect
         value={issue.state_detail}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
-        stateGroups={states}
-        buttonClassName="!shadow-none !border-0"
+        states={statesList}
+        className="h-full"
+        buttonClassName="!border-0 !h-full !w-full !rounded-none"
         hideDropdownArrow
         disabled={disabled}
       />

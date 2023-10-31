@@ -50,10 +50,10 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     issueDetailStore.removeIssueComment(workspaceSlug, projectId, issueId, commentId);
 
   const issueCommentReactionCreate = (commentId: string, reaction: string) =>
-    issueDetailStore.creationIssueCommentReaction(workspaceSlug, projectId, commentId, reaction);
+    issueDetailStore.creationIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
 
   const issueCommentReactionRemove = (commentId: string, reaction: string) =>
-    issueDetailStore.removeIssueCommentReaction(workspaceSlug, projectId, commentId, reaction);
+    issueDetailStore.removeIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
 
   return (
     <IssueView

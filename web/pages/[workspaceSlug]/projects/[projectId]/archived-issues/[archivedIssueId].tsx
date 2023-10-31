@@ -32,12 +32,10 @@ const defaultValues: Partial<IIssue> = {
   description_html: "",
   estimate_point: null,
   state: "",
-  assignees_list: [],
   priority: "low",
   target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
-  labels_list: [],
 };
 
 // services
@@ -109,9 +107,6 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
     reset({
       ...issueDetails,
-      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, archivedIssueId]);
 
