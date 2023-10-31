@@ -64,7 +64,7 @@ export interface IUserLite {
 }
 
 export interface IUserMemberLite extends IUserLite {
-  email: string;
+  email?: string;
 }
 
 export interface IUserActivity {
