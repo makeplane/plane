@@ -544,7 +544,7 @@ class ProjectMemberViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         project_member = ProjectMember.objects.get(
-            member=request.user, workspace__slug=slug
+            member=request.user, workspace__slug=slug, project_id=project_id
         )
 
         project_members = ProjectMember.objects.filter(
