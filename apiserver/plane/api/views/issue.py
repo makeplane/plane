@@ -123,7 +123,6 @@ class IssueViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("state")
             .select_related("parent")
-            .prefetch_related("mentions")
             .prefetch_related("assignees")
             .prefetch_related("labels")
             .prefetch_related(
