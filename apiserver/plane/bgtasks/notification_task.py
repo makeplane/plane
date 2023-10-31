@@ -85,8 +85,7 @@ def extract_mentions(issue_instance):
         mention_tags = soup.find_all(
             'mention-component', attrs={'target': 'users'})
 
-        for mention_tag in mention_tags:
-            mentions.append(mention_tag['id'])
+        mentions = [mention_tag['id'] for mention_tag in mention_tags]
 
         return list(set(mentions))
     except Exception as e:
