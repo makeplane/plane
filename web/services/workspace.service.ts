@@ -132,14 +132,6 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async workspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async workspaceMemberMe(workspaceSlug: string): Promise<IWorkspaceMemberMe> {
     return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/me/`)
       .then((response) => response?.data)
@@ -150,6 +142,14 @@ export class WorkspaceService extends APIService {
 
   async updateWorkspaceView(workspaceSlug: string, data: { view_props: IWorkspaceViewProps }): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/workspace-views/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async fetchWorkspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

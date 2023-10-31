@@ -95,7 +95,7 @@ export const AssigneesList: React.FC<AsigneesListProps> = ({
 
   const { data: people } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug as string) : null
   );
 
   if ((users && users.length === 0) || (userIds && userIds.length === 0))

@@ -15,7 +15,7 @@ const useWorkspaceMembers = (workspaceSlug: string | undefined, fetchCondition?:
 
   const { data: workspaceMembers, error: workspaceMemberErrors } = useSWR(
     workspaceSlug && fetchCondition ? WORKSPACE_MEMBERS(workspaceSlug) : null,
-    workspaceSlug && fetchCondition ? () => workspaceService.workspaceMembers(workspaceSlug) : null
+    workspaceSlug && fetchCondition ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug) : null
   );
 
   const hasJoined = workspaceMembers?.some((item: any) => item.member.id === (user as any)?.id);

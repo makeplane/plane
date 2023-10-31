@@ -44,7 +44,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
 
   const options = members?.map((member) => ({
