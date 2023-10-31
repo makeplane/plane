@@ -20,8 +20,9 @@ export default props => {
 
   return (
     <NodeViewWrapper className="w-fit inline mention-component" >
-      <span className={cn("px-1 py-0.5 inline rounded-md font-bold cursor-pointer hover:bg-custom-primary-300 bg-custom-primary-500 mention", {
+      <span className={cn("px-1 py-0.5 inline rounded-md font-bold bg-custom-primary-500 mention", {
         "text-[#D9C942] bg-[#544D3B] hover:bg-[#544D3B]" : highlights ? highlights.includes(props.node.attrs.id) : false,
+        "cursor-pointer hover:bg-custom-primary-300" : !props.extension.options.readonly
       })} onClick={handleClick} data-mention-target={props.node.attrs.target} data-mention-id={props.node.attrs.id}>@{ props.node.attrs.label }</span>
     </NodeViewWrapper>
   )
