@@ -76,7 +76,23 @@ class WebhookEndpoint(BaseAPIView):
 
     def patch(self, request, slug, pk):
         webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
-        serializer = WebhookSerializer(webhook, data=request.data, partial=True)
+        serializer = WebhookSerializer(
+            webhook,
+            data=request.data,
+            partial=True,
+            fields=(
+                "id",
+                "url",
+                "is_active",
+                "created_at",
+                "updated_at",
+                "project",
+                "issue",
+                "cycle",
+                "module",
+                "issue_comment",
+            ),
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
