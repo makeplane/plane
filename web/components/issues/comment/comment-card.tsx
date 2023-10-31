@@ -116,7 +116,8 @@ export const CommentCard: React.FC<Props> = ({
             </div>
             <div className="flex gap-1 self-end">
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit(onEnter)}
                 disabled={isSubmitting}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
