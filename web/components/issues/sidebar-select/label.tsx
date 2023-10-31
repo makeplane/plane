@@ -89,7 +89,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   }, [createLabelForm, reset, setFocus]);
 
   return (
-    <div className={` ${uneditable ? "opacity-60" : ""}`}>
+    <div className={`flex flex-col gap-3 ${uneditable ? "opacity-60" : ""}`}>
       <div className="flex flex-wrap gap-1">
         {labelList?.map((labelId) => {
           const label = issueLabels?.find((l) => l.id === labelId);
@@ -130,7 +130,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
               <Listbox.Button
                 className={`flex ${
                   isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-                } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
+                } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
               >
                 Select Label
               </Listbox.Button>
@@ -218,7 +218,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
             type="button"
             className={`flex ${
               isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-            } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
+            } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
             onClick={() => setCreateLabelForm((prevData) => !prevData)}
             disabled={uneditable}
           >

@@ -142,8 +142,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           onChange={(description: Object, description_html: string) => {
             debouncedIssueDescription(description_html);
           }}
-          customClassName="!p-0 !text-xs"
-          noBorder
+          customClassName="mt-0"
         />
       </span>
 

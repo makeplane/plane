@@ -53,6 +53,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueSubscriptionRemove = () => issueDetailStore.removeIssueSubscription(workspaceSlug, projectId, issueId);
 
+  const handleDeleteIssue = () => issueDetailStore.deleteIssue(workspaceSlug, projectId, issueId);
+
   return (
     <IssueView
       workspaceSlug={workspaceSlug}
@@ -68,6 +70,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueCommentReactionRemove={issueCommentReactionRemove}
       issueSubscriptionCreate={issueSubscriptionCreate}
       issueSubscriptionRemove={issueSubscriptionRemove}
+      handleDeleteIssue={handleDeleteIssue}
     >
       {children}
     </IssueView>
