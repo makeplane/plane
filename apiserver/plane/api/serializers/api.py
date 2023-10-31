@@ -9,6 +9,7 @@ class APITokenSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "token",
+            "expired_at",
             "created_at",
             "updated_at",
             "workspace",

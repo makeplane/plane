@@ -42,13 +42,19 @@ class ApiTokenEndpoint(BaseAPIView):
             status=status.HTTP_201_CREATED,
         )
 
-    def get(self, request, slug):
-        api_tokens = APIToken.objects.filter(
-            user=request.user,
-            workspace__slug=slug,
-        )
-        serializer = APITokenReadSerializer(api_tokens, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, slug, pk=None):
+        if pk == None:
+            api_tokens = APIToken.objects.filter(
+                user=request.user, workspace__slug=slug
+            )
+            serializer = APITokenReadSerializer(api_tokens, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            api_tokens = APIToken.objects.get(
+                user=request.user, workspace__slug=slug, pk=pk
+            )
+            serializer = APITokenReadSerializer(api_tokens)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request, slug, pk):
         api_token = APIToken.objects.get(
