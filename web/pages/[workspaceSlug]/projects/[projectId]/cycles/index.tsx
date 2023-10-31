@@ -29,7 +29,11 @@ const ProjectCyclesPage: NextPage = observer(() => {
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId, peekCycle } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    peekCycle: string;
+  };
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
@@ -150,13 +154,14 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </div>
 
           <Tab.Panels as={Fragment}>
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"all"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
@@ -165,35 +170,38 @@ const ProjectCyclesPage: NextPage = observer(() => {
               <ActiveCycleDetails workspaceSlug={workspaceSlug} projectId={projectId} />
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"upcoming"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"completed"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"draft"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>

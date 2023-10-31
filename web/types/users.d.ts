@@ -56,6 +56,7 @@ export interface IUserLite {
   avatar: string;
   created_at: Date;
   display_name: string;
+  email?: string;
   first_name: string;
   readonly id: string;
   is_bot: boolean;
