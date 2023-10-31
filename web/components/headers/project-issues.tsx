@@ -146,7 +146,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             onChange={(layout) => handleLayoutChange(layout)}
             selectedLayout={activeLayout}
           />
-          <FiltersDropdown title="Filters">
+          <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
               filters={issueFilterStore.userFilters}
               handleFiltersUpdate={handleFiltersUpdate}
@@ -158,7 +158,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
           </FiltersDropdown>
-          <FiltersDropdown title="Display">
+          <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
               displayFilters={issueFilterStore.userDisplayFilters}
               displayProperties={issueFilterStore.userDisplayProperties}

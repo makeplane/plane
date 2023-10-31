@@ -198,8 +198,7 @@ export const InlineCreateIssueFormWrapper: React.FC<Props> = (props) => {
 
         if (onSuccess) await onSuccess(res);
 
-        if (formData.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
+        if (formData.assignees?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE(workspaceSlug as string));
 
         if (formData.parent && formData.parent !== "") mutate(SUB_ISSUES(formData.parent));
       })

@@ -1,4 +1,4 @@
-import type { IProjectMember, IUser, IUserMemberLite, IWorkspaceViewProps } from "types";
+import type { IProjectMember, IUser, IUserLite, IUserMemberLite, IWorkspaceViewProps } from "types";
 
 export interface IWorkspace {
   readonly id: string;
@@ -56,16 +56,29 @@ export type Properties = {
 };
 
 export interface IWorkspaceMember {
-  readonly id: string;
-  workspace: IWorkspace;
-  member: IUserMemberLite;
-  role: 5 | 10 | 15 | 20;
   company_role: string | null;
-  view_props: IWorkspaceViewProps;
   created_at: Date;
-  updated_at: Date;
   created_by: string;
+  id: string;
+  member: IUserLite;
+  role: 5 | 10 | 15 | 20;
+  updated_at: Date;
   updated_by: string;
+  workspace: IWorkspaceLite;
+}
+
+export interface IWorkspaceMemberMe {
+  company_role: string | null;
+  created_at: Date;
+  created_by: string;
+  default_props: IWorkspaceViewProps;
+  id: string;
+  member: string;
+  role: 5 | 10 | 15 | 20;
+  updated_at: Date;
+  updated_by: string;
+  view_props: IWorkspaceViewProps;
+  workspace: string;
 }
 
 export interface ILastActiveWorkspaceDetails {

@@ -21,12 +21,12 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
-    <>
+    <div className="flex items-center h-full px-4">
       <MembersSelect
         value={issue.assignees}
-        onChange={(data) => onChange({ assignees_list: data })}
+        onChange={(data) => onChange({ assignees: data })}
         members={members ?? []}
-        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+        buttonClassName="!p-0 !rounded-none !border-0"
         hideDropdownArrow
         disabled={disabled}
         multiple
@@ -46,6 +46,6 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
             disabled={disabled}
           />
         ))}
-    </>
+    </div>
   );
 };

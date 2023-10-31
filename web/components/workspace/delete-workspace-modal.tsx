@@ -1,31 +1,22 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { WorkspaceService } from "services/workspace.service";
+import { AlertTriangle } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-// icons
-import { AlertTriangle } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IUser, IWorkspace } from "types";
-// fetch-keys
-import { USER_WORKSPACES } from "constants/fetch-keys";
+import type { IWorkspace } from "types";
 
 type Props = {
   isOpen: boolean;
   data: IWorkspace | null;
   onClose: () => void;
-  user: IUser | undefined;
 };
 
 const defaultValues = {
@@ -33,11 +24,12 @@ const defaultValues = {
   confirmDelete: "",
 };
 
-// services
-const workspaceService = new WorkspaceService();
+export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
+  const { isOpen, data, onClose } = props;
 
-export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, user }) => {
   const router = useRouter();
+
+  const { workspace: workspaceStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -63,14 +55,12 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
   const onSubmit = async () => {
     if (!data || !canDelete) return;
 
-    await workspaceService
-      .deleteWorkspace(data.slug, user)
+    await workspaceStore
+      .deleteWorkspace(data.slug)
       .then(() => {
         handleClose();
 
         router.push("/");
-
-        mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => prevData?.filter((workspace) => workspace.id !== data.id));
 
         setToastAlert({
           type: "success",
@@ -196,4 +186,4 @@ export const DeleteWorkspaceModal: React.FC<Props> = ({ isOpen, data, onClose, u
       </Dialog>
     </Transition.Root>
   );
-};
+});

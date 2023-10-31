@@ -19,7 +19,7 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIss
 
   return (
     <>
-      {renderLongDetailDateFormat(issue.created_at)}
+      <div className="text-xs">{renderLongDetailDateFormat(issue.created_at)}</div>
 
       {isExpanded &&
         !isLoading &&

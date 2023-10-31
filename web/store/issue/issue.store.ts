@@ -31,6 +31,7 @@ export interface IIssueStore {
   // computed
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+  getIssuesCount: number;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
@@ -68,6 +69,7 @@ export class IssueStore implements IIssueStore {
       // computed
       getIssueType: computed,
       getIssues: computed,
+      getIssuesCount: computed,
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
@@ -118,6 +120,44 @@ export class IssueStore implements IIssueStore {
     if (!projectId || !issueType) return null;
 
     return this.issues?.[projectId]?.[issueType] || null;
+  }
+
+  get getIssuesCount() {
+    const issueType = this.getIssueType;
+
+    let issuesCount = 0;
+
+    if (issueType === "grouped") {
+      const issues = this.getIssues as IIssueGroupedStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((group_id) => {
+        issuesCount += issues[group_id].length;
+      });
+    }
+
+    if (issueType === "groupWithSubGroups") {
+      const issues = this.getIssues as IIssueGroupWithSubGroupsStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((sub_group_id) => {
+        Object.keys(issues[sub_group_id]).map((group_id) => {
+          issuesCount += issues[sub_group_id][group_id].length;
+        });
+      });
+    }
+
+    if (issueType === "ungrouped") {
+      const issues = this.getIssues as IIssueUnGroupedStructure;
+
+      if (!issues) return 0;
+
+      issuesCount = issues.length;
+    }
+
+    return issuesCount;
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {

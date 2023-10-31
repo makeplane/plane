@@ -27,13 +27,11 @@ import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 // helper
 
 const defaultValues: Partial<IIssue> = {
-  assignees_list: [],
   description: "",
   description_html: "",
   estimate_point: null,
   issue_cycle: null,
   issue_module: null,
-  labels_list: [],
   name: "",
   priority: "low",
   start_date: null,
@@ -109,9 +107,6 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, issueId]);
 
