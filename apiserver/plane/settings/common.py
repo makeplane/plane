@@ -215,3 +215,46 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_IMPORTS = ("plane.bgtasks.issue_automation_task","plane.bgtasks.exporter_expired_task")
+
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+            "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, 'logs', 'debug.log') if DEBUG else os.path.join(BASE_DIR, 'logs', 'error.log'),
+            "when": "midnight",
+            "interval": 1,  # One day
+            "backupCount": 5,  # Keep last 5 days of logs,
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "plane": {
+            "level": "DEBUG" if DEBUG else "ERROR",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+    },
+}
+
