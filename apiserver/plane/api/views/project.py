@@ -43,7 +43,6 @@ from plane.api.serializers import (
 from plane.api.permissions import (
     ProjectBasePermission,
     ProjectEntityPermission,
-    ProjectAdminPermission,
     ProjectMemberPermission,
     ProjectLitePermission,
 )
@@ -463,7 +462,7 @@ class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
     model = ProjectMember
     permission_classes = [
-        ProjectAdminPermission,
+        ProjectMemberPermission,
     ]
 
     search_fields = [
@@ -554,7 +553,7 @@ class ProjectMemberViewSet(BaseViewSet):
             member__is_bot=False,
         ).select_related("project", "member", "workspace")
 
-        if project_member.role == 20:
+        if project_member.role > 10:
             serializer = ProjectMemberAdminSerializer(project_members, many=True)
         else:
             serializer = ProjectMemberSerializer(project_members, many=True)

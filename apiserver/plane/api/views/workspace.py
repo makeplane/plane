@@ -472,7 +472,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     model = WorkspaceMember
 
     permission_classes = [
-        WorkSpaceAdminPermission,
+        WorkspaceEntityPermission,
     ]
 
     search_fields = [
@@ -499,7 +499,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             member__is_bot=False,
         ).select_related("workspace", "member")
 
-        if workspace_member.role == 20:
+        if workspace_member.role > 10:
             serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
         else:
             serializer = WorkSpaceMemberSerializer(
