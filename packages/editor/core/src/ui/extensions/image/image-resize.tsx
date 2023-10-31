@@ -23,8 +23,8 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
         origin={false}
         edge={false}
         throttleDrag={0}
-        keepRatio={true}
-        resizable={true}
+        keepRatio
+        resizable
         throttleResize={0}
         onResize={({ target, width, height, delta }: any) => {
           delta[0] && (target!.style.width = `${width}px`);
@@ -33,7 +33,7 @@ export const ImageResizer = ({ editor }: { editor: Editor }) => {
         onResizeEnd={() => {
           updateMediaSize();
         }}
-        scalable={true}
+        scalable
         renderDirections={["w", "e"]}
         onScale={({ target, transform }: any) => {
           target!.style.transform = transform;

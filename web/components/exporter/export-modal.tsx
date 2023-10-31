@@ -128,7 +128,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
                       value={value ?? []}
                       onChange={(val: string[]) => onChange(val)}
                       options={options}
-                      input={true}
+                      input
                       label={
                         value && value.length > 0
                           ? projects &&
