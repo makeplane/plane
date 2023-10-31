@@ -57,7 +57,7 @@ export interface IProjectStore {
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<any>;
 
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -140,6 +140,7 @@ export class ProjectStore implements IProjectStore {
       getProjectStateById: action,
       getProjectLabelById: action,
       getProjectMemberById: action,
+      getProjectEstimateById: action,
 
       fetchProjectStates: action,
       fetchProjectLabels: action,
