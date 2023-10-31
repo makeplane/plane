@@ -36,11 +36,11 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels_list: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees_list: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
   };
 
   const handleStartDate = (date: string) => {

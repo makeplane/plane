@@ -67,7 +67,7 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
 
   const { data: people } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug as string) : null
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug as string) : null
   );
 
   const {
@@ -90,9 +90,11 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
 
   const onSubmit = async (formData: FormValues) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
+
     const payload = { ...formData };
+
     await projectService
-      .inviteProject(workspaceSlug as string, projectId as string, payload, user)
+      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload, user)
       .then(() => {
         setIsOpen(false);
         setToastAlert({

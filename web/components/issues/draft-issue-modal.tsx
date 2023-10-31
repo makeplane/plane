@@ -208,8 +208,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
           message: "Issue created successfully.",
         });
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
+        if (payload.assignees?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE(workspaceSlug as string));
       })
       .catch(() => {
         setToastAlert({
@@ -325,8 +324,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
         if (!createMore) onClose();
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
+        if (payload.assignees?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE(workspaceSlug as string));
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
@@ -347,8 +345,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
     const payload: Partial<IIssue> = {
       ...formData,
-      assignees_list: formData.assignees ?? [],
-      labels_list: formData.labels ?? [],
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };

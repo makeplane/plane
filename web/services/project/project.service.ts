@@ -7,7 +7,7 @@ import type {
   GithubRepositoriesResponse,
   IUser,
   IProject,
-  IProjectBulkInviteFormData,
+  IProjectBulkAddFormData,
   IProjectMember,
   ISearchIssueResponse,
   ProjectPreferences,
@@ -83,32 +83,6 @@ export class ProjectService extends APIService {
       });
   }
 
-  async inviteProject(
-    workspaceSlug: string,
-    projectId: string,
-    data: IProjectBulkInviteFormData,
-    user: IUser | undefined
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/add/`, data)
-      .then((response) => {
-        trackEventService.trackProjectEvent(
-          {
-            workspaceId: response?.data?.workspace?.id,
-            workspaceSlug,
-            projectId,
-            projectName: response?.data?.project?.name,
-            memberEmail: response?.data?.member?.email,
-          },
-          "PROJECT_MEMBER_INVITE",
-          user as IUser
-        );
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/join/`, { project_ids })
       .then((response) => response?.data)
@@ -136,17 +110,35 @@ export class ProjectService extends APIService {
       });
   }
 
-  async projectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/`)
+  async fetchProjectMembers(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async projectMembersWithEmail(workspaceSlug: string, projectId: string): Promise<IProjectMember[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`)
-      .then((response) => response?.data)
+  async bulkAddMembersToProject(
+    workspaceSlug: string,
+    projectId: string,
+    data: IProjectBulkAddFormData,
+    user: IUser | undefined
+  ): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/`, data)
+      .then((response) => {
+        trackEventService.trackProjectEvent(
+          {
+            workspaceId: response?.data?.workspace?.id,
+            workspaceSlug,
+            projectId,
+            projectName: response?.data?.project?.name,
+            memberEmail: response?.data?.member?.email,
+          },
+          "PROJECT_MEMBER_INVITE",
+          user as IUser
+        );
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

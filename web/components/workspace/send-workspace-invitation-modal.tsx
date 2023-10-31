@@ -14,14 +14,15 @@ import { Plus, X } from "lucide-react";
 import { IUser } from "types";
 // constants
 import { ROLE } from "constants/workspace";
+// fetch-keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  workspace_slug: string;
+  onClose: () => void;
+  workspaceSlug: string;
   user: IUser | undefined;
-  onSuccess: () => void;
+  onSuccess?: () => Promise<void>;
 };
 
 type EmailRole = {
@@ -44,8 +45,9 @@ const defaultValues: FormValues = {
 
 const workspaceService = new WorkspaceService();
 
-const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
-  const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
+export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
+  const { isOpen, onClose, workspaceSlug, user, onSuccess } = props;
+
   const {
     control,
     reset,
@@ -61,42 +63,38 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
+
     const timeout = setTimeout(() => {
       reset(defaultValues);
       clearTimeout(timeout);
-    }, 500);
+    }, 350);
   };
 
   const onSubmit = async (formData: FormValues) => {
-    if (!workspace_slug) return;
-
-    const payload = { ...formData };
+    if (!workspaceSlug) return;
 
     await workspaceService
-      .inviteWorkspace(workspace_slug, payload, user)
+      .inviteWorkspace(workspaceSlug, formData, user)
       .then(async () => {
-        setIsOpen(false);
+        if (onSuccess) await onSuccess();
+
         handleClose();
+
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-        onSuccess();
       })
-      .catch((err) => {
+      .catch((err) =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: `${err.error}`,
-        });
-        console.log(err);
-      })
-      .finally(() => {
-        reset(defaultValues);
-        mutate(WORKSPACE_INVITATIONS);
-      });
+          message: `${err.error ?? "Something went wrong. Please try again."}`,
+        })
+      )
+      .finally(() => mutate(WORKSPACE_INVITATIONS));
   };
 
   const appendField = () => {
@@ -104,9 +102,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (fields.length === 0) {
-      append([{ email: "", role: 15 }]);
-    }
+    if (fields.length === 0) append([{ email: "", role: 15 }]);
   }, [fields, append]);
 
   return (
@@ -249,5 +245,3 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     </Transition.Root>
   );
 };
-
-export default SendWorkspaceInvitationModal;

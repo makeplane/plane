@@ -82,7 +82,7 @@ def track_description(
         if (
             last_activity is not None
             and last_activity.field == "description"
-            and actor_id == last_activity.actor_id
+            and actor_id == str(last_activity.actor_id)
         ):
             last_activity.created_at = timezone.now()
             last_activity.save(update_fields=["created_at"])
@@ -276,7 +276,7 @@ def track_labels(
     issue_activities,
     epoch,
 ):
-    requested_labels = set([str(lab) for lab in requested_data.get("labels_list", [])])
+    requested_labels = set([str(lab) for lab in requested_data.get("labels", [])])
     current_labels = set([str(lab) for lab in current_instance.get("labels", [])])
 
     added_labels = requested_labels - current_labels
@@ -335,7 +335,7 @@ def track_assignees(
     epoch,
 ):
     requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignees_list", [])]
+        [str(asg) for asg in requested_data.get("assignees", [])]
     )
     current_assignees = set([str(asg) for asg in current_instance.get("assignees", [])])
 
@@ -523,8 +523,8 @@ def update_issue_activity(
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
-        "labels_list": track_labels,
-        "assignees_list": track_assignees,
+        "labels": track_labels,
+        "assignees": track_assignees,
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,

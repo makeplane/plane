@@ -35,7 +35,7 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
@@ -103,7 +103,7 @@ export const KanBanLayout: React.FC = observer(() => {
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
               />
             )}
-            display_properties={display_properties}
+            displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
@@ -128,7 +128,7 @@ export const KanBanLayout: React.FC = observer(() => {
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
               />
             )}
-            display_properties={display_properties}
+            displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
