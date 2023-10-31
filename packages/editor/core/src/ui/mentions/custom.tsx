@@ -5,6 +5,7 @@ import mentionNodeView from './mentionNodeView'
 import { IMentionHighlight } from '../../types/mention-suggestion'
 export interface CustomMentionOptions extends MentionOptions {
   mentionHighlights: IMentionHighlight[]
+  readonly?: boolean
 }
 
 export const CustomMention = Mention.extend<CustomMentionOptions>({

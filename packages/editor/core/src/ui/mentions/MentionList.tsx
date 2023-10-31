@@ -63,9 +63,8 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
   }))
 
   return (
-
-    <div className="items">
-      {props.items.length ? props.items.map((item, index) => (
+    props.items && props.items.length !== 0 ? <div className="items">
+      { props.items.length ? props.items.map((item, index) => (
             <div className={`item ${index === selectedIndex ? 'is-selected' : ''} w-72 flex items-center p-3 rounded shadow-md`} onClick={() => selectItem(index)}>
                 {item.avatar ? <div
                   className={`rounded border-[0.5px] ${index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent"
@@ -103,7 +102,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
         )
         : <div className="item">No result</div>
       }
-    </div>
+    </div> : <></>
   )
 })
 

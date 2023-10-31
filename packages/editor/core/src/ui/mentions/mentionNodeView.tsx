@@ -13,7 +13,9 @@ export default props => {
   const highlights = props.extension.options.mentionHighlights as IMentionHighlight[]
 
   const handleClick = () => {
-    router.push(props.node.attrs.redirect_uri)
+    if (!props.extension.options.readonly){
+      router.push(props.node.attrs.redirect_uri)
+    }
   }
 
   return (

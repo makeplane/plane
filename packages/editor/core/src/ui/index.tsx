@@ -64,7 +64,6 @@ const CoreEditor = ({
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
-    editable,
     setIsSubmitting,
     setShouldShowAlert,
     value,
