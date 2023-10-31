@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanbanIssueBlocksList, BoardInlineCreateIssueForm } from "components/issues";
 // types
-import { IEstimatePoint, IIssue, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
 
@@ -26,7 +26,7 @@ export interface IGroupByKanBan {
     action: "update" | "delete"
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
   enableQuickIssueCreate?: boolean;
@@ -48,7 +48,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     isDragDisabled,
     handleIssues,
     quickActions,
-    display_properties,
+    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
     states,
@@ -104,7 +104,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         isDragDisabled={isDragDisabled}
                         handleIssues={handleIssues}
                         quickActions={quickActions}
-                        display_properties={display_properties}
+                        displayProperties={displayProperties}
                         states={states}
                         labels={labels}
                         members={members}
@@ -151,7 +151,7 @@ export interface IKanBan {
     action: "update" | "delete"
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
   states: IState[] | null;
@@ -172,7 +172,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     sub_group_id = "null",
     handleIssues,
     quickActions,
-    display_properties,
+    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
     states,
@@ -200,7 +200,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
@@ -223,7 +223,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
@@ -246,7 +246,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
@@ -269,7 +269,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
@@ -292,7 +292,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
@@ -315,7 +315,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}

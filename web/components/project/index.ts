@@ -4,7 +4,6 @@ export * from "./card-list";
 export * from "./card";
 export * from "./create-project-modal";
 export * from "./delete-project-modal";
-export * from "./delete-project-section";
 export * from "./form-loader";
 export * from "./form";
 export * from "./join-project-modal";

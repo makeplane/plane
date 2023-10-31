@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
 // fetch keys
-import { WORKSPACE_MEMBERS_WITH_EMAIL } from "constants/fetch-keys";
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // components
@@ -30,8 +30,8 @@ export const JiraImportUsers: FC = () => {
   });
 
   const { data: members } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS_WITH_EMAIL(workspaceSlug?.toString() ?? "") : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug?.toString() ?? "") : null
+    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug?.toString() ?? "") : null,
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug?.toString() ?? "") : null
   );
 
   const options = members?.map((member) => ({

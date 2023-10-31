@@ -11,12 +11,14 @@ export interface InputColorPickerProps {
   value: string | undefined;
   onChange: (value: string) => void;
   name: string;
-  className: string;
+  className?: string;
+  style?: React.CSSProperties;
   placeholder: string;
 }
 
 export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
-  const { value, hasError, onChange, name, className, placeholder } = props;
+  const { value, hasError, onChange, name, className, style, placeholder } =
+    props;
 
   const [referenceElement, setReferenceElement] =
     React.useState<HTMLButtonElement | null>(null);
@@ -32,12 +34,12 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
     onChange(hex);
   };
 
-  const handleInputChange = (value: any) => {
-    onChange(value);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
   };
 
   return (
-    <div className="flex items-center justify-between rounded border border-custom-border-200 px-1">
+    <div className="relative">
       <Input
         id={name}
         name={name}
@@ -46,10 +48,14 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
         onChange={handleInputChange}
         hasError={hasError}
         placeholder={placeholder}
-        className={`border-none ${className}`}
+        className={`border-[0.5px] border-custom-border-200 ${className}`}
+        style={style}
       />
 
-      <Popover as="div">
+      <Popover
+        as="div"
+        className="absolute top-1/2 -translate-y-1/2 right-1 z-10"
+      >
         {({ open }) => {
           if (open) {
           }
@@ -60,26 +66,26 @@ export const InputColorPicker: React.FC<InputColorPickerProps> = (props) => {
                   ref={setReferenceElement}
                   variant="neutral-primary"
                   size="sm"
-                  className="border-none !p-1.5"
+                  className="border-none !bg-transparent"
                 >
-                  {value && value !== "" ? (
-                    <span
-                      className="h-3.5 w-3.5 rounded"
-                      style={{
-                        backgroundColor: `${value}`,
-                      }}
-                    />
-                  ) : (
-                    <svg
-                      width={14}
-                      height={14}
-                      viewBox="0 0 14 14"
-                      stroke="currentColor"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M0.8125 13.7508C0.65 13.7508 0.515625 13.6977 0.409375 13.5914C0.303125 13.4852 0.25 13.3508 0.25 13.1883V10.8258C0.25 10.7508 0.2625 10.682 0.2875 10.6195C0.3125 10.557 0.35625 10.4945 0.41875 10.432L7.31875 3.53203L6.34375 2.55703C6.24375 2.45703 6.19688 2.32891 6.20312 2.17266C6.20938 2.01641 6.2625 1.88828 6.3625 1.78828C6.4625 1.68828 6.59063 1.63828 6.74688 1.63828C6.90313 1.63828 7.03125 1.68828 7.13125 1.78828L8.4625 3.13828L11.125 0.475781C11.2625 0.338281 11.4094 0.269531 11.5656 0.269531C11.7219 0.269531 11.8688 0.338281 12.0063 0.475781L13.525 1.99453C13.6625 2.13203 13.7313 2.27891 13.7313 2.43516C13.7313 2.59141 13.6625 2.73828 13.525 2.87578L10.8625 5.53828L12.2125 6.88828C12.3125 6.98828 12.3625 7.11328 12.3625 7.26328C12.3625 7.41328 12.3125 7.53828 12.2125 7.63828C12.1125 7.73828 11.9844 7.78828 11.8281 7.78828C11.6719 7.78828 11.5438 7.73828 11.4438 7.63828L10.4688 6.68203L3.56875 13.582C3.50625 13.6445 3.44375 13.6883 3.38125 13.7133C3.31875 13.7383 3.25 13.7508 3.175 13.7508H0.8125ZM1.375 12.6258H3.00625L9.6625 5.96953L8.03125 4.33828L1.375 10.9945V12.6258ZM10.0563 4.75078L12.3813 2.42578L11.575 1.61953L9.25 3.94453L10.0563 4.75078Z" />
-                    </svg>
-                  )}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="lucide lucide-palette"
+                  >
+                    <circle cx="13.5" cy="6.5" r=".5" />
+                    <circle cx="17.5" cy="10.5" r=".5" />
+                    <circle cx="8.5" cy="7.5" r=".5" />
+                    <circle cx="6.5" cy="12.5" r=".5" />
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+                  </svg>
                 </Button>
               </Popover.Button>
               <Transition

@@ -32,7 +32,7 @@ import { MODULE_STATUS } from "constants/module";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
-  members_list: [],
+  members: [],
   start_date: null,
   target_date: null,
   status: "backlog",
@@ -186,7 +186,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     if (moduleDetails)
       reset({
         ...moduleDetails,
-        members_list: moduleDetails.members_list ?? moduleDetails.members_detail?.map((m) => m.id),
       });
   }, [moduleDetails, reset]);
 
@@ -301,12 +300,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             />
             <Controller
               control={control}
-              name="members_list"
+              name="members"
               render={({ field: { value } }) => (
                 <SidebarMembersSelect
                   value={value}
                   onChange={(val: string[]) => {
-                    submitChanges({ members_list: val });
+                    submitChanges({ members: val });
                   }}
                 />
               )}

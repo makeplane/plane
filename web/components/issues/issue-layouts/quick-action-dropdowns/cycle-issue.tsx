@@ -62,7 +62,7 @@ export const CycleIssueQuickActions: React.FC<Props> = (props) => {
           if (issueToEdit) handleUpdate({ ...issueToEdit, ...data });
         }}
       />
-      <CustomMenu ellipsis>
+      <CustomMenu placement="bottom-start" ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

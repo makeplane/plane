@@ -21,7 +21,7 @@ export const SpreadsheetUpdatedOnColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      {renderLongDetailDateFormat(issue.updated_at)}
+      <div className="text-xs">{renderLongDetailDateFormat(issue.updated_at)}</div>
 
       {isExpanded &&
         !isLoading &&

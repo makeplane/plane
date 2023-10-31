@@ -25,6 +25,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
+    issueDetail: issueDetailStore,
   } = useMobxStore();
 
   const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
@@ -62,14 +63,17 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
 
   const handleUpdateIssue = useCallback(
     (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !globalViewId) return;
 
-      console.log("issue", issue);
-      console.log("data", data);
+      const payload = {
+        ...issue,
+        ...data,
+      };
 
-      // TODO: add update issue logic here
+      globalViewIssuesStore.updateIssueStructure(globalViewId.toString(), payload);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
     },
-    [workspaceSlug]
+    [globalViewId, globalViewIssuesStore, workspaceSlug, issueDetailStore]
   );
 
   const issues = type

@@ -9,15 +9,7 @@ export class ProjectInvitationService extends APIService {
     super(API_BASE_URL);
   }
 
-  async projectInvitations(workspaceSlug: string, projectId: string): Promise<IProjectMemberInvitation[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async projectInvitationsWithEmail(workspaceSlug: string, projectId: string): Promise<IProjectMemberInvitation[]> {
+  async fetchProjectInvitations(workspaceSlug: string, projectId: string): Promise<IProjectMemberInvitation[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
       .then((response) => response?.data)
       .catch((error) => {

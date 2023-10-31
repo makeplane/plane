@@ -22,10 +22,10 @@ import { IInboxIssue, IIssue } from "types";
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
-  assignees_list: [],
+  assignees: [],
   priority: "low",
   target_date: new Date().toString(),
-  labels_list: [],
+  labels: [],
 };
 
 export const InboxMainContent: React.FC = observer(() => {
@@ -122,8 +122,8 @@ export const InboxMainContent: React.FC = observer(() => {
 
     reset({
       ...issueDetails,
-      assignees_list: issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+      assignees: issueDetails.assignees ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      labels: issueDetails.labels ?? issueDetails.labels,
     });
   }, [issueDetails, reset, inboxIssueId]);
 

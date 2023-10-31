@@ -49,7 +49,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   // observables
   workspaceSlug: string | null = null;
   workspaces: IWorkspace[] = [];
-  projects: { [workspaceSlug: string]: IProject[] } = {}; // workspace_id: project[]
+  projects: { [workspaceSlug: string]: IProject[] } = {}; // workspaceSlug: project[]
   labels: { [workspaceSlug: string]: IIssueLabels[] } = {};
   members: { [workspaceSlug: string]: IWorkspaceMember[] } = {};
 
@@ -214,7 +214,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const membersResponse = await this.workspaceService.workspaceMembers(workspaceSlug);
+      const membersResponse = await this.workspaceService.fetchWorkspaceMembers(workspaceSlug);
 
       runInAction(() => {
         this.members = {
