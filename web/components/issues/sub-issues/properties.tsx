@@ -8,14 +8,12 @@ import { IssueService } from "services/issue";
 import { TrackEventService } from "services/track_event.service";
 // components
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
-import { MembersSelect, PrioritySelect } from "components/project";
-import { StateSelect } from "components/states";
-// helpers
-import { getStatesList } from "helpers/state.helper";
+import { PrioritySelect } from "components/project";
 // types
 import { IUser, IIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
+import { IssuePropertyAssignee, IssuePropertyState } from "../issue-layouts/properties";
 
 export interface IIssueProperty {
   workspaceSlug: string;
@@ -32,7 +30,7 @@ const trackEventService = new TrackEventService();
 export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
   const { workspaceSlug, parentIssue, issue, user, editable } = props;
 
-  const { project: projectStore, issueFilter: issueFilterStore } = useMobxStore();
+  const { issueFilter: issueFilterStore } = useMobxStore();
 
   const displayProperties = issueFilterStore.userDisplayProperties ?? {};
 
@@ -117,8 +115,6 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
     );
   };
 
-  const statesList = getStatesList(projectStore.states?.[issue.project]);
-
   return (
     <div className="relative flex items-center gap-1">
       {displayProperties.priority && (
@@ -134,12 +130,12 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
 
       {displayProperties.state && (
         <div className="flex-shrink-0">
-          <StateSelect
-            value={issue.state_detail}
-            states={statesList}
+          <IssuePropertyState
+            projectId={issue?.project_detail?.id || null}
+            value={issue?.state_detail || null}
             onChange={(data) => handleStateChange(data)}
-            hideDropdownArrow
-            disabled={!editable}
+            disabled={false}
+            hideDropdownArrow={true}
           />
         </div>
       )}
@@ -168,13 +164,12 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
 
       {displayProperties.assignee && (
         <div className="flex-shrink-0">
-          <MembersSelect
-            value={issue.assignees}
+          <IssuePropertyAssignee
+            projectId={issue?.project_detail?.id || null}
+            value={issue?.assignees || null}
+            hideDropdownArrow={true}
             onChange={(val) => handleAssigneeChange(val)}
-            members={projectStore.members ? (projectStore.members[issue.project] ?? []).map((m) => m.member) : []}
-            hideDropdownArrow
-            disabled={!editable}
-            multiple
+            disabled={false}
           />
         </div>
       )}

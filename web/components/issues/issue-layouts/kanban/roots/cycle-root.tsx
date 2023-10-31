@@ -116,13 +116,6 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             display_properties={display_properties}
             kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
           />
         ) : (
           <KanBanSwimLanes

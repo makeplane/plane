@@ -26,9 +26,7 @@ interface IIssueView {
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
-  states: any;
-  members: any;
-  priorities: any;
+
   children: ReactNode;
 }
 
@@ -65,9 +63,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentRemove,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
-    states,
-    members,
-    priorities,
+
     children,
   } = props;
 
@@ -77,9 +73,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const { user: userStore, issueDetail: issueDetailStore }: RootStore = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const handlePeekMode = (_peek: TPeekModes) => {
-    if (peekMode != _peek) setPeekMode(_peek);
-  };
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
@@ -210,13 +203,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         issueReactionRemove={issueReactionRemove}
                       />
 
-                      <PeekOverviewProperties
-                        issue={issue}
-                        issueUpdate={issueUpdate}
-                        states={states}
-                        members={members}
-                        priorities={priorities}
-                      />
+                      <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} />
 
                       <IssueComment
                         workspaceSlug={workspaceSlug}
@@ -260,13 +247,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         />
                       </div>
                       <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
-                        <PeekOverviewProperties
-                          issue={issue}
-                          issueUpdate={issueUpdate}
-                          states={states}
-                          members={members}
-                          priorities={priorities}
-                        />
+                        <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} />
                       </div>
                     </div>
                   )}
