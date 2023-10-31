@@ -28,9 +28,6 @@ interface IIssueView {
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
   issueSubscriptionCreate: () => void;
   issueSubscriptionRemove: () => void;
-  states: any;
-  members: any;
-  priorities: any;
   children: ReactNode;
 }
 
@@ -69,9 +66,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentReactionRemove,
     issueSubscriptionCreate,
     issueSubscriptionRemove,
-    states,
-    members,
-    priorities,
     children,
   } = props;
 
