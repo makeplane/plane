@@ -1,10 +1,13 @@
-import { FC } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
 // components
+import { TextArea } from "@plane/ui";
 import { IssueReaction } from "./reactions";
 // hooks
 import { useDebouncedCallback } from "use-debounce";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // types
 import { IIssue } from "types";
 // services
@@ -25,9 +28,64 @@ interface IPeekOverviewIssueDetails {
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
   const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
 
+  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+
+  const [characterLimit, setCharacterLimit] = useState(false);
+
+  const { setShowAlert } = useReloadConfirmations();
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<IIssue>({
+    defaultValues: {
+      name: "",
+      description_html: "",
+    },
+  });
+
+  const handleDescriptionFormSubmit = useCallback(
+    async (formData: Partial<IIssue>) => {
+      if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
+
+      await issueUpdate({
+        ...issue,
+        name: formData.name ?? "",
+        description_html: formData.description_html ?? "<p></p>",
+      });
+    },
+    [issue, issueUpdate]
+  );
+
   const debouncedIssueDescription = useDebouncedCallback(async (_data: any) => {
     issueUpdate({ ...issue, description_html: _data });
   }, 1500);
+
+  const debouncedTitleSave = useDebouncedCallback(async () => {
+    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+  }, 1500);
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
+
+  // reset form values
+  useEffect(() => {
+    if (!issue) return;
+
+    reset({
+      ...issue,
+    });
+  }, [issue, reset]);
 
   return (
     <>
@@ -35,7 +93,45 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         {issue?.project_detail?.identifier}-{issue?.sequence_id}
       </span>
 
-      <span className="font-semibold text-2xl">{issue?.name}</span>
+      <div className="relative">
+        {true ? (
+          <Controller
+            name="name"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextArea
+                id="name"
+                name="name"
+                value={value}
+                placeholder="Enter issue name"
+                onFocus={() => setCharacterLimit(true)}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                  setCharacterLimit(false);
+                  setIsSubmitting("submitting");
+                  debouncedTitleSave();
+                  onChange(e.target.value);
+                }}
+                required={true}
+                className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary !p-0 focus:!px-3 focus:!py-2"
+                hasError={Boolean(errors?.description)}
+                role="textbox"
+                disabled={!true}
+              />
+            )}
+          />
+        ) : (
+          <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
+        )}
+        {characterLimit && true && (
+          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
+            <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
+              {watch("name").length}
+            </span>
+            /255
+          </div>
+        )}
+      </div>
+      <span>{errors.name ? errors.name.message : null}</span>
 
       <span className="text-black">
         <RichTextEditor
