@@ -13,7 +13,6 @@ import useUser from "hooks/use-user";
 import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
-import useMyIssues from "hooks/my-issues/use-my-issues";
 // components
 import { DraftIssueForm } from "components/issues";
 // types
@@ -89,8 +88,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const { user } = useUser();
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
-
-  const { groupedIssues, mutateMyIssues } = useMyIssues(workspaceSlug?.toString());
 
   const { setToastAlert } = useToast();
 
@@ -199,8 +196,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
       .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(async () => {
         mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(activeProject ?? "", params));
-
-        if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
           type: "success",
@@ -314,7 +309,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
             start_target_date: true,
             order_by: "sort_order",
           });
-        if (groupedIssues) mutateMyIssues();
 
         setToastAlert({
           type: "success",
