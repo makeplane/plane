@@ -21,6 +21,7 @@ class ApiTokenEndpoint(BaseAPIView):
         label = request.data.get("label", str(uuid4().hex))
         description = request.data.get("description", "")
         workspace = Workspace.objects.get(slug=slug)
+        expired_at = request.data.get("expired_at", None)
 
         # Check the user type
         user_type = 1 if request.user.is_bot else 0
@@ -31,10 +32,11 @@ class ApiTokenEndpoint(BaseAPIView):
             user=request.user,
             workspace=workspace,
             user_type=user_type,
+            expired_at=expired_at,
         )
 
         serializer = APITokenSerializer(api_token)
-        # Token will be only vissible while creating
+        # Token will be only visible while creating
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,

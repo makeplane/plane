@@ -16,7 +16,7 @@ from plane.db.models import Webhook, WebhookLog
 @shared_task(
     bind=True,
     autoretry_for=(requests.RequestException,),
-    retry_backoff=180,
+    retry_backoff=600,
     max_retries=5,
     retry_jitter=True,
 )

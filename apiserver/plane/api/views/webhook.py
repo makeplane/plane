@@ -1,6 +1,3 @@
-# Python imports
-from uuid import uuid4
-
 # Django imports
 from django.db import IntegrityError
 
@@ -45,7 +42,6 @@ class WebhookEndpoint(BaseAPIView):
                 fields=(
                     "id",
                     "url",
-                    "content_type",
                     "secret_key",
                     "is_active",
                     "created_at",

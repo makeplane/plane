@@ -4,7 +4,7 @@ from .issue import (
     IssueAPIEndpoint,
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,
-    IssueAttachmentAPIEndpoint,
+    IssueCommentAPIEndpoint,
 )
 
 from .cycle import (
@@ -14,3 +14,5 @@ from .cycle import (
 )
 
 from .module import ModuleAPIEndpoint, ModuleIssueAPIEndpoint
+
+from .inbox import InboxIssueAPIEndpoint
