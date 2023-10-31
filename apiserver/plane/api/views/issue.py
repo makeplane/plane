@@ -104,7 +104,6 @@ class IssueViewSet(BaseViewSet):
 
     filterset_fields = [
         "state__name",
-        "mentions__id",
         "assignees__id",
         "workspace__id",
     ]

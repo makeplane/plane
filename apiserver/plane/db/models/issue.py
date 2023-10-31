@@ -19,7 +19,6 @@ from plane.utils.html_processor import strip_tags
 def get_default_properties():
     return {
         "assignee": True,
-        "mentions": True,
         "start_date": True,
         "due_date": True,
         "labels": True,
