@@ -113,12 +113,6 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
       ...(prePopulatedData ?? {}),
       ...formData,
-      labels_list:
-        formData.labels_list?.length !== 0
-          ? formData.labels_list
-          : prePopulatedData?.labels && prePopulatedData?.labels.toString() !== "none"
-          ? [prePopulatedData.labels as any]
-          : [],
       start_date: renderDateFormat(new Date()),
       target_date: renderDateFormat(new Date(new Date().getTime() + 24 * 60 * 60 * 1000)),
     });

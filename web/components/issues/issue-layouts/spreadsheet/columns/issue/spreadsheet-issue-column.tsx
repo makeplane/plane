@@ -9,7 +9,6 @@ import { IIssue, IIssueDisplayProperties } from "types";
 
 type Props = {
   issue: IIssue;
-  projectId: string;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: IIssueDisplayProperties;
@@ -20,7 +19,6 @@ type Props = {
 
 export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   issue,
-  projectId,
   expandedIssues,
   setExpandedIssues,
   properties,
@@ -48,7 +46,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
     <>
       <IssueColumn
         issue={issue}
-        projectId={projectId}
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
         properties={properties}
@@ -66,7 +63,6 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
           <SpreadsheetIssuesColumn
             key={subIssue.id}
             issue={subIssue}
-            projectId={subIssue.project_detail.id}
             expandedIssues={expandedIssues}
             setExpandedIssues={setExpandedIssues}
             properties={properties}

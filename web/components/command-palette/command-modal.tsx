@@ -144,7 +144,7 @@ export const CommandModal: React.FC<Props> = (props) => {
     } else {
       updatedAssignees.push(assignee);
     }
-    updateIssue({ assignees_list: updatedAssignees });
+    updateIssue({ assignees: updatedAssignees });
   };
 
   const redirect = (path: string) => {

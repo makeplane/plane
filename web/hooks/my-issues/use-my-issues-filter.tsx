@@ -6,7 +6,7 @@ import { WorkspaceService } from "services/workspace.service";
 import {
   IIssueDisplayFilterOptions,
   IIssueFilterOptions,
-  IWorkspaceMember,
+  IWorkspaceMemberMe,
   IWorkspaceViewProps,
   Properties,
 } from "types";
@@ -66,7 +66,7 @@ const useMyIssuesFilters = (workspaceSlug: string | undefined) => {
 
       const oldData = { ...myWorkspace };
 
-      mutate<IWorkspaceMember>(
+      mutate<IWorkspaceMemberMe>(
         WORKSPACE_MEMBERS_ME(workspaceSlug.toString()),
         (prevData) => {
           if (!prevData) return;

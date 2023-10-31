@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 // components
-import { LabelSelect } from "components/project";
+import { LabelSelect } from "components/labels";
 // types
 import { IIssueLabels } from "types";
 

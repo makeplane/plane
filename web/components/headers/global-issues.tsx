@@ -128,18 +128,19 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           {activeLayout === "spreadsheet" && (
             <>
               {!STATIC_VIEW_TYPES.some((word) => router.pathname.includes(word)) && (
-                <FiltersDropdown title="Filters">
+                <FiltersDropdown title="Filters" placement="bottom-end">
                   <FilterSelection
                     filters={storedFilters ?? {}}
                     handleFiltersUpdate={handleFiltersUpdate}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                     labels={workspaceStore.workspaceLabels ?? undefined}
+                    members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
                     projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
                   />
                 </FiltersDropdown>
               )}
 
-              <FiltersDropdown title="Display">
+              <FiltersDropdown title="Display" placement="bottom-end">
                 <DisplayFiltersSelection
                   displayFilters={workspaceFilterStore.workspaceDisplayFilters}
                   displayProperties={workspaceFilterStore.workspaceDisplayProperties}

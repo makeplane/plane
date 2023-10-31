@@ -9,6 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import {
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
+  ModuleEmptyState,
   ModuleGanttLayout,
   ModuleKanBanLayout,
   ModuleListLayout,
@@ -46,22 +47,28 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
+  const issueCount = moduleIssueStore.getIssuesCount;
+
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
-      <div className="h-full w-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ModuleListLayout />
-        ) : activeLayout === "kanban" ? (
-          <ModuleKanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <ModuleCalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <ModuleGanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ModuleSpreadsheetLayout />
-        ) : null}
-      </div>
+      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
+        <ModuleEmptyState />
+      ) : (
+        <div className="h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <ModuleListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ModuleKanBanLayout />
+          ) : activeLayout === "calendar" ? (
+            <ModuleCalendarLayout />
+          ) : activeLayout === "gantt_chart" ? (
+            <ModuleGanttLayout />
+          ) : activeLayout === "spreadsheet" ? (
+            <ModuleSpreadsheetLayout />
+          ) : null}
+        </div>
+      )}
     </div>
   );
 });
