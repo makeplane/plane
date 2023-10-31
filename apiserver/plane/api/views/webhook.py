@@ -7,14 +7,15 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import Webhook, WebhookLog, Workspace
+from plane.db.models.webhook import generate_token
 from .base import BaseAPIView
-from plane.api.permissions import WorkspaceUserPermission
+from plane.api.permissions import WorkspaceOwnerPermission
 from plane.api.serializers import WebhookSerializer, WebhookLogSerializer
 
 
 class WebhookEndpoint(BaseAPIView):
     permission_classes = [
-        WorkspaceUserPermission,
+        WorkspaceOwnerPermission,
     ]
 
     def post(self, request, slug):
@@ -42,7 +43,6 @@ class WebhookEndpoint(BaseAPIView):
                 fields=(
                     "id",
                     "url",
-                    "secret_key",
                     "is_active",
                     "created_at",
                     "updated_at",
@@ -57,7 +57,21 @@ class WebhookEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
-            serializer = WebhookSerializer(webhook)
+            serializer = WebhookSerializer(
+                webhook,
+                fields=(
+                    "id",
+                    "url",
+                    "is_active",
+                    "created_at",
+                    "updated_at",
+                    "project",
+                    "issue",
+                    "cycle",
+                    "module",
+                    "issue_comment",
+                ),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, pk):
@@ -74,14 +88,27 @@ class WebhookEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WebhookLogsEndpoint(BaseAPIView):
-
+class WebhookSecretRegenerateEndpoint(BaseAPIView):
     permission_classes = [
-        WorkspaceUserPermission,
+        WorkspaceOwnerPermission,
+    ]
+
+    def post(self, request, slug, pk):
+        webhook = Webhook.objects.get(workspace__slug=slug, pk=pk)
+        webhook.secret_key = generate_token()
+        webhook.save()
+        serializer = WebhookSerializer(webhook)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class WebhookLogsEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceOwnerPermission,
     ]
 
     def get(self, request, slug, webhook_id):
-        webhook_logs = WebhookLog.objects.filter(workspace__slug=slug, webhook_id=webhook_id)
+        webhook_logs = WebhookLog.objects.filter(
+            workspace__slug=slug, webhook_id=webhook_id
+        )
         serializer = WebhookLogSerializer(webhook_logs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    

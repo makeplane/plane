@@ -9,12 +9,12 @@ from rest_framework import status
 from .base import BaseAPIView
 from plane.db.models import APIToken, Workspace
 from plane.api.serializers import APITokenSerializer, APITokenReadSerializer
-from plane.api.permissions import WorkspaceUserPermission
+from plane.api.permissions import WorkspaceOwnerPermission
 
 
 class ApiTokenEndpoint(BaseAPIView):
     permission_classes = [
-        WorkspaceUserPermission,
+        WorkspaceOwnerPermission,
     ]
 
     def post(self, request, slug):
@@ -59,6 +59,7 @@ class ApiTokenEndpoint(BaseAPIView):
     def delete(self, request, slug, pk):
         api_token = APIToken.objects.get(
             workspace__slug=slug,
+            user=request.user,
             pk=pk,
         )
         api_token.delete()
@@ -67,6 +68,7 @@ class ApiTokenEndpoint(BaseAPIView):
     def patch(self, request, slug, pk):
         api_token = APIToken.objects.get(
             workspace__slug=slug,
+            user=request.user,
             pk=pk,
         )
         serializer = APITokenSerializer(api_token, data=request.data, partial=True)
