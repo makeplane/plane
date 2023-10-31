@@ -93,7 +93,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
                 }
               <div className="ml-7 space-y-1">
                 <p className="text-sm font-medium leading-none">{item.title}</p>
-                <p className="text-sm text-muted-foreground grey">
+                <p className="text-xs text-gray-400">
                   {item.subtitle}
                 </p>
               </div>
