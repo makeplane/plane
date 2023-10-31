@@ -613,8 +613,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
           {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
             <SidebarLabelSelect
               issueDetails={issueDetail}
-              issueControl={control}
-              watchIssue={watchIssue}
+              labelList={issueDetail?.labels_list ?? []}
               submitChanges={submitChanges}
               isNotAllowed={isNotAllowed}
               uneditable={uneditable ?? false}
