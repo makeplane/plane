@@ -45,7 +45,7 @@ const ProjectIntegrations: NextPage = () => {
   const isAdmin = projectDetails?.member_role === 20;
 
   return (
-    <AppLayout header={<ProjectSettingHeader title="Integrations Settings" />}>
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Integrations Settings" />}>
       <ProjectSettingLayout>
         <div className={`pr-9 py-8 gap-10 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">

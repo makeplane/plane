@@ -10,7 +10,7 @@ import { ProjectSettingHeader } from "components/headers";
 import type { NextPage } from "next";
 
 const LabelsSettings: NextPage = () => (
-  <AppLayout header={<ProjectSettingHeader title="Labels Settings" />}>
+  <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Labels Settings" />}>
     <ProjectSettingLayout>
       <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
         <ProjectSettingsLabelList />

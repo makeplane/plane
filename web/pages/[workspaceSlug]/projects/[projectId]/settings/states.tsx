@@ -9,7 +9,7 @@ import { ProjectSettingHeader } from "components/headers";
 import type { NextPage } from "next";
 
 const StatesSettings: NextPage = () => (
-  <AppLayout header={<ProjectSettingHeader title="States Settings" />}>
+  <AppLayout withProjectWrapper header={<ProjectSettingHeader title="States Settings" />}>
     <ProjectSettingLayout>
       <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
         <div className="flex items-center py-3.5 border-b border-custom-border-200">
