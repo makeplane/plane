@@ -15,10 +15,11 @@ export interface ICyclesView {
   layout: TCycleLayout;
   workspaceSlug: string;
   projectId: string;
+  peekCycle: string;
 }
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
-  const { filter, layout, workspaceSlug, projectId } = props;
+  const { filter, layout, workspaceSlug, projectId, peekCycle } = props;
 
   // store
   const { cycle: cycleStore } = useMobxStore();
@@ -50,7 +51,13 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
       {layout === "board" && (
         <>
           {!isLoading ? (
-            <CyclesBoard cycles={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
+            <CyclesBoard
+              cycles={cyclesList}
+              filter={filter}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              peekCycle={peekCycle}
+            />
           ) : (
             <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
               <Loader.Item height="200px" />

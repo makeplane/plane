@@ -2,26 +2,41 @@ import { FC } from "react";
 // types
 import { ICycle } from "types";
 // components
-import { CyclesBoardCard } from "components/cycles";
+import { CyclePeekOverview, CyclesBoardCard } from "components/cycles";
 
 export interface ICyclesBoard {
   cycles: ICycle[];
   filter: string;
   workspaceSlug: string;
   projectId: string;
+  peekCycle: string;
 }
 
 export const CyclesBoard: FC<ICyclesBoard> = (props) => {
-  const { cycles, filter, workspaceSlug, projectId } = props;
+  const { cycles, filter, workspaceSlug, projectId, peekCycle } = props;
 
   return (
-    <div className="grid grid-cols-1 gap-9 lg:grid-cols-2 xl:grid-cols-3">
+    <>
       {cycles.length > 0 ? (
-        <>
-          {cycles.map((cycle) => (
-            <CyclesBoardCard key={cycle.id} workspaceSlug={workspaceSlug} projectId={projectId} cycle={cycle} />
-          ))}
-        </>
+        <div className="h-full w-full">
+          <div className="flex justify-between h-full w-full">
+            <div
+              className={`grid grid-cols-1 gap-6 p-8 h-full w-full overflow-y-auto ${
+                peekCycle
+                  ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
+                  : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
+              } auto-rows-max transition-all `}
+            >
+              {cycles.map((cycle) => (
+                <CyclesBoardCard key={cycle.id} workspaceSlug={workspaceSlug} projectId={projectId} cycle={cycle} />
+              ))}
+            </div>
+            <CyclePeekOverview
+              projectId={projectId?.toString() ?? ""}
+              workspaceSlug={workspaceSlug?.toString() ?? ""}
+            />
+          </div>
+        </div>
       ) : (
         <div className="h-full grid place-items-center text-center">
           <div className="space-y-2">
@@ -50,6 +65,6 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };

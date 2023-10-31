@@ -1,7 +1,7 @@
 import { action, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "../root";
-import { IIssueType } from "./cycle_issue.store";
+import { IIssueType } from "store/issue";
 
 export interface ICycleIssueCalendarViewStore {
   // actions
