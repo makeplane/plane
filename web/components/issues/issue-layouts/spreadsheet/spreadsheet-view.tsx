@@ -99,11 +99,10 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">Issue</span>
                   </div>
 
-                  {issues.map((issue: IIssue, index) => (
+                  {issues.map((issue, index) => (
                     <SpreadsheetIssuesColumn
                       key={`${issue.id}_${index}`}
                       issue={issue}
-                      projectId={issue.project_detail.id}
                       expandedIssues={expandedIssues}
                       setExpandedIssues={setExpandedIssues}
                       properties={displayProperties}

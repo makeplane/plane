@@ -10,13 +10,7 @@ import type {
   linkDetails,
 } from "types";
 
-export type TModuleStatus =
-  | "backlog"
-  | "planned"
-  | "in-progress"
-  | "paused"
-  | "completed"
-  | "cancelled";
+export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
 
 export interface IModule {
   backlog_issues: number;
@@ -38,7 +32,6 @@ export interface IModule {
   link_module: linkDetails[];
   links_list: ModuleLink[];
   members: string[];
-  members_list: string[];
   members_detail: IUserLite[];
   is_favorite: boolean;
   name: string;
@@ -80,8 +73,6 @@ export type ModuleLink = {
   url: string;
 };
 
-export type SelectModuleType =
-  | (IModule & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
+export type SelectModuleType = (IModule & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
 export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | undefined;

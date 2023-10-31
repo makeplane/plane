@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, PlusIcon, Search } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 // ui
 import { Tooltip } from "components/ui";
 // types
@@ -21,18 +21,20 @@ type Props = {
   disabled?: boolean;
 };
 
-export const LabelSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  labels,
-  className = "",
-  buttonClassName = "",
-  optionsClassName = "",
-  maxRender = 2,
-  placement,
-  hideDropdownArrow = false,
-  disabled = false,
-}) => {
+export const LabelSelect: React.FC<Props> = (props) => {
+  const {
+    value,
+    onChange,
+    labels,
+    className = "",
+    buttonClassName = "",
+    optionsClassName = "",
+    maxRender = 2,
+    placement,
+    hideDropdownArrow = false,
+    disabled = false,
+  } = props;
+
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
@@ -79,63 +81,57 @@ export const LabelSelect: React.FC<Props> = ({
       multiple
     >
       <Combobox.Button as={React.Fragment}>
-        <button
-          ref={setReferenceElement}
-          type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs ${
-            disabled
-              ? "cursor-not-allowed text-custom-text-200"
-              : value.length <= maxRender
-              ? "cursor-pointer"
-              : "cursor-pointer hover:bg-custom-background-80"
-          }  ${buttonClassName}`}
-        >
-          <div className="flex items-center gap-2 text-custom-text-200 h-full">
-            {value.length > 0 ? (
-              value.length <= maxRender ? (
-                <>
-                  {labels
-                    ?.filter((l) => value.includes(l.id))
-                    .map((label) => (
-                      <div
-                        key={label.id}
-                        className="flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
-                      >
-                        <div className="flex items-center gap-1.5 text-custom-text-200">
-                          <span
-                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                            style={{
-                              backgroundColor: label?.color ?? "#000000",
-                            }}
-                          />
-                          {label.name}
-                        </div>
+        <button ref={setReferenceElement} type="button" className="h-full w-full">
+          {value.length > 0 ? (
+            value.length <= maxRender ? (
+              <div className="flex items-center gap-2 px-4 overflow-x-scroll">
+                {labels
+                  ?.filter((l) => value.includes(l.id))
+                  .map((label) => (
+                    <div
+                      key={label.id}
+                      className="flex items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
+                    >
+                      <div className="flex items-center gap-1.5 text-custom-text-200">
+                        <span
+                          className="h-2 w-2 flex-shrink-0 rounded-full"
+                          style={{
+                            backgroundColor: label?.color ?? "#000000",
+                          }}
+                        />
+                        {label.name}
                       </div>
-                    ))}
-                </>
-              ) : (
-                <div className="h-full flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
-                  <Tooltip
-                    position="top"
-                    tooltipHeading="Labels"
-                    tooltipContent={labels
-                      ?.filter((l) => value.includes(l.id))
-                      .map((l) => l.name)
-                      .join(", ")}
-                  >
-                    <div className="h-full flex items-center gap-1.5 text-custom-text-200">
-                      <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-                      {`${value.length} Labels`}
                     </div>
-                  </Tooltip>
-                </div>
-              )
-            ) : (
-              <div className="h-full flex items-center justify-center text-xs rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 hover:bg-custom-background-80">
-                Select labels
+                  ))}
               </div>
-            )}
-          </div>
+            ) : (
+              <div
+                className={`h-full flex items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-4 text-xs ${buttonClassName}`}
+              >
+                <Tooltip
+                  position="top"
+                  tooltipHeading="Labels"
+                  tooltipContent={labels
+                    ?.filter((l) => value.includes(l.id))
+                    .map((l) => l.name)
+                    .join(", ")}
+                >
+                  <div className="h-full flex items-center gap-1.5 text-custom-text-200">
+                    <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+                    {`${value.length} Labels`}
+                  </div>
+                </Tooltip>
+              </div>
+            )
+          ) : (
+            <div
+              className={`flex items-center justify-between gap-1 w-full text-xs px-4 ${
+                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+              }  ${buttonClassName}`}
+            >
+              Select labels
+            </div>
+          )}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>

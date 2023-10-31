@@ -52,9 +52,7 @@ const defaultValues: Partial<IIssue> = {
   parent: null,
   priority: "none",
   assignees: [],
-  assignees_list: [],
   labels: [],
-  labels_list: [],
   start_date: null,
   target_date: null,
 };
@@ -313,10 +311,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
             user={user}
-            onSuccess={(response) => {
-              setValue("labels", [...watch("labels"), response.id]);
-              setValue("labels_list", [...watch("labels_list"), response.id]);
-            }}
+            onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
           />
         </>
       )}

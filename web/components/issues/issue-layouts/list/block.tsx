@@ -27,7 +27,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
 
   return (
     <>
-      <div className="text-sm p-3 relative shadow-custom-shadow-2xs bg-custom-background-100 flex items-center gap-3 border-b border-custom-border-200 hover:bg-custom-background-80">
+      <div className="text-sm p-3 relative bg-custom-background-100 flex items-center gap-3">
         {display_properties && display_properties?.key && (
           <div className="flex-shrink-0 text-xs text-custom-text-300">
             {issue?.project_detail?.identifier}-{issue.sequence_id}

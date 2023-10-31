@@ -229,8 +229,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         setFormDirtyState(null);
         setShowConfirmDiscard(false);
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
+        if (payload.assignees?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE(workspaceSlug as string));
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
@@ -271,8 +270,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     const payload: Partial<IIssue> = {
       ...formData,
-      assignees_list: formData.assignees ?? [],
-      labels_list: formData.labels ?? [],
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };

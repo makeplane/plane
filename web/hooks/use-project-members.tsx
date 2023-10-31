@@ -19,7 +19,9 @@ const useProjectMembers = (
   // fetching project members
   const { data: members } = useSWR(
     workspaceSlug && projectId && fetchCondition ? PROJECT_MEMBERS(projectId) : null,
-    workspaceSlug && projectId && fetchCondition ? () => projectService.projectMembers(workspaceSlug, projectId) : null
+    workspaceSlug && projectId && fetchCondition
+      ? () => projectService.fetchProjectMembers(workspaceSlug, projectId)
+      : null
   );
 
   const hasJoined = members?.some((item: any) => item.member.id === (user as any)?.id);

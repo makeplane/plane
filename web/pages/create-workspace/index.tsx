@@ -68,7 +68,6 @@ const CreateWorkspace: NextPage = () => {
                   onSubmit={onSubmit}
                   defaultValues={defaultValues}
                   setDefaultValues={setDefaultValues}
-                  user={user}
                 />
               </div>
             </div>

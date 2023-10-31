@@ -68,7 +68,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       : null;
 
   return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
+    <div className="relative w-full h-full bg-custom-background-90">
       <List
         issues={issues}
         group_by={group_by}

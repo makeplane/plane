@@ -26,6 +26,7 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 
+// TODO: remove this context
 export const WorkspaceMemberProvider: React.FC<Props> = (props) => {
   const { children } = props;
 
@@ -40,7 +41,7 @@ export const WorkspaceMemberProvider: React.FC<Props> = (props) => {
   const loading = !memberDetails && !error;
 
   return (
-    <WorkspaceMemberContext.Provider value={{ loading, memberDetails, error }}>
+    <WorkspaceMemberContext.Provider value={{ loading, memberDetails: undefined, error }}>
       {children}
     </WorkspaceMemberContext.Provider>
   );

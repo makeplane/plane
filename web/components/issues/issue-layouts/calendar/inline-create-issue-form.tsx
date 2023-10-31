@@ -147,18 +147,6 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
     const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
       ...(prePopulatedData ?? {}),
       ...formData,
-      labels_list:
-        formData.labels_list?.length !== 0
-          ? formData.labels_list
-          : prePopulatedData?.labels && prePopulatedData?.labels.toString() !== "none"
-          ? [prePopulatedData.labels as any]
-          : [],
-      assignees_list:
-        formData.assignees_list?.length !== 0
-          ? formData.assignees_list
-          : prePopulatedData?.assignees && prePopulatedData?.assignees.toString() !== "none"
-          ? [prePopulatedData.assignees as any]
-          : [],
     });
 
     try {

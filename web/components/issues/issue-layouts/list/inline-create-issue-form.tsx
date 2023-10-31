@@ -116,18 +116,6 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
       ...(prePopulatedData ?? {}),
       ...formData,
-      labels_list:
-        formData.labels_list?.length !== 0
-          ? formData.labels_list
-          : prePopulatedData?.labels && prePopulatedData?.labels.toString() !== "none"
-          ? [prePopulatedData.labels as any]
-          : [],
-      assignees_list:
-        formData.assignees_list?.length !== 0
-          ? formData.assignees_list
-          : prePopulatedData?.assignees && prePopulatedData?.assignees.toString() !== "none"
-          ? [prePopulatedData.assignees as any]
-          : [],
     });
 
     try {
@@ -161,7 +149,7 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div>
+    <div className="bg-custom-background-100">
       <Transition
         show={isOpen}
         enter="transition ease-in-out duration-200 transform"
@@ -189,10 +177,10 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       {!isOpen && (
         <button
           type="button"
-          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+          className="flex items-center gap-x-[6px] text-custom-primary-100 px-3 py-1 rounded-md"
           onClick={() => setIsOpen(true)}
         >
-          <PlusIcon className="h-4 w-4" />
+          <PlusIcon className="h-3 w-3" />
           <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
         </button>
       )}

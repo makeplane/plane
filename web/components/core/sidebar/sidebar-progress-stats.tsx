@@ -36,7 +36,7 @@ type Props = {
   module?: IModule;
   roundedTab?: boolean;
   noBackground?: boolean;
-  isPeekModuleDetails?: boolean;
+  isPeekView?: boolean;
 };
 
 export const SidebarProgressStats: React.FC<Props> = ({
@@ -46,7 +46,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
   module,
   roundedTab,
   noBackground,
-  isPeekModuleDetails = false,
+  isPeekView = false,
 }) => {
   const { filters, setFilters } = useIssuesView();
 
@@ -154,7 +154,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     }
                     completed={assignee.completed_issues}
                     total={assignee.total_issues}
-                    {...(!isPeekModuleDetails && {
+                    {...(!isPeekView && {
                       onClick: () => {
                         if (filters?.assignees?.includes(assignee.assignee_id ?? ""))
                           setFilters({
@@ -213,7 +213,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 }
                 completed={label.completed_issues}
                 total={label.total_issues}
-                {...(!isPeekModuleDetails && {
+                {...(!isPeekView && {
                   onClick: () => {
                     if (filters.labels?.includes(label.label_id ?? ""))
                       setFilters({

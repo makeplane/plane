@@ -27,7 +27,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
