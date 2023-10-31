@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-type EmailPasswordFormValues = {
+export type EmailPasswordSignUpFormValues = {
   email: string;
   password?: string;
   confirm_password: string;
@@ -12,7 +12,7 @@ type EmailPasswordFormValues = {
 };
 
 type Props = {
-  onSubmit: (formData: EmailPasswordFormValues) => Promise<void>;
+  onSubmit: (formData: EmailPasswordSignUpFormValues) => Promise<void>;
 };
 
 export const EmailSignUpForm: React.FC<Props> = (props) => {
@@ -23,7 +23,7 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
     control,
     watch,
     formState: { errors, isSubmitting, isValid, isDirty },
-  } = useForm<EmailPasswordFormValues>({
+  } = useForm<EmailPasswordSignUpFormValues>({
     defaultValues: {
       email: "",
       password: "",

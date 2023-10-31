@@ -210,7 +210,9 @@ export const SignInView = observer(() => {
               ) : (
                 <>
                   <>
-                    {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
+                    {enableEmailPassword && (
+                      <EmailPasswordForm onSubmit={handlePasswordSignIn} withForgetPassword withSignUpLink />
+                    )}
                     {data?.magic_login && (
                       <div className="flex flex-col divide-y divide-custom-border-200">
                         <div className="pb-7">

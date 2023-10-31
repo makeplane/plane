@@ -12,10 +12,20 @@ export interface EmailPasswordFormValues {
 
 export interface IEmailPasswordForm {
   onSubmit: (formData: EmailPasswordFormValues) => Promise<void>;
+  buttonText?: string;
+  submittingButtonText?: string;
+  withForgetPassword?: boolean;
+  withSignUpLink?: boolean;
 }
 
 export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
-  const { onSubmit } = props;
+  const {
+    onSubmit,
+    buttonText = "Sign in",
+    submittingButtonText = "Signing in...",
+    withForgetPassword = false,
+    withSignUpLink = false,
+  } = props;
   // router
   const router = useRouter();
   // form info
@@ -82,15 +92,17 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
             )}
           />
         </div>
-        <div className="text-right text-xs">
-          <button
-            type="button"
-            onClick={() => router.push("/accounts/forgot-password")}
-            className="text-custom-text-200 hover:text-custom-primary-100"
-          >
-            Forgot your password?
-          </button>
-        </div>
+        {withForgetPassword && (
+          <div className="text-right text-xs">
+            <button
+              type="button"
+              onClick={() => router.push("/accounts/forgot-password")}
+              className="text-custom-text-200 hover:text-custom-primary-100"
+            >
+              Forgot your password?
+            </button>
+          </div>
+        )}
         <div>
           <Button
             variant="primary"
@@ -100,18 +112,20 @@ export const EmailPasswordForm: React.FC<IEmailPasswordForm> = (props) => {
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
-            {isSubmitting ? "Signing in..." : "Sign in"}
+            {isSubmitting ? submittingButtonText : buttonText}
           </Button>
         </div>
-        <div className="text-xs">
-          <button
-            type="button"
-            onClick={() => router.push("/accounts/sign-up")}
-            className="text-custom-text-200 hover:text-custom-primary-100"
-          >
-            {"Don't have an account? Sign Up"}
-          </button>
-        </div>
+        {withSignUpLink && (
+          <div className="text-xs">
+            <button
+              type="button"
+              onClick={() => router.push("/accounts/sign-up")}
+              className="text-custom-text-200 hover:text-custom-primary-100"
+            >
+              {"Don't have an account? Sign Up"}
+            </button>
+          </div>
+        )}
       </form>
     </>
   );
