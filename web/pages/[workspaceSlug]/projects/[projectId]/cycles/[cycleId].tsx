@@ -80,7 +80,7 @@ const SingleCycle: React.FC = () => {
       ) : (
         <>
           <div className="flex h-full w-full">
-            <div className="h-full w-full">
+            <div className="h-full w-full overflow-hidden">
               <CycleLayoutRoot />
             </div>
             {cycleId && !isSidebarCollapsed && (
