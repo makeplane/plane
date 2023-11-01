@@ -71,7 +71,7 @@ def archive_old_issues():
                     Issue.objects.bulk_update(
                         issues_to_update, ["archived_at"], batch_size=100
                     )
-                    [
+                    _ = [
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps({"archived_at": str(archive_at)}),
