@@ -463,7 +463,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Disclosure>
                 {({ open }) => (
                   <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <div className="flex w-full items-center justify-between gap-2">
+                    <Disclosure.Button
+                      className="flex w-full items-center justify-between gap-2 p-1.5"
+                      disabled={!isStartValid || !isEndValid}
+                    >
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
                       </div>
@@ -477,12 +480,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ""
                         )}
                         {isStartValid && isEndValid ? (
-                          <Disclosure.Button className="p-1.5">
-                            <ChevronDown
-                              className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </Disclosure.Button>
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         ) : (
                           <div className="flex items-center gap-1">
                             <AlertCircle height={14} width={14} className="text-custom-text-200" />
@@ -492,7 +490,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Disclosure.Button>
                     <Transition show={open}>
                       <Disclosure.Panel>
                         <div className="flex flex-col gap-3">
