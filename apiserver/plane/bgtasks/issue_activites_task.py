@@ -418,36 +418,37 @@ def track_archive_at(
     issue_activities,
     epoch,
 ):
-    if requested_data.get("archived_at") is None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"has restored the issue",
-                verb="updated",
-                actor_id=actor_id,
-                field="archived_at",
-                old_value="archive",
-                new_value="restore",
-                epoch=epoch,
+    if current_instance.get("archived_at") != requested_data.get("archived_at"):
+        if requested_data.get("archived_at") is None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    comment="has restored the issue",
+                    verb="updated",
+                    actor_id=actor_id,
+                    field="archived_at",
+                    old_value="archive",
+                    new_value="restore",
+                    epoch=epoch,
+                )
             )
-        )
-    else:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"Plane has archived the issue",
-                verb="updated",
-                actor_id=actor_id,
-                field="archived_at",
-                old_value=None,
-                new_value="archive",
-                epoch=epoch,
+        else:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    comment="Plane has archived the issue",
+                    verb="updated",
+                    actor_id=actor_id,
+                    field="archived_at",
+                    old_value=None,
+                    new_value="archive",
+                    epoch=epoch,
+                )
             )
-        )
 
 
 def track_closed_to(
