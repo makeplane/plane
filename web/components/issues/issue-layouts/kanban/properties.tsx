@@ -202,7 +202,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {displayProperties && displayProperties?.assignee && (
         <IssuePropertyAssignee
           value={issue?.assignees || null}
-          hideDropdownArrow={true}
+          hideDropdownArrow
           onChange={handleAssignee}
           members={members}
           disabled={false}
