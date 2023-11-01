@@ -29,6 +29,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
           icon={<Icon stateGroup={stateGroup?.key} />}
           title={stateGroup?.key || ""}
           count={issues_count}
+          issuePayload={{}}
         />
       )}
     </>
