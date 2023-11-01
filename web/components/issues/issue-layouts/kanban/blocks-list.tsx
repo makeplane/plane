@@ -1,6 +1,6 @@
 // components
 import { KanbanIssueBlock } from "components/issues";
-import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
+import { IIssueDisplayProperties, IIssue } from "types";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
@@ -15,26 +15,10 @@ interface IssueBlocksListProps {
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
-  const {
-    sub_group_id,
-    columnId,
-    issues,
-    isDragDisabled,
-    handleIssues,
-    quickActions,
-    displayProperties,
-    states,
-    labels,
-    members,
-    estimates,
-  } = props;
+  const { sub_group_id, columnId, issues, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
 
   return (
     <>
@@ -51,10 +35,6 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
               columnId={columnId}
               sub_group_id={sub_group_id}
               isDragDisabled={isDragDisabled}
-              states={states}
-              labels={labels}
-              members={members}
-              estimates={estimates}
             />
           ))}
         </>

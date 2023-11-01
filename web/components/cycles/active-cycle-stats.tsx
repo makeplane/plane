@@ -1,16 +1,14 @@
 import React, { Fragment } from "react";
-
-// headless ui
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar } from "components/ui";
+import { Avatar } from "@plane/ui";
 // types
 import { ICycle } from "types";
-// types
+
 type Props = {
   cycle: ICycle;
 };
@@ -71,10 +69,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
       </Tab.List>
       {cycle.total_issues > 0 ? (
         <Tab.Panels as={Fragment}>
-          <Tab.Panel
-            as="div"
-            className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4"
-          >
+          <Tab.Panel as="div" className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4">
             {cycle.distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (
@@ -82,15 +77,8 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar
-                          user={{
-                            id: assignee.assignee_id,
-                            avatar: assignee.avatar ?? "",
-                            first_name: assignee.first_name ?? "",
-                            last_name: assignee.last_name ?? "",
-                            display_name: assignee.display_name ?? "",
-                          }}
-                        />
+                        <Avatar name={assignee?.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
+
                         <span>{assignee.display_name}</span>
                       </div>
                     }
@@ -105,13 +93,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                     title={
                       <div className="flex items-center gap-2">
                         <div className="h-5 w-5 rounded-full border-2 border-custom-border-200 bg-custom-background-80">
-                          <img
-                            src="/user.png"
-                            height="100%"
-                            width="100%"
-                            className="rounded-full"
-                            alt="User"
-                          />
+                          <img src="/user.png" height="100%" width="100%" className="rounded-full" alt="User" />
                         </div>
                         <span>No assignee</span>
                       </div>
@@ -122,10 +104,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                 );
             })}
           </Tab.Panel>
-          <Tab.Panel
-            as="div"
-            className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4"
-          >
+          <Tab.Panel as="div" className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4">
             {cycle.distribution.labels.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}

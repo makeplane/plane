@@ -1,17 +1,22 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
-import { Maximize2, ArrowRight, Link, Trash, PanelRightOpen, Square, SquareCode } from "lucide-react";
+import { PanelRightOpen, Square, SquareCode, MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
+import { Button, CustomSelect, FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
+import { DeleteIssueModal } from "../delete-issue-modal";
 // types
 import { IIssue } from "types";
 import { RootStore } from "store/root";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
+// helpers
+import { copyUrlToClipboard } from "helpers/string.helper";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -25,9 +30,9 @@ interface IIssueView {
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
-  states: any;
-  members: any;
-  priorities: any;
+  issueSubscriptionCreate: () => void;
+  issueSubscriptionRemove: () => void;
+  handleDeleteIssue: () => Promise<void>;
   children: ReactNode;
 }
 
@@ -36,17 +41,17 @@ type TPeekModes = "side-peek" | "modal" | "full-screen";
 const peekOptions: { key: TPeekModes; icon: any; title: string }[] = [
   {
     key: "side-peek",
-    icon: PanelRightOpen,
+    icon: SidePeekIcon,
     title: "Side Peek",
   },
   {
     key: "modal",
-    icon: Square,
+    icon: ModalPeekIcon,
     title: "Modal",
   },
   {
     key: "full-screen",
-    icon: SquareCode,
+    icon: FullScreenPeekIcon,
     title: "Full Screen",
   },
 ];
@@ -64,9 +69,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentRemove,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
-    states,
-    members,
-    priorities,
+    issueSubscriptionCreate,
+    issueSubscriptionRemove,
+    handleDeleteIssue,
     children,
   } = props;
 
@@ -76,8 +81,20 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const { user: userStore, issueDetail: issueDetailStore }: RootStore = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
-  const handlePeekMode = (_peek: TPeekModes) => {
-    if (peekMode != _peek) setPeekMode(_peek);
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+
+  const { setToastAlert } = useToast();
+
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues/${peekIssueId}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Issue link copied to clipboard.",
+      });
+    });
   };
 
   const updateRoutePeekId = () => {
@@ -117,128 +134,129 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   );
 
+  useSWR(
+    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
+      ? `ISSUE_PEEK_OVERVIEW_SUBSCRIPTION_${workspaceSlug}_${projectId}_${peekIssueId}`
+      : null,
+    async () => {
+      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
+        await issueDetailStore.fetchIssueSubscription(workspaceSlug, projectId, issueId);
+      }
+    }
+  );
+
   const issue = issueDetailStore.getIssue;
   const issueReactions = issueDetailStore.getIssueReactions;
   const issueComments = issueDetailStore.getIssueComments;
+  const issueSubscription = issueDetailStore.getIssueSubscription;
 
   const user = userStore?.currentUser;
 
-  return (
-    <div className="w-full !text-base">
-      <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-        {children}
-      </div>
+  const currentMode = peekOptions.find((m) => m.key === peekMode);
 
-      {issueId === peekIssueId && (
-        <div
-          className={`fixed z-50 overflow-hidden bg-custom-background-80 flex flex-col transition-all duration-300 border border-custom-border-200 rounded shadow-custom-shadow-2xl
+  return (
+    <>
+      {issue && (
+        <DeleteIssueModal
+          isOpen={deleteIssueModal}
+          handleClose={() => setDeleteIssueModal(false)}
+          data={issue}
+          onSubmit={handleDeleteIssue}
+        />
+      )}
+      <div className="w-full !text-base">
+        <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
+          {children}
+        </div>
+
+        {issueId === peekIssueId && (
+          <div
+            className={`fixed z-20 overflow-hidden bg-custom-background-100 flex flex-col transition-all duration-300 border border-custom-border-200 rounded 
           ${peekMode === "side-peek" ? `w-full md:w-[50%] top-0 right-0 bottom-0` : ``}
           ${peekMode === "modal" ? `top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-5/6 h-5/6` : ``}
           ${peekMode === "full-screen" ? `top-0 right-0 bottom-0 left-0 m-4` : ``}
           `}
-        >
-          {/* header */}
-          <div className="flex-shrink-0 w-full p-4 py-3 relative flex items-center gap-2 border-b border-custom-border-200">
-            <div
-              className="flex-shrink-0 overflow-hidden w-6 h-6 flex justify-center items-center rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100"
-              onClick={removeRoutePeekId}
-            >
-              <ArrowRight width={12} strokeWidth={2} />
-            </div>
+            style={{
+              boxShadow:
+                "0px 4px 8px 0px rgba(0, 0, 0, 0.12), 0px 6px 12px 0px rgba(16, 24, 40, 0.12), 0px 1px 16px 0px rgba(16, 24, 40, 0.12)",
+            }}
+          >
+            {/* header */}
+            <div className="relative flex items-center justify-between p-5 border-b border-custom-border-200">
+              <div className="flex items-center gap-4">
+                <button onClick={removeRoutePeekId}>
+                  <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                </button>
 
-            <div
-              className="flex-shrink-0 overflow-hidden w-6 h-6 flex justify-center items-center rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100"
-              onClick={redirectToIssueDetail}
-            >
-              <Maximize2 width={12} strokeWidth={2} />
-            </div>
+                <button onClick={redirectToIssueDetail}>
+                  <MoveDiagonal className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                </button>
+                {currentMode && (
+                  <div className="flex-shrink-0 flex items-center gap-2">
+                    <CustomSelect
+                      value={currentMode}
+                      onChange={(val: any) => setPeekMode(val)}
+                      customButton={
+                        <button type="button" className="">
+                          <currentMode.icon className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                        </button>
+                      }
+                    >
+                      {peekOptions.map((mode) => (
+                        <CustomSelect.Option key={mode.key} value={mode.key}>
+                          <div className="flex items-center gap-1.5">
+                            <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1 `} />
+                            {mode.title}
+                          </div>
+                        </CustomSelect.Option>
+                      ))}
+                    </CustomSelect>
+                  </div>
+                )}
+              </div>
 
-            <div className="flex-shrink-0 flex items-center gap-2">
-              {peekOptions.map((_option) => (
-                <div
-                  key={_option?.key}
-                  className={`px-1.5 min-w-6 h-6 flex justify-center items-center gap-1 rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100 
-                  ${peekMode === _option?.key ? `bg-custom-background-100` : ``}
-                  `}
-                  onClick={() => handlePeekMode(_option?.key)}
+              <div className="flex items-center gap-4">
+                <Button
+                  size="sm"
+                  prependIcon={<Bell className="h-3 w-3" />}
+                  variant="outline-primary"
+                  onClick={() =>
+                    issueSubscription && issueSubscription.subscribed
+                      ? issueSubscriptionRemove
+                      : issueSubscriptionCreate
+                  }
                 >
-                  <_option.icon width={14} strokeWidth={2} />
-                  <div className="text-xs font-medium">{_option?.title}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="w-full flex justify-end items-center gap-2">
-              <div className="px-1.5 min-w-6 h-6 text-xs font-medium flex justify-center items-center rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100">
-                Subscribe
-              </div>
-
-              <div className="overflow-hidden w-6 h-6 flex justify-center items-center rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100">
-                <Link width={12} strokeWidth={2} />
-              </div>
-
-              <div className="overflow-hidden w-6 h-6 flex justify-center items-center rounded-sm transition-all duration-100 border border-custom-border-200 cursor-pointer hover:bg-custom-background-100">
-                <Trash width={12} strokeWidth={2} />
+                  {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                </Button>
+                <button onClick={handleCopyText}>
+                  <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
+                </button>
+                <button onClick={() => setDeleteIssueModal(true)}>
+                  <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                </button>
               </div>
             </div>
-          </div>
 
-          {/* content */}
-          <div className="w-full h-full overflow-hidden overflow-y-auto">
-            {issueDetailStore?.loader && !issue ? (
-              <div className="text-center py-10">Loading...</div>
-            ) : (
-              issue && (
-                <>
-                  {["side-peek", "modal"].includes(peekMode) ? (
-                    <div className="space-y-6 p-4 py-5">
-                      <PeekOverviewIssueDetails
-                        workspaceSlug={workspaceSlug}
-                        issue={issue}
-                        issueUpdate={issueUpdate}
-                        issueReactions={issueReactions}
-                        user={user}
-                        issueReactionCreate={issueReactionCreate}
-                        issueReactionRemove={issueReactionRemove}
-                      />
-
-                      <PeekOverviewProperties
-                        issue={issue}
-                        issueUpdate={issueUpdate}
-                        states={states}
-                        members={members}
-                        priorities={priorities}
-                      />
-
-                      <div className="border-t border-custom-border-400" />
-
-                      <IssueComment
-                        workspaceSlug={workspaceSlug}
-                        projectId={projectId}
-                        issueId={issueId}
-                        user={user}
-                        issueComments={issueComments}
-                        issueCommentCreate={issueCommentCreate}
-                        issueCommentUpdate={issueCommentUpdate}
-                        issueCommentRemove={issueCommentRemove}
-                        issueCommentReactionCreate={issueCommentReactionCreate}
-                        issueCommentReactionRemove={issueCommentReactionRemove}
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full flex">
-                      <div className="w-full h-full space-y-6 p-4 py-5">
+            {/* content */}
+            <div className="w-full h-full overflow-hidden overflow-y-auto">
+              {issueDetailStore?.loader && !issue ? (
+                <div className="text-center py-10">Loading...</div>
+              ) : (
+                issue && (
+                  <>
+                    {["side-peek", "modal"].includes(peekMode) ? (
+                      <div className="flex flex-col gap-3 px-10 py-6">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
-                          issueReactions={issueReactions}
                           issueUpdate={issueUpdate}
+                          issueReactions={issueReactions}
                           user={user}
                           issueReactionCreate={issueReactionCreate}
                           issueReactionRemove={issueReactionRemove}
                         />
 
-                        <div className="border-t border-custom-border-400" />
+                        <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} user={user} />
 
                         <IssueComment
                           workspaceSlug={workspaceSlug}
@@ -253,23 +271,46 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueCommentReactionRemove={issueCommentReactionRemove}
                         />
                       </div>
-                      <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
-                        <PeekOverviewProperties
-                          issue={issue}
-                          issueUpdate={issueUpdate}
-                          states={states}
-                          members={members}
-                          priorities={priorities}
-                        />
+                    ) : (
+                      <div className="w-full h-full flex">
+                        <div className="w-full h-full space-y-6 p-4 py-5">
+                          <PeekOverviewIssueDetails
+                            workspaceSlug={workspaceSlug}
+                            issue={issue}
+                            issueReactions={issueReactions}
+                            issueUpdate={issueUpdate}
+                            user={user}
+                            issueReactionCreate={issueReactionCreate}
+                            issueReactionRemove={issueReactionRemove}
+                          />
+
+                          <div className="border-t border-custom-border-400" />
+
+                          <IssueComment
+                            workspaceSlug={workspaceSlug}
+                            projectId={projectId}
+                            issueId={issueId}
+                            user={user}
+                            issueComments={issueComments}
+                            issueCommentCreate={issueCommentCreate}
+                            issueCommentUpdate={issueCommentUpdate}
+                            issueCommentRemove={issueCommentRemove}
+                            issueCommentReactionCreate={issueCommentReactionCreate}
+                            issueCommentReactionRemove={issueCommentReactionRemove}
+                          />
+                        </div>
+                        <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
+                          <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} user={user} />
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              )
-            )}
+                    )}
+                  </>
+                )
+              )}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 });

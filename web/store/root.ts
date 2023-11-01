@@ -19,7 +19,18 @@ import {
   IssueQuickAddStore,
 } from "store/issue";
 import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
-import { IProjectPublishStore, IProjectStore, ProjectPublishStore, ProjectStore } from "store/project";
+import {
+  IProjectPublishStore,
+  IProjectStore,
+  ProjectPublishStore,
+  ProjectStore,
+  IProjectStateStore,
+  ProjectStateStore,
+  IProjectLabelStore,
+  ProjectLabelStore,
+  ProjectEstimatesStore,
+  IProjectEstimateStore,
+} from "store/project";
 import {
   IModuleFilterStore,
   IModuleIssueKanBanViewStore,
@@ -104,6 +115,9 @@ export class RootStore {
 
   projectPublish: IProjectPublishStore;
   project: IProjectStore;
+  projectState: IProjectStateStore;
+  projectLabel: IProjectLabelStore;
+  projectEstimates: IProjectEstimateStore;
   issue: IIssueStore;
 
   module: IModuleStore;
@@ -161,6 +175,9 @@ export class RootStore {
     this.workspaceFilter = new WorkspaceFilterStore(this);
 
     this.project = new ProjectStore(this);
+    this.projectState = new ProjectStateStore(this);
+    this.projectLabel = new ProjectLabelStore(this);
+    this.projectEstimates = new ProjectEstimatesStore(this);
     this.projectPublish = new ProjectPublishStore(this);
 
     this.module = new ModuleStore(this);

@@ -19,8 +19,8 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
     <>
       {createdBy && (
         <HeaderGroupByCard
-          icon={<Icon user={createdBy?.member} />}
-          title={createdBy?.member?.display_name || ""}
+          icon={<Icon user={createdBy} />}
+          title={createdBy?.display_name || ""}
           count={issues_count}
         />
       )}

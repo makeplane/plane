@@ -2,7 +2,7 @@ import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
 // types
-import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
+import { IIssueDisplayProperties, IIssue } from "types";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -18,27 +18,10 @@ interface IssueBlockProps {
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const {
-    sub_group_id,
-    columnId,
-    index,
-    issue,
-    isDragDisabled,
-    handleIssues,
-    quickActions,
-    displayProperties,
-    states,
-    labels,
-    members,
-    estimates,
-  } = props;
+  const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, "update");
@@ -82,10 +65,6 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   issue={issue}
                   handleIssues={updateIssue}
                   displayProperties={displayProperties}
-                  states={states}
-                  labels={labels}
-                  members={members}
-                  estimates={estimates}
                 />
               </div>
             </div>

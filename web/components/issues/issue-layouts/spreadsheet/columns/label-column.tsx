@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { LabelSelect } from "components/labels";
+import { IssuePropertyLabels } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
@@ -24,10 +24,10 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <LabelSelect
+      <IssuePropertyLabels
+        projectId={issue.project_detail.id ?? null}
         value={issue.labels}
         onChange={(data) => onChange({ labels: data })}
-        labels={labels ?? []}
         className="h-full"
         buttonClassName="!border-0 !h-full !w-full !rounded-none"
         hideDropdownArrow

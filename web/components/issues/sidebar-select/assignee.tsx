@@ -1,14 +1,10 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { ProjectService } from "services/project";
 // ui
-import { CustomSearchSelect } from "@plane/ui";
-import { AssigneesList, Avatar } from "components/ui/avatar";
+import { Avatar, AvatarGroup, CustomSearchSelect } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -37,7 +33,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -50,7 +46,15 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
         <>
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="-my-0.5 flex items-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={false} />
+              <AvatarGroup>
+                {value.map((assigneeId) => {
+                  const member = members?.find((m) => m.member.id === assigneeId)?.member;
+
+                  if (!member) return null;
+
+                  return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+                })}
+              </AvatarGroup>
               <span className="text-custom-text-100 text-xs">{value.length} Assignees</span>
             </div>
           ) : (

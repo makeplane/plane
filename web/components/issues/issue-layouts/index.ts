@@ -10,4 +10,6 @@ export * from "./gantt";
 export * from "./kanban";
 export * from "./spreadsheet";
 
+export * from "./properties";
+
 export * from "./roots";
