@@ -31,6 +31,7 @@ import { LayoutPanelTop, Sparkle, X } from "lucide-react";
 import type { IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const defaultValues: Partial<IIssue> = {
   project: "",
@@ -106,6 +107,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const { user: userStore } = useMobxStore();
 
   const user = userStore.currentUser;
+
+  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
 
   const { setToastAlert } = useToast();
 
@@ -384,6 +387,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
+                        mentionHighlights={editorSuggestion.mentionHighlights}
+                        mentionSuggestions={editorSuggestion.mentionSuggestions}
                       />
                     )}
                   />

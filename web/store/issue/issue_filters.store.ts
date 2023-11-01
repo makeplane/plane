@@ -119,6 +119,7 @@ export class IssueFilterStore implements IIssueFilterStore {
       state_group: this.userFilters?.state_group || undefined,
       state: this.userFilters?.state || undefined,
       assignees: this.userFilters?.assignees || undefined,
+      mentions: this.userFilters?.mentions || undefined,
       created_by: this.userFilters?.created_by || undefined,
       labels: this.userFilters?.labels || undefined,
       start_date: this.userFilters?.start_date || undefined,

@@ -1,16 +1,14 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
-// services
-import { CycleService } from "services/cycle.service";
+import useSWR from "swr";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
 import {
+  AvatarGroup,
   Loader,
   Tooltip,
   LinearProgressIndicator,
@@ -19,6 +17,7 @@ import {
   LayersIcon,
   StateGroupIcon,
   PriorityIcon,
+  Avatar,
 } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
@@ -31,9 +30,7 @@ import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } fro
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import { ICycle, IIssue } from "types";
-// fetch-keys
-import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { ICycle } from "types";
 
 const stateGroups = [
   {
@@ -69,9 +66,6 @@ interface IActiveCycleDetails {
 }
 
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
-  // services
-  const cycleService = new CycleService();
-
   const router = useRouter();
 
   const { workspaceSlug, projectId } = props;
@@ -306,7 +300,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
 
                 {cycle.assignees.length > 0 && (
                   <div className="flex items-center gap-1 text-custom-text-200">
-                    <AssigneesList users={cycle.assignees} length={4} />
+                    <AvatarGroup>
+                      {cycle.assignees.map((assignee) => (
+                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                      ))}
+                    </AvatarGroup>
                   </div>
                 )}
               </div>
@@ -406,7 +404,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                         <div className={`flex items-center gap-2 text-custom-text-200`}>
                           {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
                             <div className="-my-0.5 flex items-center justify-center gap-2">
-                              <AssigneesList users={issue.assignee_details} length={3} showLength={false} />
+                              <AvatarGroup showTooltip={false}>
+                                {issue.assignee_details.map((assignee: any) => (
+                                  <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                                ))}
+                              </AvatarGroup>
                             </div>
                           ) : (
                             ""

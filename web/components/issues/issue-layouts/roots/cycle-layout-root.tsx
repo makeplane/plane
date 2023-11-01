@@ -18,7 +18,11 @@ import { TransferIssues, TransferIssuesModal } from "components/cycles";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
-export const CycleLayoutRoot: React.FC = observer(() => {
+type Props = {
+  openIssuesListModal: () => void;
+};
+
+export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
@@ -60,7 +64,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
         {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-          <CycleEmptyState />
+          <CycleEmptyState openIssuesListModal={openIssuesListModal} />
         ) : (
           <div className="w-full h-full overflow-auto">
             {activeLayout === "list" ? (

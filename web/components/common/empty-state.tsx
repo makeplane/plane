@@ -3,7 +3,7 @@ import React from "react";
 import Image from "next/image";
 
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 
 type Props = {
   title: string;
@@ -33,10 +33,14 @@ export const EmptyState: React.FC<Props> = ({
       {description && <p className="text-custom-text-300 mb-7 sm:mb-8">{description}</p>}
       <div className="flex items-center gap-4">
         {primaryButton && (
-          <PrimaryButton className="flex items-center gap-1.5" onClick={primaryButton.onClick} disabled={disabled}>
-            {primaryButton.icon}
+          <Button
+            variant="primary"
+            prependIcon={primaryButton.icon}
+            onClick={primaryButton.onClick}
+            disabled={disabled}
+          >
             {primaryButton.text}
-          </PrimaryButton>
+          </Button>
         )}
         {secondaryButton}
       </div>
