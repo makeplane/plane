@@ -57,7 +57,7 @@ export interface IProjectStore {
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<void>;
-  fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<void>;
+  fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<any>;
 
   addProjectToFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
   removeProjectFromFavorites: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -70,6 +70,15 @@ export interface IProjectStore {
   createProject: (workspaceSlug: string, data: any) => Promise<any>;
   updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<any>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+
+  // write operations
+  removeMemberFromProject: (workspaceSlug: string, projectId: string, memberId: string) => Promise<void>;
+  updateMember: (
+    workspaceSlug: string,
+    projectId: string,
+    memberId: string,
+    data: Partial<IProjectMember>
+  ) => Promise<IProjectMember>;
 }
 
 export class ProjectStore implements IProjectStore {
@@ -117,6 +126,7 @@ export class ProjectStore implements IProjectStore {
       states: observable.ref,
       labels: observable.ref,
       members: observable.ref,
+      estimates: observable.ref,
 
       // computed
       searchedProjects: computed,
@@ -140,6 +150,7 @@ export class ProjectStore implements IProjectStore {
       getProjectStateById: action,
       getProjectLabelById: action,
       getProjectMemberById: action,
+      getProjectEstimateById: action,
 
       fetchProjectStates: action,
       fetchProjectLabels: action,
@@ -154,6 +165,10 @@ export class ProjectStore implements IProjectStore {
       createProject: action,
       updateProject: action,
       leaveProject: action,
+
+      // write operations
+      removeMemberFromProject: action,
+      updateMember: action,
     });
 
     this.rootStore = _rootStore;
@@ -603,6 +618,60 @@ export class ProjectStore implements IProjectStore {
       await this.fetchProjects(workspaceSlug);
     } catch (error) {
       console.log("Failed to delete project from project store");
+    }
+  };
+
+  removeMemberFromProject = async (workspaceSlug: string, projectId: string, memberId: string) => {
+    const originalMembers = this.projectMembers || [];
+
+    runInAction(() => {
+      this.members = {
+        ...this.members,
+        [projectId]: this.projectMembers?.filter((member) => member.id !== memberId) || [],
+      };
+    });
+
+    try {
+      await this.projectService.deleteProjectMember(workspaceSlug, projectId, memberId);
+      await this.fetchProjectMembers(workspaceSlug, projectId);
+    } catch (error) {
+      console.log("Failed to delete project from project store");
+      // revert back to original members in case of error
+      runInAction(() => {
+        this.members = {
+          ...this.members,
+          [projectId]: originalMembers,
+        };
+      });
+    }
+  };
+
+  updateMember = async (workspaceSlug: string, projectId: string, memberId: string, data: Partial<IProjectMember>) => {
+    const originalMembers = this.projectMembers || [];
+
+    runInAction(() => {
+      this.members = {
+        ...this.members,
+        [projectId]: (this.projectMembers || [])?.map((member) =>
+          member.id === memberId ? { ...member, ...data } : member
+        ),
+      };
+    });
+
+    try {
+      const response = await this.projectService.updateProjectMember(workspaceSlug, projectId, memberId, data);
+      await this.fetchProjectMembers(workspaceSlug, projectId);
+      return response;
+    } catch (error) {
+      console.log("Failed to update project member from project store");
+      // revert back to original members in case of error
+      runInAction(() => {
+        this.members = {
+          ...this.members,
+          [projectId]: originalMembers,
+        };
+      });
+      throw error;
     }
   };
 }
