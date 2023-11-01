@@ -21,17 +21,19 @@ type Props = {
   disabled?: boolean;
 };
 
-export const StateSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  states,
-  className = "",
-  buttonClassName = "",
-  optionsClassName = "",
-  placement,
-  hideDropdownArrow = false,
-  disabled = false,
-}) => {
+export const StateSelect: React.FC<Props> = (props) => {
+  const {
+    value,
+    onChange,
+    states,
+    className = "",
+    buttonClassName = "",
+    optionsClassName = "",
+    placement,
+    hideDropdownArrow = false,
+    disabled = false,
+  } = props;
+
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
