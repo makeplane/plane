@@ -16,7 +16,11 @@ import {
   ModuleSpreadsheetLayout,
 } from "components/issues";
 
-export const ModuleLayoutRoot: React.FC = observer(() => {
+type Props = {
+  openIssuesListModal: () => void;
+};
+
+export const ModuleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query as {
     workspaceSlug: string;
@@ -53,7 +57,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
       {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ModuleEmptyState />
+        <ModuleEmptyState openIssuesListModal={openIssuesListModal} />
       ) : (
         <div className="h-full w-full overflow-auto">
           {activeLayout === "list" ? (

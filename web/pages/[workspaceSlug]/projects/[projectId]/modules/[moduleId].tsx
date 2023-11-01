@@ -3,8 +3,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+
+// services
+import { ModuleService } from "services/module.service";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useToast from "hooks/use-toast";
+import useUser from "hooks/use-user";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -18,6 +23,9 @@ import { EmptyState } from "components/common";
 import emptyModule from "public/empty-state/module.svg";
 // types
 import { NextPage } from "next";
+import { ISearchIssueResponse } from "types";
+
+const moduleService = new ModuleService();
 
 const ModuleIssuesPage: NextPage = () => {
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
@@ -26,6 +34,10 @@ const ModuleIssuesPage: NextPage = () => {
   const { workspaceSlug, projectId, moduleId } = router.query;
 
   const { module: moduleStore } = useMobxStore();
+
+  const { user } = useUser();
+
+  const { setToastAlert } = useToast();
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -38,27 +50,27 @@ const ModuleIssuesPage: NextPage = () => {
   );
 
   // TODO: add this function to bulk add issues to cycle
-  // const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
-  //   if (!workspaceSlug || !projectId) return;
+  const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
+    if (!workspaceSlug || !projectId) return;
 
-  //   const payload = {
-  //     issues: data.map((i) => i.id),
-  //   };
+    const payload = {
+      issues: data.map((i) => i.id),
+    };
 
-  //   await moduleService
-  //     .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
-  //     .catch(() =>
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: "Selected issues could not be added to the module. Please try again.",
-  //       })
-  //     );
-  // };
+    await moduleService
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the module. Please try again.",
+        })
+      );
+  };
 
-  // const openIssuesListModal = () => {
-  //   setModuleIssuesListModal(true);
-  // };
+  const openIssuesListModal = () => {
+    setModuleIssuesListModal(true);
+  };
 
   const toggleSidebar = () => {
     setValue(`${!isSidebarCollapsed}`);
@@ -72,7 +84,7 @@ const ModuleIssuesPage: NextPage = () => {
           isOpen={moduleIssuesListModal}
           handleClose={() => setModuleIssuesListModal(false)}
           searchParams={{ module: true }}
-          handleOnSubmit={async () => {}}
+          handleOnSubmit={handleAddIssuesToModule}
         />
         {error ? (
           <EmptyState
@@ -86,8 +98,8 @@ const ModuleIssuesPage: NextPage = () => {
           />
         ) : (
           <div className="flex h-full w-full">
-            <div className="h-full w-full">
-              <ModuleLayoutRoot />
+            <div className="h-full w-full overflow-hidden">
+              <ModuleLayoutRoot openIssuesListModal={openIssuesListModal} />
             </div>
             {moduleId && !isSidebarCollapsed && (
               <div

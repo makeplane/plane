@@ -74,7 +74,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           type="button"
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          } `}
+          }`}
         >
           {label}
         </button>
