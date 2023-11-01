@@ -126,6 +126,7 @@ export class ProjectStore implements IProjectStore {
       states: observable.ref,
       labels: observable.ref,
       members: observable.ref,
+      estimates: observable.ref,
 
       // computed
       searchedProjects: computed,
