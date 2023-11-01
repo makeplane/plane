@@ -6,7 +6,6 @@ from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
-from .project import ProjectLiteSerializer
 from .user import UserLiteSerializer
 from plane.db.models import Inbox, InboxIssue, Issue
 

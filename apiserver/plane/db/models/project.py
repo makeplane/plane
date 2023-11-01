@@ -4,9 +4,6 @@ from uuid import uuid4
 # Django imports
 from django.db import models
 from django.conf import settings
-from django.template.defaultfilters import slugify
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Modeule imports
