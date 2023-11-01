@@ -37,7 +37,7 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const projectService = new ProjectService();
 
-export const SingleIntegration: React.FC<Props> = ({ integration }) => {
+export const IntegrationCard: React.FC<Props> = ({ integration }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 

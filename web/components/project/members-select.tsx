@@ -87,7 +87,7 @@ export const MembersSelect: React.FC<Props> = ({
     >
       <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
-          <AssigneesList userIds={value} length={3} showLength={true} />
+          <AssigneesList userIds={value} length={3} showLength />
         ) : (
           <span
             className="flex items-center justify-between gap-1 h-full w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none

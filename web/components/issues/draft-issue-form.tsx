@@ -297,17 +297,11 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     <>
       {projectId && (
         <>
-          <CreateStateModal
-            isOpen={stateModal}
-            handleClose={() => setStateModal(false)}
-            projectId={projectId}
-            user={user}
-          />
+          <CreateStateModal isOpen={stateModal} handleClose={() => setStateModal(false)} projectId={projectId} />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
-            user={user}
             onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
           />
         </>

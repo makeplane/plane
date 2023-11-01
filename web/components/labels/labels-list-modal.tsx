@@ -2,37 +2,46 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+
 // icons
 import { LayerStackIcon } from "@plane/ui";
 import { Search } from "lucide-react";
-// services
-import { IssueLabelService } from "services/issue";
 // types
-import { IUser, IIssueLabels } from "types";
-// constants
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { IIssueLabels } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   parent: IIssueLabels | undefined;
-  user: IUser | undefined;
 };
 
-const issueLabelService = new IssueLabelService();
+export const LabelsListModal: React.FC<Props> = observer((props) => {
+  const { isOpen, handleClose, parent } = props;
 
-export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, user }) => {
-  const [query, setQuery] = useState("");
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: issueLabels, mutate } = useSWR<IIssueLabels[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
+  // store
+  const { projectLabel: projectLabelStore, project: projectStore } = useMobxStore();
+
+  // states
+  const [query, setQuery] = useState("");
+
+  // api call to fetch project details
+  useSWR(
+    workspaceSlug && projectId ? "PROJECT_LABELS" : null,
     workspaceSlug && projectId
-      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
       : null
   );
+
+  // derived values
+  const issueLabels = projectStore.labels?.[projectId?.toString()!] ?? null;
 
   const filteredLabels: IIssueLabels[] =
     query === ""
@@ -47,27 +56,9 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
   const addChildLabel = async (label: IIssueLabels) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate(
-      (prevData: any) =>
-        prevData?.map((l: any) => {
-          if (l.id === label.id) return { ...l, parent: parent?.id ?? "" };
-
-          return l;
-        }),
-      false
-    );
-
-    await issueLabelService
-      .patchIssueLabel(
-        workspaceSlug as string,
-        projectId as string,
-        label.id,
-        {
-          parent: parent?.id ?? "",
-        },
-        user
-      )
-      .then(() => mutate());
+    await projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+      parent: parent?.id!,
+    });
   };
 
   return (
@@ -122,7 +113,7 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
                           if (
                             (label.parent === "" || label.parent === null) && // issue does not have any other parent
                             label.id !== parent?.id && // issue is not itself
-                            children?.length === 0 // issue doesn't have any othe children
+                            children?.length === 0 // issue doesn't have any other children
                           )
                             return (
                               <Combobox.Option
@@ -173,4 +164,4 @@ export const LabelsListModal: React.FC<Props> = ({ isOpen, handleClose, parent, 
       </Dialog>
     </Transition.Root>
   );
-};
+});
