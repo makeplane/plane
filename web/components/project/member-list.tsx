@@ -11,6 +11,7 @@ import useUser from "hooks/use-user";
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
+// icons
 import { Search } from "lucide-react";
 
 // services
@@ -20,13 +21,13 @@ export const ProjectMemberList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
   // store
   const { project: projectStore } = useMobxStore();
 
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const { user } = useUser();
 
@@ -121,7 +122,9 @@ export const ProjectMemberList: React.FC = observer(() => {
           {members.length > 0
             ? searchedMembers.map((member) => <ProjectMemberListItem key={member.id} member={member} />)
             : null}
-          {searchedMembers.length === 0 && <h4 className="text-md text-center mt-32">No matching member</h4>}
+          {searchedMembers.length === 0 && (
+            <h4 className="text-md text-custom-text-400 text-center mt-20">No matching member</h4>
+          )}
         </div>
       )}
     </>

@@ -73,7 +73,9 @@ export const WorkspaceMembersList: React.FC<{ searchQuery: string }> = observer(
       {members.length > 0
         ? searchedMembers.map((member) => <WorkspaceMembersListItem key={member.id} member={member} />)
         : null}
-      {searchedMembers.length === 0 && <h4 className="text-md text-center mt-32">No matching member</h4>}
+      {searchedMembers.length === 0 && (
+        <h4 className="text-md text-custom-text-400 text-center mt-20">No matching member</h4>
+      )}
     </div>
   );
 });

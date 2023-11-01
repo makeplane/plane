@@ -12,14 +12,15 @@ import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/w
 import { Button } from "@plane/ui";
 // types
 import type { NextPage } from "next";
+// icons
 import { Search } from "lucide-react";
 
 const MembersSettings: NextPage = () => {
   const [inviteModal, setInviteModal] = useState(false);
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  const [searchQuery, setSearchQuery] = useState<string>("");
+
   const { user } = useUser();
 
   return (
