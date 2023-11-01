@@ -4,8 +4,7 @@ import useSWR from "swr";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
 import { UserCircle } from "lucide-react";
 // fetch-keys
@@ -34,7 +33,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -48,7 +47,11 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption ? <Avatar user={selectedOption} /> : <UserCircle className="h-4 w-4 text-custom-text-200" />}
+          {selectedOption ? (
+            <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
+          ) : (
+            <UserCircle className="h-4 w-4 text-custom-text-200" />
+          )}
           {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">Lead</span>}
         </div>
       }

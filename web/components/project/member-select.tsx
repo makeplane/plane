@@ -1,16 +1,11 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
+import { Ban } from "lucide-react";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
-// icon
-import { Ban } from "lucide-react";
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -39,7 +34,7 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -52,7 +47,7 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption && <Avatar user={selectedOption} />}
+          {selectedOption && <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />}
           {selectedOption ? (
             selectedOption?.display_name
           ) : (

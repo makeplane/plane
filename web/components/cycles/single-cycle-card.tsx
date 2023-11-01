@@ -10,8 +10,15 @@ import useToast from "hooks/use-toast";
 // components
 import { SingleProgressStats } from "components/core";
 // ui
-import { CustomMenu, Tooltip, LinearProgressIndicator, ContrastIcon, RunningIcon } from "@plane/ui";
-import { AssigneesList } from "components/ui/avatar";
+import {
+  CustomMenu,
+  Tooltip,
+  LinearProgressIndicator,
+  ContrastIcon,
+  RunningIcon,
+  Avatar,
+  AvatarGroup,
+} from "@plane/ui";
 // icons
 import {
   AlarmClock,
@@ -245,7 +252,11 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     <div className="w-16">Members:</div>
                     {cycle.assignees.length > 0 ? (
                       <div className="flex items-center gap-1 text-custom-text-200">
-                        <AssigneesList users={cycle.assignees} length={4} />
+                        <AvatarGroup>
+                          {cycle.assignees.map((assignee) => (
+                            <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                          ))}
+                        </AvatarGroup>{" "}
                       </div>
                     ) : (
                       "No members"

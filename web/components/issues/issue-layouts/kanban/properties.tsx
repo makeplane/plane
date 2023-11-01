@@ -136,17 +136,6 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         />
       )}
 
-      {/* assignee */}
-      {displayProperties && displayProperties?.assignee && (
-        <IssuePropertyAssignee
-          value={issue?.assignees || null}
-          hideDropdownArrow={true}
-          onChange={handleAssignee}
-          members={members}
-          disabled={false}
-        />
-      )}
-
       {/* start date */}
       {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
@@ -207,6 +196,17 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
+      )}
+
+      {/* assignee */}
+      {displayProperties && displayProperties?.assignee && (
+        <IssuePropertyAssignee
+          value={issue?.assignees || null}
+          hideDropdownArrow={true}
+          onChange={handleAssignee}
+          members={members}
+          disabled={false}
+        />
       )}
     </div>
   );

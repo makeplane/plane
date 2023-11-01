@@ -2,9 +2,8 @@ import React, { FC, useState, Fragment } from "react";
 // popper js
 import { usePopper } from "react-popper";
 // ui
-import { Input, Tooltip } from "@plane/ui";
+import { Avatar, Input, Tooltip } from "@plane/ui";
 import { Listbox } from "@headlessui/react";
-import { Avatar } from "components/ui";
 // icons
 import { Check, Search, User2 } from "lucide-react";
 // types
@@ -64,7 +63,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       >
         {value ? (
           <>
-            <Avatar height="18px" width="18px" user={value?.member} />
+            <Avatar name={value?.member.display_name} src={value?.member.avatar} />
             <span className="text-xs leading-4"> {value?.member.display_name}</span>
           </>
         ) : (
@@ -122,7 +121,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
                     {({ selected }) => (
                       <>
                         <div className="flex items-center gap-2">
-                          <Avatar user={workspaceMember.member} />
+                          <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
                           {workspaceMember.member.display_name}
                         </div>
                         {selected && <Check className="h-3.5 w-3.5" />}

@@ -2,7 +2,8 @@ import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
-import { Avatar } from "components/ui";
+// ui
+import { Avatar } from "@plane/ui";
 
 export interface IAssigneesHeader {
   column_id: string;
@@ -10,7 +11,7 @@ export interface IAssigneesHeader {
   issues_count: number;
 }
 
-export const Icon = ({ user }: any) => <Avatar user={user} height="22px" width="22px" fontSize="12px" />;
+export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="base" />;
 
 export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
   const { column_id, column_value, issues_count } = props;

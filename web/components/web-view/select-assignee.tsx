@@ -2,16 +2,15 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-
-// icons
 import { ChevronDown } from "lucide-react";
 // services
 import { ProjectService } from "services/project";
-// fetch key
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
 // components
-import { Avatar } from "components/ui/avatar";
 import { WebViewModal } from "./web-view-modal";
+// ui
+import { Avatar } from "@plane/ui";
+// fetch keys
+import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   value: string[];
@@ -54,7 +53,7 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
               label: member.member.display_name,
               value: member.member.id,
               checked: value?.includes(member.member.id),
-              icon: <Avatar user={member.member} />,
+              icon: <Avatar name={member?.member.display_name} src={member?.member.avatar} />,
               onClick: () => {
                 setIsOpen(false);
                 if (disabled) return;
@@ -73,7 +72,7 @@ export const AssigneeSelect: React.FC<Props> = (props) => {
       >
         {value && value.length > 0 && Array.isArray(value) ? (
           <div className="-my-0.5 flex items-center gap-2">
-            <Avatar user={selectedAssignees?.[0].member} />
+            <Avatar name={selectedAssignees?.[0]?.member.display_name} src={selectedAssignees?.[0]?.member.avatar} />
             <span className="text-custom-text-200 text-xs">{selectedAssignees?.length} Assignees</span>
           </div>
         ) : (

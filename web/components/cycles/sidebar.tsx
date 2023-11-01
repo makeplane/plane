@@ -15,8 +15,8 @@ import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
-import { Avatar, CustomRangeDatePicker } from "components/ui";
-import { CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { CustomRangeDatePicker } from "components/ui";
+import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
 // icons
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, MoveRight } from "lucide-react";
 // helpers
@@ -441,7 +441,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
               <div className="flex items-center w-1/2 rounded-sm">
                 <div className="flex items-center gap-2.5">
-                  <Avatar user={cycleDetails.owned_by} />
+                  <Avatar name={cycleDetails.owned_by.display_name} src={cycleDetails.owned_by.avatar} />
                   <span className="text-sm text-custom-text-200">{cycleDetails.owned_by.display_name}</span>
                 </div>
               </div>

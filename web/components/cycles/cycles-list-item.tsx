@@ -8,9 +8,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
-import { AssigneesList } from "components/ui";
 // ui
-import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon } from "@plane/ui";
+import { CustomMenu, Tooltip, CircularProgressIndicator, CycleGroupIcon, AvatarGroup, Avatar } from "@plane/ui";
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
@@ -207,7 +206,11 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             <Tooltip tooltipContent={`${cycle.assignees.length} Members`}>
               <div className="flex items-center justify-center gap-1 cursor-default w-16">
                 {cycle.assignees.length > 0 ? (
-                  <AssigneesList users={cycle.assignees} length={2} />
+                  <AvatarGroup showTooltip={false}>
+                    {cycle.assignees.map((assignee) => (
+                      <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                    ))}
+                  </AvatarGroup>
                 ) : (
                   <span className="flex items-end justify-center h-5 w-5 bg-custom-background-80 rounded-full border border-dashed border-custom-text-400">
                     <User2 className="h-4 w-4 text-custom-text-400" />
