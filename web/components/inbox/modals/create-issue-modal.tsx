@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { Controller, useForm } from "react-hook-form";
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import { IMentionHighlight, IMentionSuggestion, RichTextEditorWithRef } from "@plane/rich-text-editor";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -15,6 +15,8 @@ import { IssuePrioritySelect } from "components/issues/select";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { IIssue } from "types";
+import useProjectMembers from "hooks/use-project-members";
+import useUser from "hooks/use-user";
 
 type Props = {
   isOpen: boolean;

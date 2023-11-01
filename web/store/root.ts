@@ -98,6 +98,11 @@ import {
   InboxStore,
 } from "store/inbox";
 
+import {
+  IMentionsStore,
+  MentionsStore
+} from "store/editor"
+
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
@@ -159,6 +164,8 @@ export class RootStore {
   inboxIssueDetails: IInboxIssueDetailsStore;
   inboxFilters: IInboxFiltersStore;
 
+  mentionsStore: IMentionsStore;
+
   constructor() {
     this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);
@@ -217,5 +224,7 @@ export class RootStore {
     this.inboxIssues = new InboxIssuesStore(this);
     this.inboxIssueDetails = new InboxIssueDetailsStore(this);
     this.inboxFilters = new InboxFiltersStore(this);
+
+    this.mentionsStore = new MentionsStore(this);
   }
 }

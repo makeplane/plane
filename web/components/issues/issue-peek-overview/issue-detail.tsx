@@ -8,10 +8,12 @@ import { IssueReaction } from "./reactions";
 // hooks
 import { useDebouncedCallback } from "use-debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // types
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const fileService = new FileService();
 
@@ -27,12 +29,16 @@ interface IPeekOverviewIssueDetails {
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
   const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
-
+  // store
+  const { user: userStore } = useMobxStore();
+  const isAllowed = [5, 10].includes(userStore.projectMemberInfo?.role || 0);
+  // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-
   const [characterLimit, setCharacterLimit] = useState(false);
-
+  // hooks
   const { setShowAlert } = useReloadConfirmations();
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, issue.project_detail.id);
+
   const {
     handleSubmit,
     watch,
@@ -94,7 +100,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       </span>
 
       <div className="relative">
-        {true ? (
+        {isAllowed ? (
           <Controller
             name="name"
             control={control}
@@ -143,6 +149,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
             debouncedIssueDescription(description_html);
           }}
           customClassName="mt-0"
+          mentionSuggestions={editorSuggestions.mentionSuggestions}
+          mentionHighlights={editorSuggestions.mentionHighlights}
         />
       </span>
 
