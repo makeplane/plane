@@ -9,12 +9,12 @@ import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
 import { IModule } from "types";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  const { workspaceSlug } = router.query;
+  // store
   const { project: projectStore, module: moduleStore } = useMobxStore();
-
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+  const { currentProjectDetails } = projectStore;
   const modules = moduleStore.projectModules;
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
@@ -36,7 +36,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
           }))
       : [];
 
-  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+  const isAllowed = currentProjectDetails?.member_role === 20 || currentProjectDetails?.member_role === 15;
 
   return (
     <div className="w-full h-full overflow-y-auto">

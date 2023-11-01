@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
@@ -18,7 +19,6 @@ const PROJECT_FEATURES_LIST = [
     title: "Cycles",
     description: "Cycles are enabled for all the projects in this workspace. Access them from the sidebar.",
     icon: <ContrastIcon className="h-4 w-4 text-purple-500 flex-shrink-0 rotate-180" />,
-
     property: "cycle_view",
   },
   {
@@ -67,31 +67,29 @@ const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType 
 // services
 const trackEventService = new TrackEventService();
 
-export const ProjectFeaturesList: React.FC<Props> = observer((props) => {
-  const {} = props;
-
+export const ProjectFeaturesList: FC<Props> = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // store
   const { project: projectStore, user: userStore } = useMobxStore();
-
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
-  const user = userStore.currentUser ?? undefined;
-  const isAdmin = userStore.projectMemberInfo?.role === 20;
-
+  const { currentUser, currentProjectRole } = userStore;
+  const { currentProjectDetails } = projectStore;
+  const isAdmin = currentProjectRole === 20;
+  // hooks
   const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {
-    if (!workspaceSlug || !projectId || !projectDetails) return;
-
+    if (!workspaceSlug || !projectId || !currentProjectDetails) return;
     setToastAlert({
       type: "success",
       title: "Success!",
       message: "Project feature updated successfully.",
     });
-
     projectStore.updateProject(workspaceSlug.toString(), projectId.toString(), formData);
   };
+
+  if (!currentUser) return <></>;
 
   return (
     <div>
@@ -108,21 +106,21 @@ export const ProjectFeaturesList: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={projectDetails?.[feature.property as keyof IProject]}
+            value={currentProjectDetails?.[feature.property as keyof IProject]}
             onChange={() => {
               trackEventService.trackMiscellaneousEvent(
                 {
-                  workspaceId: (projectDetails?.workspace as any)?.id,
+                  workspaceId: (currentProjectDetails?.workspace as any)?.id,
                   workspaceSlug,
                   projectId,
-                  projectIdentifier: projectDetails?.identifier,
-                  projectName: projectDetails?.name,
+                  projectIdentifier: currentProjectDetails?.identifier,
+                  projectName: currentProjectDetails?.name,
                 },
-                getEventType(feature.title, !projectDetails?.[feature.property as keyof IProject]),
-                user
+                getEventType(feature.title, !currentProjectDetails?.[feature.property as keyof IProject]),
+                currentUser
               );
               handleSubmit({
-                [feature.property]: !projectDetails?.[feature.property as keyof IProject],
+                [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],
               });
             }}
             disabled={!isAdmin}

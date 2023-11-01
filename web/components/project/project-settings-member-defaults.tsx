@@ -25,20 +25,16 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store
   const { user: userStore, project: projectStore } = useMobxStore();
-
+  const { currentProjectDetails } = projectStore;
+  const { currentProjectRole } = userStore;
+  const isAdmin = currentProjectRole === 20;
   // hooks
   const { setToastAlert } = useToast();
-
-  // derived values
-  const memberDetails = userStore.projectMemberInfo;
-  const isAdmin = memberDetails?.role === 20;
-  const projectDetails = projectStore.project_details[projectId?.toString()!];
-
+  // form info
   const { reset, control } = useForm<IProject>({ defaultValues });
-
+  // fetching user members
   useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
     workspaceSlug && projectId
@@ -47,23 +43,23 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   );
 
   useEffect(() => {
-    if (!projectDetails) return;
+    if (!currentProjectDetails) return;
 
     reset({
-      ...projectDetails,
-      default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
-      project_lead: (projectDetails.project_lead as IUserLite)?.id ?? projectDetails.project_lead,
-      workspace: (projectDetails.workspace as IWorkspace).id,
+      ...currentProjectDetails,
+      default_assignee: currentProjectDetails.default_assignee?.id ?? currentProjectDetails.default_assignee,
+      project_lead: (currentProjectDetails.project_lead as IUserLite)?.id ?? currentProjectDetails.project_lead,
+      workspace: (currentProjectDetails.workspace as IWorkspace).id,
     });
-  }, [projectDetails, reset]);
+  }, [currentProjectDetails, reset]);
 
   const submitChanges = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId) return;
 
     reset({
-      ...projectDetails,
-      default_assignee: projectDetails.default_assignee?.id ?? projectDetails.default_assignee,
-      project_lead: (projectDetails.project_lead as IUserLite)?.id ?? projectDetails.project_lead,
+      ...currentProjectDetails,
+      default_assignee: currentProjectDetails?.default_assignee?.id ?? currentProjectDetails?.default_assignee,
+      project_lead: (currentProjectDetails?.project_lead as IUserLite)?.id ?? currentProjectDetails?.project_lead,
       ...formData,
     });
 
@@ -96,7 +92,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           <div className="flex flex-col gap-2 w-1/2">
             <h4 className="text-sm">Project Lead</h4>
             <div className="">
-              {projectDetails ? (
+              {currentProjectDetails ? (
                 <Controller
                   control={control}
                   name="project_lead"
@@ -121,7 +117,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           <div className="flex flex-col gap-2 w-1/2">
             <h4 className="text-sm">Default Assignee</h4>
             <div className="">
-              {projectDetails ? (
+              {currentProjectDetails ? (
                 <Controller
                   control={control}
                   name="default_assignee"
