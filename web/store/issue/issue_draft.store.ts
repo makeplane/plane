@@ -3,7 +3,7 @@ import { action, observable, runInAction, makeAutoObservable } from "mobx";
 // services
 import { IssueDraftService } from "services/issue";
 // types
-import type { IIssue, IUser } from "types";
+import type { IIssue } from "types";
 
 export class DraftIssuesStore {
   issues: { [key: string]: IIssue } = {};
@@ -58,23 +58,15 @@ export class DraftIssuesStore {
 
   getIssueById = async (workspaceSlug: string, projectId: string, issueId: string): Promise<IIssue> => {
     if (this.issues[issueId]) return this.issues[issueId];
-
-    try {
-      const issueResponse: IIssue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId);
-
-      const issues = {
-        ...this.issues,
-        [issueId]: { ...issueResponse },
-      };
-
-      runInAction(() => {
-        this.issues = issues;
-      });
-
-      return issueResponse;
-    } catch (error) {
-      throw error;
-    }
+    const issueResponse: IIssue = await this.issueDraftService.getDraftIssueById(workspaceSlug, projectId, issueId);
+    const issues = {
+      ...this.issues,
+      [issueId]: { ...issueResponse },
+    };
+    runInAction(() => {
+      this.issues = issues;
+    });
+    return issueResponse;
   };
 
   /**
@@ -86,37 +78,18 @@ export class DraftIssuesStore {
    * @returns {IIssue}
    */
 
-  createDraftIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueForm: IIssue,
-    user: IUser
-  ): Promise<IIssue> => {
-    try {
-      const issueResponse = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, issueForm);
-
-      const issues = {
+  createDraftIssue = async (workspaceSlug: string, projectId: string, issueForm: IIssue): Promise<IIssue> => {
+    const issueResponse = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, issueForm);
+    runInAction(() => {
+      this.issues = {
         ...this.issues,
         [issueResponse.id]: { ...issueResponse },
       };
-
-      runInAction(() => {
-        this.issues = issues;
-      });
-      return issueResponse;
-    } catch (error) {
-      console.error("Creating issue error", error);
-      throw error;
-    }
+    });
+    return issueResponse;
   };
 
-  updateDraftIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    issueForm: Partial<IIssue>,
-    user: IUser
-  ) => {
+  updateDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string, issueForm: Partial<IIssue>) => {
     // keep a copy of the issue in the store
     const originalIssue = { ...this.issues[issueId] };
 
@@ -152,7 +125,7 @@ export class DraftIssuesStore {
     }
   };
 
-  deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string, user: IUser) => {
+  deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const issues = { ...this.issues };
     delete issues[issueId];
 

@@ -100,29 +100,19 @@ class UserStore implements IUserStore {
   };
 
   fetchCurrentUserSettings = async () => {
-    try {
-      const response = await this.userService.currentUserSettings();
-      if (response) {
-        runInAction(() => {
-          this.currentUserSettings = response;
-        });
-      }
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.userService.currentUserSettings();
+    runInAction(() => {
+      this.currentUserSettings = response;
+    });
+    return response;
   };
 
   fetchUserDashboardInfo = async (workspaceSlug: string, month: number) => {
-    try {
-      const response = await this.userService.userWorkspaceDashboard(workspaceSlug, month);
-      runInAction(() => {
-        this.dashboardInfo = response;
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.userService.userWorkspaceDashboard(workspaceSlug, month);
+    runInAction(() => {
+      this.dashboardInfo = response;
+    });
+    return response;
   };
 
   fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
@@ -176,20 +166,22 @@ class UserStore implements IUserStore {
         return response;
       }
     } catch (error) {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          is_tour_completed: false,
+        } as IUser;
+      });
       throw error;
     }
   };
 
   updateCurrentUser = async (data: Partial<IUser>) => {
-    try {
-      const response = await this.userService.updateUser(data);
-      runInAction(() => {
-        this.currentUser = response;
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
+    const response = await this.userService.updateUser(data);
+    runInAction(() => {
+      this.currentUser = response;
+    });
+    return response;
   };
 
   updateCurrentUserTheme = async (theme: string) => {
@@ -208,6 +200,13 @@ class UserStore implements IUserStore {
       } as IUser);
       return response;
     } catch (error) {
+      const response = await this.userService.currentUser();
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          theme: response.theme,
+        } as IUser;
+      });
       throw error;
     }
   };

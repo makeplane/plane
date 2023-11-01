@@ -62,7 +62,7 @@ export class UserService extends APIService {
       });
   }
 
-  async updateUser(data: Partial<IUser>): Promise<any> {
+  async updateUser(data: Partial<IUser>): Promise<IUser> {
     return this.patch("/api/users/me/", data)
       .then((response) => response?.data)
       .catch((error) => {
