@@ -53,7 +53,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
         list.length > 0 &&
         list.map((_list: any) => (
           <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
-            <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3">
+            <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90">
               <ListGroupByHeaderRoot
                 column_id={getValueFromObject(_list, listKey) as string}
                 column_value={_list}
