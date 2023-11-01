@@ -522,6 +522,11 @@ export class ProjectStore implements IProjectStore {
   };
 
   joinProject = async (workspaceSlug: string, projectIds: string[]) => {
+    const newPermissions: { [projectId: string]: boolean } = {};
+    projectIds.forEach((projectId) => {
+      newPermissions[projectId] = true;
+    });
+
     try {
       this.loader = true;
       this.error = null;
@@ -530,6 +535,10 @@ export class ProjectStore implements IProjectStore {
       await this.fetchProjects(workspaceSlug);
 
       runInAction(() => {
+        this.rootStore.user.hasPermissionToProject = {
+          ...this.rootStore.user.hasPermissionToProject,
+          ...newPermissions,
+        };
         this.loader = false;
         this.error = null;
       });
