@@ -78,7 +78,7 @@ def archive_old_issues():
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
-                            current_instance=None,
+                            current_instance=json.dumps({"archived_at": None}),
                             subscriber=False,
                             epoch=int(timezone.now().timestamp())
                         )

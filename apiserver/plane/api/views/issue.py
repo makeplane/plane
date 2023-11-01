@@ -1100,7 +1100,7 @@ class IssueArchiveViewSet(BaseViewSet):
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder),
             epoch=int(timezone.now().timestamp()),
         )
 
