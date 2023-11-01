@@ -1086,8 +1086,6 @@ class IssueArchiveViewSet(BaseViewSet):
             archived_at__isnull=False,
             pk=pk,
         )
-        issue.archived_at = None
-        issue.save()
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": None}),
@@ -1099,6 +1097,8 @@ class IssueArchiveViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
         )
+        issue.archived_at = None
+        issue.save()
 
         return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
