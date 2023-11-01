@@ -43,7 +43,7 @@ export const FilterAssignees: React.FC<Props> = (props) => {
                     key={`assignees-${member.id}`}
                     isChecked={appliedFilters?.includes(member.id) ? true : false}
                     onClick={() => handleUpdate(member.id)}
-                    icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} />}
+                    icon={<Avatar name={member.display_name} src={member.avatar} showTooltip={false} size="sm" />}
                     title={member.display_name}
                   />
                 ))}

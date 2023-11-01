@@ -130,8 +130,6 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       </div>
     );
 
-  console.log("cycle", cycle);
-
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
 

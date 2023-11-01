@@ -2,7 +2,7 @@ import React from "react";
 // ui
 import { Tooltip } from "../tooltip";
 
-export type TAvatarSize = "sm" | "md" | "base" | "lg";
+export type TAvatarSize = "sm" | "md" | "base" | "lg" | number;
 
 type Props = {
   /**
@@ -32,6 +32,12 @@ type Props = {
    * @default "md"
    */
   size?: TAvatarSize;
+  /**
+   * The shape of the avatar
+   * Possible values: "circle", "square"
+   * @default "circle"
+   */
+  shape?: "circle" | "square";
   /**
    * The source of the avatar image
    */
@@ -73,6 +79,21 @@ export const getSizeInfo = (size: TAvatarSize) => {
   }
 };
 
+export const getBorderRadius = (shape: "circle" | "square") => {
+  switch (shape) {
+    case "circle":
+      return "rounded-full";
+    case "square":
+      return "rounded-md";
+    default:
+      return "rounded-full";
+  }
+};
+
+export const isAValidNumber = (value: any) => {
+  return typeof value === "number" && !isNaN(value);
+};
+
 export const Avatar: React.FC<Props> = (props) => {
   const {
     name,
@@ -81,6 +102,7 @@ export const Avatar: React.FC<Props> = (props) => {
     fallbackTextColor,
     showTooltip = true,
     size = "md",
+    shape = "circle",
     src,
   } = props;
 
@@ -93,13 +115,29 @@ export const Avatar: React.FC<Props> = (props) => {
       disabled={!showTooltip}
     >
       <div
-        className={`${sizeInfo.avatarSize} overflow-hidden rounded-full grid place-items-center`}
+        className={`${
+          !isAValidNumber(size) ? sizeInfo.avatarSize : ""
+        } overflow-hidden grid place-items-center ${getBorderRadius(shape)}`}
+        style={
+          isAValidNumber(size)
+            ? {
+                height: `${size}px`,
+                width: `${size}px`,
+              }
+            : {}
+        }
       >
         {src ? (
-          <img src={src} className="h-full w-full rounded-full" alt={name} />
+          <img
+            src={src}
+            className={`h-full w-full ${getBorderRadius(shape)}`}
+            alt={name}
+          />
         ) : (
           <div
-            className={`${sizeInfo.fontSize} grid place-items-center h-full w-full rounded-full`}
+            className={`${
+              sizeInfo.fontSize
+            } grid place-items-center h-full w-full ${getBorderRadius(shape)}`}
             style={{
               backgroundColor:
                 fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",

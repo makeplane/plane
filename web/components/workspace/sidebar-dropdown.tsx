@@ -238,7 +238,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!themeStore.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar name={user?.display_name} src={user?.avatar} size="lg" />
+            <Avatar name={user?.display_name} src={user?.avatar} size={32} shape="square" />
           </Menu.Button>
 
           <Transition

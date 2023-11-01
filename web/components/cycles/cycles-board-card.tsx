@@ -193,7 +193,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
               {cycle.assignees.length > 0 && (
                 <Tooltip tooltipContent={`${cycle.assignees.length} Members`}>
                   <div className="flex items-center gap-1 cursor-default">
-                    <AvatarGroup>
+                    <AvatarGroup showTooltip={false}>
                       {cycle.assignees.map((assignee) => (
                         <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
                       ))}

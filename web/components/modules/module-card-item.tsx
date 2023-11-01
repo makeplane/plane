@@ -163,7 +163,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
                   <div className="flex items-center gap-1 cursor-default">
-                    <AvatarGroup>
+                    <AvatarGroup showTooltip={false}>
                       {module.members_detail.map((member) => (
                         <Avatar key={member.id} name={member.display_name} src={member.avatar} />
                       ))}

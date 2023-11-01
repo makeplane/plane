@@ -2,7 +2,7 @@ import React from "react";
 // ui
 import { Tooltip } from "../tooltip";
 // types
-import { TAvatarSize, getSizeInfo } from "./avatar";
+import { TAvatarSize, getSizeInfo, isAValidNumber } from "./avatar";
 
 type Props = {
   /**
@@ -64,7 +64,17 @@ export const AvatarGroup: React.FC<Props> = (props) => {
           disabled={!showTooltip}
         >
           <div
-            className={`${sizeInfo.avatarSize} ring-1 ring-custom-border-200 bg-custom-primary-500 text-white rounded-full grid place-items-center text-[9px]`}
+            className={`${
+              !isAValidNumber(size) ? sizeInfo.avatarSize : ""
+            } ring-1 ring-custom-border-200 bg-custom-primary-500 text-white rounded-full grid place-items-center text-[9px]`}
+            style={
+              isAValidNumber(size)
+                ? {
+                    width: size,
+                    height: size,
+                  }
+                : {}
+            }
           >
             +{totalAvatars - max}
           </div>
