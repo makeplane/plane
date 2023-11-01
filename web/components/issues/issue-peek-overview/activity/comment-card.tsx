@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
@@ -47,6 +48,8 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
   const showEditorRef = React.useRef<any>(null);
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, projectId)
 
   const {
     formState: { isSubmitting },
@@ -121,6 +124,8 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
                 }}
+                mentionSuggestions={editorSuggestions.mentionSuggestions}
+                mentionHighlights={editorSuggestions.mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">

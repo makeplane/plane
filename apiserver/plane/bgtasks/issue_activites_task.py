@@ -1534,6 +1534,8 @@ def issue_activity(
                 IssueActivitySerializer(issue_activities_created, many=True).data,
                 cls=DjangoJSONEncoder,
             ),
+            requested_data=requested_data,
+            current_instance=current_instance
         )
 
         return

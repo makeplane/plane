@@ -30,6 +30,7 @@ import { Sparkle, X } from "lucide-react";
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const aiService = new AIService();
 const fileService = new FileService();
@@ -120,6 +121,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
 
   const {
     formState: { errors, isSubmitting },
@@ -436,6 +439,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
+                        mentionHighlights={editorSuggestions.mentionHighlights}
+                        mentionSuggestions={editorSuggestions.mentionSuggestions}
                       />
                     )}
                   />

@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 
-// services
-import { FileService } from "services/file.service";
+// react-hook-form
+import { useForm } from "react-hook-form";
 // icons
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
+// service
+import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
 import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-text-editor";
+
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
-
-// services
-const fileService = new FileService();
 
 type Props = {
   comment: IIssueComment;
@@ -26,21 +25,21 @@ type Props = {
   onSubmit: (commentId: string, data: Partial<IIssueComment>) => void;
   showAccessSpecifier?: boolean;
   workspaceSlug: string;
+  disabled?: boolean;
 };
 
-export const CommentCard: React.FC<Props> = ({
-  comment,
-  handleCommentDeletion,
-  onSubmit,
-  showAccessSpecifier = false,
-  workspaceSlug,
-}) => {
+// services
+const fileService = new FileService();
+
+export const CommentCard: React.FC<Props> = (props) => {
+  const { comment, handleCommentDeletion, onSubmit, showAccessSpecifier = false, workspaceSlug, disabled } = props;
+
   const { user } = useUser();
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, comment.project_detail.id)
 
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
-
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, comment.project_detail.id)
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -90,7 +89,7 @@ export const CommentCard: React.FC<Props> = ({
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
-          <MessageSquare className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
+          <MessageSquare className="h-3.5 w-3.5 text-custom-text-200" />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -104,9 +103,9 @@ export const CommentCard: React.FC<Props> = ({
           <form className={`flex-col gap-2 ${isEditing ? "flex" : "hidden"}`}>
             <div>
               <LiteTextEditorWithRef
-                onEnterKeyPress={handleSubmit(onEnter)}
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                 deleteFile={fileService.deleteImage}
+                onEnterKeyPress={handleSubmit(onEnter)}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}
@@ -121,9 +120,8 @@ export const CommentCard: React.FC<Props> = ({
             </div>
             <div className="flex gap-1 self-end">
               <button
-                type="button"
-                onClick={handleSubmit(onEnter)}
-                disabled={isSubmitting}
+                type="submit"
+                disabled={isSubmitting || disabled}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
                 <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
@@ -148,11 +146,11 @@ export const CommentCard: React.FC<Props> = ({
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
             />
-            <CommentReaction projectId={comment.project} commentId={comment.id} />
+            <CommentReaction readonly={disabled} projectId={comment.project} commentId={comment.id} />
           </div>
         </div>
       </div>
-      {user?.id === comment.actor && (
+      {user?.id === comment.actor && !disabled && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
             <Pencil className="h-3 w-3" />
