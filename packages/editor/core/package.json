@@ -41,6 +41,8 @@
     "@tiptap/extension-task-list": "^2.1.7",
     "@tiptap/extension-text-style": "^2.1.11",
     "@tiptap/extension-underline": "^2.1.7",
+    "@tiptap/prosemirror-tables": "^1.1.4",
+    "jsx-dom-cjs": "^8.0.3",
     "@tiptap/pm": "^2.1.7",
     "@tiptap/react": "^2.1.7",
     "@tiptap/starter-kit": "^2.1.10",
