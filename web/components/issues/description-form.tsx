@@ -114,7 +114,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                   onChange(e.target.value);
                   debouncedFormSave();
                 }}
-                required={true}
+                required
                 className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.description)}
                 role="textbox"

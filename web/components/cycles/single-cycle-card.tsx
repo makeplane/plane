@@ -334,7 +334,7 @@ export const SingleCycleCard: React.FC<TSingleStatProps> = ({
                     position="bottom"
                   >
                     <div className="flex w-full items-center">
-                      <LinearProgressIndicator data={progressIndicatorData} noTooltip={true} />
+                      <LinearProgressIndicator data={progressIndicatorData} noTooltip />
                     </div>
                   </Tooltip>
                   <Disclosure.Button>

@@ -57,7 +57,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
             onChange={handleState}
             states={states}
             disabled={false}
-            hideDropdownArrow={true}
+            hideDropdownArrow
           />
         </div>
       </div>
@@ -75,7 +75,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
             value={issue?.assignees || null}
             onChange={(ids: string[]) => handleAssignee(ids)}
             disabled={false}
-            hideDropdownArrow={true}
+            hideDropdownArrow
             members={members}
           />
         </div>
@@ -94,7 +94,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
             value={issue?.priority || null}
             onChange={handlePriority}
             disabled={false}
-            hideDropdownArrow={true}
+            hideDropdownArrow
           />
         </div>
       </div>
