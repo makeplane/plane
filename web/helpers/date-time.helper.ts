@@ -1,4 +1,9 @@
-export const renderDateFormat = (date: string | Date | null) => {
+export const addDays = ({ date, days }: { date: Date; days: number }): Date => {
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
+export const renderDateFormat = (date: string | Date | null, dayFirst: boolean = false) => {
   if (!date) return "N/A";
 
   var d = new Date(date),
@@ -9,7 +14,7 @@ export const renderDateFormat = (date: string | Date | null) => {
   if (month.length < 2) month = "0" + month;
   if (day.length < 2) day = "0" + day;
 
-  return [year, month, day].join("-");
+  return dayFirst ? [day, month, year].join("-") : [year, month, day].join("-");
 };
 
 export const renderShortNumericDateFormat = (date: string | Date) =>

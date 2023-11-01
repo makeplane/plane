@@ -121,3 +121,9 @@ ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
+
+# Base API URL
+BASE_API_URL = os.environ.get("BASE_API_URL", "http://localhost:8000")
+
+# Webhook API
+ENABLE_WEBHOOK_API = os.environ.get("ENABLE_WEBHOOK_API", "0") == "1"

@@ -14,6 +14,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# To access plane api through api tokens
+ENABLE_WEBHOOK_API = os.environ.get("ENABLE_WEBHOOK_API", "0") == "1"
 
 # Application definition
 
@@ -38,6 +40,11 @@ INSTALLED_APPS = [
     "django_celery_beat",
 ]
 
+if ENABLE_WEBHOOK_API:
+    INSTALLED_APPS.append(
+        "plane.proxy",
+    )
+
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -49,7 +56,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
- ]
+    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -212,6 +220,10 @@ SIMPLE_JWT = {
 }
 
 CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_IMPORTS = ("plane.bgtasks.issue_automation_task","plane.bgtasks.exporter_expired_task")
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_IMPORTS = (
+    "plane.bgtasks.issue_automation_task",
+    "plane.bgtasks.exporter_expired_task",
+)
+

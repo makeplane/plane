@@ -15,7 +15,7 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, WebhookMixin
 from plane.api.serializers import (
     ModuleWriteSerializer,
     ModuleSerializer,
@@ -41,11 +41,12 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
 
 
-class ModuleViewSet(BaseViewSet):
+class ModuleViewSet(WebhookMixin, BaseViewSet):
     model = Module
     permission_classes = [
         ProjectEntityPermission,
     ]
+    webhook_event = "module"
 
     def get_serializer_class(self):
         return (

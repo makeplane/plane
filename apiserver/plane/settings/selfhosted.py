@@ -127,3 +127,8 @@ OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
 GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
 
+# Base API URL
+BASE_API_URL = os.environ.get("BASE_API_URL", "")
+
+# Webhook API
+ENABLE_WEBHOOK_API = os.environ.get("ENABLE_WEBHOOK_API", "0") == "1"

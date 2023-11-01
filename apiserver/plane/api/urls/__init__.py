@@ -21,10 +21,17 @@ from .unsplash import urlpatterns as unsplash_urls
 from .user import urlpatterns as user_urls
 from .views import urlpatterns as view_urls
 from .workspace import urlpatterns as workspace_urls
+from .api import urlpatterns as api_urls
+from .webhook import urlpatterns as webhook_urls
+
+
+# Django imports
+from django.conf import settings
 
 
 urlpatterns = [
     *analytic_urls,
+    *api_urls,
     *asset_urls,
     *authentication_urls,
     *configuration_urls,
@@ -48,3 +55,9 @@ urlpatterns = [
     *view_urls,
     *workspace_urls,
 ]
+
+if settings.ENABLE_WEBHOOK_API:
+    urlpatterns += webhook_urls
+
+if settings.ENABLE_WEBHOOK_API and settings.BASE_API_URL:
+    urlpatterns += api_urls
