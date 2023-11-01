@@ -48,6 +48,7 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
           icon={<Icon priority={priority?.key} />}
           title={priority?.title || ""}
           count={issues_count}
+          issuePayload={{ priority: priority?.key }}
         />
       )}
     </>

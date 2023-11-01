@@ -30,16 +30,20 @@ const defaultValues: Partial<IWorkspace> = {
 const fileService = new FileService();
 
 export const WorkspaceDetails: React.FC = observer(() => {
+  // states
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-
+  // store
   const { workspace: workspaceStore, user: userStore } = useMobxStore();
   const activeWorkspace = workspaceStore.currentWorkspace;
-
+  const { currentWorkspaceRole } = userStore;
+  const isAdmin = currentWorkspaceRole === 20;
+  // hooks
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
     control,
@@ -102,8 +106,6 @@ export const WorkspaceDetails: React.FC = observer(() => {
   useEffect(() => {
     if (activeWorkspace) reset({ ...activeWorkspace });
   }, [activeWorkspace, reset]);
-
-  const isAdmin = userStore.workspaceMemberInfo?.role === 20;
 
   if (!activeWorkspace)
     return (

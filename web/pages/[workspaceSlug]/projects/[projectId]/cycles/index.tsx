@@ -27,6 +27,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query as {
@@ -78,19 +79,18 @@ const ProjectCyclesPage: NextPage = observer(() => {
     }
   }, [projectId, cycleStore, handleCurrentView, handleCurrentLayout]);
 
-  const projectDetails = projectId ? projectStore.project_details[projectId] : null;
   const cycleView = cycleStore?.cycleView;
   const cycleLayout = cycleStore?.cycleLayout;
 
   return (
-    <AppLayout header={<CyclesHeader name={projectDetails?.name} />} withProjectWrapper>
+    <AppLayout header={<CyclesHeader name={currentProjectDetails?.name} />} withProjectWrapper>
       <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         isOpen={createModal}
         handleClose={() => setCreateModal(false)}
       />
-      {projectDetails?.total_cycles === 0 ? (
+      {currentProjectDetails?.total_cycles === 0 ? (
         <div className="h-full grid place-items-center">
           <EmptyState
             title="Plan your project with cycles"

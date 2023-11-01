@@ -150,6 +150,17 @@ def filter_assignees(params, filter, method):
             filter["assignees__in"] = params.get("assignees")
     return filter
 
+def filter_mentions(params, filter, method):
+    if method == "GET":
+        mentions = [item for item in params.get("mentions").split(",") if item != 'null']
+        mentions = filter_valid_uuids(mentions)
+        if len(mentions) and "" not in mentions:
+            filter["issue_mention__mention__id__in"] = mentions
+    else:
+        if params.get("mentions", None) and len(params.get("mentions")) and params.get("mentions") != 'null':
+            filter["issue_mention__mention__id__in"] = params.get("mentions")
+    return filter
+
 
 def filter_created_by(params, filter, method):
     if method == "GET":
@@ -326,6 +337,7 @@ def issue_filters(query_params, method):
         "parent": filter_parent,
         "labels": filter_labels,
         "assignees": filter_assignees,
+        "mentions": filter_mentions,
         "created_by": filter_created_by,
         "name": filter_name,
         "created_at": filter_created_at,

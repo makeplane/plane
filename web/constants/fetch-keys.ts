@@ -6,6 +6,7 @@ const paramsToKey = (params: any) => {
     state,
     state_group,
     priority,
+    mentions,
     assignees,
     created_by,
     labels,
@@ -22,6 +23,7 @@ const paramsToKey = (params: any) => {
   let stateKey = state ? state.split(",") : [];
   let stateGroupKey = state_group ? state_group.split(",") : [];
   let priorityKey = priority ? priority.split(",") : [];
+  let mentionsKey = mentions ? mentions.split(",") : [];
   let assigneesKey = assignees ? assignees.split(",") : [];
   let createdByKey = created_by ? created_by.split(",") : [];
   let labelsKey = labels ? labels.split(",") : [];
@@ -40,11 +42,12 @@ const paramsToKey = (params: any) => {
   stateGroupKey = stateGroupKey.sort().join("_");
   priorityKey = priorityKey.sort().join("_");
   assigneesKey = assigneesKey.sort().join("_");
+  mentionsKey = mentionsKey.sort().join("_");
   createdByKey = createdByKey.sort().join("_");
   labelsKey = labelsKey.sort().join("_");
   subscriberKey = subscriberKey.sort().join("_");
 
-  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
+  return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${startTargetDate}_${subscriberKey}`;
 };
 
 const myIssuesParamsToKey = (params: any) => {
