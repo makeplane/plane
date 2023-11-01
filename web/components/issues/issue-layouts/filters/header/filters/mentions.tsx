@@ -3,8 +3,7 @@ import React, { useState } from "react";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
-import { Avatar } from "components/ui";
-import { Loader } from "@plane/ui";
+import { Loader, Avatar } from "@plane/ui";
 // types
 import { IUserLite } from "types";
 
@@ -45,7 +44,7 @@ export const FilterMentions: React.FC<Props> = (props) => {
                     key={`mentions-${member.id}`}
                     isChecked={appliedFilters?.includes(member.id) ? true : false}
                     onClick={() => handleUpdate(member.id)}
-                    icon={<Avatar user={member} height="18px" width="18px" />}
+                    icon={<Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} />}
                     title={member.display_name}
                   />
                 ))}
