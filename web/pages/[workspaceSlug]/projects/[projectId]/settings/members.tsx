@@ -1,6 +1,6 @@
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import { ProjectSettingHeader } from "components/headers";
 import { ProjectMemberList, ProjectSettingsMemberDefaults } from "components/project";

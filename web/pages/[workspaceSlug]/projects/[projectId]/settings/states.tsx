@@ -1,9 +1,9 @@
 import React from "react";
 // layout
 import { AppLayout } from "layouts/app-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import { ProjectSettingStateList } from "components/states";
-import { ProjectSettingLayout } from "layouts/setting-layout";
 import { ProjectSettingHeader } from "components/headers";
 // types
 import type { NextPage } from "next";
