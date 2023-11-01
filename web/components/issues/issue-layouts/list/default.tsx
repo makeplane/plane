@@ -17,14 +17,7 @@ export interface IGroupByList {
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   is_list?: boolean;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  projects: IProject[] | null;
-  stateGroups: any;
-  priorities: any;
   enableQuickIssueCreate?: boolean;
-  estimates: IEstimatePoint[] | null;
 }
 
 const GroupByList: React.FC<IGroupByList> = observer((props) => {
@@ -37,13 +30,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     quickActions,
     display_properties,
     is_list = false,
-    states,
-    labels,
-    members,
-    projects,
-    stateGroups,
-    priorities,
-    estimates,
     enableQuickIssueCreate,
   } = props;
 
@@ -70,10 +56,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                 handleIssues={handleIssues}
                 quickActions={quickActions}
                 display_properties={display_properties}
-                states={states}
-                labels={labels}
-                members={members}
-                estimates={estimates}
               />
             )}
             {enableQuickIssueCreate && (
@@ -121,7 +103,7 @@ export const List: React.FC<IList> = observer((props) => {
     projects,
     stateGroups,
     priorities,
-    estimates,
+
     enableQuickIssueCreate,
   } = props;
 
@@ -137,13 +119,6 @@ export const List: React.FC<IList> = observer((props) => {
           quickActions={quickActions}
           display_properties={display_properties}
           is_list
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -157,13 +132,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -177,13 +145,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -197,13 +158,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -217,13 +171,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -237,13 +184,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -257,13 +197,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}
@@ -277,13 +210,6 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          states={states}
-          labels={labels}
-          members={members}
-          projects={projects}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          estimates={estimates}
           enableQuickIssueCreate={enableQuickIssueCreate}
         />
       )}

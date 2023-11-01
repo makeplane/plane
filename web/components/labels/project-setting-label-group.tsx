@@ -1,72 +1,41 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Disclosure, Transition } from "@headlessui/react";
-// services
-import { IssueLabelService } from "services/issue";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { CustomMenu } from "@plane/ui";
+import { CustomMenu } from "components/ui";
 // icons
 import { ChevronDown, Component, Pencil, Plus, Trash2, X } from "lucide-react";
 // types
-import { IUser, IIssueLabels } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import { IIssueLabels } from "types";
 
 type Props = {
   label: IIssueLabels;
   labelChildren: IIssueLabels[];
-  addLabelToGroup: (parentLabel: IIssueLabels) => void;
-  editLabel: (label: IIssueLabels) => void;
   handleLabelDelete: () => void;
-  user: IUser | undefined;
+  editLabel: (label: IIssueLabels) => void;
+  addLabelToGroup: (parentLabel: IIssueLabels) => void;
 };
 
-// services
-const issueLabelService = new IssueLabelService();
+export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
+  const { label, labelChildren, addLabelToGroup, editLabel, handleLabelDelete } = props;
 
-export const SingleLabelGroup: React.FC<Props> = ({
-  label,
-  labelChildren,
-  addLabelToGroup,
-  editLabel,
-  handleLabelDelete,
-  user,
-}) => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  // store
+  const { projectLabel: projectLabelStore } = useMobxStore();
 
   const removeFromGroup = (label: IIssueLabels) => {
     if (!workspaceSlug || !projectId) return;
 
-    mutate<IIssueLabels[]>(
-      PROJECT_ISSUE_LABELS(projectId as string),
-      (prevData) =>
-        prevData?.map((l) => {
-          if (l.id === label.id) return { ...l, parent: null };
-
-          return l;
-        }),
-      false
-    );
-
-    issueLabelService
-      .patchIssueLabel(
-        workspaceSlug as string,
-        projectId as string,
-        label.id,
-        {
-          parent: null,
-        },
-        user
-      )
-      .then(() => {
-        mutate(PROJECT_ISSUE_LABELS(projectId as string));
-      });
+    projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+      parent: null,
+    });
   };
 
   return (
@@ -163,7 +132,7 @@ export const SingleLabelGroup: React.FC<Props> = ({
 
                       <div className="flex items-center">
                         <button className="flex items-center justify-start gap-2" onClick={handleLabelDelete}>
-                          <X className="h-4 w-4 text-custom-sidebar-text-400 flex-shrink-0" />
+                          <X className="h-[18px] w-[18px] text-custom-sidebar-text-400 flex-shrink-0" />
                         </button>
                       </div>
                     </div>
@@ -176,4 +145,4 @@ export const SingleLabelGroup: React.FC<Props> = ({
       )}
     </Disclosure>
   );
-};
+});

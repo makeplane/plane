@@ -11,21 +11,17 @@ import { IssuePropertyDate } from "../properties/date";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IEstimatePoint, IIssue, IIssueLabels, IState, IUserLite, TIssuePriorities } from "types";
+import { IIssue, IState, TIssuePriorities } from "types";
 
 export interface IKanBanProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue) => void;
   display_properties: any;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties, states, labels, members, estimates } = props;
+  const { columnId: group_id, issue, handleIssues, display_properties } = props;
 
   const handleState = (state: IState) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
@@ -59,13 +55,13 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
     <div className="relative flex gap-2 overflow-x-auto whitespace-nowrap">
       {/* basic properties */}
       {/* state */}
-      {display_properties && display_properties?.state && states && (
+      {display_properties && display_properties?.state && (
         <IssuePropertyState
+          projectId={issue?.project_detail?.id || null}
           value={issue?.state_detail || null}
           hideDropdownArrow
           onChange={handleState}
           disabled={false}
-          states={states}
         />
       )}
 
@@ -80,24 +76,24 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* label */}
-      {display_properties && display_properties?.labels && labels && (
+      {display_properties && display_properties?.labels && (
         <IssuePropertyLabels
+          projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
           onChange={handleLabel}
-          labels={labels}
           disabled={false}
           hideDropdownArrow
         />
       )}
 
       {/* assignee */}
-      {display_properties && display_properties?.assignee && members && (
+      {display_properties && display_properties?.assignee && (
         <IssuePropertyAssignee
+          projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={false}
-          members={members}
         />
       )}
 
@@ -124,8 +120,8 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {/* estimates */}
       {display_properties && display_properties?.estimate && (
         <IssuePropertyEstimates
+          projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
-          estimatePoints={estimates}
           hideDropdownArrow
           onChange={handleEstimate}
           disabled={false}

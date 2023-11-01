@@ -99,13 +99,6 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-            estimates={null}
           />
         ) : (
           <KanBanSwimLanes

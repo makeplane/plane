@@ -13,7 +13,9 @@ type Props = {
   data?: any;
 };
 
-const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, handleDelete }) => {
+export const ConfirmProjectMemberRemove: React.FC<Props> = (props) => {
+  const { isOpen, onClose, data, handleDelete } = props;
+
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const handleClose = () => {
@@ -89,5 +91,3 @@ const ConfirmProjectMemberRemove: React.FC<Props> = ({ isOpen, onClose, data, ha
     </Transition.Root>
   );
 };
-
-export default ConfirmProjectMemberRemove;

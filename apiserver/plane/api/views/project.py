@@ -482,6 +482,83 @@ class ProjectMemberViewSet(BaseViewSet):
             .select_related("workspace", "workspace__owner")
         )
 
+    def create(self, request, slug, project_id):
+        members = request.data.get("members", [])
+
+        # get the project
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+
+        if not len(members):
+            return Response(
+                {"error": "Atleast one member is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        bulk_project_members = []
+        bulk_issue_props = []
+
+        project_members = (
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member_id__in=[member.get("member_id") for member in members],
+            )
+            .values("member_id", "sort_order")
+            .order_by("sort_order")
+        )
+
+        for member in members:
+            sort_order = [
+                project_member.get("sort_order")
+                for project_member in project_members
+                if str(project_member.get("member_id")) == str(member.get("member_id"))
+            ]
+            bulk_project_members.append(
+                ProjectMember(
+                    member_id=member.get("member_id"),
+                    role=member.get("role", 10),
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                    sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
+                )
+            )
+            bulk_issue_props.append(
+                IssueProperty(
+                    user_id=member.get("member_id"),
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                )
+            )
+
+        project_members = ProjectMember.objects.bulk_create(
+            bulk_project_members,
+            batch_size=10,
+            ignore_conflicts=True,
+        )
+
+        _ = IssueProperty.objects.bulk_create(
+            bulk_issue_props, batch_size=10, ignore_conflicts=True
+        )
+
+        serializer = ProjectMemberSerializer(project_members, many=True)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def list(self, request, slug, project_id):
+        project_member = ProjectMember.objects.get(
+            member=request.user, workspace__slug=slug, project_id=project_id
+        )
+
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            member__is_bot=False,
+        ).select_related("project", "member", "workspace")
+
+        if project_member.role > 10:
+            serializer = ProjectMemberAdminSerializer(project_members, many=True)
+        else:
+            serializer = ProjectMemberSerializer(project_members, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id
@@ -565,73 +642,6 @@ class ProjectMemberViewSet(BaseViewSet):
         ).delete()
         project_member.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class AddMemberToProjectEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
-    def post(self, request, slug, project_id):
-        members = request.data.get("members", [])
-
-        # get the project
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
-
-        if not len(members):
-            return Response(
-                {"error": "Atleast one member is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        bulk_project_members = []
-        bulk_issue_props = []
-
-        project_members = (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                member_id__in=[member.get("member_id") for member in members],
-            )
-            .values("member_id", "sort_order")
-            .order_by("sort_order")
-        )
-
-        for member in members:
-            sort_order = [
-                project_member.get("sort_order")
-                for project_member in project_members
-                if str(project_member.get("member_id"))
-                == str(member.get("member_id"))
-            ]
-            bulk_project_members.append(
-                ProjectMember(
-                    member_id=member.get("member_id"),
-                    role=member.get("role", 10),
-                    project_id=project_id,
-                    workspace_id=project.workspace_id,
-                    sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
-                )
-            )
-            bulk_issue_props.append(
-                IssueProperty(
-                    user_id=member.get("member_id"),
-                    project_id=project_id,
-                    workspace_id=project.workspace_id,
-                )
-            )
-
-        project_members = ProjectMember.objects.bulk_create(
-            bulk_project_members,
-            batch_size=10,
-            ignore_conflicts=True,
-        )
-
-        _ = IssueProperty.objects.bulk_create(
-            bulk_issue_props, batch_size=10, ignore_conflicts=True
-        )
-
-        serializer = ProjectMemberSerializer(project_members, many=True)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class AddTeamToProjectEndpoint(BaseAPIView):
@@ -930,21 +940,6 @@ class ProjectDeployBoardViewSet(BaseViewSet):
         project_deploy_board.save()
 
         serializer = ProjectDeployBoardSerializer(project_deploy_board)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class ProjectMemberEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        project_members = ProjectMember.objects.filter(
-            project_id=project_id,
-            workspace__slug=slug,
-            member__is_bot=False,
-        ).select_related("project", "member", "workspace")
-        serializer = ProjectMemberSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
