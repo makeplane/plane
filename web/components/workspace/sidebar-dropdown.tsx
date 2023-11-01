@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 import { useTheme } from "next-themes";
+import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -12,11 +13,8 @@ import useToast from "hooks/use-toast";
 // services
 import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
-// components
-import { Avatar } from "components/ui";
-import { Loader } from "@plane/ui";
-// icons
-import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
+// ui
+import { Avatar, Loader } from "@plane/ui";
 // types
 import { IWorkspace } from "types";
 
@@ -240,7 +238,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!themeStore.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar user={user} height="28px" width="28px" fontSize="14px" />
+            <Avatar name={user?.display_name} src={user?.avatar} size={32} shape="square" />
           </Menu.Button>
 
           <Transition

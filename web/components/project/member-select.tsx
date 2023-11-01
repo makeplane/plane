@@ -1,15 +1,12 @@
 import React from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-
-// store
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
+import { Ban } from "lucide-react";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
-// icon
-import { Ban } from "lucide-react";
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 
 type Props = {
   value: any;
@@ -41,7 +38,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -54,7 +51,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption && <Avatar user={selectedOption} />}
+          {selectedOption && <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />}
           {selectedOption ? (
             selectedOption?.display_name
           ) : (

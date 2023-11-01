@@ -1,16 +1,12 @@
 import { FC, MouseEvent, useState } from "react";
-
 import { useRouter } from "next/router";
-
-// next imports
 import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { CycleCreateUpdateModal, CycleDeleteModal } from "components/cycles";
 // ui
-import { AssigneesList } from "components/ui/avatar";
-import { CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } from "@plane/ui";
+import { Avatar, AvatarGroup, CustomMenu, Tooltip, LayersIcon, CycleGroupIcon } from "@plane/ui";
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
@@ -197,7 +193,11 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
               {cycle.assignees.length > 0 && (
                 <Tooltip tooltipContent={`${cycle.assignees.length} Members`}>
                   <div className="flex items-center gap-1 cursor-default">
-                    <AssigneesList users={cycle.assignees} length={3} />
+                    <AvatarGroup showTooltip={false}>
+                      {cycle.assignees.map((assignee) => (
+                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                      ))}
+                    </AvatarGroup>
                   </div>
                 </Tooltip>
               )}

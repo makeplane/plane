@@ -8,16 +8,15 @@ import { RootStore } from "store/root";
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { DeleteProjectModal, JoinProjectModal } from "components/project";
 // ui
-import { Button, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, Button, Tooltip } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IProject } from "types";
-// components
-import { DeleteProjectModal, JoinProjectModal } from "components/project";
-import { AssigneesList } from "components/ui";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -177,7 +176,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 >
                   {projectMembersIds.length > 0 ? (
                     <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
-                      <AssigneesList userIds={projectMembersIds} length={3} showLength />
+                      <AvatarGroup showTooltip={false}>
+                        {projectMembersIds.map((memberId) => {
+                          const member = project.members?.find((m) => m.id === memberId);
+
+                          if (!member) return null;
+
+                          return (
+                            <Avatar key={member.id} name={member.member__display_name} src={member.member__avatar} />
+                          );
+                        })}
+                      </AvatarGroup>
                     </div>
                   ) : (
                     <span className="text-sm italic text-custom-text-400">No Member Yet</span>

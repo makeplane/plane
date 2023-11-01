@@ -9,8 +9,7 @@ import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList } from "components/ui";
-import { CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
@@ -164,7 +163,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
                   <div className="flex items-center gap-1 cursor-default">
-                    <AssigneesList users={module.members_detail} length={3} />
+                    <AvatarGroup showTooltip={false}>
+                      {module.members_detail.map((member) => (
+                        <Avatar key={member.id} name={member.display_name} src={member.avatar} />
+                      ))}
+                    </AvatarGroup>
                   </div>
                 </Tooltip>
               )}

@@ -1,18 +1,14 @@
 import React from "react";
-
-// icons
-import { PriorityIcon, StateGroupIcon } from "@plane/ui";
+import { X } from "lucide-react";
 // ui
-import { Avatar } from "components/ui";
+import { Avatar, PriorityIcon, StateGroupIcon } from "@plane/ui";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IIssueFilterOptions, IIssueLabels, IState, IUserLite, TStateGroups } from "types";
 // constants
 import { STATE_GROUP_COLORS } from "constants/state";
-import { X } from "lucide-react";
 
 type Props = {
   filters: Partial<IIssueFilterOptions>;
@@ -149,7 +145,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                             key={memberId}
                             className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
                           >
-                            <Avatar user={member} />
+                            <Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} />
                             <span>{member?.display_name}</span>
                             <span
                               className="cursor-pointer"
@@ -173,7 +169,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                             key={`${memberId}-${key}`}
                             className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1 capitalize"
                           >
-                            <Avatar user={member} />
+                            <Avatar name={member?.display_name} src={member?.avatar} />
                             <span>{member?.display_name}</span>
                             <span
                               className="cursor-pointer"
