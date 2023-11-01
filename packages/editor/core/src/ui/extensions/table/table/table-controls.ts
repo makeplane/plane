@@ -67,12 +67,8 @@ export function tableControls() {
         }
 
         const { hoveredTable, hoveredCell } = pluginState.values;
-        if (hoveredTable) {
-          const tableNode = state.doc.nodeAt(hoveredTable.pos);
-          if (!tableNode) {
-            return null;
-          }
-
+        const docSize = state.doc.content.size;
+        if (hoveredTable && hoveredCell && hoveredTable.pos < docSize && hoveredCell.pos < docSize) {
           const decorations = [
             Decoration.node(
               hoveredTable.pos,
