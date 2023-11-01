@@ -128,6 +128,7 @@ class UserStore implements IUserStore {
   fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
     try {
       const response = await this.workspaceService.workspaceMemberMe(workspaceSlug.toString());
+
       runInAction(() => {
         this.workspaceMemberInfo = response;
         this.hasPermissionToWorkspace = true;

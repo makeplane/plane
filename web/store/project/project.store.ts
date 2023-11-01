@@ -530,6 +530,7 @@ export class ProjectStore implements IProjectStore {
       await this.fetchProjects(workspaceSlug);
 
       runInAction(() => {
+        this.rootStore.user.hasPermissionToProject = true;
         this.loader = false;
         this.error = null;
       });
