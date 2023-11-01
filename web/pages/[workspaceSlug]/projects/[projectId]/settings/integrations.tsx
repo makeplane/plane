@@ -11,7 +11,7 @@ import { ProjectSettingLayout } from "layouts/setting-layout";
 import { IntegrationService } from "services/integrations";
 import { ProjectService } from "services/project";
 // components
-import { SingleIntegration } from "components/project";
+import { IntegrationCard } from "components/project";
 import { ProjectSettingHeader } from "components/headers";
 // ui
 import { EmptyState } from "components/common";
@@ -23,8 +23,6 @@ import { IProject } from "types";
 import type { NextPage } from "next";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
-// helper
-// import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const integrationService = new IntegrationService();
@@ -33,10 +31,6 @@ const projectService = new ProjectService();
 const ProjectIntegrations: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // const { project: projectStore } = useMobxStore();
-
-  // const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
 
   const { data: projectDetails } = useSWR<IProject>(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
@@ -51,7 +45,7 @@ const ProjectIntegrations: NextPage = () => {
   const isAdmin = projectDetails?.member_role === 20;
 
   return (
-    <AppLayout header={<ProjectSettingHeader title="Integrations Settings" />}>
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Integrations Settings" />}>
       <ProjectSettingLayout>
         <div className={`pr-9 py-8 gap-10 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
           <div className="flex items-center py-3.5 border-b border-custom-border-200">
@@ -61,7 +55,7 @@ const ProjectIntegrations: NextPage = () => {
             workspaceIntegrations.length > 0 ? (
               <div>
                 {workspaceIntegrations.map((integration) => (
-                  <SingleIntegration key={integration.integration_detail.id} integration={integration} />
+                  <IntegrationCard key={integration.integration_detail.id} integration={integration} />
                 ))}
               </div>
             ) : (

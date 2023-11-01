@@ -1,29 +1,29 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Dialog, Popover, Transition } from "@headlessui/react";
-// services
-import { ProjectStateService } from "services/project";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
+import { CustomSelect } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
 // types
-import type { IUser, IState, IStateResponse } from "types";
-// fetch keys
-import { STATES_LIST } from "constants/fetch-keys";
+import type { IState } from "types";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+
 // types
 type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -33,11 +33,14 @@ const defaultValues: Partial<IState> = {
   group: "backlog",
 };
 
-const projectStateService = new ProjectStateService();
+export const CreateStateModal: React.FC<Props> = observer((props) => {
+  const { isOpen, projectId, handleClose } = props;
 
-export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  // store
+  const { projectState: projectStateStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -63,36 +66,32 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       ...formData,
     };
 
-    await projectStateService
-      .createState(workspaceSlug as string, projectId, payload, user)
-      .then((res) => {
-        mutate<IStateResponse>(
-          STATES_LIST(projectId.toString()),
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              [res.group]: [...prevData[res.group], res],
-            };
-          },
-          false
-        );
+    await projectStateStore
+      .createState(workspaceSlug.toString(), projectId.toString(), payload)
+      .then(() => {
         onClose();
       })
       .catch((err) => {
-        if (err.status === 400)
+        const error = err.response;
+
+        if (typeof error === "object") {
+          Object.keys(error).forEach((key) => {
+            setToastAlert({
+              type: "error",
+              title: "Error!",
+              message: Array.isArray(error[key]) ? error[key].join(", ") : error[key],
+            });
+          });
+        } else {
           setToastAlert({
             type: "error",
             title: "Error!",
-            message: "Another state exists with the same name. Please try again with another name.",
+            message:
+              error ?? err.status === 400
+                ? "Another state exists with the same name. Please try again with another name."
+                : "State could not be created. Please try again.",
           });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "State could not be created. Please try again.",
-          });
+        }
       });
   };
 
@@ -264,4 +263,4 @@ export const CreateStateModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       </Dialog>
     </Transition.Root>
   );
-};
+});

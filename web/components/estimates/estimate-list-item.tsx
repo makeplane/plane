@@ -1,14 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useRouter } from "next/router";
 
-// services
-import { ProjectService } from "services/project";
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import useProjectDetails from "hooks/use-project-details";
-// components
-import { DeleteEstimateModal } from "components/estimates";
 // ui
 import { Button, CustomMenu } from "@plane/ui";
 //icons
@@ -16,48 +14,46 @@ import { Pencil, Trash2 } from "lucide-react";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import { IUser, IEstimate } from "types";
+import { IEstimate } from "types";
 
 type Props = {
-  user: IUser | undefined;
   estimate: IEstimate;
   editEstimate: (estimate: IEstimate) => void;
-  handleEstimateDelete: (estimateId: string) => void;
+  deleteEstimate: (estimateId: string) => void;
 };
 
-// services
-const projectService = new ProjectService();
+export const EstimateListItem: React.FC<Props> = observer((props) => {
+  const { estimate, editEstimate, deleteEstimate } = props;
 
-export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, handleEstimateDelete }) => {
-  const [isDeleteEstimateModalOpen, setIsDeleteEstimateModalOpen] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  // store
+  const { project: projectStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
-  const { projectDetails, mutateProjectDetails } = useProjectDetails();
+  // derived values
+  const projectDetails = projectStore.project_details?.[projectId?.toString()!];
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    const payload = {
-      estimate: estimate.id,
-    };
+    await projectStore
+      .updateProject(workspaceSlug.toString(), projectId.toString(), {
+        estimate: estimate.id,
+      })
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-    mutateProjectDetails((prevData: any) => {
-      if (!prevData) return prevData;
-
-      return { ...prevData, estimate: estimate.id };
-    }, false);
-
-    await projectService.updateProject(workspaceSlug as string, projectId as string, payload, user).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Estimate points could not be used. Please try again.",
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: errorString ?? "Estimate points could not be used. Please try again.",
+        });
       });
-    });
   };
 
   return (
@@ -76,7 +72,7 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {projectDetails?.estimate !== estimate.id && estimate.points.length > 0 && (
+            {projectDetails?.estimate !== estimate?.id && estimate?.points?.length > 0 && (
               <Button variant="neutral-primary" onClick={handleUseEstimate}>
                 Use
               </Button>
@@ -95,7 +91,7 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
               {projectDetails?.estimate !== estimate.id && (
                 <CustomMenu.MenuItem
                   onClick={() => {
-                    setIsDeleteEstimateModalOpen(true);
+                    deleteEstimate(estimate.id);
                   }}
                 >
                   <div className="flex items-center justify-start gap-2">
@@ -107,7 +103,7 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
             </CustomMenu>
           </div>
         </div>
-        {estimate.points.length > 0 ? (
+        {estimate?.points?.length > 0 ? (
           <div className="flex text-xs text-custom-text-200">
             Estimate points (
             <span className="flex gap-1">
@@ -126,16 +122,6 @@ export const SingleEstimate: React.FC<Props> = ({ user, estimate, editEstimate, 
           </div>
         )}
       </div>
-
-      <DeleteEstimateModal
-        isOpen={isDeleteEstimateModalOpen}
-        handleClose={() => setIsDeleteEstimateModalOpen(false)}
-        data={estimate}
-        handleDelete={() => {
-          handleEstimateDelete(estimate.id);
-          setIsDeleteEstimateModalOpen(false);
-        }}
-      />
     </>
   );
-};
+});

@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-
 import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
@@ -56,7 +52,7 @@ const defaultValues: FormValues = {
 const projectService = new ProjectService();
 const workspaceService = new WorkspaceService();
 
-const SendProjectInvitationModal: React.FC<Props> = (props) => {
+export const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;
 
   const router = useRouter();
@@ -308,5 +304,3 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
     </Transition.Root>
   );
 };
-
-export default SendProjectInvitationModal;
