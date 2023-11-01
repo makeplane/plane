@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // components

@@ -8,7 +8,7 @@ import { ProjectService, ProjectEstimateService } from "services/project";
 import useProjectDetails from "hooks/use-project-details";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import { CreateUpdateEstimateModal, SingleEstimate } from "components/estimates";
 import { ProjectSettingHeader } from "components/headers";

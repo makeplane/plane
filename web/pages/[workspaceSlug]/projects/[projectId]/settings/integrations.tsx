@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // services
 import { IntegrationService } from "services/integrations";
 import { ProjectService } from "services/project";

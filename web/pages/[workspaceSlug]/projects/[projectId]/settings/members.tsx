@@ -13,7 +13,7 @@ import useProjectDetails from "hooks/use-project-details";
 import { Controller, useForm } from "react-hook-form";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import ConfirmProjectMemberRemove from "components/project/confirm-project-member-remove";
 import SendProjectInvitationModal from "components/project/send-project-invitation-modal";

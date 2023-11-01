@@ -10,7 +10,7 @@ import useUserAuth from "hooks/use-user-auth";
 import { IssueLabelService } from "services/issue";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import {
   CreateUpdateLabelInline,
