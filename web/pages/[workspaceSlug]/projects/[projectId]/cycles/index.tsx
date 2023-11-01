@@ -22,6 +22,8 @@ import type { NextPage } from "next";
 import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
+import { Tooltip } from "@plane/ui";
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
 const ProjectCyclesPage: NextPage = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -135,18 +137,25 @@ const ProjectCyclesPage: NextPage = observer(() => {
                 {CYCLE_VIEWS.map((view) => {
                   if (view.key === "gantt" && cycleStore?.cycleView === "draft") return null;
                   return (
-                    <button
+                    <Tooltip
                       key={view.key}
-                      type="button"
-                      className={`grid h-8 w-8 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                        cycleStore?.cycleLayout === view.key
-                          ? "bg-custom-background-80 text-custom-text-100"
-                          : "text-custom-text-200"
-                      }`}
-                      onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
+                      tooltipContent={
+                        <span className="capitalize">{replaceUnderscoreIfSnakeCase(view.key)} Layout</span>
+                      }
+                      position="bottom"
                     >
-                      {view.icon}
-                    </button>
+                      <button
+                        type="button"
+                        className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+                          cycleStore?.cycleLayout === view.key
+                            ? "bg-custom-sidebar-background-80"
+                            : "text-custom-sidebar-text-200"
+                        }`}
+                        onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
+                      >
+                        <view.icon className="h-3.5 w-3.5" />
+                      </button>
+                    </Tooltip>
                   );
                 })}
               </div>

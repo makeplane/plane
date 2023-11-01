@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { GanttChart, LayoutGrid, List, Plus } from "lucide-react";
+import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -22,7 +22,7 @@ const moduleViewOptions: { type: "list" | "grid" | "gantt_chart"; icon: any }[] 
   },
   {
     type: "gantt_chart",
-    icon: GanttChart,
+    icon: GanttChartSquare,
   },
 ];
 
