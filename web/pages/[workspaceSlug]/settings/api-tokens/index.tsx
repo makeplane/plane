@@ -1,22 +1,28 @@
+// react
 import React from "react";
+// next
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import Link from "next/link";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // component
 import { WorkspaceSettingHeader } from "components/headers";
-// ui
-import { Spinner } from "@plane/ui";
-// types
-import type { NextPage } from "next";
-import { PrimaryButton } from "components/ui";
-import { useRouter } from "next/router";
-import useSWR from "swr";
-import { ApiTokenService } from "services/api_token.service";
-import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { formatDateDistance } from "helpers/date-time.helper";
 import ApiTokenEmptyState from "components/api-token/empty-state";
-import Link from "next/link";
+// ui
+import { Spinner, Button } from "@plane/ui";
+// services
+import { ApiTokenService } from "services/api_token.service";
+// constants
+import { API_TOKENS_LIST } from "constants/fetch-keys";
+// helpers
+import { formatLongDateDistance, timeAgo } from "helpers/date-time.helper";
+// swr
+import useSWR from "swr";
+// icons
 import { XCircle } from "lucide-react";
+
 
 const apiTokenService = new ApiTokenService();
 const Api: NextPage = () => {
@@ -35,18 +41,19 @@ const Api: NextPage = () => {
             <section className="pr-9 py-8 w-full overflow-y-auto">
               <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200 mb-2">
                 <h3 className="text-xl font-medium">Api Tokens</h3>
-                <PrimaryButton
+                <Button
+                  variant="primary"
                   onClick={() => {
                     router.push(`${router.asPath}/create/`);
                   }}
                 >
                   Add Api Token
-                </PrimaryButton>{" "}
+                </Button>
               </div>
               <div>
                 {tokens?.map((token) => (
                   <Link href={`/${workspaceSlug}/settings/api-tokens/${token.id}`} key={token.id}>
-                    <div className="border-b flex flex-col relative group justify-center items-start border-custom-border-200 py-5 hover:cursor-pointer">
+                    <div className="border-b flex flex-col relative justify-center items-start border-custom-border-200 py-5 hover:cursor-pointer">
                       <XCircle className="absolute right-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto justify-self-center stroke-custom-text-400 h-[15px] w-[15px]" />
                       <div className="flex items-center px-4">
                         <span className="text-sm font-medium leading-6">{token.label}</span>
@@ -64,13 +71,15 @@ const Api: NextPage = () => {
                         {token.description.length != 0 && (
                           <p className="text-sm mb-1 mr-3 font-medium leading-6">{token.description}</p>
                         )}
-                        {token.is_active && (
+                        {
                           <p className="text-xs mb-1 leading-6 text-custom-text-400">
-                            {token.expired_at === null
-                              ? "Never Expires"
-                              : "Expires in " + formatDateDistance(token.expired_at!)}
+                            {token.is_active
+                              ? token.expired_at === null
+                                ? "Never Expires"
+                                : `Expires in ${formatLongDateDistance(token.expired_at!)}`
+                              : timeAgo(token.expired_at)}
                           </p>
-                        )}
+                        }
                       </div>
                     </div>
                   </Link>

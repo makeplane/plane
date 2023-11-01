@@ -1,8 +1,12 @@
+// react
 import React from "react";
+// next
 import Image from "next/image";
-import emptyApiTokens from "public/empty-state/api-token.svg";
-import { PrimaryButton } from "components/ui";
 import { useRouter } from "next/router";
+// ui
+import { PrimaryButton } from "components/ui";
+// assets
+import emptyApiTokens from "public/empty-state/api-token.svg";
 
 const ApiTokenEmptyState = () => {
   const router = useRouter();
@@ -19,7 +23,7 @@ const ApiTokenEmptyState = () => {
         <PrimaryButton
           className="flex items-center gap-1.5"
           onClick={() => {
-            router.push(`${router.asPath}/add/`);
+            router.push(`${router.asPath}/create/`);
           }}
         >
           Add Token
