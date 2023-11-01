@@ -36,8 +36,8 @@ export const IssueComment: FC<IIssueComment> = (props) => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="font-medium text-xl">Activity</div>
+    <div className="flex flex-col gap-3 border-t py-6 border-custom-border-200">
+      <div className="font-medium text-lg">Activity</div>
 
       <div className="space-y-2">
         <IssueCommentEditor

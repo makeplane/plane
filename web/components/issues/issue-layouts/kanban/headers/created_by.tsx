@@ -52,6 +52,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ created_by: createdBy?.member?.id }}
           />
         ))}
     </>

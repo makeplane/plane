@@ -14,6 +14,7 @@ import {
   ProjectSpreadsheetLayout,
   ProjectEmptyState,
 } from "components/issues";
+import { Spinner } from "@plane/ui";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -33,7 +34,12 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const issueCount = issueStore.getIssuesCount;
 
-  // console.log("issueCount", issueCount);
+  if (!issueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">

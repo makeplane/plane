@@ -8,8 +8,7 @@ from rest_framework import serializers
 from .base import BaseSerializer
 from .user import UserLiteSerializer
 from .state import StateSerializer, StateLiteSerializer
-from .user import UserLiteSerializer
-from .project import ProjectSerializer, ProjectLiteSerializer
+from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
     User,
@@ -232,25 +231,6 @@ class IssueActivitySerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssueCommentSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-
-    class Meta:
-        model = IssueComment
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
 
 class IssuePropertySerializer(BaseSerializer):
     class Meta:
@@ -287,7 +267,6 @@ class LabelLiteSerializer(BaseSerializer):
 
 
 class IssueLabelSerializer(BaseSerializer):
-    # label_details = LabelSerializer(read_only=True, source="label")
 
     class Meta:
         model = IssueLabel

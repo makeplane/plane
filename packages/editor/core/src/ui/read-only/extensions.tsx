@@ -15,8 +15,12 @@ import Gapcursor from "@tiptap/extension-gapcursor";
 
 import ReadOnlyImageExtension from "../extensions/image/read-only-image";
 import { isValidHttpUrl } from "../../lib/utils";
+import { Mentions } from "../mentions";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
 
-export const CoreReadOnlyEditorExtensions  = [
+export const CoreReadOnlyEditorExtensions = (
+  mentionConfig: { mentionSuggestions: IMentionSuggestion[], mentionHighlights: string[] },
+) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -85,8 +89,9 @@ export const CoreReadOnlyEditorExtensions  = [
       html: true,
       transformCopiedText: true,
     }),
-    // Table,
-    // TableHeader,
-    // CustomTableCell,
-    // TableRow,
+    Table,
+    TableHeader,
+    CustomTableCell,
+    TableRow,
+    Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
   ];

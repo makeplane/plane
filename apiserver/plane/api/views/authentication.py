@@ -249,11 +249,11 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
         ## Generate a random token
         token = (
-            "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            "".join(random.choices(string.ascii_lowercase, k=4))
             + "-"
-            + "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            + "".join(random.choices(string.ascii_lowercase, k=4))
             + "-"
-            + "".join(random.choices(string.ascii_lowercase + string.digits, k=4))
+            + "".join(random.choices(string.ascii_lowercase, k=4))
         )
 
         ri = redis_instance()

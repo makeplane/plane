@@ -15,6 +15,7 @@ import {
   ProjectViewGanttLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
+import { Spinner } from "@plane/ui";
 
 export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -50,6 +51,13 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   const issueCount = projectViewIssuesStore.getIssuesCount;
+
+  if (!projectViewIssuesStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative h-full w-full flex flex-col overflow-hidden">

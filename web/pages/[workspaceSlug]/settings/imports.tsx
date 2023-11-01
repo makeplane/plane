@@ -1,5 +1,5 @@
 // layouts
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { AppLayout } from "layouts/app-layout";
 import IntegrationGuide from "components/integration/guide";

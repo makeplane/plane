@@ -17,7 +17,7 @@ export interface IModuleListLayout {}
 
 export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   const {
     project: projectStore,
@@ -25,6 +25,7 @@ export const ModuleListLayout: React.FC = observer(() => {
     moduleIssue: moduleIssueStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
 
   const issues = moduleIssueStore?.getIssues;
 
@@ -54,8 +55,6 @@ export const ModuleListLayout: React.FC = observer(() => {
     [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
-
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
@@ -63,8 +62,8 @@ export const ModuleListLayout: React.FC = observer(() => {
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+    currentProjectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (

@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { IntegrationService } from "services/integrations";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { SingleIntegrationCard } from "components/integration";
 import { WorkspaceSettingHeader } from "components/headers";

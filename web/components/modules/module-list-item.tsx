@@ -9,8 +9,7 @@ import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList } from "components/ui";
-import { CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
@@ -174,7 +173,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
               <div className="flex items-center justify-center gap-1 cursor-default w-16">
                 {module.members_detail.length > 0 ? (
-                  <AssigneesList users={module.members_detail} length={2} />
+                  <AvatarGroup showTooltip={false}>
+                    {module.members_detail.map((member) => (
+                      <Avatar key={member.id} name={member.display_name} src={member.avatar} />
+                    ))}
+                  </AvatarGroup>
                 ) : (
                   <span className="flex items-end justify-center h-5 w-5 bg-custom-background-80 rounded-full border border-dashed border-custom-text-400">
                     <User2 className="h-4 w-4 text-custom-text-400" />
