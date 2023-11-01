@@ -86,7 +86,7 @@ const ModuleIssuesPage: NextPage = () => {
           />
         ) : (
           <div className="flex h-full w-full">
-            <div className="h-full w-full">
+            <div className="h-full w-full overflow-hidden">
               <ModuleLayoutRoot />
             </div>
             {moduleId && !isSidebarCollapsed && (
