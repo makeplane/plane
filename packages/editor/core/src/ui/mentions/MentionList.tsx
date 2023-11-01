@@ -1,6 +1,7 @@
 import { Editor } from '@tiptap/react';
 import React, {
   forwardRef,
+  useCallback,
   useEffect,
   useImperativeHandle,
   useState,
@@ -17,13 +18,13 @@ interface MentionListProps {
 // eslint-disable-next-line react/display-name
 const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const selectItem = (index: number) => {
+  const selectItem = useCallback((index: number) => {
     const item = props.items[index]
 
     if (item) {
       props.command({ id: item.id, label: item.title, target: "users", redirect_uri: item.redirect_uri })
     }
-  }
+  }, [props.command, props.items])
 
   const upHandler = () => {
     setSelectedIndex(((selectedIndex + props.items.length) - 1) % props.items.length)
@@ -60,33 +61,24 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
 
       return false
     },
-  }))
+  }), [props.items, selectedIndex, setSelectedIndex, selectItem])
 
   return (
     props.items && props.items.length !== 0 ? <div className="items">
       { props.items.length ? props.items.map((item, index) => (
             <div className={`item ${index === selectedIndex ? 'is-selected' : ''} w-72 flex items-center p-3 rounded shadow-md`} onClick={() => selectItem(index)}>
                 {item.avatar ? <div
-                  className={`rounded border-[0.5px] ${index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent"
+                  className={`rounded border-[0.5px] ${index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent h-6 w-6"
                     }`}
-                  style={{
-                    height: "24px",
-                    width: "24px",
-                  }}
                 >
                   <img
                     src={item.avatar}
-                    className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                    className="h-6 w-6 object-cover rounded"
                     alt={item.title}
                   />
                 </div> :
                   <div
-                    className="grid place-items-center text-xs capitalize text-white rounded bg-gray-700  border-[0.5px] border-custom-border-200"
-                    style={{
-                      height: "24px",
-                      width: "24px",
-                      fontSize: "12px",
-                    }}
+                    className="grid place-items-center text-xs capitalize text-white rounded bg-gray-700  border-[0.5px] border-custom-border-200 h-6 w-6"
                   >
                     {item.title.charAt(0)}
                   </div>
