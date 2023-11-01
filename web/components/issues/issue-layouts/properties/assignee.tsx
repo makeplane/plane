@@ -1,16 +1,13 @@
 import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
 import { usePopper } from "react-popper";
-// ui
-import { AssigneesList, Avatar } from "components/ui";
 import { Combobox } from "@headlessui/react";
-import { Tooltip } from "@plane/ui";
 import { Check, ChevronDown, Search, User2 } from "lucide-react";
+// ui
+import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store/root";
 
 export interface IIssuePropertyAssignee {
   view?: "profile" | "workspace" | "project";
@@ -41,7 +38,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     multiple = false,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -49,17 +46,17 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  const projectMembers = projectId && projectStore?.members?.[projectId];
+  const projectMembers = projectId ? projectStore?.members?.[projectId] : undefined;
 
   const fetchProjectMembers = () =>
     workspaceSlug && projectId && projectStore.fetchProjectMembers(workspaceSlug, projectId);
 
-  const options = (projectMembers ? projectMembers : [])?.map((member) => ({
+  const options = (projectMembers ?? [])?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member.member.display_name} src={member.member.avatar} showTooltip={false} />
         {member.member.display_name}
       </div>
     ),
@@ -83,7 +80,15 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     >
       <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
-          <AssigneesList userIds={value} length={3} showLength={true} />
+          <AvatarGroup showTooltip={false}>
+            {value.map((assigneeId) => {
+              const member = projectMembers?.find((m) => m.member.id === assigneeId)?.member;
+
+              if (!member) return null;
+
+              return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+            })}
+          </AvatarGroup>
         ) : (
           <span
             className="flex items-center justify-between gap-1 h-full w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none

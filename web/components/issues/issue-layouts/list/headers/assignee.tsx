@@ -11,7 +11,7 @@ export interface IAssigneesHeader {
   issues_count: number;
 }
 
-export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="base" />;
+export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="md" />;
 
 export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
   const { column_id, column_value, issues_count } = props;
@@ -21,11 +21,7 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
   return (
     <>
       {assignee && (
-        <HeaderGroupByCard
-          icon={<Icon user={assignee?.member} />}
-          title={assignee?.member?.display_name || ""}
-          count={issues_count}
-        />
+        <HeaderGroupByCard icon={<Icon user={assignee} />} title={assignee?.display_name || ""} count={issues_count} />
       )}
     </>
   );

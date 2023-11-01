@@ -94,6 +94,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={false}
+          multiple
         />
       )}
 
