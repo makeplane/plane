@@ -6,6 +6,8 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GlobalViewEmptyState, GlobalViewsAppliedFiltersRoot, SpreadsheetView } from "components/issues";
+// ui
+import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
 
@@ -81,6 +83,13 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     : globalViewId
     ? globalViewIssuesStore.viewIssues?.[globalViewId.toString()]
     : undefined;
+
+  if (!issues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
