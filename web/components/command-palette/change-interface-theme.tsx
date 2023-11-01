@@ -1,8 +1,7 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { FC, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { THEME_OPTIONS } from "constants/themes";
 import { useTheme } from "next-themes";
-import useUser from "hooks/use-user";
 import { Settings } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -12,20 +11,19 @@ type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpen }) => {
-  const store: any = useMobxStore();
-
+export const ChangeInterfaceTheme: FC<Props> = observer((props) => {
+  const { setIsPaletteOpen } = props;
+  // store
+  const { user: userStore } = useMobxStore();
+  // states
   const [mounted, setMounted] = useState(false);
-
+  // theme
   const { setTheme } = useTheme();
 
-  const { user } = useUser();
-
   const updateUserTheme = (newTheme: string) => {
-    if (!user) return;
     setTheme(newTheme);
-    return store.user
-      .updateCurrentUserSettings({ theme: { ...user.theme, theme: newTheme } })
+    return userStore
+      .updateCurrentUserTheme(newTheme)
       .then((response: any) => response)
       .catch((error: any) => error);
   };
