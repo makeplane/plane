@@ -70,8 +70,8 @@ export const AvatarGroup: React.FC<Props> = (props) => {
             style={
               isAValidNumber(size)
                 ? {
-                    width: size,
-                    height: size,
+                    width: `${size}px`,
+                    height: `${size}px`,
                   }
                 : {}
             }
