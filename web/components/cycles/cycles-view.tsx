@@ -25,7 +25,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { cycle: cycleStore } = useMobxStore();
 
   // api call to fetch cycles list
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && filter ? `CYCLES_LIST_${projectId}_${filter}` : null,
     workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
@@ -36,10 +36,10 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     <>
       {layout === "list" && (
         <>
-          {!isLoading ? (
+          {cyclesList ? (
             <CyclesList cycles={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
           ) : (
-            <Loader className="space-y-4">
+            <Loader className="space-y-4 p-8">
               <Loader.Item height="50px" />
               <Loader.Item height="50px" />
               <Loader.Item height="50px" />
@@ -50,7 +50,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
       {layout === "board" && (
         <>
-          {!isLoading ? (
+          {cyclesList ? (
             <CyclesBoard
               cycles={cyclesList}
               filter={filter}
@@ -59,7 +59,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
               peekCycle={peekCycle}
             />
           ) : (
-            <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+            <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3 p-8">
               <Loader.Item height="200px" />
               <Loader.Item height="200px" />
               <Loader.Item height="200px" />
@@ -70,7 +70,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
       {layout === "gantt" && (
         <>
-          {!isLoading ? (
+          {cyclesList ? (
             <CyclesListGanttChartView cycles={cyclesList} workspaceSlug={workspaceSlug} />
           ) : (
             <Loader className="space-y-4">

@@ -33,8 +33,6 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const issueCount = issueStore.getIssuesCount;
 
-  console.log("issueCount", issueCount);
-
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
