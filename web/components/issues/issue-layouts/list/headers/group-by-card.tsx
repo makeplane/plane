@@ -22,7 +22,7 @@ interface IHeaderGroupByCard {
   icon?: React.ReactNode;
   title: string;
   count: number;
-  issuePayload?: Partial<IIssue>;
+  issuePayload: Partial<IIssue>;
 }
 
 const moduleService = new ModuleService();
