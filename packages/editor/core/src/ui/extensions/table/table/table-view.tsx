@@ -11,7 +11,6 @@ import {
 } from "@tiptap/prosemirror-tables";
 
 import icons from "./icons";
-import InsertLeftTableIcon from "../../../menus/table-menu/InsertLeftTableIcon";
 
 export function updateColumns(
   node: ProseMirrorNode,
@@ -98,13 +97,13 @@ function setCellsBackgroundColor(editor: Editor, backgroundColor) {
 const columnsToolboxItems = [
   {
     label: "Add Column Before",
-    icon: <InsertLeftTableIcon />,
+    icon: icons.insertLeftTableIcon,
     action: ({ editor }: { editor: Editor }) =>
       editor.chain().focus().addColumnBefore().run(),
   },
   {
     label: "Add Column After",
-    icon: icons.insertColumnRight,
+    icon: icons.insertRightTableIcon,
     action: ({ editor }: { editor: Editor }) =>
       editor.chain().focus().addColumnAfter().run(),
   },
@@ -140,18 +139,18 @@ const columnsToolboxItems = [
 const rowsToolboxItems = [
   {
     label: "Add Row Above",
-    icon: icons.insertRowTop,
+    icon: icons.insertTopTableIcon,
     action: ({ editor }: { editor: Editor }) =>
       editor.chain().focus().addRowBefore().run(),
   },
   {
     label: "Add Row Below",
-    icon: icons.insertRowBottom,
+    icon: icons.insertBottomTableIcon,
     action: ({ editor }: { editor: Editor }) =>
       editor.chain().focus().addRowAfter().run(),
   },
   {
-    label: "Pick a Color",
+    label: "Pick Row Color",
     icon: icons.colorPicker,
     action: ({
       editor,
@@ -232,13 +231,32 @@ function createColorPickerToolbox({
   tippyOptions: Partial<Props>;
   onSelectColor?: (color: string) => void;
 }) {
+  // TODO: Change colors
+  const LABEL_COLOR_OPTIONS = [
+    "#FF6900",
+    "#FCB900",
+    "#7BDCB5",
+    "#00D084",
+    "#8ED1FC",
+    "#0693E3",
+    "#ABB8C3",
+    "#EB144C",
+    "#F78DA7",
+    "#9900EF",
+  ];
+
   const items = {
     Default: "rgb(var(--color-primary-100))",
-    "Light gray": "#e7f3f8",
-    "Dark gray": "#c7d2d7",
-    "Light blue": "#e7f3f8",
-    "Light red": "#ffc4c7",
-    "Light yellow": "#fbf3db",
+    "Bright Orange": LABEL_COLOR_OPTIONS[0],
+    "Bright Yellow": LABEL_COLOR_OPTIONS[1],
+    "Light Green": LABEL_COLOR_OPTIONS[2],
+    "Bright Green": LABEL_COLOR_OPTIONS[3],
+    "Light Blue": LABEL_COLOR_OPTIONS[4],
+    "Dark Blue": LABEL_COLOR_OPTIONS[5],
+    Gray: LABEL_COLOR_OPTIONS[6],
+    "Bright Red": LABEL_COLOR_OPTIONS[7],
+    Pink: LABEL_COLOR_OPTIONS[8],
+    Purple: LABEL_COLOR_OPTIONS[9],
   };
 
   const colorPicker = tippy(triggerButton, {
@@ -325,11 +343,6 @@ export class TableView implements NodeView {
     this.hoveredCell = null;
     this.map = TableMap.get(node);
 
-    /**
-     * DOM
-     */
-
-    // Controllers
     if (editor.isEditable) {
       this.rowsControl = h(
         "div",
@@ -452,16 +465,19 @@ export class TableView implements NodeView {
   updateControls() {
     const { hoveredTable: table, hoveredCell: cell } = Object.values(
       this.decorations,
-    ).reduce((acc, curr) => {
-      if (curr.spec.hoveredCell !== undefined) {
-        acc["hoveredCell"] = curr.spec.hoveredCell;
-      }
+    ).reduce(
+      (acc, curr) => {
+        if (curr.spec.hoveredCell !== undefined) {
+          acc["hoveredCell"] = curr.spec.hoveredCell;
+        }
 
-      if (curr.spec.hoveredTable !== undefined) {
-        acc["hoveredTable"] = curr.spec.hoveredTable;
-      }
-      return acc;
-    }, {}) as any;
+        if (curr.spec.hoveredTable !== undefined) {
+          acc["hoveredTable"] = curr.spec.hoveredTable;
+        }
+        return acc;
+      },
+      {} as Record<string, HTMLElement>,
+    ) as any;
 
     if (table === undefined || cell === undefined) {
       return this.root.classList.add("controls--disabled");
