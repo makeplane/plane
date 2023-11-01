@@ -41,13 +41,12 @@ class BaseAPIView(APIView):
 
     def _get_url(self, request):
         path = self._get_url_path(request=request)
-        url = f"{settings.BASE_API_URL}/api/{path}"
+        url = request.build_absolute_uri("/api/" + path)
         return url
 
     def _get_query_params(self, request):
         query_params = request.GET
         return query_params
-
 
     def _get_payload(self, request):
         content_type = request.headers.get("Content-Type", "application/json")

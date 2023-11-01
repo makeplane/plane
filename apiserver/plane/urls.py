@@ -14,10 +14,11 @@ urlpatterns = [
     # path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="index.html")),
     path("api/", include("plane.api.urls")),
-    path("api/v1/", include("plane.proxy.urls")),
     path("", include("plane.web.urls")),
 ]
 
+if settings.ENABLE_WEBHOOK_API:
+    urlpatterns += path("api/v1/", include("plane.proxy.urls")),
 
 if settings.DEBUG:
     import debug_toolbar

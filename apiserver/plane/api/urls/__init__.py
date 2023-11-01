@@ -31,7 +31,6 @@ from django.conf import settings
 
 urlpatterns = [
     *analytic_urls,
-    *api_urls,
     *asset_urls,
     *authentication_urls,
     *configuration_urls,
@@ -58,6 +57,4 @@ urlpatterns = [
 
 if settings.ENABLE_WEBHOOK_API:
     urlpatterns += webhook_urls
-
-if settings.ENABLE_WEBHOOK_API and settings.BASE_API_URL:
     urlpatterns += api_urls

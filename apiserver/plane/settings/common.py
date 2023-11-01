@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "plane.utils",
     "plane.web",
     "plane.middleware",
+    "plane.proxy",
     # Third-party things
     "rest_framework",
     "rest_framework.authtoken",
@@ -39,11 +40,6 @@ INSTALLED_APPS = [
     "taggit",
     "django_celery_beat",
 ]
-
-if ENABLE_WEBHOOK_API:
-    INSTALLED_APPS.append(
-        "plane.proxy",
-    )
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
