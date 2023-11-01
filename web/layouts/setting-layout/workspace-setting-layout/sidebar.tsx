@@ -27,6 +27,10 @@ export const WorkspaceSettingsSidebar = () => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
+      label: "Webhooks",
+      href: `/${workspaceSlug}/settings/webhooks`,
+    },
+    {
       label: "Imports",
       href: `/${workspaceSlug}/settings/imports`,
     },
@@ -53,7 +57,7 @@ export const WorkspaceSettingsSidebar = () => {
       href: `/${workspaceSlug}/me/profile/preferences`,
     },
   ];
-
+console.log(router.asPath);
   return (
     <div className="flex flex-col gap-6 w-80 px-5">
       <div className="flex flex-col gap-2">
