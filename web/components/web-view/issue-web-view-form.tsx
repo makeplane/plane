@@ -89,7 +89,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                     setIsSubmitting("submitting");
                     debouncedTitleSave();
                   }}
-                  required={true}
+                  required
                   className="min-h-10 block w-full resize-none overflow-hidden rounded border bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                   role="textbox"
                   disabled={!isAllowed}
@@ -125,7 +125,7 @@ export const IssueWebViewForm: React.FC<Props> = (props) => {
                     ? "<p></p>"
                     : value
                 }
-                debouncedUpdatesEnabled={true}
+                debouncedUpdatesEnabled
                 setShouldShowAlert={setShowAlert}
                 setIsSubmitting={setIsSubmitting}
                 customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}

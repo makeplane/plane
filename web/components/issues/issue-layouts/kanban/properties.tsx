@@ -111,7 +111,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           onChange={handleState}
           states={states}
           disabled={false}
-          hideDropdownArrow={true}
+          hideDropdownArrow
         />
       )}
 
@@ -121,7 +121,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           value={issue?.priority || null}
           onChange={handlePriority}
           disabled={false}
-          hideDropdownArrow={true}
+          hideDropdownArrow
         />
       )}
 
@@ -132,7 +132,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           onChange={handleLabel}
           labels={labels}
           disabled={false}
-          hideDropdownArrow={true}
+          hideDropdownArrow
         />
       )}
 
@@ -163,7 +163,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           onChange={handleEstimate}
           estimatePoints={estimates}
           disabled={false}
-          hideDropdownArrow={true}
+          hideDropdownArrow
         />
       )}
 
