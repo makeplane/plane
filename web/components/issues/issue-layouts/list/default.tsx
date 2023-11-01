@@ -136,7 +136,7 @@ export const List: React.FC<IList> = observer((props) => {
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
-          is_list={true}
+          is_list
           states={states}
           labels={labels}
           members={members}
