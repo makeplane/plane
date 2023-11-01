@@ -1,10 +1,15 @@
 import { PlusIcon } from "lucide-react";
 // components
 import { EmptyState } from "components/common";
+import { Button } from "@plane/ui";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 
-export const ModuleEmptyState: React.FC = () => (
+type Props = {
+  openIssuesListModal: () => void;
+};
+
+export const ModuleEmptyState: React.FC<Props> = ({ openIssuesListModal }) => (
   <div className="h-full w-full grid place-items-center">
     <EmptyState
       title="Module issues will appear here"
@@ -20,6 +25,15 @@ export const ModuleEmptyState: React.FC = () => (
           document.dispatchEvent(e);
         },
       }}
+      secondaryButton={
+        <Button
+          variant="neutral-primary"
+          prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
+          onClick={openIssuesListModal}
+        >
+          Add an existing issue
+        </Button>
+      }
     />
   </div>
 );

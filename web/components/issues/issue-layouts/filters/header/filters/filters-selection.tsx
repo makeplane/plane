@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 // components
 import {
   FilterAssignees,
+  FilterMentions,
   FilterCreatedBy,
   FilterLabels,
   FilterPriority,
@@ -96,6 +97,18 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
             <FilterAssignees
               appliedFilters={filters.assignees ?? null}
               handleUpdate={(val) => handleFiltersUpdate("assignees", val)}
+              members={members}
+              searchQuery={filtersSearchQuery}
+            />
+          </div>
+        )}
+
+        {/* assignees */}
+        {isFilterEnabled("mentions") && (
+          <div className="py-2">
+            <FilterMentions
+              appliedFilters={filters.mentions ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("mentions", val)}
               members={members}
               searchQuery={filtersSearchQuery}
             />

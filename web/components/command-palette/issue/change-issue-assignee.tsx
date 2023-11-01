@@ -9,7 +9,7 @@ import useProjectMembers from "hooks/use-project-members";
 // constants
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // ui
-import { Avatar } from "components/ui";
+import { Avatar } from "@plane/ui";
 // icons
 import { Check } from "lucide-react";
 // types
@@ -31,13 +31,13 @@ export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }
   const { members } = useProjectMembers(workspaceSlug as string, projectId as string);
 
   const options =
-    members?.map(({ member }: any) => ({
+    members?.map(({ member }) => ({
       value: member.id,
       query: member.display_name,
       content: (
         <>
           <div className="flex items-center gap-2">
-            <Avatar user={member} />
+            <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
             {member.display_name}
           </div>
           {issue.assignees.includes(member.id) && (

@@ -15,8 +15,8 @@ import { SidebarProgressStats } from "components/core";
 import ProgressChart from "components/core/sidebar/progress-chart";
 import { CycleDeleteModal } from "components/cycles/delete-modal";
 // ui
-import { Avatar, CustomRangeDatePicker } from "components/ui";
-import { CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { CustomRangeDatePicker } from "components/ui";
+import { Avatar, CustomMenu, Loader, LayersIcon } from "@plane/ui";
 // icons
 import { ChevronDown, LinkIcon, Trash2, UserCircle2, AlertCircle, ChevronRight, MoveRight } from "lucide-react";
 // helpers
@@ -137,7 +137,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          await submitChanges({
+          submitChanges({
             start_date: renderDateFormat(`${watch("start_date")}`),
             end_date: renderDateFormat(`${watch("end_date")}`),
           });
@@ -211,7 +211,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         });
 
         if (isDateValidForExistingCycle) {
-          await submitChanges({
+          submitChanges({
             start_date: renderDateFormat(`${watch("start_date")}`),
             end_date: renderDateFormat(`${watch("end_date")}`),
           });
@@ -349,79 +349,73 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               )}
               <div className="relative flex h-full w-52 items-center gap-2.5">
                 <Popover className="flex h-full items-center justify-center rounded-lg">
-                  {({}) => (
-                    <>
-                      <Popover.Button
-                        disabled={isCompleted ?? false}
-                        className="text-sm text-custom-text-300 font-medium cursor-default"
-                      >
-                        {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
-                      </Popover.Button>
+                  <Popover.Button
+                    disabled={isCompleted ?? false}
+                    className="text-sm text-custom-text-300 font-medium cursor-default"
+                  >
+                    {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
+                  </Popover.Button>
 
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-150"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
-                      >
-                        <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
-                          <CustomRangeDatePicker
-                            value={watch("start_date") ? watch("start_date") : cycleDetails?.start_date}
-                            onChange={(val) => {
-                              if (val) {
-                                handleStartDateChange(val);
-                              }
-                            }}
-                            startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                            endDate={watch("end_date") ? `${watch("end_date")}` : null}
-                            maxDate={new Date(`${watch("end_date")}`)}
-                            selectsStart
-                          />
-                        </Popover.Panel>
-                      </Transition>
-                    </>
-                  )}
+                  <Transition
+                    as={React.Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 translate-y-1"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 translate-y-1"
+                  >
+                    <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
+                      <CustomRangeDatePicker
+                        value={watch("start_date") ? watch("start_date") : cycleDetails?.start_date}
+                        onChange={(val) => {
+                          if (val) {
+                            handleStartDateChange(val);
+                          }
+                        }}
+                        startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                        endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                        maxDate={new Date(`${watch("end_date")}`)}
+                        selectsStart
+                      />
+                    </Popover.Panel>
+                  </Transition>
                 </Popover>
                 <MoveRight className="h-4 w-4 text-custom-text-300" />
                 <Popover className="flex h-full items-center justify-center rounded-lg">
-                  {({}) => (
-                    <>
-                      <Popover.Button
-                        disabled={isCompleted ?? false}
-                        className="text-sm text-custom-text-300 font-medium cursor-default"
-                      >
-                        {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-                      </Popover.Button>
+                  <>
+                    <Popover.Button
+                      disabled={isCompleted ?? false}
+                      className="text-sm text-custom-text-300 font-medium cursor-default"
+                    >
+                      {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                    </Popover.Button>
 
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-150"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
-                      >
-                        <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
-                          <CustomRangeDatePicker
-                            value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
-                            onChange={(val) => {
-                              if (val) {
-                                handleEndDateChange(val);
-                              }
-                            }}
-                            startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                            endDate={watch("end_date") ? `${watch("end_date")}` : null}
-                            minDate={new Date(`${watch("start_date")}`)}
-                            selectsEnd
-                          />
-                        </Popover.Panel>
-                      </Transition>
-                    </>
-                  )}
+                    <Transition
+                      as={React.Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
+                        <CustomRangeDatePicker
+                          value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
+                          onChange={(val) => {
+                            if (val) {
+                              handleEndDateChange(val);
+                            }
+                          }}
+                          startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                          endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                          minDate={new Date(`${watch("start_date")}`)}
+                          selectsEnd
+                        />
+                      </Popover.Panel>
+                    </Transition>
+                  </>
                 </Popover>
               </div>
             </div>
@@ -441,7 +435,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
               <div className="flex items-center w-1/2 rounded-sm">
                 <div className="flex items-center gap-2.5">
-                  <Avatar user={cycleDetails.owned_by} />
+                  <Avatar name={cycleDetails.owned_by.display_name} src={cycleDetails.owned_by.avatar} />
                   <span className="text-sm text-custom-text-200">{cycleDetails.owned_by.display_name}</span>
                 </div>
               </div>
@@ -463,7 +457,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Disclosure>
                 {({ open }) => (
                   <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <div className="flex w-full items-center justify-between gap-2">
+                    <Disclosure.Button
+                      className="flex w-full items-center justify-between gap-2 p-1.5"
+                      disabled={!isStartValid || !isEndValid}
+                    >
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
                       </div>
@@ -477,12 +474,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ""
                         )}
                         {isStartValid && isEndValid ? (
-                          <Disclosure.Button className="p-1.5">
-                            <ChevronDown
-                              className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </Disclosure.Button>
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         ) : (
                           <div className="flex items-center gap-1">
                             <AlertCircle height={14} width={14} className="text-custom-text-200" />
@@ -492,12 +484,12 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Disclosure.Button>
                     <Transition show={open}>
                       <Disclosure.Panel>
                         <div className="flex flex-col gap-3">
                           {isStartValid && isEndValid ? (
-                            <div className=" h-full w-full pt-4">
+                            <div className="h-full w-full pt-4">
                               <div className="flex  items-start  gap-4 py-2 text-xs">
                                 <div className="flex items-center gap-3 text-custom-text-100">
                                   <div className="flex items-center justify-center gap-1">

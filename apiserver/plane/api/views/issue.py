@@ -235,10 +235,7 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
-        return Response(
-            issues, status=status.HTTP_200_OK
-        )
-
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -443,9 +440,7 @@ class UserWorkSpaceIssues(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        return Response(
-            issues, status=status.HTTP_200_OK
-        )
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class WorkSpaceIssuesEndpoint(BaseAPIView):
@@ -623,13 +618,12 @@ class IssueUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = IssuePropertySerializer(issue_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-
     def get(self, request, slug, project_id):
-            issue_property, _ = IssueProperty.objects.get_or_create(
-                user=request.user, project_id=project_id
-            )
-            serializer = IssuePropertySerializer(issue_property)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        issue_property, _ = IssueProperty.objects.get_or_create(
+            user=request.user, project_id=project_id
+        )
+        serializer = IssuePropertySerializer(issue_property)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class LabelViewSet(BaseViewSet):
@@ -1092,17 +1086,19 @@ class IssueArchiveViewSet(BaseViewSet):
             archived_at__isnull=False,
             pk=pk,
         )
-        issue.archived_at = None
-        issue.save()
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": None}),
             actor_id=str(request.user.id),
             issue_id=str(issue.id),
             project_id=str(project_id),
-            current_instance=None,
+            current_instance=json.dumps(
+                IssueSerializer(issue).data, cls=DjangoJSONEncoder
+            ),
             epoch=int(timezone.now().timestamp()),
         )
+        issue.archived_at = None
+        issue.save()
 
         return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
@@ -2160,9 +2156,7 @@ class IssueDraftViewSet(BaseViewSet):
                 status=status.HTTP_200_OK,
             )
 
-        return Response(
-            issues, status=status.HTTP_200_OK
-        )
+        return Response(issues, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)

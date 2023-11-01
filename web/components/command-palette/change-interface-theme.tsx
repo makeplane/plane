@@ -1,33 +1,35 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { FC, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { THEME_OPTIONS } from "constants/themes";
 import { useTheme } from "next-themes";
-import useUser from "hooks/use-user";
 import { Settings } from "lucide-react";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
+import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const ChangeInterfaceTheme: React.FC<Props> = observer(({ setIsPaletteOpen }) => {
-  const store: any = useMobxStore();
-
+export const ChangeInterfaceTheme: FC<Props> = observer((props) => {
+  const { setIsPaletteOpen } = props;
+  // store
+  const { user: userStore } = useMobxStore();
+  // states
   const [mounted, setMounted] = useState(false);
-
+  // hooks
   const { setTheme } = useTheme();
-
-  const { user } = useUser();
+  const { setToastAlert } = useToast();
 
   const updateUserTheme = (newTheme: string) => {
-    if (!user) return;
     setTheme(newTheme);
-    return store.user
-      .updateCurrentUserSettings({ theme: { ...user.theme, theme: newTheme } })
-      .then((response: any) => response)
-      .catch((error: any) => error);
+    return userStore.updateCurrentUserTheme(newTheme).catch(() => {
+      setToastAlert({
+        title: "Failed to save user theme settings!",
+        type: "error",
+      });
+    });
   };
 
   // useEffect only runs on the client, so now we can safely show the UI
