@@ -177,7 +177,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 >
                   {projectMembersIds.length > 0 ? (
                     <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
-                      <AssigneesList userIds={projectMembersIds} length={3} showLength={true} />
+                      <AssigneesList userIds={projectMembersIds} length={3} showLength />
                     </div>
                   ) : (
                     <span className="text-sm italic text-custom-text-400">No Member Yet</span>

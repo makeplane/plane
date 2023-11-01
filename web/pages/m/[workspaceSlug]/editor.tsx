@@ -62,7 +62,7 @@ const Editor: NextPage = () => {
                   deleteFile={fileService.deleteImage}
                   borderOnFocus={false}
                   value={!value || value === "" ? "<p></p>" : value}
-                  noBorder={true}
+                  noBorder
                   customClassName="h-full shadow-sm overflow-auto"
                   editorContentCustomClassNames="pb-9"
                   onChange={(description: Object, description_html: string) => {

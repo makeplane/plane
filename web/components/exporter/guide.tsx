@@ -150,7 +150,7 @@ const IntegrationGuide = () => {
         </>
         {provider && (
           <Exporter
-            isOpen={true}
+            isOpen
             handleClose={() => handleCsvClose()}
             data={null}
             user={user}

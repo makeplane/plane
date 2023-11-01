@@ -121,7 +121,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
@@ -186,7 +186,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
