@@ -25,6 +25,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
           icon={<Icon color={label?.color || null} />}
           title={column_value?.name || ""}
           count={issues_count}
+          issuePayload={{ labels: [label.id] }}
         />
       )}
     </>

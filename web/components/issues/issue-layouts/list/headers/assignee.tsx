@@ -24,6 +24,7 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
           icon={<Icon user={assignee?.member} />}
           title={assignee?.member?.display_name || ""}
           count={issues_count}
+          issuePayload={{ assignees: [assignee?.member?.id] }}
         />
       )}
     </>
