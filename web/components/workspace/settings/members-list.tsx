@@ -11,11 +11,9 @@ import { WorkspaceMembersListItem } from "components/workspace";
 import { Loader } from "@plane/ui";
 
 const workspaceService = new WorkspaceService();
-
-export const WorkspaceMembersList: React.FC = observer(() => {
+export const WorkspaceMembersList: React.FC<{ searchQuery: string }> = observer(({ searchQuery }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
   const { workspace: workspaceStore, user: userStore } = useMobxStore();
 
   const workspaceMembers = workspaceStore.workspaceMembers;
@@ -54,6 +52,11 @@ export const WorkspaceMembersList: React.FC = observer(() => {
       accountCreated: true,
     })) || []),
   ];
+  const searchedMembers = members?.filter((member) => {
+    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
+    const displayName = member.display_name.toLowerCase();
+    return displayName.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
+  });
 
   if (!workspaceMembers || !workspaceInvitations || !user)
     return (
@@ -68,8 +71,9 @@ export const WorkspaceMembersList: React.FC = observer(() => {
   return (
     <div className="divide-y-[0.5px] divide-custom-border-200">
       {members.length > 0
-        ? members.map((member) => <WorkspaceMembersListItem key={member.id} member={member} />)
+        ? searchedMembers.map((member) => <WorkspaceMembersListItem key={member.id} member={member} />)
         : null}
+      {searchedMembers.length === 0 && <h4 className="text-md text-center mt-32">No matching member</h4>}
     </div>
   );
 });
