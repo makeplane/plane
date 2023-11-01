@@ -38,7 +38,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
       : null
   );
   // fetching user project member information
-  const { data: projectMemberInfo } = useSWR(
+  useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_ME_${workspaceSlug}_${projectId}` : null,
     workspaceSlug && projectId
       ? () => userStore.fetchUserProjectInfo(workspaceSlug.toString(), projectId.toString())
@@ -53,10 +53,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   );
   // fetching project members
   useSWR(
-    workspaceSlug && projectId && projectMemberInfo && [20, 15].includes(projectMemberInfo.role)
-      ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}`
-      : null,
-    workspaceSlug && projectId && projectMemberInfo && [20, 15].includes(projectMemberInfo.role)
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_${workspaceSlug}_${projectId}` : null,
+    workspaceSlug && projectId
       ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );

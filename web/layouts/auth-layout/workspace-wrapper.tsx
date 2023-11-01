@@ -22,7 +22,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   // fetching all workspaces
   useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces());
   // fetching user workspace information
-  const { data: workspaceMemberInfo } = useSWR(
+  useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
     workspaceSlug ? () => userStore.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
   );
@@ -33,12 +33,8 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && workspaceMemberInfo && [20, 15].includes(workspaceMemberInfo.role)
-      ? `WORKSPACE_MEMBERS_${workspaceSlug}`
-      : null,
-    workspaceSlug && workspaceMemberInfo && [20, 15].includes(workspaceMemberInfo.role)
-      ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString())
-      : null
+    workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
   // fetch workspace labels
   useSWR(

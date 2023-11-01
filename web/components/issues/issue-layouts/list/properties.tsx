@@ -62,7 +62,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {display_properties && display_properties?.state && states && (
         <IssuePropertyState
           value={issue?.state_detail || null}
-          hideDropdownArrow={true}
+          hideDropdownArrow
           onChange={handleState}
           disabled={false}
           states={states}
@@ -75,7 +75,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.priority || null}
           onChange={handlePriority}
           disabled={false}
-          hideDropdownArrow={true}
+          hideDropdownArrow
         />
       )}
 
@@ -86,7 +86,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           onChange={handleLabel}
           labels={labels}
           disabled={false}
-          hideDropdownArrow={true}
+          hideDropdownArrow
         />
       )}
 
@@ -94,7 +94,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {display_properties && display_properties?.assignee && members && (
         <IssuePropertyAssignee
           value={issue?.assignees || null}
-          hideDropdownArrow={true}
+          hideDropdownArrow
           onChange={handleAssignee}
           disabled={false}
           members={members}
@@ -126,7 +126,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
         <IssuePropertyEstimates
           value={issue?.estimate_point || null}
           estimatePoints={estimates}
-          hideDropdownArrow={true}
+          hideDropdownArrow
           onChange={handleEstimate}
           disabled={false}
         />

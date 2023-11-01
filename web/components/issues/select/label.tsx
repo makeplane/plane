@@ -49,7 +49,7 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                 <IssueLabelsList
                   labels={value.map((v) => issueLabels?.find((l) => l.id === v)) ?? []}
                   length={3}
-                  showLength={true}
+                  showLength
                 />
               </span>
             ) : (
