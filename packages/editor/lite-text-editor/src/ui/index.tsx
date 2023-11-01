@@ -11,6 +11,16 @@ import { LiteTextEditorExtensions } from "./extensions";
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
+export type IMentionSuggestion = {
+  id: string;
+  type: string;
+  avatar: string;
+  title: string;
+  subtitle: string;
+  redirect_uri: string;
+}
+
+export type IMentionHighlight = string
 
 interface ILiteTextEditor {
   value: string;
@@ -38,6 +48,8 @@ interface ILiteTextEditor {
     }[];
   };
   onEnterKeyPress?: (e?: any) => void;
+  mentionHighlights?: string[];
+  mentionSuggestions?: IMentionSuggestion[];
 }
 
 interface LiteTextEditorProps extends ILiteTextEditor {
@@ -64,6 +76,8 @@ const LiteTextEditor = ({
   forwardedRef,
   commentAccessSpecifier,
   onEnterKeyPress,
+  mentionHighlights,
+  mentionSuggestions
 }: LiteTextEditorProps) => {
   const editor = useEditor({
     onChange,
@@ -75,6 +89,8 @@ const LiteTextEditor = ({
     deleteFile,
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
+    mentionHighlights,
+    mentionSuggestions
   });
 
   const editorClassNames = getEditorClassNames({

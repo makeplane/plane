@@ -2,15 +2,14 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { useFormContext, useFieldArray, Controller } from "react-hook-form";
-// fetch keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// components
-import { Avatar } from "components/ui";
-import { CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
+// ui
+import { Avatar, CustomSelect, CustomSearchSelect, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { IJiraImporterForm } from "types";
+// fetch keys
+import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 
 const workspaceService = new WorkspaceService();
 
@@ -39,7 +38,7 @@ export const JiraImportUsers: FC = () => {
     query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),

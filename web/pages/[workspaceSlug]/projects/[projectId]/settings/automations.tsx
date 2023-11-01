@@ -8,7 +8,7 @@ import useSWR, { mutate } from "swr";
 import { ProjectService } from "services/project";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { ProjectSettingLayout } from "layouts/setting-layout";
+import { ProjectSettingLayout } from "layouts/settings-layout";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 import useProjectDetails from "hooks/use-project-details";

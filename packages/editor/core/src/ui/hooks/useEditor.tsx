@@ -12,6 +12,7 @@ import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
 import { UploadImage } from "../../types/upload-image";
 import { useInitializedContent } from "./useInitializedContent";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -26,6 +27,8 @@ interface CustomEditorProps {
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: any;
+  mentionHighlights?: string[];
+  mentionSuggestions?: IMentionSuggestion[];
 }
 
 export const useEditor = ({
@@ -38,6 +41,8 @@ export const useEditor = ({
   setIsSubmitting,
   forwardedRef,
   setShouldShowAlert,
+  mentionHighlights,
+  mentionSuggestions
 }: CustomEditorProps) => {
   const editor = useCustomEditor(
     {
@@ -45,7 +50,7 @@ export const useEditor = ({
         ...CoreEditorProps(uploadFile, setIsSubmitting),
         ...editorProps,
       },
-      extensions: [...CoreEditorExtensions(deleteFile), ...extensions],
+      extensions: [...CoreEditorExtensions({ mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []}, deleteFile), ...extensions],
       content:
         typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
       onUpdate: async ({ editor }) => {

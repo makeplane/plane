@@ -3,8 +3,12 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// services
+import { IssueService } from "services/issue";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
+import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -16,6 +20,10 @@ import { CycleLayoutRoot } from "components/issues/issue-layouts";
 import { EmptyState } from "components/common";
 // assets
 import emptyCycle from "public/empty-state/cycle.svg";
+// types
+import { ISearchIssueResponse } from "types";
+
+const issueService = new IssueService();
 
 const SingleCycle: React.FC = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
@@ -24,6 +32,10 @@ const SingleCycle: React.FC = () => {
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const { cycle: cycleStore } = useMobxStore();
+
+  const { user } = useUser();
+
+  const { setToastAlert } = useToast();
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -40,23 +52,27 @@ const SingleCycle: React.FC = () => {
   };
 
   // TODO: add this function to bulk add issues to cycle
-  // const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
-  //   if (!workspaceSlug || !projectId) return;
+  const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
+    if (!workspaceSlug || !projectId) return;
 
-  //   const payload = {
-  //     issues: data.map((i) => i.id),
-  //   };
+    const payload = {
+      issues: data.map((i) => i.id),
+    };
 
-  //   await issueService
-  //     .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
-  //     .catch(() => {
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: "Selected issues could not be added to the cycle. Please try again.",
-  //       });
-  //     });
-  // };
+    await issueService
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Selected issues could not be added to the cycle. Please try again.",
+        });
+      });
+  };
+
+  const openIssuesListModal = () => {
+    setCycleIssuesListModal(true);
+  };
 
   return (
     <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
@@ -65,7 +81,7 @@ const SingleCycle: React.FC = () => {
         isOpen={cycleIssuesListModal}
         handleClose={() => setCycleIssuesListModal(false)}
         searchParams={{ cycle: true }}
-        handleOnSubmit={async () => {}}
+        handleOnSubmit={handleAddIssuesToCycle}
       />
       {error ? (
         <EmptyState
@@ -80,8 +96,8 @@ const SingleCycle: React.FC = () => {
       ) : (
         <>
           <div className="flex h-full w-full">
-            <div className="h-full w-full">
-              <CycleLayoutRoot />
+            <div className="h-full w-full overflow-hidden">
+              <CycleLayoutRoot openIssuesListModal={openIssuesListModal} />
             </div>
             {cycleId && !isSidebarCollapsed && (
               <div

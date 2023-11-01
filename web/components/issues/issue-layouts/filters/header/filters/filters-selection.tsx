@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 // components
 import {
   FilterAssignees,
+  FilterMentions,
   FilterCreatedBy,
   FilterLabels,
   FilterPriority,
@@ -70,6 +71,10 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
     };
   }>({
     assignees: {
+      currentLength: 5,
+      totalLength: members?.length ?? 0,
+    },
+    mentions: {
       currentLength: 5,
       totalLength: members?.length ?? 0,
     },
@@ -251,6 +256,27 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
                   isViewMoreVisible={isViewMoreVisible("assignees")}
                   handleLess={() => handleViewLess("assignees")}
                   handleMore={() => handleViewMore("assignees")}
+                />
+              }
+            />
+          </div>
+        )}
+
+        {/* assignees */}
+        {isFilterEnabled("mentions") && (
+          <div className="py-2">
+            <FilterMentions
+              appliedFilters={filters.mentions ?? null}
+              handleUpdate={(val) => handleFiltersUpdate("mentions", val)}
+              itemsToRender={filtersToRender.mentions?.currentLength ?? 0}
+              members={members}
+              searchQuery={filtersSearchQuery}
+              viewButtons={
+                <ViewButtons
+                  isViewLessVisible={isViewLessVisible("mentions")}
+                  isViewMoreVisible={isViewMoreVisible("mentions")}
+                  handleLess={() => handleViewLess("mentions")}
+                  handleMore={() => handleViewMore("mentions")}
                 />
               }
             />

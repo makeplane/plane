@@ -50,6 +50,7 @@ const useIssuesView = () => {
     order_by: displayFilters?.order_by,
     group_by: displayFilters?.group_by,
     assignees: filters?.assignees ? filters?.assignees.join(",") : undefined,
+    mentions: filters?.mentions ? filters?.mentions.join(",") : undefined,
     state: filters?.state ? filters?.state.join(",") : undefined,
     priority: filters?.priority ? filters?.priority.join(",") : undefined,
     type: !isArchivedIssues ? (displayFilters?.type ? displayFilters?.type : undefined) : undefined,

@@ -12,6 +12,7 @@ import { Globe2, Lock } from "lucide-react";
 
 // types
 import type { IIssueComment } from "types";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -49,7 +50,9 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
 
   const {
     control,
@@ -90,6 +93,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                       debouncedUpdatesEnabled={false}
                       onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                       commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
+                      mentionSuggestions={editorSuggestions.mentionSuggestions}
+                      mentionHighlights={editorSuggestions.mentionHighlights}
                     />
                   )}
                 />

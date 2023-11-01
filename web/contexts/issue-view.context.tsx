@@ -51,6 +51,7 @@ export const initialState: StateType = {
     labels: null,
     state: null,
     state_group: null,
+    mentions: null,
     subscriber: null,
     created_by: null,
     start_date: null,
