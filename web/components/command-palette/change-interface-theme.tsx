@@ -4,7 +4,8 @@ import { THEME_OPTIONS } from "constants/themes";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
 import { observer } from "mobx-react-lite";
-// mobx store
+// hooks
+import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
@@ -17,15 +18,18 @@ export const ChangeInterfaceTheme: FC<Props> = observer((props) => {
   const { user: userStore } = useMobxStore();
   // states
   const [mounted, setMounted] = useState(false);
-  // theme
+  // hooks
   const { setTheme } = useTheme();
+  const { setToastAlert } = useToast();
 
   const updateUserTheme = (newTheme: string) => {
     setTheme(newTheme);
-    return userStore
-      .updateCurrentUserTheme(newTheme)
-      .then((response: any) => response)
-      .catch((error: any) => error);
+    return userStore.updateCurrentUserTheme(newTheme).catch(() => {
+      setToastAlert({
+        title: "Failed to save user theme settings!",
+        type: "error",
+      });
+    });
   };
 
   // useEffect only runs on the client, so now we can safely show the UI
