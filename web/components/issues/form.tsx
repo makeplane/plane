@@ -249,17 +249,11 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     <>
       {projectId && (
         <>
-          <CreateStateModal
-            isOpen={stateModal}
-            handleClose={() => setStateModal(false)}
-            projectId={projectId}
-            user={user ?? undefined}
-          />
+          <CreateStateModal isOpen={stateModal} handleClose={() => setStateModal(false)} projectId={projectId} />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
-            user={user ?? undefined}
             onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
           />
         </>

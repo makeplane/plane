@@ -50,7 +50,7 @@ const defaultValues: FormValues = {
 const projectService = new ProjectService();
 const workspaceService = new WorkspaceService();
 
-const SendProjectInvitationModal: React.FC<Props> = (props) => {
+export const SendProjectInvitationModal: React.FC<Props> = (props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;
 
   const router = useRouter();
@@ -306,5 +306,3 @@ const SendProjectInvitationModal: React.FC<Props> = (props) => {
     </Transition.Root>
   );
 };
-
-export default SendProjectInvitationModal;

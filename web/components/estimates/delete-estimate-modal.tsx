@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-
-// headless ui
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useToast from "hooks/use-toast";
 // types
 import { IEstimate } from "types";
-
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
@@ -12,13 +15,42 @@ import { Button } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
+  data: IEstimate | null;
   handleClose: () => void;
-  data: IEstimate;
-  handleDelete: () => void;
 };
 
-export const DeleteEstimateModal: React.FC<Props> = ({ isOpen, handleClose, data, handleDelete }) => {
+export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
+  const { isOpen, handleClose, data } = props;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  // store
+  const { projectEstimates: projectEstimatesStore } = useMobxStore();
+
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  // hooks
+  const { setToastAlert } = useToast();
+
+  const handleEstimateDelete = () => {
+    if (!workspaceSlug || !projectId) return;
+
+    const estimateId = data?.id!;
+
+    projectEstimatesStore.deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId).catch((err) => {
+      const error = err?.error;
+      const errorString = Array.isArray(error) ? error[0] : error;
+
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: errorString ?? "Estimate could not be deleted. Please try again",
+      });
+    });
+  };
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -68,7 +100,7 @@ export const DeleteEstimateModal: React.FC<Props> = ({ isOpen, handleClose, data
                   <span>
                     <p className="break-words text-sm leading-7 text-custom-text-200">
                       Are you sure you want to delete estimate-{" "}
-                      <span className="break-words font-medium text-custom-text-100">{data.name}</span>
+                      <span className="break-words font-medium text-custom-text-100">{data?.name}</span>
                       {""}? All of the data related to the estiamte will be permanently removed. This action cannot be
                       undone.
                     </p>
@@ -81,7 +113,7 @@ export const DeleteEstimateModal: React.FC<Props> = ({ isOpen, handleClose, data
                       variant="danger"
                       onClick={() => {
                         setIsDeleteLoading(true);
-                        handleDelete();
+                        handleEstimateDelete();
                       }}
                       loading={isDeleteLoading}
                     >
@@ -96,4 +128,4 @@ export const DeleteEstimateModal: React.FC<Props> = ({ isOpen, handleClose, data
       </Dialog>
     </Transition.Root>
   );
-};
+});

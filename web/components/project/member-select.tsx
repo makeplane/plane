@@ -1,13 +1,12 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { Ban } from "lucide-react";
-// services
-import { ProjectService } from "services/project";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
 type Props = {
   value: any;
@@ -15,19 +14,24 @@ type Props = {
   isDisabled?: boolean;
 };
 
-// services
-const projectService = new ProjectService();
+export const MemberSelect: React.FC<Props> = observer((props) => {
+  const { value, onChange, isDisabled = false } = props;
 
-export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = false }) => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+  // store
+  const { project: projectStore } = useMobxStore();
+
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
+
+  const members = projectStore.members?.[projectId?.toString()!];
 
   const options = members?.map((member) => ({
     value: member.member.id,
@@ -81,4 +85,4 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
       disabled={isDisabled}
     />
   );
-};
+});
