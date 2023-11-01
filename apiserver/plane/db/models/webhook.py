@@ -41,7 +41,7 @@ class Webhook(BaseModel):
         ]
     )
     is_active = models.BooleanField(default=True)
-    secret_key = models.CharField(max_length=255, blank=True, null=True)
+    secret_key = models.CharField(max_length=255, default=generate_token)
     project = models.BooleanField(default=False)
     issue = models.BooleanField(default=False)
     module = models.BooleanField(default=False)

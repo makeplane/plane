@@ -1,6 +1,10 @@
 from django.urls import path
 
-from plane.api.views import WebhookEndpoint, WebhookLogsEndpoint
+from plane.api.views import (
+    WebhookEndpoint,
+    WebhookLogsEndpoint,
+    WebhookSecretRegenerateEndpoint,
+)
 
 
 urlpatterns = [
@@ -12,6 +16,11 @@ urlpatterns = [
     path(
         "workspaces/<str:slug>/webhooks/<uuid:pk>/",
         WebhookEndpoint.as_view(),
+        name="webhooks",
+    ),
+    path(
+        "workspaces/<str:slug>/webhooks/<uuid:pk>/regenerate/",
+        WebhookSecretRegenerateEndpoint.as_view(),
         name="webhooks",
     ),
     path(

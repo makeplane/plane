@@ -41,6 +41,18 @@ class WorkSpaceBasePermission(BasePermission):
             ).exists()
 
 
+class WorkspaceOwnerPermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            return False
+
+        return WorkspaceMember.objects.filter(
+            workspace__slug=view.workspace_slug,
+            member=request.user,
+            role=Owner,
+        ).exists()
+
+
 class WorkSpaceAdminPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:

@@ -171,4 +171,4 @@ from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
 
-from .webhook import WebhookEndpoint, WebhookLogsEndpoint
+from .webhook import WebhookEndpoint, WebhookLogsEndpoint, WebhookSecretRegenerateEndpoint

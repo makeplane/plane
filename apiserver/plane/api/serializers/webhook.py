@@ -14,6 +14,7 @@ class WebhookSerializer(DynamicBaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
+            "secret_key",
         ]
 
 
