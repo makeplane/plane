@@ -1,6 +1,6 @@
 // layout
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import ExportGuide from "components/exporter/guide";

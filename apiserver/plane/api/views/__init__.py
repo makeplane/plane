@@ -7,14 +7,12 @@ from .project import (
     ProjectMemberInvitationsViewset,
     ProjectMemberInviteDetailViewSet,
     ProjectIdentifierEndpoint,
-    AddMemberToProjectEndpoint,
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
     ProjectMemberUserEndpoint,
     ProjectFavoritesViewSet,
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
-    ProjectMemberEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
     LeaveProjectEndpoint,
     ProjectPublicCoverImagesEndpoint,
@@ -53,7 +51,6 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    WorkspaceMembersEndpoint,
     LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet

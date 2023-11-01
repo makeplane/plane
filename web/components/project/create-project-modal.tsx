@@ -330,9 +330,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             <CustomSelect
                               value={value}
                               onChange={onChange}
-                              buttonClassName="border-[0.5px] shadow-md !py-1.5"
+                              buttonClassName="border-[0.5px] shadow-md !py-1.5 shadow-none"
                               label={
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 text-custom-text-300">
                                   {currentNetwork ? (
                                     <>
                                       <currentNetwork.icon className="h-[18px] w-[18px]" />
