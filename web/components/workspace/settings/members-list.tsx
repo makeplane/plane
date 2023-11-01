@@ -15,12 +15,11 @@ const workspaceService = new WorkspaceService();
 export const WorkspaceMembersList: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store
   const { workspace: workspaceStore, user: userStore } = useMobxStore();
-
   const workspaceMembers = workspaceStore.workspaceMembers;
-  const user = userStore.workspaceMemberInfo;
-
+  const user = userStore.currentWorkspaceMemberInfo;
+  // fetching workspace invitations
   const { data: workspaceInvitations } = useSWR(
     workspaceSlug ? `WORKSPACE_INVITATIONS_${workspaceSlug.toString()}` : null,
     workspaceSlug ? () => workspaceService.workspaceInvitations(workspaceSlug.toString()) : null

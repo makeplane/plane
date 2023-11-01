@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // mobx store
@@ -35,20 +35,19 @@ type Props = {
 // services
 const workspaceService = new WorkspaceService();
 
-export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
+export const WorkspaceMembersListItem: FC<Props> = (props) => {
   const { member } = props;
-
-  const [removeMemberModal, setRemoveMemberModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
+  // store
   const { workspace: workspaceStore, user: userStore } = useMobxStore();
-
-  const user = userStore.workspaceMemberInfo;
-  const isAdmin = userStore.workspaceMemberInfo?.role === 20;
+  const { currentWorkspaceMemberInfo, currentWorkspaceRole } = userStore;
+  const isAdmin = currentWorkspaceRole === 20;
+  // states
+  const [removeMemberModal, setRemoveMemberModal] = useState(false);
+  // hooks
+  const { setToastAlert } = useToast();
 
   const handleRemoveMember = async () => {
     if (!workspaceSlug) return;
@@ -83,7 +82,7 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
         });
   };
 
-  if (!user) return null;
+  if (!currentWorkspaceMemberInfo) return null;
 
   return (
     <>
@@ -141,12 +140,12 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
               <div className="flex item-center gap-1 px-2 py-0.5 rounded">
                 <span
                   className={`flex items-center text-xs font-medium rounded ${
-                    member.memberId !== user.member ? "" : "text-custom-sidebar-text-400"
+                    member.memberId !== currentWorkspaceMemberInfo.member ? "" : "text-custom-sidebar-text-400"
                   }`}
                 >
                   {ROLE[member.role as keyof typeof ROLE]}
                 </span>
-                {member.memberId !== user.member && (
+                {member.memberId !== currentWorkspaceMemberInfo.member && (
                   <span className="grid place-items-center">
                     <ChevronDown className="h-3 w-3" />
                   </span>
@@ -155,7 +154,7 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
             }
             value={member.role}
             onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
-              if (!workspaceSlug) return;
+              if (!workspaceSlug || !value) return;
 
               workspaceStore
                 .updateMember(workspaceSlug.toString(), member.id, {
@@ -170,12 +169,15 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
                 });
             }}
             disabled={
-              member.memberId === user.member || !member.status || (user.role !== 20 && user.role < member.role)
+              member.memberId === currentWorkspaceMemberInfo.member ||
+              !member.status ||
+              Boolean(currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < member.role)
             }
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (user.role !== 20 && user.role < parseInt(key)) return null;
+              if (currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < parseInt(key))
+                return null;
 
               return (
                 <CustomSelect.Option key={key} value={parseInt(key, 10)}>
@@ -185,7 +187,11 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
             })}
           </CustomSelect>
           {isAdmin && (
-            <Tooltip tooltipContent={member.memberId === user.member ? "Leave workspace" : "Remove member"}>
+            <Tooltip
+              tooltipContent={
+                member.memberId === currentWorkspaceMemberInfo.member ? "Leave workspace" : "Remove member"
+              }
+            >
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}

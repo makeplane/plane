@@ -17,10 +17,10 @@ export interface IProjectSettingHeader {
 export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) => {
   const { title } = props;
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
   // store
   const { project: projectStore } = useMobxStore();
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
+  const { currentProjectDetails } = projectStore;
 
   return (
     <div
@@ -31,9 +31,9 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
           <Breadcrumbs onBack={() => router.back()}>
             <BreadcrumbItem
               link={
-                <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
+                <Link href={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}>
                   <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
+                    <p className="truncate">{`${truncateText(currentProjectDetails?.name ?? "Project", 32)}`}</p>
                   </a>
                 </Link>
               }

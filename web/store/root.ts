@@ -98,10 +98,7 @@ import {
   InboxStore,
 } from "store/inbox";
 
-import {
-  IMentionsStore,
-  MentionsStore
-} from "store/editor"
+import { IMentionsStore, MentionsStore } from "store/editor";
 
 enableStaticRendering(typeof window === "undefined");
 

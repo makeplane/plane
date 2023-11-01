@@ -1,5 +1,5 @@
 // mobx
-import { action, observable, runInAction, makeObservable } from "mobx";
+import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // services
 import { ProjectService } from "services/project";
 import { UserService } from "services/user.service";
@@ -7,6 +7,7 @@ import { WorkspaceService } from "services/workspace.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
 import { IWorkspaceMemberMe, IProjectMember } from "types";
+import { RootStore } from "./root";
 
 export interface IUserStore {
   loader: boolean;
@@ -17,15 +18,27 @@ export interface IUserStore {
 
   dashboardInfo: any;
 
-  workspaceMemberInfo: IWorkspaceMemberMe | null;
+  workspaceMemberInfo: {
+    [workspaceSlug: string]: IWorkspaceMemberMe;
+  };
   hasPermissionToWorkspace: {
     [workspaceSlug: string]: boolean | null;
   };
 
-  projectMemberInfo: IProjectMember | null;
+  projectMemberInfo: {
+    [projectId: string]: IProjectMember;
+  };
   hasPermissionToProject: {
     [projectId: string]: boolean | null;
   };
+
+  currentProjectMemberInfo: IProjectMember | undefined;
+  currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
+  currentProjectRole: number | undefined;
+  currentWorkspaceRole: number | undefined;
+
+  hasPermissionToCurrentWorkspace: boolean | undefined;
+  hasPermissionToCurrentProject: boolean | undefined;
 
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
@@ -48,14 +61,18 @@ class UserStore implements IUserStore {
 
   dashboardInfo: any = null;
 
-  workspaceMemberInfo: IWorkspaceMemberMe | null = null;
+  workspaceMemberInfo: {
+    [workspaceSlug: string]: IWorkspaceMemberMe;
+  } = {};
   hasPermissionToWorkspace: {
-    [workspaceSlug: string]: boolean | null;
+    [workspaceSlug: string]: boolean;
   } = {};
 
-  projectMemberInfo: IProjectMember | null = null;
+  projectMemberInfo: {
+    [projectId: string]: IProjectMember;
+  } = {};
   hasPermissionToProject: {
-    [projectId: string]: boolean | null;
+    [projectId: string]: boolean;
   } = {};
   // root store
   rootStore;
@@ -64,7 +81,7 @@ class UserStore implements IUserStore {
   workspaceService;
   projectService;
 
-  constructor(_rootStore: any) {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
       loader: observable.ref,
@@ -78,12 +95,54 @@ class UserStore implements IUserStore {
       // action
       fetchCurrentUser: action,
       fetchCurrentUserSettings: action,
+      fetchUserDashboardInfo: action,
+      fetchUserWorkspaceInfo: action,
+      fetchUserProjectInfo: action,
+      updateTourCompleted: action,
+      updateCurrentUser: action,
+      updateCurrentUserTheme: action,
       // computed
+      currentProjectMemberInfo: computed,
+      currentWorkspaceMemberInfo: computed,
+      currentProjectRole: computed,
+      currentWorkspaceRole: computed,
+      hasPermissionToCurrentWorkspace: computed,
+      hasPermissionToCurrentProject: computed,
     });
     this.rootStore = _rootStore;
     this.userService = new UserService();
     this.workspaceService = new WorkspaceService();
     this.projectService = new ProjectService();
+  }
+
+  get currentWorkspaceMemberInfo() {
+    if (!this.rootStore.workspace.workspaceSlug) return;
+    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug];
+  }
+
+  get currentWorkspaceRole() {
+    if (!this.rootStore.workspace.workspaceSlug) return;
+    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug].role;
+  }
+
+  get currentProjectMemberInfo() {
+    if (!this.rootStore.project.projectId) return;
+    return this.projectMemberInfo[this.rootStore.project.projectId];
+  }
+
+  get currentProjectRole() {
+    if (!this.rootStore.project.projectId) return;
+    return this.projectMemberInfo[this.rootStore.project.projectId].role;
+  }
+
+  get hasPermissionToCurrentWorkspace() {
+    if (!this.rootStore.workspace.workspaceSlug) return;
+    return this.hasPermissionToWorkspace[this.rootStore.workspace.workspaceSlug];
+  }
+
+  get hasPermissionToCurrentProject() {
+    if (!this.rootStore.project.projectId) return;
+    return this.hasPermissionToProject[this.rootStore.project.projectId];
   }
 
   fetchCurrentUser = async () => {
@@ -132,10 +191,13 @@ class UserStore implements IUserStore {
 
   fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
     try {
-      const response = await this.workspaceService.workspaceMemberMe(workspaceSlug.toString());
+      const response = await this.workspaceService.workspaceMemberMe(workspaceSlug);
 
       runInAction(() => {
-        this.workspaceMemberInfo = response;
+        this.workspaceMemberInfo = {
+          ...this.workspaceMemberInfo,
+          [workspaceSlug]: response,
+        };
         this.hasPermissionToWorkspace = {
           ...this.hasPermissionToWorkspace,
           [workspaceSlug]: true,
@@ -158,7 +220,10 @@ class UserStore implements IUserStore {
       const response = await this.projectService.projectMemberMe(workspaceSlug, projectId);
 
       runInAction(() => {
-        this.projectMemberInfo = response;
+        this.projectMemberInfo = {
+          ...this.projectMemberInfo,
+          [projectId]: response,
+        };
         this.hasPermissionToProject = {
           ...this.hasPermissionToProject,
           [projectId]: true,

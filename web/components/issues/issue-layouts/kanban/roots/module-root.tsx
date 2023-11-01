@@ -18,6 +18,9 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 export interface IModuleKanBanLayout {}
 
 export const ModuleKanBanLayout: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, moduleId } = router.query;
+  // store
   const {
     project: projectStore,
     moduleIssue: moduleIssueStore,
@@ -25,9 +28,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { currentProjectDetails } = projectStore;
 
   const issues = moduleIssueStore?.getIssues;
 
@@ -83,8 +84,6 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
-
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
@@ -92,8 +91,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+    currentProjectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (
