@@ -108,7 +108,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   const projectExists = projectId ? projectsList?.find((project) => project.id === projectId.toString()) : null;
 
   // check if the project member apis is loading
-  if (!userStore.projectMemberInfo && userStore.hasPermissionToProject === null)
+  if (!userStore.projectMemberInfo && projectId && userStore.hasPermissionToProject[projectId.toString()] === null)
     return (
       <div className="grid h-screen place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -118,10 +118,11 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     );
 
   // check if the user don't have permission to access the project
-  if (projectExists && userStore.hasPermissionToProject === false) return <JoinProject />;
+  if (projectExists && projectId && userStore.hasPermissionToProject[projectId.toString()] === false)
+    return <JoinProject />;
 
   // check if the project info is not found.
-  if (userStore.projectNotFound && userStore.hasPermissionToProject === false)
+  if (!projectExists && projectId && userStore.hasPermissionToProject[projectId.toString()] === false)
     return (
       <div className="container grid h-screen place-items-center bg-custom-background-100">
         <EmptyState
