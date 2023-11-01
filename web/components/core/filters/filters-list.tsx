@@ -168,7 +168,7 @@ export const FiltersList: React.FC<Props> = ({ filters, setFilters, clearAllFilt
                             key={memberId}
                             className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-1"
                           >
-                            <Avatar user={member} />
+                            <Avatar name={member?.display_name} src={member?.avatar} showTooltip={false} />
                             <span>{member?.display_name}</span>
                             <span
                               className="cursor-pointer"
