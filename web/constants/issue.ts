@@ -394,7 +394,7 @@ export const getValueFromObject = (object: Object, key: string): string | number
   let value: any = object;
   if (!value || keys.length === 0) return null;
 
-  for (const _key of keys) value = value[_key];
+  for (const _key of keys) value = value?.[_key];
   return value;
 };
 

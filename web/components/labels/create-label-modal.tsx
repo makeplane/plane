@@ -1,19 +1,19 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Dialog, Popover, Transition } from "@headlessui/react";
-// services
-import { IssueLabelService } from "services/issue";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button, Input } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
 // types
-import type { IUser, IIssueLabels, IState } from "types";
+import type { IIssueLabels, IState } from "types";
 // constants
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 
 // types
@@ -22,7 +22,6 @@ type Props = {
   projectId: string;
   handleClose: () => void;
   onSuccess?: (response: IIssueLabels) => void;
-  user: IUser | undefined;
 };
 
 const defaultValues: Partial<IState> = {
@@ -30,11 +29,14 @@ const defaultValues: Partial<IState> = {
   color: "rgb(var(--color-text-200))",
 };
 
-const issueLabelService = new IssueLabelService();
+export const CreateLabelModal: React.FC<Props> = observer((props) => {
+  const { isOpen, projectId, handleClose, onSuccess } = props;
 
-export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClose, user, onSuccess }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  // store
+  const { projectLabel: projectLabelStore } = useMobxStore();
 
   const {
     formState: { errors, isSubmitting },
@@ -59,10 +61,9 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
   const onSubmit = async (formData: IIssueLabels) => {
     if (!workspaceSlug) return;
 
-    await issueLabelService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
+    await projectLabelStore
+      .createLabel(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
-        mutate<IIssueLabels[]>(PROJECT_ISSUE_LABELS(projectId), (prevData) => [res, ...(prevData ?? [])], false);
         onClose();
         if (onSuccess) onSuccess(res);
       })
@@ -197,4 +198,4 @@ export const CreateLabelModal: React.FC<Props> = ({ isOpen, projectId, handleClo
       </Dialog>
     </Transition.Root>
   );
-};
+});

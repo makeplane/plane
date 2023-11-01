@@ -2,9 +2,8 @@ import React, { FC, useState, Fragment } from "react";
 // popper js
 import { usePopper } from "react-popper";
 // ui
-import { Input, Tooltip } from "@plane/ui";
+import { Avatar, Input } from "@plane/ui";
 import { Listbox } from "@headlessui/react";
-import { Avatar } from "components/ui";
 // icons
 import { Check, Search, User2 } from "lucide-react";
 // types
@@ -49,32 +48,22 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       : options?.filter((option) => option.member.display_name.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <Tooltip
-      tooltipHeading="Assignee"
-      tooltipContent={
-        options && options.length > 0
-          ? options.map((assignee) => assignee?.member.display_name).join(", ")
-          : "No Assignee"
-      }
-      position="top"
-    >
-      <div
-        className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
+    <div
+      className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
             "
-      >
-        {value ? (
-          <>
-            <Avatar height="18px" width="18px" user={value?.member} />
-            <span className="text-xs leading-4"> {value?.member.display_name}</span>
-          </>
-        ) : (
-          <>
-            <User2 className="h-[18px] w-[18px]" />
-            <span className="text-xs leading-4">{placeholder}</span>
-          </>
-        )}
-      </div>
-    </Tooltip>
+    >
+      {value ? (
+        <>
+          <Avatar name={value?.member.display_name} src={value?.member.avatar} />
+          <span className="text-xs leading-4"> {value?.member.display_name}</span>
+        </>
+      ) : (
+        <>
+          <User2 className="h-[18px] w-[18px]" />
+          <span className="text-xs leading-4">{placeholder}</span>
+        </>
+      )}
+    </div>
   );
 
   return (
@@ -122,7 +111,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
                     {({ selected }) => (
                       <>
                         <div className="flex items-center gap-2">
-                          <Avatar user={workspaceMember.member} />
+                          <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
                           {workspaceMember.member.display_name}
                         </div>
                         {selected && <Check className="h-3.5 w-3.5" />}

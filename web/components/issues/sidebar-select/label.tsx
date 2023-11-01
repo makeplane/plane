@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { Controller, UseFormWatch, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 // headless ui
 import { Listbox, Popover, Transition } from "@headlessui/react";
@@ -12,7 +12,7 @@ import useUser from "hooks/use-user";
 // ui
 import { Input, Spinner } from "@plane/ui";
 // icons
-import { Component, Plus, Tag, X } from "lucide-react";
+import { Component, Plus, X } from "lucide-react";
 // types
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
@@ -20,8 +20,7 @@ import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   issueDetails: IIssue | undefined;
-  issueControl: any;
-  watchIssue: UseFormWatch<IIssue>;
+  labelList: string[];
   submitChanges: (formData: any) => void;
   isNotAllowed: boolean;
   uneditable: boolean;
@@ -36,8 +35,7 @@ const issueLabelService = new IssueLabelService();
 
 export const SidebarLabelSelect: React.FC<Props> = ({
   issueDetails,
-  issueControl,
-  watchIssue,
+  labelList,
   submitChanges,
   isNotAllowed,
   uneditable,
@@ -91,167 +89,152 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   }, [createLabelForm, reset, setFocus]);
 
   return (
-    <div className={`space-y-3 py-3 ${uneditable ? "opacity-60" : ""}`}>
-      <div className="flex items-start justify-between">
-        <div className="flex basis-1/2 items-center gap-x-2 text-sm text-custom-text-200">
-          <Tag className="h-4 w-4" />
-          <p>Label</p>
-        </div>
-        <div className="basis-1/2">
-          <div className="flex flex-wrap gap-1">
-            {watchIssue("labels")?.map((labelId) => {
-              const label = issueLabels?.find((l) => l.id === labelId);
+    <div className={`flex flex-col gap-3 ${uneditable ? "opacity-60" : ""}`}>
+      <div className="flex flex-wrap gap-1">
+        {labelList?.map((labelId) => {
+          const label = issueLabels?.find((l) => l.id === labelId);
 
-              if (label)
-                return (
-                  <span
-                    key={label.id}
-                    className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
-                    onClick={() => {
-                      const updatedLabels = watchIssue("labels")?.filter((l) => l !== labelId);
-                      submitChanges({
-                        labels: updatedLabels,
-                      });
-                    }}
-                  >
-                    <span
-                      className="h-2 w-2 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
-                      }}
-                    />
-                    {label.name}
-                    <X className="h-2 w-2 group-hover:text-red-500" />
-                  </span>
-                );
-            })}
-            <Controller
-              control={issueControl}
-              name="labels"
-              render={({ field: { value } }) => (
-                <Listbox
-                  as="div"
-                  value={value}
-                  onChange={(val: any) => submitChanges({ labels: val })}
-                  className="flex-shrink-0"
-                  multiple
-                  disabled={isNotAllowed || uneditable}
-                >
-                  {({ open }) => (
-                    <div className="relative">
-                      <Listbox.Button
-                        className={`flex ${
-                          isNotAllowed || uneditable
-                            ? "cursor-not-allowed"
-                            : "cursor-pointer hover:bg-custom-background-90"
-                        } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
-                      >
-                        Select Label
-                      </Listbox.Button>
-
-                      <Transition
-                        show={open}
-                        as={React.Fragment}
-                        leave="transition ease-in duration-100"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                      >
-                        <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-100 focus:outline-none">
-                          <div className="py-1">
-                            {issueLabels ? (
-                              issueLabels.length > 0 ? (
-                                issueLabels.map((label: IIssueLabels) => {
-                                  const children = issueLabels?.filter((l) => l.parent === label.id);
-
-                                  if (children.length === 0) {
-                                    if (!label.parent)
-                                      return (
-                                        <Listbox.Option
-                                          key={label.id}
-                                          className={({ active, selected }) =>
-                                            `${active || selected ? "bg-custom-background-90" : ""} ${
-                                              selected ? "" : "text-custom-text-200"
-                                            } flex cursor-pointer select-none items-center gap-2 truncate p-2`
-                                          }
-                                          value={label.id}
-                                        >
-                                          <span
-                                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                                            style={{
-                                              backgroundColor: label.color && label.color !== "" ? label.color : "#000",
-                                            }}
-                                          />
-                                          {label.name}
-                                        </Listbox.Option>
-                                      );
-                                  } else
-                                    return (
-                                      <div className="border-y border-custom-border-100 bg-custom-background-90">
-                                        <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
-                                          <Component className="h-3 w-3" />
-                                          {label.name}
-                                        </div>
-                                        <div>
-                                          {children.map((child) => (
-                                            <Listbox.Option
-                                              key={child.id}
-                                              className={({ active, selected }) =>
-                                                `${active || selected ? "bg-custom-background-100" : ""} ${
-                                                  selected ? "" : "text-custom-text-200"
-                                                } flex cursor-pointer select-none items-center gap-2 truncate p-2`
-                                              }
-                                              value={child.id}
-                                            >
-                                              <span
-                                                className="h-2 w-2 flex-shrink-0 rounded-full"
-                                                style={{
-                                                  backgroundColor: child?.color ?? "black",
-                                                }}
-                                              />
-                                              {child.name}
-                                            </Listbox.Option>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    );
-                                })
-                              ) : (
-                                <div className="text-center">No labels found</div>
-                              )
-                            ) : (
-                              <Spinner />
-                            )}
-                          </div>
-                        </Listbox.Options>
-                      </Transition>
-                    </div>
-                  )}
-                </Listbox>
-              )}
-            />
-            {!isNotAllowed && (
-              <button
-                type="button"
+          if (label)
+            return (
+              <span
+                key={label.id}
+                className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
+                onClick={() => {
+                  const updatedLabels = labelList?.filter((l) => l !== labelId);
+                  submitChanges({
+                    labels: updatedLabels,
+                  });
+                }}
+              >
+                <span
+                  className="h-2 w-2 flex-shrink-0 rounded-full"
+                  style={{
+                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                  }}
+                />
+                {label.name}
+                <X className="h-2 w-2 group-hover:text-red-500" />
+              </span>
+            );
+        })}
+        <Listbox
+          as="div"
+          value={issueDetails?.labels ?? []}
+          onChange={(val: any) => submitChanges({ labels: val })}
+          className="flex-shrink-0"
+          multiple
+          disabled={isNotAllowed || uneditable}
+        >
+          {({ open }) => (
+            <div className="relative">
+              <Listbox.Button
                 className={`flex ${
                   isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-                } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-200`}
-                onClick={() => setCreateLabelForm((prevData) => !prevData)}
-                disabled={uneditable}
+                } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
               >
-                {createLabelForm ? (
-                  <>
-                    <X className="h-3 w-3" /> Cancel
-                  </>
-                ) : (
-                  <>
-                    <Plus className="h-3 w-3" /> New
-                  </>
-                )}
-              </button>
+                Select Label
+              </Listbox.Button>
+
+              <Transition
+                show={open}
+                as={React.Fragment}
+                leave="transition ease-in duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <Listbox.Options className="absolute right-0 z-10 mt-1 max-h-28 w-40 overflow-auto rounded-md bg-custom-background-80 py-1 text-xs shadow-lg border border-custom-border-100 focus:outline-none">
+                  <div className="py-1">
+                    {issueLabels ? (
+                      issueLabels.length > 0 ? (
+                        issueLabels.map((label: IIssueLabels) => {
+                          const children = issueLabels?.filter((l) => l.parent === label.id);
+
+                          if (children.length === 0) {
+                            if (!label.parent)
+                              return (
+                                <Listbox.Option
+                                  key={label.id}
+                                  className={({ active, selected }) =>
+                                    `${active || selected ? "bg-custom-background-90" : ""} ${
+                                      selected ? "" : "text-custom-text-200"
+                                    } flex cursor-pointer select-none items-center gap-2 truncate p-2`
+                                  }
+                                  value={label.id}
+                                >
+                                  <span
+                                    className="h-2 w-2 flex-shrink-0 rounded-full"
+                                    style={{
+                                      backgroundColor: label.color && label.color !== "" ? label.color : "#000",
+                                    }}
+                                  />
+                                  {label.name}
+                                </Listbox.Option>
+                              );
+                          } else
+                            return (
+                              <div className="border-y border-custom-border-100 bg-custom-background-90">
+                                <div className="flex select-none items-center gap-2 truncate p-2 font-medium text-custom-text-100">
+                                  <Component className="h-3 w-3" />
+                                  {label.name}
+                                </div>
+                                <div>
+                                  {children.map((child) => (
+                                    <Listbox.Option
+                                      key={child.id}
+                                      className={({ active, selected }) =>
+                                        `${active || selected ? "bg-custom-background-100" : ""} ${
+                                          selected ? "" : "text-custom-text-200"
+                                        } flex cursor-pointer select-none items-center gap-2 truncate p-2`
+                                      }
+                                      value={child.id}
+                                    >
+                                      <span
+                                        className="h-2 w-2 flex-shrink-0 rounded-full"
+                                        style={{
+                                          backgroundColor: child?.color ?? "black",
+                                        }}
+                                      />
+                                      {child.name}
+                                    </Listbox.Option>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                        })
+                      ) : (
+                        <div className="text-center">No labels found</div>
+                      )
+                    ) : (
+                      <Spinner />
+                    )}
+                  </div>
+                </Listbox.Options>
+              </Transition>
+            </div>
+          )}
+        </Listbox>
+        {!isNotAllowed && (
+          <button
+            type="button"
+            className={`flex ${
+              isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
+            } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
+            onClick={() => setCreateLabelForm((prevData) => !prevData)}
+            disabled={uneditable}
+          >
+            {createLabelForm ? (
+              <>
+                <X className="h-3 w-3" /> Cancel
+              </>
+            ) : (
+              <>
+                <Plus className="h-3 w-3" /> New
+              </>
             )}
-          </div>
-        </div>
+          </button>
+        )}
       </div>
+
       {createLabelForm && (
         <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleNewLabel)}>
           <div>

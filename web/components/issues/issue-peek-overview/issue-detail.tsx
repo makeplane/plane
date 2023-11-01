@@ -1,16 +1,17 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
 // components
+import { TextArea } from "@plane/ui";
 import { IssueReaction } from "./reactions";
 // hooks
 import { useDebouncedCallback } from "use-debounce";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // types
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
-import { useForm, Controller } from "react-hook-form";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 const fileService = new FileService();
 
@@ -26,24 +27,45 @@ interface IPeekOverviewIssueDetails {
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
   const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
+
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
-  const { handleSubmit, watch, reset, control } = useForm<IIssue>({
+  const [characterLimit, setCharacterLimit] = useState(false);
+
+  const { setShowAlert } = useReloadConfirmations();
+  const {
+    handleSubmit,
+    watch,
+    reset,
+    control,
+    formState: { errors },
+  } = useForm<IIssue>({
     defaultValues: {
       name: "",
       description_html: "",
     },
   });
 
-  const { setShowAlert } = useReloadConfirmations();
+  const handleDescriptionFormSubmit = useCallback(
+    async (formData: Partial<IIssue>) => {
+      if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
 
-  useEffect(() => {
-    if (!issue) return;
+      await issueUpdate({
+        ...issue,
+        name: formData.name ?? "",
+        description_html: formData.description_html ?? "<p></p>",
+      });
+    },
+    [issue, issueUpdate]
+  );
 
-    reset({
-      ...issue,
-    });
-  }, [issue, reset]);
+  const debouncedIssueDescription = useDebouncedCallback(async (_data: any) => {
+    issueUpdate({ ...issue, description_html: _data });
+  }, 1500);
+
+  const debouncedTitleSave = useDebouncedCallback(async () => {
+    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+  }, 1500);
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -56,62 +78,80 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     }
   }, [isSubmitting, setShowAlert]);
 
-  const handleDescriptionFormSubmit = useCallback(
-    async (formData: Partial<IIssue>) => {
-      if (!formData?.name || formData?.name.length === 0 || formData?.name.length > 255) return;
+  // reset form values
+  useEffect(() => {
+    if (!issue) return;
 
-      issueUpdate({ name: formData.name ?? "", description_html: formData.description_html });
-    },
-    [issueUpdate]
-  );
-
-  const debouncedIssueFormSave = useDebouncedCallback(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+    reset({
+      ...issue,
+    });
+  }, [issue, reset]);
 
   return (
-    <div className="space-y-4">
-      <div className="font-medium text-sm text-custom-text-200">
+    <>
+      <span className="font-medium text-base text-custom-text-400">
         {issue?.project_detail?.identifier}-{issue?.sequence_id}
-      </div>
+      </span>
 
-      <div className="font-medium text-xl">{watch("name")}</div>
-
-      <div className="space-y-2">
-        <div className="relative">
+      <div className="relative">
+        {true ? (
           <Controller
-            name="description_html"
+            name="name"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <RichTextEditor
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-                deleteFile={fileService.deleteImage}
+              <TextArea
+                id="name"
+                name="name"
                 value={value}
-                onChange={(description: Object, description_html: string) => {
+                placeholder="Enter issue name"
+                onFocus={() => setCharacterLimit(true)}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+                  setCharacterLimit(false);
                   setIsSubmitting("submitting");
-                  onChange(description_html);
-                  debouncedIssueFormSave();
+                  debouncedTitleSave();
+                  onChange(e.target.value);
                 }}
-                customClassName="p-3 min-h-[80px] shadow-sm"
+                required={true}
+                className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary !p-0 focus:!px-3 focus:!py-2"
+                hasError={Boolean(errors?.description)}
+                role="textbox"
+                disabled={!true}
               />
             )}
           />
-          <div
-            className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-              isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-            }`}
-          >
-            {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+        ) : (
+          <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
+        )}
+        {characterLimit && true && (
+          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
+            <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
+              {watch("name").length}
+            </span>
+            /255
           </div>
-        </div>
-
-        <IssueReaction
-          issueReactions={issueReactions}
-          user={user}
-          issueReactionCreate={issueReactionCreate}
-          issueReactionRemove={issueReactionRemove}
-        />
+        )}
       </div>
-    </div>
+      <span>{errors.name ? errors.name.message : null}</span>
+
+      <span className="text-black">
+        <RichTextEditor
+          uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+          deleteFile={fileService.deleteImage}
+          value={issue?.description_html}
+          debouncedUpdatesEnabled={false}
+          onChange={(description: Object, description_html: string) => {
+            debouncedIssueDescription(description_html);
+          }}
+          customClassName="mt-0"
+        />
+      </span>
+
+      <IssueReaction
+        issueReactions={issueReactions}
+        user={user}
+        issueReactionCreate={issueReactionCreate}
+        issueReactionRemove={issueReactionRemove}
+      />
+    </>
   );
 };

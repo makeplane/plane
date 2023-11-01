@@ -7,8 +7,6 @@ export * from "./form";
 export * from "./modal";
 export * from "./select";
 export * from "./sidebar";
-export * from "./single-cycle-card";
-export * from "./single-cycle-list";
 export * from "./transfer-issues-modal";
 export * from "./transfer-issues";
 export * from "./cycles-list";

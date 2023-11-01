@@ -32,7 +32,7 @@ import {
 // ui
 import { CustomDatePicker } from "components/ui";
 // icons
-import { Bell, CalendarDays, LinkIcon, Plus, Signal, Trash2, Triangle, User2 } from "lucide-react";
+import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, User2 } from "lucide-react";
 import { ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -333,7 +333,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
                       <p>State</p>
                     </div>
-                    <div className="sm:basis-1/2">
+                    <div>
                       <Controller
                         control={control}
                         name="state"
@@ -354,7 +354,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Assignees</p>
                     </div>
-                    <div className="sm:basis-1/2">
+                    <div>
                       <Controller
                         control={control}
                         name="assignees"
@@ -375,7 +375,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <Signal className="h-4 w-4 flex-shrink-0" />
                       <p>Priority</p>
                     </div>
-                    <div className="sm:basis-1/2">
+                    <div>
                       <Controller
                         control={control}
                         name="priority"
@@ -583,7 +583,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <ContrastIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Cycle</p>
                     </div>
-                    <div className="space-y-1 sm:w-1/2">
+                    <div className="space-y-1">
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
                         handleCycleChange={handleCycleChange}
@@ -598,7 +598,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <DiceIcon className="h-4 w-4 flex-shrink-0" />
                       <p>Module</p>
                     </div>
-                    <div className="space-y-1 sm:w-1/2">
+                    <div className="space-y-1">
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
                         handleModuleChange={handleModuleChange}
@@ -611,14 +611,21 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
             )}
           </div>
           {(fieldsToShow.includes("all") || fieldsToShow.includes("label")) && (
-            <SidebarLabelSelect
-              issueDetails={issueDetail}
-              issueControl={control}
-              watchIssue={watchIssue}
-              submitChanges={submitChanges}
-              isNotAllowed={isNotAllowed}
-              uneditable={uneditable ?? false}
-            />
+            <div className="flex flex-wrap items-start py-2">
+              <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:w-1/2">
+                <Tag className="h-4 w-4 flex-shrink-0" />
+                <p>Label</p>
+              </div>
+              <div className="space-y-1 sm:w-1/2">
+                <SidebarLabelSelect
+                  issueDetails={issueDetail}
+                  labelList={issueDetail?.labels ?? []}
+                  submitChanges={submitChanges}
+                  isNotAllowed={isNotAllowed}
+                  uneditable={uneditable ?? false}
+                />
+              </div>
+            </div>
           )}
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
             <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
