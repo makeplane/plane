@@ -59,7 +59,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       position="top"
     >
       <div
-        className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
+        className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border-[0.5px] border-custom-border-300 duration-300 focus:outline-none text-custom-text-300
             "
       >
         {value ? (
@@ -85,7 +85,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           type="button"
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          } `}
+          }`}
         >
           {label}
         </button>
