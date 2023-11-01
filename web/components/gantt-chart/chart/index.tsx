@@ -165,6 +165,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
+    if (!scrollContainer) return;
+
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
     let scrollWidth: number = 0;
     let daysDifference: number = 0;
@@ -192,6 +194,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // handling scroll functionality
   const onScroll = () => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    if (!scrollContainer) return;
 
     const scrollWidth: number = scrollContainer?.scrollWidth;
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
