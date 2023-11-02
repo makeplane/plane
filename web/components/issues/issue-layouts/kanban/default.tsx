@@ -9,7 +9,7 @@ import { KanbanIssueBlocksList, BoardInlineCreateIssueForm } from "components/is
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 // constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
+import { getValueFromObject } from "constants/issue";
 
 export interface IGroupByKanBan {
   issues: any;
@@ -25,6 +25,7 @@ export interface IGroupByKanBan {
     issue: IIssue,
     action: "update" | "delete"
   ) => void;
+  showEmptyGroup: boolean;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
@@ -42,6 +43,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     listKey,
     isDragDisabled,
     handleIssues,
+    showEmptyGroup,
     quickActions,
     displayProperties,
     kanBanToggle,
@@ -92,6 +94,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         columnId={getValueFromObject(_list, listKey) as string}
                         issues={issues[getValueFromObject(_list, listKey) as string]}
                         isDragDisabled={isDragDisabled}
+                        showEmptyGroup={showEmptyGroup}
                         handleIssues={handleIssues}
                         quickActions={quickActions}
                         displayProperties={displayProperties}
@@ -140,6 +143,13 @@ export interface IKanBan {
   displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  showEmptyGroup: boolean;
+  states: any;
+  stateGroups: any;
+  priorities: any;
+  labels: any;
+  members: any;
+  projects: any;
   enableQuickIssueCreate?: boolean;
 }
 
@@ -154,22 +164,50 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     displayProperties,
     kanBanToggle,
     handleKanBanToggle,
+    showEmptyGroup,
+    states,
+    stateGroups,
+    priorities,
+    labels,
+    members,
+    projects,
     enableQuickIssueCreate,
   } = props;
 
-  const { project: projectStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
+  const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
 
   return (
     <div className="relative w-full h-full">
+      {/* TODO: have to implement */}
+      {group_by && group_by === "projects" && (
+        <GroupByKanBan
+          issues={issues}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          sub_group_id={sub_group_id}
+          list={projects}
+          listKey={`id`}
+          isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
+          handleIssues={handleIssues}
+          quickActions={quickActions}
+          displayProperties={displayProperties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+        />
+      )}
+
       {group_by && group_by === "state" && (
         <GroupByKanBan
           issues={issues}
           group_by={group_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
-          list={projectStore?.projectStates}
+          list={states}
           listKey={`id`}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
@@ -185,9 +223,10 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           group_by={group_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
-          list={ISSUE_STATE_GROUPS}
+          list={stateGroups}
           listKey={`key`}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
@@ -203,9 +242,10 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           group_by={group_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
-          list={ISSUE_PRIORITIES}
+          list={priorities}
           listKey={`key`}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
@@ -221,9 +261,10 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           group_by={group_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
-          list={projectStore?.projectLabels}
+          list={labels ? [...labels, { id: "None", name: "None" }] : labels}
           listKey={`id`}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
@@ -239,9 +280,10 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           group_by={group_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
+          list={members ? [...members, { id: "None", display_name: "None" }] : members}
+          listKey={`id`}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
@@ -257,9 +299,10 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           group_by={group_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
+          list={members}
+          listKey={`id`}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
+          showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}

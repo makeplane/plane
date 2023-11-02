@@ -27,7 +27,7 @@ type Props = {
   states?: IStateResponse | undefined;
 };
 
-const membersFilters = ["assignees", "mentions" ,"created_by", "subscriber"];
+const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {

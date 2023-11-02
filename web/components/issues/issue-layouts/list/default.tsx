@@ -188,7 +188,7 @@ export const List: React.FC<IList> = observer((props) => {
         <GroupByList
           issues={issues}
           group_by={group_by}
-          list={labels}
+          list={[...labels, { id: "None", name: "None" }]}
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
@@ -202,7 +202,7 @@ export const List: React.FC<IList> = observer((props) => {
         <GroupByList
           issues={issues}
           group_by={group_by}
-          list={members}
+          list={[...members, { id: "None", display_name: "None" }]}
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}

@@ -37,6 +37,8 @@ export const CycleKanBanLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
+  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
+
   const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
@@ -116,6 +118,13 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             displayProperties={displayProperties}
             kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members?.map((m) => m.member) ?? null}
+            projects={projects}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         ) : (
           <KanBanSwimLanes
@@ -140,7 +149,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         )}
       </DragDropContext>
