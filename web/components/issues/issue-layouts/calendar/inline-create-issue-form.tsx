@@ -66,7 +66,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -74,7 +74,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full pr-2 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full pr-2 py-1.5 rounded-md bg-transparent text-xs font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -181,15 +181,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
 
   return (
     <>
-      <Transition
-        show={isOpen}
-        enter="transition ease-in-out duration-200 transform"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in-out duration-200 transform"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
+      {isOpen && (
         <div
           ref={ref}
           className={`transition-all z-20 w-full ${
@@ -198,21 +190,21 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex w-full px-1.5 border-[0.5px] border-custom-border-100 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
+            className="flex w-full px-2 border-[0.5px] border-custom-border-200 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
           >
             <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
           </form>
         </div>
-      </Transition>
+      )}
 
       {!isOpen && (
         <div className="hidden group-hover:block border-[0.5px] border-custom-border-200 rounded">
           <button
             type="button"
-            className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-1 py-1.5 rounded-md"
+            className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1.5 rounded-md"
             onClick={() => setIsOpen(true)}
           >
-            <PlusIcon className="h-4 w-4" />
+            <PlusIcon className="h-3.5 w-3.5" />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
           </button>
         </div>

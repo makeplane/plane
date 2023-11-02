@@ -39,7 +39,7 @@ const Inputs = (props: any) => {
 
   return (
     <div>
-      <h4 className="text-sm font-medium leading-5 text-custom-text-300">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-xs font-medium leading-5 text-custom-text-300">{projectDetails?.identifier ?? "..."}</h4>
       <input
         autoComplete="off"
         placeholder="Issue Title"
@@ -151,26 +151,18 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
 
   return (
     <div>
-      <Transition
-        show={isOpen}
-        enter="transition ease-in-out duration-200 transform"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in-out duration-200 transform"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
+      {isOpen && (
         <form
           ref={ref}
           onSubmit={handleSubmit(onSubmitHandler)}
-          className="flex flex-col border-[0.5px] border-custom-border-100 justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px] mb-3 rounded bg-custom-background-100 shadow-custom-shadow-sm"
+          className="flex flex-col border-[0.5px] border-custom-border-100 justify-between gap-1.5 group/card relative select-none px-3.5 py-3 h-[118px] mb-3 mx-1.5 rounded bg-custom-background-300 shadow-custom-shadow-sm"
         >
           <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
         </form>
-      </Transition>
+      )}
 
       {isOpen && (
-        <p className="text-xs ml-3 italic text-custom-text-200">
+        <p className="text-xs ml-3 italic mb-2 text-custom-text-200">
           Press {"'"}Enter{"'"} to add another issue
         </p>
       )}
@@ -178,7 +170,7 @@ export const BoardInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       {!isOpen && (
         <button
           type="button"
-          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-3 rounded-md"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-4 w-4" />
