@@ -305,14 +305,12 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         <>
           <div className="flex items-center justify-between w-full">
             <div>
-              {peekCycle && (
-                <button
-                  className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
-                  onClick={() => handleClose()}
-                >
-                  <ChevronRight className="h-3 w-3 text-white stroke-2" />
-                </button>
-              )}
+              <button
+                className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
+                onClick={() => handleClose()}
+              >
+                <ChevronRight className="h-3 w-3 text-white stroke-2" />
+              </button>
             </div>
             <div className="flex items-center gap-3.5">
               <button onClick={handleCopyText}>
