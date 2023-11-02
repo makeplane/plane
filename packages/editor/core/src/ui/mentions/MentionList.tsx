@@ -18,13 +18,16 @@ interface MentionListProps {
 // eslint-disable-next-line react/display-name
 const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const selectItem = useCallback((index: number) => {
+
+  const selectItem = (index: number) => {
     const item = props.items[index]
+
+    console.log(props.command)
 
     if (item) {
       props.command({ id: item.id, label: item.title, target: "users", redirect_uri: item.redirect_uri })
     }
-  }, [props.command, props.items])
+  }
 
   const upHandler = () => {
     setSelectedIndex(((selectedIndex + props.items.length) - 1) % props.items.length)
@@ -55,15 +58,13 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
       }
 
       if (event.key === 'Enter') {
-        event.preventDefault();
-        event.stopPropagation();
         enterHandler()
         return false
       }
 
       return false
     },
-  }), [props.items, selectedIndex, setSelectedIndex, selectItem])
+  }))
 
   return (
     props.items && props.items.length !== 0 ? <div className="items shadow-md">
