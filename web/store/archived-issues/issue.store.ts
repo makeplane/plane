@@ -189,7 +189,7 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       console.error("Error: Fetching error in issues", error);
       this.loader = false;
       this.error = error;
-      return error;
+      throw error;
     }
   };
 

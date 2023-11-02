@@ -5,6 +5,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -23,7 +25,9 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { archivedIssues: archivedIssueStore } = useMobxStore();
+  const { setToastAlert } = useToast();
+
+  const { archivedIssueDetail: archivedIssueDetailStore } = useMobxStore();
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -41,9 +45,25 @@ export const DeleteArchivedIssueModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await archivedIssueStore.deleteArchivedIssue(workspaceSlug.toString(), data.project, data.id);
+    await archivedIssueDetailStore
+      .deleteArchivedIssue(workspaceSlug.toString(), data.project, data.id)
+      .then(() => {
+        if (onSubmit) onSubmit();
+      })
+      .catch((err) => {
+        const error = err?.detail;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-    if (onSubmit) await onSubmit().finally(() => setIsDeleteLoading(false));
+        setToastAlert({
+          title: "Error",
+          type: "error",
+          message: errorString || "Something went wrong.",
+        });
+      })
+      .finally(() => {
+        setIsDeleteLoading(false);
+        onClose();
+      });
   };
 
   return (

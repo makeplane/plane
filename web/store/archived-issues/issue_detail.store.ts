@@ -93,7 +93,7 @@ export class ArchivedIssueDetailStore implements IArchivedIssueDetailStore {
           [projectId]: originalIssues,
         };
       });
-      return error;
+      throw error;
     }
   };
 
@@ -125,7 +125,7 @@ export class ArchivedIssueDetailStore implements IArchivedIssueDetailStore {
         this.loader = false;
         this.error = error;
       });
-      return error;
+      throw error;
     }
   };
 
@@ -156,7 +156,7 @@ export class ArchivedIssueDetailStore implements IArchivedIssueDetailStore {
         this.loader = false;
         this.error = error;
       });
-      return error;
+      throw error;
     }
   };
 }
