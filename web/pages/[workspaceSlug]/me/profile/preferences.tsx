@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
@@ -14,8 +14,10 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { Spinner } from "@plane/ui";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
+// type
+import { NextPageWithLayout } from "types/app";
 
-const ProfilePreferencesPage = observer(() => {
+const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   const { user: userStore } = useMobxStore();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
@@ -45,32 +47,38 @@ const ProfilePreferencesPage = observer(() => {
   };
 
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="My Profile Preferences" />}>
-      <WorkspaceSettingLayout>
-        {userStore.currentUser ? (
-          <div className="pr-9 py-8 w-full overflow-y-auto">
-            <div className="flex items-center py-3.5 border-b border-custom-border-200">
-              <h3 className="text-xl font-medium">Preferences</h3>
-            </div>
-            <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
-              <div className="col-span-12 sm:col-span-6">
-                <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
-                <p className="text-sm text-custom-text-200">Select or customize your interface color scheme.</p>
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
-              </div>
-            </div>
-            {userTheme?.theme === "custom" && <CustomThemeSelector />}
+    <>
+      {userStore.currentUser ? (
+        <div className="pr-9 py-8 w-full overflow-y-auto">
+          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+            <h3 className="text-xl font-medium">Preferences</h3>
           </div>
-        ) : (
-          <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-            <Spinner />
+          <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
+            <div className="col-span-12 sm:col-span-6">
+              <h4 className="text-lg font-semibold text-custom-text-100">Theme</h4>
+              <p className="text-sm text-custom-text-200">Select or customize your interface color scheme.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <ThemeSwitch value={currentTheme} onChange={handleThemeChange} />
+            </div>
           </div>
-        )}
-      </WorkspaceSettingLayout>
-    </AppLayout>
+          {userTheme?.theme === "custom" && <CustomThemeSelector />}
+        </div>
+      ) : (
+        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+          <Spinner />
+        </div>
+      )}
+    </>
   );
 });
+
+ProfilePreferencesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="My Profile Preferences" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
 
 export default ProfilePreferencesPage;

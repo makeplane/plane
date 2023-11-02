@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // store
@@ -12,9 +12,9 @@ import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const ProfileSubscribedIssues: NextPage = () => {
+const ProfileSubscribedIssuesPage: NextPageWithLayout = () => {
   const {
     workspace: workspaceStore,
     project: projectStore,
@@ -58,4 +58,12 @@ const ProfileSubscribedIssues: NextPage = () => {
   );
 };
 
-export default observer(ProfileSubscribedIssues);
+ProfileSubscribedIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<UserProfileHeader />}>
+      <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
+};
+
+export default observer(ProfileSubscribedIssuesPage);

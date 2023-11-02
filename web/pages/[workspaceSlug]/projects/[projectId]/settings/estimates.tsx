@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -6,16 +6,20 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingHeader } from "components/headers";
 import { EstimatesList } from "components/estimates/estimate-list";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const EstimatesSettings: NextPage = () => (
-  <AppLayout header={<ProjectSettingHeader title="Estimates Settings" />} withProjectWrapper>
-    <ProjectSettingLayout>
-      <div className="pr-9 py-8 w-full overflow-y-auto">
-        <EstimatesList />
-      </div>
-    </ProjectSettingLayout>
-  </AppLayout>
+const EstimatesSettingsPage: NextPageWithLayout = () => (
+  <div className="pr-9 py-8 w-full overflow-y-auto">
+    <EstimatesList />
+  </div>
 );
 
-export default EstimatesSettings;
+EstimatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectSettingHeader title="Estimates Settings" />} withProjectWrapper>
+      <ProjectSettingLayout>{page}; </ProjectSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default EstimatesSettingsPage;

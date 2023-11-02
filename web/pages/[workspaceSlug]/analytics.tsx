@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
@@ -18,10 +18,12 @@ import { Plus } from "lucide-react";
 import emptyAnalytics from "public/empty-state/analytics.svg";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
+// type
+import { NextPageWithLayout } from "types/app";
 
 const trackEventService = new TrackEventService();
 
-const AnalyticsPage = observer(() => {
+const AnalyticsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -109,5 +111,9 @@ const AnalyticsPage = observer(() => {
     </AppLayout>
   );
 });
+
+AnalyticsPage.getLayout = function getLayout(page: ReactElement) {
+  return <AppLayout header={<WorkspaceAnalyticsHeader />}>{page}</AppLayout>;
+};
 
 export default AnalyticsPage;
