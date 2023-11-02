@@ -31,13 +31,6 @@ export const ProjectMemberList: React.FC = observer(() => {
 
   const { user } = useUser();
 
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
   const { data: projectInvitations } = useSWR(
     workspaceSlug && projectId ? `PROJECT_INVITATIONS_${projectId.toString()}` : null,
     workspaceSlug && projectId

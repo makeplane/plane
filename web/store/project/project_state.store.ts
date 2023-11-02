@@ -81,7 +81,7 @@ export class ProjectStateStore implements IProjectStateStore {
   };
 
   updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => {
-    const originalStates = this.rootStore.project.states;
+    const originalStates = this.rootStore.project.states || {};
 
     runInAction(() => {
       this.rootStore.project.states = {
@@ -120,13 +120,7 @@ export class ProjectStateStore implements IProjectStateStore {
     } catch (error) {
       console.log("Failed to update state from project store");
       runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: {
-            ...this.rootStore.project.states?.[projectId],
-            [data.group as string]: originalStates || [],
-          },
-        } as any;
+        this.rootStore.project.states = originalStates;
       });
       throw error;
     }
