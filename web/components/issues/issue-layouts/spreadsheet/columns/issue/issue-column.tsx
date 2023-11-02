@@ -5,7 +5,6 @@ import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
@@ -16,10 +15,16 @@ type Props = {
   issue: IIssue;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   properties: IIssueDisplayProperties;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
+  setIssuePeekOverView: React.Dispatch<
+    React.SetStateAction<{
+      workspaceSlug: string;
+      projectId: string;
+      issueId: string;
+    } | null>
+  >;
   disableUserActions: boolean;
   nestingLevel: number;
 };
@@ -28,7 +33,7 @@ export const IssueColumn: React.FC<Props> = ({
   issue,
   expanded,
   handleToggleExpand,
-  handleUpdateIssue,
+  setIssuePeekOverView,
   properties,
   handleEditIssue,
   handleDeleteIssue,
@@ -53,11 +58,6 @@ export const IssueColumn: React.FC<Props> = ({
     });
   };
 
-  const [issuePeekOverview, setIssuePeekOverView] = useState<{
-    workspaceSlug: string;
-    projectId: string;
-    issueId: string;
-  } | null>(null);
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
     setIssuePeekOverView({
@@ -168,15 +168,6 @@ export const IssueColumn: React.FC<Props> = ({
           </Tooltip>
         </div>
       </div>
-
-      {issuePeekOverview && (
-        <IssuePeekOverview
-          workspaceSlug={issuePeekOverview?.workspaceSlug}
-          projectId={issuePeekOverview?.projectId}
-          issueId={issuePeekOverview?.issueId}
-          handleIssue={(issueToUpdate) => handleUpdateIssue(issueToUpdate as IIssue, issueToUpdate)}
-        />
-      )}
     </>
   );
 };
