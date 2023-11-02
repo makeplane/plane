@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
+import { usePopper } from "react-popper";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// popper js
-import { usePopper } from "react-popper";
 // ui
 import { Combobox } from "@headlessui/react";
 // icons
