@@ -12,6 +12,7 @@ interface IssueBlockProps {
   index: number;
   issue: IIssue;
   isDragDisabled: boolean;
+  showEmptyGroup: boolean;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -23,7 +24,17 @@ interface IssueBlockProps {
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
+  const {
+    sub_group_id,
+    columnId,
+    index,
+    issue,
+    isDragDisabled,
+    showEmptyGroup,
+    handleIssues,
+    quickActions,
+    displayProperties,
+  } = props;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, "update");
@@ -83,6 +94,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   issue={issue}
                   handleIssues={updateIssue}
                   displayProperties={displayProperties}
+                  showEmptyGroup={showEmptyGroup}
                 />
               </div>
             </div>
