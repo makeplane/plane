@@ -8,6 +8,7 @@ import { GanttChartRoot, IBlockUpdateData, renderIssueBlocksStructure } from "co
 import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssue } from "types";
 
 export const CycleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -38,8 +39,8 @@ export const CycleGanttLayout: React.FC = observer(() => {
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
-          BlockRender={IssueGanttBlock}
-          SidebarBlockRender={IssueGanttSidebarBlock}
+          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
+          sidebarBlockToRender={(data: IIssue) => <IssueGanttSidebarBlock data={data} handleIssue={updateIssue} />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}

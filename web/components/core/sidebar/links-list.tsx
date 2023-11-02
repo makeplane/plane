@@ -15,6 +15,7 @@ type Props = {
 
 export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEditLink, userAuth }) => {
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
   return (
     <>
       {links.map((link) => (

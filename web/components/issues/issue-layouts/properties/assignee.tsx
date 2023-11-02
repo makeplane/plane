@@ -21,6 +21,7 @@ export interface IIssuePropertyAssignee {
   optionsClassName?: string;
   placement?: Placement;
   multiple?: true;
+  noLabelBorder?: boolean;
 }
 
 export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer((props) => {
@@ -36,6 +37,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     optionsClassName,
     placement,
     multiple = false,
+    noLabelBorder = false,
   } = props;
 
   const { workspace: workspaceStore, project: projectStore } = useMobxStore();
@@ -91,8 +93,9 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           </AvatarGroup>
         ) : (
           <span
-            className="flex items-center justify-between gap-1 h-full w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none
-          "
+            className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded duration-300 focus:outline-none ${
+              noLabelBorder ? "" : " px-2.5 py-1 border border-custom-border-300"
+            }}`}
           >
             <User2 className="h-3 w-3" />
           </span>

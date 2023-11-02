@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-import useUser from "hooks/use-user";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueDraftService } from "services/issue";
 // hooks
-import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 // icons
 import { AlertTriangle } from "lucide-react";
@@ -19,8 +14,6 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@plane/ui";
 // types
 import type { IIssue } from "types";
-// fetch-keys
-import { PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -31,19 +24,18 @@ type Props = {
 
 const issueDraftService = new IssueDraftService();
 
-export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
+export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, data, onSubmit } = props;
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { user: userStore } = useMobxStore();
+  const user = userStore.currentUser;
 
-  const { params } = useIssuesView();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const { user } = useUser();
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -64,7 +56,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
-        mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+
         setToastAlert({
           title: "Success",
           message: "Draft Issue deleted successfully",
@@ -146,4 +138,4 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

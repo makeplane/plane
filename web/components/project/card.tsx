@@ -113,8 +113,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             className="absolute top-0 left-0 h-full w-full object-cover rounded-t"
           />
 
-          <div className="absolute h-9 w-full bottom-4 z-10 flex items-center justify-between px-4">
-            <div className="flex items-center gap-2.5">
+          <div className="absolute h-10 w-full bottom-4 z-10 flex items-center justify-between px-4">
+            <div className="flex items-center gap-2.5 flex-grow truncate">
               <div className="h-9 w-9 flex item-center justify-center rounded bg-white/90 flex-shrink-0">
                 <span className="flex items-center justify-center">
                   {project.emoji
@@ -125,8 +125,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 </span>
               </div>
 
-              <div className="flex flex-col gap-0.5 justify-center h-9">
-                <h3 className="text-white font-semibold line-clamp-1">{project.name}</h3>
+              <div className="flex flex-col gap-0.5 justify-between w-full truncate">
+                <h3 className="text-white font-semibold truncate">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
                   <p className="text-xs font-medium text-white">{project.identifier} </p>
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
@@ -134,7 +134,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               </div>
             </div>
 
-            <div className="flex items-center h-full gap-2">
+            <div className="flex items-center h-full gap-2 flex-shrink-0">
               <button
                 className="flex items-center justify-center h-6 w-6 rounded bg-white/10"
                 onClick={(e) => {

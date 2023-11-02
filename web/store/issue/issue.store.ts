@@ -265,9 +265,10 @@ export class IssueStore implements IIssueStore {
       ...i,
       ...(i.id === issue.id
         ? {
+            ...issue,
             sort_order: payload.sort_order?.newSortOrder ?? i.sort_order,
-            start_date: payload.start_date,
-            target_date: payload.target_date,
+            start_date: payload.start_date ?? i.start_date,
+            target_date: payload.target_date ?? i.target_date,
           }
         : {}),
     }));
@@ -288,7 +289,7 @@ export class IssueStore implements IIssueStore {
       };
     });
 
-    const newPayload: any = { ...payload };
+    const newPayload: any = { ...issue, ...payload };
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 

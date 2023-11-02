@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// hooks
+import { observer } from "mobx-react-lite";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
@@ -17,7 +17,7 @@ import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-l
 import { IWorkspace } from "types";
 import type { NextPage } from "next";
 
-const CreateWorkspace: NextPage = () => {
+const CreateWorkspace: NextPage = observer(() => {
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
@@ -27,10 +27,9 @@ const CreateWorkspace: NextPage = () => {
   const router = useRouter();
 
   const { user: userStore } = useMobxStore();
+  const user = userStore.currentUser;
 
   const { theme } = useTheme();
-
-  const { user } = useUser();
 
   const onSubmit = async (workspace: IWorkspace) => {
     await userStore
@@ -76,6 +75,6 @@ const CreateWorkspace: NextPage = () => {
       </DefaultLayout>
     </UserAuthWrapper>
   );
-};
+});
 
 export default CreateWorkspace;

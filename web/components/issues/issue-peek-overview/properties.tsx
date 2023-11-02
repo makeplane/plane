@@ -1,7 +1,9 @@
 import { FC, useState } from "react";
 import { mutate } from "swr";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 import { CalendarDays, ContrastIcon, Link2, Plus, Signal, Tag, Triangle, User2 } from "lucide-react";
@@ -23,10 +25,7 @@ import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
 import { ICycle, IIssue, IIssueLink, IModule, TIssuePriorities, linkDetails } from "types";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-
 // services
 import { IssueService } from "services/issue";
 
@@ -38,17 +37,18 @@ interface IPeekOverviewProperties {
 
 const issueService = new IssueService();
 
-export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
+export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { issue, issueUpdate, user } = props;
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+
+  const { user: userStore } = useMobxStore();
+  const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const { memberRole } = useProjectMyMembership();
 
   const handleState = (_state: string) => {
     issueUpdate({ ...issue, state: _state });
@@ -346,7 +346,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
                   links={issue.issue_link}
                   handleDeleteLink={handleDeleteLink}
                   handleEditLink={handleEditLink}
-                  userAuth={memberRole}
+                  userAuth={{
+                    isGuest: userRole === 5,
+                    isViewer: userRole === 10,
+                    isMember: userRole === 15,
+                    isOwner: userRole === 20,
+                  }}
                 />
               ) : null}
             </div>
@@ -355,4 +360,4 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = (props) => {
       </div>
     </>
   );
-};
+});
