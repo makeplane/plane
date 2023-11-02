@@ -7,13 +7,14 @@ import { IIssue } from "types";
 interface Props {
   columnId: string;
   issues: IIssue[];
+  isReadonly?: boolean;
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issues, handleIssues, quickActions, display_properties } = props;
+  const { columnId, issues, handleIssues, quickActions, display_properties, isReadonly } = props;
 
   return (
     <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
@@ -25,6 +26,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             issue={issue}
             handleIssues={handleIssues}
             quickActions={quickActions}
+            isReadonly={isReadonly}
             display_properties={display_properties}
           />
         ))

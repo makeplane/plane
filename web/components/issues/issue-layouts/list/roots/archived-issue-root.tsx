@@ -54,6 +54,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
       <List
         issues={issues}
         group_by={group_by}
+        isReadonly
         handleIssues={handleIssues}
         quickActions={(group_by, issue) => (
           <ArchivedIssueQuickActions issue={issue} handleDelete={async () => handleIssues(group_by, issue, "delete")} />
