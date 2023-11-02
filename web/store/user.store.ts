@@ -122,7 +122,7 @@ class UserStore implements IUserStore {
 
   get currentWorkspaceRole() {
     if (!this.rootStore.workspace.workspaceSlug) return;
-    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug].role;
+    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug]?.role;
   }
 
   get currentProjectMemberInfo() {
@@ -132,7 +132,7 @@ class UserStore implements IUserStore {
 
   get currentProjectRole() {
     if (!this.rootStore.project.projectId) return;
-    return this.projectMemberInfo[this.rootStore.project.projectId].role;
+    return this.projectMemberInfo[this.rootStore.project.projectId]?.role;
   }
 
   get hasPermissionToCurrentWorkspace() {
