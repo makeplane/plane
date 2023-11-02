@@ -154,7 +154,7 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
         <form
           ref={ref}
           onSubmit={handleSubmit(onSubmitHandler)}
-          className="absolute flex border-[0.5px] w-full border-t-0 border-custom-border-100 px-3 items-center gap-x-3 bg-custom-background-100 shadow-custom-shadow-sm z-10"
+          className="absolute flex items-center gap-x-3 border-[0.5px] w-full border-t-0 border-custom-border-100 px-3 bg-custom-background-100 shadow-custom-shadow-sm z-10"
         >
           <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
         </form>
@@ -167,10 +167,10 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       )}
 
       {!isOpen && (
-        <div className="w-full border-t border-custom-border-200">
+        <div className="w-full border-t-[0.5px] border-custom-border-200">
           <button
             type="button"
-            className="flex items-center gap-x-[6px] text-custom-primary-100 p-3 "
+            className="flex items-center gap-x-[6px] text-custom-primary-100 p-3"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-3 w-3" />
