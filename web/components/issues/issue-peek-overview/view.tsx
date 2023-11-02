@@ -1,6 +1,6 @@
 import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
-import { PanelRightOpen, Square, SquareCode, MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
+import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // components
@@ -165,9 +165,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
       <div className="w-full !text-base">
-        <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-          {children}
-        </div>
+        {children && (
+          <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
+            {children}
+          </div>
+        )}
 
         {issueId === peekIssueId && (
           <div
