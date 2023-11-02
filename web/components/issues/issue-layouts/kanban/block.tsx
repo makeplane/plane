@@ -1,6 +1,8 @@
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
+import { Tooltip } from "@plane/ui";
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 
@@ -57,7 +59,23 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+              <IssuePeekOverview
+                workspaceSlug={issue?.workspace_detail?.slug}
+                projectId={issue?.project_detail?.id}
+                issueId={issue?.id}
+                handleIssue={(issueToUpdate) => {
+                  handleIssues(
+                    !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
+                    !columnId && columnId === "null" ? null : columnId,
+                    { ...issue, ...issueToUpdate },
+                    "update"
+                  );
+                }}
+              >
+                <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                  <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+                </Tooltip>
+              </IssuePeekOverview>
               <div>
                 <KanBanProperties
                   sub_group_id={sub_group_id}
