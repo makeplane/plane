@@ -15,6 +15,7 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 import { ChevronDown, XCircle } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
+import { TUserWorkspaceRole } from "types";
 
 type Props = {
   member: {
@@ -25,7 +26,7 @@ type Props = {
     last_name: string;
     email: string | undefined;
     display_name: string;
-    role: 5 | 10 | 15 | 20;
+    role: TUserWorkspaceRole;
     status: boolean;
     member: boolean;
     accountCreated: boolean;
@@ -153,7 +154,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
               </div>
             }
             value={member.role}
-            onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
+            onChange={(value: TUserWorkspaceRole | undefined) => {
               if (!workspaceSlug || !value) return;
 
               workspaceStore

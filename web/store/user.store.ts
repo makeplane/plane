@@ -6,7 +6,7 @@ import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
-import { IWorkspaceMemberMe, IProjectMember } from "types";
+import { IWorkspaceMemberMe, IProjectMember, TUserProjectRole, TUserWorkspaceRole } from "types";
 import { RootStore } from "./root";
 
 export interface IUserStore {
@@ -34,8 +34,8 @@ export interface IUserStore {
 
   currentProjectMemberInfo: IProjectMember | undefined;
   currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
-  currentProjectRole: number | undefined;
-  currentWorkspaceRole: number | undefined;
+  currentProjectRole: TUserProjectRole | undefined;
+  currentWorkspaceRole: TUserWorkspaceRole | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;
@@ -261,7 +261,15 @@ class UserStore implements IUserStore {
 
   updateCurrentUser = async (data: Partial<IUser>) => {
     try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          ...data,
+        } as IUser;
+      });
+
       const response = await this.userService.updateUser(data);
+
       runInAction(() => {
         this.currentUser = response;
       });

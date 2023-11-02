@@ -7,8 +7,6 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle 
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
@@ -35,8 +33,7 @@ export const InboxMainContent: React.FC = observer(() => {
   const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
 
   const user = userStore.currentUser;
-
-  const { memberRole } = useProjectMyMembership();
+  const userRole = userStore.currentProjectRole;
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -225,7 +222,7 @@ export const InboxMainContent: React.FC = observer(() => {
                   description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
-                isAllowed={memberRole.isMember || memberRole.isOwner || user?.id === issueDetails.created_by}
+                isAllowed={userRole === 15 || userRole === 20 || user?.id === issueDetails.created_by}
               />
             </div>
 

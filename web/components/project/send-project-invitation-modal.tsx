@@ -1,20 +1,21 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // services
 import { ProjectService } from "services/project";
 import { WorkspaceService } from "services/workspace.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IUser } from "types";
+import { IUser, TUserProjectRole } from "types";
 // fetch-keys
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
@@ -29,7 +30,7 @@ type Props = {
 };
 
 type member = {
-  role: 5 | 10 | 15 | 20;
+  role: TUserProjectRole;
   member_id: string;
 };
 
@@ -50,14 +51,16 @@ const defaultValues: FormValues = {
 const projectService = new ProjectService();
 const workspaceService = new WorkspaceService();
 
-export const SendProjectInvitationModal: React.FC<Props> = (props) => {
+export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const { isOpen, setIsOpen, members, user, onSuccess } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
-  const { memberDetails } = useProjectMyMembership();
+
+  const { user: userStore } = useMobxStore();
+  const userRole = userStore.currentProjectRole;
 
   const { data: people } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
@@ -243,7 +246,7 @@ export const SendProjectInvitationModal: React.FC<Props> = (props) => {
                                     width="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
-                                      if (parseInt(key) > (memberDetails?.role ?? 5)) return null;
+                                      if (parseInt(key) > (userRole ?? 5)) return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>
@@ -305,4 +308,4 @@ export const SendProjectInvitationModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});
