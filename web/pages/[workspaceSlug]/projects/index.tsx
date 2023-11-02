@@ -1,12 +1,14 @@
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
-import type { NextPage } from "next";
 // components
 import { ProjectCardList } from "components/project";
 import { ProjectsHeader } from "components/headers";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+// type
+import { NextPageWithLayout } from "types/app";
 
-const ProjectsPage: NextPage = () => {
+const ProjectsPage: NextPageWithLayout = () => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -16,6 +18,10 @@ const ProjectsPage: NextPage = () => {
       <>{workspaceSlug && <ProjectCardList workspaceSlug={workspaceSlug.toString()} />}</>
     </AppLayout>
   );
+};
+
+ProjectsPage.getLayout = function getLayout(page: ReactElement) {
+  return <AppLayout header={<ProjectsHeader />}>{page}</AppLayout>;
 };
 
 export default ProjectsPage;
