@@ -11,7 +11,7 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 // icons
 import { Plus, X } from "lucide-react";
 // types
-import { IUser } from "types";
+import { IUser, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 // fetch-keys
@@ -27,7 +27,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
 };
 
 type FormValues = {

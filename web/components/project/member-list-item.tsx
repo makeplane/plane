@@ -16,6 +16,7 @@ import { CustomMenu, CustomSelect } from "@plane/ui";
 import { ChevronDown, X } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
+import { TUserProjectRole } from "types";
 
 // services
 const projectInvitationService = new ProjectInvitationService();
@@ -144,7 +145,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               </div>
             }
             value={member.role}
-            onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
+            onChange={(value: TUserProjectRole | undefined) => {
               if (!workspaceSlug || !projectId) return;
 
               projectStore
