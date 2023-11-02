@@ -47,6 +47,7 @@ export interface IUserStore {
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember>;
   fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
 
+  updateUserOnBoard: () => Promise<void>;
   updateTourCompleted: () => Promise<void>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
   updateCurrentUserTheme: (theme: string) => Promise<IUser>;
@@ -98,6 +99,7 @@ class UserStore implements IUserStore {
       fetchUserDashboardInfo: action,
       fetchUserWorkspaceInfo: action,
       fetchUserProjectInfo: action,
+      updateUserOnBoard: action,
       updateTourCompleted: action,
       updateCurrentUser: action,
       updateCurrentUserTheme: action,
@@ -242,6 +244,27 @@ class UserStore implements IUserStore {
     }
   };
 
+  updateUserOnBoard = async () => {
+    try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          is_onboarded: true,
+        } as IUser;
+      });
+
+      const user = this.currentUser ?? undefined;
+
+      if (!user) return;
+
+      await this.userService.updateUserOnBoard({ userRole: user.role }, user);
+    } catch (error) {
+      this.fetchCurrentUser();
+
+      throw error;
+    }
+  };
+
   updateTourCompleted = async () => {
     try {
       if (this.currentUser) {
@@ -251,7 +274,9 @@ class UserStore implements IUserStore {
             is_tour_completed: true,
           } as IUser;
         });
+
         const response = await this.userService.updateUserTourCompleted(this.currentUser);
+
         return response;
       }
     } catch (error) {
@@ -275,6 +300,8 @@ class UserStore implements IUserStore {
       });
       return response;
     } catch (error) {
+      this.fetchCurrentUser();
+
       throw error;
     }
   };
