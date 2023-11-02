@@ -24,21 +24,20 @@ interface MentionListProps {
 const MentionList = forwardRef((props: MentionListProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const selectItem = useCallback(
-    (index: number) => {
-      const item = props.items[index];
+  const selectItem = (index: number) => {
+    const item = props.items[index];
 
-      if (item) {
-        props.command({
-          id: item.id,
-          label: item.title,
-          target: "users",
-          redirect_uri: item.redirect_uri,
-        });
-      }
-    },
-    [props.command, props.items],
-  );
+    console.log(props.command);
+
+    if (item) {
+      props.command({
+        id: item.id,
+        label: item.title,
+        target: "users",
+        redirect_uri: item.redirect_uri,
+      });
+    }
+  };
 
   const upHandler = () => {
     setSelectedIndex(
@@ -58,32 +57,26 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
     setSelectedIndex(0);
   }, [props.items]);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      onKeyDown: ({ event }: { event: KeyboardEvent }) => {
-        if (event.key === "ArrowUp") {
-          upHandler();
-          return true;
-        }
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }: { event: KeyboardEvent }) => {
+      if (event.key === "ArrowUp") {
+        upHandler();
+        return true;
+      }
 
-        if (event.key === "ArrowDown") {
-          downHandler();
-          return true;
-        }
+      if (event.key === "ArrowDown") {
+        downHandler();
+        return true;
+      }
 
-        if (event.key === "Enter") {
-          event.preventDefault();
-          event.stopPropagation();
-          enterHandler();
-          return false;
-        }
-
+      if (event.key === "Enter") {
+        enterHandler();
         return false;
-      },
-    }),
-    [props.items, selectedIndex, setSelectedIndex, selectItem],
-  );
+      }
+
+      return false;
+    },
+  }));
 
   return props.items && props.items.length !== 0 ? (
     <div className="absolute max-h-40 bg-custom-background-100 rounded-md shadow-custom-shadow-sm text-custom-text-300 text-sm overflow-y-auto w-48 p-1 space-y-0.5">
