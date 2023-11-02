@@ -779,12 +779,12 @@ class SubIssuesEndpoint(BaseAPIView):
                 type="issue.activity.updated",
                 requested_data=json.dumps({"parent": str(issue_id)}),
                 actor_id=str(request.user.id),
-                issue_id=str(issue_id),
+                issue_id=str(sub_issue_id),
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": str(issue_id)}),
+                current_instance=json.dumps({"parent": str(sub_issue_id)}),
                 epoch=int(timezone.now().timestamp()),
             )
-            for issue_id in sub_issue_ids
+            for sub_issue_id in sub_issue_ids
         ]
 
         return Response(
