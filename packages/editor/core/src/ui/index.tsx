@@ -1,14 +1,14 @@
-"use client"
-import * as React from 'react';
+"use client";
+import * as React from "react";
 import { Extension } from "@tiptap/react";
-import { UploadImage } from '../types/upload-image';
-import { DeleteImage } from '../types/delete-image';
-import { getEditorClassNames } from '../lib/utils';
-import { EditorProps } from '@tiptap/pm/view';
-import { useEditor } from './hooks/useEditor';
-import { EditorContainer } from '../ui/components/editor-container';
-import { EditorContentWrapper } from '../ui/components/editor-content';
-import { IMentionSuggestion } from '../types/mention-suggestion';
+import { UploadImage } from "../types/upload-image";
+import { DeleteImage } from "../types/delete-image";
+import { getEditorClassNames } from "../lib/utils";
+import { EditorProps } from "@tiptap/pm/view";
+import { useEditor } from "./hooks/useEditor";
+import { EditorContainer } from "../ui/components/editor-container";
+import { EditorContentWrapper } from "../ui/components/editor-content";
+import { IMentionSuggestion } from "../types/mention-suggestion";
 
 interface ICoreEditor {
   value: string;
@@ -19,7 +19,9 @@ interface ICoreEditor {
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
+  setIsSubmitting?: (
+    isSubmitting: "submitting" | "submitted" | "saved",
+  ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   editable?: boolean;
   forwardedRef?: any;
@@ -72,22 +74,29 @@ const CoreEditor = ({
     forwardedRef,
   });
 
-  const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });
+  const editorClassNames = getEditorClassNames({
+    noBorder,
+    borderOnFocus,
+    customClassName,
+  });
 
   if (!editor) return null;
 
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        <EditorContentWrapper
+          editor={editor}
+          editorContentCustomClassNames={editorContentCustomClassNames}
+        />
       </div>
-    </EditorContainer >
+    </EditorContainer>
   );
 };
 
-const CoreEditorWithRef = React.forwardRef<EditorHandle, ICoreEditor>((props, ref) => (
-  <CoreEditor {...props} forwardedRef={ref} />
-));
+const CoreEditorWithRef = React.forwardRef<EditorHandle, ICoreEditor>(
+  (props, ref) => <CoreEditor {...props} forwardedRef={ref} />,
+);
 
 CoreEditorWithRef.displayName = "CoreEditorWithRef";
 
