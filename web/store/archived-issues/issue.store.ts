@@ -1,10 +1,10 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
 // types
 import { IIssue } from "types";
 // services
-import { IssueService } from "services/issue";
+import { IssueArchiveService } from "services/issue";
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 import {
   IIssueGroupWithSubGroupsStructure,
@@ -24,9 +24,14 @@ export interface IArchivedIssueStore {
       ungrouped: IIssueUnGroupedStructure;
     };
   };
+
+  // services
+  archivedIssueService: IssueArchiveService;
+
   // computed
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+
   // action
   fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
@@ -49,7 +54,7 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
     };
   } = {};
   // service
-  issueService;
+  archivedIssueService;
   rootStore;
 
   constructor(_rootStore: RootStore) {
@@ -66,26 +71,25 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       updateIssueStructure: action,
     });
     this.rootStore = _rootStore;
-    this.issueService = new IssueService();
+    this.archivedIssueService = new IssueArchiveService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+
+      if (
+        workspaceSlug &&
+        projectId &&
+        this.rootStore.archivedIssueFilters.userDisplayFilters &&
+        this.rootStore.archivedIssueFilters.userFilters
+      )
+        this.fetchIssues(workspaceSlug, projectId);
+    });
   }
 
   get getIssueType() {
-    const groupedLayouts = ["kanban", "list", "calendar"];
-    const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
-
-    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
-    if (!issueLayout) return null;
-
-    const _issueState = groupedLayouts.includes(issueLayout)
-      ? issueSubGroup
-        ? "groupWithSubGroups"
-        : "grouped"
-      : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
-
-    return _issueState || null;
+    const issueSubGroup = this.rootStore.archivedIssueFilters.userDisplayFilters?.sub_group_by || null;
+    return issueSubGroup ? "groupWithSubGroups" : "grouped";
   }
 
   get getIssues() {
@@ -122,10 +126,6 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
         },
       };
     }
-    if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i));
-    }
 
     const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
     if (orderBy === "-created_at") {
@@ -154,8 +154,8 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
       this.rootStore.project.setProjectId(projectId);
 
-      const params = this.rootStore?.issueFilter?.appliedFilters;
-      const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
+      const params = this.rootStore.archivedIssueFilters.appliedFilters;
+      const issueResponse = await this.archivedIssueService.getArchivedIssues(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
       if (issueType != null) {
