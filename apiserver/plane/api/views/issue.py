@@ -778,14 +778,14 @@ class SubIssuesEndpoint(BaseAPIView):
         _ = [
             issue_activity.delay(
                 type="issue.activity.updated",
-                requested_data=json.dumps({"parent": issue_id}, cls=DjangoJSONEncoder),
+                requested_data=json.dumps({"parent": str(issue_id)}),
                 actor_id=str(request.user.id),
-                issue_id=str(issue),
+                issue_id=str(issue_id),
                 project_id=str(project_id),
-                current_instance=json.dumps({"parent": issue}, cls=DjangoJSONEncoder),
+                current_instance=json.dumps({"parent": str(issue_id)}),
                 epoch=int(timezone.now().timestamp()),
             )
-            for issue in sub_issue_ids
+            for issue_id in sub_issue_ids
         ]
 
         return Response(
