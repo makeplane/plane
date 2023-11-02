@@ -29,7 +29,6 @@ const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const { user: userStore } = useMobxStore();
-  const { fetchCurrentUserSettings } = userStore;
   // router
   const router = useRouter();
   const { next: next_url } = router.query as { next: string };
@@ -46,7 +45,7 @@ export const SignInView = observer(() => {
     (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
 
   useEffect(() => {
-    fetchCurrentUserSettings().then((settings) => {
+    userStore.fetchCurrentUserSettings().then((settings) => {
       setLoading(true);
       if (next_url) router.push(next_url);
       else
@@ -58,12 +57,13 @@ export const SignInView = observer(() => {
           }`
         );
     });
-  }, [fetchCurrentUserSettings, router, next_url]);
+  }, [userStore, router, next_url]);
 
   const handleLoginRedirection = () => {
     userStore.fetchCurrentUser().then((user) => {
-      const isOnboard = user.onboarding_step.profile_complete;
-      if (isOnboard) {
+      const isOnboarded = user.is_onboarded;
+
+      if (isOnboarded) {
         userStore
           .fetchCurrentUserSettings()
           .then((userSettings: IUserSettings) => {

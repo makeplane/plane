@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useEffect, useState, FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-import { mutate } from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
@@ -13,8 +12,6 @@ import useToast from "hooks/use-toast";
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
 import { IWorkspace } from "types";
-// fetch-keys
-import { USER_WORKSPACES } from "constants/fetch-keys";
 // constants
 import { ORGANIZATION_SIZE } from "constants/workspace";
 
@@ -96,7 +93,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                 message: "Workspace created successfully.",
               });
 
-              mutate<IWorkspace[]>(USER_WORKSPACES, (prevData) => [res, ...(prevData ?? [])], false);
               if (onSubmit) await onSubmit(res);
             })
             .catch(() =>
