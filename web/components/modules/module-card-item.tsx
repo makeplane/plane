@@ -37,7 +37,14 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const { module: moduleStore } = useMobxStore();
 
-  const completionPercentage = (module.completed_issues / module.total_issues) * 100;
+  const moduleTotalIssues =
+    module.backlog_issues +
+    module.unstarted_issues +
+    module.started_issues +
+    module.completed_issues +
+    module.cancelled_issues;
+
+  const completionPercentage = (module.completed_issues / moduleTotalIssues) * 100;
 
   const endDate = new Date(module.target_date ?? "");
   const startDate = new Date(module.start_date ?? "");
@@ -47,15 +54,13 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
   const issueCount =
-    module.completed_issues && module.total_issues
-      ? module.total_issues === 0
-        ? "0 Issue"
-        : module.total_issues === module.completed_issues
-        ? module.total_issues > 1
-          ? `${module.total_issues} Issues`
-          : `${module.total_issues} Issue`
-        : `${module.completed_issues}/${module.total_issues} Issues`
-      : "0 Issue";
+    moduleTotalIssues === 0
+      ? "0 Issue"
+      : moduleTotalIssues === module.completed_issues
+      ? moduleTotalIssues > 1
+        ? `${moduleTotalIssues} Issues`
+        : `${moduleTotalIssues} Issue`
+      : `${module.completed_issues}/${moduleTotalIssues} Issues`;
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -158,7 +163,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount}</span>
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
