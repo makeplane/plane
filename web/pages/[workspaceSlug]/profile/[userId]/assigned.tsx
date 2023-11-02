@@ -1,5 +1,4 @@
-import React from "react";
-import type { NextPage } from "next";
+import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -13,10 +12,10 @@ import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanba
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-
 // types
+import { NextPageWithLayout } from "types/app";
 
-const ProfileAssignedIssues: NextPage = observer(() => {
+const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
   const {
     workspace: workspaceStore,
     project: projectStore,
@@ -45,22 +44,28 @@ const ProfileAssignedIssues: NextPage = observer(() => {
   const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
 
   return (
-    <AppLayout header={<UserProfileHeader />}>
-      <ProfileAuthWrapper showProfileIssuesFilter>
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="w-full h-full relative overflow-auto -z-1">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-        )}
-      </ProfileAuthWrapper>
-    </AppLayout>
+    <>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="w-full h-full relative overflow-auto -z-1">
+          {activeLayout === "list" ? (
+            <ProfileIssuesListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ProfileIssuesKanBanLayout />
+          ) : null}
+        </div>
+      )}
+    </>
   );
 });
 
-export default ProfileAssignedIssues;
+ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<UserProfileHeader />}>
+      <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
+};
+
+export default ProfileAssignedIssuesPage;

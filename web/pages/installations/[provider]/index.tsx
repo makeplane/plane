@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
-
+import React, { useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 // services
 import { AppInstallationService } from "services/app_installation.service";
 // ui
 import { Spinner } from "@plane/ui";
+// types
+import { NextPageWithLayout } from "types/app";
 
 // services
 const appInstallationService = new AppInstallationService();
 
-const AppPostInstallation = () => {
+const AppPostInstallation: NextPageWithLayout = () => {
   const router = useRouter();
   const { installation_id, setup_action, state, provider, code } = router.query;
 
@@ -83,6 +83,10 @@ const AppPostInstallation = () => {
       <Spinner />
     </div>
   );
+};
+
+AppPostInstallation.getLayout = function getLayout(page: ReactElement) {
+  return <div>{page}</div>;
 };
 
 export default AppPostInstallation;
