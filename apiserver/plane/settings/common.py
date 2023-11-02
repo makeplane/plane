@@ -4,7 +4,6 @@ import os
 import ssl
 import certifi
 from datetime import timedelta
-from urllib.parse import urlparse
 
 # Django imports
 from django.core.management.utils import get_random_secret_key
@@ -14,6 +13,7 @@ import dj_database_url
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
+from sentry_sdk.integrations.celery import CeleryIntegration
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -24,7 +24,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 DEBUG = False
 
 # Allowed Hosts
-ALLOWED_HOSTS = os.getenv("EXTRA_ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = ["*"]
 
 # Redirect if / is not present
 APPEND_SLASH = True
@@ -106,7 +106,7 @@ CSRF_COOKIE_SECURE = True
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -224,10 +224,6 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
-# Custom Domain settings
-parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
-AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
-AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
 
 # JWT Auth Configuration
@@ -286,19 +282,20 @@ CELERY_IMPORTS = (
 if bool(os.environ.get("SENTRY_DSN", False)):
     sentry_sdk.init(
         dsn=os.environ.get("SENTRY_DSN", ""),
-        integrations=[DjangoIntegration(), RedisIntegration()],
-        # If you wish to associate users to errors (assuming you are using
-        # django.contrib.auth) you may enable sending PII data.
+        integrations=[
+            DjangoIntegration(),
+            RedisIntegration(),
+            CeleryIntegration(monitor_beat_tasks=True),
+        ],
         traces_sample_rate=1,
         send_default_pii=True,
-        environment=os.environ.get("ENVIRONMENT", "production"),
+        environment=os.environ.get("ENVIRONMENT", "development"),
         profiles_sample_rate=1.0,
     )
 
 
 # Application Envs
-WEB_URL = os.environ.get("WEB_URL", "https://app.plane.so") # For email redirection
-PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False) # For External
+PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
@@ -308,7 +305,7 @@ UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 # Github Access Token
 GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 
-# Analytics 
+# Analytics
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
