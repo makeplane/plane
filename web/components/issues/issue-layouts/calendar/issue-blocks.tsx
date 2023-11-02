@@ -2,16 +2,20 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
+// components
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { Tooltip } from "@plane/ui";
 // types
 import { IIssue } from "types";
 
 type Props = {
   issues: IIssue[] | null;
+  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (issue: IIssue) => React.ReactNode;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, quickActions } = props;
+  const { issues, handleIssues, quickActions } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -47,7 +51,19 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                   <div className="text-xs text-custom-text-300 flex-shrink-0">
                     {issue.project_detail.identifier}-{issue.sequence_id}
                   </div>
-                  <h6 className="text-xs flex-grow truncate">{issue.name}</h6>
+                  <IssuePeekOverview
+                    workspaceSlug={issue?.workspace_detail?.slug}
+                    projectId={issue?.project_detail?.id}
+                    issueId={issue?.id}
+                    // TODO: add the logic here
+                    handleIssue={(issueToUpdate) => {
+                      handleIssues(issue.target_date ?? "", { ...issue, ...issueToUpdate }, "update");
+                    }}
+                  >
+                    <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                      <span className="text-xs flex-grow truncate">{issue.name}</span>
+                    </Tooltip>
+                  </IssuePeekOverview>
                   <div className="hidden group-hover/calendar-block:block">{quickActions(issue)}</div>
                 </a>
               </Link>

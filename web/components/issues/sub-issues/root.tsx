@@ -1,10 +1,10 @@
-import React from "react";
-// next imports
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
-// swr
+import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
-// lucide icons
 import { Plus, ChevronRight, ChevronDown } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ExistingIssuesListModal } from "components/core";
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -22,8 +22,6 @@ import { IUser, IIssue, ISearchIssueResponse } from "types";
 import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
@@ -45,7 +43,7 @@ const issueService = new IssueService();
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
 
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, issue: issueStore, issueDetail: issueDetailStore } = useMobxStore();
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
@@ -159,6 +157,21 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     });
   };
 
+  const handleUpdateIssue = useCallback(
+    (issue: IIssue, data: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !user) return;
+
+      const payload = {
+        ...issue,
+        ...data,
+      };
+
+      issueStore.updateIssueStructure(null, null, payload);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
+    },
+    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+  );
+
   const isEditable = userRole === 5 || userRole === 10 ? false : true;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
@@ -229,6 +242,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                     handleIssuesLoader={handleIssuesLoader}
                     copyText={copyText}
                     handleIssueCrudOperation={handleIssueCrudOperation}
+                    handleUpdateIssue={handleUpdateIssue}
                   />
                 </div>
               )}

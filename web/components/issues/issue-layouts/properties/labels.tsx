@@ -25,6 +25,7 @@ export interface IIssuePropertyLabels {
   optionsClassName?: string;
   placement?: Placement;
   maxRender?: number;
+  noLabelBorder?: boolean;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -40,6 +41,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     optionsClassName,
     placement,
     maxRender = 2,
+    noLabelBorder = false,
   } = props;
 
   const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
@@ -149,7 +151,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 </div>
               )
             ) : (
-              <div className="h-full flex items-center justify-center text-xs rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 hover:bg-custom-background-80">
+              <div
+                className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${
+                  noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+                }`}
+              >
                 Select labels
               </div>
             )}
