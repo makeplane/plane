@@ -251,5 +251,5 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .item.is-selected {
-  border-color: rgb(var(--color-border-200));
+  border-color: rgb(var(--color-border-400));
 }

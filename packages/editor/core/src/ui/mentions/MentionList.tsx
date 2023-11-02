@@ -55,8 +55,10 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
       }
 
       if (event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
         enterHandler()
-        return true
+        return false
       }
 
       return false
@@ -64,9 +66,9 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
   }), [props.items, selectedIndex, setSelectedIndex, selectItem])
 
   return (
-    props.items && props.items.length !== 0 ? <div className="items">
+    props.items && props.items.length !== 0 ? <div className="items shadow-md">
       { props.items.length ? props.items.map((item, index) => (
-            <div className={`item ${index === selectedIndex ? 'is-selected' : ''} w-72 flex items-center p-3 rounded shadow-md`} onClick={() => selectItem(index)}>
+            <div className={`item ${index === selectedIndex ? 'is-selected' : ''} w-72 flex items-center p-3 rounded`} onClick={() => selectItem(index)}>
                 {item.avatar ? <div
                   className={`rounded border-[0.5px] ${index ? "border-custom-border-200 bg-custom-background-100" : "border-transparent h-6 w-6"
                     }`}
