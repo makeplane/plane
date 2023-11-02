@@ -13,11 +13,7 @@ const ProjectsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  return (
-    <AppLayout header={<ProjectsHeader />}>
-      <>{workspaceSlug && <ProjectCardList workspaceSlug={workspaceSlug.toString()} />}</>
-    </AppLayout>
-  );
+  return <>{workspaceSlug && <ProjectCardList workspaceSlug={workspaceSlug.toString()} />}</>;
 };
 
 ProjectsPage.getLayout = function getLayout(page: ReactElement) {

@@ -1,5 +1,4 @@
-import * as React from "react";
-
+import { FC } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -7,16 +6,18 @@ import { Plus } from "lucide-react";
 import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+export interface ICyclesHeader {}
 
-export interface ICyclesHeader {
-  name: string | undefined;
-}
-
-export const CyclesHeader: React.FC<ICyclesHeader> = (props) => {
-  const { name } = props;
+export const CyclesHeader: FC<ICyclesHeader> = (props) => {
+  const {} = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store
+  const { project: projectStore } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
 
   return (
     <div
@@ -34,7 +35,7 @@ export const CyclesHeader: React.FC<ICyclesHeader> = (props) => {
                 </Link>
               }
             />
-            <BreadcrumbItem title={`${truncateText(name ?? "Project", 32)} Cycles`} />
+            <BreadcrumbItem title={`${truncateText(currentProjectDetails?.name ?? "Project Title", 32)} Cycles`} />
           </Breadcrumbs>
         </div>
       </div>

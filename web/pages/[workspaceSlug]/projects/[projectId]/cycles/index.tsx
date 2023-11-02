@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 import useSWR from "swr";
@@ -13,19 +13,20 @@ import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
 import { EmptyState } from "components/common";
+import { Tooltip } from "@plane/ui";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { TCycleView, TCycleLayout } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
-import { Tooltip } from "@plane/ui";
+// helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
-const ProjectCyclesPage: NextPage = observer(() => {
+const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
@@ -85,7 +86,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
   const cycleLayout = cycleStore?.cycleLayout;
 
   return (
-    <AppLayout header={<CyclesHeader name={currentProjectDetails?.name} />} withProjectWrapper>
+    <>
       <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
@@ -217,8 +218,16 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </Tab.Panels>
         </Tab.Group>
       )}
-    </AppLayout>
+    </>
   );
 });
+
+ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
 
 export default ProjectCyclesPage;

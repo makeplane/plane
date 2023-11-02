@@ -1,18 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-
+import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
-// react-color
 import { TwitterPicker } from "react-color";
-// react-beautiful-dnd
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
@@ -23,6 +15,7 @@ import useUser from "hooks/use-user";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
@@ -39,7 +32,7 @@ import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helpe
 import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
@@ -55,7 +48,7 @@ const projectService = new ProjectService();
 const pageService = new PageService();
 const issueLabelService = new IssueLabelService();
 
-const SinglePage: NextPage = () => {
+const PageDetailsPage: NextPageWithLayout = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [showBlock, setShowBlock] = useState(false);
@@ -302,7 +295,7 @@ const SinglePage: NextPage = () => {
   }, [memberDetails]);
 
   return (
-    <AppLayout header={<PagesHeader />} withProjectWrapper>
+    <>
       {error ? (
         <EmptyState
           image={emptyPage}
@@ -330,7 +323,7 @@ const SinglePage: NextPage = () => {
                   <Controller
                     name="name"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={() => (
                       <TextArea
                         id="name"
                         name="name"
@@ -627,8 +620,16 @@ const SinglePage: NextPage = () => {
           <Loader.Item height="200px" />
         </Loader>
       )}
+    </>
+  );
+};
+
+PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<PagesHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default SinglePage;
+export default PageDetailsPage;

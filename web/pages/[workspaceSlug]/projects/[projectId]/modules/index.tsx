@@ -1,15 +1,20 @@
-import React from "react";
-import { NextPage } from "next";
+import { ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { ModulesListView } from "components/modules";
 import { ModulesListHeader } from "components/headers";
+// types
+import { NextPageWithLayout } from "types/app";
 
-const ProjectModules: NextPage = () => (
-  <AppLayout header={<ModulesListHeader />} withProjectWrapper>
-    <ModulesListView />
-  </AppLayout>
-);
+const ProjectModulesPage: NextPageWithLayout = () => <ModulesListView />;
 
-export default ProjectModules;
+ProjectModulesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ModulesListHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
+
+export default ProjectModulesPage;

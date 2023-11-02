@@ -1,9 +1,6 @@
-import React from "react";
-
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { UserService } from "services/user.service";
 // layouts
@@ -19,8 +16,8 @@ import {
   ProfileWorkload,
 } from "components/profile";
 // types
-import type { NextPage } from "next";
 import { IUserStateDistribution, TStateGroups } from "types";
+import { NextPageWithLayout } from "types/app";
 // constants
 import { USER_PROFILE_DATA } from "constants/fetch-keys";
 import { GROUP_CHOICES } from "constants/project";
@@ -28,7 +25,7 @@ import { GROUP_CHOICES } from "constants/project";
 // services
 const userService = new UserService();
 
-const ProfileOverview: NextPage = () => {
+const ProfileOverviewPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
@@ -45,20 +42,24 @@ const ProfileOverview: NextPage = () => {
   });
 
   return (
+    <div className="h-full w-full px-5 md:px-9 py-5 space-y-7 overflow-y-auto">
+      <ProfileStats userProfile={userProfile} />
+      <ProfileWorkload stateDistribution={stateDistribution} />
+      <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
+        <ProfilePriorityDistribution userProfile={userProfile} />
+        <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
+      </div>
+      <ProfileActivity />
+    </div>
+  );
+};
+
+ProfileOverviewPage.getLayout = function getLayout(page: ReactElement) {
+  return (
     <AppLayout header={<UserProfileHeader />}>
-      <ProfileAuthWrapper>
-        <div className="h-full w-full px-5 md:px-9 py-5 space-y-7 overflow-y-auto">
-          <ProfileStats userProfile={userProfile} />
-          <ProfileWorkload stateDistribution={stateDistribution} />
-          <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
-            <ProfilePriorityDistribution userProfile={userProfile} />
-            <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
-          </div>
-          <ProfileActivity />
-        </div>
-      </ProfileAuthWrapper>
+      <ProfileAuthWrapper>{page}</ProfileAuthWrapper>
     </AppLayout>
   );
 };
 
-export default ProfileOverview;
+export default ProfileOverviewPage;

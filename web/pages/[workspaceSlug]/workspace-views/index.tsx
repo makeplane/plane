@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -9,35 +9,37 @@ import { Input } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // constants
 import { DEFAULT_GLOBAL_VIEWS_LIST } from "constants/workspace";
 
-const WorkspaceViews: NextPage = () => {
+const WorkspaceViewsPage: NextPageWithLayout = () => {
   const [query, setQuery] = useState("");
 
   return (
-    <AppLayout header={<GlobalIssuesHeader activeLayout="list" />}>
-      <div className="flex flex-col">
-        <div className="h-full w-full flex flex-col overflow-hidden">
-          <div className="flex items-center gap-2.5 w-full px-5 py-3 border-b border-custom-border-200">
-            <Search className="text-custom-text-200" size={14} strokeWidth={2} />
-            <Input
-              className="w-full bg-transparent text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 !p-0 focus:outline-none"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search"
-              mode="true-transparent"
-            />
-          </div>
+    <div className="flex flex-col">
+      <div className="h-full w-full flex flex-col overflow-hidden">
+        <div className="flex items-center gap-2.5 w-full px-5 py-3 border-b border-custom-border-200">
+          <Search className="text-custom-text-200" size={14} strokeWidth={2} />
+          <Input
+            className="w-full bg-transparent text-xs leading-5 text-custom-text-200 placeholder:text-custom-text-400 !p-0 focus:outline-none"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search"
+            mode="true-transparent"
+          />
         </div>
-        {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => v.label.toLowerCase().includes(query.toLowerCase())).map((option) => (
-          <GlobalDefaultViewListItem key={option.key} view={option} />
-        ))}
-        <GlobalViewsList searchQuery={query} />
       </div>
-    </AppLayout>
+      {DEFAULT_GLOBAL_VIEWS_LIST.filter((v) => v.label.toLowerCase().includes(query.toLowerCase())).map((option) => (
+        <GlobalDefaultViewListItem key={option.key} view={option} />
+      ))}
+      <GlobalViewsList searchQuery={query} />
+    </div>
   );
 };
 
-export default WorkspaceViews;
+WorkspaceViewsPage.getLayout = function getLayout(page: ReactElement) {
+  return <AppLayout header={<GlobalIssuesHeader activeLayout="list" />}>{page}</AppLayout>;
+};
+
+export default WorkspaceViewsPage;

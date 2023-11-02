@@ -1,9 +1,6 @@
-import { useState, Fragment } from "react";
-
+import { useState, Fragment, ReactElement } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-
-// headless ui
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
@@ -17,8 +14,7 @@ import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "compone
 import { PagesHeader } from "components/headers";
 // types
 import { TPageViewProps } from "types";
-import type { NextPage } from "next";
-// fetch-keys
+import { NextPageWithLayout } from "types/app";
 
 const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -38,7 +34,7 @@ const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages")
 
 const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
 
-const ProjectPages: NextPage = () => {
+const ProjectPagesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
@@ -68,7 +64,7 @@ const ProjectPages: NextPage = () => {
   };
 
   return (
-    <AppLayout header={<PagesHeader showButton />} withProjectWrapper>
+    <>
       {workspaceSlug && projectId && (
         <CreateUpdatePageModal
           isOpen={createUpdatePageModal}
@@ -160,8 +156,16 @@ const ProjectPages: NextPage = () => {
           </Tab.Panels>
         </Tab.Group>
       </div>
+    </>
+  );
+};
+
+ProjectPagesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<PagesHeader showButton />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectPages;
+export default ProjectPagesPage;
