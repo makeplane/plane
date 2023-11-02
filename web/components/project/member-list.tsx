@@ -54,7 +54,7 @@ export const ProjectMemberList: React.FC = observer(() => {
       status: true,
       member: true,
     })) || []),
-    ...(projectInvitations?.map((item) => ({
+    ...(projectInvitations?.map((item: any) => ({
       id: item.id,
       memberId: item.id,
       avatar: item.avatar ?? "",
