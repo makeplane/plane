@@ -47,7 +47,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   const { user: userStore, project: projectStore } = useMobxStore();
   const user = userStore.currentUser ?? undefined;
-  const userRole = userStore.projectMemberInfo?.role;
+  const userRole = userStore.currentProjectRole;
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
 
   const { data: siblingIssues } = useSWR(
