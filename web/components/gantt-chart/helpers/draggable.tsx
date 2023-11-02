@@ -9,7 +9,7 @@ import { IGanttBlock } from "../types";
 
 type Props = {
   block: IGanttBlock;
-  BlockRender: React.FC<any>;
+  blockToRender: (data: any) => React.ReactNode;
   handleBlock: (totalBlockShifts: number, dragDirection: "left" | "right" | "move") => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -18,7 +18,7 @@ type Props = {
 
 export const ChartDraggable: React.FC<Props> = ({
   block,
-  BlockRender,
+  blockToRender,
   handleBlock,
   enableBlockLeftResize,
   enableBlockRightResize,
@@ -286,7 +286,7 @@ export const ChartDraggable: React.FC<Props> = ({
           className={`relative z-[2] rounded h-8 w-full flex items-center ${isMoving ? "pointer-events-none" : ""}`}
           onMouseDown={handleBlockMove}
         >
-          <BlockRender data={block.data} />
+          {blockToRender(block.data)}
         </div>
         {/* right resize drag handle */}
         {enableBlockRightResize && (

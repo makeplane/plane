@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 // next imports
 import { useRouter } from "next/router";
 // swr
@@ -13,6 +13,7 @@ import { ProgressBar } from "./progressbar";
 // ui
 import { CustomMenu } from "@plane/ui";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
 import { useProjectMyMembership } from "contexts/project-member.context";
 import useToast from "hooks/use-toast";
 // helpers
@@ -48,6 +49,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
     projectId: string;
     peekIssue: string;
   };
+
+  const { issue: issueStore, issueDetail: issueDetailStore } = useMobxStore();
 
   const { memberRole } = useProjectMyMembership();
   const { setToastAlert } = useToast();
@@ -158,6 +161,21 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
     });
   };
 
+  const handleUpdateIssue = useCallback(
+    (issue: IIssue, data: Partial<IIssue>) => {
+      if (!workspaceSlug || !projectId || !user) return;
+
+      const payload = {
+        ...issue,
+        ...data,
+      };
+
+      issueStore.updateIssueStructure(null, null, payload);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
+    },
+    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+  );
+
   const isEditable = memberRole?.isGuest || memberRole?.isViewer ? false : true;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
@@ -228,6 +246,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = ({ parentIssue, user }) =
                     handleIssuesLoader={handleIssuesLoader}
                     copyText={copyText}
                     handleIssueCrudOperation={handleIssueCrudOperation}
+                    handleUpdateIssue={handleUpdateIssue}
                   />
                 </div>
               )}

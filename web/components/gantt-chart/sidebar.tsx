@@ -17,14 +17,14 @@ type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  SidebarBlockRender: React.FC<any>;
+  sidebarBlockToRender: (block: any) => React.ReactNode;
   enableReorder: boolean;
   enableQuickIssueCreate?: boolean;
 };
 
 export const GanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder, enableQuickIssueCreate } = props;
+  const { title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder, enableQuickIssueCreate } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -130,9 +130,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                               </button>
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
-                              <div className="flex-grow truncate">
-                                <SidebarBlockRender data={block.data} />
-                              </div>
+                              <div className="flex-grow truncate">{sidebarBlockToRender(block.data)}</div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
                               </div>
