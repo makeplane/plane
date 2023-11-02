@@ -10,7 +10,6 @@ import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 const Webhooks: NextPage = () => {
-
   const router = useRouter();
 
   const { workspaceSlug } = router.query as { workspaceSlug: string };
@@ -28,7 +27,6 @@ const Webhooks: NextPage = () => {
 
   const { webhook: webhookStore }: RootStore = useMobxStore();
 
-
   const onSubmit = (data: IExtendedWebhook): Promise<IWebhook> => {
     const payload = {
       url: data?.url,
@@ -38,16 +36,16 @@ const Webhooks: NextPage = () => {
       module: data?.module,
       issue: data?.issue,
       issue_comment: data?.issue_comment,
-    }
+    };
     return webhookStore.create(workspaceSlug, payload);
-  }
+  };
 
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />} >
+    <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
-          <WebhookDetails type='create' initialData={initialWebhookPayload} onSubmit={onSubmit} />
-        </section>
+        <div className="w-full overflow-y-auto py-3 pr-4">
+          <WebhookDetails type="create" initialData={initialWebhookPayload} onSubmit={onSubmit} />
+        </div>
       </WorkspaceSettingLayout>
     </AppLayout>
   );

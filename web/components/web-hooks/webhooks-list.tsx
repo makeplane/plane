@@ -17,16 +17,16 @@ export const WebhookLists: FC<IWebHookLists> = observer((props) => {
   return (
     <>
       <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
-        <h4 className="text-xl font-medium">Webhooks</h4>
+        <div className="text-xl font-medium">Webhooks</div>
         <Link href={`/${workspaceSlug}/settings/webhooks/create`}>
           <Button variant="primary" size="sm">
             Add webhook
           </Button>
         </Link>
       </div>
-      {/* List */}
+
       <div className="divide-y divide-custom-border-200 overflow-y-scroll">
-        {webhookStore.webhooks.map((item, index) => (
+        {webhookStore.webhooks.map((item) => (
           <WebhooksListItem workspaceSlug={workspaceSlug} webhook={item} />
         ))}
       </div>

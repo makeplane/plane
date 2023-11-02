@@ -1,17 +1,18 @@
 import React from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingHeader } from "components/headers";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
-import { WebhookLists, EmptyWebhooks } from "components/web-hooks";
-import { WebhookService } from "services/webhook.service";
 import useSWR from "swr";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 import { observer } from "mobx-react-lite";
-
-const webhookService = new WebhookService();
+// layout
+import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/setting-layout";
+// components
+import { WorkspaceSettingHeader } from "components/headers";
+import { WebhookLists, EmptyWebhooks } from "components/web-hooks";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+// types
+import { RootStore } from "store/root";
 
 const Webhooks: NextPage = observer(() => {
   const router = useRouter();
@@ -19,21 +20,29 @@ const Webhooks: NextPage = observer(() => {
 
   const { webhook: webhookStore }: RootStore = useMobxStore();
 
-  useSWR(
-    "WEBHOOKS_LIST",
+  const { isLoading } = useSWR(
+    workspaceSlug ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
     workspaceSlug
-      ? () => webhookStore.fetchAll(workspaceSlug)
+      ? async () => {
+          await webhookStore.fetchAll(workspaceSlug);
+        }
       : null
   );
 
-
-
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />} >
+    <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
-          {webhookStore.webhooks.length > 0 ? <WebhookLists workspaceSlug={workspaceSlug} /> : <EmptyWebhooks workspaceSlug={workspaceSlug} />}
-        </section>
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          <div className="w-full overflow-y-auto py-3 pr-4">
+            {webhookStore.webhooks.length > 0 ? (
+              <WebhookLists workspaceSlug={workspaceSlug} />
+            ) : (
+              <EmptyWebhooks workspaceSlug={workspaceSlug} />
+            )}
+          </div>
+        )}
       </WorkspaceSettingLayout>
     </AppLayout>
   );

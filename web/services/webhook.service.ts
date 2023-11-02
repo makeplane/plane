@@ -1,6 +1,8 @@
+// api services
 import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
+// types
 import { IWebhook } from "types";
 
 export class WebhookService extends APIService {
@@ -48,7 +50,7 @@ export class WebhookService extends APIService {
       });
   }
 
-  async regenrate(workspaceSlug: string, webhook_id: string): Promise<void> {
+  async regenerate(workspaceSlug: string, webhook_id: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/regenerate/`)
       .then((response) => response?.data)
       .catch((error) => {

@@ -8,16 +8,23 @@ import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 interface IWebhookDetails {
-  type: 'create' | 'edit'
+  type: "create" | "edit";
   initialData: IWebhook;
   onSubmit: (val: IExtendedWebhook) => Promise<IWebhook>;
 }
 
 export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
   const { type, initialData, onSubmit } = props;
-  const { webhook: webhookStore }: RootStore = useMobxStore()
+  const { webhook: webhookStore }: RootStore = useMobxStore();
 
-  const { reset, watch, handleSubmit, control, getValues, formState: { isSubmitting } } = useForm<IExtendedWebhook>();
+  const {
+    reset,
+    watch,
+    handleSubmit,
+    control,
+    getValues,
+    formState: { isSubmitting },
+  } = useForm<IExtendedWebhook>();
 
   useEffect(() => {
     if (initialData && reset) reset({ ...initialData, webhook_events: "all" });
@@ -27,7 +34,8 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
     if (watch("webhook_events")) {
       if (watch("webhook_events") === "all")
         reset({ ...getValues(), project: true, module: true, cycle: true, issue: true, issue_comment: true });
-      if (watch("webhook_events") === "individual") reset({ ...getValues(), project: false, module: false, cycle: false, issue: false, issue_comment: false });
+      if (watch("webhook_events") === "individual")
+        reset({ ...getValues(), project: false, module: false, cycle: false, issue: false, issue_comment: false });
     }
   }, [watch && watch("webhook_events")]);
 
@@ -211,7 +219,7 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
         {!webhookStore?.webhookSecretKey && (
           <div>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'processing...' : 'Save webhook'}
+              {isSubmitting ? "processing..." : "Save webhook"}
             </Button>
           </div>
         )}
