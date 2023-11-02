@@ -27,8 +27,8 @@ export const ListLayout: FC = observer(() => {
 
   const issues = issueStore?.getIssues;
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
+  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
+  const group_by: string | null = userDisplayFilters?.group_by || null;
   const display_properties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
@@ -77,6 +77,7 @@ export const ListLayout: FC = observer(() => {
         projects={projects}
         enableQuickIssueCreate
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+        showEmptyGroup={userDisplayFilters.show_empty_groups}
       />
     </div>
   );
