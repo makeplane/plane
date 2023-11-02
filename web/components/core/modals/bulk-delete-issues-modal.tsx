@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 // react hook form
 import { SubmitHandler, useForm } from "react-hook-form";
 // headless ui
@@ -9,7 +9,6 @@ import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
 // ui
 import { Button, LayersIcon } from "@plane/ui";
 // icons
@@ -17,15 +16,7 @@ import { Search } from "lucide-react";
 // types
 import { IUser, IIssue } from "types";
 // fetch keys
-import {
-  CYCLE_DETAILS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_DETAILS,
-  MODULE_ISSUES_WITH_PARAMS,
-  PROJECT_ISSUES_LIST,
-  PROJECT_ISSUES_LIST_WITH_PARAMS,
-  VIEW_ISSUES,
-} from "constants/fetch-keys";
+import { PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 
 type FormInput = {
   delete_issue_ids: string[];
@@ -43,7 +34,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
   const { isOpen, onClose, user } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
   // states
   const [query, setQuery] = useState("");
   // fetching project issues.
@@ -53,9 +44,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
   );
 
   const { setToastAlert } = useToast();
-  const { displayFilters, params } = useIssuesView();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { order_by, group_by, ...viewGanttParams } = params;
 
   const {
     handleSubmit,
@@ -89,14 +77,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
 
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
-    const ganttFetchKey = cycleId
-      ? CYCLE_ISSUES_WITH_PARAMS(cycleId.toString())
-      : moduleId
-      ? MODULE_ISSUES_WITH_PARAMS(moduleId.toString())
-      : viewId
-      ? VIEW_ISSUES(viewId.toString(), viewGanttParams)
-      : PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "");
-
     await issueService
       .bulkDeleteIssues(
         workspaceSlug as string,
@@ -112,17 +92,6 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Issues deleted successfully!",
         });
-
-        if (displayFilters.layout === "gantt_chart") mutate(ganttFetchKey);
-        else {
-          if (cycleId) {
-            mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), params));
-            mutate(CYCLE_DETAILS(cycleId.toString()));
-          } else if (moduleId) {
-            mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-            mutate(MODULE_DETAILS(moduleId as string));
-          } else mutate(PROJECT_ISSUES_LIST_WITH_PARAMS(projectId.toString(), params));
-        }
 
         handleClose();
       })
