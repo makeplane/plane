@@ -35,6 +35,8 @@ export interface IssuesModalProps {
     | "estimate"
     | "parent"
     | "all"
+    | "module"
+    | "cycle"
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
