@@ -36,8 +36,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           workspaceSlug={issue?.workspace_detail?.slug}
           projectId={issue?.project_detail?.id}
           issueId={issue?.id}
-          // TODO: add the logic here
-          handleIssue={() => {}}
+          handleIssue={(issueToUpdate) => {
+            handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
+          }}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <div className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full">{issue.name}</div>

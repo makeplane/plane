@@ -11,7 +11,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 # Module imports
-from plane.db.models import Workspace, User, WorkspaceMemberInvite
+from plane.db.models import Workspace, WorkspaceMemberInvite
 
 
 @shared_task

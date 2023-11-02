@@ -30,7 +30,7 @@ const ProfileAssignedIssues: NextPage = observer(() => {
     userId: string;
   };
 
-  useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
+  const { isLoading } = useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
     if (workspaceSlug && userId) {
       // workspace labels
       workspaceStore.setWorkspaceSlug(workspaceSlug);
@@ -46,8 +46,8 @@ const ProfileAssignedIssues: NextPage = observer(() => {
 
   return (
     <AppLayout header={<UserProfileHeader />}>
-      <ProfileAuthWrapper>
-        {profileIssuesStore.loader ? (
+      <ProfileAuthWrapper showProfileIssuesFilter>
+        {isLoading ? (
           <div>Loading...</div>
         ) : (
           <div className="w-full h-full relative overflow-auto -z-1">

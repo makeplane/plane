@@ -49,7 +49,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, projectId)
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, projectId);
 
   const {
     formState: { isSubmitting },

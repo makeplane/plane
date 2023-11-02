@@ -54,7 +54,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
 
   const {
     control,
@@ -75,7 +75,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   return (
     <form onSubmit={handleSubmit(handleAddComment)}>
       <div className="space-y-2">
-        <div className="relative">
+        <div className="relative h-full">
           {showAccessSpecifier && (
             <div className="absolute bottom-2 left-3 z-[1]">
               <Controller
@@ -119,22 +119,28 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
-                    customClassName="p-3 min-h-[100px] shadow-sm"
+                    customClassName="p-2 h-full"
                     debouncedUpdatesEnabled={false}
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
+                    submitButton={
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="!px-2.5 !py-1.5 !text-xs"
+                        disabled={isSubmitting || disabled}
+                      >
+                        {isSubmitting ? "Adding..." : "Comment"}
+                      </Button>
+                    }
                   />
                 )}
               />
             )}
           />
         </div>
-
-        <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
-          {isSubmitting ? "Adding..." : "Comment"}
-        </Button>
       </div>
     </form>
   );

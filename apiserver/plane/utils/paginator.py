@@ -21,12 +21,7 @@ class Cursor:
         )
 
     def __repr__(self):
-        return "<{}: value={} offset={} is_prev={}>".format(
-            type(self).__name__,
-            self.value,
-            self.offset,
-            int(self.is_prev),
-        )
+        return f"{type(self).__name__,}: value={self.value} offset={self.offset}, is_prev={int(self.is_prev)}"
 
     def __bool__(self):
         return bool(self.has_results)
@@ -176,10 +171,6 @@ class BasePaginator:
         **paginator_kwargs,
     ):
         """Paginate the request"""
-        assert (paginator and not paginator_kwargs) or (
-            paginator_cls and paginator_kwargs
-        )
-
         per_page = self.get_per_page(request, default_per_page, max_per_page)
 
         # Convert the cursor value to integer and float from string

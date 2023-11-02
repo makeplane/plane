@@ -20,6 +20,8 @@ import {
   IssuePrioritySelect,
   IssueProjectSelect,
   IssueStateSelect,
+  IssueModuleSelect,
+  IssueCycleSelect,
 } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
@@ -70,6 +72,8 @@ export interface IssueFormProps {
     | "estimate"
     | "parent"
     | "all"
+    | "module"
+    | "cycle"
   )[];
 }
 
@@ -108,7 +112,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
 
   const user = userStore.currentUser;
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
+  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId);
 
   const { setToastAlert } = useToast();
 
@@ -488,6 +492,38 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     />
                   </div>
                 )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("module")) && (
+                  <Controller
+                    control={control}
+                    name="module"
+                    render={({ field: { value, onChange } }) => (
+                      <IssueModuleSelect
+                        workspaceSlug={workspaceSlug as string}
+                        projectId={projectId}
+                        value={value}
+                        onChange={(val: string) => {
+                          onChange(val);
+                        }}
+                      />
+                    )}
+                  />
+                )}
+                {(fieldsToShow.includes("all") || fieldsToShow.includes("cycle")) && (
+                  <Controller
+                    control={control}
+                    name="cycle"
+                    render={({ field: { value, onChange } }) => (
+                      <IssueCycleSelect
+                        workspaceSlug={workspaceSlug as string}
+                        projectId={projectId}
+                        value={value}
+                        onChange={(val: string) => {
+                          onChange(val);
+                        }}
+                      />
+                    )}
+                  />
+                )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("estimate")) && (
                   <>
                     <Controller
@@ -503,7 +539,10 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                   <>
                     <CustomMenu
                       customButton={
-                        <button className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200">
+                        <button
+                          type="button"
+                          className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200"
+                        >
                           <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80">
                             {watch("parent") ? (
                               <>

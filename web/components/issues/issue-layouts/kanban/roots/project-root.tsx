@@ -105,6 +105,7 @@ export const KanBanLayout: React.FC = observer(() => {
             displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            enableQuickIssueCreate
           />
         ) : (
           <KanBanSwimLanes
