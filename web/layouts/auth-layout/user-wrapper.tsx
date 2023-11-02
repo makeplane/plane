@@ -13,13 +13,15 @@ export interface IUserAuthWrapper {
 export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   const { children } = props;
   // store
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, workspace: workspaceStore } = useMobxStore();
   // router
   const router = useRouter();
   // fetching user information
   const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
   // fetching user settings
   useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings());
+  // fetching all workspaces
+  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces());
 
   if (!currentUser && !error) {
     return (
