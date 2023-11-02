@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon, LucideIcon } from "lucide-react";
+import { BoldIcon } from "lucide-react";
 
 import {
   BoldItem,
@@ -14,7 +14,6 @@ import {
   TableItem,
   UnderLineItem,
 } from "@plane/editor-core";
-import { Icon } from "./icon";
 import { Tooltip } from "../../tooltip";
 import { UploadImage } from "../..";
 
@@ -73,6 +72,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     props.commentAccessSpecifier?.onAccessChange(accessKey);
   };
 
+  console.log(complexItems);
+
   return (
     <div className="flex items-stretch gap-1.5 w-full h-9">
       {props.commentAccessSpecifier && (
@@ -94,6 +95,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                       ? "text-custom-text-100"
                       : "text-custom-text-400"
                   }`}
+                  strokeWidth={2}
                 />
               </button>
             </Tooltip>
@@ -120,6 +122,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   className={cn("h-3.5 w-3.5", {
                     "text-custom-text-100": item.isActive(),
                   })}
+                  strokeWidth={2.5}
                 />
               </button>
             ))}
@@ -142,6 +145,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   className={cn("h-3.5 w-3.5", {
                     "text-custom-text-100": item.isActive(),
                   })}
+                  strokeWidth={2.5}
                 />
               </button>
             ))}
@@ -164,6 +168,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   className={cn("h-3.5 w-3.5", {
                     "text-custom-text-100": item.isActive(),
                   })}
+                  strokeWidth={2.5}
                 />
               </button>
             ))}
@@ -186,6 +191,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
                   className={cn("h-3.5 w-3.5", {
                     "text-custom-text-100": item.isActive(),
                   })}
+                  strokeWidth={2.5}
                 />
               </button>
             ))}
