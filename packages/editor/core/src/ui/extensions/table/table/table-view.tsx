@@ -231,32 +231,16 @@ function createColorPickerToolbox({
   tippyOptions: Partial<Props>;
   onSelectColor?: (color: string) => void;
 }) {
-  // TODO: Change colors
-  const LABEL_COLOR_OPTIONS = [
-    "#FF6900",
-    "#FCB900",
-    "#7BDCB5",
-    "#00D084",
-    "#8ED1FC",
-    "#0693E3",
-    "#ABB8C3",
-    "#EB144C",
-    "#F78DA7",
-    "#9900EF",
-  ];
-
   const items = {
     Default: "rgb(var(--color-primary-100))",
-    "Bright Orange": LABEL_COLOR_OPTIONS[0],
-    "Bright Yellow": LABEL_COLOR_OPTIONS[1],
-    "Light Green": LABEL_COLOR_OPTIONS[2],
-    "Bright Green": LABEL_COLOR_OPTIONS[3],
-    "Light Blue": LABEL_COLOR_OPTIONS[4],
-    "Dark Blue": LABEL_COLOR_OPTIONS[5],
-    Gray: LABEL_COLOR_OPTIONS[6],
-    "Bright Red": LABEL_COLOR_OPTIONS[7],
-    Pink: LABEL_COLOR_OPTIONS[8],
-    Purple: LABEL_COLOR_OPTIONS[9],
+    Orange: "#FFE5D1",
+    Grey: "#F1F1F1",
+    Yellow: "#FEF3C7",
+    Green: "#DCFCE7",
+    Red: "#FFDDDD",
+    Blue: "#D9E4FF",
+    Pink: "#FFE8FA",
+    Purple: "#E8DAFB",
   };
 
   const colorPicker = tippy(triggerButton, {
