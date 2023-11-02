@@ -6,7 +6,7 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { DeleteProjectViewModal } from "components/views";
+import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
 import { CustomMenu } from "@plane/ui";
 // icons
@@ -24,6 +24,7 @@ type Props = {
 export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const { view } = props;
 
+  const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
 
   const router = useRouter();
@@ -47,6 +48,15 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
 
   return (
     <>
+      {workspaceSlug && projectId && view && (
+        <CreateUpdateProjectViewModal
+          isOpen={createUpdateViewModal}
+          onClose={() => setCreateUpdateViewModal(false)}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={projectId.toString()}
+          data={view}
+        />
+      )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
         <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
@@ -97,6 +107,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        setCreateUpdateViewModal(true);
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
