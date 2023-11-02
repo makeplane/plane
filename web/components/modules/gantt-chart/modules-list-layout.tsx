@@ -45,8 +45,8 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        SidebarBlockRender={ModuleGanttSidebarBlock}
-        BlockRender={ModuleGanttBlock}
+        sidebarBlockToRender={ModuleGanttSidebarBlock}
+        blockToRender={(data: IModule) => <ModuleGanttBlock data={data} />}
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}

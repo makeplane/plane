@@ -39,8 +39,8 @@ type ChartViewRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  SidebarBlockRender: React.FC<any>;
-  BlockRender: React.FC<any>;
+  blockToRender: (data: any) => React.ReactNode;
+  sidebarBlockToRender: (block: any) => React.ReactNode;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
@@ -54,8 +54,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blocks = null,
   loaderTitle,
   blockUpdateHandler,
-  SidebarBlockRender,
-  BlockRender,
+  sidebarBlockToRender,
+  blockToRender,
   enableBlockLeftResize,
   enableBlockRightResize,
   enableBlockMove,
@@ -285,7 +285,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             title={title}
             blockUpdateHandler={blockUpdateHandler}
             blocks={chartBlocks}
-            SidebarBlockRender={SidebarBlockRender}
+            sidebarBlockToRender={sidebarBlockToRender}
             enableReorder={enableReorder}
           />
         </div>
@@ -307,7 +307,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             <GanttChartBlocks
               itemsContainerWidth={itemsContainerWidth}
               blocks={chartBlocks}
-              BlockRender={BlockRender}
+              blockToRender={blockToRender}
               blockUpdateHandler={blockUpdateHandler}
               enableBlockLeftResize={enableBlockLeftResize}
               enableBlockRightResize={enableBlockRightResize}
