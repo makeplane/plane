@@ -537,7 +537,7 @@ def update_issue_activity(
     )
 
     for key in requested_data:
-        func = ISSUE_ACTIVITY_MAPPER.get(key, None)
+        func = ISSUE_ACTIVITY_MAPPER.get(key)
         if func is not None:
             func(
                 requested_data=requested_data,

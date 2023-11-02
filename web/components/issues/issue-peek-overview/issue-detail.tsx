@@ -31,7 +31,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
   // store
   const { user: userStore } = useMobxStore();
-  const isAllowed = [5, 10].includes(userStore.projectMemberInfo?.role || 0);
+  const { currentProjectRole } = userStore;
+  const isAllowed = [5, 10].includes(currentProjectRole || 0);
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);

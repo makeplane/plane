@@ -15,6 +15,8 @@ import {
   CycleSpreadsheetLayout,
 } from "components/issues";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
+// ui
+import { Spinner } from "@plane/ui";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
@@ -56,6 +58,13 @@ export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal 
       : "draft";
 
   const issueCount = cycleIssueStore.getIssuesCount;
+
+  if (!cycleIssueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>

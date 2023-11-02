@@ -27,7 +27,6 @@ from .issue import (
     IssueActivity,
     IssueProperty,
     IssueComment,
-    IssueBlocker,
     IssueLabel,
     IssueAssignee,
     Label,

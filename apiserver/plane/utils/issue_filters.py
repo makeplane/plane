@@ -327,7 +327,7 @@ def filter_start_target_date_issues(params, filter, method):
 
 
 def issue_filters(query_params, method):
-    filter = dict()
+    filter = {}
 
     ISSUE_FILTER = {
         "state": filter_state,

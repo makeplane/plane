@@ -39,7 +39,6 @@ from plane.api.serializers import (
     IssueActivitySerializer,
     IssueCommentSerializer,
     IssuePropertySerializer,
-    LabelSerializer,
     IssueSerializer,
     LabelSerializer,
     IssueFlatSerializer,
@@ -1086,8 +1085,6 @@ class IssueArchiveViewSet(BaseViewSet):
             archived_at__isnull=False,
             pk=pk,
         )
-        issue.archived_at = None
-        issue.save()
         issue_activity.delay(
             type="issue.activity.updated",
             requested_data=json.dumps({"archived_at": None}),
@@ -1099,6 +1096,8 @@ class IssueArchiveViewSet(BaseViewSet):
             ),
             epoch=int(timezone.now().timestamp()),
         )
+        issue.archived_at = None
+        issue.save()
 
         return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
 
@@ -1392,8 +1391,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     )
                     .distinct()
                 ).order_by("created_at")
-            else:
-                return IssueComment.objects.none()
+            return IssueComment.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return IssueComment.objects.none()
 
@@ -1518,8 +1516,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
                     .order_by("-created_at")
                     .distinct()
                 )
-            else:
-                return IssueReaction.objects.none()
+            return IssueReaction.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return IssueReaction.objects.none()
 
@@ -1614,8 +1611,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     .order_by("-created_at")
                     .distinct()
                 )
-            else:
-                return CommentReaction.objects.none()
+            return CommentReaction.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return CommentReaction.objects.none()
 
@@ -1709,8 +1705,7 @@ class IssueVotePublicViewSet(BaseViewSet):
                     .filter(workspace__slug=self.kwargs.get("slug"))
                     .filter(project_id=self.kwargs.get("project_id"))
                 )
-            else:
-                return IssueVote.objects.none()
+            return IssueVote.objects.none()
         except ProjectDeployBoard.DoesNotExist:
             return IssueVote.objects.none()
 

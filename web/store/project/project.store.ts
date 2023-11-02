@@ -41,6 +41,8 @@ export interface IProjectStore {
   joinedProjects: IProject[];
   favoriteProjects: IProject[];
 
+  currentProjectDetails: IProject | undefined;
+
   // actions
   setProjectId: (projectId: string) => void;
   setSearchQuery: (query: string) => void;
@@ -137,6 +139,8 @@ export class ProjectStore implements IProjectStore {
       projectMembers: computed,
       projectEstimates: computed,
 
+      currentProjectDetails: computed,
+
       joinedProjects: computed,
       favoriteProjects: computed,
 
@@ -196,6 +200,11 @@ export class ProjectStore implements IProjectStore {
   get workspaceProjects() {
     if (!this.rootStore.workspace.workspaceSlug) return [];
     return this.projects?.[this.rootStore.workspace.workspaceSlug];
+  }
+
+  get currentProjectDetails() {
+    if (!this.projectId) return;
+    return this.project_details[this.projectId];
   }
 
   get joinedProjects() {

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-
 // store
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -25,18 +24,15 @@ export const EstimatesList: React.FC = observer(() => {
 
   // store
   const { project: projectStore } = useMobxStore();
-
+  const { currentProjectDetails } = projectStore;
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
   const [estimateToDelete, setEstimateToDelete] = useState<string | null>(null);
   const [estimateToUpdate, setEstimateToUpdate] = useState<IEstimate | undefined>();
-
   // hooks
   const { setToastAlert } = useToast();
-
   // derived values
   const estimatesList = projectStore.projectEstimates;
-  const projectDetails = projectStore.project_details?.[projectId?.toString()!];
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -88,7 +84,7 @@ export const EstimatesList: React.FC = observer(() => {
             >
               Add Estimate
             </Button>
-            {projectDetails?.estimate && (
+            {currentProjectDetails?.estimate && (
               <Button variant="neutral-primary" onClick={disableEstimates}>
                 Disable Estimates
               </Button>

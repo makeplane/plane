@@ -11,6 +11,8 @@ import useUser from "hooks/use-user";
 import { ProjectMemberListItem, SendProjectInvitationModal } from "components/project";
 // ui
 import { Button, Loader } from "@plane/ui";
+// icons
+import { Search } from "lucide-react";
 
 // services
 const projectInvitationService = new ProjectInvitationService();
@@ -25,6 +27,7 @@ export const ProjectMemberList: React.FC = observer(() => {
 
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const { user } = useUser();
 
@@ -72,6 +75,12 @@ export const ProjectMemberList: React.FC = observer(() => {
     })) || []),
   ];
 
+  const searchedMembers = members?.filter((member) => {
+    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
+    const displayName = member.display_name.toLowerCase();
+    return displayName.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
+  });
+
   return (
     <>
       <SendProjectInvitationModal
@@ -87,6 +96,16 @@ export const ProjectMemberList: React.FC = observer(() => {
 
       <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
         <h4 className="text-xl font-medium">Members</h4>
+        <div className="flex gap-1 items-center justify-start ml-auto text-custom-text-400 rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
+          <Search className="h-3.5 w-3.5" />
+          <input
+            className="max-w-[234px] w-full border-none bg-transparent text-sm focus:outline-none"
+            placeholder="Search"
+            value={searchQuery}
+            autoFocus={true}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
         <Button variant="primary" onClick={() => setInviteModal(true)}>
           Add Member
         </Button>
@@ -101,8 +120,11 @@ export const ProjectMemberList: React.FC = observer(() => {
       ) : (
         <div className="divide-y divide-custom-border-200">
           {members.length > 0
-            ? members.map((member) => <ProjectMemberListItem key={member.id} member={member} />)
+            ? searchedMembers.map((member) => <ProjectMemberListItem key={member.id} member={member} />)
             : null}
+          {searchedMembers.length === 0 && (
+            <h4 className="text-md text-custom-text-400 text-center mt-20">No matching member</h4>
+          )}
         </div>
       )}
     </>

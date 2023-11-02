@@ -3,7 +3,6 @@ import json
 
 # Django imports
 from django.db.models import (
-    OuterRef,
     Func,
     F,
     Q,
