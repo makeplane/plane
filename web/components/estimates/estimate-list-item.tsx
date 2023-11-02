@@ -24,18 +24,14 @@ type Props = {
 
 export const EstimateListItem: React.FC<Props> = observer((props) => {
   const { estimate, editEstimate, deleteEstimate } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store
   const { project: projectStore } = useMobxStore();
-
+  const { currentProjectDetails } = projectStore;
+  // hooks
   const { setToastAlert } = useToast();
-
-  // derived values
-  const projectDetails = projectStore.project_details?.[projectId?.toString()!];
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -63,7 +59,7 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
           <div>
             <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">
               {estimate.name}
-              {projectDetails?.estimate && projectDetails?.estimate === estimate.id && (
+              {currentProjectDetails?.estimate && currentProjectDetails?.estimate === estimate.id && (
                 <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-500">In use</span>
               )}
             </h6>
@@ -72,7 +68,7 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            {projectDetails?.estimate !== estimate?.id && estimate?.points?.length > 0 && (
+            {currentProjectDetails?.estimate !== estimate?.id && estimate?.points?.length > 0 && (
               <Button variant="neutral-primary" onClick={handleUseEstimate}>
                 Use
               </Button>
@@ -88,7 +84,7 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
                   <span>Edit estimate</span>
                 </div>
               </CustomMenu.MenuItem>
-              {projectDetails?.estimate !== estimate.id && (
+              {currentProjectDetails?.estimate !== estimate.id && (
                 <CustomMenu.MenuItem
                   onClick={() => {
                     deleteEstimate(estimate.id);

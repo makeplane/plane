@@ -59,7 +59,7 @@ def archive_old_issues():
             # Check if Issues
             if issues:
                 # Set the archive time to current time
-                archive_at = timezone.now()
+                archive_at = timezone.now().date()
 
                 issues_to_update = []
                 for issue in issues:

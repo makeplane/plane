@@ -360,8 +360,7 @@ class InboxIssuePublicViewSet(BaseViewSet):
                 )
                 .select_related("issue", "workspace", "project")
             )
-        else:
-            return InboxIssue.objects.none()
+        return InboxIssue.objects.none()
 
     def list(self, request, slug, project_id, inbox_id):
         project_deploy_board = ProjectDeployBoard.objects.get(workspace__slug=slug, project_id=project_id)

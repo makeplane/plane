@@ -55,6 +55,7 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ assignees: [assignee?.member?.id] }}
           />
         ))}
     </>

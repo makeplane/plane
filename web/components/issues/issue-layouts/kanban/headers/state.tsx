@@ -52,6 +52,7 @@ export const StateHeader: FC<IStateHeader> = observer((props) => {
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ state: state?.id }}
           />
         ))}
     </>

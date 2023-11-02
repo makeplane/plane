@@ -15,6 +15,8 @@ import {
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
+// ui
+import { Spinner } from "@plane/ui";
 
 type Props = {
   openIssuesListModal: () => void;
@@ -52,6 +54,13 @@ export const ModuleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   const issueCount = moduleIssueStore.getIssuesCount;
+
+  if (!moduleIssueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">

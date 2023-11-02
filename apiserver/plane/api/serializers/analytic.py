@@ -17,7 +17,7 @@ class AnalyticViewSerializer(BaseSerializer):
         if bool(query_params):
             validated_data["query"] = issue_filters(query_params, "POST")
         else:
-            validated_data["query"] = dict()
+            validated_data["query"] = {}
         return AnalyticView.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -25,6 +25,6 @@ class AnalyticViewSerializer(BaseSerializer):
         if bool(query_params):
             validated_data["query"] = issue_filters(query_params, "POST")
         else:
-            validated_data["query"] = dict()
+            validated_data["query"] = {}
         validated_data["query"] = issue_filters(query_params, "PATCH")
         return super().update(instance, validated_data)

@@ -22,6 +22,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
           icon={<Icon user={createdBy} />}
           title={createdBy?.display_name || ""}
           count={issues_count}
+          issuePayload={{ created_by: createdBy?.member?.id }}
         />
       )}
     </>

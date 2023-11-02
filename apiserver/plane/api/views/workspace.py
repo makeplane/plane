@@ -6,12 +6,10 @@ from uuid import uuid4
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Prefetch
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import (
     Prefetch,
     OuterRef,
@@ -55,7 +53,6 @@ from . import BaseViewSet
 from plane.db.models import (
     User,
     Workspace,
-    WorkspaceMember,
     WorkspaceMemberInvite,
     Team,
     ProjectMember,

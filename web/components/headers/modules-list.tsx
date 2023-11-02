@@ -29,10 +29,10 @@ const moduleViewOptions: { type: "list" | "grid" | "gantt_chart"; icon: any }[] 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  const { workspaceSlug } = router.query;
+  // store
   const { project: projectStore } = useMobxStore();
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+  const { currentProjectDetails } = projectStore;
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
@@ -52,7 +52,7 @@ export const ModulesListHeader: React.FC = observer(() => {
                 </Link>
               }
             />
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Modules`} />
+            <BreadcrumbItem title={`${truncateText(currentProjectDetails?.name ?? "Project", 32)} Modules`} />
           </Breadcrumbs>
         </div>
       </div>
