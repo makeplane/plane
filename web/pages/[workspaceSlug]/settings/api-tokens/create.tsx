@@ -1,20 +1,34 @@
-import { Menu, Transition } from "@headlessui/react";
-import { Button, Input, TextArea, ToggleSwitch } from "@plane/ui";
-import { WorkspaceSettingHeader } from "components/headers";
-import { PrimaryButton } from "components/ui";
-import { AppLayout } from "layouts/app-layout/layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
-import { Copy } from "lucide-react";
-import { NextPage } from "next";
+// react
 import { useState, Fragment } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { addDays, renderDateFormat } from "helpers/date-time.helper";
+// next
+import { useRouter } from "next/router";
+import { NextPage } from "next";
+// layouts
+import { AppLayout } from "layouts/app-layout/layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
+// components
+import { WorkspaceSettingHeader } from "components/headers";
+// hooks
 import useToast from "hooks/use-toast";
+// services
+import { ApiTokenService } from "services/api_token.service";
+// types
+import { IApiToken } from "types/api_token";
+// helpers
+import { addDays, renderDateFormat } from "helpers/date-time.helper";
+// ui
+import { Button, Input, TextArea, ToggleSwitch, } from "@plane/ui";
+// headless ui
+import { Menu, Transition } from "@headlessui/react";
+// icons
+import { Copy } from "lucide-react";
+// react-hook-form
+import { Controller, useForm } from "react-hook-form";
+// mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
-import { ApiTokenService } from "services/api_token.service";
-import { useRouter } from "next/router";
-import { IApiToken } from "types/api_token";
+
+
 
 const expiryOptions = [
   {
@@ -98,9 +112,9 @@ const CreateApiToken: NextPage = () => {
       [token.label, token.description, renderDateFormat(token.expired_at ?? null), token.token],
     ];
 
-    let csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement("a");
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "secret_key.csv");
     document.body.appendChild(link);
@@ -269,7 +283,7 @@ const CreateApiToken: NextPage = () => {
               </div>
 
               {!generatedToken && (
-                <PrimaryButton type="submit">{loading ? "generating..." : "Add Api key"}</PrimaryButton>
+                <Button variant="primary" type="submit">{loading ? "generating..." : "Add Api key"}</Button>
               )}
             </div>
           )}

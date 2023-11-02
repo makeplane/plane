@@ -18,11 +18,14 @@ export interface IUserStore {
   dashboardInfo: any;
 
   workspaceMemberInfo: IWorkspaceMemberMe | null;
-  hasPermissionToWorkspace: boolean | null;
+  hasPermissionToWorkspace: {
+    [workspaceSlug: string]: boolean | null;
+  };
 
   projectMemberInfo: IProjectMember | null;
-  projectNotFound: boolean;
-  hasPermissionToProject: boolean | null;
+  hasPermissionToProject: {
+    [projectId: string]: boolean | null;
+  };
 
   fetchCurrentUser: () => Promise<IUser>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
@@ -46,11 +49,14 @@ class UserStore implements IUserStore {
   dashboardInfo: any = null;
 
   workspaceMemberInfo: IWorkspaceMemberMe | null = null;
-  hasPermissionToWorkspace: boolean | null = null;
+  hasPermissionToWorkspace: {
+    [workspaceSlug: string]: boolean | null;
+  } = {};
 
   projectMemberInfo: IProjectMember | null = null;
-  projectNotFound: boolean = false;
-  hasPermissionToProject: boolean | null = null;
+  hasPermissionToProject: {
+    [projectId: string]: boolean | null;
+  } = {};
   // root store
   rootStore;
   // services
@@ -68,7 +74,6 @@ class UserStore implements IUserStore {
       workspaceMemberInfo: observable.ref,
       hasPermissionToWorkspace: observable.ref,
       projectMemberInfo: observable.ref,
-      projectNotFound: observable.ref,
       hasPermissionToProject: observable.ref,
       // action
       fetchCurrentUser: action,
@@ -128,14 +133,21 @@ class UserStore implements IUserStore {
   fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
     try {
       const response = await this.workspaceService.workspaceMemberMe(workspaceSlug.toString());
+
       runInAction(() => {
         this.workspaceMemberInfo = response;
-        this.hasPermissionToWorkspace = true;
+        this.hasPermissionToWorkspace = {
+          ...this.hasPermissionToWorkspace,
+          [workspaceSlug]: true,
+        };
       });
       return response;
     } catch (error) {
       runInAction(() => {
-        this.hasPermissionToWorkspace = false;
+        this.hasPermissionToWorkspace = {
+          ...this.hasPermissionToWorkspace,
+          [workspaceSlug]: false,
+        };
       });
       throw error;
     }
@@ -147,18 +159,20 @@ class UserStore implements IUserStore {
 
       runInAction(() => {
         this.projectMemberInfo = response;
-        this.hasPermissionToWorkspace = true;
+        this.hasPermissionToProject = {
+          ...this.hasPermissionToProject,
+          [projectId]: true,
+        };
       });
       return response;
     } catch (error: any) {
       runInAction(() => {
-        this.hasPermissionToWorkspace = false;
+        this.hasPermissionToProject = {
+          ...this.hasPermissionToProject,
+          [projectId]: false,
+        };
       });
-      if (error?.status === 404) {
-        runInAction(() => {
-          this.projectNotFound = true;
-        });
-      }
+
       throw error;
     }
   };

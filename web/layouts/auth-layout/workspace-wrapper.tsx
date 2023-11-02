@@ -43,7 +43,11 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   );
 
   // while data is being loaded
-  if (!userStore.workspaceMemberInfo && userStore.hasPermissionToWorkspace === null) {
+  if (
+    !userStore.workspaceMemberInfo &&
+    workspaceSlug &&
+    userStore.hasPermissionToWorkspace[workspaceSlug.toString()] === null
+  ) {
     return (
       <div className="grid h-screen place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -53,7 +57,11 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   }
   // while user does not have access to view that workspace
-  if (userStore.hasPermissionToWorkspace !== null && userStore.hasPermissionToWorkspace === false) {
+  if (
+    userStore.hasPermissionToWorkspace !== null &&
+    workspaceSlug &&
+    userStore.hasPermissionToWorkspace[workspaceSlug.toString()] === false
+  ) {
     return (
       <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
         <div className="grid h-full place-items-center p-4">

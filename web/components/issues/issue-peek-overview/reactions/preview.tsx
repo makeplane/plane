@@ -26,13 +26,13 @@ export const IssueReactionPreview: FC<IIssueReactionPreview> = (props) => {
               type="button"
               onClick={() => handleReaction(reaction)}
               key={reaction}
-              className={`flex items-center gap-1.5 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
+              className={`flex items-center gap-1.5 text-custom-text-100 text-sm h-full px-2 py-1 rounded ${
                 isUserReacted(issueReactions[reaction])
-                  ? `bg-custom-primary-100/20 hover:bg-custom-primary-100/30`
+                  ? `bg-custom-primary-100/10 hover:bg-custom-primary-100/30`
                   : `bg-custom-background-90 hover:bg-custom-background-100/30`
               }`}
             >
-              <span>{renderEmoji(reaction)}</span>
+              <span className="text-sm">{renderEmoji(reaction)}</span>
               <span
                 className={`${
                   isUserReacted(issueReactions[reaction]) ? `text-custom-primary-100 hover:text-custom-primary-200` : ``
