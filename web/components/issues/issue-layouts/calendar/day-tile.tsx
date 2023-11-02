@@ -16,12 +16,13 @@ import { IIssue } from "types";
 type Props = {
   date: ICalendarDate;
   issues: IIssueGroupedStructure | null;
+  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues, quickActions, enableQuickIssueCreate } = props;
+  const { date, issues, handleIssues, quickActions, enableQuickIssueCreate } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -63,7 +64,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                <CalendarIssueBlocks issues={issuesList} quickActions={quickActions} />
+                <CalendarIssueBlocks issues={issuesList} handleIssues={handleIssues} quickActions={quickActions} />
                 {enableQuickIssueCreate && (
                   <div className="py-1 px-2">
                     <CalendarInlineCreateIssueForm

@@ -73,7 +73,7 @@ export const ConfirmIssueDiscard: React.FC<Props> = (props) => {
                       Discard
                     </Button>
                   </div>
-                  <div className="space-x-2">
+                  <div className="flex items-center gap-2">
                     <Button variant="neutral-primary" onClick={onClose}>
                       Cancel
                     </Button>
