@@ -15,7 +15,7 @@ import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 // ui
-import { CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon } from "@plane/ui";
 // icon
 import { AlertCircle, ChevronDown, ChevronRight, Info, LinkIcon, Plus, Trash2 } from "lucide-react";
 // helpers
@@ -260,13 +260,35 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">{moduleDetails.name}</h4>
             <div className="flex items-center gap-5">
-              {moduleStatus && (
-                <span
-                  className={`flex items-center cursor-default justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
-                >
-                  {moduleStatus.label}
-                </span>
-              )}
+              <Controller
+                control={control}
+                name="status"
+                render={({ field: { value } }) => (
+                  <CustomSelect
+                    customButton={
+                      <span
+                        className={`flex items-center cursor-default justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus?.textColor} ${moduleStatus?.bgColor}`}
+                      >
+                        {moduleStatus?.label ?? "Backlog"}
+                      </span>
+                    }
+                    value={value}
+                    onChange={(value: any) => {
+                      submitChanges({ status: value });
+                    }}
+                  >
+                    {MODULE_STATUS.map((status) => (
+                      <CustomSelect.Option key={status.value} value={status.value}>
+                        <div className="flex items-center gap-2">
+                          <ModuleStatusIcon status={status.value} />
+                          {status.label}
+                        </div>
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
+
               <span className="text-sm text-custom-text-300 font-mediu cursor-default">
                 {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
                 {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}

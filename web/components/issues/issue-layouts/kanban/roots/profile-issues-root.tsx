@@ -34,6 +34,8 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
 
   const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
+  const userDisplayFilters = profileIssueFiltersStore?.userDisplayFilters || null;
+
   const displayProperties = profileIssueFiltersStore?.userDisplayProperties || null;
 
   const currentKanBanView: "swimlanes" | "default" = profileIssueFiltersStore?.userDisplayFilters?.sub_group_by
@@ -99,6 +101,13 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members?.map((m) => m.member) ?? null}
+            projects={projects}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         ) : (
           <KanBanSwimLanes
@@ -122,7 +131,7 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         )}
       </DragDropContext>
