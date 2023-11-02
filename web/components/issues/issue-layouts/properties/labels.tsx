@@ -88,6 +88,59 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     ],
   });
 
+  const label = (
+    <div className="flex items-center gap-2 text-custom-text-200 h-full">
+      {value.length > 0 ? (
+        value.length <= maxRender ? (
+          <>
+            {(projectLabels ? projectLabels : [])
+              ?.filter((l) => value.includes(l.id))
+              .map((label) => (
+                <div
+                  key={label.id}
+                  className="flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
+                >
+                  <div className="flex items-center gap-1.5 text-custom-text-200">
+                    <span
+                      className="h-2 w-2 flex-shrink-0 rounded-full"
+                      style={{
+                        backgroundColor: label?.color ?? "#000000",
+                      }}
+                    />
+                    {label.name}
+                  </div>
+                </div>
+              ))}
+          </>
+        ) : (
+          <div className="h-full flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
+            <Tooltip
+              position="top"
+              tooltipHeading="Labels"
+              tooltipContent={(projectLabels ? projectLabels : [])
+                ?.filter((l) => value.includes(l.id))
+                .map((l) => l.name)
+                .join(", ")}
+            >
+              <div className="h-full flex items-center gap-1.5 text-custom-text-200">
+                <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
+                {`${value.length} Labels`}
+              </div>
+            </Tooltip>
+          </div>
+        )
+      ) : (
+        <div
+                className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${
+                  noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+                }`}
+              >
+          Select labels
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <Combobox
       as="div"
@@ -110,61 +163,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           }  ${buttonClassName}`}
           onClick={() => fetchProjectLabels()}
         >
-          <div className="flex items-center gap-2 text-custom-text-200 h-full">
-            {value.length > 0 ? (
-              value.length <= maxRender ? (
-                <>
-                  {(projectLabels ? projectLabels : [])
-                    ?.filter((l) => value.includes(l.id))
-                    .map((label) => (
-                      <div
-                        key={label.id}
-                        className="flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
-                      >
-                        <div className="flex items-center gap-1.5 text-custom-text-200">
-                          <span
-                            className="h-2 w-2 flex-shrink-0 rounded-full"
-                            style={{
-                              backgroundColor: label?.color ?? "#000000",
-                            }}
-                          />
-                          {label.name}
-                        </div>
-                      </div>
-                    ))}
-                </>
-              ) : (
-                <div className="h-full flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
-                  <Tooltip
-                    position="top"
-                    tooltipHeading="Labels"
-                    tooltipContent={(projectLabels ? projectLabels : [])
-                      ?.filter((l) => value.includes(l.id))
-                      .map((l) => l.name)
-                      .join(", ")}
-                  >
-                    <div className="h-full flex items-center gap-1.5 text-custom-text-200">
-                      <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
-                      {`${value.length} Labels`}
-                    </div>
-                  </Tooltip>
-                </div>
-              )
-            ) : (
-              <div
-                className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${
-                  noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
-                }`}
-              >
-                Select labels
-              </div>
-            )}
-          </div>
+          {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
 
-      <Combobox.Options>
+      <Combobox.Options className="fixed z-10">
         <div
           className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
           ref={setPopperElement}

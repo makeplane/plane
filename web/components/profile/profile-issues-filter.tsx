@@ -10,8 +10,16 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 export const ProfileIssuesFilter = observer(() => {
   const { workspace: workspaceStore, profileIssueFilters: profileIssueFiltersStore }: RootStore = useMobxStore();
 
-  const handleLayoutChange = (_layout: string) =>
-    profileIssueFiltersStore.handleIssueFilters("userDisplayFilters", { layout: _layout });
+  const handleLayoutChange = (_layout: string) => {
+    const payload = {
+      layout: _layout,
+      group_by: profileIssueFiltersStore.userDisplayFilters.group_by
+        ? profileIssueFiltersStore.userDisplayFilters.group_by
+        : "state_detail.group",
+    };
+
+    profileIssueFiltersStore.handleIssueFilters("userDisplayFilters", payload);
+  };
 
   const handleFilters = (key: any, value: any) => {
     let updatesFilters: any = profileIssueFiltersStore?.userFilters;
