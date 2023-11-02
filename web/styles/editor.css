@@ -229,27 +229,3 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .ProseMirror table * .is-empty::before {
   opacity: 0;
 }
-
-
-.items {
-  position: absolute;
-  max-height: 40vh;
-  background: rgb(var(--color-background-100));
-  border-radius: 0.5rem;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0px 10px 20px rgba(0, 0, 0, 0.1);
-  color: rgb(var(--color-text-100));
-  font-size: 0.9rem;
-  overflow: auto;
-}
-
-.item {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 0.4rem;
-  text-align: left;
-  cursor: pointer;
-}
-
-.item.is-selected {
-  border-color: rgb(var(--color-border-200));
-}
