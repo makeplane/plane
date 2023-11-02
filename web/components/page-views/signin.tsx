@@ -45,17 +45,37 @@ export const SignInView = observer(() => {
     (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
 
   useEffect(() => {
-    userStore.fetchCurrentUserSettings().then((settings) => {
+    userStore.fetchCurrentUser().then((currentUser) => {
       setLoading(true);
-      if (next_url) router.push(next_url);
-      else
-        router.push(
-          `/${
-            settings.workspace.last_workspace_slug
-              ? settings.workspace.last_workspace_slug
-              : settings.workspace.fallback_workspace_slug
-          }`
-        );
+
+      // if next_url is provided, redirect the user to that url
+      if (next_url) {
+        router.push(next_url);
+        return;
+      }
+
+      // if the user is not onboarded, redirect them to the onboarding page
+      if (!currentUser.is_onboarded) {
+        router.push("/onboarding");
+        return;
+      }
+
+      // if the user is onboarded, fetch their last workspace details
+      userStore.fetchCurrentUserSettings().then((currentUserSettings) => {
+        let route = "";
+        const workspaceSlug =
+          currentUserSettings?.workspace?.last_workspace_slug ??
+          currentUserSettings?.workspace?.fallback_workspace_slug;
+
+        // if there is any workspaceSlug present, redirect the user to that workspace
+        if (workspaceSlug && workspaceSlug.trim() !== "") route = workspaceSlug;
+        // if there is no workspaceSlug present, check if the user has any invitations
+        else if (currentUserSettings.workspace.invites > 0) route = "/invitations";
+        // if there are no invitations, redirect the user to the create-workspace page
+        else route = "/create-workspace";
+
+        router.push(`/${route}`);
+      });
     });
   }, [userStore, router, next_url]);
 
