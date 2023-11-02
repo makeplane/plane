@@ -15,6 +15,7 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueComment } from "types";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 // services
 const fileService = new FileService();
@@ -38,6 +39,8 @@ export const CommentCard: React.FC<Props> = ({
 
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, comment.project_detail.id)
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -112,6 +115,8 @@ export const CommentCard: React.FC<Props> = ({
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
                 }}
+                mentionSuggestions={editorSuggestions.mentionSuggestions}
+                mentionHighlights={editorSuggestions.mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">

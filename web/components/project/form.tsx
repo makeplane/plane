@@ -68,11 +68,11 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           message: "Project updated successfully",
         });
       })
-      .catch(() => {
+      .catch((error) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Project could not be updated. Please try again.",
+          message: error?.error ?? "Project could not be updated. Please try again.",
         });
       });
   };

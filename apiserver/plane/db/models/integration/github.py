@@ -6,7 +6,6 @@ from django.db import models
 
 # Module imports
 from plane.db.models import ProjectBaseModel
-from plane.db.mixins import AuditModel
 
 
 class GithubRepository(ProjectBaseModel):

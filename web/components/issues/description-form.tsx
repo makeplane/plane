@@ -10,6 +10,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -20,6 +21,7 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    project_id?: string;
   };
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
@@ -35,6 +37,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
+
+  const editorSuggestion = useEditorSuggestions(workspaceSlug, issue.project_id)
 
   const {
     handleSubmit,
@@ -154,13 +158,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 onChange(description_html);
                 debouncedFormSave();
               }}
+              mentionSuggestions={editorSuggestion.mentionSuggestions}
+              mentionHighlights={editorSuggestion.mentionHighlights}
             />
           )}
         />
         <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
         >
           {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>

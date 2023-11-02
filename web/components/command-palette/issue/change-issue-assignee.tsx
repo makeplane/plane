@@ -9,7 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService } from "services/issue";
 // ui
-import { Avatar } from "components/ui";
+import { Avatar } from "@plane/ui";
 // types
 import { IUser, IIssue } from "types";
 // constants
@@ -34,13 +34,13 @@ export const ChangeIssueAssignee: FC<Props> = observer((props) => {
   const members = projectId ? projectStore.members?.[projectId.toString()] : undefined;
 
   const options =
-    members?.map(({ member }: any) => ({
+    members?.map(({ member }) => ({
       value: member.id,
       query: member.display_name,
       content: (
         <>
           <div className="flex items-center gap-2">
-            <Avatar user={member} />
+            <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
             {member.display_name}
           </div>
           {issue.assignees.includes(member.id) && (

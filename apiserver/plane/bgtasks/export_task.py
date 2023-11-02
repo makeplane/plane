@@ -4,7 +4,6 @@ import io
 import json
 import boto3
 import zipfile
-from urllib.parse import urlparse, urlunparse
 
 # Django imports
 from django.conf import settings

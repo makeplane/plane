@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";

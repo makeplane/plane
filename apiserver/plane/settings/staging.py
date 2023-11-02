@@ -4,7 +4,6 @@ import ssl
 import certifi
 
 import dj_database_url
-from urllib.parse import urlparse
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration

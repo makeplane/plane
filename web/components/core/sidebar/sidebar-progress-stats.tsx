@@ -10,10 +10,9 @@ import useIssuesView from "hooks/use-issues-view";
 import emptyLabel from "public/empty-state/empty_label.svg";
 import emptyMembers from "public/empty-state/empty_members.svg";
 // components
-import { StateGroupIcon } from "@plane/ui";
 import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar } from "components/ui";
+import { Avatar, StateGroupIcon } from "@plane/ui";
 // types
 import {
   IModule,
@@ -138,17 +137,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar
-                          user={{
-                            id: assignee.assignee_id,
-                            avatar: assignee.avatar ?? "",
-                            first_name: assignee.first_name ?? "",
-                            last_name: assignee.last_name ?? "",
-                            display_name: assignee.display_name ?? "",
-                          }}
-                          height="18px"
-                          width="18px"
-                        />
+                        <Avatar name={assignee.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
                         <span>{assignee.display_name}</span>
                       </div>
                     }

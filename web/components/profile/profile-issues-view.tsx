@@ -251,6 +251,7 @@ export const ProfileIssuesView = () => {
               states={undefined}
               clearAllFilters={() =>
                 setFilters({
+                  mentions: null,
                   labels: null,
                   priority: null,
                   state_group: null,

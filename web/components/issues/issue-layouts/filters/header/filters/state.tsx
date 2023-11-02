@@ -12,15 +12,14 @@ import { IStateResponse } from "types";
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  itemsToRender: number;
   searchQuery: string;
   states: IStateResponse | undefined;
-  viewButtons: React.ReactNode;
 };
 
 export const FilterState: React.FC<Props> = (props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery, states, viewButtons } = props;
+  const { appliedFilters, handleUpdate, searchQuery, states } = props;
 
+  const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const statesList = getStatesList(states);
@@ -28,6 +27,13 @@ export const FilterState: React.FC<Props> = (props) => {
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+  const handleViewToggle = () => {
+    if (!filteredOptions) return;
+
+    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
+    else setItemsToRender(filteredOptions.length);
+  };
 
   return (
     <>
@@ -50,7 +56,15 @@ export const FilterState: React.FC<Props> = (props) => {
                     title={state.name}
                   />
                 ))}
-                {viewButtons}
+                {filteredOptions.length > 5 && (
+                  <button
+                    type="button"
+                    className="text-custom-primary-100 text-xs font-medium ml-8"
+                    onClick={handleViewToggle}
+                  >
+                    {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                  </button>
+                )}
               </>
             ) : (
               <p className="text-xs text-custom-text-400 italic">No matches found</p>

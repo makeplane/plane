@@ -1,15 +1,11 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { ProjectEstimateService } from "services/project";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -17,29 +13,15 @@ import { Button, Input, TextArea } from "@plane/ui";
 // helpers
 import { checkDuplicates } from "helpers/array.helper";
 // types
-import { IUser, IEstimate, IEstimateFormData } from "types";
-// fetch-keys
-import { ESTIMATES_LIST, ESTIMATE_DETAILS } from "constants/fetch-keys";
+import { IEstimate, IEstimateFormData } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IEstimate;
-  user: IUser | undefined;
 };
 
-type FormValues = {
-  name: string;
-  description: string;
-  value1: string;
-  value2: string;
-  value3: string;
-  value4: string;
-  value5: string;
-  value6: string;
-};
-
-const defaultValues: Partial<FormValues> = {
+const defaultValues = {
   name: "",
   description: "",
   value1: "",
@@ -50,10 +32,18 @@ const defaultValues: Partial<FormValues> = {
   value6: "",
 };
 
-// services
-const projectEstimateService = new ProjectEstimateService();
+type FormValues = typeof defaultValues;
 
-export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, isOpen, user }) => {
+export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
+  const { handleClose, data, isOpen } = props;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
+
+  // store
+  const { projectEstimates: projectEstimatesStore } = useMobxStore();
+
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -68,71 +58,47 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
     reset();
   };
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
   const { setToastAlert } = useToast();
 
   const createEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectEstimateService
-      .createEstimate(workspaceSlug as string, projectId as string, payload, user)
+    await projectEstimatesStore
+      .createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
-        mutate(ESTIMATES_LIST(projectId as string));
         onClose();
       })
       .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Estimate with that name already exists. Please try again with another name.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Estimate could not be created. Please try again.",
-          });
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
+
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message:
+            errorString ?? err.status === 400
+              ? "Estimate with that name already exists. Please try again with another name."
+              : "Estimate could not be created. Please try again.",
+        });
       });
   };
 
   const updateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId || !data) return;
 
-    mutate<IEstimate[]>(
-      ESTIMATES_LIST(projectId.toString()),
-      (prevData) =>
-        prevData?.map((p) => {
-          if (p.id === data.id)
-            return {
-              ...p,
-              name: payload.estimate.name,
-              description: payload.estimate.description,
-              points: p.points.map((point, index) => ({
-                ...point,
-                value: payload.estimate_points[index].value,
-              })),
-            };
-
-          return p;
-        }),
-      false
-    );
-
-    await projectEstimateService
-      .patchEstimate(workspaceSlug as string, projectId as string, data?.id as string, payload, user)
+    await projectEstimatesStore
+      .updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
       .then(() => {
-        mutate(ESTIMATES_LIST(projectId.toString()));
-        mutate(ESTIMATE_DETAILS(data.id));
         handleClose();
       })
-      .catch(() => {
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
+
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Estimate could not be updated. Please try again.",
+          message: errorString ?? "Estimate could not be updated. Please try again.",
         });
       });
 
@@ -291,151 +257,38 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
                           )}
                         />
                       </div>
+
+                      {/* list of all the points */}
+                      {/* since they are all the same, we can use a loop to render them */}
                       <div className="grid grid-cols-3 gap-3">
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">1</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Controller
-                                control={control}
-                                name="value1"
-                                render={({ field: { value, onChange, ref } }) => (
-                                  <Input
-                                    id="value1"
-                                    name="value1"
-                                    type="text"
-                                    value={value}
-                                    onChange={onChange}
-                                    ref={ref}
-                                    hasError={Boolean(errors.value1)}
-                                    placeholder="Point 1"
-                                    className="rounded-l-none w-full"
+                        {Array(6)
+                          .fill(0)
+                          .map((_, i) => (
+                            <div className="flex items-center">
+                              <span className="flex h-full items-center rounded-lg bg-custom-background-80">
+                                <span className="rounded-lg px-2 text-sm text-custom-text-200">{i + 1}</span>
+                                <span className="rounded-r-lg bg-custom-background-100">
+                                  <Controller
+                                    control={control}
+                                    name={`value${i + 1}` as keyof FormValues}
+                                    render={({ field: { value, onChange, ref } }) => (
+                                      <Input
+                                        ref={ref}
+                                        type="text"
+                                        value={value}
+                                        onChange={onChange}
+                                        id={`value${i + 1}`}
+                                        name={`value${i + 1}`}
+                                        placeholder={`Point ${i + 1}`}
+                                        className="rounded-l-none w-full"
+                                        hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
+                                      />
+                                    )}
                                   />
-                                )}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">2</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Controller
-                                control={control}
-                                name="value2"
-                                render={({ field: { value, onChange, ref } }) => (
-                                  <Input
-                                    id="value2"
-                                    name="value2"
-                                    type="text"
-                                    value={value}
-                                    onChange={onChange}
-                                    ref={ref}
-                                    hasError={Boolean(errors.value2)}
-                                    placeholder="Point 2"
-                                    className="rounded-l-none w-full"
-                                  />
-                                )}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">3</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Controller
-                                control={control}
-                                name="value3"
-                                render={({ field: { value, onChange, ref } }) => (
-                                  <Input
-                                    id="value3"
-                                    name="value3"
-                                    type="text"
-                                    value={value}
-                                    onChange={onChange}
-                                    ref={ref}
-                                    hasError={Boolean(errors.value3)}
-                                    placeholder="Point 3"
-                                    className="rounded-l-none w-full"
-                                  />
-                                )}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">4</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Controller
-                                control={control}
-                                name="value4"
-                                render={({ field: { value, onChange, ref } }) => (
-                                  <Input
-                                    id="value4"
-                                    name="value4"
-                                    type="text"
-                                    value={value}
-                                    onChange={onChange}
-                                    ref={ref}
-                                    hasError={Boolean(errors.value4)}
-                                    placeholder="Point 4"
-                                    className="rounded-l-none w-full"
-                                  />
-                                )}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">5</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Controller
-                                control={control}
-                                name="value5"
-                                render={({ field: { value, onChange, ref } }) => (
-                                  <Input
-                                    id="value5"
-                                    name="value5"
-                                    type="text"
-                                    value={value}
-                                    onChange={onChange}
-                                    ref={ref}
-                                    hasError={Boolean(errors.value5)}
-                                    placeholder="Point 5"
-                                    className="rounded-l-none w-full"
-                                  />
-                                )}
-                              />
-                            </span>
-                          </span>
-                        </div>
-                        <div className="flex items-center">
-                          <span className="flex h-full items-center rounded-lg bg-custom-background-80">
-                            <span className="rounded-lg px-2 text-sm text-custom-text-200">6</span>
-                            <span className="rounded-r-lg bg-custom-background-100">
-                              <Controller
-                                control={control}
-                                name="value6"
-                                render={({ field: { value, onChange, ref } }) => (
-                                  <Input
-                                    id="value6"
-                                    name="value6"
-                                    type="text"
-                                    value={value}
-                                    onChange={onChange}
-                                    ref={ref}
-                                    hasError={Boolean(errors.value6)}
-                                    placeholder="Point 6"
-                                    className="rounded-l-none w-full"
-                                  />
-                                )}
-                              />
-                            </span>
-                          </span>
-                        </div>
+                                </span>
+                              </span>
+                            </div>
+                          ))}
                       </div>
                     </div>
                     <div className="mt-5 flex justify-end gap-2">
@@ -461,4 +314,4 @@ export const CreateUpdateEstimateModal: React.FC<Props> = ({ handleClose, data, 
       </Transition.Root>
     </>
   );
-};
+});
