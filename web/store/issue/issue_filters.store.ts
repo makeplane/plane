@@ -149,7 +149,14 @@ export class IssueFilterStore implements IIssueFilterStore {
 
       runInAction(() => {
         this.userFilters = memberResponse?.view_props?.filters;
-        this.userDisplayFilters = memberResponse?.view_props?.display_filters ?? {};
+        this.userDisplayFilters = {
+          ...memberResponse?.view_props?.display_filters,
+          // add calendar display filters if not already present
+          calendar: {
+            show_weekends: memberResponse?.view_props?.display_filters?.calendar?.show_weekends || true,
+            layout: memberResponse?.view_props?.display_filters?.calendar?.layout || "month",
+          },
+        };
         this.userDisplayProperties = issueProperties?.properties || this.defaultDisplayProperties;
         // default props from api
         this.defaultFilters = memberResponse.default_props.filters;

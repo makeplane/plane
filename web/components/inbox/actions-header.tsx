@@ -6,8 +6,6 @@ import { Popover } from "@headlessui/react";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -38,9 +36,9 @@ export const InboxActionsHeader = observer(() => {
   const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
 
   const user = userStore?.currentUser;
+  const userRole = userStore.currentProjectRole;
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : null;
 
-  const { memberRole } = useProjectMyMembership();
   const { setToastAlert } = useToast();
 
   const markInboxStatus = async (data: TInboxStatus) => {
@@ -73,7 +71,7 @@ export const InboxActionsHeader = observer(() => {
   }, [issue]);
 
   const issueStatus = issue?.issue_inbox[0].status;
-  const isAllowed = memberRole.isMember || memberRole.isOwner;
+  const isAllowed = userRole === 15 || userRole === 20;
 
   const today = new Date();
   const tomorrow = new Date(today);

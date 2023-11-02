@@ -39,8 +39,8 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
         (sub_group_by && header_type === "sub_group_by" ? (
           <HeaderSubGroupByCard
             column_id={column_id}
-            icon={<Icon user={assignee?.member} />}
-            title={assignee?.member?.display_name || ""}
+            icon={<Icon user={assignee} />}
+            title={assignee?.display_name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -50,12 +50,12 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             column_id={column_id}
-            icon={<Icon user={assignee?.member} />}
-            title={assignee?.member?.display_name || ""}
+            icon={<Icon user={assignee} />}
+            title={assignee?.display_name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
-            issuePayload={{ assignees: [assignee?.member?.id] }}
+            issuePayload={{ assignees: [assignee?.id] }}
           />
         ))}
     </>

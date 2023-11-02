@@ -104,6 +104,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                       key={`${issue.id}_${index}`}
                       issue={issue}
                       expandedIssues={expandedIssues}
+                      handleUpdateIssue={handleUpdateIssue}
                       setExpandedIssues={setExpandedIssues}
                       properties={displayProperties}
                       handleIssueAction={handleIssueAction}

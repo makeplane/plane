@@ -1,5 +1,7 @@
 import type { IUserLite, IWorkspace, IWorkspaceLite, IUserMemberLite, TStateGroups, IProjectViewProps } from ".";
 
+export type TUserProjectRole = 5 | 10 | 15 | 20;
+
 export interface IProject {
   archive_in: number;
   close_in: number;
@@ -32,7 +34,7 @@ export interface IProject {
   is_deployed: boolean;
   is_favorite: boolean;
   is_member: boolean;
-  member_role: 5 | 10 | 15 | 20 | null;
+  member_role: TUserProjectRole | null;
   members: IProjectMemberLite[];
   issue_views_view: boolean;
   module_view: boolean;
@@ -76,7 +78,7 @@ export interface IProjectMember {
   project: IProjectLite;
   workspace: IWorkspaceLite;
   comment: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserProjectRole;
 
   preferences: ProjectPreferences;
 
@@ -100,7 +102,7 @@ export interface IProjectMemberInvitation {
   token: string;
   message: string;
   responded_at: Date;
-  role: 5 | 10 | 15 | 20;
+  role: TUserProjectRole;
 
   created_at: Date;
   updated_at: Date;
@@ -109,7 +111,7 @@ export interface IProjectMemberInvitation {
 }
 
 export interface IProjectBulkAddFormData {
-  members: { role: 5 | 10 | 15 | 20; member_id: string }[];
+  members: { role: TUserProjectRole; member_id: string }[];
 }
 
 export interface IGithubRepository {

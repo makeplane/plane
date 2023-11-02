@@ -1,5 +1,7 @@
 import type { IProjectMember, IUser, IUserLite, IUserMemberLite, IWorkspaceViewProps } from "types";
 
+export type TUserWorkspaceRole = 5 | 10 | 15 | 20;
+
 export interface IWorkspace {
   readonly id: string;
   readonly owner: IUser;
@@ -30,13 +32,13 @@ export interface IWorkspaceMemberInvitation {
   token: string;
   message: string;
   responded_at: Date;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
   created_by_detail: IUser;
   workspace: IWorkspace;
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: 5 | 10 | 15 | 20 }[];
+  emails: { email: string; role: TUserWorkspaceRole }[];
 }
 
 export type Properties = {
@@ -61,7 +63,7 @@ export interface IWorkspaceMember {
   created_by: string;
   id: string;
   member: IUserLite;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
   updated_at: Date;
   updated_by: string;
   workspace: IWorkspaceLite;
@@ -74,7 +76,7 @@ export interface IWorkspaceMemberMe {
   default_props: IWorkspaceViewProps;
   id: string;
   member: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
   updated_at: Date;
   updated_by: string;
   view_props: IWorkspaceViewProps;

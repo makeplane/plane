@@ -22,10 +22,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { issueDetail: issueDetailStore }: RootStore = useMobxStore();
 
   const issueUpdate = (_data: Partial<IIssue>) => {
-    if (handleIssue) {
-      handleIssue(_data);
-      issueDetailStore.updateIssue(workspaceSlug, projectId, issueId, _data);
-    }
+    handleIssue(_data);
   };
 
   const issueReactionCreate = (reaction: string) =>

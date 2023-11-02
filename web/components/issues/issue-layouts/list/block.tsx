@@ -12,10 +12,11 @@ interface IssueBlockProps {
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
+  showEmptyGroup?: boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties } = props;
+  const { columnId, issue, handleIssues, quickActions, display_properties, showEmptyGroup } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
     handleIssues(group_by, issueToUpdate, "update");
@@ -36,8 +37,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           workspaceSlug={issue?.workspace_detail?.slug}
           projectId={issue?.project_detail?.id}
           issueId={issue?.id}
-          // TODO: add the logic here
-          handleIssue={() => {}}
+          handleIssue={(issueToUpdate) => {
+            handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
+          }}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <div className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full">{issue.name}</div>
@@ -50,6 +52,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             issue={issue}
             handleIssues={updateIssue}
             display_properties={display_properties}
+            showEmptyGroup={showEmptyGroup}
           />
           {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
         </div>

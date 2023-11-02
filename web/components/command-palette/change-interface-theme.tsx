@@ -1,12 +1,13 @@
 import React, { FC, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Command } from "cmdk";
-import { THEME_OPTIONS } from "constants/themes";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
+// constants
+import { THEME_OPTIONS } from "constants/themes";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;

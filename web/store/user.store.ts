@@ -6,7 +6,7 @@ import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // interfaces
 import { IUser, IUserSettings } from "types/users";
-import { IWorkspaceMemberMe, IProjectMember } from "types";
+import { IWorkspaceMemberMe, IProjectMember, TUserProjectRole, TUserWorkspaceRole } from "types";
 import { RootStore } from "./root";
 
 export interface IUserStore {
@@ -34,8 +34,8 @@ export interface IUserStore {
 
   currentProjectMemberInfo: IProjectMember | undefined;
   currentWorkspaceMemberInfo: IWorkspaceMemberMe | undefined;
-  currentProjectRole: number | undefined;
-  currentWorkspaceRole: number | undefined;
+  currentProjectRole: TUserProjectRole | undefined;
+  currentWorkspaceRole: TUserWorkspaceRole | undefined;
 
   hasPermissionToCurrentWorkspace: boolean | undefined;
   hasPermissionToCurrentProject: boolean | undefined;
@@ -47,6 +47,7 @@ export interface IUserStore {
   fetchUserProjectInfo: (workspaceSlug: string, projectId: string) => Promise<IProjectMember>;
   fetchUserDashboardInfo: (workspaceSlug: string, month: number) => Promise<any>;
 
+  updateUserOnBoard: () => Promise<void>;
   updateTourCompleted: () => Promise<void>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
   updateCurrentUserTheme: (theme: string) => Promise<IUser>;
@@ -98,6 +99,7 @@ class UserStore implements IUserStore {
       fetchUserDashboardInfo: action,
       fetchUserWorkspaceInfo: action,
       fetchUserProjectInfo: action,
+      updateUserOnBoard: action,
       updateTourCompleted: action,
       updateCurrentUser: action,
       updateCurrentUserTheme: action,
@@ -122,7 +124,7 @@ class UserStore implements IUserStore {
 
   get currentWorkspaceRole() {
     if (!this.rootStore.workspace.workspaceSlug) return;
-    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug].role;
+    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug]?.role;
   }
 
   get currentProjectMemberInfo() {
@@ -132,7 +134,7 @@ class UserStore implements IUserStore {
 
   get currentProjectRole() {
     if (!this.rootStore.project.projectId) return;
-    return this.projectMemberInfo[this.rootStore.project.projectId].role;
+    return this.projectMemberInfo[this.rootStore.project.projectId]?.role;
   }
 
   get hasPermissionToCurrentWorkspace() {
@@ -242,6 +244,27 @@ class UserStore implements IUserStore {
     }
   };
 
+  updateUserOnBoard = async () => {
+    try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          is_onboarded: true,
+        } as IUser;
+      });
+
+      const user = this.currentUser ?? undefined;
+
+      if (!user) return;
+
+      await this.userService.updateUserOnBoard({ userRole: user.role }, user);
+    } catch (error) {
+      this.fetchCurrentUser();
+
+      throw error;
+    }
+  };
+
   updateTourCompleted = async () => {
     try {
       if (this.currentUser) {
@@ -251,7 +274,9 @@ class UserStore implements IUserStore {
             is_tour_completed: true,
           } as IUser;
         });
+
         const response = await this.userService.updateUserTourCompleted(this.currentUser);
+
         return response;
       }
     } catch (error) {
@@ -261,12 +286,22 @@ class UserStore implements IUserStore {
 
   updateCurrentUser = async (data: Partial<IUser>) => {
     try {
+      runInAction(() => {
+        this.currentUser = {
+          ...this.currentUser,
+          ...data,
+        } as IUser;
+      });
+
       const response = await this.userService.updateUser(data);
+
       runInAction(() => {
         this.currentUser = response;
       });
       return response;
     } catch (error) {
+      this.fetchCurrentUser();
+
       throw error;
     }
   };

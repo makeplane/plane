@@ -1,3 +1,4 @@
+import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -8,6 +9,7 @@ import { GanttChartRoot, IBlockUpdateData, renderIssueBlocksStructure } from "co
 import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssue } from "types";
 
 export const GanttLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -21,7 +23,7 @@ export const GanttLayout: React.FC = observer(() => {
 
   const issues = issueStore.getIssues;
 
-  const updateIssue = (block: any, payload: IBlockUpdateData) => {
+  const updateIssue = (block: IIssue, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
     issueStore.updateGanttIssueStructure(workspaceSlug.toString(), block, payload);
@@ -38,8 +40,8 @@ export const GanttLayout: React.FC = observer(() => {
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
-          BlockRender={IssueGanttBlock}
-          SidebarBlockRender={IssueGanttSidebarBlock}
+          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
+          sidebarBlockToRender={(data: IIssue) => <IssueGanttSidebarBlock data={data} handleIssue={updateIssue} />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}

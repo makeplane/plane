@@ -4,6 +4,9 @@ import { Popover2 } from "@blueprintjs/popover2";
 import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
@@ -13,6 +16,7 @@ type Props = {
   issue: IIssue;
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   properties: IIssueDisplayProperties;
   handleEditIssue: (issue: IIssue) => void;
   handleDeleteIssue: (issue: IIssue) => void;
@@ -24,6 +28,7 @@ export const IssueColumn: React.FC<Props> = ({
   issue,
   expanded,
   handleToggleExpand,
+  handleUpdateIssue,
   properties,
   handleEditIssue,
   handleDeleteIssue,
@@ -37,15 +42,6 @@ export const IssueColumn: React.FC<Props> = ({
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const openPeekOverview = () => {
-    const { query } = router;
-
-    router.push({
-      pathname: router.pathname,
-      query: { ...query, peekIssue: issue.id },
-    });
-  };
 
   const handleCopyText = () => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
@@ -142,15 +138,20 @@ export const IssueColumn: React.FC<Props> = ({
           )}
         </div>
       )}
-      <span className="flex items-center px-4 py-2.5 h-full  truncate flex-grow">
-        <button
-          type="button"
-          className="truncate text-custom-text-100 text-left cursor-pointer w-full text-[0.825rem]"
-          onClick={openPeekOverview}
-        >
-          {issue.name}
-        </button>
-      </span>
+      <IssuePeekOverview
+        workspaceSlug={issue?.workspace_detail?.slug}
+        projectId={issue?.project_detail?.id}
+        issueId={issue?.id}
+        handleIssue={(issueToUpdate) => handleUpdateIssue(issueToUpdate as IIssue, issueToUpdate)}
+      >
+        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <span className="flex items-center px-4 py-2.5 h-full  truncate flex-grow">
+            <div className="truncate text-custom-text-100 text-left cursor-pointer w-full text-[0.825rem]">
+              {issue.name}
+            </div>
+          </span>
+        </Tooltip>
+      </IssuePeekOverview>
     </div>
   );
 };
