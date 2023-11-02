@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { List } from "../default";
+import { ArchivedIssueQuickActions } from "components/issues";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -18,8 +19,8 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
   const {
     project: projectStore,
-    archivedIssueFilters: archivedIssueFiltersStore,
     archivedIssues: archivedIssueStore,
+    archivedIssueFilters: archivedIssueFiltersStore,
   } = useMobxStore();
 
   // derived values
@@ -27,14 +28,12 @@ export const ArchivedIssueListLayout: FC = observer(() => {
   const display_properties = archivedIssueFiltersStore?.userDisplayProperties || null;
   const group_by: string | null = archivedIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
-  const handleIssues = (group_by: string | null, issue: IIssue, action: "update" | "delete" | "convertToIssue") => {
+  const handleIssues = (group_by: string | null, issue: IIssue, action: "delete" | "update") => {
     if (!workspaceSlug || !projectId) return;
 
-    console.log({
-      group_by,
-      issue,
-      action,
-    });
+    if (action === "delete") {
+      archivedIssueStore.deleteArchivedIssue(group_by, null, issue);
+    }
   };
 
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
@@ -56,7 +55,9 @@ export const ArchivedIssueListLayout: FC = observer(() => {
         issues={issues}
         group_by={group_by}
         handleIssues={handleIssues}
-        quickActions={() => null}
+        quickActions={(group_by, issue) => (
+          <ArchivedIssueQuickActions issue={issue} handleDelete={async () => handleIssues(group_by, issue, "delete")} />
+        )}
         display_properties={display_properties}
         states={states}
         stateGroups={stateGroups}

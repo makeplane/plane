@@ -55,8 +55,6 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const handleDisplayFiltersUpdate = (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
     if (!workspaceSlug || !projectId) return;
 
-    console.log(updatedDisplayFilter);
-
     archivedIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
       display_filters: {
         ...archivedIssueFiltersStore.userDisplayFilters,

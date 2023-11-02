@@ -24,6 +24,11 @@ export interface IArchivedIssueStore {
       ungrouped: IIssueUnGroupedStructure;
     };
   };
+  issueDetail: {
+    [project_id: string]: {
+      [issue_id: string]: IIssue;
+    };
+  };
 
   // services
   archivedIssueService: IssueArchiveService;
@@ -35,6 +40,7 @@ export interface IArchivedIssueStore {
   // action
   fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  deleteArchivedIssue: (group: string | null, sub_group: string | null, issue: IIssue) => Promise<any>;
 }
 
 export class ArchivedIssueStore implements IArchivedIssueStore {
@@ -53,6 +59,8 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       ungrouped: IIssue[];
     };
   } = {};
+  issueDetail: IArchivedIssueStore["issueDetail"] = {};
+
   // service
   archivedIssueService;
   rootStore;
@@ -63,12 +71,15 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       loader: observable.ref,
       error: observable.ref,
       issues: observable.ref,
+
       // computed
       getIssueType: computed,
       getIssues: computed,
+
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
+      deleteArchivedIssue: action,
     });
     this.rootStore = _rootStore;
     this.archivedIssueService = new IssueArchiveService();
@@ -180,5 +191,40 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       this.error = error;
       return error;
     }
+  };
+
+  /**
+   * @description Function to delete issue from the store. NOTE: This function is not deleting issue from the backend.
+   */
+  deleteArchivedIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const projectId: string | null = issue?.project;
+    const issueType = this.getIssueType;
+    if (!projectId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      issues = {
+        ...issues,
+        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
+      };
+    }
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
+        },
+      };
+    }
+
+    runInAction(() => {
+      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
+    });
   };
 }

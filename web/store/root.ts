@@ -85,6 +85,8 @@ import {
   IArchivedIssueStore,
   ArchivedIssueFilterStore,
   IArchivedIssueFilterStore,
+  ArchivedIssueDetailStore,
+  IArchivedIssueDetailStore,
 } from "store/archived-issues";
 import { DraftIssueStore, IDraftIssueStore, DraftIssueFilterStore, IDraftIssueFilterStore } from "store/draft-issues";
 import {
@@ -149,6 +151,7 @@ export class RootStore {
   profileIssueFilters: IProfileIssueFilterStore;
 
   archivedIssues: IArchivedIssueStore;
+  archivedIssueDetail: IArchivedIssueDetailStore;
   archivedIssueFilters: IArchivedIssueFilterStore;
 
   draftIssues: IDraftIssueStore;
@@ -208,6 +211,7 @@ export class RootStore {
     this.profileIssueFilters = new ProfileIssueFilterStore(this);
 
     this.archivedIssues = new ArchivedIssueStore(this);
+    this.archivedIssueDetail = new ArchivedIssueDetailStore(this);
     this.archivedIssueFilters = new ArchivedIssueFilterStore(this);
 
     this.draftIssues = new DraftIssueStore(this);
