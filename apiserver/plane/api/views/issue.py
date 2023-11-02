@@ -773,6 +773,20 @@ class SubIssuesEndpoint(BaseAPIView):
 
         updated_sub_issues = Issue.issue_objects.filter(id__in=sub_issue_ids)
 
+        # Track the issue
+        _ = [
+            issue_activity.delay(
+                type="issue.activity.updated",
+                requested_data=json.dumps({"parent": str(issue_id)}),
+                actor_id=str(request.user.id),
+                issue_id=str(sub_issue_id),
+                project_id=str(project_id),
+                current_instance=json.dumps({"parent": str(sub_issue_id)}),
+                epoch=int(timezone.now().timestamp()),
+            )
+            for sub_issue_id in sub_issue_ids
+        ]
+
         return Response(
             IssueFlatSerializer(updated_sub_issues, many=True).data,
             status=status.HTTP_200_OK,
