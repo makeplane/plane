@@ -7,7 +7,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Input, TextArea } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import { IProjectView } from "types";
 // constants
@@ -147,8 +148,10 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" size="sm" type="submit">
           {data
             ? isSubmitting
               ? "Updating View..."
@@ -156,7 +159,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );
