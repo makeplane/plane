@@ -26,7 +26,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
     <>
       <div className="text-sm p-3 relative bg-custom-background-100 flex items-center gap-3">
         {display_properties && display_properties?.key && (
-          <div className="flex-shrink-0 text-xs text-custom-text-300">
+          <div className="flex-shrink-0 text-xs text-custom-text-300 font-medium">
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
         )}
