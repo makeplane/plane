@@ -51,11 +51,15 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   const projectLabels = projectId && projectStore?.labels?.[projectId];
 
-  const fetchProjectLabels = () =>
-    workspaceSlug && projectId && projectStore.fetchProjectLabels(workspaceSlug, projectId);
+  const fetchProjectLabels = () => {
+    setIsLoading(true);
+    if (workspaceSlug && projectId)
+      projectStore.fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+  };
 
   const options = (projectLabels ? projectLabels : []).map((label) => ({
     value: label.id,
@@ -131,10 +135,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
         )
       ) : (
         <div
-                className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${
-                  noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
-                }`}
-              >
+          className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${
+            noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+          }`}
+        >
           Select labels
         </div>
       )}
@@ -161,7 +165,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => fetchProjectLabels()}
+          onClick={() => !projectLabels && fetchProjectLabels()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -186,33 +190,31 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             />
           </div>
           <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
-            {filteredOptions ? (
-              filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <Combobox.Option
-                    key={option.value}
-                    value={option.value}
-                    className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                    }
-                  >
-                    {({ selected }) => (
-                      <>
-                        {option.content}
-                        {selected && <Check className={`h-3.5 w-3.5`} />}
-                      </>
-                    )}
-                  </Combobox.Option>
-                ))
-              ) : (
-                <span className="flex items-center gap-2 p-1">
-                  <p className="text-left text-custom-text-200 ">No matching results</p>
-                </span>
-              )
-            ) : (
+            {isLoading ? (
               <p className="text-center text-custom-text-200">Loading...</p>
+            ) : filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <Combobox.Option
+                  key={option.value}
+                  value={option.value}
+                  className={({ active, selected }) =>
+                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                      active ? "bg-custom-background-80" : ""
+                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                  }
+                >
+                  {({ selected }) => (
+                    <>
+                      {option.content}
+                      {selected && <Check className={`h-3.5 w-3.5`} />}
+                    </>
+                  )}
+                </Combobox.Option>
+              ))
+            ) : (
+              <span className="flex items-center gap-2 p-1">
+                <p className="text-left text-custom-text-200 ">No matching results</p>
+              </span>
             )}
           </div>
         </div>
