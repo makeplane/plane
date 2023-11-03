@@ -3,14 +3,12 @@ import { BarDatum } from "@nivo/bar";
 // components
 import { CustomTooltip } from "./custom-tooltip";
 // ui
-import { BarGraph } from "components/ui";
+import { BarGraph, Tooltip } from "components/ui";
 // helpers
 import { findStringWithMostCharacters } from "helpers/array.helper";
 import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
 // types
 import { IAnalyticsParams, IAnalyticsResponse } from "types";
-// Tooltip
-import { Tooltip } from "components/ui";
 
 type Props = {
   analytics: IAnalyticsResponse;
