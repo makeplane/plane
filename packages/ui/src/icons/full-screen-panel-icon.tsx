@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const SidePeekIcon: React.FC<ISvgIcons> = ({
+export const FullScreenPanelIcon: React.FC<ISvgIcons> = ({
   className = "text-current",
   ...rest
 }) => (
@@ -20,7 +20,7 @@ export const SidePeekIcon: React.FC<ISvgIcons> = ({
       strokeLinejoin="round"
     />
     <path
-      d="M20 3H12V5V19V21H20C20.5523 21 21 20.1046 21 19V5C21 3.89543 20.5523 3 20 3Z"
+      d="M16.6667 6.00001H7.20015C6.50001 5.99999 6.00005 6.00003 6.00017 7.33335C6.00027 8.4402 6.00021 13.8198 6.00018 15.8823L6.00017 16.6667C6.00017 18 6.00017 18 7.20015 18H16.6667C18 18 18 18 18 16.6667V7.33335C18 6.00001 18 6.00001 16.6667 6.00001H16.6667Z"
       fill="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
