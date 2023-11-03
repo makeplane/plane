@@ -187,7 +187,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 py-5 w-full">
           {/* state */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
               <p>State</p>
             </div>
@@ -198,7 +198,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* assignee */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
@@ -209,7 +209,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* priority */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
@@ -220,7 +220,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* estimate */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <Triangle className="h-4 w-4 flex-shrink-0 " />
               <p>Estimate</p>
             </div>
@@ -231,7 +231,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* start date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Start date</p>
             </div>
@@ -249,7 +249,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* due date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Due date</p>
             </div>
@@ -267,7 +267,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* parent */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <User2 className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
@@ -281,7 +281,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <div className="flex flex-col gap-5 py-5 w-full">
           <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <ContrastIcon className="h-4 w-4 flex-shrink-0" />
               <p>Cycle</p>
             </div>
@@ -291,7 +291,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
 
           <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <p>Module</p>
             </div>
@@ -300,7 +300,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
           </div>
           <div className="flex items-start gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 flex-shrink-0">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <Tag className="h-4 w-4 flex-shrink-0" />
               <p>Label</p>
             </div>
@@ -321,8 +321,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 pt-5 w-full">
           <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center gap-2 w-80">
-              <div className="flex items-center gap-2 w-40">
-                <Link2 className="h-4 w-4 rotate-45 flex-shrink-0" />
+              <div className="flex items-center gap-2 w-40 text-sm">
+                <Link2 className="h-4 w-4 flex-shrink-0" />
                 <p>Links</p>
               </div>
               <div>
