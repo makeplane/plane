@@ -27,8 +27,6 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
   const selectItem = (index: number) => {
     const item = props.items[index];
 
-    console.log(props.command);
-
     if (item) {
       props.command({
         id: item.id,
@@ -71,7 +69,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
 
       if (event.key === "Enter") {
         enterHandler();
-        return false;
+        return true;
       }
 
       return false;
@@ -79,7 +77,7 @@ const MentionList = forwardRef((props: MentionListProps, ref) => {
   }));
 
   return props.items && props.items.length !== 0 ? (
-    <div className="absolute max-h-40 bg-custom-background-100 rounded-md shadow-custom-shadow-sm text-custom-text-300 text-sm overflow-y-auto w-48 p-1 space-y-0.5">
+    <div className="mentions absolute max-h-40 bg-custom-background-100 rounded-md shadow-custom-shadow-sm text-custom-text-300 text-sm overflow-y-auto w-48 p-1 space-y-0.5">
       {props.items.length ? (
         props.items.map((item, index) => (
           <div
