@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
 // mobx store
@@ -7,9 +6,10 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
 // helper
-import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 
 const moduleViewOptions: { type: "list" | "grid" | "gantt_chart"; icon: any }[] = [
   {
@@ -42,17 +42,28 @@ export const ModulesListHeader: React.FC = observer(() => {
     >
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p>Projects</p>
-                  </a>
-                </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={currentProjectDetails?.name ?? "Project"}
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
               }
+              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
-            <BreadcrumbItem title={`${truncateText(currentProjectDetails?.name ?? "Project", 32)} Modules`} />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Modules"
+            />
           </Breadcrumbs>
         </div>
       </div>

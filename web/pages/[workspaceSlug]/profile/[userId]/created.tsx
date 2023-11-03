@@ -58,7 +58,7 @@ const ProfileCreatedIssuesPage: NextPageWithLayout = () => {
 
 ProfileCreatedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader />}>
+    <AppLayout header={<UserProfileHeader title="Created" />}>
       <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
     </AppLayout>
   );

@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { Plus } from "lucide-react";
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
-import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+
 export interface ICyclesHeader {}
 
 export const CyclesHeader: FC<ICyclesHeader> = (props) => {
@@ -25,17 +25,28 @@ export const CyclesHeader: FC<ICyclesHeader> = (props) => {
     >
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p>Projects</p>
-                  </a>
-                </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={currentProjectDetails?.name ?? "Project"}
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="flex items-center justify-center h-4 w-4 rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
               }
+              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
-            <BreadcrumbItem title={`${truncateText(currentProjectDetails?.name ?? "Project Title", 32)} Cycles`} />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Cycles"
+            />
           </Breadcrumbs>
         </div>
       </div>

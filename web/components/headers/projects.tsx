@@ -1,9 +1,7 @@
 import { useRouter } from "next/router";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, Briefcase } from "lucide-react";
 // ui
-import { BreadcrumbItem, Breadcrumbs, Button } from "@plane/ui";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { Breadcrumbs, Button } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
@@ -13,8 +11,7 @@ export const ProjectsHeader = observer(() => {
   const { workspaceSlug } = router.query;
 
   // store
-  const { project: projectStore, workspace: workspaceStore } = useMobxStore();
-  const currentWorkspace = workspaceStore.currentWorkspace;
+  const { project: projectStore } = useMobxStore();
 
   const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : [];
 
@@ -24,10 +21,11 @@ export const ProjectsHeader = observer(() => {
     >
       <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              title={`${truncateText(currentWorkspace?.name ?? "Workspace", 32)} Projects`}
-              unshrinkTitle={false}
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<Briefcase className="h-4 w-4 text-custom-text-300" />}
+              label="Projects"
             />
           </Breadcrumbs>
         </div>
