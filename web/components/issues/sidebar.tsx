@@ -37,7 +37,7 @@ import { ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
+import type { IIssue, IIssueLink, linkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
@@ -97,14 +97,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   const handleCycleChange = useCallback(
-    (cycleDetails: ICycle) => {
+    (cycleId: string) => {
       if (!workspaceSlug || !projectId || !issueDetail || !user) return;
 
       issueService
         .addIssueToCycle(
           workspaceSlug as string,
           projectId as string,
-          cycleDetails.id,
+          cycleId,
           {
             issues: [issueDetail.id],
           },
@@ -118,14 +118,14 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   );
 
   const handleModuleChange = useCallback(
-    (moduleDetail: IModule) => {
+    (moduleId: string) => {
       if (!workspaceSlug || !projectId || !issueDetail || !user) return;
 
       moduleService
         .addIssuesToModule(
           workspaceSlug as string,
           projectId as string,
-          moduleDetail.id,
+          moduleId,
           {
             issues: [issueDetail.id],
           },

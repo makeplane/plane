@@ -24,7 +24,7 @@ import useToast from "hooks/use-toast";
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { ICycle, IIssue, IIssueLink, IModule, TIssuePriorities, linkDetails } from "types";
+import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
 import { IssueService } from "services/issue";
@@ -42,7 +42,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, cycleIssue: cycleIssueStore, moduleIssue: moduleIssueStore } = useMobxStore();
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
@@ -71,11 +71,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleParent = (_parent: string) => {
     issueUpdate({ ...issue, parent: _parent });
   };
-  const handleCycle = (_cycle: ICycle) => {
-    issueUpdate({ ...issue, cycle: _cycle.id });
+  const addIssueToCycle = async (cycleId: string) => {
+    if (!workspaceSlug || !issue || !cycleId) return;
+    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), issue.project_detail.id, cycleId, issue.id);
   };
-  const handleModule = (_module: IModule) => {
-    issueUpdate({ ...issue, module: _module.id });
+
+  const addIssueToModule = async (moduleId: string) => {
+    if (!workspaceSlug || !issue || !moduleId) return;
+
+    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), issue.project_detail.id, moduleId, issue.id);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
@@ -286,7 +290,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Cycle</p>
             </div>
             <div>
-              <SidebarCycleSelect issueDetail={issue} handleCycleChange={handleCycle} disabled={isNotAllowed} />
+              <SidebarCycleSelect issueDetail={issue} handleCycleChange={addIssueToCycle} disabled={isNotAllowed} />
             </div>
           </div>
 
@@ -296,7 +300,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               <p>Module</p>
             </div>
             <div>
-              <SidebarModuleSelect issueDetail={issue} handleModuleChange={handleModule} disabled={isNotAllowed} />
+              <SidebarModuleSelect issueDetail={issue} handleModuleChange={addIssueToModule} disabled={isNotAllowed} />
             </div>
           </div>
           <div className="flex items-start gap-2 w-full">
