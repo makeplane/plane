@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -10,11 +9,12 @@ import useLocalStorage from "hooks/use-local-storage";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 import { ProjectAnalyticsModal } from "components/analytics";
 // ui
-import { Breadcrumbs, Button, CustomMenu } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon, CustomMenu } from "@plane/ui";
 // icons
-import { ArrowRight, ContrastIcon, Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
@@ -32,6 +32,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     cycleIssueFilter: cycleIssueFilterStore,
     project: projectStore,
   } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
+
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
@@ -110,36 +112,55 @@ export const CycleIssuesHeader: React.FC = observer(() => {
       />
       <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2">
-          <Breadcrumbs onBack={() => router.back()}>
+          <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects/${projectId}/cycles`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(cycleDetails?.project_detail.name ?? "", 32)} Cycles`}</p>
-                  </a>
-                </Link>
+              type="text"
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="flex items-center justify-center h-4 w-4 rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
+              }
+              label={currentProjectDetails?.name ?? "Project"}
+              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
+            />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Cycles"
+              link={`/${workspaceSlug}/projects/${projectId}/cycles`}
+            />
+            <Breadcrumbs.BreadcrumbItem
+              type="component"
+              component={
+                <CustomMenu
+                  placement="bottom-start"
+                  label={
+                    <>
+                      <ContrastIcon className="h-3 w-3" />
+                      {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
+                    </>
+                  }
+                  className="ml-1.5 flex-shrink-0"
+                  width="auto"
+                >
+                  {cyclesList?.map((cycle) => (
+                    <CustomMenu.MenuItem
+                      key={cycle.id}
+                      onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
+                    >
+                      {truncateText(cycle.name, 40)}
+                    </CustomMenu.MenuItem>
+                  ))}
+                </CustomMenu>
               }
             />
           </Breadcrumbs>
-          <CustomMenu
-            label={
-              <>
-                <ContrastIcon className="h-3 w-3" />
-                {cycleDetails?.name && truncateText(cycleDetails.name, 40)}
-              </>
-            }
-            className="ml-1.5 flex-shrink-0"
-            width="auto"
-          >
-            {cyclesList?.map((cycle) => (
-              <CustomMenu.MenuItem
-                key={cycle.id}
-                onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
-              >
-                {truncateText(cycle.name, 40)}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
         </div>
         <div className="flex items-center gap-2">
           <LayoutSelection

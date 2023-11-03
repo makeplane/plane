@@ -1,20 +1,19 @@
 import { FC } from "react";
 import useSWR from "swr";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
 import { IIssue } from "types";
 // constants
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
 import { IssueArchiveService } from "services/issue";
+// helpers
+import { renderEmoji } from "helpers/emoji.helper";
 
 const issueArchiveService = new IssueArchiveService();
 
@@ -24,10 +23,7 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
 
   const { project: projectStore } = useMobxStore();
 
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
+  const { currentProjectDetails } = projectStore;
 
   const { data: issueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
@@ -45,17 +41,35 @@ export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
     <div className="relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <Link href={`/${workspaceSlug}/projects/${projectId as string}/issues`}>
-              <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                <p className="truncate">{`${truncateText(
-                  issueDetails?.project_detail.name ?? "Project",
-                  32
-                )} Issues`}</p>
-              </a>
-            </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
+              }
+              label={currentProjectDetails?.name ?? "Project"}
+              link={`/${workspaceSlug}/projects`}
+            />
 
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Archived  Issues`} />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Archived Issues"
+              link={`/${workspaceSlug}/projects/${projectId}/archived-issues`}
+            />
+
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={`${issueDetails?.project_detail.identifier}-${issueDetails?.sequence_id}` ?? "..."}
+            />
           </Breadcrumbs>
         </div>
       </div>

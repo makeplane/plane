@@ -1,21 +1,13 @@
 import { FC } from "react";
-import useSWR from "swr";
 
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
+import { Settings } from "lucide-react";
+
 // hooks
 import { observer } from "mobx-react-lite";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// helpers
-import { truncateText } from "helpers/string.helper";
-// constant
-import { WORKSPACE_DETAILS } from "constants/fetch-keys";
-
-const workspaceService = new WorkspaceService();
 
 export interface IWorkspaceSettingHeader {
   title: string;
@@ -27,27 +19,20 @@ export const WorkspaceSettingHeader: FC<IWorkspaceSettingHeader> = observer((pro
 
   const { workspaceSlug } = router.query;
 
-  const { data: activeWorkspace } = useSWR(workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null, () =>
-    workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null
-  );
-
   return (
     <div
       className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
     >
       <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}</p>
-                  </a>
-                </Link>
-              }
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label="Settings"
+              icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+              link={`/${workspaceSlug}/settings`}
             />
-            <BreadcrumbItem title={title} unshrinkTitle />
+            <Breadcrumbs.BreadcrumbItem type="text" label={title} />
           </Breadcrumbs>
         </div>
       </div>
