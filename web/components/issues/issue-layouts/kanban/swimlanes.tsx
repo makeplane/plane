@@ -286,6 +286,28 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
         )}
       </div>
 
+      {sub_group_by && sub_group_by === "project" && (
+        <SubGroupSwimlane
+          issues={issues}
+          sub_group_by={sub_group_by}
+          group_by={group_by}
+          list={projects}
+          listKey={`id`}
+          handleIssues={handleIssues}
+          quickActions={quickActions}
+          displayProperties={displayProperties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
+          states={states}
+          stateGroups={stateGroups}
+          priorities={priorities}
+          labels={labels}
+          members={members}
+          projects={projects}
+        />
+      )}
+
       {sub_group_by && sub_group_by === "state" && (
         <SubGroupSwimlane
           issues={issues}

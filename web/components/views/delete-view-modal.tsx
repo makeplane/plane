@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
@@ -112,10 +112,12 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeleteView} loading={isDeleteLoading}>
+                  <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" size="sm" onClick={handleDeleteView}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

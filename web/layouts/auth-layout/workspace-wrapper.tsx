@@ -4,7 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // icons
-import { Spinner, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -67,12 +67,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <a>
-                  <SecondaryButton>Check pending invites</SecondaryButton>
+                  <Button variant="neutral-primary" size="sm">
+                    Check pending invites
+                  </Button>
                 </a>
               </Link>
               <Link href="/create-workspace">
                 <a>
-                  <PrimaryButton>Create new workspace</PrimaryButton>
+                  <Button variant="primary" size="sm">
+                    Create new workspace
+                  </Button>
                 </a>
               </Link>
             </div>

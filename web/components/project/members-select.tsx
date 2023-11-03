@@ -3,10 +3,8 @@ import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, User2 } from "lucide-react";
-// components
-import { Tooltip } from "components/ui";
 // ui
-import { Avatar, AvatarGroup } from "@plane/ui";
+import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
 import { IUserLite } from "types";
 
