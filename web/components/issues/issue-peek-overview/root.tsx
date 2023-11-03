@@ -6,7 +6,6 @@ import { IssueView } from "./view";
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
 import { IIssue } from "types";
-import { RootStore } from "store/root";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
@@ -19,7 +18,7 @@ interface IIssuePeekOverview {
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { workspaceSlug, projectId, issueId, handleIssue, children } = props;
 
-  const { issueDetail: issueDetailStore }: RootStore = useMobxStore();
+  const { issueDetail: issueDetailStore, project: projectStore, user: userStore } = useMobxStore();
 
   const issueUpdate = (_data: Partial<IIssue>) => {
     handleIssue(_data);
@@ -52,6 +51,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const handleDeleteIssue = () => issueDetailStore.deleteIssue(workspaceSlug, projectId, issueId);
 
+  const userRole = userStore.currentProjectRole ?? 5;
+
   return (
     <IssueView
       workspaceSlug={workspaceSlug}
@@ -68,6 +69,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueSubscriptionCreate={issueSubscriptionCreate}
       issueSubscriptionRemove={issueSubscriptionRemove}
       handleDeleteIssue={handleDeleteIssue}
+      disableUserActions={[5, 10].includes(userRole)}
+      showCommentAccessSpecifier={projectStore.currentProjectDetails?.is_deployed}
     >
       {children}
     </IssueView>

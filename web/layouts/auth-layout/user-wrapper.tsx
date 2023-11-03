@@ -17,11 +17,17 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   // router
   const router = useRouter();
   // fetching user information
-  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
+  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser(), {
+    shouldRetryOnError: false,
+  });
   // fetching user settings
-  useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings());
+  useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings(), {
+    shouldRetryOnError: false,
+  });
   // fetching all workspaces
-  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces());
+  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces(), {
+    shouldRetryOnError: false,
+  });
 
   if (!currentUser && !error) {
     return (

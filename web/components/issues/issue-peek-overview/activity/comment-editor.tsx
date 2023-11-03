@@ -124,7 +124,11 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
-                    commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
+                    commentAccessSpecifier={
+                      showAccessSpecifier
+                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        : undefined
+                    }
                     submitButton={
                       <Button
                         variant="primary"
