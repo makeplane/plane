@@ -190,7 +190,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex w-full px-2 border-[0.5px] border-custom-border-200 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm transition-opacity"
+            className="flex w-full px-2 border-[0.5px] border-custom-border-200 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-2xs transition-opacity"
           >
             <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
           </form>

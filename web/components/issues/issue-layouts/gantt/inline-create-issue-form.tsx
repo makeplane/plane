@@ -1,25 +1,21 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { Transition } from "@headlessui/react";
-import { PlusIcon } from "lucide-react";
-
-// store
 import { observer } from "mobx-react-lite";
+import { PlusIcon } from "lucide-react";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-
-// constants
-import { createIssuePayload } from "constants/issue";
-
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
-import { renderDateFormat } from "helpers/date-time.helper";
+// constants
+import { createIssuePayload } from "constants/issue";
 
 type Props = {
   prePopulatedData?: Partial<IIssue>;
@@ -152,10 +148,10 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       {isOpen && (
         <form
           ref={ref}
-          className="flex py-3 px-2 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-sm"
+          className="flex py-3 px-2 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-2xs"
           onSubmit={handleSubmit(onSubmitHandler)}
         >
-          <div className="w-[12px] h-[12px] rounded-full border border-custom-border-1000 flex-shrink-0" />
+          <div className="w-3 h-3 rounded-full border border-custom-border-1000 flex-shrink-0" />
           <h4 className="text-xs text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
           <Inputs register={register} setFocus={setFocus} />
         </form>
