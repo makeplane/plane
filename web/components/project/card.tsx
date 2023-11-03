@@ -181,7 +181,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
-                      const member = project.members?.find((m) => m.id === memberId);
+                      const member = project.members?.find((m) => m.member_id === memberId);
 
                       if (!member) return null;
 
