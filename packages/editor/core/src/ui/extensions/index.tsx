@@ -17,9 +17,12 @@ import ImageExtension from "./image";
 
 import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
+import { Mentions } from "../mentions";
 
 
 export const CoreEditorExtensions = (
+  mentionConfig: { mentionSuggestions: IMentionSuggestion[], mentionHighlights: string[] },
   deleteFile: DeleteImage,
 ) => [
     StarterKit.configure({
@@ -94,4 +97,5 @@ export const CoreEditorExtensions = (
     TableHeader,
     CustomTableCell,
     TableRow,
+    Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
   ];

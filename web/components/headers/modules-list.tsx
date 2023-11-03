@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { GanttChart, LayoutGrid, List, Plus } from "lucide-react";
+import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -22,17 +22,17 @@ const moduleViewOptions: { type: "list" | "grid" | "gantt_chart"; icon: any }[] 
   },
   {
     type: "gantt_chart",
-    icon: GanttChart,
+    icon: GanttChartSquare,
   },
 ];
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  const { workspaceSlug } = router.query;
+  // store
   const { project: projectStore } = useMobxStore();
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+  const { currentProjectDetails } = projectStore;
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
@@ -52,7 +52,7 @@ export const ModulesListHeader: React.FC = observer(() => {
                 </Link>
               }
             />
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Modules`} />
+            <BreadcrumbItem title={`${truncateText(currentProjectDetails?.name ?? "Project", 32)} Modules`} />
           </Breadcrumbs>
         </div>
       </div>

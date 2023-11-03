@@ -102,7 +102,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
           [projectId]: (this.rootStore.project.labels?.[projectId] || [])?.map((label) =>
             label.id === labelId ? { ...label, ...originalLabel } : label
           ),
-        } as any;
+        };
       });
       throw error;
     }

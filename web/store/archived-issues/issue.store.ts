@@ -209,7 +209,7 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       issues = issues as IIssueGroupedStructure;
       issues = {
         ...issues,
-        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
+        [group_id]: issues?.[group_id]?.filter((i) => i?.id !== issue?.id),
       };
     }
     if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
@@ -217,8 +217,8 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       issues = {
         ...issues,
         [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
+          ...issues?.[sub_group_id],
+          [group_id]: issues?.[sub_group_id]?.[group_id]?.filter((i) => i?.id !== issue?.id),
         },
       };
     }

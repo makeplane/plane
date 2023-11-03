@@ -1,14 +1,10 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { ProjectService } from "services/project";
 // ui
-import { AssigneesList, Avatar } from "components/ui";
-import { CustomSearchSelect, UserGroupIcon } from "@plane/ui";
+import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
 // fetch-keys
@@ -38,7 +34,7 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} height="18px" width="18px" />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} showTooltip={false} />
         {member.member.display_name}
       </div>
     ),
@@ -57,8 +53,16 @@ export const SidebarMembersSelect: React.FC<Props> = ({ value, onChange }) => {
           customButtonClassName="rounded-sm"
           customButton={
             value && value.length > 0 && Array.isArray(value) ? (
-              <div className="flex items-center gap-2 p-0.5 w-full">
-                <AssigneesList userIds={value} length={2} />
+              <div className="px-1">
+                <AvatarGroup showTooltip={false}>
+                  {value.map((assigneeId) => {
+                    const member = members?.find((m) => m.member.id === assigneeId)?.member;
+
+                    if (!member) return null;
+
+                    return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+                  })}
+                </AvatarGroup>
               </div>
             ) : (
               <div className="group flex items-center justify-between gap-2 p-1 text-sm text-custom-text-400 w-full">

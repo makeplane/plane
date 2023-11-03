@@ -4,7 +4,9 @@ import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, User2 } from "lucide-react";
 // components
-import { AssigneesList, Avatar, Tooltip } from "components/ui";
+import { Tooltip } from "components/ui";
+// ui
+import { Avatar, AvatarGroup } from "@plane/ui";
 // types
 import { IUserLite } from "types";
 
@@ -63,7 +65,7 @@ export const MembersSelect: React.FC<Props> = ({
     query: member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member} />
+        <Avatar name={member.display_name} src={member.avatar} />
         {member.display_name}
       </div>
     ),
@@ -87,7 +89,15 @@ export const MembersSelect: React.FC<Props> = ({
     >
       <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
-          <AssigneesList userIds={value} length={3} showLength />
+          <AvatarGroup showTooltip={false}>
+            {value.map((assigneeId) => {
+              const member = members?.find((m) => m.id === assigneeId);
+
+              if (!member) return null;
+
+              return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+            })}
+          </AvatarGroup>
         ) : (
           <span
             className="flex items-center justify-between gap-1 h-full w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 duration-300 focus:outline-none
@@ -143,7 +153,7 @@ export const MembersSelect: React.FC<Props> = ({
                     value={option.value}
                     className={({ active, selected }) =>
                       `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
+                        active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }
                   >

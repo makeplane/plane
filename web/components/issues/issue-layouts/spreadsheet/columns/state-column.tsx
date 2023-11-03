@@ -28,7 +28,8 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
         projectId={issue.project_detail.id ?? null}
         value={issue.state_detail}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
-        buttonClassName="!shadow-none !border-0"
+        className="h-full w-full"
+        buttonClassName="!shadow-none !border-0 h-full w-full"
         hideDropdownArrow
         disabled={disabled}
       />

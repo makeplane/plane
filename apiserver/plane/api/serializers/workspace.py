@@ -110,9 +110,8 @@ class TeamSerializer(BaseSerializer):
             ]
             TeamMember.objects.bulk_create(team_members, batch_size=10)
             return team
-        else:
-            team = Team.objects.create(**validated_data)
-            return team
+        team = Team.objects.create(**validated_data)
+        return team
 
     def update(self, instance, validated_data):
         if "members" in validated_data:
@@ -124,8 +123,7 @@ class TeamSerializer(BaseSerializer):
             ]
             TeamMember.objects.bulk_create(team_members, batch_size=10)
             return super().update(instance, validated_data)
-        else:
-            return super().update(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class WorkspaceThemeSerializer(BaseSerializer):

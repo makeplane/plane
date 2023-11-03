@@ -4,8 +4,7 @@ import useSWR from "swr";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
 import { ChevronDown, UserCircle2 } from "lucide-react";
 // fetch-keys
@@ -36,7 +35,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} height="18px" width="18px" />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -58,7 +57,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
           customButton={
             selectedOption ? (
               <div className="flex items-center justify-start gap-2 p-0.5 w-full">
-                <Avatar user={selectedOption} />
+                <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
                 <span className="text-sm text-custom-text-200">{selectedOption?.display_name}</span>
               </div>
             ) : (

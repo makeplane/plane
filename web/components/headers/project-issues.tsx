@@ -174,9 +174,11 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <a>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
-                  <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-200">
-                    {inboxDetails.pending_issue_count}
-                  </span>
+                  {inboxDetails.pending_issue_count > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-200">
+                      {inboxDetails.pending_issue_count}
+                    </span>
+                  )}
                 </Button>
               </a>
             </Link>

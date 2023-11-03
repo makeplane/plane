@@ -16,6 +16,7 @@ import { CustomMenu, CustomSelect } from "@plane/ui";
 import { ChevronDown, X } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
+import { TUserProjectRole } from "types";
 
 // services
 const projectInvitationService = new ProjectInvitationService();
@@ -26,32 +27,28 @@ type Props = {
 
 export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const { member } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // states
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<any | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<any | null>(null);
-
   // store
   const { user: userStore, project: projectStore } = useMobxStore();
-
+  // hooks
   const { setToastAlert } = useToast();
-
+  // fetching project members
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
     workspaceSlug && projectId
       ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
-
   // derived values
   const user = userStore.currentUser;
-  const memberDetails = userStore.projectMemberInfo;
-  const isAdmin = memberDetails?.role === 20;
-  const isOwner = memberDetails?.role === 20;
+  const { currentProjectRole } = userStore;
+  const isAdmin = currentProjectRole === 20;
+  const isOwner = currentProjectRole === 20;
   const projectMembers = projectStore.members?.[projectId?.toString()!];
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
@@ -148,7 +145,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               </div>
             }
             value={member.role}
-            onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
+            onChange={(value: TUserProjectRole | undefined) => {
               if (!workspaceSlug || !projectId) return;
 
               projectStore

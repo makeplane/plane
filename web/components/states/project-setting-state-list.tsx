@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // store
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -22,10 +19,9 @@ export const ProjectSettingStateList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store
   const { project: projectStore } = useMobxStore();
-
+  const { currentProjectDetails } = projectStore;
   // state
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);
@@ -47,7 +43,6 @@ export const ProjectSettingStateList: React.FC = observer(() => {
 
   // derived values
   const states = projectStore.projectStatesByGroups;
-  const projectDetails = projectStore.project_details[projectId?.toString()!] ?? null;
   const orderedStateGroups = orderStateGroups(states!);
   const statesList = getStatesList(orderedStateGroups);
 
@@ -60,7 +55,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
       />
 
       <div className="space-y-8 py-6">
-        {states && projectDetails && orderedStateGroups ? (
+        {states && currentProjectDetails && orderedStateGroups ? (
           Object.keys(orderedStateGroups || {}).map((key) => {
             if (orderedStateGroups[key].length !== 0)
               return (

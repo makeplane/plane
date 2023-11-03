@@ -41,6 +41,8 @@ export interface IProjectStore {
   joinedProjects: IProject[];
   favoriteProjects: IProject[];
 
+  currentProjectDetails: IProject | undefined;
+
   // actions
   setProjectId: (projectId: string) => void;
   setSearchQuery: (query: string) => void;
@@ -137,6 +139,8 @@ export class ProjectStore implements IProjectStore {
       projectMembers: computed,
       projectEstimates: computed,
 
+      currentProjectDetails: computed,
+
       joinedProjects: computed,
       favoriteProjects: computed,
 
@@ -196,6 +200,11 @@ export class ProjectStore implements IProjectStore {
   get workspaceProjects() {
     if (!this.rootStore.workspace.workspaceSlug) return [];
     return this.projects?.[this.rootStore.workspace.workspaceSlug];
+  }
+
+  get currentProjectDetails() {
+    if (!this.projectId) return;
+    return this.project_details[this.projectId];
   }
 
   get joinedProjects() {
@@ -522,6 +531,11 @@ export class ProjectStore implements IProjectStore {
   };
 
   joinProject = async (workspaceSlug: string, projectIds: string[]) => {
+    const newPermissions: { [projectId: string]: boolean } = {};
+    projectIds.forEach((projectId) => {
+      newPermissions[projectId] = true;
+    });
+
     try {
       this.loader = true;
       this.error = null;
@@ -530,6 +544,10 @@ export class ProjectStore implements IProjectStore {
       await this.fetchProjects(workspaceSlug);
 
       runInAction(() => {
+        this.rootStore.user.hasPermissionToProject = {
+          ...this.rootStore.user.hasPermissionToProject,
+          ...newPermissions,
+        };
         this.loader = false;
         this.error = null;
       });
