@@ -67,10 +67,10 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
           Labels
         </Tab>
       </Tab.List>
-      {cycle.total_issues > 0 ? (
+      {cycle && cycle.total_issues > 0 ? (
         <Tab.Panels as={Fragment}>
           <Tab.Panel as="div" className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4">
-            {cycle.distribution.assignees.map((assignee, index) => {
+            {cycle.distribution?.assignees?.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (
                   <SingleProgressStats
@@ -105,7 +105,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
             })}
           </Tab.Panel>
           <Tab.Panel as="div" className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4">
-            {cycle.distribution.labels.map((label, index) => (
+            {cycle.distribution?.labels?.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}
                 title={

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
@@ -22,10 +22,11 @@ import { EmptyState } from "components/common";
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { ISearchIssueResponse } from "types";
+import { NextPageWithLayout } from "types/app";
 
 const issueService = new IssueService();
 
-const SingleCycle: React.FC = () => {
+const CycleDetailPage: NextPageWithLayout = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
 
   const router = useRouter();
@@ -75,7 +76,7 @@ const SingleCycle: React.FC = () => {
   };
 
   return (
-    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
+    <>
       {/* TODO: Update logic to bulk add issues to a cycle */}
       <ExistingIssuesListModal
         isOpen={cycleIssuesListModal}
@@ -113,8 +114,16 @@ const SingleCycle: React.FC = () => {
           </div>
         </>
       )}
+    </>
+  );
+};
+
+CycleDetailPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default SingleCycle;
+export default CycleDetailPage;

@@ -1,6 +1,8 @@
+import { ReactElement } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Router from "next/router";
+import { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
 import NProgress from "nprogress";
 // styles
@@ -11,15 +13,14 @@ import "styles/nprogress.css";
 import "styles/react-datepicker.css";
 // contexts
 import { ToastContextProvider } from "contexts/toast.context";
-// types
-import type { AppProps } from "next/app";
 // constants
 import { THEMES } from "constants/themes";
-// constants
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
 import { MobxStoreProvider } from "lib/mobx/store-provider";
 import MobxStoreInit from "lib/mobx/store-init";
+// types
+import { NextPageWithLayout } from "types/app";
 
 const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 
@@ -29,7 +30,14 @@ Router.events.on("routeChangeStart", NProgress.start);
 Router.events.on("routeChangeError", NProgress.done);
 Router.events.on("routeChangeComplete", NProgress.done);
 
-function MyApp({ Component, pageProps }: AppProps) {
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  // Use the layout defined at the page level, if available
+  const getLayout = Component.getLayout ?? ((page: ReactElement) => page);
+
   return (
     <>
       <Head>
@@ -40,7 +48,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ToastContextProvider>
             <CrispWithNoSSR />
             <MobxStoreInit />
-            <Component {...pageProps} />
+            {getLayout(<Component {...pageProps} />)}
           </ToastContextProvider>
         </ThemeProvider>
       </MobxStoreProvider>

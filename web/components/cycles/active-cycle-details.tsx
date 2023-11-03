@@ -475,7 +475,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
           </div>
           <div className="relative h-64">
             <ProgressChart
-              distribution={cycle.distribution.completion_chart}
+              distribution={cycle.distribution?.completion_chart ?? {}}
               startDate={cycle.start_date ?? ""}
               endDate={cycle.end_date ?? ""}
               totalIssues={cycle.total_issues}

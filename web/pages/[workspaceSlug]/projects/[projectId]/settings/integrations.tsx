@@ -1,9 +1,6 @@
-import React from "react";
-
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -20,7 +17,7 @@ import { Loader } from "@plane/ui";
 import emptyIntegration from "public/empty-state/integration.svg";
 // types
 import { IProject } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
@@ -28,7 +25,7 @@ import { PROJECT_DETAILS, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 const integrationService = new IntegrationService();
 const projectService = new ProjectService();
 
-const ProjectIntegrations: NextPage = () => {
+const ProjectIntegrationsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -45,43 +42,47 @@ const ProjectIntegrations: NextPage = () => {
   const isAdmin = projectDetails?.member_role === 20;
 
   return (
-    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Integrations Settings" />}>
-      <ProjectSettingLayout>
-        <div className={`pr-9 py-8 gap-10 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Integrations</h3>
+    <div className={`pr-9 py-8 gap-10 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+      <div className="flex items-center py-3.5 border-b border-custom-border-200">
+        <h3 className="text-xl font-medium">Integrations</h3>
+      </div>
+      {workspaceIntegrations ? (
+        workspaceIntegrations.length > 0 ? (
+          <div>
+            {workspaceIntegrations.map((integration) => (
+              <IntegrationCard key={integration.integration_detail.id} integration={integration} />
+            ))}
           </div>
-          {workspaceIntegrations ? (
-            workspaceIntegrations.length > 0 ? (
-              <div>
-                {workspaceIntegrations.map((integration) => (
-                  <IntegrationCard key={integration.integration_detail.id} integration={integration} />
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                title="You haven't configured integrations"
-                description="Configure GitHub and other integrations to sync your project issues."
-                image={emptyIntegration}
-                primaryButton={{
-                  text: "Configure now",
-                  onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
-                }}
-                disabled={!isAdmin}
-              />
-            )
-          ) : (
-            <Loader className="space-y-5">
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-              <Loader.Item height="40px" />
-            </Loader>
-          )}
-        </div>
-      </ProjectSettingLayout>
+        ) : (
+          <EmptyState
+            title="You haven't configured integrations"
+            description="Configure GitHub and other integrations to sync your project issues."
+            image={emptyIntegration}
+            primaryButton={{
+              text: "Configure now",
+              onClick: () => router.push(`/${workspaceSlug}/settings/integrations`),
+            }}
+            disabled={!isAdmin}
+          />
+        )
+      ) : (
+        <Loader className="space-y-5">
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+          <Loader.Item height="40px" />
+        </Loader>
+      )}
+    </div>
+  );
+};
+
+ProjectIntegrationsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Integrations Settings" />}>
+      <ProjectSettingLayout>{page}</ProjectSettingLayout>
     </AppLayout>
   );
 };
 
-export default ProjectIntegrations;
+export default ProjectIntegrationsPage;
