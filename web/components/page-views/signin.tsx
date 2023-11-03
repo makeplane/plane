@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
@@ -22,17 +22,18 @@ import { Loader, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import { IUserSettings } from "types";
+import { IUser, IUserSettings } from "types";
 
 const appConfigService = new AppConfigService();
 const authService = new AuthService();
 
 export const SignInView = observer(() => {
-  const { user: userStore } = useMobxStore();
+  const {
+    user: { fetchCurrentUser, fetchCurrentUserSettings },
+  } = useMobxStore();
   // router
   const router = useRouter();
   const { next: next_url } = router.query as { next: string };
-
   // states
   const [isLoading, setLoading] = useState(false);
   // toast
@@ -44,44 +45,44 @@ export const SignInView = observer(() => {
     data &&
     (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
 
-  useEffect(() => {
-    userStore.fetchCurrentUserSettings().then((settings) => {
-      setLoading(true);
-      if (next_url) router.push(next_url);
-      else
-        router.push(
-          `/${
-            settings.workspace.last_workspace_slug
-              ? settings.workspace.last_workspace_slug
-              : settings.workspace.fallback_workspace_slug
-          }`
-        );
-    });
-  }, [userStore, router, next_url]);
-
-  const handleLoginRedirection = () => {
-    userStore.fetchCurrentUser().then((user) => {
-      const isOnboarded = user.is_onboarded;
-
-      if (isOnboarded) {
-        userStore
-          .fetchCurrentUserSettings()
-          .then((userSettings: IUserSettings) => {
-            const workspaceSlug =
-              userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-            if (next_url) router.push(next_url);
-            else if (workspaceSlug) router.push(`/${workspaceSlug}`);
-            else if (userSettings.workspace.invites > 0) router.push("/invitations");
-            else router.push("/create-workspace");
-          })
-          .catch(() => {
-            setLoading(false);
-          });
-      } else {
+  const handleLoginRedirection = useCallback(
+    (user: IUser) => {
+      // if the user is not onboarded, redirect them to the onboarding page
+      if (!user.is_onboarded) {
         router.push("/onboarding");
+        return;
       }
+      // if next_url is provided, redirect the user to that url
+      if (next_url) {
+        router.push(next_url);
+        return;
+      }
+
+      // if the user is onboarded, fetch their last workspace details
+      fetchCurrentUserSettings()
+        .then((userSettings: IUserSettings) => {
+          const workspaceSlug =
+            userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+          if (workspaceSlug) router.push(`/${workspaceSlug}`);
+          else if (userSettings.workspace.invites > 0) router.push("/invitations");
+          else router.push("/create-workspace");
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    },
+    [fetchCurrentUserSettings, router, next_url]
+  );
+
+  const mutateUserInfo = useCallback(() => {
+    fetchCurrentUser().then((user) => {
+      handleLoginRedirection(user);
     });
-  };
+  }, [fetchCurrentUser, handleLoginRedirection]);
+
+  useEffect(() => {
+    mutateUserInfo();
+  }, [mutateUserInfo]);
 
   const handleGoogleSignIn = async ({ clientId, credential }: any) => {
     try {
@@ -94,7 +95,7 @@ export const SignInView = observer(() => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
-          handleLoginRedirection();
+          mutateUserInfo();
         }
       } else {
         setLoading(false);
@@ -121,7 +122,7 @@ export const SignInView = observer(() => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
-          handleLoginRedirection();
+          mutateUserInfo();
         }
       } else {
         setLoading(false);
@@ -142,13 +143,7 @@ export const SignInView = observer(() => {
     return authService
       .emailLogin(formData)
       .then(() => {
-        userStore.fetchCurrentUser().then((user) => {
-          const isOnboard = user.onboarding_step.profile_complete;
-          if (isOnboard) handleLoginRedirection();
-          else {
-            router.push("/onboarding");
-          }
-        });
+        mutateUserInfo();
       })
       .catch((err) => {
         setLoading(false);
@@ -164,7 +159,7 @@ export const SignInView = observer(() => {
     try {
       setLoading(true);
       if (response) {
-        handleLoginRedirection();
+        mutateUserInfo();
       }
     } catch (err: any) {
       setLoading(false);

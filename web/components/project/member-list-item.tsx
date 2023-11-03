@@ -11,9 +11,9 @@ import useToast from "hooks/use-toast";
 // components
 import { ConfirmProjectMemberRemove } from "components/project";
 // ui
-import { CustomMenu, CustomSelect } from "@plane/ui";
+import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, XCircle } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
 import { TUserProjectRole } from "types";
@@ -46,9 +46,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   );
   // derived values
   const user = userStore.currentUser;
-  const { currentProjectRole } = userStore;
+  const { currentProjectMemberInfo, currentProjectRole } = userStore;
   const isAdmin = currentProjectRole === 20;
-  const isOwner = currentProjectRole === 20;
   const projectMembers = projectStore.members?.[projectId?.toString()!];
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
@@ -69,7 +68,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             await projectStore.removeMemberFromProject(
               workspaceSlug.toString(),
               projectId.toString(),
-              selectedRemoveMember
+              selectedRemoveMember.id
             );
           }
           // if the user is an invite
@@ -77,7 +76,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             await projectInvitationService.deleteProjectInvitation(
               workspaceSlug.toString(),
               projectId.toString(),
-              selectedInviteRemoveMember
+              selectedInviteRemoveMember.id
             );
             mutate(`PROJECT_INVITATIONS_${projectId.toString()}`);
           }
@@ -89,59 +88,62 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           });
         }}
       />
-
-      <div key={member.id} className="flex items-center justify-between px-3.5 py-[18px]">
-        <div className="flex items-center gap-x-6 gap-y-2">
+      <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
+        <div className="flex items-center gap-x-4 gap-y-2">
           {member.avatar && member.avatar !== "" ? (
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-lg p-4 capitalize text-white">
-              <img
-                src={member.avatar}
-                alt={member.display_name}
-                className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
-              />
-            </div>
-          ) : member.display_name || member.email ? (
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-              {(member.display_name || member.email)?.charAt(0)}
-            </div>
+            <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+              <a className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
+                <img
+                  src={member.avatar}
+                  alt={member.display_name || member.email}
+                  className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                />
+              </a>
+            </Link>
           ) : (
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gray-700 p-4 capitalize text-white">
-              ?
-            </div>
+            <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
+              <a className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize bg-gray-700 text-white">
+                {(member.display_name ?? member.email ?? "?")[0]}
+              </a>
+            </Link>
           )}
+
           <div>
             {member.member ? (
               <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                <a className="text-sm">
-                  <span>
-                    {member.first_name} {member.last_name}
-                  </span>
-                  <span className="text-custom-text-300 text-sm ml-2">({member.display_name})</span>
+                <a className="text-sm font-medium">
+                  {member.first_name} {member.last_name}
                 </a>
               </Link>
             ) : (
-              <h4 className="text-sm">{member.display_name || member.email}</h4>
+              <h4 className="text-sm cursor-default">{member.display_name || member.email}</h4>
             )}
-            {isOwner && <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email}</p>}
+            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email ?? member.display_name}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-xs">
-          {!member.member && (
-            <div className="mr-2 flex items-center justify-center rounded-full bg-yellow-500/20 px-2 py-1 text-center text-xs text-yellow-500">
-              Pending
+
+        <div className="flex items-center gap-2 text-xs">
+          {!member?.status && (
+            <div className="flex items-center justify-center rounded bg-yellow-500/20 px-2.5 py-1 text-center text-xs text-yellow-500 font-medium">
+              <p>Pending</p>
             </div>
           )}
+
           <CustomSelect
             customButton={
-              <div className="flex item-center gap-1">
+              <div className="flex item-center gap-1 px-2 py-0.5 rounded">
                 <span
-                  className={`flex items-center text-sm font-medium ${
-                    member.memberId !== user?.id ? "" : "text-custom-sidebar-text-400"
+                  className={`flex items-center text-xs font-medium rounded ${
+                    member.memberId !== currentProjectMemberInfo?.id ? "" : "text-custom-sidebar-text-400"
                   }`}
                 >
                   {ROLE[member.role as keyof typeof ROLE]}
                 </span>
-                {member.memberId !== user?.id && <ChevronDown className="h-4 w-4" />}
+                {member.memberId !== currentProjectMemberInfo?.id && (
+                  <span className="grid place-items-center">
+                    <ChevronDown className="h-3 w-3" />
+                  </span>
+                )}
               </div>
             }
             value={member.role}
@@ -168,31 +170,34 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               !member.member ||
               (currentUser && currentUser.role !== 20 && currentUser.role < member.role)
             }
+            placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (currentUser && currentUser.role !== 20 && currentUser.role < parseInt(key)) return null;
+              if (currentProjectRole && currentProjectRole !== 20 && currentProjectRole < parseInt(key)) return null;
 
               return (
-                <CustomSelect.Option key={key} value={key}>
+                <CustomSelect.Option key={key} value={parseInt(key, 10)}>
                   <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
                 </CustomSelect.Option>
               );
             })}
           </CustomSelect>
-          <CustomMenu ellipsis disabled={!isAdmin}>
-            <CustomMenu.MenuItem
-              onClick={() => {
-                if (member.member) setSelectedRemoveMember(member.id);
-                else setSelectedInviteRemoveMember(member.id);
-              }}
+          {isAdmin && (
+            <Tooltip
+              tooltipContent={member.memberId === currentProjectMemberInfo?.member ? "Leave project" : "Remove member"}
             >
-              <span className="flex items-center justify-start gap-2">
-                <X className="h-4 w-4" />
-
-                <span> {member.memberId !== user?.id ? "Remove member" : "Leave project"}</span>
-              </span>
-            </CustomMenu.MenuItem>
-          </CustomMenu>
+              <button
+                type="button"
+                onClick={() => {
+                  if (member.member) setSelectedRemoveMember(member);
+                  else setSelectedInviteRemoveMember(member);
+                }}
+                className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+              >
+                <XCircle className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={2} />
+              </button>
+            </Tooltip>
+          )}
         </div>
       </div>
     </>

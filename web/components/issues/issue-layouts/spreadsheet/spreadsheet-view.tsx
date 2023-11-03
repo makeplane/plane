@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { PlusIcon } from "lucide-react";
 // components
 import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetInlineCreateIssueForm } from "components/issues";
-import { CustomMenu, Spinner } from "@plane/ui";
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { Spinner } from "@plane/ui";
 // types
 import {
   IIssue,
@@ -47,6 +47,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
   } = props;
 
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
+  const [issuePeekOverview, setIssuePeekOverView] = useState<{
+    workspaceSlug: string;
+    projectId: string;
+    issueId: string;
+  } | null>(null);
 
   const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
 
@@ -104,11 +109,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                       key={`${issue.id}_${index}`}
                       issue={issue}
                       expandedIssues={expandedIssues}
-                      handleUpdateIssue={handleUpdateIssue}
                       setExpandedIssues={setExpandedIssues}
                       properties={displayProperties}
                       handleIssueAction={handleIssueAction}
                       disableUserActions={disableUserActions}
+                      setIssuePeekOverView={setIssuePeekOverView}
                     />
                   ))}
                 </div>
@@ -174,6 +179,14 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             ))} */}
         </div>
       </div>
+      {issuePeekOverview && (
+        <IssuePeekOverview
+          workspaceSlug={issuePeekOverview?.workspaceSlug}
+          projectId={issuePeekOverview?.projectId}
+          issueId={issuePeekOverview?.issueId}
+          handleIssue={(issueToUpdate: any) => handleUpdateIssue(issueToUpdate as IIssue, issueToUpdate)}
+        />
+      )}
     </div>
   );
 });

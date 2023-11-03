@@ -4,21 +4,23 @@ import { observer } from "mobx-react-lite";
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // types
-import { TIssueGroupByOptions } from "types";
+import { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "types";
 // constants
 import { ISSUE_GROUP_BY_OPTIONS } from "constants/issue";
 
 type Props = {
-  selectedGroupBy: TIssueGroupByOptions | undefined;
-  selectedSubGroupBy: TIssueGroupByOptions | undefined;
+  displayFilters: IIssueDisplayFilterOptions;
   handleUpdate: (val: TIssueGroupByOptions) => void;
   subGroupByOptions: TIssueGroupByOptions[];
 };
 
 export const FilterSubGroupBy: React.FC<Props> = observer((props) => {
-  const { selectedGroupBy, selectedSubGroupBy, handleUpdate, subGroupByOptions } = props;
+  const { displayFilters, handleUpdate, subGroupByOptions } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
+
+  const selectedGroupBy = displayFilters.group_by ?? null;
+  const selectedSubGroupBy = displayFilters.sub_group_by ?? null;
 
   return (
     <>

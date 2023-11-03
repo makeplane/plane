@@ -165,9 +165,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
         />
       )}
       <div className="w-full !text-base">
-        <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-          {children}
-        </div>
+        {children && (
+          <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
+            {children}
+          </div>
+        )}
 
         {issueId === peekIssueId && (
           <div

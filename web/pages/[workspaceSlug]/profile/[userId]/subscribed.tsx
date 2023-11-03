@@ -11,6 +11,7 @@ import { ProfileAuthWrapper } from "layouts/profile-layout";
 import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { Spinner } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "types/app";
 
@@ -40,21 +41,21 @@ const ProfileSubscribedIssuesPage: NextPageWithLayout = () => {
   const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
 
   return (
-    <AppLayout header={<UserProfileHeader />}>
-      <ProfileAuthWrapper showProfileIssuesFilter>
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="w-full h-full relative overflow-auto -z-1">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-        )}
-      </ProfileAuthWrapper>
-    </AppLayout>
+    <>
+      {isLoading ? (
+        <div className="flex justify-center items-center w-full h-full">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="w-full h-full relative overflow-auto -z-1">
+          {activeLayout === "list" ? (
+            <ProfileIssuesListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ProfileIssuesKanBanLayout />
+          ) : null}
+        </div>
+      )}
+    </>
   );
 };
 
