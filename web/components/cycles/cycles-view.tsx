@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { TCycleLayout } from "types";
 
