@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { Transition } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 
 // store
@@ -204,7 +203,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
             className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1.5 rounded-md"
             onClick={() => setIsOpen(true)}
           >
-            <PlusIcon className="h-3.5 w-3.5" />
+            <PlusIcon width={14} strokeWidth={2} />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
           </button>
         </div>

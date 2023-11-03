@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { Transition } from "@headlessui/react";
 
 // hooks
 import useToast from "hooks/use-toast";
@@ -179,7 +178,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
             className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pt-3 rounded-md"
             onClick={() => setIsOpen(true)}
           >
-            <PlusIcon className="h-4 w-4" />
+            <PlusIcon width={14} strokeWidth={2} />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
           </button>
         </div>
