@@ -130,6 +130,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const payload: Partial<IIssue> = {
     name: getValues("name"),
     description: getValues("description"),
+    description_html: getValues("description_html"),
     state: getValues("state"),
     priority: getValues("priority"),
     assignees: getValues("assignees"),
