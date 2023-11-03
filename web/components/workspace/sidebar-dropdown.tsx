@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { useTheme } from "next-themes";
 import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -55,8 +54,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const { workspaces, currentWorkspace: activeWorkspace } = workspaceStore;
   const user = userStore.currentUser;
 
-  const { setTheme } = useTheme();
-
   const { setToastAlert } = useToast();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
@@ -81,7 +78,6 @@ export const WorkspaceSidebarDropdown = observer(() => {
       .signOut()
       .then(() => {
         router.push("/");
-        setTheme("system");
       })
       .catch(() =>
         setToastAlert({
