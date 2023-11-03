@@ -9,6 +9,7 @@ import { ProfileAuthWrapper } from "layouts/profile-layout";
 import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
@@ -46,7 +47,9 @@ const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {isLoading ? (
-        <div>Loading...</div>
+        <div className="flex justify-center items-center w-full h-full">
+          <Spinner />
+        </div>
       ) : (
         <div className="w-full h-full relative overflow-auto -z-1">
           {activeLayout === "list" ? (
