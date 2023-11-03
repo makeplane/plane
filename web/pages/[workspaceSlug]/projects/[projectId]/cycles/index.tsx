@@ -20,11 +20,9 @@ import emptyCycle from "public/empty-state/cycle.svg";
 import { TCycleView, TCycleLayout } from "types";
 import { NextPageWithLayout } from "types/app";
 // constants
-import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
+import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
-// helpers
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -118,7 +116,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             handleCurrentView(CYCLE_TAB_LIST[i].key as TCycleView);
           }}
         >
-          <div className="flex flex-col sm:flex-row gap-4 justify-between border-b border-custom-border-300 px-4 sm:px-5 pb-4 sm:pb-0">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-end sm:items-center border-b border-custom-border-200 px-4 sm:px-5 pb-4 sm:pb-0">
             <Tab.List as="div" className="flex items-center overflow-x-scroll">
               {CYCLE_TAB_LIST.map((tab) => (
                 <Tab
@@ -133,28 +131,28 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 </Tab>
               ))}
             </Tab.List>
-            {CYCLE_VIEWS && CYCLE_VIEWS.length > 0 && cycleStore?.cycleView != "active" && (
-              <div className="justify-end sm:justify-start flex items-center gap-x-1">
-                {CYCLE_VIEWS.map((view) => {
-                  if (view.key === "gantt" && cycleStore?.cycleView === "draft") return null;
+            {cycleStore?.cycleView != "active" && (
+              <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+                {CYCLE_VIEW_LAYOUTS.map((layout) => {
+                  if (layout.key === "gantt" && cycleStore?.cycleView === "draft") return null;
+
                   return (
-                    <Tooltip
-                      key={view.key}
-                      tooltipContent={
-                        <span className="capitalize">{replaceUnderscoreIfSnakeCase(view.key)} Layout</span>
-                      }
-                      position="bottom"
-                    >
+                    <Tooltip key={layout.key} tooltipContent={layout.title}>
                       <button
                         type="button"
-                        className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-                          cycleStore?.cycleLayout === view.key
-                            ? "bg-custom-sidebar-background-80"
-                            : "text-custom-sidebar-text-200"
+                        className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                          cycleStore?.cycleLayout == layout.key
+                            ? "bg-custom-background-100 shadow-custom-shadow-2xs"
+                            : ""
                         }`}
-                        onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
+                        onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
                       >
-                        <view.icon className="h-3.5 w-3.5" />
+                        <layout.icon
+                          strokeWidth={2}
+                          className={`h-3.5 w-3.5 ${
+                            cycleStore?.cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                          }`}
+                        />
                       </button>
                     </Tooltip>
                   );

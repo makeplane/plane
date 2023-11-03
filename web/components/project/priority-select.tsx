@@ -82,7 +82,7 @@ export const PrioritySelect: React.FC<Props> = ({
               : value === "low"
               ? "text-green-500"
               : "text-custom-text-200"
-          } ${value === "urgent" && highlightUrgentPriority ? "text-white" : "text-red-500"}`}
+          } ${value === "urgent" ? (highlightUrgentPriority ? "text-white" : "text-red-500") : ""}`}
         />
         {showTitle && <span className="capitalize text-xs">{value}</span>}
       </div>
