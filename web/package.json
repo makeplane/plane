@@ -65,6 +65,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.39.0",
     "@types/js-cookie": "^3.0.2",
     "@types/node": "18.0.6",
     "@types/nprogress": "^0.2.0",
