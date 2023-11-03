@@ -40,21 +40,19 @@ const ProfileSubscribedIssuesPage: NextPageWithLayout = () => {
   const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
 
   return (
-    <AppLayout header={<UserProfileHeader />}>
-      <ProfileAuthWrapper showProfileIssuesFilter>
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="w-full h-full relative overflow-auto -z-1">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-        )}
-      </ProfileAuthWrapper>
-    </AppLayout>
+    <>
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        <div className="w-full h-full relative overflow-auto -z-1">
+          {activeLayout === "list" ? (
+            <ProfileIssuesListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ProfileIssuesKanBanLayout />
+          ) : null}
+        </div>
+      )}
+    </>
   );
 };
 

@@ -176,10 +176,11 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
 
   const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
 
+  console.log("group_by,group_by", group_by);
+
   return (
     <div className="relative w-full h-full">
-      {/* TODO: have to implement */}
-      {group_by && group_by === "projects" && (
+      {group_by && group_by === "project" && (
         <GroupByKanBan
           issues={issues}
           group_by={group_by}
