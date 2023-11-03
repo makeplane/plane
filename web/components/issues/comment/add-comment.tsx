@@ -52,7 +52,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
 
   const {
     control,
@@ -74,33 +74,35 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
     <div>
       <form onSubmit={handleSubmit(handleAddComment)}>
         <div>
-          <div className="relative">
-            <Controller
-              name="access"
-              control={control}
-              render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
-                <Controller
-                  name="comment_html"
-                  control={control}
-                  render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
-                    <LiteTextEditorWithRef
-                      onEnterKeyPress={handleSubmit(handleAddComment)}
-                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                      deleteFile={fileService.deleteImage}
-                      ref={editorRef}
-                      value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
-                      customClassName="p-3 min-h-[100px] shadow-sm"
-                      debouncedUpdatesEnabled={false}
-                      onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
-                      commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
-                      mentionSuggestions={editorSuggestions.mentionSuggestions}
-                      mentionHighlights={editorSuggestions.mentionHighlights}
-                    />
-                  )}
-                />
-              )}
-            />
-          </div>
+          <Controller
+            name="access"
+            control={control}
+            render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
+              <Controller
+                name="comment_html"
+                control={control}
+                render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
+                  <LiteTextEditorWithRef
+                    onEnterKeyPress={handleSubmit(handleAddComment)}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    deleteFile={fileService.deleteImage}
+                    ref={editorRef}
+                    value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
+                    customClassName="p-3 min-h-[100px] shadow-sm"
+                    debouncedUpdatesEnabled={false}
+                    onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
+                    commentAccessSpecifier={
+                      showAccessSpecifier
+                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        : undefined
+                    }
+                    mentionSuggestions={editorSuggestions.mentionSuggestions}
+                    mentionHighlights={editorSuggestions.mentionHighlights}
+                  />
+                )}
+              />
+            )}
+          />
 
           <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
             {isSubmitting ? "Adding..." : "Comment"}

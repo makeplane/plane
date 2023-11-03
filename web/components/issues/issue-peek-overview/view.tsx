@@ -1,8 +1,10 @@
 import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
-import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
@@ -13,7 +15,6 @@ import { DeleteIssueModal } from "../delete-issue-modal";
 import { IIssue } from "types";
 import { RootStore } from "store/root";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
@@ -34,6 +35,8 @@ interface IIssueView {
   issueSubscriptionRemove: () => void;
   handleDeleteIssue: () => Promise<void>;
   children: ReactNode;
+  disableUserActions?: boolean;
+  showCommentAccessSpecifier?: boolean;
 }
 
 type TPeekModes = "side-peek" | "modal" | "full-screen";
@@ -73,6 +76,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueSubscriptionRemove,
     handleDeleteIssue,
     children,
+    disableUserActions = false,
+    showCommentAccessSpecifier = false,
   } = props;
 
   const router = useRouter();
@@ -239,9 +244,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <button onClick={handleCopyText}>
                   <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
                 </button>
-                <button onClick={() => setDeleteIssueModal(true)}>
-                  <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
-                </button>
+                {!disableUserActions && (
+                  <button onClick={() => setDeleteIssueModal(true)}>
+                    <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                  </button>
+                )}
               </div>
             </div>
 
@@ -264,7 +271,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueReactionRemove={issueReactionRemove}
                         />
 
-                        <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} user={user} />
+                        <PeekOverviewProperties
+                          issue={issue}
+                          issueUpdate={issueUpdate}
+                          disableUserActions={disableUserActions}
+                        />
 
                         <IssueComment
                           workspaceSlug={workspaceSlug}
@@ -277,6 +288,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueCommentRemove={issueCommentRemove}
                           issueCommentReactionCreate={issueCommentReactionCreate}
                           issueCommentReactionRemove={issueCommentReactionRemove}
+                          showCommentAccessSpecifier={showCommentAccessSpecifier}
                         />
                       </div>
                     ) : (
@@ -305,10 +317,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             issueCommentRemove={issueCommentRemove}
                             issueCommentReactionCreate={issueCommentReactionCreate}
                             issueCommentReactionRemove={issueCommentReactionRemove}
+                            showCommentAccessSpecifier={showCommentAccessSpecifier}
                           />
                         </div>
                         <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
-                          <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} user={user} />
+                          <PeekOverviewProperties
+                            issue={issue}
+                            issueUpdate={issueUpdate}
+                            disableUserActions={disableUserActions}
+                          />
                         </div>
                       </div>
                     )}
