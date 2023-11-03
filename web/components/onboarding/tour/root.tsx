@@ -99,7 +99,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
                 started by creating a project.
               </p>
-              <div className="flex items-center gap-6 mt-8">
+              <div className="flex items-center gap-6 mt-8 h-full">
                 <Button variant="primary" onClick={() => setStep("issues")}>
                   Take a Product Tour
                 </Button>
