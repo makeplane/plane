@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { WorkspaceDashboardView } from "components/views";
+import { WorkspaceDashboardView } from "components/page-views";
 import { WorkspaceDashboardHeader } from "components/headers/workspace-dashboard";
 // types
 import { NextPageWithLayout } from "types/app";

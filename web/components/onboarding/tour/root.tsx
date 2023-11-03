@@ -1,16 +1,15 @@
 import { useState } from "react";
-
 import Image from "next/image";
-
-// hooks
-import useUser from "hooks/use-user";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { TourSidebar } from "components/onboarding";
 // ui
 import { Button } from "@plane/ui";
 // icons
 import { X } from "lucide-react";
-// images
+// assets
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 import IssuesTour from "public/onboarding/issues.webp";
 import CyclesTour from "public/onboarding/cycles.webp";
@@ -75,10 +74,13 @@ const TOUR_STEPS: {
   },
 ];
 
-export const TourRoot: React.FC<Props> = ({ onComplete }) => {
+export const TourRoot: React.FC<Props> = observer((props) => {
+  const { onComplete } = props;
+  // states
   const [step, setStep] = useState<TTourSteps>("welcome");
 
-  const { user } = useUser();
+  const { user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const user = userStore.currentUser;
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];
@@ -149,7 +151,13 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
                   )}
                 </div>
                 {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) === TOUR_STEPS.length - 1 && (
-                  <Button variant="primary" onClick={onComplete}>
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      onComplete();
+                      commandPaletteStore.toggleCreateProjectModal();
+                    }}
+                  >
                     Create my first project
                   </Button>
                 )}
@@ -160,4 +168,4 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
       )}
     </>
   );
-};
+});
