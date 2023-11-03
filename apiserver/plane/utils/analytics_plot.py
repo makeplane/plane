@@ -12,14 +12,14 @@ from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, Conc
 from plane.db.models import Issue
 
 
-def annotate_with_monthly_dimension(queryset, field_name, query_set):
+def annotate_with_monthly_dimension(queryset, field_name, attribute):
     # Get the year and the months
     year = ExtractYear(field_name)
     month = ExtractMonth(field_name)
     # Concat the year and month
     dimension = Concat(year, Value("-"), month, output_field=CharField())
     # Annotate the dimension
-    return queryset.annotate(**{query_set: dimension})
+    return queryset.annotate(**{attribute: dimension})
 
 def extract_axis(queryset, x_axis):
     # Format the dimension when the axis is in date
