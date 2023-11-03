@@ -1,4 +1,4 @@
-import os, sys, random, string
+import os, sys
 import uuid
 
 sys.path.append("/code")

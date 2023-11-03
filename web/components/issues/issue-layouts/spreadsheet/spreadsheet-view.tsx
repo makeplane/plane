@@ -83,7 +83,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           ref={containerRef}
           className="flex max-h-full h-full overflow-y-auto divide-x-[0.5px] divide-custom-border-200"
         >
-          {issues ? (
+          {issues && issues.length > 0 ? (
             <>
               <div className="sticky left-0 w-[28rem] z-[2]">
                 <div
@@ -104,6 +104,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                       key={`${issue.id}_${index}`}
                       issue={issue}
                       expandedIssues={expandedIssues}
+                      handleUpdateIssue={handleUpdateIssue}
                       setExpandedIssues={setExpandedIssues}
                       properties={displayProperties}
                       handleIssueAction={handleIssueAction}

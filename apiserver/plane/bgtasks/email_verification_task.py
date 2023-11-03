@@ -23,7 +23,7 @@ def email_verification(first_name, email, token, current_site):
 
         from_email_string = settings.EMAIL_FROM
 
-        subject = f"Verify your Email!"
+        subject = "Verify your Email!"
 
         context = {
             "first_name": first_name,

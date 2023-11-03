@@ -18,6 +18,9 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 export interface IModuleKanBanLayout {}
 
 export const ModuleKanBanLayout: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, moduleId } = router.query;
+  // store
   const {
     project: projectStore,
     moduleIssue: moduleIssueStore,
@@ -25,15 +28,15 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { currentProjectDetails } = projectStore;
 
   const issues = moduleIssueStore?.getIssues;
 
   const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+
+  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
 
   const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
@@ -83,8 +86,6 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
-
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
@@ -92,8 +93,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+    currentProjectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (
@@ -122,7 +123,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         ) : (
           <KanBanSwimLanes
@@ -147,7 +148,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         )}
       </DragDropContext>

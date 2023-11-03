@@ -1,8 +1,10 @@
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
+import { Tooltip } from "@plane/ui";
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // types
-import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
+import { IIssueDisplayProperties, IIssue } from "types";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -10,6 +12,7 @@ interface IssueBlockProps {
   index: number;
   issue: IIssue;
   isDragDisabled: boolean;
+  showEmptyGroup: boolean;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -18,10 +21,6 @@ interface IssueBlockProps {
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
@@ -31,13 +30,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
     index,
     issue,
     isDragDisabled,
+    showEmptyGroup,
     handleIssues,
     quickActions,
     displayProperties,
-    states,
-    labels,
-    members,
-    estimates,
   } = props;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
@@ -74,7 +70,23 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+              <IssuePeekOverview
+                workspaceSlug={issue?.workspace_detail?.slug}
+                projectId={issue?.project_detail?.id}
+                issueId={issue?.id}
+                handleIssue={(issueToUpdate) => {
+                  handleIssues(
+                    !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
+                    !columnId && columnId === "null" ? null : columnId,
+                    { ...issue, ...issueToUpdate },
+                    "update"
+                  );
+                }}
+              >
+                <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                  <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+                </Tooltip>
+              </IssuePeekOverview>
               <div>
                 <KanBanProperties
                   sub_group_id={sub_group_id}
@@ -82,10 +94,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   issue={issue}
                   handleIssues={updateIssue}
                   displayProperties={displayProperties}
-                  states={states}
-                  labels={labels}
-                  members={members}
-                  estimates={estimates}
+                  showEmptyGroup={showEmptyGroup}
                 />
               </div>
             </div>

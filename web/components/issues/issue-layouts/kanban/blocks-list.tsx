@@ -1,12 +1,13 @@
 // components
 import { KanbanIssueBlock } from "components/issues";
-import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
+import { IIssueDisplayProperties, IIssue } from "types";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
   issues: IIssue[];
   isDragDisabled: boolean;
+  showEmptyGroup: boolean;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -15,10 +16,6 @@ interface IssueBlocksListProps {
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
-  states: IState[] | null;
-  labels: IIssueLabels[] | null;
-  members: IUserLite[] | null;
-  estimates: IEstimatePoint[] | null;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
@@ -26,14 +23,11 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
     sub_group_id,
     columnId,
     issues,
+    showEmptyGroup,
     isDragDisabled,
     handleIssues,
     quickActions,
     displayProperties,
-    states,
-    labels,
-    members,
-    estimates,
   } = props;
 
   return (
@@ -45,16 +39,13 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
               key={`kanban-issue-block-${issue.id}`}
               index={index}
               issue={issue}
+              showEmptyGroup={showEmptyGroup}
               handleIssues={handleIssues}
               quickActions={quickActions}
               displayProperties={displayProperties}
               columnId={columnId}
               sub_group_id={sub_group_id}
               isDragDisabled={isDragDisabled}
-              states={states}
-              labels={labels}
-              members={members}
-              estimates={estimates}
             />
           ))}
         </>

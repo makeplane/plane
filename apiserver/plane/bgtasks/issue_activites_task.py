@@ -131,7 +131,7 @@ def track_parent(
                 else "",
                 field="parent",
                 project_id=project_id,
-                workspace=workspace_id,
+                workspace_id=workspace_id,
                 comment=f"updated the parent issue to",
                 old_identifier=old_parent.id if old_parent is not None else None,
                 new_identifier=new_parent.id if new_parent is not None else None,
@@ -334,9 +334,7 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignees", [])]
-    )
+    requested_assignees = set([str(asg) for asg in requested_data.get("assignees", [])])
     current_assignees = set([str(asg) for asg in current_instance.get("assignees", [])])
 
     added_assignees = requested_assignees - current_assignees
@@ -363,17 +361,19 @@ def track_assignees(
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
         issue_activities.append(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="updated",
-            old_value=assignee.display_name,
-            new_value="",
-            field="assignees",
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"removed assignee ",
-            old_identifier=assignee.id,
-            epoch=epoch,
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=assignee.display_name,
+                new_value="",
+                field="assignees",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"removed assignee ",
+                old_identifier=assignee.id,
+                epoch=epoch,
+            )
         )
 
 
@@ -418,36 +418,37 @@ def track_archive_at(
     issue_activities,
     epoch,
 ):
-    if requested_data.get("archived_at") is None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"has restored the issue",
-                verb="updated",
-                actor_id=actor_id,
-                field="archived_at",
-                old_value="archive",
-                new_value="restore",
-                epoch=epoch,
+    if current_instance.get("archived_at") != requested_data.get("archived_at"):
+        if requested_data.get("archived_at") is None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    comment="has restored the issue",
+                    verb="updated",
+                    actor_id=actor_id,
+                    field="archived_at",
+                    old_value="archive",
+                    new_value="restore",
+                    epoch=epoch,
+                )
             )
-        )
-    else:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"Plane has archived the issue",
-                verb="updated",
-                actor_id=actor_id,
-                field="archived_at",
-                old_value=None,
-                new_value="archive",
-                epoch=epoch,
+        else:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    comment="Plane has archived the issue",
+                    verb="updated",
+                    actor_id=actor_id,
+                    field="archived_at",
+                    old_value=None,
+                    new_value="archive",
+                    epoch=epoch,
+                )
             )
-        )
 
 
 def track_closed_to(
@@ -536,7 +537,7 @@ def update_issue_activity(
     )
 
     for key in requested_data:
-        func = ISSUE_ACTIVITY_MAPPER.get(key, None)
+        func = ISSUE_ACTIVITY_MAPPER.get(key)
         if func is not None:
             func(
                 requested_data=requested_data,
@@ -1534,6 +1535,8 @@ def issue_activity(
                 IssueActivitySerializer(issue_activities_created, many=True).data,
                 cls=DjangoJSONEncoder,
             ),
+            requested_data=requested_data,
+            current_instance=current_instance,
         )
 
         return

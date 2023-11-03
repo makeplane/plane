@@ -26,6 +26,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IUser, IIssue, IPageBlock, IProject } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   block: IPageBlock;
@@ -62,6 +63,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
       description_html: "<p></p>",
     },
   });
+
+  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
 
   const updatePageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -423,6 +426,8 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                           customClassName="text-sm min-h-[150px]"
                           noBorder
                           borderOnFocus={false}
+                          mentionSuggestions={editorSuggestion.mentionSuggestions}
+                          mentionHighlights={editorSuggestion.mentionHighlights}
                         />
                       )
                     : block.description_stripped.length > 0 && (

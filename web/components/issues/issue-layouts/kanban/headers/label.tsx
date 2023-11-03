@@ -55,6 +55,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ labels: [label?.id] }}
           />
         ))}
     </>

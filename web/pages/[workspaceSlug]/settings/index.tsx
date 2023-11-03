@@ -1,18 +1,21 @@
+import { ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { WorkspaceDetails } from "components/workspace";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const WorkspaceSettings: NextPage = () => (
-  <AppLayout header={<WorkspaceSettingHeader title="General Settings" />}>
-    <WorkspaceSettingLayout>
-      <WorkspaceDetails />
-    </WorkspaceSettingLayout>
-  </AppLayout>
-);
+const WorkspaceSettingsPage: NextPageWithLayout = () => <WorkspaceDetails />;
 
-export default WorkspaceSettings;
+WorkspaceSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="General Settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default WorkspaceSettingsPage;

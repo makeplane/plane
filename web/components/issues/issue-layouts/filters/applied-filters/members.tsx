@@ -1,9 +1,7 @@
 import { observer } from "mobx-react-lite";
-
-// ui
-import { Avatar } from "components/ui";
-// icons
 import { X } from "lucide-react";
+// ui
+import { Avatar } from "@plane/ui";
 // types
 import { IUserLite } from "types";
 
@@ -25,7 +23,7 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
 
         return (
           <div key={memberId} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
-            <Avatar user={memberDetails} height="16px" width="16px" />
+            <Avatar name={memberDetails.display_name} src={memberDetails.avatar} showTooltip={false} />
             <span className="normal-case">{memberDetails.display_name}</span>
             <button
               type="button"

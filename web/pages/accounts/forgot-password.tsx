@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import { ReactElement } from "react";
 import Image from "next/image";
 // components
 import { EmailForgotPasswordForm, EmailForgotPasswordFormValues } from "components/account";
@@ -10,10 +10,12 @@ import { UserService } from "services/user.service";
 import useToast from "hooks/use-toast";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+// types
+import { NextPageWithLayout } from "types/app";
 
 const userService = new UserService();
 
-const ForgotPasswordPage: NextPage = () => {
+const ForgotPasswordPage: NextPageWithLayout = () => {
   // toast
   const { setToastAlert } = useToast();
 
@@ -47,25 +49,27 @@ const ForgotPasswordPage: NextPage = () => {
       });
   };
   return (
-    <DefaultLayout>
-      <>
-        <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
-        <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
-          <div className="grid place-items-center bg-custom-background-100">
-            <div className="h-[30px] w-[30px]">
-              <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
-            </div>
+    <>
+      <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
+      <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+        <div className="grid place-items-center bg-custom-background-100">
+          <div className="h-[30px] w-[30px]">
+            <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
           </div>
         </div>
-      </>
+      </div>
       <div className="grid place-items-center h-full overflow-y-auto py-6 px-7">
         <div>
           <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">Forgot Password</h1>
           <EmailForgotPasswordForm onSubmit={handleForgotPassword} />
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
+};
+
+ForgotPasswordPage.getLayout = function getLayout(page: ReactElement) {
+  return <DefaultLayout>{page}</DefaultLayout>;
 };
 
 export default ForgotPasswordPage;

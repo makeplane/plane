@@ -67,7 +67,7 @@ export class ProfileIssueFilterStore implements IProfileIssueFilterStore {
       if (this.userFilters || this.userDisplayFilters || this.userDisplayProperties) {
         const workspaceSlug = this.rootStore.workspace.workspaceSlug;
         const userId = this.rootStore.profileIssues?.userId;
-        if (workspaceSlug && userId && this.rootStore.profileIssues.currentProfileTab) {
+        if (workspaceSlug && userId && this.rootStore.profileIssues.currentProfileTab && this.appliedFilters) {
           console.log("autorun triggered");
           this.rootStore.profileIssues.fetchIssues(
             workspaceSlug,

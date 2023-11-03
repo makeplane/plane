@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 import useSWR from "swr";
@@ -13,20 +13,24 @@ import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
 import { EmptyState } from "components/common";
+import { Tooltip } from "@plane/ui";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { TCycleView, TCycleLayout } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // constants
 import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
+// helpers
+import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
-const ProjectCyclesPage: NextPage = observer(() => {
+const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query as {
@@ -78,19 +82,18 @@ const ProjectCyclesPage: NextPage = observer(() => {
     }
   }, [projectId, cycleStore, handleCurrentView, handleCurrentLayout]);
 
-  const projectDetails = projectId ? projectStore.project_details[projectId] : null;
   const cycleView = cycleStore?.cycleView;
   const cycleLayout = cycleStore?.cycleLayout;
 
   return (
-    <AppLayout header={<CyclesHeader name={projectDetails?.name} />} withProjectWrapper>
+    <>
       <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         isOpen={createModal}
         handleClose={() => setCreateModal(false)}
       />
-      {projectDetails?.total_cycles === 0 ? (
+      {currentProjectDetails?.total_cycles === 0 ? (
         <div className="h-full grid place-items-center">
           <EmptyState
             title="Plan your project with cycles"
@@ -135,18 +138,25 @@ const ProjectCyclesPage: NextPage = observer(() => {
                 {CYCLE_VIEWS.map((view) => {
                   if (view.key === "gantt" && cycleStore?.cycleView === "draft") return null;
                   return (
-                    <button
+                    <Tooltip
                       key={view.key}
-                      type="button"
-                      className={`grid h-8 w-8 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                        cycleStore?.cycleLayout === view.key
-                          ? "bg-custom-background-80 text-custom-text-100"
-                          : "text-custom-text-200"
-                      }`}
-                      onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
+                      tooltipContent={
+                        <span className="capitalize">{replaceUnderscoreIfSnakeCase(view.key)} Layout</span>
+                      }
+                      position="bottom"
                     >
-                      {view.icon}
-                    </button>
+                      <button
+                        type="button"
+                        className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
+                          cycleStore?.cycleLayout === view.key
+                            ? "bg-custom-sidebar-background-80"
+                            : "text-custom-sidebar-text-200"
+                        }`}
+                        onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
+                      >
+                        <view.icon className="h-3.5 w-3.5" />
+                      </button>
+                    </Tooltip>
                   );
                 })}
               </div>
@@ -208,8 +218,16 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </Tab.Panels>
         </Tab.Group>
       )}
-    </AppLayout>
+    </>
   );
 });
+
+ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
 
 export default ProjectCyclesPage;

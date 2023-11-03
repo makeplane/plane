@@ -7,8 +7,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // types
 import { IIssue } from "types";
 import { RootStore } from "store/root";
-// constants
-import { ISSUE_PRIORITIES } from "constants/issue";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
@@ -21,17 +19,10 @@ interface IIssuePeekOverview {
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { workspaceSlug, projectId, issueId, handleIssue, children } = props;
 
-  const { project: projectStore, issueDetail: issueDetailStore }: RootStore = useMobxStore();
-
-  const states = projectStore?.projectStates || undefined;
-  const members = projectStore?.projectMembers || undefined;
-  const priorities = ISSUE_PRIORITIES || undefined;
+  const { issueDetail: issueDetailStore }: RootStore = useMobxStore();
 
   const issueUpdate = (_data: Partial<IIssue>) => {
-    if (handleIssue) {
-      handleIssue(_data);
-      issueDetailStore.updateIssue(workspaceSlug, projectId, issueId, _data);
-    }
+    handleIssue(_data);
   };
 
   const issueReactionCreate = (reaction: string) =>
@@ -55,14 +46,17 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const issueCommentReactionRemove = (commentId: string, reaction: string) =>
     issueDetailStore.removeIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
 
+  const issueSubscriptionCreate = () => issueDetailStore.createIssueSubscription(workspaceSlug, projectId, issueId);
+
+  const issueSubscriptionRemove = () => issueDetailStore.removeIssueSubscription(workspaceSlug, projectId, issueId);
+
+  const handleDeleteIssue = () => issueDetailStore.deleteIssue(workspaceSlug, projectId, issueId);
+
   return (
     <IssueView
       workspaceSlug={workspaceSlug}
       projectId={projectId}
       issueId={issueId}
-      states={states}
-      members={members}
-      priorities={priorities}
       issueUpdate={issueUpdate}
       issueReactionCreate={issueReactionCreate}
       issueReactionRemove={issueReactionRemove}
@@ -71,6 +65,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueCommentRemove={issueCommentRemove}
       issueCommentReactionCreate={issueCommentReactionCreate}
       issueCommentReactionRemove={issueCommentReactionRemove}
+      issueSubscriptionCreate={issueSubscriptionCreate}
+      issueSubscriptionRemove={issueSubscriptionRemove}
+      handleDeleteIssue={handleDeleteIssue}
     >
       {children}
     </IssueView>

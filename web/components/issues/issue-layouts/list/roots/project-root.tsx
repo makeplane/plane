@@ -15,19 +15,20 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export const ListLayout: FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  const { workspaceSlug } = router.query;
+  // store
   const {
     project: projectStore,
     issue: issueStore,
     issueDetail: issueDetailStore,
     issueFilter: issueFilterStore,
   } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
 
   const issues = issueStore?.getIssues;
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
+  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
+  const group_by: string | null = userDisplayFilters?.group_by || null;
   const display_properties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
@@ -43,8 +44,6 @@ export const ListLayout: FC = observer(() => {
     [issueStore, issueDetailStore, workspaceSlug]
   );
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
-
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
@@ -52,8 +51,8 @@ export const ListLayout: FC = observer(() => {
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+    currentProjectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (
@@ -78,6 +77,7 @@ export const ListLayout: FC = observer(() => {
         projects={projects}
         enableQuickIssueCreate
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+        showEmptyGroup={userDisplayFilters.show_empty_groups}
       />
     </div>
   );
