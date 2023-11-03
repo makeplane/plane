@@ -22,6 +22,7 @@ import type { IUserNotification } from "types";
 
 type NotificationCardProps = {
   notification: IUserNotification;
+  isSnoozedTabOpen: boolean;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
   markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
   markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
@@ -32,6 +33,7 @@ type NotificationCardProps = {
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
     notification,
+    isSnoozedTabOpen,
     markNotificationReadStatus,
     markNotificationReadStatusToggle,
     markNotificationArchivedStatus,
@@ -43,6 +45,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
+
+  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
   return (
     <div
