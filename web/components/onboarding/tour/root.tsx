@@ -93,7 +93,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
             <div className="h-3/5 bg-custom-primary-100 grid place-items-center">
               <Image src={PlaneWhiteLogo} alt="Plane White Logo" />
             </div>
-            <div className="h-2/5 overflow-y-auto p-6">
+            <div className="h-2/5 flex flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
                 Welcome to Plane, {user?.first_name} {user?.last_name}
               </h3>
@@ -101,17 +101,19 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                 We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
                 started by creating a project.
               </p>
-              <div className="flex items-center gap-6 mt-8">
-                <Button variant="primary" onClick={() => setStep("issues")}>
-                  Take a Product Tour
-                </Button>
-                <button
-                  type="button"
-                  className="outline-custom-text-100 bg-transparent text-custom-primary-100 text-xs font-medium"
-                  onClick={onComplete}
-                >
-                  No thanks, I will explore it myself
-                </button>
+              <div className="flex items-end h-full">
+                <div className="flex items-center gap-6 mt-8">
+                  <Button variant="primary" onClick={() => setStep("issues")}>
+                    Take a Product Tour
+                  </Button>
+                  <button
+                    type="button"
+                    className="outline-custom-text-100 bg-transparent text-custom-primary-100 text-xs font-medium"
+                    onClick={onComplete}
+                  >
+                    No thanks, I will explore it myself
+                  </button>
+                </div>
               </div>
             </div>
           </div>
