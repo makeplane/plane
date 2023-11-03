@@ -1,3 +1,4 @@
+import { GanttChartSquare, LayoutGrid, List } from "lucide-react";
 // types
 import { TModuleStatus } from "types";
 
@@ -49,5 +50,23 @@ export const MODULE_STATUS: {
     color: "#ef4444",
     textColor: "text-red-500",
     bgColor: "bg-red-50",
+  },
+];
+
+export const MODULE_VIEW_LAYOUTS: { key: "list" | "grid" | "gantt_chart"; icon: any; title: string }[] = [
+  {
+    key: "list",
+    icon: List,
+    title: "List layout",
+  },
+  {
+    key: "grid",
+    icon: LayoutGrid,
+    title: "Grid layout",
+  },
+  {
+    key: "gantt_chart",
+    icon: GanttChartSquare,
+    title: "Gantt layout",
   },
 ];

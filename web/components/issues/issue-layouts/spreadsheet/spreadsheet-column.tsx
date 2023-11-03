@@ -12,13 +12,16 @@ import useLocalStorage from "hooks/use-local-storage";
 // components
 import {
   SpreadsheetAssigneeColumn,
+  SpreadsheetAttachmentColumn,
   SpreadsheetCreatedOnColumn,
   SpreadsheetDueDateColumn,
   SpreadsheetEstimateColumn,
   SpreadsheetLabelColumn,
+  SpreadsheetLinkColumn,
   SpreadsheetPriorityColumn,
   SpreadsheetStartDateColumn,
   SpreadsheetStateColumn,
+  SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
 } from "components/issues";
 // ui
@@ -178,7 +181,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               />
             ) : property === "priority" ? (
               <SpreadsheetPriorityColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
@@ -186,7 +188,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               />
             ) : property === "estimate" ? (
               <SpreadsheetEstimateColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
@@ -194,7 +195,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               />
             ) : property === "assignee" ? (
               <SpreadsheetAssigneeColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
@@ -203,7 +203,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               />
             ) : property === "labels" ? (
               <SpreadsheetLabelColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
@@ -212,7 +211,6 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               />
             ) : property === "start_date" ? (
               <SpreadsheetStartDateColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
@@ -220,24 +218,21 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
               />
             ) : property === "due_date" ? (
               <SpreadsheetDueDateColumn
-                key={`${property}-${issue.id}`}
                 disabled={disableUserActions}
                 expandedIssues={expandedIssues}
                 issue={issue}
                 onChange={(data: Partial<IIssue>) => handleUpdateIssue(issue, data)}
               />
             ) : property === "created_on" ? (
-              <SpreadsheetCreatedOnColumn
-                key={`${property}-${issue.id}`}
-                expandedIssues={expandedIssues}
-                issue={issue}
-              />
+              <SpreadsheetCreatedOnColumn expandedIssues={expandedIssues} issue={issue} />
             ) : property === "updated_on" ? (
-              <SpreadsheetUpdatedOnColumn
-                key={`${property}-${issue.id}`}
-                expandedIssues={expandedIssues}
-                issue={issue}
-              />
+              <SpreadsheetUpdatedOnColumn expandedIssues={expandedIssues} issue={issue} />
+            ) : property === "link" ? (
+              <SpreadsheetLinkColumn expandedIssues={expandedIssues} issue={issue} />
+            ) : property === "attachment_count" ? (
+              <SpreadsheetAttachmentColumn expandedIssues={expandedIssues} issue={issue} />
+            ) : property === "sub_issue_count" ? (
+              <SpreadsheetSubIssueColumn expandedIssues={expandedIssues} issue={issue} />
             ) : null}
           </div>
         ))}

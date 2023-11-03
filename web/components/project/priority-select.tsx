@@ -3,9 +3,7 @@ import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
-import { PriorityIcon } from "@plane/ui";
-// components
-import { Tooltip } from "components/ui";
+import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
@@ -84,7 +82,7 @@ export const PrioritySelect: React.FC<Props> = ({
               : value === "low"
               ? "text-green-500"
               : "text-custom-text-200"
-          } ${value === "urgent" && highlightUrgentPriority ? "text-white" : "text-red-500"}`}
+          } ${value === "urgent" ? (highlightUrgentPriority ? "text-white" : "text-red-500") : ""}`}
         />
         {showTitle && <span className="capitalize text-xs">{value}</span>}
       </div>

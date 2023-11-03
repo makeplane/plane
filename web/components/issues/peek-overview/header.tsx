@@ -3,9 +3,9 @@ import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
+import { CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
 // icons
-import { LinkIcon, MoveRight, Trash2 } from "lucide-react";
+import { LinkIcon, MoveDiagonal, MoveRight, Trash2 } from "lucide-react";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -26,15 +26,15 @@ const peekModes: {
   icon: any;
   label: string;
 }[] = [
-  { key: "side", icon: SidePeekIcon, label: "Side Peek" },
+  { key: "side", icon: SidePanelIcon, label: "Side Peek" },
   {
     key: "modal",
-    icon: ModalPeekIcon,
+    icon: CenterPanelIcon,
     label: "Modal Peek",
   },
   {
     key: "full",
-    icon: FullScreenPeekIcon,
+    icon: FullScreenPanelIcon,
     label: "Full Screen Peek",
   },
 ];
@@ -73,7 +73,7 @@ export const PeekOverviewHeader: React.FC<Props> = ({
         )}
         <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
           <a>
-            <FullScreenPeekIcon className="h-3.5 w-3.5" />
+            <MoveDiagonal className="h-3.5 w-3.5" />
           </a>
         </Link>
         <CustomSelect

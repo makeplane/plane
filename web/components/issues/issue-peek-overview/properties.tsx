@@ -24,7 +24,7 @@ import useToast from "hooks/use-toast";
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { ICycle, IIssue, IIssueLink, IModule, TIssuePriorities, linkDetails } from "types";
+import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
 import { IssueService } from "services/issue";
@@ -32,17 +32,18 @@ import { IssueService } from "services/issue";
 interface IPeekOverviewProperties {
   issue: IIssue;
   issueUpdate: (issue: Partial<IIssue>) => void;
-  user: any;
+  disableUserActions: boolean;
 }
 
 const issueService = new IssueService();
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { issue, issueUpdate, user } = props;
+  const { issue, issueUpdate, disableUserActions } = props;
+  // states
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, cycleIssue: cycleIssueStore, moduleIssue: moduleIssueStore } = useMobxStore();
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
@@ -71,11 +72,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleParent = (_parent: string) => {
     issueUpdate({ ...issue, parent: _parent });
   };
-  const handleCycle = (_cycle: ICycle) => {
-    issueUpdate({ ...issue, cycle: _cycle.id });
+  const addIssueToCycle = async (cycleId: string) => {
+    if (!workspaceSlug || !issue || !cycleId) return;
+    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), issue.project_detail.id, cycleId, issue.id);
   };
-  const handleModule = (_module: IModule) => {
-    issueUpdate({ ...issue, module: _module.id });
+
+  const addIssueToModule = async (moduleId: string) => {
+    if (!workspaceSlug || !issue || !moduleId) return;
+
+    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), issue.project_detail.id, moduleId, issue.id);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
@@ -168,8 +173,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const maxDate = issue.target_date ? new Date(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const isNotAllowed = user?.memberRole?.isGuest || user?.memberRole?.isViewer;
-
   return (
     <>
       <LinkModal
@@ -187,51 +190,63 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 py-5 w-full">
           {/* state */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
               <p>State</p>
             </div>
             <div>
-              <SidebarStateSelect value={issue?.state || ""} onChange={handleState} disabled={isNotAllowed} />
+              <SidebarStateSelect value={issue?.state || ""} onChange={handleState} disabled={disableUserActions} />
             </div>
           </div>
 
           {/* assignee */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
             <div>
-              <SidebarAssigneeSelect value={issue.assignees || []} onChange={handleAssignee} disabled={isNotAllowed} />
+              <SidebarAssigneeSelect
+                value={issue.assignees || []}
+                onChange={handleAssignee}
+                disabled={disableUserActions}
+              />
             </div>
           </div>
 
           {/* priority */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
             <div>
-              <SidebarPrioritySelect value={issue.priority || ""} onChange={handlePriority} disabled={isNotAllowed} />
+              <SidebarPrioritySelect
+                value={issue.priority || ""}
+                onChange={handlePriority}
+                disabled={disableUserActions}
+              />
             </div>
           </div>
 
           {/* estimate */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <Triangle className="h-4 w-4 flex-shrink-0 " />
               <p>Estimate</p>
             </div>
             <div>
-              <SidebarEstimateSelect value={issue.estimate_point} onChange={handleEstimate} disabled={isNotAllowed} />
+              <SidebarEstimateSelect
+                value={issue.estimate_point}
+                onChange={handleEstimate}
+                disabled={disableUserActions}
+              />
             </div>
           </div>
 
           {/* start date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Start date</p>
             </div>
@@ -242,14 +257,14 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 onChange={handleStartDate}
                 className="bg-custom-background-80 border-none !px-2.5 !py-0.5"
                 maxDate={maxDate ?? undefined}
-                disabled={isNotAllowed}
+                disabled={disableUserActions}
               />
             </div>
           </div>
 
           {/* due date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Due date</p>
             </div>
@@ -260,19 +275,19 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 onChange={handleTargetDate}
                 className="bg-custom-background-80 border-none !px-2.5 !py-0.5"
                 minDate={minDate ?? undefined}
-                disabled={isNotAllowed}
+                disabled={disableUserActions}
               />
             </div>
           </div>
 
           {/* parent */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <User2 className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
             <div>
-              <SidebarParentSelect onChange={handleParent} issueDetails={issue} disabled={isNotAllowed} />
+              <SidebarParentSelect onChange={handleParent} issueDetails={issue} disabled={disableUserActions} />
             </div>
           </div>
         </div>
@@ -281,26 +296,34 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <div className="flex flex-col gap-5 py-5 w-full">
           <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <ContrastIcon className="h-4 w-4 flex-shrink-0" />
               <p>Cycle</p>
             </div>
             <div>
-              <SidebarCycleSelect issueDetail={issue} handleCycleChange={handleCycle} disabled={isNotAllowed} />
+              <SidebarCycleSelect
+                issueDetail={issue}
+                handleCycleChange={addIssueToCycle}
+                disabled={disableUserActions}
+              />
             </div>
           </div>
 
           <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <p>Module</p>
             </div>
             <div>
-              <SidebarModuleSelect issueDetail={issue} handleModuleChange={handleModule} disabled={isNotAllowed} />
+              <SidebarModuleSelect
+                issueDetail={issue}
+                handleModuleChange={addIssueToModule}
+                disabled={disableUserActions}
+              />
             </div>
           </div>
           <div className="flex items-start gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 flex-shrink-0">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <Tag className="h-4 w-4 flex-shrink-0" />
               <p>Label</p>
             </div>
@@ -309,8 +332,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 issueDetails={issue}
                 labelList={issue.labels}
                 submitChanges={handleLabels}
-                isNotAllowed={isNotAllowed}
-                uneditable={isNotAllowed}
+                isNotAllowed={disableUserActions}
+                uneditable={disableUserActions}
               />
             </div>
           </div>
@@ -321,16 +344,16 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 pt-5 w-full">
           <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center gap-2 w-80">
-              <div className="flex items-center gap-2 w-40">
-                <Link2 className="h-4 w-4 rotate-45 flex-shrink-0" />
+              <div className="flex items-center gap-2 w-40 text-sm">
+                <Link2 className="h-4 w-4 flex-shrink-0" />
                 <p>Links</p>
               </div>
               <div>
-                {!isNotAllowed && (
+                {!disableUserActions && (
                   <button
                     type="button"
                     className={`flex ${
-                      isNotAllowed ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
+                      disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
                     } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
                     onClick={() => setLinkModal(true)}
                     disabled={false}

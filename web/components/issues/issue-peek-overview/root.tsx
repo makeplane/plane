@@ -30,10 +30,12 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { peekIssueId } = router.query as { peekIssueId: string };
 
   const {
-    issueDetail: issueDetailStore,
+    user: userStore,
     issue: issueStore,
+    issueDetail: issueDetailStore,
     archivedIssueDetail: archivedIssueDetailStore,
     archivedIssues: archivedIssuesStore,
+    project: projectStore,
   }: RootStore = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -118,6 +120,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }
   };
 
+  const userRole = userStore.currentProjectRole ?? 5;
+
   return (
     <IssueView
       workspaceSlug={workspaceSlug}
@@ -139,6 +143,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       issueSubscriptionCreate={issueSubscriptionCreate}
       issueSubscriptionRemove={issueSubscriptionRemove}
       handleDeleteIssue={handleDeleteIssue}
+      disableUserActions={[5, 10].includes(userRole)}
+      showCommentAccessSpecifier={projectStore.currentProjectDetails?.is_deployed}
     >
       {children}
     </IssueView>

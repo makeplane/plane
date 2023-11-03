@@ -1,5 +1,4 @@
 import { FC } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -9,13 +8,15 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { truncateText } from "helpers/string.helper";
 // ui
-import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
+import { Breadcrumbs, BreadcrumbItem, LayersIcon } from "@plane/ui";
 // icons
 import { ArrowLeft } from "lucide-react";
 // components
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown } from "components/issues";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
+// helper
+import { renderEmoji } from "helpers/emoji.helper";
 
 export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const router = useRouter();
@@ -23,10 +24,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
 
   const { project: projectStore, archivedIssueFilters: archivedIssueFiltersStore } = useMobxStore();
 
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
+  const { currentProjectDetails } = projectStore;
 
   // for archived issues list layout is the only option
   const activeLayout = "list";
@@ -82,17 +80,29 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
           </button>
         </div>
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p>Projects</p>
-                  </a>
-                </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
               }
+              label={currentProjectDetails?.name ?? "Project"}
+              link={`/${workspaceSlug}/projects`}
             />
-            <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Issues`} />
+
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Archived Issues"
+            />
           </Breadcrumbs>
         </div>
       </div>

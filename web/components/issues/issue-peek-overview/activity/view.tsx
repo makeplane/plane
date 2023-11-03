@@ -14,6 +14,7 @@ interface IIssueComment {
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
+  showCommentAccessSpecifier: boolean;
 }
 
 export const IssueComment: FC<IIssueComment> = (props) => {
@@ -28,6 +29,7 @@ export const IssueComment: FC<IIssueComment> = (props) => {
     issueCommentRemove,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
+    showCommentAccessSpecifier,
   } = props;
 
   const handleAddComment = async (formData: any) => {
@@ -40,10 +42,7 @@ export const IssueComment: FC<IIssueComment> = (props) => {
       <div className="font-medium text-lg">Activity</div>
 
       <div className="space-y-2">
-        <IssueCommentEditor
-          onSubmit={handleAddComment}
-          // showAccessSpecifier={projectDetails && projectDetails.is_deployed}
-        />
+        <IssueCommentEditor onSubmit={handleAddComment} showAccessSpecifier={showCommentAccessSpecifier} />
 
         <IssueActivityCard
           workspaceSlug={workspaceSlug}

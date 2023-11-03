@@ -10,9 +10,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection } from "components/issues";
 import { CreateUpdateWorkspaceViewModal } from "components/workspace";
 // ui
-import { Button, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, LayersIcon, PhotoFilterIcon, Tooltip } from "@plane/ui";
 // icons
-import { CheckCircle, List, PlusIcon, Sheet } from "lucide-react";
+import { List, PlusIcon, Sheet } from "lucide-react";
 // types
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TStaticViewTypes } from "types";
 // constants
@@ -99,9 +99,20 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex gap-2 items-center">
-          {activeLayout === "spreadsheet" && <CheckCircle size={16} strokeWidth={2} />}
-          <span className="text-sm font-medium">Workspace {activeLayout === "spreadsheet" ? "Issues" : "Views"}</span>
+        <div>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={
+                activeLayout === "spreadsheet" ? (
+                  <LayersIcon className="h-4 w-4 text-custom-text-300" />
+                ) : (
+                  <PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />
+                )
+              }
+              label={`Workspace ${activeLayout === "spreadsheet" ? "Issues" : "Views"}`}
+            />
+          </Breadcrumbs>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
