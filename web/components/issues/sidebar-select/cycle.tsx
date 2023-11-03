@@ -8,17 +8,15 @@ import useSWR, { mutate } from "swr";
 import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // ui
-import { CustomSelect, Spinner, Tooltip } from "@plane/ui";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { ContrastIcon, CustomSearchSelect, Tooltip } from "@plane/ui";
 // types
-import { ICycle, IIssue } from "types";
+import { IIssue } from "types";
 // fetch-keys
 import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
-  handleCycleChange: (cycle: ICycle) => void;
+  handleCycleChange: (cycleId: string) => void;
   disabled?: boolean;
 };
 
@@ -52,10 +50,30 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
       });
   };
 
+  const options = incompleteCycles?.map((cycle) => ({
+    value: cycle.id,
+    query: cycle.name,
+    content: (
+      <div className="flex items-center gap-1.5 truncate">
+        <span className="flex justify-center items-center flex-shrink-0 w-3.5 h-3.5">
+          <ContrastIcon />
+        </span>
+        <span className="truncate flex-grow">{cycle.name}</span>
+      </div>
+    ),
+  }));
+
   const issueCycle = issueDetail?.issue_cycle;
 
   return (
-    <CustomSelect
+    <CustomSearchSelect
+      value={issueCycle?.cycle_detail.id}
+      onChange={(value: any) => {
+        value === issueCycle?.cycle_detail.id
+          ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
+          : handleCycleChange(value);
+      }}
+      options={options}
       customButton={
         <div>
           <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}>
@@ -65,41 +83,21 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
                 disabled ? "cursor-not-allowed" : ""
               }`}
             >
-              <span className={`truncate ${issueCycle ? "text-custom-text-100" : "text-custom-text-200"}`}>
+              <span
+                className={`flex items-center gap-1.5 truncate ${
+                  issueCycle ? "text-custom-text-100" : "text-custom-text-200"
+                }`}
+              >
+                {issueCycle && <ContrastIcon className="h-3.5 w-3.5" />}
                 {issueCycle ? issueCycle.cycle_detail.name : "No cycle"}
               </span>
             </button>
           </Tooltip>
         </div>
       }
-      value={issueCycle ? issueCycle.cycle_detail.id : null}
-      onChange={(value: any) => {
-        !value
-          ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
-          : handleCycleChange(incompleteCycles?.find((c) => c.id === value) as ICycle);
-      }}
-      width="w-full"
-      maxHeight="rg"
+      width="max-w-[10rem]"
+      noChevron
       disabled={disabled}
-    >
-      {incompleteCycles ? (
-        incompleteCycles.length > 0 ? (
-          <>
-            {incompleteCycles.map((option) => (
-              <CustomSelect.Option key={option.id} value={option.id}>
-                <Tooltip position="left-bottom" tooltipContent={option.name}>
-                  <span className="w-full truncate">{truncateText(option.name, 25)}</span>
-                </Tooltip>
-              </CustomSelect.Option>
-            ))}
-            <CustomSelect.Option value={null}>None</CustomSelect.Option>
-          </>
-        ) : (
-          <div className="text-center">No cycles found</div>
-        )
-      ) : (
-        <Spinner />
-      )}
-    </CustomSelect>
+    />
   );
 };

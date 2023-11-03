@@ -1,58 +1,80 @@
 import * as React from "react";
 
 // icons
-import { MoveLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+// components
+import { Tooltip } from "../tooltip";
 
 type BreadcrumbsProps = {
-  onBack: () => void;
   children: any;
 };
 
-const Breadcrumbs = ({ onBack, children }: BreadcrumbsProps) => (
-  <>
-    <div className="flex w-full flex-grow items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
-      <button
-        type="button"
-        className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-custom-sidebar-border-200 text-center text-sm hover:bg-custom-sidebar-background-90"
-        onClick={onBack}
-      >
-        <MoveLeft className="h-4 w-4 text-custom-sidebar-text-200 group-hover:text-custom-sidebar-text-100" />
-      </button>
-      {children}
-    </div>
-  </>
-);
-
-type BreadcrumbItemProps = {
-  title?: string;
-  link?: JSX.Element;
-  icon?: any;
-  unshrinkTitle?: boolean;
-};
-
-const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
-  title,
-  link,
-  icon,
-  unshrinkTitle = false,
-}) => (
-  <>
-    {link ? (
-      link
-    ) : (
-      <div
-        className={`truncate px-3 text-sm ${
-          unshrinkTitle ? "flex-shrink-0" : ""
-        }`}
-      >
-        <p className={`truncate ${icon ? "flex items-center gap-2" : ""}`}>
-          {icon}
-          <span className="break-words">{title}</span>
-        </p>
+const Breadcrumbs = ({ children }: BreadcrumbsProps) => (
+  <div className="flex items-center space-x-2">
+    {React.Children.map(children, (child, index) => (
+      <div key={index} className="flex items-center flex-wrap gap-2.5">
+        {child}
+        {index !== React.Children.count(children) - 1 && (
+          <ChevronRight
+            className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400"
+            aria-hidden="true"
+          />
+        )}
       </div>
-    )}
-  </>
+    ))}
+  </div>
 );
+
+type Props = {
+  type?: "text" | "component";
+  component?: React.ReactNode;
+  label?: string;
+  icon?: React.ReactNode;
+  link?: string;
+};
+const BreadcrumbItem: React.FC<Props> = (props) => {
+  const { type = "text", component, label, icon, link } = props;
+  return (
+    <>
+      {type != "text" ? (
+        <div className="flex items-center space-x-2">{component}</div>
+      ) : (
+        <Tooltip tooltipContent={label} position="bottom">
+          <li className="flex items-center space-x-2">
+            <div className="flex items-center flex-wrap gap-2.5">
+              {link ? (
+                <a
+                  className="flex items-center gap-1 text-sm font-medium text-custom-text-300 hover:text-custom-text-100"
+                  href={link}
+                >
+                  {icon && (
+                    <div className="overflow-hidden w-5 h-5 flex justify-center items-center !text-[1rem]">
+                      {icon}
+                    </div>
+                  )}
+                  <div className="relative block overflow-hidden truncate line-clamp-1 max-w-[150px]">
+                    {label}
+                  </div>
+                </a>
+              ) : (
+                <div className="flex items-center gap-1 text-sm font-medium text-custom-text-100 cursor-default">
+                  {icon && (
+                    <div className="overflow-hidden w-5 h-5 flex justify-center items-center">
+                      {icon}
+                    </div>
+                  )}
+                  <div className="relative block overflow-hidden truncate line-clamp-1 max-w-[150px]">
+                    {label}
+                  </div>
+                </div>
+              )}
+            </div>
+          </li>
+        </Tooltip>
+      )}
+    </>
+  );
+};
 
 Breadcrumbs.BreadcrumbItem = BreadcrumbItem;
 

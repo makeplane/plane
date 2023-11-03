@@ -3,9 +3,7 @@ import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
-import { PriorityIcon } from "@plane/ui";
-// components
-import { Tooltip } from "components/ui";
+import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types

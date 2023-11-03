@@ -19,7 +19,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
-import { PagesHeader } from "components/headers";
+import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { EmptyState } from "components/common";
 import { CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
@@ -626,7 +626,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
 PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<PagesHeader />} withProjectWrapper>
+    <AppLayout header={<PageDetailsHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

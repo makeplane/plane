@@ -24,7 +24,7 @@ import useToast from "hooks/use-toast";
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { ICycle, IIssue, IIssueLink, IModule, TIssuePriorities, linkDetails } from "types";
+import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // services
 import { IssueService } from "services/issue";
@@ -42,7 +42,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, cycleIssue: cycleIssueStore, moduleIssue: moduleIssueStore } = useMobxStore();
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
@@ -71,11 +71,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleParent = (_parent: string) => {
     issueUpdate({ ...issue, parent: _parent });
   };
-  const handleCycle = (_cycle: ICycle) => {
-    issueUpdate({ ...issue, cycle: _cycle.id });
+  const addIssueToCycle = async (cycleId: string) => {
+    if (!workspaceSlug || !issue || !cycleId) return;
+    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), issue.project_detail.id, cycleId, issue.id);
   };
-  const handleModule = (_module: IModule) => {
-    issueUpdate({ ...issue, module: _module.id });
+
+  const addIssueToModule = async (moduleId: string) => {
+    if (!workspaceSlug || !issue || !moduleId) return;
+
+    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), issue.project_detail.id, moduleId, issue.id);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
@@ -187,7 +191,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 py-5 w-full">
           {/* state */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
               <p>State</p>
             </div>
@@ -198,7 +202,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* assignee */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
@@ -209,7 +213,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* priority */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
@@ -220,7 +224,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* estimate */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <Triangle className="h-4 w-4 flex-shrink-0 " />
               <p>Estimate</p>
             </div>
@@ -231,7 +235,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* start date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Start date</p>
             </div>
@@ -249,7 +253,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* due date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Due date</p>
             </div>
@@ -267,7 +271,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* parent */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <User2 className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
@@ -281,26 +285,26 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <div className="flex flex-col gap-5 py-5 w-full">
           <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <ContrastIcon className="h-4 w-4 flex-shrink-0" />
               <p>Cycle</p>
             </div>
             <div>
-              <SidebarCycleSelect issueDetail={issue} handleCycleChange={handleCycle} disabled={isNotAllowed} />
+              <SidebarCycleSelect issueDetail={issue} handleCycleChange={addIssueToCycle} disabled={isNotAllowed} />
             </div>
           </div>
 
           <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40">
+            <div className="flex items-center gap-2 w-40 text-sm">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <p>Module</p>
             </div>
             <div>
-              <SidebarModuleSelect issueDetail={issue} handleModuleChange={handleModule} disabled={isNotAllowed} />
+              <SidebarModuleSelect issueDetail={issue} handleModuleChange={addIssueToModule} disabled={isNotAllowed} />
             </div>
           </div>
           <div className="flex items-start gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 flex-shrink-0">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <Tag className="h-4 w-4 flex-shrink-0" />
               <p>Label</p>
             </div>
@@ -321,8 +325,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 pt-5 w-full">
           <div className="flex flex-col gap-2 w-full">
             <div className="flex items-center gap-2 w-80">
-              <div className="flex items-center gap-2 w-40">
-                <Link2 className="h-4 w-4 rotate-45 flex-shrink-0" />
+              <div className="flex items-center gap-2 w-40 text-sm">
+                <Link2 className="h-4 w-4 flex-shrink-0" />
                 <p>Links</p>
               </div>
               <div>
