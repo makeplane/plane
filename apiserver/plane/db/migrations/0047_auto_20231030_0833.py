@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
                 ('url', models.URLField(validators=[plane.db.models.webhook.validate_schema, plane.db.models.webhook.validate_domain])),
                 ('is_active', models.BooleanField(default=True)),
-                ('secret_key', models.CharField(blank=True, max_length=255, null=True)),
+                ('secret_key', models.CharField(default=plane.db.models.webhook.generate_token, max_length=255)),
                 ('project', models.BooleanField(default=False)),
                 ('issue', models.BooleanField(default=False)),
                 ('module', models.BooleanField(default=False)),
