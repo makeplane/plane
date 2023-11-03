@@ -63,7 +63,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.state_detail || null}
           hideDropdownArrow
           onChange={handleState}
-          disabled={false}
+          disabled={isReadonly}
         />
       )}
 
@@ -72,7 +72,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
-          disabled={false}
+          disabled={isReadonly}
           hideDropdownArrow
         />
       )}
@@ -83,7 +83,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
           onChange={handleLabel}
-          disabled={false}
+          disabled={isReadonly}
           hideDropdownArrow
         />
       )}
@@ -95,7 +95,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.assignees || null}
           hideDropdownArrow
           onChange={handleAssignee}
-          disabled={false}
+          disabled={isReadonly}
           multiple
         />
       )}
@@ -105,7 +105,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
-          disabled={false}
+          disabled={isReadonly}
           placeHolder="Start date"
         />
       )}
@@ -115,7 +115,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
-          disabled={false}
+          disabled={isReadonly}
           placeHolder="Target date"
         />
       )}
@@ -127,7 +127,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.estimate_point || null}
           hideDropdownArrow
           onChange={handleEstimate}
-          disabled={false}
+          disabled={isReadonly}
         />
       )}
 

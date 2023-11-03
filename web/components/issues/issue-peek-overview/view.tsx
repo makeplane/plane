@@ -3,26 +3,28 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
 import { DeleteIssueModal } from "../delete-issue-modal";
+import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
 // types
 import { IIssue } from "types";
 import { RootStore } from "store/root";
 // hooks
-import useToast from "hooks/use-toast";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  issue: IIssue | null;
+  isLoading?: boolean;
+  isArchived?: boolean;
+  handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  redirectToIssueDetail: () => void;
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
@@ -64,6 +66,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     workspaceSlug,
     projectId,
     issueId,
+    issue,
+    isLoading,
+    isArchived,
+    handleCopyText,
+    redirectToIssueDetail,
     issueUpdate,
     issueReactionCreate,
     issueReactionRemove,
@@ -88,20 +95,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const { setToastAlert } = useToast();
-
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues/${peekIssueId}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
       const { query } = router;
@@ -122,23 +115,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   };
 
-  const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${workspaceSlug}/projects/${projectId}/issues/${issueId}`,
-    });
-  };
-
-  useSWR(
-    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_PEEK_OVERVIEW_${workspaceSlug}_${projectId}_${peekIssueId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
-      }
-    }
-  );
-
   useSWR(
     workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
       ? `ISSUE_PEEK_OVERVIEW_SUBSCRIPTION_${workspaceSlug}_${projectId}_${peekIssueId}`
@@ -150,10 +126,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   );
 
-  const issue = issueDetailStore.getIssue;
-  const issueReactions = issueDetailStore.getIssueReactions;
-  const issueComments = issueDetailStore.getIssueComments;
-  const issueSubscription = issueDetailStore.getIssueSubscription;
+  const issueReactions = issueDetailStore.getIssueReactions || [];
+  const issueComments = issueDetailStore.getIssueComments || [];
+  const issueSubscription = issueDetailStore.getIssueSubscription || [];
 
   const user = userStore?.currentUser;
 
@@ -161,11 +136,19 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   return (
     <>
-      {issue && (
+      {issue && !isArchived && (
         <DeleteIssueModal
           isOpen={deleteIssueModal}
           handleClose={() => setDeleteIssueModal(false)}
           data={issue}
+          onSubmit={handleDeleteIssue}
+        />
+      )}
+      {issue && isArchived && (
+        <DeleteArchivedIssueModal
+          data={issue}
+          isOpen={deleteIssueModal}
+          handleClose={() => setDeleteIssueModal(false)}
           onSubmit={handleDeleteIssue}
         />
       )}
@@ -229,18 +212,20 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               </div>
 
               <div className="flex items-center gap-4">
-                <Button
-                  size="sm"
-                  prependIcon={<Bell className="h-3 w-3" />}
-                  variant="outline-primary"
-                  onClick={() =>
-                    issueSubscription && issueSubscription.subscribed
-                      ? issueSubscriptionRemove
-                      : issueSubscriptionCreate
-                  }
-                >
-                  {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                </Button>
+                {!isArchived && (
+                  <Button
+                    size="sm"
+                    prependIcon={<Bell className="h-3 w-3" />}
+                    variant="outline-primary"
+                    onClick={() =>
+                      issueSubscription && issueSubscription.subscribed
+                        ? issueSubscriptionRemove
+                        : issueSubscriptionCreate
+                    }
+                  >
+                    {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                  </Button>
+                )}
                 <button onClick={handleCopyText}>
                   <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
                 </button>
@@ -253,8 +238,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             </div>
 
             {/* content */}
-            <div className="w-full h-full overflow-hidden overflow-y-auto">
-              {issueDetailStore?.loader && !issue ? (
+            <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+              {isArchived && (
+                <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
+              )}
+              {isLoading && !issue ? (
                 <div className="text-center py-10">Loading...</div>
               ) : (
                 issue && (

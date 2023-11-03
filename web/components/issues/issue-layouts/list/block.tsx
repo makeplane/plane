@@ -12,11 +12,12 @@ interface IssueBlockProps {
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
+  isReadonly?: boolean;
   showEmptyGroup?: boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties, showEmptyGroup } = props;
+  const { columnId, issue, handleIssues, quickActions, display_properties, showEmptyGroup, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
     handleIssues(group_by, issueToUpdate, "update");
@@ -37,6 +38,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           workspaceSlug={issue?.workspace_detail?.slug}
           projectId={issue?.project_detail?.id}
           issueId={issue?.id}
+          isArchived={issue?.archived_at !== null}
           handleIssue={(issueToUpdate) => {
             handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
           }}
@@ -50,6 +52,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           <KanBanProperties
             columnId={columnId}
             issue={issue}
+            isReadonly={isReadonly}
             handleIssues={updateIssue}
             display_properties={display_properties}
             showEmptyGroup={showEmptyGroup}
