@@ -1,30 +1,32 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, FC, Dispatch, SetStateAction, useRef } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
-import { SparklesIcon } from "@heroicons/react/24/outline";
+import { Sparkle } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 // services
-import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
-import aiService from "services/ai.service";
+import { PageService } from "services/page.service";
+import { IssueService } from "services/issue/issue.service";
+import { AIService } from "services/ai.service";
+import { FileService } from "services/file.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { GptAssistantModal } from "components/core";
-import { TipTapEditor } from "components/tiptap";
-import { PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, TextArea } from "@plane/ui";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // types
-import { ICurrentUserResponse, IPageBlock } from "types";
+import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   handleClose: () => void;
   data?: IPageBlock;
   handleAiAssistance?: (response: string) => void;
-  setIsSyncing?: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsSyncing?: Dispatch<SetStateAction<boolean>>;
   focus?: keyof IPageBlock;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
 const defaultValues = {
@@ -33,7 +35,12 @@ const defaultValues = {
   description_html: null,
 };
 
-export const CreateUpdateBlockInline: React.FC<Props> = ({
+const aiService = new AIService();
+const pagesService = new PageService();
+const issueService = new IssueService();
+const fileService = new FileService();
+
+export const CreateUpdateBlockInline: FC<Props> = ({
   handleClose,
   data,
   handleAiAssistance,
@@ -44,22 +51,23 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
 
-  const editorRef = React.useRef<any>(null);
+  const editorRef = useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
+
+  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
 
   const { setToastAlert } = useToast();
 
   const {
     handleSubmit,
-    register,
     control,
     watch,
     setValue,
     setFocus,
     reset,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<IPageBlock>({
     defaultValues,
   });
@@ -140,7 +148,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           mutate(PAGE_BLOCKS_LIST(pageId as string));
           editorRef.current?.setEditorValue(res.description_html);
           if (data.issue && data.sync)
-            issuesService
+            issueService
               .patchIssue(
                 workspaceSlug as string,
                 projectId as string,
@@ -195,8 +203,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -262,14 +269,22 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
       >
         <div className="pt-2">
           <div className="flex justify-between">
-            <TextArea
-              id="name"
+            <Controller
               name="name"
-              placeholder="Title"
-              register={register}
-              className="min-h-10 font medium block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base"
-              autoComplete="off"
-              maxLength={255}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="name"
+                  name="name"
+                  value={value}
+                  placeholder="Title"
+                  onChange={onChange}
+                  className="min-h-10 font medium block w-full resize-none overflow-hidden border-none bg-transparent py-1 text-base"
+                  autoComplete="off"
+                  maxLength={255}
+                  hasError={Boolean(errors?.name)}
+                />
+              )}
             />
           </div>
           <div className="page-block-section relative -mt-2 text-custom-text-200">
@@ -279,8 +294,9 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
               render={({ field: { value, onChange } }) => {
                 if (!data)
                   return (
-                    <TipTapEditor
-                      workspaceSlug={workspaceSlug as string}
+                    <RichTextEditorWithRef
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      deleteFile={fileService.deleteImage}
                       ref={editorRef}
                       value={"<p></p>"}
                       debouncedUpdatesEnabled={false}
@@ -291,16 +307,17 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                         onChange(description_html);
                         setValue("description", description);
                       }}
+                      mentionHighlights={editorSuggestion.mentionHighlights}
+                      mentionSuggestions={editorSuggestion.mentionSuggestions}
                     />
                   );
                 else if (!value || !watch("description_html"))
-                  return (
-                    <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />
-                  );
+                  return <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />;
 
                 return (
-                  <TipTapEditor
-                    workspaceSlug={workspaceSlug as string}
+                  <RichTextEditorWithRef
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={
                       value && value !== "" && Object.keys(value).length > 0
@@ -332,7 +349,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                   "Generating response..."
                 ) : (
                   <>
-                    <SparklesIcon className="h-4 w-4" />I{"'"}m feeling lucky
+                    <Sparkle className="h-4 w-4" />I{"'"}m feeling lucky
                   </>
                 )}
               </button>
@@ -342,23 +359,19 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
                 className="ml-2 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-80"
                 onClick={() => setGptAssistantModal(true)}
               >
-                <SparklesIcon className="h-4 w-4" />
+                <Sparkle className="h-4 w-4" />
                 AI
               </button>
             </div>
           </div>
         </div>
         <div className="flex items-center justify-end gap-2 p-4">
-          <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-          <PrimaryButton type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
-            {data
-              ? isSubmitting
-                ? "Updating..."
-                : "Update block"
-              : isSubmitting
-              ? "Adding..."
-              : "Add block"}
-          </PrimaryButton>
+          <Button variant="neutral-primary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" type="submit" disabled={watch("name") === ""} loading={isSubmitting}>
+            {data ? (isSubmitting ? "Updating..." : "Update block") : isSubmitting ? "Adding..." : "Add block"}
+          </Button>
         </div>
       </form>
       <GptAssistantModal
@@ -371,9 +384,7 @@ export const CreateUpdateBlockInline: React.FC<Props> = ({
         onResponse={(response) => {
           if (data && handleAiAssistance) {
             handleAiAssistance(response);
-            editorRef.current?.setEditorValue(
-              `${watch("description_html")}<p>${response}</p>` ?? ""
-            );
+            editorRef.current?.setEditorValue(`${watch("description_html")}<p>${response}</p>` ?? "");
           } else {
             setValue("description", {});
             setValue("description_html", `${watch("description_html")}<p>${response}</p>`);

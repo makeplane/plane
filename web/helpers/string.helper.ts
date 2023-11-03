@@ -1,3 +1,10 @@
+import {
+  CYCLE_ISSUES_WITH_PARAMS,
+  MODULE_ISSUES_WITH_PARAMS,
+  PROJECT_ISSUES_LIST_WITH_PARAMS,
+  VIEW_ISSUES,
+} from "constants/fetch-keys";
+
 export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
@@ -49,6 +56,19 @@ export const copyTextToClipboard = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
 
+/**
+ * @description: This function copies the url to clipboard after prepending the origin URL to it
+ * @param {string} path
+ * @example:
+ * const text = copyUrlToClipboard("path");
+ * copied URL: origin_url/path
+ */
+export const copyUrlToClipboard = async (path: string) => {
+  const originUrl = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+
+  await copyTextToClipboard(`${originUrl}/${path}`);
+};
+
 export const generateRandomColor = (string: string): string => {
   if (!string) return "rgb(var(--color-primary-100))";
 
@@ -91,10 +111,19 @@ export const getFirstCharacters = (str: string) => {
  */
 
 export const stripHTML = (html: string) => {
-  const tmp = document.createElement("DIV");
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || "";
+  const strippedText = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, ""); // Remove script tags
+  return strippedText.replace(/<[^>]*>/g, ""); // Remove all other HTML tags
 };
+
+/**
+ *
+ * @example:
+ * const html = "<p>Some text</p>";
+ * const text = stripAndTruncateHTML(html);
+ * console.log(text); // Some text
+ */
+
+export const stripAndTruncateHTML = (html: string, length: number = 55) => truncateText(stripHTML(html), length);
 
 /**
  * @description: This function return number count in string if number is more than 100 then it will return 99+
@@ -121,4 +150,27 @@ export const objToQueryParams = (obj: any) => {
   }
 
   return params.toString();
+};
+
+export const getFetchKeysForIssueMutation = (options: {
+  cycleId?: string | string[];
+  moduleId?: string | string[];
+  viewId?: string | string[];
+  projectId: string;
+  viewGanttParams: any;
+  ganttParams: any;
+}) => {
+  const { cycleId, moduleId, viewId, projectId, viewGanttParams, ganttParams } = options;
+
+  const ganttFetchKey = cycleId
+    ? { ganttFetchKey: CYCLE_ISSUES_WITH_PARAMS(cycleId.toString(), ganttParams) }
+    : moduleId
+    ? { ganttFetchKey: MODULE_ISSUES_WITH_PARAMS(moduleId.toString(), ganttParams) }
+    : viewId
+    ? { ganttFetchKey: VIEW_ISSUES(viewId.toString(), viewGanttParams) }
+    : { ganttFetchKey: PROJECT_ISSUES_LIST_WITH_PARAMS(projectId?.toString() ?? "", ganttParams) };
+
+  return {
+    ...ganttFetchKey,
+  };
 };

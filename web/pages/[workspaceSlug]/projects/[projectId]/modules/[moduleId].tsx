@@ -1,79 +1,54 @@
-import React, { useState } from "react";
-
+import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// icons
-import { ArrowLeftIcon, RectangleGroupIcon } from "@heroicons/react/24/outline";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import modulesService from "services/modules.service";
+import { ModuleService } from "services/module.service";
 // hooks
+import useLocalStorage from "hooks/use-local-storage";
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
+import useUser from "hooks/use-user";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
-// contexts
-import { IssueViewContextProvider } from "contexts/issue-view.context";
+import { AppLayout } from "layouts/app-layout";
 // components
-import { ExistingIssuesListModal, IssuesFilterView, IssuesView } from "components/core";
+import { ExistingIssuesListModal } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
-import { AnalyticsProjectModal } from "components/analytics";
+import { ModuleLayoutRoot } from "components/issues";
+import { ModuleIssuesHeader } from "components/headers";
 // ui
-import { CustomMenu, EmptyState, SecondaryButton } from "components/ui";
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-// images
+import { EmptyState } from "components/common";
+// assets
 import emptyModule from "public/empty-state/module.svg";
-// helpers
-import { truncateText } from "helpers/string.helper";
 // types
+import { NextPageWithLayout } from "types/app";
 import { ISearchIssueResponse } from "types";
-// fetch-keys
-import { MODULE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
 
-const SingleModule: React.FC = () => {
+const moduleService = new ModuleService();
+
+const ModuleIssuesPage: NextPageWithLayout = () => {
+  // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
-  const [moduleSidebar, setModuleSidebar] = useState(true);
-  const [analyticsModal, setAnalyticsModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
-
-  const { user } = useUserAuth();
-
+  // store
+  const { module: moduleStore } = useMobxStore();
+  // hooks
+  const { user } = useUser();
   const { setToastAlert } = useToast();
+  // local storage
+  const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
+  const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
-  const { data: modules } = useSWR(
-    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => modulesService.getModules(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  const { data: moduleIssues } = useSWR(
-    workspaceSlug && projectId && moduleId ? MODULE_ISSUES(moduleId as string) : null,
+  const { error } = useSWR(
+    workspaceSlug && projectId && moduleId ? `CURRENT_MODULE_DETAILS_${moduleId.toString()}` : null,
     workspaceSlug && projectId && moduleId
-      ? () =>
-          modulesService.getModuleIssues(
-            workspaceSlug as string,
-            projectId as string,
-            moduleId as string
-          )
+      ? () => moduleStore.fetchModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId.toString())
       : null
   );
 
-  const { data: moduleDetails, error } = useSWR(
-    moduleId ? MODULE_DETAILS(moduleId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          modulesService.getModuleDetails(
-            workspaceSlug as string,
-            projectId as string,
-            moduleId as string
-          )
-      : null
-  );
-
+  // TODO: add this function to bulk add issues to cycle
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -81,14 +56,8 @@ const SingleModule: React.FC = () => {
       issues: data.map((i) => i.id),
     };
 
-    await modulesService
-      .addIssuesToModule(
-        workspaceSlug as string,
-        projectId as string,
-        moduleId as string,
-        payload,
-        user
-      )
+    await moduleService
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -102,102 +71,57 @@ const SingleModule: React.FC = () => {
     setModuleIssuesListModal(true);
   };
 
+  const toggleSidebar = () => {
+    setValue(`${!isSidebarCollapsed}`);
+  };
+
   return (
-    <IssueViewContextProvider>
+    <>
+      {/* TODO: Update logic to bulk add issues to a cycle */}
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}
         searchParams={{ module: true }}
         handleOnSubmit={handleAddIssuesToModule}
       />
-      <ProjectAuthorizationWrapper
-        breadcrumbs={
-          <Breadcrumbs>
-            <BreadcrumbItem
-              title={`${truncateText(moduleDetails?.project_detail.name ?? "Project", 32)} Modules`}
-              link={`/${workspaceSlug}/projects/${projectId}/modules`}
-              linkTruncate
-            />
-          </Breadcrumbs>
-        }
-        left={
-          <CustomMenu
-            label={
-              <>
-                <RectangleGroupIcon className="h-3 w-3" />
-                {moduleDetails?.name && truncateText(moduleDetails.name, 40)}
-              </>
-            }
-            className="ml-1.5"
-            width="auto"
-          >
-            {modules?.map((module) => (
-              <CustomMenu.MenuItem
-                key={module.id}
-                renderAs="a"
-                href={`/${workspaceSlug}/projects/${projectId}/modules/${module.id}`}
-              >
-                {truncateText(module.name, 40)}
-              </CustomMenu.MenuItem>
-            ))}
-          </CustomMenu>
-        }
-        right={
-          <div className={`flex items-center gap-2 duration-300`}>
-            <IssuesFilterView />
-            <SecondaryButton
-              onClick={() => setAnalyticsModal(true)}
-              className="!py-1.5 font-normal rounded-md text-custom-text-200 hover:text-custom-text-100"
-              outline
-            >
-              Analytics
-            </SecondaryButton>
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
-                moduleSidebar ? "rotate-180" : ""
-              }`}
-              onClick={() => setModuleSidebar((prevData) => !prevData)}
-            >
-              <ArrowLeftIcon className="h-4 w-4" />
-            </button>
+      {error ? (
+        <EmptyState
+          image={emptyModule}
+          title="Module does not exist"
+          description="The module you are looking for does not exist or has been deleted."
+          primaryButton={{
+            text: "View other modules",
+            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
+          }}
+        />
+      ) : (
+        <div className="flex h-full w-full">
+          <div className="h-full w-full overflow-hidden">
+            <ModuleLayoutRoot openIssuesListModal={openIssuesListModal} />
           </div>
-        }
-      >
-        {error ? (
-          <EmptyState
-            image={emptyModule}
-            title="Module does not exist"
-            description="The module you are looking for does not exist or has been deleted."
-            primaryButton={{
-              text: "View other modules",
-              onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/modules`),
-            }}
-          />
-        ) : (
-          <>
-            <AnalyticsProjectModal
-              isOpen={analyticsModal}
-              onClose={() => setAnalyticsModal(false)}
-            />
+          {moduleId && !isSidebarCollapsed && (
             <div
-              className={`h-full flex flex-col ${moduleSidebar ? "mr-[24rem]" : ""} ${
-                analyticsModal ? "mr-[50%]" : ""
-              } duration-300`}
+              className="flex flex-col gap-3.5 h-full w-[24rem] z-10 overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 py-3.5 duration-300 flex-shrink-0"
+              style={{
+                boxShadow:
+                  "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
+              }}
             >
-              <IssuesView openIssuesListModal={openIssuesListModal} />
+              <ModuleDetailsSidebar moduleId={moduleId.toString()} handleClose={toggleSidebar} />
             </div>
-            <ModuleDetailsSidebar
-              module={moduleDetails}
-              isOpen={moduleSidebar}
-              moduleIssues={moduleIssues}
-              user={user}
-            />
-          </>
-        )}
-      </ProjectAuthorizationWrapper>
-    </IssueViewContextProvider>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
-export default SingleModule;
+ModuleIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ModuleIssuesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
+
+export default ModuleIssuesPage;

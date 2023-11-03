@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 // components
 import { ParentIssuesListModal } from "components/issues";
 // types
-import { IIssue, ISearchIssueResponse, UserAuth } from "types";
+import { IIssue, ISearchIssueResponse } from "types";
 
 type Props = {
   onChange: (value: string) => void;
@@ -13,11 +13,7 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarParentSelect: React.FC<Props> = ({
-  onChange,
-  issueDetails,
-  disabled = false,
-}) => {
+export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, disabled = false }) => {
   const [isParentModalOpen, setIsParentModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
 

@@ -1,9 +1,8 @@
 import { useState } from "react";
-
 // ui
-import { SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps } from "types";
 // constants
 import { CreateWorkspaceForm } from "components/workspace";
 
@@ -11,17 +10,13 @@ type Props = {
   finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
   updateLastWorkspace: () => Promise<void>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   workspaces: IWorkspace[] | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({
-  finishOnboarding,
-  stepChange,
-  updateLastWorkspace,
-  user,
-  workspaces,
-}) => {
+export const Workspace: React.FC<Props> = (props) => {
+  const { finishOnboarding, stepChange, updateLastWorkspace, user, workspaces } = props;
+
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
@@ -54,16 +49,15 @@ export const Workspace: React.FC<Props> = ({
           onSubmit={completeStep}
           defaultValues={defaultValues}
           setDefaultValues={setDefaultValues}
-          user={user}
           primaryButtonText={{
             loading: "Creating...",
             default: "Continue",
           }}
           secondaryButton={
             workspaces ? (
-              <SecondaryButton onClick={secondaryButtonAction}>
+              <Button variant="neutral-primary" onClick={secondaryButtonAction}>
                 {workspaces.length > 0 ? "Skip & continue" : "Back"}
-              </SecondaryButton>
+              </Button>
             ) : undefined
           }
         />

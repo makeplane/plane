@@ -1,36 +1,33 @@
 import React, { useEffect } from "react";
-
-// swr
 import { mutate } from "swr";
-// react-hook-form
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-// headless
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, CustomSelect, Input } from "@plane/ui";
 // icons
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Plus, X } from "lucide-react";
 // types
-import { ICurrentUserResponse } from "types";
+import { IUser, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
+// fetch-keys
 import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  workspace_slug: string;
-  user: ICurrentUserResponse | undefined;
-  onSuccess: () => void;
+  onClose: () => void;
+  workspaceSlug: string;
+  user: IUser | undefined;
+  onSuccess?: () => Promise<void>;
 };
 
 type EmailRole = {
   email: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
 };
 
 type FormValues = {
@@ -46,8 +43,11 @@ const defaultValues: FormValues = {
   ],
 };
 
-const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
-  const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
+const workspaceService = new WorkspaceService();
+
+export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
+  const { isOpen, onClose, workspaceSlug, user, onSuccess } = props;
+
   const {
     control,
     reset,
@@ -63,42 +63,38 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
+
     const timeout = setTimeout(() => {
       reset(defaultValues);
       clearTimeout(timeout);
-    }, 500);
+    }, 350);
   };
 
   const onSubmit = async (formData: FormValues) => {
-    if (!workspace_slug) return;
-
-    const payload = { ...formData };
+    if (!workspaceSlug) return;
 
     await workspaceService
-      .inviteWorkspace(workspace_slug, payload, user)
-      .then(async (res) => {
-        setIsOpen(false);
+      .inviteWorkspace(workspaceSlug, formData, user)
+      .then(async () => {
+        if (onSuccess) await onSuccess();
+
         handleClose();
+
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Invitations sent successfully.",
         });
-        onSuccess();
       })
-      .catch((err) => {
+      .catch((err) =>
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: `${err.error}`,
-        });
-        console.log(err);
-      })
-      .finally(() => {
-        reset(defaultValues);
-        mutate(WORKSPACE_INVITATIONS);
-      });
+          message: `${err.error ?? "Something went wrong. Please try again."}`,
+        })
+      )
+      .finally(() => mutate(WORKSPACE_INVITATIONS));
   };
 
   const appendField = () => {
@@ -106,9 +102,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (fields.length === 0) {
-      append([{ email: "", role: 15 }]);
-    }
+    if (fields.length === 0) append([{ email: "", role: 15 }]);
   }, [fields, append]);
 
   return (
@@ -145,16 +139,11 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                   }}
                 >
                   <div className="space-y-5">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-custom-text-100"
-                    >
+                    <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Invite people to collaborate
                     </Dialog.Title>
                     <div className="mt-2">
-                      <p className="text-sm text-custom-text-200">
-                        Invite members to work on your workspace.
-                      </p>
+                      <p className="text-sm text-custom-text-200">Invite members to work on your workspace.</p>
                     </div>
 
                     <div className="space-y-4 mb-3">
@@ -171,12 +160,18 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                                   message: "Invalid Email ID",
                                 },
                               }}
-                              render={({ field }) => (
+                              render={({ field: { value, onChange, ref } }) => (
                                 <>
                                   <Input
-                                    {...field}
-                                    className="text-xs sm:text-sm"
+                                    id={`emails.${index}.email`}
+                                    name={`emails.${index}.email`}
+                                    type="text"
+                                    value={value}
+                                    onChange={onChange}
+                                    ref={ref}
+                                    hasError={Boolean(errors.emails?.[index]?.email)}
                                     placeholder="Enter their email..."
+                                    className="text-xs sm:text-sm w-full"
                                   />
                                   {errors.emails?.[index]?.email && (
                                     <span className="ml-1 text-red-500 text-xs">
@@ -215,7 +210,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                               className="self-center place-items-center rounded -ml-3"
                               onClick={() => remove(index)}
                             >
-                              <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                              <X className="h-3.5 w-3.5 text-custom-text-200" />
                             </button>
                           )}
                         </div>
@@ -229,14 +224,16 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
                       onClick={appendField}
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <Plus className="h-4 w-4" />
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                      <PrimaryButton type="submit" loading={isSubmitting}>
+                      <Button variant="neutral-primary" onClick={handleClose}>
+                        Cancel
+                      </Button>
+                      <Button variant="primary" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
-                      </PrimaryButton>
+                      </Button>
                     </div>
                   </div>
                 </form>
@@ -248,5 +245,3 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     </Transition.Root>
   );
 };
-
-export default SendWorkspaceInvitationModal;

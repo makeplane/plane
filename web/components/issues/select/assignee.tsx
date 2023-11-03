@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectServices from "services/project.service";
+import { ProjectService } from "services/project";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect, Icon } from "components/ui";
+import { Avatar, AvatarGroup, CustomSearchSelect } from "@plane/ui";
+import { User2 } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -15,6 +14,8 @@ export type Props = {
   onChange: (value: string[]) => void;
 };
 
+const projectService = new ProjectService();
+
 export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], onChange }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -22,7 +23,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -31,7 +32,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
     query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} showTooltip={false} />
         {member.member.is_bot ? member.member.first_name : member.member.display_name}
       </div>
     ),
@@ -46,11 +47,19 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
         <div className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="-my-0.5 flex items-center justify-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={true} />
+              <AvatarGroup showTooltip={false}>
+                {value.map((assigneeId) => {
+                  const member = members?.find((m) => m.member.id === assigneeId)?.member;
+
+                  if (!member) return null;
+
+                  return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+                })}
+              </AvatarGroup>
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
-              <Icon iconName="person" className="!text-base !leading-4" />
+              <User2 className="h-4 w-4" />
               <span className="text-custom-text-200">Assignee</span>
             </div>
           )}

@@ -1,0 +1,11 @@
+FROM node:18-alpine
+RUN apk add --no-cache libc6-compat
+# Set working directory
+WORKDIR /app
+
+
+COPY . .
+RUN yarn global add turbo
+RUN yarn install
+EXPOSE 3000
+CMD ["yarn","dev", "--filter=space"]

@@ -1,19 +1,22 @@
-import React, { useEffect } from "react";
-
+import React, { useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
+// services
+import { AppInstallationService } from "services/app_installation.service";
+// ui
+import { Spinner } from "@plane/ui";
+// types
+import { NextPageWithLayout } from "types/app";
 
 // services
-import appInstallationsService from "services/app-installations.service";
-// ui
-import { Spinner } from "components/ui";
+const appInstallationService = new AppInstallationService();
 
-const AppPostInstallation = () => {
+const AppPostInstallation: NextPageWithLayout = () => {
   const router = useRouter();
   const { installation_id, setup_action, state, provider, code } = router.query;
 
   useEffect(() => {
     if (provider === "github" && state && installation_id) {
-      appInstallationsService
+      appInstallationService
         .addInstallationApp(state.toString(), provider, { installation_id })
         .then(() => {
           window.opener = null;
@@ -24,7 +27,7 @@ const AppPostInstallation = () => {
           console.log(err);
         });
     } else if (provider === "slack" && state && code) {
-      appInstallationsService
+      appInstallationService
         .getSlackAuthDetails(code.toString())
         .then((res) => {
           const [workspaceSlug, projectId, integrationId] = state.toString().split(",");
@@ -36,7 +39,7 @@ const AppPostInstallation = () => {
               },
             };
 
-            appInstallationsService
+            appInstallationService
               .addInstallationApp(state.toString(), provider, payload)
               .then((r) => {
                 window.opener = null;
@@ -56,7 +59,7 @@ const AppPostInstallation = () => {
               team_name: res.team.name,
               scopes: res.scope,
             };
-            appInstallationsService
+            appInstallationService
               .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
               .then((r) => {
                 window.opener = null;
@@ -80,6 +83,10 @@ const AppPostInstallation = () => {
       <Spinner />
     </div>
   );
+};
+
+AppPostInstallation.getLayout = function getLayout(page: ReactElement) {
+  return <div>{page}</div>;
 };
 
 export default AppPostInstallation;
