@@ -66,6 +66,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
 
                 onChange(val);
               }}
+              params={params}
             />
           )}
         />
