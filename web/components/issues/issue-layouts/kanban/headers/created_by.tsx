@@ -36,8 +36,8 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
         (sub_group_by && header_type === "sub_group_by" ? (
           <HeaderSubGroupByCard
             column_id={column_id}
-            icon={<Icon user={createdBy?.member} />}
-            title={createdBy?.member?.display_name || ""}
+            icon={<Icon user={createdBy} />}
+            title={createdBy?.display_name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -47,12 +47,12 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             column_id={column_id}
-            icon={<Icon user={createdBy?.member} />}
-            title={createdBy?.member?.display_name || ""}
+            icon={<Icon user={createdBy} />}
+            title={createdBy?.display_name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
-            issuePayload={{ created_by: createdBy?.member?.id }}
+            issuePayload={{ created_by: createdBy?.id }}
           />
         ))}
     </>

@@ -19,10 +19,11 @@ export interface IKanBanProperties {
   handleIssues: (group_by: string | null, issue: IIssue) => void;
   display_properties: any;
   isReadonly?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties, isReadonly } = props;
+  const { columnId: group_id, issue, handleIssues, display_properties, isReadonly, showEmptyGroup } = props;
 
   const handleState = (state: IState) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
@@ -77,7 +78,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* label */}
-      {display_properties && display_properties?.labels && (
+      {display_properties && display_properties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
@@ -88,7 +89,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* assignee */}
-      {display_properties && display_properties?.assignee && (
+      {display_properties && display_properties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
@@ -100,7 +101,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* start date */}
-      {display_properties && display_properties?.start_date && (
+      {display_properties && display_properties?.start_date && (showEmptyGroup || issue?.start_date) && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
@@ -110,7 +111,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* target/due date */}
-      {display_properties && display_properties?.due_date && (
+      {display_properties && display_properties?.due_date && (showEmptyGroup || issue?.target_date) && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}

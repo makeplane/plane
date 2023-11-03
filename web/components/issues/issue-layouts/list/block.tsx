@@ -13,10 +13,11 @@ interface IssueBlockProps {
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   display_properties: any;
   isReadonly?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties, isReadonly } = props;
+  const { columnId, issue, handleIssues, quickActions, display_properties, showEmptyGroup, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
     handleIssues(group_by, issueToUpdate, "update");
@@ -54,6 +55,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             isReadonly={isReadonly}
             handleIssues={updateIssue}
             display_properties={display_properties}
+            showEmptyGroup={showEmptyGroup}
           />
           {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
         </div>

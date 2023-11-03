@@ -3,7 +3,7 @@ import { Editor } from "@tiptap/core";
 import tippy from 'tippy.js'
 
 import MentionList from './MentionList'
-import { IMentionSuggestion } from './mentions';
+import { IMentionSuggestion } from '../../types/mention-suggestion';
 
 const Suggestion = (suggestions: IMentionSuggestion[]) => ({
   items: ({ query }: { query: string }) => suggestions.filter(suggestion => suggestion.title.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5),

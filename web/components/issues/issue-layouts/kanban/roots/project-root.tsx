@@ -8,8 +8,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -19,7 +17,7 @@ export interface IKanBanLayout {}
 
 export const KanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string };
 
   const {
     project: projectStore,
@@ -35,6 +33,8 @@ export const KanBanLayout: React.FC = observer(() => {
   const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+
+  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
 
   const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
@@ -80,7 +80,7 @@ export const KanBanLayout: React.FC = observer(() => {
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const projects = workspaceSlug ? projectStore?.projects?.[workspaceSlug] || null : null;
   const estimates =
     currentProjectDetails?.estimate !== null
       ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
@@ -105,7 +105,14 @@ export const KanBanLayout: React.FC = observer(() => {
             displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={labels}
+            members={members?.map((m) => m.member) ?? null}
+            projects={projects}
             enableQuickIssueCreate
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         ) : (
           <KanBanSwimLanes
@@ -129,7 +136,7 @@ export const KanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         )}
       </DragDropContext>

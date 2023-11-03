@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -14,12 +13,12 @@ import {
   ProjectDetailsFormLoader,
 } from "components/project";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
 
-const GeneralSettings: NextPage = observer(() => {
+const GeneralSettingsPage: NextPageWithLayout = observer(() => {
   // store
   const { project: projectStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
@@ -42,37 +41,43 @@ const GeneralSettings: NextPage = observer(() => {
   const isAdmin = currentProjectDetails?.member_role === 20;
 
   return (
-    <AppLayout header={<ProjectSettingHeader title="General Settings" />} withProjectWrapper>
-      <ProjectSettingLayout>
-        {currentProjectDetails && (
-          <DeleteProjectModal
+    <>
+      {currentProjectDetails && (
+        <DeleteProjectModal
+          project={currentProjectDetails}
+          isOpen={Boolean(selectProject)}
+          onClose={() => setSelectedProject(null)}
+        />
+      )}
+
+      <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
+        {currentProjectDetails && workspaceSlug ? (
+          <ProjectDetailsForm
             project={currentProjectDetails}
-            isOpen={Boolean(selectProject)}
-            onClose={() => setSelectedProject(null)}
+            workspaceSlug={workspaceSlug.toString()}
+            isAdmin={isAdmin}
           />
+        ) : (
+          <ProjectDetailsFormLoader />
         )}
 
-        <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-          {currentProjectDetails && workspaceSlug ? (
-            <ProjectDetailsForm
-              project={currentProjectDetails}
-              workspaceSlug={workspaceSlug.toString()}
-              isAdmin={isAdmin}
-            />
-          ) : (
-            <ProjectDetailsFormLoader />
-          )}
-
-          {isAdmin && (
-            <DeleteProjectSection
-              projectDetails={currentProjectDetails}
-              handleDelete={() => setSelectedProject(currentProjectDetails.id ?? null)}
-            />
-          )}
-        </div>
-      </ProjectSettingLayout>
-    </AppLayout>
+        {isAdmin && (
+          <DeleteProjectSection
+            projectDetails={currentProjectDetails}
+            handleDelete={() => setSelectedProject(currentProjectDetails.id ?? null)}
+          />
+        )}
+      </div>
+    </>
   );
 });
 
-export default GeneralSettings;
+GeneralSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectSettingHeader title="General Settings" />} withProjectWrapper>
+      <ProjectSettingLayout>{page}</ProjectSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default GeneralSettingsPage;

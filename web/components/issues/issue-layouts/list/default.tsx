@@ -19,6 +19,7 @@ export interface IGroupByList {
   display_properties: any;
   is_list?: boolean;
   enableQuickIssueCreate?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 const GroupByList: React.FC<IGroupByList> = observer((props) => {
@@ -33,6 +34,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     display_properties,
     is_list = false,
     enableQuickIssueCreate,
+    showEmptyGroup,
   } = props;
 
   return (
@@ -59,6 +61,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                 quickActions={quickActions}
                 display_properties={display_properties}
                 isReadonly={isReadonly}
+                showEmptyGroup={showEmptyGroup}
               />
             )}
             {enableQuickIssueCreate && (
@@ -92,6 +95,7 @@ export interface IList {
   priorities: any;
   enableQuickIssueCreate?: boolean;
   estimates: IEstimatePoint[] | null;
+  showEmptyGroup?: boolean;
 }
 
 export const List: React.FC<IList> = observer((props) => {
@@ -108,7 +112,7 @@ export const List: React.FC<IList> = observer((props) => {
     projects,
     stateGroups,
     priorities,
-
+    showEmptyGroup,
     enableQuickIssueCreate,
   } = props;
 
@@ -126,6 +130,7 @@ export const List: React.FC<IList> = observer((props) => {
           is_list
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -140,6 +145,7 @@ export const List: React.FC<IList> = observer((props) => {
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -154,6 +160,7 @@ export const List: React.FC<IList> = observer((props) => {
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -168,6 +175,7 @@ export const List: React.FC<IList> = observer((props) => {
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -182,6 +190,7 @@ export const List: React.FC<IList> = observer((props) => {
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -189,13 +198,14 @@ export const List: React.FC<IList> = observer((props) => {
         <GroupByList
           issues={issues}
           group_by={group_by}
-          list={labels}
+          list={[...labels, { id: "None", name: "None" }]}
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -203,13 +213,14 @@ export const List: React.FC<IList> = observer((props) => {
         <GroupByList
           issues={issues}
           group_by={group_by}
-          list={members}
+          list={[...members, { id: "None", display_name: "None" }]}
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
 
@@ -224,6 +235,7 @@ export const List: React.FC<IList> = observer((props) => {
           display_properties={display_properties}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadonly={isReadonly}
+          showEmptyGroup={showEmptyGroup}
         />
       )}
     </div>
