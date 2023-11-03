@@ -11,8 +11,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect } from "components/ui";
-import { Button, Input, Tooltip } from "@plane/ui";
+import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 // types
 import type { IState } from "types";
 // fetch-keys

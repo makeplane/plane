@@ -7,9 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CreateUpdateProjectViewModal } from "components/views";
 // components
-import { Breadcrumbs, PhotoFilterIcon } from "@plane/ui";
-// ui
-import { PrimaryButton } from "components/ui";
+import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 
@@ -69,10 +67,14 @@ export const ProjectViewsHeader: React.FC = observer(() => {
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <div>
-            <PrimaryButton type="button" className="flex items-center gap-2" onClick={() => setCreateViewModal(true)}>
-              <Plus size={14} strokeWidth={2} />
+            <Button
+              variant="primary"
+              size="sm"
+              prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
+              onClick={() => setCreateViewModal(true)}
+            >
               Create View
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>

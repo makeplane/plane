@@ -13,7 +13,7 @@ interface IIssuePeekOverview {
   projectId: string;
   issueId: string;
   handleIssue: (issue: Partial<IIssue>) => void;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
