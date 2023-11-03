@@ -7,7 +7,7 @@
 </p>
 
 <h3 align="center"><b>Plane</b></h3>
-<p align="center"><b>Open-source, self-hosted project planning tool</b></p>
+<p align="center"><b>Flexible, extensible open-source project management</b></p>
 
 <p align="center">
 <a href="https://discord.com/invite/A92xrEGCge">
