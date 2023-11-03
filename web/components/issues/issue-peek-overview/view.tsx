@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
-import { Button, CustomSelect, FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
+import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
 import { DeleteIssueModal } from "../delete-issue-modal";
 // types
 import { IIssue } from "types";
@@ -41,17 +41,17 @@ type TPeekModes = "side-peek" | "modal" | "full-screen";
 const peekOptions: { key: TPeekModes; icon: any; title: string }[] = [
   {
     key: "side-peek",
-    icon: SidePeekIcon,
+    icon: SidePanelIcon,
     title: "Side Peek",
   },
   {
     key: "modal",
-    icon: ModalPeekIcon,
+    icon: CenterPanelIcon,
     title: "Modal",
   },
   {
     key: "full-screen",
-    icon: FullScreenPeekIcon,
+    icon: FullScreenPanelIcon,
     title: "Full Screen",
   },
 ];
@@ -206,7 +206,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     >
                       {peekOptions.map((mode) => (
                         <CustomSelect.Option key={mode.key} value={mode.key}>
-                          <div className="flex items-center gap-1.5">
+                          <div
+                            className={`flex items-center gap-1.5 ${
+                              currentMode.key === mode.key
+                                ? "text-custom-text-200"
+                                : "text-custom-text-400 hover:text-custom-text-200"
+                            }`}
+                          >
                             <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1 `} />
                             {mode.title}
                           </div>

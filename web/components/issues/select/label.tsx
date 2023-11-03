@@ -19,11 +19,12 @@ type Props = {
   value: string[];
   onChange: (value: string[]) => void;
   projectId: string;
+  label?: JSX.Element;
 };
 
 const issueLabelService = new IssueLabelService();
 
-export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
+export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId, label }) => {
   // states
   const [query, setQuery] = useState("");
 
@@ -56,7 +57,9 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
               ref={setReferenceElement}
               className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200"
             >
-              {value && value.length > 0 ? (
+              {label ? (
+                label
+              ) : value && value.length > 0 ? (
                 <span className="flex items-center justify-center gap-2 text-xs">
                   <IssueLabelsList
                     labels={value.map((v) => issueLabels?.find((l) => l.id === v)) ?? []}
