@@ -20,7 +20,7 @@ interface IIssuePeekOverview {
   issueId: string;
   handleIssue: (issue: Partial<IIssue>) => void;
   isArchived?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
