@@ -13,7 +13,7 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 // types
 import { IWorkspace } from "types";
 // constants
-import { ORGANIZATION_SIZE } from "constants/workspace";
+import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -29,22 +29,6 @@ type Props = {
     default: string;
   };
 };
-
-const restrictedUrls = [
-  "api",
-  "installations",
-  "404",
-  "create-workspace",
-  "error",
-  "invitations",
-  "magic-sign-in",
-  "onboarding",
-  "profile",
-  "reset-password",
-  "sign-up",
-  "spaces",
-  "workspace-member-invitation",
-];
 
 const workspaceService = new WorkspaceService();
 
@@ -81,7 +65,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
     await workspaceService
       .workspaceSlugCheck(formData.slug)
       .then(async (res) => {
-        if (res.status === true && !restrictedUrls.includes(formData.slug)) {
+        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
 
           await workspaceStore
@@ -141,7 +125,6 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
             render={({ field: { value, ref, onChange } }) => (
               <Input
                 id="workspaceName"
-                name="name"
                 type="text"
                 value={value}
                 onChange={(e) => {
@@ -167,15 +150,15 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               rules={{
                 required: "Workspace URL is required",
               }}
-              render={({ field: { value, ref } }) => (
+              render={({ field: { onChange, value, ref } }) => (
                 <Input
                   id="workspaceUrl"
-                  name="slug"
                   type="text"
                   value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
-                  onChange={(e) =>
-                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true)
-                  }
+                  onChange={(e) => {
+                    /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true);
+                    onChange(e.target.value.toLowerCase());
+                  }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder="Enter workspace name..."
