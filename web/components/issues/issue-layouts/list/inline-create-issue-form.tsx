@@ -172,7 +172,7 @@ export const ListInlineCreateIssueForm: React.FC<Props> = observer((props) => {
             className="flex items-center gap-x-[6px] text-custom-primary-100 p-3"
             onClick={() => setIsOpen(true)}
           >
-            <PlusIcon width={14} strokeWidth={2} />
+            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
           </button>
         </div>

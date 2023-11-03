@@ -46,7 +46,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full py-3 rounded-md bg-transparent text-[0.825rem] leading-5 text-custom-text-200 outline-none"
+        className="w-full py-3 rounded-md bg-transparent text-sm leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -178,7 +178,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
             className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pt-3 rounded-md"
             onClick={() => setIsOpen(true)}
           >
-            <PlusIcon width={14} strokeWidth={2} />
+            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
           </button>
         </div>

@@ -146,7 +146,7 @@ export const IssueColumn: React.FC<Props> = ({
       >
         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
           <span className="flex items-center px-4 py-2.5 h-full  truncate flex-grow">
-            <div className="truncate text-custom-text-100 text-left cursor-pointer w-full text-[0.825rem]">
+            <div className="truncate text-custom-text-100 text-left cursor-pointer w-full text-sm">
               {issue.name}
             </div>
           </span>
