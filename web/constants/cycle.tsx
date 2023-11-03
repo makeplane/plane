@@ -23,18 +23,21 @@ export const CYCLE_TAB_LIST = [
   },
 ];
 
-export const CYCLE_VIEWS = [
+export const CYCLE_VIEW_LAYOUTS = [
   {
     key: "list",
     icon: List,
+    title: "List layout",
   },
   {
     key: "board",
     icon: LayoutGrid,
+    title: "Grid layout",
   },
   {
     key: "gantt",
     icon: GanttChartSquare,
+    title: "Gantt layout",
   },
 ];
 
