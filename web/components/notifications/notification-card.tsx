@@ -1,15 +1,13 @@
 import React from "react";
-
 import Image from "next/image";
 import { useRouter } from "next/router";
-
+import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
-
 // icons
 import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-import { ArchiveRestore, Clock, MessageSquare, User2 } from "lucide-react";
-
+// constants
+import { snoozeOptions } from "constants/notification";
 // helper
 import { replaceUnderscoreIfSnakeCase, truncateText, stripAndTruncateHTML } from "helpers/string.helper";
 import {
@@ -19,14 +17,12 @@ import {
   renderShortDate,
   renderShortDateWithYearFormat,
 } from "helpers/date-time.helper";
-
 // type
 import type { IUserNotification } from "types";
-// constants
-import { snoozeOptions } from "constants/notification";
 
 type NotificationCardProps = {
   notification: IUserNotification;
+  isSnoozedTabOpen: boolean;
   markNotificationReadStatus: (notificationId: string) => Promise<void>;
   markNotificationReadStatusToggle: (notificationId: string) => Promise<void>;
   markNotificationArchivedStatus: (notificationId: string) => Promise<void>;
@@ -37,6 +33,7 @@ type NotificationCardProps = {
 export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const {
     notification,
+    isSnoozedTabOpen,
     markNotificationReadStatus,
     markNotificationReadStatusToggle,
     markNotificationArchivedStatus,
@@ -48,6 +45,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
+
+  if (isSnoozedTabOpen && new Date(notification.snoozed_till!) < new Date()) return null;
 
   return (
     <div
@@ -92,52 +91,54 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
         )}
       </div>
       <div className="space-y-2.5 w-full overflow-hidden">
-        { !notification.message ? <div className="text-sm w-full break-words">
-          <span className="font-semibold">
-            {notification.triggered_by_details.is_bot
-              ? notification.triggered_by_details.first_name
-              : notification.triggered_by_details.display_name}{" "}
-          </span>
-          {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
-          {notification.data.issue_activity.field === "comment"
-            ? "commented"
-            : notification.data.issue_activity.field === "None"
-            ? null
-            : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
-          {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
-            ? "to"
-            : ""}
-          <span className="font-semibold">
-            {" "}
-            {notification.data.issue_activity.field !== "None" ? (
-              notification.data.issue_activity.field !== "comment" ? (
-                notification.data.issue_activity.field === "target_date" ? (
-                  renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
-                ) : notification.data.issue_activity.field === "attachment" ? (
-                  "the issue"
-                ) : notification.data.issue_activity.field === "description" ? (
-                  stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
+        {!notification.message ? (
+          <div className="text-sm w-full break-words">
+            <span className="font-semibold">
+              {notification.triggered_by_details.is_bot
+                ? notification.triggered_by_details.first_name
+                : notification.triggered_by_details.display_name}{" "}
+            </span>
+            {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.verb}{" "}
+            {notification.data.issue_activity.field === "comment"
+              ? "commented"
+              : notification.data.issue_activity.field === "None"
+              ? null
+              : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
+            {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
+              ? "to"
+              : ""}
+            <span className="font-semibold">
+              {" "}
+              {notification.data.issue_activity.field !== "None" ? (
+                notification.data.issue_activity.field !== "comment" ? (
+                  notification.data.issue_activity.field === "target_date" ? (
+                    renderShortDateWithYearFormat(notification.data.issue_activity.new_value)
+                  ) : notification.data.issue_activity.field === "attachment" ? (
+                    "the issue"
+                  ) : notification.data.issue_activity.field === "description" ? (
+                    stripAndTruncateHTML(notification.data.issue_activity.new_value, 55)
+                  ) : (
+                    notification.data.issue_activity.new_value
+                  )
                 ) : (
-                  notification.data.issue_activity.new_value
+                  <span>
+                    {`"`}
+                    {notification.data.issue_activity.new_value.length > 55
+                      ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
+                      : notification.data.issue_activity.issue_comment}
+                    {`"`}
+                  </span>
                 )
               ) : (
-                <span>
-                  {`"`}
-                  {notification.data.issue_activity.new_value.length > 55
-                    ? notification?.data?.issue_activity?.issue_comment?.slice(0, 50) + "..."
-                    : notification.data.issue_activity.issue_comment}
-                  {`"`}
-                </span>
-              )
-            ) : (
-              "the issue and assigned it to you."
-            )}
-          </span>
-        </div> : <div className="text-sm w-full break-words">
-           <span className="semi-bold">
-               { notification.message }
-           </span>
-         </div> }
+                "the issue and assigned it to you."
+              )}
+            </span>
+          </div>
+        ) : (
+          <div className="text-sm w-full break-words">
+            <span className="semi-bold">{notification.message}</span>
+          </div>
+        )}
 
         <div className="flex justify-between gap-2 text-xs">
           <p className="text-custom-text-300">

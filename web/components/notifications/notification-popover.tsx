@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
+import { Bell } from "lucide-react";
+import { observer } from "mobx-react-lite";
 // hooks
 import useUserNotification from "hooks/use-user-notifications";
 // components
 import { EmptyState } from "components/common";
 import { SnoozeNotificationModal, NotificationCard, NotificationHeader } from "components/notifications";
 import { Loader, Tooltip } from "@plane/ui";
-// icons
-import { Bell } from "lucide-react";
 // images
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
@@ -15,7 +15,7 @@ import { getNumberCount } from "helpers/string.helper";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
-export const NotificationPopover = () => {
+export const NotificationPopover = observer(() => {
   const store: any = useMobxStore();
 
   const {
@@ -121,6 +121,7 @@ export const NotificationPopover = () => {
                           {notifications.map((notification) => (
                             <NotificationCard
                               key={notification.id}
+                              isSnoozedTabOpen={snoozed}
                               notification={notification}
                               markNotificationArchivedStatus={markNotificationArchivedStatus}
                               markNotificationReadStatus={markNotificationAsRead}
@@ -193,4 +194,4 @@ export const NotificationPopover = () => {
       </Popover>
     </>
   );
-};
+});
