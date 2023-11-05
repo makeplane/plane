@@ -152,12 +152,12 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     </Button>
                   )}
                 </div>
-                {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) === TOUR_STEPS.length - 1 && (
+                {currentStepIndex === TOUR_STEPS.length - 1 && (
                   <Button
                     variant="primary"
                     onClick={() => {
                       onComplete();
-                      commandPaletteStore.toggleCreateProjectModal();
+                      commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                   >
                     Create my first project
