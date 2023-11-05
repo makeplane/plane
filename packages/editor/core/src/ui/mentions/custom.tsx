@@ -9,7 +9,6 @@ export interface CustomMentionOptions extends MentionOptions {
 }
 
 export const CustomMention = Mention.extend<CustomMentionOptions>({
-
   addAttributes() {
     return {
       id: {
@@ -54,6 +53,3 @@ export const CustomMention = Mention.extend<CustomMentionOptions>({
     return ['mention-component', mergeAttributes(HTMLAttributes)]
   },
 })
-
-
-
