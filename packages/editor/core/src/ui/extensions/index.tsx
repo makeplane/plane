@@ -8,10 +8,10 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { CustomTableCell } from "./table/table-cell";
-import { Table } from "./table";
-import { TableHeader } from "./table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
+import TableHeader from "./table/table-header/table-header";
+import Table from "./table/table";
+import TableCell from "./table/table-cell/table-cell";
+import TableRow from "./table/table-row/table-row";
 
 import ImageExtension from "./image";
 
@@ -95,7 +95,7 @@ export const CoreEditorExtensions = (
     }),
     Table,
     TableHeader,
-    CustomTableCell,
+    TableCell,
     TableRow,
     Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
   ];

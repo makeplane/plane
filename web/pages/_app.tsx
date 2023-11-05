@@ -8,6 +8,7 @@ import NProgress from "nprogress";
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
+import "styles/table.css";
 import "styles/command-pallette.css";
 import "styles/nprogress.css";
 import "styles/react-datepicker.css";
