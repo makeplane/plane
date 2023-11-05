@@ -139,22 +139,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-
-      <span className="">
-        <RichTextEditor
-          uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-          deleteFile={fileService.deleteImage}
-          value={issue?.description_html}
-          debouncedUpdatesEnabled={false}
-          onChange={(description: Object, description_html: string) => {
-            debouncedIssueDescription(description_html);
-          }}
-          customClassName="mt-0"
-          mentionSuggestions={editorSuggestions.mentionSuggestions}
-          mentionHighlights={editorSuggestions.mentionHighlights}
-        />
-      </span>
-
+      <RichTextEditor
+        uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+        deleteFile={fileService.deleteImage}
+        value={issue?.description_html}
+        debouncedUpdatesEnabled={false}
+        onChange={(description: Object, description_html: string) => {
+          debouncedIssueDescription(description_html);
+        }}
+        customClassName="mt-0"
+        mentionSuggestions={editorSuggestions.mentionSuggestions}
+        mentionHighlights={editorSuggestions.mentionHighlights}
+      />
       <IssueReaction
         issueReactions={issueReactions}
         user={user}

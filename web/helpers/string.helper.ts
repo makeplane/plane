@@ -5,7 +5,13 @@ import {
   VIEW_ISSUES,
 } from "constants/fetch-keys";
 
-export const addSpaceIfCamelCase = (str: string) => str.replace(/([a-z])([A-Z])/g, "$1 $2");
+export const addSpaceIfCamelCase = (str: string) => {
+  if (str === undefined || str === null) return "";
+
+  if (typeof str !== "string") str = `${str}`;
+
+  return str.replace(/([a-z])([A-Z])/g, "$1 $2");
+};
 
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 

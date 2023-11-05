@@ -148,6 +148,8 @@ const useUserNotification = () => {
     handleReadMutation(isRead ? "unread" : "read");
     mutateNotification(notificationId, { read_at: isRead ? null : new Date() });
 
+    if (readNotification) removeNotification(notificationId);
+
     if (isRead) {
       await userNotificationServices
         .markUserNotificationAsUnread(workspaceSlug.toString(), notificationId)

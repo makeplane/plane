@@ -1,4 +1,5 @@
 import { useState, Fragment } from "react";
+import { useRouter } from "next/router";
 import { Transition, Dialog } from "@headlessui/react";
 // ui
 import { Button } from "@plane/ui";
@@ -17,10 +18,12 @@ type TJoinProjectModalProps = {
 
 export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   const { handleClose, isOpen, project, workspaceSlug } = props;
-  // store
-  const { project: projectStore } = useMobxStore();
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
+  // store
+  const { project: projectStore } = useMobxStore();
+  // router
+  const router = useRouter();
 
   const handleJoin = () => {
     setIsJoiningLoading(true);
@@ -29,6 +32,8 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
       .joinProject(workspaceSlug, [project.id])
       .then(() => {
         setIsJoiningLoading(false);
+
+        router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
         handleClose();
       })
       .catch(() => {

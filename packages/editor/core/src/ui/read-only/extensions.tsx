@@ -8,10 +8,10 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { CustomTableCell } from "../extensions/table/table-cell";
-import { Table } from "../extensions/table";
-import { TableHeader } from "../extensions/table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
+import TableHeader from "../extensions/table/table-header/table-header";
+import Table from "../extensions/table/table";
+import TableCell from "../extensions/table/table-cell/table-cell";
+import TableRow from "../extensions/table/table-row/table-row";
 
 import ReadOnlyImageExtension from "../extensions/image/read-only-image";
 import { isValidHttpUrl } from "../../lib/utils";
@@ -91,7 +91,7 @@ export const CoreReadOnlyEditorExtensions = (
     }),
     Table,
     TableHeader,
-    CustomTableCell,
+    TableCell,
     TableRow,
     Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
   ];
