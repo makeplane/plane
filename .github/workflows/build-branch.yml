@@ -69,6 +69,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
+          target: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ env.gh_branch }}
           tags: ${{ env.img_tag }}
           # tags: ${{ steps.metaFrontend.outputs.tags }}
           push: true
