@@ -55,7 +55,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
 
   return (
-    <div className="relative w-full h-full flex">
+    <div className="relative w-full h-full flex gap-3">
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (

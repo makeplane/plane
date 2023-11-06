@@ -88,7 +88,8 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
-                    customClassName="p-3 min-h-[100px] shadow-sm"
+                    customClassName="p-2 h-full"
+                    editorContentCustomClassNames="min-h-[35px]"
                     debouncedUpdatesEnabled={false}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
@@ -98,15 +99,21 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     }
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}
+                    submitButton={
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="!px-2.5 !py-1.5 !text-xs"
+                        disabled={isSubmitting || disabled}
+                      >
+                        {isSubmitting ? "Adding..." : "Comment"}
+                      </Button>
+                    }
                   />
                 )}
               />
             )}
           />
-
-          <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
-            {isSubmitting ? "Adding..." : "Comment"}
-          </Button>
         </div>
       </form>
     </div>

@@ -250,7 +250,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 px-10 py-6">
+                      <div className="flex flex-col gap-3 py-6 px-8">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
