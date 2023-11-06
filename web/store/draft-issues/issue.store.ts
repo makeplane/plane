@@ -91,8 +91,6 @@ export class IssueDraftStore implements IIssueDraftStore {
   }
 
   get getIssueType() {
-    // TODO: fix this such that we only have the
-    // conditions for layouts that are actually allowed in draft issues
     const groupedLayouts = ["kanban", "list", "calendar"];
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
@@ -187,6 +185,7 @@ export class IssueDraftStore implements IIssueDraftStore {
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
     const projectId: string | null = issue?.project;
     const issueType = this.getIssueType;
+
     if (!projectId || !issueType) return null;
 
     let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
@@ -289,64 +288,23 @@ export class IssueDraftStore implements IIssueDraftStore {
     }
   };
 
-  convertDraftIssueToIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
-    // TODO: add removing item from draft issue list
+  convertDraftIssueToIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     await this.updateDraftIssue(workspaceSlug, projectId, { id: issueId, is_draft: false });
+    await this.fetchIssues(workspaceSlug, projectId);
+  };
 
   deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const originalIssues = { ...this.draftIssues };
-
-    const issueType = this.getIssueType;
 
     runInAction(() => {
       this.loader = true;
       this.error = null;
     });
 
-    // FIXME: use real group_id and sub_group_id from filters
-    const group_id = "1";
-    const sub_group_id = "1";
-
-    if (issueType) {
-      let issues = originalIssues?.[projectId]?.[issueType] || null;
-      if (!issues) return null;
-
-      if (issueType === "grouped") {
-        issues = issues as IIssueGroupedStructure;
-        issues = {
-          ...issues,
-          [group_id]: issues[group_id].filter((i) => i?.id !== issueId),
-        };
-      }
-
-      if (issueType === "groupWithSubGroups") {
-        issues = issues as IIssueGroupWithSubGroupsStructure;
-        issues = {
-          ...issues,
-          [sub_group_id]: {
-            ...issues[sub_group_id],
-            [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issueId),
-          },
-        };
-      }
-
-      if (issueType === "ungrouped") {
-        issues = issues as IIssueUnGroupedStructure;
-        issues = issues.filter((i) => i?.id !== issueId);
-      }
-
-      // optimistic removing draft issue
-      runInAction(() => {
-        this.draftIssues = {
-          ...this.draftIssues,
-          [projectId]: { ...this.draftIssues[projectId], [issueType]: issues },
-        };
-      });
-    }
-
     try {
       // deleting using api
       await this.draftIssueService.deleteDraftIssue(workspaceSlug, projectId, issueId);
+      await this.fetchIssues(workspaceSlug, projectId);
 
       runInAction(() => {
         this.loader = false;

@@ -13,6 +13,8 @@ import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { DraftIssueForm } from "components/issues";
+// constants
+import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS, getValueFromObject } from "constants/issue";
 // types
 import type { IIssue } from "types";
 // fetch-keys
@@ -59,6 +61,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const {
     project: projectStore,
     draftIssues: draftIssueStore,
+    draftIssueFilters: draftIssueFilterStore,
     issueDetail: issueDetailStore,
     issue: issueStore,
     user: userStore,
@@ -165,8 +168,21 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
       .then((response) => {
         if (!createMore) onClose();
 
-        // replace with actual group id and sub group id
-        draftIssueStore.updateIssueStructure(null, null, response);
+        const userDisplayFilters = draftIssueFilterStore?.userDisplayFilters;
+        const groupBy = userDisplayFilters?.group_by || null;
+
+        let groupById: null | string = null;
+
+        if (groupBy === "priority") {
+          groupById = getValueFromObject(ISSUE_PRIORITIES, "key") as string;
+        } else if (groupBy === "labels") {
+          groupById = getValueFromObject(projectStore?.projectLabels ?? [], "id") as string;
+        } else if (groupBy === "state_detail.group") {
+          groupById = getValueFromObject(ISSUE_STATE_GROUPS, "key") as string;
+        }
+
+        draftIssueStore.updateIssueStructure(groupById, null, response);
+        draftIssueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
         if (!payload.is_draft) {
           if (payload.cycle && payload.cycle !== "") addIssueToCycle(response.id, payload.cycle);
