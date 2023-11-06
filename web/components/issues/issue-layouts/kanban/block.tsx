@@ -61,7 +61,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
               )}
             </div>
             <div
-              className={`text-sm rounded p-2 px-3 shadow-custom-shadow-2xs space-y-[8px] border transition-all bg-custom-background-100 ${
+              className={`text-sm rounded py-2 px-3 shadow-custom-shadow-2xs space-y-2 border-[0.5px] border-custom-border-200 transition-all bg-custom-background-100 ${
                 isDragDisabled ? "" : "hover:cursor-grab"
               } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
             >

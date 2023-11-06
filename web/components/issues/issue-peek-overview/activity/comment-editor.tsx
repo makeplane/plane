@@ -90,6 +90,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"
+                    editorContentCustomClassNames="min-h-[35px]"
                     debouncedUpdatesEnabled={false}
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}
