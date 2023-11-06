@@ -1,6 +1,6 @@
 # Python improts
 import uuid
-
+import requests
 # Django imports
 from django.contrib.auth.hashers import make_password
 
@@ -25,7 +25,7 @@ from plane.utils.integrations.github import (
     delete_github_installation,
 )
 from plane.api.permissions import WorkSpaceAdminPermission
-
+from plane.utils.integrations.slack import slack_oauth
 
 class IntegrationViewSet(BaseViewSet):
     serializer_class = IntegrationSerializer
@@ -98,12 +98,19 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             config = {"installation_id": installation_id}
 
         if provider == "slack":
-            metadata = request.data.get("metadata", {})
+            code = request.data.get("code", False)
+
+            if not code:
+                return Response({"error": "Code is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            slack_response = slack_oauth(code=code)
+
+            metadata = slack_response
             access_token = metadata.get("access_token", False)
             team_id = metadata.get("team", {}).get("id", False)
             if not metadata or not access_token or not team_id:
                 return Response(
-                    {"error": "Access token and team id is required"},
+                    {"error": "Slack could not be installed. Please try again later"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             config = {"team_id": team_id, "access_token": access_token}
