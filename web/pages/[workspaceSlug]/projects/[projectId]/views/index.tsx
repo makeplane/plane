@@ -1,5 +1,4 @@
-import React from "react";
-import type { NextPage } from "next";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
@@ -9,25 +8,31 @@ import { ProjectViewsHeader } from "components/headers";
 import { ProjectViewsList } from "components/views";
 // layouts
 import { AppLayout } from "layouts/app-layout";
+// types
+import { NextPageWithLayout } from "types/app";
 
-const ProjectViews: NextPage = () => {
+const ProjectViewsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { projectViews: projectViewsStore } = useMobxStore();
+  // store
+  const {
+    projectViews: { fetchAllViews },
+  } = useMobxStore();
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_VIEWS_LIST_${workspaceSlug.toString()}_${projectId.toString()}` : null,
-    workspaceSlug && projectId
-      ? () => projectViewsStore.fetchAllViews(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchAllViews(workspaceSlug.toString(), projectId.toString()) : null
   );
 
+  return <ProjectViewsList />;
+};
+
+ProjectViewsPage.getLayout = function getLayout(page: ReactElement) {
   return (
     <AppLayout header={<ProjectViewsHeader />} withProjectWrapper>
-      <ProjectViewsList />
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectViews;
+export default ProjectViewsPage;

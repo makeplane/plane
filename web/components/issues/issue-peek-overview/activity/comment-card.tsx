@@ -49,7 +49,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, projectId)
+  const editorSuggestions = useEditorSuggestions(workspaceSlug, projectId);
 
   const {
     formState: { isSubmitting },
@@ -158,6 +158,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+              mentionHighlights={editorSuggestions.mentionHighlights}
             />
 
             <div className="mt-1">

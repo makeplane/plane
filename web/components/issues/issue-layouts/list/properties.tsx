@@ -18,10 +18,12 @@ export interface IKanBanProperties {
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue) => void;
   display_properties: any;
+  isReadonly?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties } = props;
+  const { columnId: group_id, issue, handleIssues, display_properties, isReadonly, showEmptyGroup } = props;
 
   const handleState = (state: IState) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
@@ -61,7 +63,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.state_detail || null}
           hideDropdownArrow
           onChange={handleState}
-          disabled={false}
+          disabled={isReadonly}
         />
       )}
 
@@ -70,50 +72,50 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
-          disabled={false}
+          disabled={isReadonly}
           hideDropdownArrow
         />
       )}
 
       {/* label */}
-      {display_properties && display_properties?.labels && (
+      {display_properties && display_properties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
           onChange={handleLabel}
-          disabled={false}
+          disabled={isReadonly}
           hideDropdownArrow
         />
       )}
 
       {/* assignee */}
-      {display_properties && display_properties?.assignee && (
+      {display_properties && display_properties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
           hideDropdownArrow
           onChange={handleAssignee}
-          disabled={false}
+          disabled={isReadonly}
           multiple
         />
       )}
 
       {/* start date */}
-      {display_properties && display_properties?.start_date && (
+      {display_properties && display_properties?.start_date && (showEmptyGroup || issue?.start_date) && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
-          disabled={false}
+          disabled={isReadonly}
           placeHolder="Start date"
         />
       )}
 
       {/* target/due date */}
-      {display_properties && display_properties?.due_date && (
+      {display_properties && display_properties?.due_date && (showEmptyGroup || issue?.target_date) && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
-          disabled={false}
+          disabled={isReadonly}
           placeHolder="Target date"
         />
       )}
@@ -125,7 +127,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
           value={issue?.estimate_point || null}
           hideDropdownArrow
           onChange={handleEstimate}
-          disabled={false}
+          disabled={isReadonly}
         />
       )}
 

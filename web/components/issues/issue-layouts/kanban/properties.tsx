@@ -18,10 +18,11 @@ export interface IKanBanProperties {
   issue: IIssue;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
   displayProperties: IIssueDisplayProperties;
+  showEmptyGroup: boolean;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties } = props;
+  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, showEmptyGroup } = props;
 
   const handleState = (state: IState) => {
     handleIssues(
@@ -104,7 +105,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       )}
 
       {/* label */}
-      {displayProperties && displayProperties?.labels && (
+      {displayProperties && displayProperties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
@@ -115,7 +116,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       )}
 
       {/* start date */}
-      {displayProperties && displayProperties?.start_date && (
+      {displayProperties && displayProperties?.start_date && (showEmptyGroup || issue?.start_date) && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
@@ -125,7 +126,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       )}
 
       {/* target/due date */}
-      {displayProperties && displayProperties?.due_date && (
+      {displayProperties && displayProperties?.due_date && (showEmptyGroup || issue?.target_date) && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
@@ -177,7 +178,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       )}
 
       {/* assignee */}
-      {displayProperties && displayProperties?.assignee && (
+      {displayProperties && displayProperties?.assignee && (showEmptyGroup || issue?.assignees.length > 0) && (
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}

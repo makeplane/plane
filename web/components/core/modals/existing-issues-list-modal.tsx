@@ -1,30 +1,16 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Rocket, Search, X } from "lucide-react";
 // services
 import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// icons
-import { Rocket, Search, X } from "lucide-react";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
-// fetch-keys
-import {
-  CYCLE_DETAILS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_DETAILS,
-  MODULE_ISSUES_WITH_PARAMS,
-} from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -53,11 +39,9 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const { params } = useIssuesView();
 
   const handleClose = () => {
     onClose();
@@ -80,16 +64,6 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     setIsSubmitting(true);
 
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
-
-    if (cycleId) {
-      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-      mutate(CYCLE_DETAILS(cycleId as string));
-    }
-
-    if (moduleId) {
-      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-      mutate(MODULE_DETAILS(moduleId as string));
-    }
 
     handleClose();
 

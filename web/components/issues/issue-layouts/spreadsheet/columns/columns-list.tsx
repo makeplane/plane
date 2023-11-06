@@ -142,6 +142,39 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
           property="updated_on"
         />
       )}
+      {displayProperties.link && (
+        <SpreadsheetColumn
+          displayFilters={displayFilters}
+          disableUserActions={disableUserActions}
+          expandedIssues={expandedIssues}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          handleUpdateIssue={handleUpdateIssue}
+          issues={issues}
+          property="link"
+        />
+      )}
+      {displayProperties.attachment_count && (
+        <SpreadsheetColumn
+          displayFilters={displayFilters}
+          disableUserActions={disableUserActions}
+          expandedIssues={expandedIssues}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          handleUpdateIssue={handleUpdateIssue}
+          issues={issues}
+          property="attachment_count"
+        />
+      )}
+      {displayProperties.sub_issue_count && (
+        <SpreadsheetColumn
+          displayFilters={displayFilters}
+          disableUserActions={disableUserActions}
+          expandedIssues={expandedIssues}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          handleUpdateIssue={handleUpdateIssue}
+          issues={issues}
+          property="sub_issue_count"
+        />
+      )}
     </>
   );
 });

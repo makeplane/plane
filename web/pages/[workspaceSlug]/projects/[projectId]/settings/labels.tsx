@@ -1,5 +1,4 @@
-import React from "react";
-
+import { ReactElement } from "react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -7,16 +6,20 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingsLabelList } from "components/labels";
 import { ProjectSettingHeader } from "components/headers";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const LabelsSettings: NextPage = () => (
-  <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Labels Settings" />}>
-    <ProjectSettingLayout>
-      <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
-        <ProjectSettingsLabelList />
-      </div>
-    </ProjectSettingLayout>
-  </AppLayout>
+const LabelsSettingsPage: NextPageWithLayout = () => (
+  <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
+    <ProjectSettingsLabelList />
+  </div>
 );
 
-export default LabelsSettings;
+LabelsSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="Labels Settings" />}>
+      <ProjectSettingLayout>{page}</ProjectSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default LabelsSettingsPage;

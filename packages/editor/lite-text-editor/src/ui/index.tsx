@@ -18,9 +18,9 @@ export type IMentionSuggestion = {
   title: string;
   subtitle: string;
   redirect_uri: string;
-}
+};
 
-export type IMentionHighlight = string
+export type IMentionHighlight = string;
 
 interface ILiteTextEditor {
   value: string;
@@ -32,7 +32,7 @@ interface ILiteTextEditor {
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved"
+    isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
@@ -50,6 +50,7 @@ interface ILiteTextEditor {
   onEnterKeyPress?: (e?: any) => void;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
+  submitButton?: React.ReactNode;
 }
 
 interface LiteTextEditorProps extends ILiteTextEditor {
@@ -61,24 +62,27 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const LiteTextEditor = ({
-  onChange,
-  debouncedUpdatesEnabled,
-  setIsSubmitting,
-  setShouldShowAlert,
-  editorContentCustomClassNames,
-  value,
-  uploadFile,
-  deleteFile,
-  noBorder,
-  borderOnFocus,
-  customClassName,
-  forwardedRef,
-  commentAccessSpecifier,
-  onEnterKeyPress,
-  mentionHighlights,
-  mentionSuggestions
-}: LiteTextEditorProps) => {
+const LiteTextEditor = (props: LiteTextEditorProps) => {
+  const {
+    onChange,
+    debouncedUpdatesEnabled,
+    setIsSubmitting,
+    setShouldShowAlert,
+    editorContentCustomClassNames,
+    value,
+    uploadFile,
+    deleteFile,
+    noBorder,
+    borderOnFocus,
+    customClassName,
+    forwardedRef,
+    commentAccessSpecifier,
+    onEnterKeyPress,
+    mentionHighlights,
+    mentionSuggestions,
+    submitButton,
+  } = props;
+
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
@@ -90,7 +94,7 @@ const LiteTextEditor = ({
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
     mentionHighlights,
-    mentionSuggestions
+    mentionSuggestions,
   });
 
   const editorClassNames = getEditorClassNames({
@@ -114,6 +118,7 @@ const LiteTextEditor = ({
             uploadFile={uploadFile}
             setIsSubmitting={setIsSubmitting}
             commentAccessSpecifier={commentAccessSpecifier}
+            submitButton={submitButton}
           />
         </div>
       </div>
@@ -122,7 +127,7 @@ const LiteTextEditor = ({
 };
 
 const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ILiteTextEditor>(
-  (props, ref) => <LiteTextEditor {...props} forwardedRef={ref} />
+  (props, ref) => <LiteTextEditor {...props} forwardedRef={ref} />,
 );
 
 LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";

@@ -6,7 +6,7 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { CustomMenu } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 // icons
 import { ChevronDown, Component, Pencil, Plus, Trash2, X } from "lucide-react";
 // types

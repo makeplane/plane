@@ -1,24 +1,22 @@
-import { useState, Fragment } from "react";
-
+import { useState, Fragment, ReactElement } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-
-// headless ui
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-// icons
-import { LayoutGrid, List } from "lucide-react";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
 import { PagesHeader } from "components/headers";
+// ui
+import { Tooltip } from "@plane/ui";
 // types
 import { TPageViewProps } from "types";
-import type { NextPage } from "next";
-// fetch-keys
+import { NextPageWithLayout } from "types/app";
+// constants
+import { PAGE_TABS_LIST, PAGE_VIEW_LAYOUTS } from "constants/page";
 
 const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -36,9 +34,7 @@ const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages")
   ssr: false,
 });
 
-const tabsList = ["Recent", "All", "Favorites", "Created by me", "Created by others"];
-
-const ProjectPages: NextPage = () => {
+const ProjectPagesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
@@ -68,7 +64,7 @@ const ProjectPages: NextPage = () => {
   };
 
   return (
-    <AppLayout header={<PagesHeader showButton />} withProjectWrapper>
+    <>
       {workspaceSlug && projectId && (
         <CreateUpdatePageModal
           isOpen={createUpdatePageModal}
@@ -81,25 +77,25 @@ const ProjectPages: NextPage = () => {
       <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
         <div className="flex gap-4 justify-between">
           <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
-          <div className="flex gap-x-1">
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                viewType === "list" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => setViewType("list")}
-            >
-              <List className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                viewType === "detailed" ? "bg-custom-background-80" : ""
-              }`}
-              onClick={() => setViewType("detailed")}
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
+          <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+            {PAGE_VIEW_LAYOUTS.map((layout) => (
+              <Tooltip key={layout.key} tooltipContent={layout.title}>
+                <button
+                  type="button"
+                  className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                    viewType == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                  }`}
+                  onClick={() => setViewType(layout.key as TPageViewProps)}
+                >
+                  <layout.icon
+                    strokeWidth={2}
+                    className={`h-3.5 w-3.5 ${
+                      viewType == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                    }`}
+                  />
+                </button>
+              </Tooltip>
+            ))}
           </div>
         </div>
         <Tab.Group
@@ -125,9 +121,9 @@ const ProjectPages: NextPage = () => {
         >
           <Tab.List as="div" className="mb-6 flex items-center justify-between">
             <div className="flex gap-4 items-center flex-wrap">
-              {tabsList.map((tab, index) => (
+              {PAGE_TABS_LIST.map((tab) => (
                 <Tab
-                  key={`${tab}-${index}`}
+                  key={tab.key}
                   className={({ selected }) =>
                     `rounded-full border px-5 py-1.5 text-sm outline-none ${
                       selected
@@ -136,7 +132,7 @@ const ProjectPages: NextPage = () => {
                     }`
                   }
                 >
-                  {tab}
+                  {tab.title}
                 </Tab>
               ))}
             </div>
@@ -160,8 +156,16 @@ const ProjectPages: NextPage = () => {
           </Tab.Panels>
         </Tab.Group>
       </div>
+    </>
+  );
+};
+
+ProjectPagesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<PagesHeader showButton />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectPages;
+export default ProjectPagesPage;

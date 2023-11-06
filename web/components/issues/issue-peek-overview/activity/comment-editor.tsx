@@ -1,18 +1,17 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
-
+import { Globe2, Lock } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
+// hooks
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
 import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
-import { Button, Tooltip } from "@plane/ui";
-import { Globe2, Lock } from "lucide-react";
-
+import { Button } from "@plane/ui";
 // types
 import type { IIssueComment } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -54,7 +53,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
 
   const {
     control,
@@ -75,36 +74,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   return (
     <form onSubmit={handleSubmit(handleAddComment)}>
       <div className="space-y-2">
-        <div className="relative">
-          {showAccessSpecifier && (
-            <div className="absolute bottom-2 left-3 z-[1]">
-              <Controller
-                control={control}
-                name="access"
-                render={({ field: { onChange, value } }) => (
-                  <div className="flex border border-custom-border-300 divide-x divide-custom-border-300 rounded overflow-hidden">
-                    {commentAccess.map((access) => (
-                      <Tooltip key={access.key} tooltipContent={access.label}>
-                        <button
-                          type="button"
-                          onClick={() => onChange(access.key)}
-                          className={`grid place-items-center p-1 hover:bg-custom-background-80 ${
-                            value === access.key ? "bg-custom-background-80" : ""
-                          }`}
-                        >
-                          <access.icon
-                            className={`w-4 h-4 -mt-1 ${
-                              value === access.key ? "!text-custom-text-100" : "!text-custom-text-400"
-                            }`}
-                          />
-                        </button>
-                      </Tooltip>
-                    ))}
-                  </div>
-                )}
-              />
-            </div>
-          )}
+        <div className="h-full">
           <Controller
             name="access"
             control={control}
@@ -119,22 +89,32 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
-                    customClassName="p-3 min-h-[100px] shadow-sm"
+                    customClassName="p-2 h-full"
                     debouncedUpdatesEnabled={false}
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
-                    commentAccessSpecifier={{ accessValue, onAccessChange, showAccessSpecifier, commentAccess }}
+                    commentAccessSpecifier={
+                      showAccessSpecifier
+                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        : undefined
+                    }
+                    submitButton={
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="!px-2.5 !py-1.5 !text-xs"
+                        disabled={isSubmitting || disabled}
+                      >
+                        {isSubmitting ? "Adding..." : "Comment"}
+                      </Button>
+                    }
                   />
                 )}
               />
             )}
           />
         </div>
-
-        <Button variant="neutral-primary" type="submit" disabled={isSubmitting || disabled}>
-          {isSubmitting ? "Adding..." : "Comment"}
-        </Button>
       </div>
     </form>
   );

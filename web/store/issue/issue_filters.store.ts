@@ -149,7 +149,14 @@ export class IssueFilterStore implements IIssueFilterStore {
 
       runInAction(() => {
         this.userFilters = memberResponse?.view_props?.filters;
-        this.userDisplayFilters = memberResponse?.view_props?.display_filters ?? {};
+        this.userDisplayFilters = {
+          ...memberResponse?.view_props?.display_filters,
+          // add calendar display filters if not already present
+          calendar: {
+            show_weekends: memberResponse?.view_props?.display_filters?.calendar?.show_weekends || true,
+            layout: memberResponse?.view_props?.display_filters?.calendar?.layout || "month",
+          },
+        };
         this.userDisplayProperties = issueProperties?.properties || this.defaultDisplayProperties;
         // default props from api
         this.defaultFilters = memberResponse.default_props.filters;
@@ -178,6 +185,13 @@ export class IssueFilterStore implements IIssueFilterStore {
 
     // set sub_group_by to null if group_by is set to null
     if (newViewProps.display_filters.group_by === null) newViewProps.display_filters.sub_group_by = null;
+
+    // set sub_group_by to null if layout is switched to kanban group_by and sub_group_by are same
+    if (
+      newViewProps.display_filters.layout === "kanban" &&
+      newViewProps.display_filters.group_by === newViewProps.display_filters.sub_group_by
+    )
+      newViewProps.display_filters.sub_group_by = null;
 
     // set group_by to state if layout is switched to kanban and group_by is null
     if (newViewProps.display_filters.layout === "kanban" && newViewProps.display_filters.group_by === null)

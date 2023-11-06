@@ -131,7 +131,7 @@ def track_parent(
                 else "",
                 field="parent",
                 project_id=project_id,
-                workspace=workspace_id,
+                workspace_id=workspace_id,
                 comment=f"updated the parent issue to",
                 old_identifier=old_parent.id if old_parent is not None else None,
                 new_identifier=new_parent.id if new_parent is not None else None,
@@ -334,9 +334,7 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignees", [])]
-    )
+    requested_assignees = set([str(asg) for asg in requested_data.get("assignees", [])])
     current_assignees = set([str(asg) for asg in current_instance.get("assignees", [])])
 
     added_assignees = requested_assignees - current_assignees
@@ -363,17 +361,19 @@ def track_assignees(
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
         issue_activities.append(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="updated",
-            old_value=assignee.display_name,
-            new_value="",
-            field="assignees",
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"removed assignee ",
-            old_identifier=assignee.id,
-            epoch=epoch,
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=assignee.display_name,
+                new_value="",
+                field="assignees",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"removed assignee ",
+                old_identifier=assignee.id,
+                epoch=epoch,
+            )
         )
 
 
@@ -1536,7 +1536,7 @@ def issue_activity(
                 cls=DjangoJSONEncoder,
             ),
             requested_data=requested_data,
-            current_instance=current_instance
+            current_instance=current_instance,
         )
 
         return

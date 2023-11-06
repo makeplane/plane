@@ -8,6 +8,7 @@ interface ICoreReadOnlyEditor {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
+  mentionHighlights: string[]
 }
 
 interface EditorCoreProps extends ICoreReadOnlyEditor {
@@ -26,10 +27,12 @@ const LiteReadOnlyEditor = ({
   customClassName,
   value,
   forwardedRef,
+  mentionHighlights
 }: EditorCoreProps) => {
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
+    mentionHighlights
   });
 
   const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });

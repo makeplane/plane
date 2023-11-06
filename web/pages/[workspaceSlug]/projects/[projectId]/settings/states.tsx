@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactElement } from "react";
 // layout
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -6,20 +6,23 @@ import { ProjectSettingLayout } from "layouts/settings-layout";
 import { ProjectSettingStateList } from "components/states";
 import { ProjectSettingHeader } from "components/headers";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const StatesSettings: NextPage = () => (
-  <AppLayout withProjectWrapper header={<ProjectSettingHeader title="States Settings" />}>
-    <ProjectSettingLayout>
-      <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
-        <div className="flex items-center py-3.5 border-b border-custom-border-200">
-          <h3 className="text-xl font-medium">States</h3>
-        </div>
-
-        <ProjectSettingStateList />
-      </div>
-    </ProjectSettingLayout>
-  </AppLayout>
+const StatesSettingsPage: NextPageWithLayout = () => (
+  <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
+    <div className="flex items-center py-3.5 border-b border-custom-border-200">
+      <h3 className="text-xl font-medium">States</h3>
+    </div>
+    <ProjectSettingStateList />
+  </div>
 );
 
-export default StatesSettings;
+StatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout withProjectWrapper header={<ProjectSettingHeader title="States Settings" />}>
+      <ProjectSettingLayout>{page}</ProjectSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default StatesSettingsPage;

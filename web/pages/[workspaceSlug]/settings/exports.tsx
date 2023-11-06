@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 // layout
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -5,10 +6,9 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { WorkspaceSettingHeader } from "components/headers";
 import ExportGuide from "components/exporter/guide";
 // types
-import type { NextPage } from "next";
-// helper
+import { NextPageWithLayout } from "types/app";
 
-const ImportExport: NextPage = () => (
+const ExportsPage: NextPageWithLayout = () => (
   <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
     <WorkspaceSettingLayout>
       <div className="pr-9 py-8 w-full overflow-y-auto">
@@ -21,4 +21,12 @@ const ImportExport: NextPage = () => (
   </AppLayout>
 );
 
-export default ImportExport;
+ExportsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default ExportsPage;

@@ -5,7 +5,16 @@ import json
 from django.utils import timezone
 
 # Module imports
-from plane.db.models import IssueMention, IssueSubscriber, Project, User, IssueAssignee, Issue, Notification
+from plane.db.models import (
+    IssueMention,
+    IssueSubscriber,
+    Project,
+    User,
+    IssueAssignee,
+    Issue,
+    Notification,
+    IssueComment,
+)
 
 # Third Party imports
 from celery import shared_task
@@ -165,6 +174,9 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
 
         for subscriber in list(set(issue_subscribers)):
             for issue_activity in issue_activities_created:
+                issue_comment = issue_activity.get("issue_comment")
+                if issue_comment is not None:
+                    issue_comment = IssueComment.objects.get(id=issue_comment, issue_id=issue_id, project_id=project_id, workspace_id=project.workspace_id)
                 bulk_notifications.append(
                     Notification(
                         workspace=project.workspace,
@@ -192,8 +204,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                                 "new_value": str(issue_activity.get("new_value")),
                                 "old_value": str(issue_activity.get("old_value")),
                                 "issue_comment": str(
-                                    issue_activity.get(
-                                        "issue_comment").comment_stripped
+                                    issue_comment.comment_stripped
                                     if issue_activity.get("issue_comment") is not None
                                     else ""
                                 ),
@@ -257,7 +268,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
         IssueMention.objects.bulk_create(
             aggregated_issue_mentions, batch_size=100)
         IssueMention.objects.filter(
-            issue=issue.id, mention__in=removed_mention).delete()
+            issue=issue, mention__in=removed_mention).delete()
 
         # Bulk create notifications
         Notification.objects.bulk_create(bulk_notifications, batch_size=100)

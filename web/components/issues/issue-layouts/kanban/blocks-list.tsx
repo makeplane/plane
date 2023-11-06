@@ -7,6 +7,7 @@ interface IssueBlocksListProps {
   columnId: string;
   issues: IIssue[];
   isDragDisabled: boolean;
+  showEmptyGroup: boolean;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -18,7 +19,16 @@ interface IssueBlocksListProps {
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
-  const { sub_group_id, columnId, issues, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
+  const {
+    sub_group_id,
+    columnId,
+    issues,
+    showEmptyGroup,
+    isDragDisabled,
+    handleIssues,
+    quickActions,
+    displayProperties,
+  } = props;
 
   return (
     <>
@@ -29,6 +39,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
               key={`kanban-issue-block-${issue.id}`}
               index={index}
               issue={issue}
+              showEmptyGroup={showEmptyGroup}
               handleIssues={handleIssues}
               quickActions={quickActions}
               displayProperties={displayProperties}

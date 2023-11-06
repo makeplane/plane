@@ -24,6 +24,8 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = ({ issue, onChange, exp
       <ViewDueDateSelect
         issue={issue}
         onChange={(val) => onChange({ target_date: val })}
+        className="!h-full !w-full max-w-full px-2.5 py-1 flex items-center"
+        buttonClassName="!h-full !w-full !shadow-none px-2.5"
         noBorder
         disabled={disabled}
       />
