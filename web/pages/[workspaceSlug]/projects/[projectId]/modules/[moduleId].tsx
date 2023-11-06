@@ -3,12 +3,9 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { ModuleService } from "services/module.service";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -24,8 +21,6 @@ import emptyModule from "public/empty-state/module.svg";
 import { NextPageWithLayout } from "types/app";
 import { ISearchIssueResponse } from "types";
 
-const moduleService = new ModuleService();
-
 const ModuleIssuesPage: NextPageWithLayout = () => {
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
@@ -33,9 +28,8 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
   // store
-  const { module: moduleStore } = useMobxStore();
-  // hooks
-  const { user } = useUser();
+  const { module: moduleStore, moduleIssue: moduleIssueStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
@@ -48,16 +42,13 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
       : null
   );
 
-  // TODO: add this function to bulk add issues to cycle
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !moduleId) return;
 
-    const payload = {
-      issues: data.map((i) => i.id),
-    };
+    const issueIds = data.map((i) => i.id);
 
-    await moduleService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
+    await moduleIssueStore
+      .addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -68,6 +59,7 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
   };
 
   const openIssuesListModal = () => {
+    console.log("Opening...");
     setModuleIssuesListModal(true);
   };
 
@@ -77,7 +69,6 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
 
   return (
     <>
-      {/* TODO: Update logic to bulk add issues to a cycle */}
       <ExistingIssuesListModal
         isOpen={moduleIssuesListModal}
         handleClose={() => setModuleIssuesListModal(false)}

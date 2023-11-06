@@ -3,11 +3,8 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { IssueService } from "services/issue";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -24,17 +21,13 @@ import emptyCycle from "public/empty-state/cycle.svg";
 import { ISearchIssueResponse } from "types";
 import { NextPageWithLayout } from "types/app";
 
-const issueService = new IssueService();
-
 const CycleDetailPage: NextPageWithLayout = () => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { cycle: cycleStore } = useMobxStore();
-
-  const { user } = useUser();
+  const { cycle: cycleStore, cycleIssue: cycleIssueStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -52,16 +45,13 @@ const CycleDetailPage: NextPageWithLayout = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
 
-  // TODO: add this function to bulk add issues to cycle
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !cycleId) return;
 
-    const payload = {
-      issues: data.map((i) => i.id),
-    };
+    const issueIds = data.map((i) => i.id);
 
-    await issueService
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
+    await cycleIssueStore
+      .addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds)
       .catch(() => {
         setToastAlert({
           type: "error",

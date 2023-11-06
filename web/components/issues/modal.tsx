@@ -171,13 +171,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), activeProject, cycleId, issueId);
+    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), activeProject, cycleId, [issueId]);
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), activeProject, moduleId, issueId);
+    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), activeProject, moduleId, [issueId]);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {

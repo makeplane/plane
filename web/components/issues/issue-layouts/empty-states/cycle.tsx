@@ -28,7 +28,8 @@ export const CycleEmptyState: React.FC<Props> = ({ openIssuesListModal }) => (
       secondaryButton={
         <Button
           variant="neutral-primary"
-          prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} onClick={openIssuesListModal} />}
+          prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
+          onClick={openIssuesListModal}
         >
           Add an existing issue
         </Button>
