@@ -14,6 +14,7 @@ from plane.db.models import (
     Issue,
     Notification,
     IssueComment,
+    IssueActivity
 )
 
 # Third Party imports
@@ -218,8 +219,17 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             mention_subscribers, batch_size=100)
 
         for mention_id in new_mentions:
+            last_activity = (
+                    IssueActivity.objects.filter(issue_id=issue_id)
+                    .order_by("-created_at")
+                    .first()
+            )
             if (mention_id != actor_id):
-                for issue_activity in issue_activities_created:
+                if (
+                    last_activity is not None
+                    and last_activity.field == "description"
+                    and actor_id == str(last_activity.actor_id)
+                ):
                     bulk_notifications.append(
                         Notification(
                             workspace=project.workspace,
@@ -240,15 +250,47 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                                     "state_group": issue.state.group,
                                 },
                                 "issue_activity": {
-                                    "id": str(issue_activity.get("id")),
-                                    "verb": str(issue_activity.get("verb")),
-                                    "field": str(issue_activity.get("field")),
-                                    "actor": str(issue_activity.get("actor_id")),
-                                    "new_value": str(issue_activity.get("new_value")),
-                                    "old_value": str(issue_activity.get("old_value")),
+                                    "id": str(last_activity.id),
+                                    "verb": str(last_activity.verb),
+                                    "field": str(last_activity.field),
+                                    "actor": str(last_activity.actor_id),
+                                    "new_value": str(last_activity.new_value),
+                                    "old_value": str(last_activity.old_value),
                                 },
                             },
                         )
+                    )
+                else:
+                    for issue_activity in issue_activities_created:
+                        bulk_notifications.append(
+                            Notification(
+                                workspace=project.workspace,
+                                sender="in_app:issue_activities:mention",
+                                triggered_by_id=actor_id,
+                                receiver_id=mention_id,
+                                entity_identifier=issue_id,
+                                entity_name="issue",
+                                project=project,
+                                message=f"You have been mentioned in the issue {issue.name}",
+                                data={
+                                    "issue": {
+                                        "id": str(issue_id),
+                                        "name": str(issue.name),
+                                        "identifier": str(issue.project.identifier),
+                                        "sequence_id": issue.sequence_id,
+                                        "state_name": issue.state.name,
+                                        "state_group": issue.state.group,
+                                    },
+                                    "issue_activity": {
+                                        "id": str(issue_activity.get("id")),
+                                        "verb": str(issue_activity.get("verb")),
+                                        "field": str(issue_activity.get("field")),
+                                        "actor": str(issue_activity.get("actor_id")),
+                                        "new_value": str(issue_activity.get("new_value")),
+                                        "old_value": str(issue_activity.get("old_value")),
+                                    },
+                                },
+                            )
                     )
 
         # Create New Mentions Here
