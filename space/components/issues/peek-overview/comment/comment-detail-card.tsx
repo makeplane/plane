@@ -15,6 +15,7 @@ import { timeAgo } from "helpers/date-time.helper";
 import { Comment } from "types/issue";
 // services
 import fileService from "services/file.service";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   workspaceSlug: string;
@@ -27,6 +28,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
+
+  const mentionsConfig = useEditorSuggestions();
 
   const editorRef = React.useRef<any>(null);
 
@@ -135,7 +138,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
-              mentionHighlights={userStore.currentUser?.id ? [userStore.currentUser?.id] : []}
+              mentionHighlights={mentionsConfig.mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
