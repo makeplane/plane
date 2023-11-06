@@ -91,12 +91,12 @@ export const HeaderGroupByCard = observer(({ icon, title, count, issuePayload }:
         />
       )}
       <div
-        className={`flex-shrink-0 relative flex gap-2 p-1.5 ${
-          verticalAlignPosition ? `flex-col items-center w-[44px]` : `flex-row items-center w-full`
+        className={`flex-shrink-0 relative flex gap-2 py-1.5 ${
+          verticalAlignPosition ? `flex-col items-center w-11` : `flex-row items-center w-full`
         }`}
       >
-        <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center">
-          {icon ? icon : <CircleDashed width={14} strokeWidth={2} />}
+        <div className="flex-shrink-0 w-5 h-5 rounded-sm overflow-hidden flex justify-center items-center">
+          {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
         </div>
 
         <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `flex-row w-full`}`}>
@@ -114,8 +114,8 @@ export const HeaderGroupByCard = observer(({ icon, title, count, issuePayload }:
           <CustomMenu
             width="auto"
             customButton={
-              <span className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
-                <Plus width={14} strokeWidth={2} />
+              <span className="flex-shrink-0 w-5 h-5 rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+                <Plus className="h-3.5 w-3.5" strokeWidth={2} />
               </span>
             }
           >
@@ -128,7 +128,7 @@ export const HeaderGroupByCard = observer(({ icon, title, count, issuePayload }:
           </CustomMenu>
         ) : (
           <div
-            className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+            className="flex-shrink-0 w-5 h-5 rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
             onClick={() => setIsOpen(true)}
           >
             <Plus width={14} strokeWidth={2} />

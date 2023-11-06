@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, Fragment, ReactNode } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -112,6 +112,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     else await issueStore.deleteIssue(workspaceSlug, projectId, issue!);
     const { query } = router;
     if (query.peekIssueId) {
+      issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
       router.push({
         pathname: router.pathname,
@@ -123,30 +124,32 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const userRole = userStore.currentProjectRole ?? 5;
 
   return (
-    <IssueView
-      workspaceSlug={workspaceSlug}
-      projectId={projectId}
-      issueId={issueId}
-      issue={issue}
-      isLoading={isLoading}
-      isArchived={isArchived}
-      handleCopyText={handleCopyText}
-      redirectToIssueDetail={redirectToIssueDetail}
-      issueUpdate={issueUpdate}
-      issueReactionCreate={issueReactionCreate}
-      issueReactionRemove={issueReactionRemove}
-      issueCommentCreate={issueCommentCreate}
-      issueCommentUpdate={issueCommentUpdate}
-      issueCommentRemove={issueCommentRemove}
-      issueCommentReactionCreate={issueCommentReactionCreate}
-      issueCommentReactionRemove={issueCommentReactionRemove}
-      issueSubscriptionCreate={issueSubscriptionCreate}
-      issueSubscriptionRemove={issueSubscriptionRemove}
-      handleDeleteIssue={handleDeleteIssue}
-      disableUserActions={[5, 10].includes(userRole)}
-      showCommentAccessSpecifier={projectStore.currentProjectDetails?.is_deployed}
-    >
-      {children}
-    </IssueView>
+    <Fragment>
+      <IssueView
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        issueId={issueId}
+        issue={issue}
+        isLoading={isLoading}
+        isArchived={isArchived}
+        handleCopyText={handleCopyText}
+        redirectToIssueDetail={redirectToIssueDetail}
+        issueUpdate={issueUpdate}
+        issueReactionCreate={issueReactionCreate}
+        issueReactionRemove={issueReactionRemove}
+        issueCommentCreate={issueCommentCreate}
+        issueCommentUpdate={issueCommentUpdate}
+        issueCommentRemove={issueCommentRemove}
+        issueCommentReactionCreate={issueCommentReactionCreate}
+        issueCommentReactionRemove={issueCommentReactionRemove}
+        issueSubscriptionCreate={issueSubscriptionCreate}
+        issueSubscriptionRemove={issueSubscriptionRemove}
+        handleDeleteIssue={handleDeleteIssue}
+        disableUserActions={[5, 10].includes(userRole)}
+        showCommentAccessSpecifier={projectStore.currentProjectDetails?.is_deployed}
+      >
+        {children}
+      </IssueView>
+    </Fragment>
   );
 });
