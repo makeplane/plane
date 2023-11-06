@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { DragDropContext } from "@hello-pangea/dnd";
@@ -8,6 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
+import { Spinner } from "@plane/ui";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 // types
@@ -34,6 +35,8 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
 
   const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
+  const order_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.order_by || null;
+
   const userDisplayFilters = profileIssueFiltersStore?.userDisplayFilters || null;
 
   const displayProperties = profileIssueFiltersStore?.userDisplayProperties || null;
@@ -42,7 +45,14 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
     ? "swimlanes"
     : "default";
 
+  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
+
+  const onDragStart = () => {
+    setIsDragStarted(true);
+  };
+
   const onDragEnd = (result: any) => {
+    setIsDragStarted(false);
     if (!result) return;
 
     if (
@@ -83,58 +93,70 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
   const projects = projectStore?.workspaceProjects || null;
 
   return (
-    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {currentKanBanView === "default" ? (
-          <KanBan
-            issues={issues}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={(sub_group_by, group_by, issue) => (
-              <ProjectIssueQuickActions
-                issue={issue}
-                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
-                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+    <>
+      {profileIssuesStore.loader ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner />
+        </div>
+      ) : (
+        <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            {currentKanBanView === "default" ? (
+              <KanBan
+                issues={issues}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                order_by={order_by}
+                handleIssues={handleIssues}
+                quickActions={(sub_group_by, group_by, issue) => (
+                  <ProjectIssueQuickActions
+                    issue={issue}
+                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+                  />
+                )}
+                displayProperties={displayProperties}
+                kanBanToggle={issueKanBanViewStore?.kanBanToggle}
+                handleKanBanToggle={handleKanBanToggle}
+                states={states}
+                stateGroups={stateGroups}
+                priorities={priorities}
+                labels={labels}
+                members={members?.map((m) => m.member) ?? null}
+                projects={projects}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+                isDragStarted={isDragStarted}
+              />
+            ) : (
+              <KanBanSwimLanes
+                issues={issues}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                order_by={order_by}
+                handleIssues={handleIssues}
+                quickActions={(sub_group_by, group_by, issue) => (
+                  <ProjectIssueQuickActions
+                    issue={issue}
+                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+                  />
+                )}
+                displayProperties={displayProperties}
+                kanBanToggle={issueKanBanViewStore?.kanBanToggle}
+                handleKanBanToggle={handleKanBanToggle}
+                states={states}
+                stateGroups={stateGroups}
+                priorities={priorities}
+                labels={labels}
+                members={members?.map((m) => m.member) ?? null}
+                projects={projects}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+                isDragStarted={isDragStarted}
               />
             )}
-            displayProperties={displayProperties}
-            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-          />
-        ) : (
-          <KanBanSwimLanes
-            issues={issues}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={(sub_group_by, group_by, issue) => (
-              <ProjectIssueQuickActions
-                issue={issue}
-                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
-                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-              />
-            )}
-            displayProperties={displayProperties}
-            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-          />
-        )}
-      </DragDropContext>
-    </div>
+          </DragDropContext>
+        </div>
+      )}
+    </>
   );
 });
