@@ -2252,219 +2252,208 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug, project_id):
-        try:
-            issue_ids = request.data.get("issue_ids", [])
-            # Get all the issues
-            issues = (
-                Issue.objects.filter(
-                    workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+        issue_ids = request.data.get("issue_ids", [])
+        # Get all the issues
+        issues = (
+            Issue.objects.filter(
+                workspace__slug=slug, project_id=project_id, pk__in=issue_ids
+            )
+            .select_related("state")
+            .prefetch_related("labels", "assignees")
+        )
+        # Current epoch
+        epoch = int(timezone.now().timestamp())
+
+        # Project details
+        project = Project.objects.get(workspace__slug=slug, pk=project_id)
+        workspace_id = project.workspace_id
+
+        # Initialize arrays
+        bulk_update_issues = []
+        bulk_issue_activities = []
+        bulk_update_issue_labels = []
+        bulk_update_issue_assignees = []
+
+        properties = request.data.get("properties", {})
+
+        for issue in issues:
+            # Priority
+            if properties.get("priority", False):
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"priority": properties.get("priority")}
+                        ),
+                        "current_instance": json.dumps(
+                            {"priority": (issue.priority)}
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
                 )
-                .select_related("state")
-                .prefetch_related("labels", "assignees")
-            )
-            # Current epoch
-            epoch = int(timezone.now().timestamp())
+                issue.priority = properties.get("priority")
+            # State
+            if properties.get("state", False):
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"state": properties.get("state")}
+                        ),
+                        "current_instance": json.dumps({"state": str(issue.state_id)}),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.state_id = properties.get("state")
+            # Start date
+            if properties.get("start_date", False):
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"start_date": properties.get("start_date")}
+                        ),
+                        "current_instance": json.dumps(
+                            {"start_date": str(issue.start_date)}
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.start_date = properties.get("start_date")
+            # Target date
+            if properties.get("target_date", False):
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"target_date": properties.get("target_date")}
+                        ),
+                        "current_instance": json.dumps(
+                            {"target_date": str(issue.target_date)}
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.target_date = properties.get("target_date")
+            # Estimate point
+            if properties.get("estimate_point", False):
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"estimate_point": properties.get("estimate_point")}
+                        ),
+                        "current_instance": json.dumps(
+                            {"estimate_point": (issue.estimate_point)}
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
+                issue.estimate_point = properties.get("estimate_point")
 
-            # Project details
-            project = Project.objects.get(workspace__slug=slug, pk=project_id)
-            workspace_id = project.workspace_id
+            bulk_update_issues.append(issue)
 
-            # Initialize arrays
-            bulk_update_issues = []
-            bulk_issue_activities = []
-            bulk_update_issue_labels = []
-            bulk_update_issue_assignees = []
-
-            properties = request.data.get("properties", {})
-
-            for issue in issues:
-                # Priority
-                if properties.get("priority", False):
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"priority": properties.get("priority")}
-                            ),
-                            "current_instance": json.dumps(
-                                {"priority": (issue.priority)}
-                            ),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
-                    )
-                    issue.priority = properties.get("priority")
-                # State
-                if properties.get("state", False):
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"state": properties.get("state_id")}
-                            ),
-                            "current_instance": json.dumps({"state": (issue.state_id)}),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
-                    )
-                    issue.state_id = properties.get("state")
-                # Start date
-                if properties.get("start_date", False):
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"start_date": properties.get("start_date")}
-                            ),
-                            "current_instance": json.dumps(
-                                {"start_date": (issue.start_date)}
-                            ),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
-                    )
-                    issue.start_date = properties.get("start_date")
-                # Target date
-                if properties.get("target_date", False):
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"target_date": properties.get("requested_data")}
-                            ),
-                            "current_instance": json.dumps(
-                                {"target_date": (issue.target_date)}
-                            ),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
-                    )
-                    issue.target_date = properties.get("target_date")
-                # Estimate point
-                if properties.get("estimate_point", False):
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"estimate_point": properties.get("estimate_point")}
-                            ),
-                            "current_instance": json.dumps(
-                                {"estimate_point": (issue.estimate_point)}
-                            ),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
-                    )
-                    issue.estimate_point = properties.get("estimate_point")
-
-                bulk_update_issues.append(issue)
-
-                # Labels
-                if properties.get("labels_list", []):
-                    for label_id in properties.get("labels_list", []):
-                        bulk_update_issue_labels.append(
-                            IssueLabel(
-                                issue=issue,
-                                label_id=label_id,
-                                created_by=request.user,
-                                project_id=project_id,
-                                workspace_id=workspace_id,
-                            )
+            # Labels
+            if properties.get("labels", []):
+                for label_id in properties.get("labels", []):
+                    bulk_update_issue_labels.append(
+                        IssueLabel(
+                            issue=issue,
+                            label_id=label_id,
+                            created_by=request.user,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
                         )
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"labels_list": properties.get("labels_list", [])}
-                            ),
-                            "current_instance": json.dumps(
-                                {"labels": [str(label.id) for label in issue.labels.all()]}
-                            ),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
                     )
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"labels": properties.get("labels", [])}
+                        ),
+                        "current_instance": json.dumps(
+                            {"labels": [str(label.id) for label in issue.labels.all()]}
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
 
-                # Assignees
-                if properties.get("assignees_list", []):
-                    for assignee_id in properties.get(
-                        "assignees_list", issue.assignees
-                    ):
-                        bulk_update_issue_assignees.append(
-                            IssueAssignee(
-                                issue=issue,
-                                assignee_id=assignee_id,
-                                created_by=request.user,
-                                project_id=project_id,
-                                workspace_id=workspace_id,
-                            )
+            # Assignees
+            if properties.get("assignees", []):
+                for assignee_id in properties.get(
+                    "assignees", issue.assignees
+                ):
+                    bulk_update_issue_assignees.append(
+                        IssueAssignee(
+                            issue=issue,
+                            assignee_id=assignee_id,
+                            created_by=request.user,
+                            project_id=project_id,
+                            workspace_id=workspace_id,
                         )
-                    bulk_issue_activities.append(
-                        {
-                            "type": "issue.activity.updated",
-                            "requested_data": json.dumps(
-                                {"assignees_list": properties.get("assignees_list", [])}
-                            ),
-                            "current_instance": json.dumps(
-                                {
-                                    "assignees": [
-                                        str(assignee.id)
-                                        for assignee in issue.assignees.all()
-                                    ]
-                                }
-                            ),
-                            "issue_id": str(issue.id),
-                            "actor_id": str(request.user.id),
-                            "project_id": str(project_id),
-                            "epoch": epoch,
-                        }
                     )
+                bulk_issue_activities.append(
+                    {
+                        "type": "issue.activity.updated",
+                        "requested_data": json.dumps(
+                            {"assignees": properties.get("assignees", [])}
+                        ),
+                        "current_instance": json.dumps(
+                            {
+                                "assignees": [
+                                    str(assignee.id)
+                                    for assignee in issue.assignees.all()
+                                ]
+                            }
+                        ),
+                        "issue_id": str(issue.id),
+                        "actor_id": str(request.user.id),
+                        "project_id": str(project_id),
+                        "epoch": epoch,
+                    }
+                )
 
-            # Bulk update all the objects
-            Issue.objects.bulk_update(
-                bulk_update_issues,
-                ["priority", "estimate_point", "start_date", "target_date", "state"],
-                batch_size=100,
-            )
+        # Bulk update all the objects
+        Issue.objects.bulk_update(
+            bulk_update_issues,
+            ["priority", "estimate_point", "start_date", "target_date", "state"],
+            batch_size=100,
+        )
 
-            # Create new labels
-            IssueLabel.objects.bulk_create(
-                bulk_update_issue_labels,
-                ignore_conflicts=True,
-                batch_size=100,
-            )
+        # Create new labels
+        IssueLabel.objects.bulk_create(
+            bulk_update_issue_labels,
+            ignore_conflicts=True,
+            batch_size=100,
+        )
 
-            # Create new assignees
-            IssueAssignee.objects.bulk_create(
-                bulk_update_issue_assignees,
-                ignore_conflicts=True,
-                batch_size=100,
-            )
+        # Create new assignees
+        IssueAssignee.objects.bulk_create(
+            bulk_update_issue_assignees,
+            ignore_conflicts=True,
+            batch_size=100,
+        )
+        # update the issue activity
+        [issue_activity.delay(**activity) for activity in bulk_issue_activities]
 
-            [issue_activity.delay(**activity) for activity in bulk_issue_activities]
-
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except Project.DoesNotExist:
-            return Response(
-                {"error": "Project does not exists"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 

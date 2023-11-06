@@ -21,6 +21,7 @@ from plane.api.views import (
     IssueArchiveViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    BulkIssueOperationsEndpoint,
 )
 
 
@@ -73,6 +74,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-create-labels/",
         BulkCreateIssueLabelsEndpoint.as_view(),
         name="project-bulk-labels",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-operation-issues/",
+        BulkIssueOperationsEndpoint.as_view(),
+        name="bulk-issue-operation",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-delete-issues/",
@@ -312,4 +318,5 @@ urlpatterns = [
         ),
         name="project-issue-draft",
     ),
+    ## End Issue Drafts
 ]
