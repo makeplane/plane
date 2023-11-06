@@ -38,7 +38,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks
   const { setShowAlert } = useReloadConfirmations();
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, issue.project_detail.id);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     handleSubmit,
