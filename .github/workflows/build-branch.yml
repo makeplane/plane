@@ -2,7 +2,11 @@
 name: Docker Branch Build
 
 on:
-  workflow_dispatch
+  push:
+    branches-ignore:
+      - master
+# on:
+#   workflow_dispatch
 
 env:
   gh_branch: develop
