@@ -49,16 +49,21 @@ jobs:
           source: ${{ steps.gh_branch_replace_dot.outputs.value }}
           find: '_'
           replace: ''
-      - name: upload-proxy
+      - name: Uploading Proxy Source
         uses: actions/upload-artifact@v3
         with:
-          name: src
+          name: proxy-src-code
           path: ./nginx
-      - name: upload-backend
+      - name: Uploading Backend Source
         uses: actions/upload-artifact@v3
         with:
-          name: src
+          name: backend-src-code
           path: ./apiserver
+      - name: Uploading Web Source
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-src-code
+          path: ./
     outputs:
         gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
 
@@ -122,35 +127,35 @@ jobs:
   #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   #         DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  # branch_build_push_backend:
-  #   runs-on: ubuntu-20.04
-  #   needs: [ branch_build_and_push ]
-  #   steps:
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v2.5.0
+  branch_build_push_backend:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
 
-  #     - name: Login to Docker Hub
-  #       uses: docker/login-action@v2.1.0
-  #       with:
-  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  #     - name: src-backend
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: src
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Downloading Backend Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-src-code
 
-  #     - name: Build and Push Backend to Docker Hub
-  #       uses: docker/build-push-action@v4.0.0
-  #       with:
-  #         context: src/apiserver
-  #         file: ./apiserver/Dockerfile.api
-  #         platforms: linux/amd64
-  #         push: true
-  #         tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
-  #       env:
-  #         DOCKER_BUILDKIT: 1
-  #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  #         DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and Push Backend to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./Dockerfile.api
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
@@ -159,16 +164,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
 
-      # - name: Login to Docker Hub
-      #   uses: docker/login-action@v2.1.0
-      #   with:
-      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: src-proxy
+      - name: Downloading Proxy Source Code
         uses: actions/download-artifact@v3
         with:
-          name: src
+          name: proxy-src-code
 
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v4.0.0
