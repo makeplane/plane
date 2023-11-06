@@ -132,7 +132,6 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     control,
     getValues,
     setValue,
-    setFocus,
   } = useForm<IIssue>({
     defaultValues: prePopulatedData ?? defaultValues,
     reValidateMode: "onChange",
@@ -250,14 +249,12 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   };
 
   useEffect(() => {
-    setFocus("name");
-
     reset({
       ...defaultValues,
       ...(prePopulatedData ?? {}),
       ...(data ?? {}),
     });
-  }, [setFocus, prePopulatedData, reset, data]);
+  }, [prePopulatedData, reset, data]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
@@ -359,6 +356,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                         id="name"
                         name="name"
                         type="text"
+                        tabIndex={1}
                         value={value}
                         onChange={onChange}
                         ref={ref}

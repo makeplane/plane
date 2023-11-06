@@ -46,15 +46,7 @@ const issueService = new IssueService();
 const moduleService = new ModuleService();
 
 export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const {
-    data,
-    handleClose,
-    isOpen,
-
-    prePopulateData: prePopulateDataProps,
-    fieldsToShow = ["all"],
-    onSubmit,
-  } = props;
+  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
 
   // states
   const [createMore, setCreateMore] = useState(false);
