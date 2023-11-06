@@ -16,6 +16,7 @@ env:
   img_tag: latest
 
 jobs:
+
   branch_build_and_push:
     name: Build and Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
@@ -32,7 +33,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
 
       - uses: ASzc/change-string-case-action@v2
         id: gh_branch_upper_lower
@@ -59,34 +59,47 @@ jobs:
           source: ${{ steps.gh_branch_replace_dot.outputs.value }}
           find: '_'
           replace: ''
+    outputs:
+        gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
 
-
+  branch_build_push_frontend:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
       - name: Build and Push Frontend to Docker Container Registry
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ steps.gh_branch_clean.outputs.value }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Plane-Deploy to Docker Hub
+  branch_build_push_space:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
+      - name: Build and Push Space to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
           context: .
           file: ./space/Dockerfile.space
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-${{ steps.gh_branch_clean.outputs.value }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  branch_build_push_backend:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
       - name: Build and Push Backend to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
@@ -94,19 +107,23 @@ jobs:
           file: ./apiserver/Dockerfile.api
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-${{ steps.gh_branch_clean.outputs.value }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  branch_build_push_proxy:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
           context: ./nginx
           file: ./nginx/Dockerfile
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ steps.gh_branch_clean.outputs.value }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
