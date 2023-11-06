@@ -12,7 +12,7 @@ const appInstallationService = new AppInstallationService();
 
 const AppPostInstallation: NextPageWithLayout = () => {
   const router = useRouter();
-  const { installation_id, setup_action, state, provider, code } = router.query;
+  const { installation_id, state, provider, code } = router.query;
 
   useEffect(() => {
     if (provider === "github" && state && installation_id) {
@@ -33,10 +33,9 @@ const AppPostInstallation: NextPageWithLayout = () => {
         const payload = {
           code,
         };
-
         appInstallationService
           .addInstallationApp(state.toString(), provider, payload)
-          .then((r) => {
+          .then(() => {
             window.opener = null;
             window.open("", "_self");
             window.close();
@@ -50,7 +49,7 @@ const AppPostInstallation: NextPageWithLayout = () => {
         };
         appInstallationService
           .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
-          .then((r) => {
+          .then(() => {
             window.opener = null;
             window.open("", "_self");
             window.close();
