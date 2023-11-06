@@ -11,19 +11,19 @@ import { IssuePropertyDate } from "../properties/date";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue, IState, TIssuePriorities } from "types";
+import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 
 export interface IKanBanProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue) => void;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   isReadonly?: boolean;
   showEmptyGroup?: boolean;
 }
 
 export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties, isReadonly, showEmptyGroup } = props;
+  const { columnId: group_id, issue, handleIssues, displayProperties, isReadonly, showEmptyGroup } = props;
 
   const handleState = (state: IState) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
@@ -57,7 +57,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
     <div className="relative flex gap-2 overflow-x-auto whitespace-nowrap">
       {/* basic properties */}
       {/* state */}
-      {display_properties && display_properties?.state && (
+      {displayProperties && displayProperties?.state && (
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
           value={issue?.state_detail || null}
@@ -68,7 +68,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* priority */}
-      {display_properties && display_properties?.priority && (
+      {displayProperties && displayProperties?.priority && (
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
@@ -78,7 +78,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* label */}
-      {display_properties && display_properties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
+      {displayProperties && displayProperties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
@@ -89,7 +89,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* assignee */}
-      {display_properties && display_properties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
+      {displayProperties && displayProperties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
@@ -101,7 +101,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* start date */}
-      {display_properties && display_properties?.start_date && (showEmptyGroup || issue?.start_date) && (
+      {displayProperties && displayProperties?.start_date && (showEmptyGroup || issue?.start_date) && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
@@ -111,7 +111,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* target/due date */}
-      {display_properties && display_properties?.due_date && (showEmptyGroup || issue?.target_date) && (
+      {displayProperties && displayProperties?.due_date && (showEmptyGroup || issue?.target_date) && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
@@ -121,7 +121,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* estimates */}
-      {display_properties && display_properties?.estimate && (
+      {displayProperties && displayProperties?.estimate && (
         <IssuePropertyEstimates
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
@@ -133,7 +133,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
 
       {/* extra render properties */}
       {/* sub-issues */}
-      {display_properties && display_properties?.sub_issue_count && (
+      {displayProperties && displayProperties?.sub_issue_count && (
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -143,7 +143,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* attachments */}
-      {display_properties && display_properties?.attachment_count && (
+      {displayProperties && displayProperties?.attachment_count && (
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -153,7 +153,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* link */}
-      {display_properties && display_properties?.link && (
+      {displayProperties && displayProperties?.link && (
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />

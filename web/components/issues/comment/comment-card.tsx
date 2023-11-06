@@ -40,7 +40,7 @@ export const CommentCard: React.FC<Props> = ({
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, comment.project_detail.id)
+  const editorSuggestions = useEditorSuggestions();
 
   const [isEditing, setIsEditing] = useState(false);
 

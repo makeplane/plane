@@ -5,7 +5,7 @@ const useEditorSuggestions = () => {
   const { mentionsStore }: RootStore = useMobxStore();
 
   return {
-    mentionSuggestions: mentionsStore.mentionSuggestions,
+    // mentionSuggestions: mentionsStore.mentionSuggestions,
     mentionHighlights: mentionsStore.mentionHighlights,
   };
 };

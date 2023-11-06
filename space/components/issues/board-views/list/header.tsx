@@ -2,8 +2,8 @@
 import { observer } from "mobx-react-lite";
 // interfaces
 import { IIssueState } from "types/issue";
-// icons
-import { StateGroupIcon } from "components/icons";
+// ui
+import { StateGroupIcon } from "@plane/ui";
 // constants
 import { issueGroupFilter } from "constants/data";
 // mobx hook
@@ -18,12 +18,12 @@ export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
   if (stateGroup === null) return <></>;
 
   return (
-    <div className="px-6 py-2 flex items-center">
-      <div className="w-4 h-4 flex justify-center items-center">
-        <StateGroupIcon stateGroup={state.group} color={state.color} />
+    <div className="p-3 flex items-center gap-2">
+      <div className="w-3.5 h-3.5 flex justify-center items-center">
+        <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
-      <div className="font-semibold capitalize ml-2 mr-3">{state?.name}</div>
-      <div className="text-custom-text-200">{store.issue.getCountOfIssuesByState(state.id)}</div>
+      <div className="font-medium capitalize mr-1">{state?.name}</div>
+      <div className="text-custom-text-200 text-sm font-medium">{store.issue.getCountOfIssuesByState(state.id)}</div>
     </div>
   );
 });

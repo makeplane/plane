@@ -1,16 +1,13 @@
 import { Fragment, useState } from "react";
-
-import { observer } from "mobx-react-lite";
-
-// hooks
 import { usePopper } from "react-popper";
-import useEstimateOption from "hooks/use-estimate-option";
-// ui
-import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+import { observer } from "mobx-react-lite";
 import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+// ui
 import { Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IIssuePropertyEstimates {
   view?: "profile" | "workspace" | "project";
@@ -27,7 +24,6 @@ export interface IIssuePropertyEstimates {
 
 export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observer((props) => {
   const {
-    view,
     projectId,
     value,
     onChange,
@@ -44,8 +40,6 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-  const { isEstimateActive, estimatePoints } = useEstimateOption();
-
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
     modifiers: [
@@ -57,6 +51,14 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       },
     ],
   });
+
+  const { project: projectStore } = useMobxStore();
+
+  const projectDetails = projectId ? projectStore.project_details[projectId] : null;
+  const isEstimateEnabled = projectDetails?.estimate !== null;
+  const estimates = projectId ? projectStore.estimates?.[projectId] : null;
+  const estimatePoints =
+    projectDetails && isEstimateEnabled ? estimates?.find((e) => e.id === projectDetails.estimate)?.points : null;
 
   const options: { value: number | null; query: string; content: any }[] | undefined = (estimatePoints ?? []).map(
     (estimate) => ({
@@ -93,6 +95,8 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
       </div>
     </Tooltip>
   );
+
+  if (!isEstimateEnabled) return null;
 
   return (
     <Combobox

@@ -97,6 +97,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
+      issueDetailStore.setPeekId(issueId);
       const { query } = router;
       router.push({
         pathname: router.pathname,
@@ -107,6 +108,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const removeRoutePeekId = () => {
     const { query } = router;
     if (query.peekIssueId) {
+      issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
       router.push({
         pathname: router.pathname,
@@ -248,7 +250,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 px-10 py-6">
+                      <div className="flex flex-col gap-3 py-6 px-8">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
@@ -291,8 +293,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             issueReactionCreate={issueReactionCreate}
                             issueReactionRemove={issueReactionRemove}
                           />
-
-                          <div className="border-t border-custom-border-400" />
 
                           <IssueComment
                             workspaceSlug={workspaceSlug}

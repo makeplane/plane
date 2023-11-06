@@ -18,11 +18,7 @@ import {
 // ui
 import { Spinner } from "@plane/ui";
 
-type Props = {
-  openIssuesListModal: () => void;
-};
-
-export const ModuleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
+export const ModuleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query as {
     workspaceSlug: string;
@@ -66,7 +62,11 @@ export const ModuleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
       {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ModuleEmptyState openIssuesListModal={openIssuesListModal} />
+        <ModuleEmptyState
+          workspaceSlug={workspaceSlug?.toString()}
+          projectId={projectId?.toString()}
+          moduleId={moduleId?.toString()}
+        />
       ) : (
         <div className="h-full w-full overflow-auto">
           {activeLayout === "list" ? (
