@@ -341,7 +341,7 @@ export class IssueStore implements IIssueStore {
       this.rootStore.project.setProjectId(projectId);
 
       const params = this.rootStore?.issueFilter?.appliedFilters;
-      const issueResponse: any = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
+      const issueResponse = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
       if (issueType != null) {
@@ -349,7 +349,7 @@ export class IssueStore implements IIssueStore {
           ...this.issues,
           [projectId]: {
             ...this.issues[projectId],
-            [issueType]: issueResponse?.["data"],
+            [issueType]: issueResponse,
           },
         };
         runInAction(() => {

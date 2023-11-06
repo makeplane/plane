@@ -295,12 +295,7 @@ export class CycleIssueStore implements ICycleIssueStore {
       this.error = null;
 
       const params = this.rootStore?.cycleIssueFilter?.appliedFilters;
-      const issueResponse: any = await this.cycleService.getCycleIssuesWithParams(
-        workspaceSlug,
-        projectId,
-        cycleId,
-        params
-      );
+      const issueResponse = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
 
       const issueType = this.getIssueType;
       if (issueType != null) {
@@ -308,7 +303,7 @@ export class CycleIssueStore implements ICycleIssueStore {
           ...this.issues,
           [cycleId]: {
             ...this.issues[cycleId],
-            [issueType]: issueResponse?.["data"],
+            [issueType]: issueResponse,
           },
         };
         runInAction(() => {
