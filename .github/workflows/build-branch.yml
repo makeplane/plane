@@ -5,7 +5,8 @@ on:
   workflow_dispatch
 
 env:
-  gh_branch: ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+  gh_branch: develop
+  img_tag: ${GITHUB_RUN_ID}
 
 jobs:
   branch_build_and_push:
@@ -30,7 +31,7 @@ jobs:
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-$GITHUB_REF_NAME
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-$gh_branch
           tags: |
             type=ref,event=tag
       
@@ -38,7 +39,7 @@ jobs:
       #   id: metaBackend
       #   uses: docker/metadata-action@v4.3.0
       #   with:
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-$GITHUB_REF_NAME
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-$gh_branch
       #     tags: |
       #       type=ref,event=tag
 
@@ -46,7 +47,7 @@ jobs:
       #   id: metaSpace
       #   uses: docker/metadata-action@v4.3.0
       #   with:
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-$GITHUB_REF_NAME
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-$gh_branch
       #     tags: |
       #       type=ref,event=tag
 
@@ -54,7 +55,7 @@ jobs:
       #   id: metaProxy
       #   uses: docker/metadata-action@v4.3.0
       #   with:
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-$GITHUB_REF_NAME
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-$gh_branch
       #     tags: |
       #       type=ref,event=tag
 
