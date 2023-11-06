@@ -29,7 +29,7 @@ export const ListLayout: FC = observer(() => {
 
   const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
   const group_by: string | null = userDisplayFilters?.group_by || null;
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
@@ -68,7 +68,7 @@ export const ListLayout: FC = observer(() => {
             handleUpdate={async (data) => handleIssues(group_by, data, "update")}
           />
         )}
-        display_properties={display_properties}
+        displayProperties={displayProperties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}
