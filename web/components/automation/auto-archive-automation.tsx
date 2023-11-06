@@ -54,7 +54,7 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
 
         {projectDetails?.archive_in !== 0 && (
           <div className="ml-12">
-            <div className="flex items-center justify-between rounded px-5 py-4 bg-custom-background-90 border border-custom-border-200 gap-2 w-full">
+            <div className="flex items-center justify-between rounded px-5 py-4 bg-custom-background-90 border-[0.5px] border-custom-border-200 gap-2 w-full">
               <div className="w-1/2 text-sm font-medium">Auto-archive issues that are closed for</div>
               <div className="w-1/2">
                 <CustomSelect
