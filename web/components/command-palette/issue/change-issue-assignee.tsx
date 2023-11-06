@@ -1,35 +1,37 @@
-import React, { Dispatch, SetStateAction, useCallback } from "react";
-
+import { Dispatch, SetStateAction, useCallback, FC } from "react";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-
-// cmdk
 import { Command } from "cmdk";
+import { Check } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import issuesService from "services/issues.service";
-// hooks
-import useProjectMembers from "hooks/use-project-members";
+import { IssueService } from "services/issue";
+// ui
+import { Avatar } from "@plane/ui";
+// types
+import { IUser, IIssue } from "types";
 // constants
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-// ui
-import { Avatar } from "components/ui";
-// icons
-import { CheckIcon } from "components/icons";
-// types
-import { ICurrentUserResponse, IIssue } from "types";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
   issue: IIssue;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
 
-export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
+// services
+const issueService = new IssueService();
+
+export const ChangeIssueAssignee: FC<Props> = observer((props) => {
+  const { setIsPaletteOpen, issue, user } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { members } = useProjectMembers(workspaceSlug as string, projectId as string);
+  const { project: projectStore } = useMobxStore();
+  const members = projectId ? projectStore.members?.[projectId.toString()] : undefined;
 
   const options =
     members?.map(({ member }) => ({
@@ -38,12 +40,12 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
       content: (
         <>
           <div className="flex items-center gap-2">
-            <Avatar user={member} />
+            <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
             {member.display_name}
           </div>
           {issue.assignees.includes(member.id) && (
             <div>
-              <CheckIcon className="h-3 w-3" />
+              <Check className="h-3 w-3" />
             </div>
           )}
         </>
@@ -67,7 +69,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
       );
 
       const payload = { ...formData };
-      await issuesService
+      await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -80,7 +82,7 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
   );
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees_list ?? [];
+    const updatedAssignees = issue.assignees ?? [];
 
     if (updatedAssignees.includes(assignee)) {
       updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
@@ -88,13 +90,13 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
       updatedAssignees.push(assignee);
     }
 
-    updateIssue({ assignees_list: updatedAssignees });
+    updateIssue({ assignees: updatedAssignees });
     setIsPaletteOpen(false);
   };
 
   return (
     <>
-      {options.map((option) => (
+      {options.map((option: any) => (
         <Command.Item
           key={option.value}
           onSelect={() => handleIssueAssignees(option.value)}
@@ -105,4 +107,4 @@ export const ChangeIssueAssignee: React.FC<Props> = ({ setIsPaletteOpen, issue, 
       ))}
     </>
   );
-};
+});

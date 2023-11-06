@@ -1,13 +1,13 @@
 import { useRouter } from "next/router";
-// react-beautiful-dnd
-import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { MoreVertical } from "lucide-react";
 // hooks
 import { useChart } from "./hooks";
 // ui
-import { Loader } from "components/ui";
-// icons
-import { EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import { Loader } from "@plane/ui";
+// components
+import { GanttInlineCreateIssueForm } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
@@ -17,12 +17,14 @@ type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  SidebarBlockRender: React.FC<any>;
+  sidebarBlockToRender: (block: any) => React.ReactNode;
   enableReorder: boolean;
+  enableQuickIssueCreate?: boolean;
 };
 
 export const GanttSidebar: React.FC<Props> = (props) => {
-  const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder, enableQuickIssueCreate } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -55,8 +57,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
     // update the sort order to the lowest if dropped at the top
     if (destination.index === 0) updatedSortOrder = blocks[0].sort_order - 1000;
     // update the sort order to the highest if dropped at the bottom
-    else if (destination.index === blocks.length - 1)
-      updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
+    else if (destination.index === blocks.length - 1) updatedSortOrder = blocks[blocks.length - 1].sort_order + 1000;
     // update the sort order to the average of the two adjacent blocks if dropped in between
     else {
       const destinationSortingOrder = blocks[destination.index].sort_order;
@@ -95,11 +96,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
             <>
               {blocks ? (
                 blocks.map((block, index) => {
-                  const duration = findTotalDaysInRange(
-                    block.start_date ?? "",
-                    block.target_date ?? "",
-                    true
-                  );
+                  const duration = findTotalDaysInRange(block.start_date ?? "", block.target_date ?? "", true);
 
                   return (
                     <Draggable
@@ -110,9 +107,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${
-                            snapshot.isDragging ? "bg-custom-background-80 rounded" : ""
-                          }`}
+                          className={`h-11 ${snapshot.isDragging ? "bg-custom-background-80 rounded" : ""}`}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -130,14 +125,12 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                                 className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
                                 {...provided.dragHandleProps}
                               >
-                                <EllipsisVerticalIcon className="h-4" />
-                                <EllipsisVerticalIcon className="h-4 -ml-5" />
+                                <MoreVertical className="h-3.5 w-3.5" />
+                                <MoreVertical className="h-3.5 w-3.5 -ml-5" />
                               </button>
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
-                              <div className="flex-grow truncate">
-                                <SidebarBlockRender data={block.data} />
-                              </div>
+                              <div className="flex-grow truncate">{sidebarBlockToRender(block.data)}</div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
                               </div>
@@ -158,6 +151,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
+            <GanttInlineCreateIssueForm />
           </div>
         )}
       </StrictModeDroppable>

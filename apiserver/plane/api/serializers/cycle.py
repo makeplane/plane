@@ -1,6 +1,3 @@
-# Django imports
-from django.db.models.functions import TruncDate
-
 # Third party imports
 from rest_framework import serializers
 
@@ -12,10 +9,14 @@ from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
 from plane.db.models import Cycle, CycleIssue, CycleFavorite
 
-class CycleWriteSerializer(BaseSerializer):
 
+class CycleWriteSerializer(BaseSerializer):
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("end_date", None) is not None and data.get("start_date", None) > data.get("end_date", None):
+        if (
+            data.get("start_date", None) is not None
+            and data.get("end_date", None) is not None
+            and data.get("start_date", None) > data.get("end_date", None)
+        ):
             raise serializers.ValidationError("Start date cannot exceed end date")
         return data
 
@@ -41,10 +42,14 @@ class CycleSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
 
     def validate(self, data):
-        if data.get("start_date", None) is not None and data.get("end_date", None) is not None and data.get("start_date", None) > data.get("end_date", None):
+        if (
+            data.get("start_date", None) is not None
+            and data.get("end_date", None) is not None
+            and data.get("start_date", None) > data.get("end_date", None)
+        ):
             raise serializers.ValidationError("Start date cannot exceed end date")
         return data
-    
+
     def get_assignees(self, obj):
         members = [
             {
@@ -52,7 +57,9 @@ class CycleSerializer(BaseSerializer):
                 "display_name": assignee.display_name,
                 "id": assignee.id,
             }
-            for issue_cycle in obj.issue_cycle.prefetch_related("issue__assignees").all()
+            for issue_cycle in obj.issue_cycle.prefetch_related(
+                "issue__assignees"
+            ).all()
             for assignee in issue_cycle.issue.assignees.all()
         ]
         # Use a set comprehension to return only the unique objects

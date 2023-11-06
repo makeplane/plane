@@ -1,26 +1,19 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-import useUser from "hooks/use-user";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import issueServices from "services/issues.service";
+import { IssueDraftService } from "services/issue";
 // hooks
-import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { AlertTriangle } from "lucide-react";
 // ui
-import { SecondaryButton, DangerButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import type { IIssue } from "types";
-// fetch-keys
-import { PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -29,19 +22,20 @@ type Props = {
   onSubmit?: () => Promise<void> | void;
 };
 
-export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
+const issueDraftService = new IssueDraftService();
+
+export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, data, onSubmit } = props;
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { user: userStore } = useMobxStore();
+  const user = userStore.currentUser;
 
-  const { params } = useIssuesView();
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const { user } = useUser();
 
   useEffect(() => {
     setIsDeleteLoading(false);
@@ -57,12 +51,12 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
 
     setIsDeleteLoading(true);
 
-    await issueServices
-      .deleteDraftIssue(workspaceSlug as string, data.project, data.id, user)
+    await issueDraftService
+      .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
-        mutate(PROJECT_DRAFT_ISSUES_LIST_WITH_PARAMS(projectId as string, params));
+
         setToastAlert({
           title: "Success",
           message: "Draft Issue deleted successfully",
@@ -112,10 +106,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Draft Issue</h3>
@@ -127,15 +118,17 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
                       <span className="break-words font-medium text-custom-text-100">
                         {data?.project_detail.identifier}-{data?.sequence_id}
                       </span>
-                      {""}? All of the data related to the draft issue will be permanently removed.
-                      This action cannot be undone.
+                      {""}? All of the data related to the draft issue will be permanently removed. This action cannot
+                      be undone.
                     </p>
                   </span>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={onClose}>Cancel</SecondaryButton>
-                    <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                    <Button variant="neutral-primary" onClick={onClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                       {isDeleteLoading ? "Deleting..." : "Delete Issue"}
-                    </DangerButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>
@@ -145,4 +138,4 @@ export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

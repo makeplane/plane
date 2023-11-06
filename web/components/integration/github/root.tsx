@@ -9,8 +9,7 @@ import useSWR, { mutate } from "swr";
 // react-hook-form
 import { useForm } from "react-hook-form";
 // services
-import IntegrationService from "services/integration";
-import GithubIntegrationService from "services/integration/github.service";
+import { IntegrationService, GithubIntegrationService } from "services/integrations";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -22,25 +21,16 @@ import {
   GithubImportConfirm,
 } from "components/integration";
 // icons
-import { CogIcon, CloudUploadIcon, UsersIcon, CheckIcon } from "components/icons";
-import { ArrowLeftIcon, ListBulletIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon } from "@plane/ui";
+import { ArrowLeft, Check, List, Settings, UploadCloud } from "lucide-react";
 // images
 import GithubLogo from "public/services/github.png";
 // types
-import { ICurrentUserResponse, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
+import { IUser, IGithubRepoCollaborator, IGithubServiceImportFormData } from "types";
 // fetch-keys
-import {
-  APP_INTEGRATIONS,
-  IMPORTER_SERVICES_LIST,
-  WORKSPACE_INTEGRATIONS,
-} from "constants/fetch-keys";
+import { APP_INTEGRATIONS, IMPORTER_SERVICES_LIST, WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
 
-export type TIntegrationSteps =
-  | "import-configure"
-  | "import-data"
-  | "repo-details"
-  | "import-users"
-  | "import-confirm";
+export type TIntegrationSteps = "import-configure" | "import-data" | "repo-details" | "import-users" | "import-confirm";
 export interface IIntegrationData {
   state: TIntegrationSteps;
 }
@@ -69,29 +59,33 @@ const integrationWorkflowData = [
   {
     title: "Configure",
     key: "import-configure",
-    icon: CogIcon,
+    icon: Settings,
   },
   {
     title: "Import Data",
     key: "import-data",
-    icon: CloudUploadIcon,
+    icon: UploadCloud,
   },
-  { title: "Issues", key: "repo-details", icon: ListBulletIcon },
+  { title: "Issues", key: "repo-details", icon: List },
   {
     title: "Users",
     key: "import-users",
-    icon: UsersIcon,
+    icon: UserGroupIcon,
   },
   {
     title: "Confirm",
     key: "import-confirm",
-    icon: CheckIcon,
+    icon: Check,
   },
 ];
 
 type Props = {
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
 };
+
+// services
+const integrationService = new IntegrationService();
+const githubIntegrationService = new GithubIntegrationService();
 
 export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
@@ -108,21 +102,15 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
     defaultValues: defaultFormValues,
   });
 
-  const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () =>
-    IntegrationService.getAppIntegrationsList()
-  );
+  const { data: appIntegrations } = useSWR(APP_INTEGRATIONS, () => integrationService.getAppIntegrationsList());
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
-    workspaceSlug
-      ? () => IntegrationService.getWorkspaceIntegrationsList(workspaceSlug as string)
-      : null
+    workspaceSlug ? () => integrationService.getWorkspaceIntegrationsList(workspaceSlug as string) : null
   );
 
   const activeIntegrationState = () => {
-    const currentElementIndex = integrationWorkflowData.findIndex(
-      (i) => i?.key === currentStep?.state
-    );
+    const currentElementIndex = integrationWorkflowData.findIndex((i) => i?.key === currentStep?.state);
 
     return currentElementIndex;
   };
@@ -133,14 +121,11 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
 
   // current integration from all the integrations available
   const integration =
-    appIntegrations &&
-    appIntegrations.length > 0 &&
-    appIntegrations.find((i) => i.provider === provider);
+    appIntegrations && appIntegrations.length > 0 && appIntegrations.find((i) => i.provider === provider);
 
   // current integration from workspace integrations
   const workspaceIntegration =
-    integration &&
-    workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
+    integration && workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
   const createGithubImporterService = async (formData: TFormValues) => {
     if (!formData.github || !formData.project) return;
@@ -161,7 +146,8 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
       project_id: formData.project,
     };
 
-    await GithubIntegrationService.createGithubServiceImport(workspaceSlug as string, payload, user)
+    await githubIntegrationService
+      .createGithubServiceImport(workspaceSlug as string, payload, user)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
@@ -180,7 +166,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
       <div className="space-y-2">
         <Link href={`/${workspaceSlug}/settings/imports`}>
           <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
-            <ArrowLeftIcon className="h-3 w-3" />
+            <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
           </div>
         </Link>
@@ -214,9 +200,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
                     <div
                       key={index}
                       className={`border-b px-7 ${
-                        index <= activeIntegrationState() - 1
-                          ? `border-custom-primary`
-                          : `border-custom-border-200`
+                        index <= activeIntegrationState() - 1 ? `border-custom-primary` : `border-custom-border-200`
                       }`}
                     >
                       {" "}

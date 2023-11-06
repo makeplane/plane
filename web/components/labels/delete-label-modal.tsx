@@ -1,37 +1,39 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
-import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-// services
-import issuesService from "services/issues.service";
+import { AlertTriangle } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IIssueLabels } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import type { IIssueLabels } from "types";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   data: IIssueLabels | null;
-  user: ICurrentUserResponse | undefined;
 };
 
-export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+export const DeleteLabelModal: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose, data } = props;
 
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  // store
+  const { projectLabel: projectLabelStore } = useMobxStore();
+
+  // states
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  // hooks
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -44,23 +46,19 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user 
 
     setIsDeleteLoading(true);
 
-    mutate<IIssueLabels[]>(
-      PROJECT_ISSUE_LABELS(projectId.toString()),
-      (prevData) => (prevData ?? []).filter((p) => p.id !== data.id),
-      false
-    );
-
-    await issuesService
-      .deleteIssueLabel(workspaceSlug.toString(), projectId.toString(), data.id, user)
-      .then(() => handleClose())
-      .catch(() => {
+    await projectLabelStore
+      .deleteLabel(workspaceSlug.toString(), projectId.toString(), data.id)
+      .then(() => {
+        handleClose();
+      })
+      .catch((err) => {
         setIsDeleteLoading(false);
 
-        mutate(PROJECT_ISSUE_LABELS(projectId.toString()));
+        const error = err?.error || "Label could not be deleted. Please try again.";
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Label could not be deleted. Please try again.",
+          message: error,
         });
       });
   };
@@ -95,33 +93,29 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user 
                 <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <ExclamationTriangleIcon
-                        className="h-6 w-6 text-red-600"
-                        aria-hidden="true"
-                      />
+                      <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <Dialog.Title
-                        as="h3"
-                        className="text-lg font-medium leading-6 text-custom-text-100"
-                      >
+                      <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         Delete Label
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete label-{" "}
-                          <span className="font-medium text-custom-text-100">{data?.name}</span>?
-                          The label will be removed from all the issues.
+                          <span className="font-medium text-custom-text-100">{data?.name}</span>? The label will be
+                          removed from all the issues.
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="flex justify-end gap-2 p-4 sm:px-6">
-                  <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                  <DangerButton onClick={handleDeletion} loading={isDeleteLoading}>
+                  <Button variant="neutral-primary" onClick={handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
                     {isDeleteLoading ? "Deleting..." : "Delete"}
-                  </DangerButton>
+                  </Button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -130,4 +124,4 @@ export const DeleteLabelModal: React.FC<Props> = ({ isOpen, onClose, data, user 
       </Dialog>
     </Transition.Root>
   );
-};
+});

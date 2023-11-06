@@ -168,126 +168,107 @@ class GlobalSearchEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug):
-        try:
-            query = request.query_params.get("search", False)
-            workspace_search = request.query_params.get("workspace_search", "false")
-            project_id = request.query_params.get("project_id", False)
+        query = request.query_params.get("search", False)
+        workspace_search = request.query_params.get("workspace_search", "false")
+        project_id = request.query_params.get("project_id", False)
 
-            if not query:
-                return Response(
-                    {
-                        "results": {
-                            "workspace": [],
-                            "project": [],
-                            "issue": [],
-                            "cycle": [],
-                            "module": [],
-                            "issue_view": [],
-                            "page": [],
-                        }
-                    },
-                    status=status.HTTP_200_OK,
-                )
-
-            MODELS_MAPPER = {
-                "workspace": self.filter_workspaces,
-                "project": self.filter_projects,
-                "issue": self.filter_issues,
-                "cycle": self.filter_cycles,
-                "module": self.filter_modules,
-                "issue_view": self.filter_views,
-                "page": self.filter_pages,
-            }
-
-            results = {}
-
-            for model in MODELS_MAPPER.keys():
-                func = MODELS_MAPPER.get(model, None)
-                results[model] = func(query, slug, project_id, workspace_search)
-            return Response({"results": results}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            capture_exception(e)
+        if not query:
             return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {
+                    "results": {
+                        "workspace": [],
+                        "project": [],
+                        "issue": [],
+                        "cycle": [],
+                        "module": [],
+                        "issue_view": [],
+                        "page": [],
+                    }
+                },
+                status=status.HTTP_200_OK,
             )
+
+        MODELS_MAPPER = {
+            "workspace": self.filter_workspaces,
+            "project": self.filter_projects,
+            "issue": self.filter_issues,
+            "cycle": self.filter_cycles,
+            "module": self.filter_modules,
+            "issue_view": self.filter_views,
+            "page": self.filter_pages,
+        }
+
+        results = {}
+
+        for model in MODELS_MAPPER.keys():
+            func = MODELS_MAPPER.get(model, None)
+            results[model] = func(query, slug, project_id, workspace_search)
+        return Response({"results": results}, status=status.HTTP_200_OK)
 
 
 class IssueSearchEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
-        try:
-            query = request.query_params.get("search", False)
-            workspace_search = request.query_params.get("workspace_search", "false")
-            parent = request.query_params.get("parent", "false")
-            issue_relation = request.query_params.get("issue_relation", "false")
-            cycle = request.query_params.get("cycle", "false")
-            module = request.query_params.get("module", "false")
-            sub_issue = request.query_params.get("sub_issue", "false")
+        query = request.query_params.get("search", False)
+        workspace_search = request.query_params.get("workspace_search", "false")
+        parent = request.query_params.get("parent", "false")
+        issue_relation = request.query_params.get("issue_relation", "false")
+        cycle = request.query_params.get("cycle", "false")
+        module = request.query_params.get("module", "false")
+        sub_issue = request.query_params.get("sub_issue", "false")
 
-            issue_id = request.query_params.get("issue_id", False)
+        issue_id = request.query_params.get("issue_id", False)
 
-            issues = Issue.issue_objects.filter(
-                workspace__slug=slug,
-                project__project_projectmember__member=self.request.user,
-            )
+        issues = Issue.issue_objects.filter(
+            workspace__slug=slug,
+            project__project_projectmember__member=self.request.user,
+        )
 
-            if workspace_search == "false":
-                issues = issues.filter(project_id=project_id)
+        if workspace_search == "false":
+            issues = issues.filter(project_id=project_id)
 
-            if query:
-                issues = search_issues(query, issues)
+        if query:
+            issues = search_issues(query, issues)
 
-            if parent == "true" and issue_id:
-                issue = Issue.issue_objects.get(pk=issue_id)
-                issues = issues.filter(
-                    ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
-                ).exclude(
-                    pk__in=Issue.issue_objects.filter(parent__isnull=False).values_list(
-                        "parent_id", flat=True
-                    )
+        if parent == "true" and issue_id:
+            issue = Issue.issue_objects.get(pk=issue_id)
+            issues = issues.filter(
+                ~Q(pk=issue_id), ~Q(pk=issue.parent_id), parent__isnull=True
+            ).exclude(
+                pk__in=Issue.issue_objects.filter(parent__isnull=False).values_list(
+                    "parent_id", flat=True
                 )
-            if issue_relation == "true" and issue_id:
-                issue = Issue.issue_objects.get(pk=issue_id)
-                issues = issues.filter(
-                    ~Q(pk=issue_id),
-                    ~Q(issue_related__issue=issue),
-                    ~Q(issue_relation__related_issue=issue),
-                )
-            if sub_issue == "true" and issue_id:
-                issue = Issue.issue_objects.get(pk=issue_id)
-                issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
-                if issue.parent:
-                    issues = issues.filter(~Q(pk=issue.parent_id))
-
-            if cycle == "true":
-                issues = issues.exclude(issue_cycle__isnull=False)
-
-            if module == "true":
-                issues = issues.exclude(issue_module__isnull=False)
-
-            return Response(
-                issues.values(
-                    "name",
-                    "id",
-                    "sequence_id",
-                    "project__name",
-                    "project__identifier",
-                    "project_id",
-                    "workspace__slug",
-                    "state__name",
-                    "state__group",
-                    "state__color",
-                ),
-                status=status.HTTP_200_OK,
             )
-        except Issue.DoesNotExist:
-            return Response(
-                {"error": "Issue Does not exist"}, status=status.HTTP_400_BAD_REQUEST
+        if issue_relation == "true" and issue_id:
+            issue = Issue.issue_objects.get(pk=issue_id)
+            issues = issues.filter(
+                ~Q(pk=issue_id),
+                ~Q(issue_related__issue=issue),
+                ~Q(issue_relation__related_issue=issue),
             )
-        except Exception as e:
-            print(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if sub_issue == "true" and issue_id:
+            issue = Issue.issue_objects.get(pk=issue_id)
+            issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
+            if issue.parent:
+                issues = issues.filter(~Q(pk=issue.parent_id))
+
+        if cycle == "true":
+            issues = issues.exclude(issue_cycle__isnull=False)
+
+        if module == "true":
+            issues = issues.exclude(issue_module__isnull=False)
+
+        return Response(
+            issues.values(
+                "name",
+                "id",
+                "sequence_id",
+                "project__name",
+                "project__identifier",
+                "project_id",
+                "workspace__slug",
+                "state__name",
+                "state__group",
+                "state__color",
+            ),
+            status=status.HTTP_200_OK,
+        )
