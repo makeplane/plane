@@ -17,13 +17,17 @@ export const DraftIssueListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { project: projectStore, draftIssues: draftIssuesStore, issueFilter: issueFilterStore } = useMobxStore();
+  const {
+    project: projectStore,
+    draftIssues: draftIssuesStore,
+    draftIssueFilters: draftIssueFiltersStore,
+  } = useMobxStore();
 
   const issues = draftIssuesStore.getDraftIssues;
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+  const group_by: string | null = draftIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const display_properties = draftIssueFiltersStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete" | "convertToIssue") => {

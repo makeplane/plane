@@ -22,7 +22,6 @@ import {
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
 // ui
-import {} from "components/ui";
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
 // icons
 import { Sparkle, X } from "lucide-react";
@@ -122,7 +121,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const { setToastAlert } = useToast();
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId);
 
   const {
     formState: { errors, isSubmitting },

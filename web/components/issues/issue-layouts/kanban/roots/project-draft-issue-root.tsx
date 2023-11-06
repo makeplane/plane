@@ -8,8 +8,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { DraftIssueQuickActions } from "components/issues";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -17,27 +15,24 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export const DraftIssueKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const {
     project: projectStore,
-    issueFilter: issueFilterStore,
+    draftIssueFilters: draftIssueFiltersStore,
     issueKanBanView: issueKanBanViewStore,
     draftIssues: draftIssuesStore,
   } = useMobxStore();
 
+  // derived values
   const issues = draftIssuesStore.getDraftIssues;
-
-  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
-
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const display_properties = draftIssueFiltersStore?.userDisplayProperties;
+  const userDisplayFilters = draftIssueFiltersStore?.userDisplayFilters;
+  const group_by: string | null = userDisplayFilters?.group_by || null;
+  const showEmptyGroup = userDisplayFilters?.show_empty_groups || false;
+  const sub_group_by: string | null = userDisplayFilters?.sub_group_by || null;
 
   const currentKanBanView = "default";
-  // const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
-  //   ? "swimlanes"
-  //   : "default";
 
   const onDragEnd = (result: any) => {
     if (!result) return;
@@ -50,7 +45,6 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
     )
       return;
 
-    // TODO: use draft issue store instead
     currentKanBanView === "default"
       ? issueKanBanViewStore?.handleDragDrop(result.source, result.destination)
       : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
@@ -65,18 +59,14 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
     ) => {
       if (!workspaceSlug) return;
 
-      const grouping = {
-        group_id: group_by,
-        sub_group_id: sub_group_by,
-      };
-
       if (action === "update") {
+        draftIssuesStore.updateDraftIssue(workspaceSlug.toString(), issue.project, issue);
         draftIssuesStore.updateIssueStructure(group_by, sub_group_by, issue);
-        draftIssuesStore.updateDraftIssue(workspaceSlug.toString(), issue.project, grouping, issue);
       }
       if (action === "delete") draftIssuesStore.deleteDraftIssue(workspaceSlug.toString(), issue.project, issue.id);
       if (action === "convertToIssue")
-        draftIssuesStore.convertDraftIssueToIssue(workspaceSlug.toString(), issue.project, grouping, issue.id);
+        draftIssuesStore.convertDraftIssueToIssue(workspaceSlug.toString(), issue.project, issue.id);
+      draftIssuesStore.fetchIssues(workspaceSlug.toString(), issue.project);
     },
     [draftIssuesStore, workspaceSlug]
   );
@@ -85,18 +75,12 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
-
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
-  const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
-      : null;
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
@@ -113,7 +97,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
                 handleUpdate={(issue: any, action: any) => handleIssues(sub_group_by, group_by, issue, action)}
               />
             )}
-            display_properties={display_properties}
+            displayProperties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
@@ -122,7 +106,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={showEmptyGroup}
           />
         ) : (
           <KanBanSwimLanes
@@ -136,7 +120,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
                 handleUpdate={(issue: any, action: any) => handleIssues(sub_group_by, group_by, issue, action)}
               />
             )}
-            display_properties={display_properties}
+            displayProperties={display_properties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
@@ -145,7 +129,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={showEmptyGroup}
           />
         )}
       </DragDropContext>

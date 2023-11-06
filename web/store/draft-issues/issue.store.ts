@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
 // types
@@ -41,24 +41,8 @@ export interface IIssueDraftStore {
   createDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   deleteDraftIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
-  updateDraftIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    grouping: {
-      group_id: string | null;
-      sub_group_id: string | null;
-    },
-    issueForm: Partial<IIssue>
-  ) => Promise<any>;
-  convertDraftIssueToIssue: (
-    workspaceSlug: string,
-    projectId: string,
-    grouping: {
-      group_id: string | null;
-      sub_group_id: string | null;
-    },
-    issueId: string
-  ) => Promise<any>;
+  updateDraftIssue: (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => Promise<any>;
+  convertDraftIssueToIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<any>;
 
   // service
   draftIssueService: IssueDraftService;
@@ -91,18 +75,29 @@ export class IssueDraftStore implements IIssueDraftStore {
     });
     this.rootStore = _rootStore;
     this.draftIssueService = new IssueDraftService();
+
+    autorun(() => {
+      const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+      const projectId = this.rootStore.project.projectId;
+
+      if (
+        workspaceSlug &&
+        projectId &&
+        this.rootStore.draftIssueFilters.userFilters &&
+        this.rootStore.draftIssueFilters.userDisplayFilters
+      )
+        this.fetchIssues(workspaceSlug, projectId);
+    });
   }
 
   get getIssueType() {
-    // FIXME: this is temporary for development
-    // return "grouped";
-    return "ungrouped";
-
+    // TODO: fix this such that we only have the
+    // conditions for layouts that are actually allowed in draft issues
     const groupedLayouts = ["kanban", "list", "calendar"];
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
-    const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
-    const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
+    const issueLayout = this.rootStore?.draftIssueFilters?.userDisplayFilters?.layout || null;
+    const issueSubGroup = this.rootStore?.draftIssueFilters?.userDisplayFilters?.sub_group_by || null;
     if (!issueLayout) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
@@ -119,6 +114,7 @@ export class IssueDraftStore implements IIssueDraftStore {
   get getDraftIssues() {
     const issueType = this.getIssueType;
     const projectId = this.rootStore?.project?.projectId;
+
     if (!projectId || !issueType) return null;
 
     return this.draftIssues?.[projectId]?.[issueType] || null;
@@ -132,11 +128,7 @@ export class IssueDraftStore implements IIssueDraftStore {
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
       this.rootStore.project.setProjectId(projectId);
 
-      // const params = this.rootStore?.issueFilter?.appliedFilters;
-      // TODO: use actual params using applied filters
-      const params = {
-        // group_by: "state",
-      };
+      const params = this.rootStore?.draftIssueFilters?.appliedFilters;
       const issueResponse = await this.draftIssueService.getDraftIssues(workspaceSlug, projectId, params);
 
       const issueType = this.getIssueType;
@@ -246,7 +238,7 @@ export class IssueDraftStore implements IIssueDraftStore {
       else issues = [...issues, issue];
     }
 
-    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
+    const orderBy = this.rootStore?.draftIssueFilters?.userDisplayFilters?.order_by || "";
     if (orderBy === "-created_at") {
       issues = sortArrayByDate(issues as any, "created_at");
     }
@@ -265,26 +257,13 @@ export class IssueDraftStore implements IIssueDraftStore {
     });
   };
 
-  updateDraftIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    grouping: {
-      group_id: string | null;
-      sub_group_id: string | null;
-    },
-    issueForm: Partial<IIssue>
-  ) => {
+  updateDraftIssue = async (workspaceSlug: string, projectId: string, issueForm: Partial<IIssue>) => {
     const originalIssues = { ...this.draftIssues };
-
-    const { group_id, sub_group_id } = grouping;
 
     runInAction(() => {
       this.loader = true;
       this.error = null;
     });
-
-    // optimistic updating draft issue
-    this.updateIssueStructure(group_id, sub_group_id, issueForm as IIssue);
 
     try {
       const response = await this.draftIssueService.updateDraftIssue(
@@ -310,17 +289,9 @@ export class IssueDraftStore implements IIssueDraftStore {
     }
   };
 
-  convertDraftIssueToIssue = async (
-    workspaceSlug: string,
-    projectId: string,
-    grouping: {
-      group_id: string | null;
-      sub_group_id: string | null;
-    },
-    issueId: string
-  ) =>
+  convertDraftIssueToIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     // TODO: add removing item from draft issue list
-    await this.updateDraftIssue(workspaceSlug, projectId, grouping, { id: issueId, is_draft: false });
+    await this.updateDraftIssue(workspaceSlug, projectId, { id: issueId, is_draft: false });
 
   deleteDraftIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     const originalIssues = { ...this.draftIssues };
