@@ -35,8 +35,11 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   // calculate total length of avatars inside the group
   const totalAvatars = React.Children.toArray(children).length;
 
+  // if avatars are equal to max + 1, then we need to show the last avatar as well, if avatars are more than max + 1, then we need to show the count of the remaining avatars
+  const maxAvatarsToRender = totalAvatars <= max + 1 ? max + 1 : max;
+
   // slice the children to the maximum number of avatars
-  const avatars = React.Children.toArray(children).slice(0, max);
+  const avatars = React.Children.toArray(children).slice(0, maxAvatarsToRender);
 
   // assign the necessary props from the AvatarGroup component to the Avatar components
   const avatarsWithUpdatedProps = avatars.map((avatar) => {
@@ -58,7 +61,7 @@ export const AvatarGroup: React.FC<Props> = (props) => {
           {avatar}
         </div>
       ))}
-      {max < totalAvatars && (
+      {maxAvatarsToRender < totalAvatars && (
         <Tooltip
           tooltipContent={`${totalAvatars} total`}
           disabled={!showTooltip}
