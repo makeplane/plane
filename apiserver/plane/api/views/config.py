@@ -30,4 +30,5 @@ class ConfigurationEndpoint(BaseAPIView):
         data["email_password_login"] = (
             os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1"
         )
+        data["slack"] = os.environ.get("SLACK_CLIENT_ID", None)
         return Response(data, status=status.HTTP_200_OK)
