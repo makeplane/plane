@@ -22,7 +22,8 @@
     "SLACK_CLIENT_SECRET",
     "JITSU_TRACKER_ACCESS_KEY",
     "JITSU_TRACKER_HOST",
-    "UNSPLASH_ACCESS_KEY"
+    "UNSPLASH_ACCESS_KEY",
+    "NEXT_PUBLIC_SLACK_CLIENT_ID"
   ],
   "pipeline": {
     "build": {
