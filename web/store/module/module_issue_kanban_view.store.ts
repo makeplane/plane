@@ -44,6 +44,7 @@ export class ModuleIssueKanBanViewStore implements IModuleIssueKanBanViewStore {
   }
 
   get canUserDragDrop() {
+    if (this.rootStore.issueDetail.peekId) return false;
     if (
       this.rootStore?.issueFilter?.userDisplayFilters?.order_by &&
       this.rootStore?.issueFilter?.userDisplayFilters?.order_by === "sort_order" &&
