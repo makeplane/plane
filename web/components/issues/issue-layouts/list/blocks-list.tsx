@@ -2,7 +2,7 @@ import { FC } from "react";
 // components
 import { IssueBlock } from "components/issues";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueDisplayProperties } from "types";
 
 interface Props {
   columnId: string;
@@ -10,12 +10,12 @@ interface Props {
   isReadonly?: boolean;
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   showEmptyGroup?: boolean;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issues, handleIssues, quickActions, display_properties, showEmptyGroup, isReadonly } = props;
+  const { columnId, issues, handleIssues, quickActions, displayProperties, showEmptyGroup, isReadonly } = props;
 
   return (
     <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
@@ -28,7 +28,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             handleIssues={handleIssues}
             quickActions={quickActions}
             isReadonly={isReadonly}
-            display_properties={display_properties}
+            displayProperties={displayProperties}
             showEmptyGroup={showEmptyGroup}
           />
         ))
