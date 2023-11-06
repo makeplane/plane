@@ -4,7 +4,7 @@ import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
