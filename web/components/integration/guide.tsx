@@ -79,7 +79,7 @@ const IntegrationGuide = () => {
             {IMPORTERS_EXPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -100,7 +100,7 @@ const IntegrationGuide = () => {
               </div>
             ))}
             <div>
-              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-200">
+              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-100">
                 <h3 className="flex gap-2 text-xl font-medium">
                   Previous Imports
                   <button

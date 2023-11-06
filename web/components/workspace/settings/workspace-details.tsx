@@ -135,7 +135,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
         value={watch("logo")}
       />
       <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex gap-5 items-center pb-7 border-b border-custom-border-200">
+        <div className="flex gap-5 items-center pb-7 border-b border-custom-border-100">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
@@ -265,7 +265,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
           </div>
         </div>
         {isAdmin && (
-          <Disclosure as="div" className="border-t border-custom-border-200">
+          <Disclosure as="div" className="border-t border-custom-border-100">
             {({ open }) => (
               <div className="w-full">
                 <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">

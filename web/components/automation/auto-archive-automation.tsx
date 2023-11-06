@@ -29,7 +29,7 @@ export const AutoArchiveAutomation: React.FC<Props> = ({ projectDetails, handleC
         handleClose={() => setmonthModal(false)}
         handleChange={handleChange}
       />
-      <div className="flex flex-col gap-4 border-b border-custom-border-200 px-4 py-6">
+      <div className="flex flex-col gap-4 border-b border-custom-border-100 px-4 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">
