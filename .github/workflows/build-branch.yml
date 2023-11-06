@@ -16,7 +16,6 @@ env:
   img_tag: latest
 
 jobs:
-
   branch_build_and_push:
     name: Build and Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
@@ -59,6 +58,11 @@ jobs:
           source: ${{ steps.gh_branch_replace_dot.outputs.value }}
           find: '_'
           replace: ''
+      - name: Upload math result for job 1
+        uses: actions/upload-artifact@v3
+        with:
+          name: src
+          path: ./
     outputs:
         gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
 
@@ -66,10 +70,15 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [ branch_build_and_push ]
     steps:
+      - name: src-frontend
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+
       - name: Build and Push Frontend to Docker Container Registry
         uses: docker/build-push-action@v4.0.0
         with:
-          context: .
+          context: src/
           file: ./web/Dockerfile.web
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
@@ -83,10 +92,15 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [ branch_build_and_push ]
     steps:
+      - name: src-space
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+
       - name: Build and Push Space to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
-          context: .
+          context: src/
           file: ./space/Dockerfile.space
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
@@ -100,10 +114,15 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [ branch_build_and_push ]
     steps:
+      - name: src-backend
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+
       - name: Build and Push Backend to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
-          context: ./apiserver
+          context: src/apiserver
           file: ./apiserver/Dockerfile.api
           platforms: linux/amd64
           push: true
@@ -117,10 +136,15 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [ branch_build_and_push ]
     steps:
+      - name: src-proxy
+        uses: actions/download-artifact@v3
+        with:
+          name: src
+          
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
-          context: ./nginx
+          context: src/nginx
           file: ./nginx/Dockerfile
           platforms: linux/amd64
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
