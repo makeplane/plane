@@ -10,7 +10,7 @@ on:
 
 env:
   gh_branch: develop
-  img_tag: ${GITHUB_RUN_ID}
+  img_tag: ${{ github.run_id }}
 
 jobs:
   branch_build_and_push:
@@ -35,7 +35,7 @@ jobs:
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ env.img_tag }}
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ env.gh_branch }}
           tags: |
             type=ref,event=tag
       
