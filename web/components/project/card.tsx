@@ -211,7 +211,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               <div className="flex items-center">
                 <Button
                   variant="link-primary"
-                  className="!p-0"
+                  className="!p-0 font-semibold"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
