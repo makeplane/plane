@@ -35,7 +35,7 @@ jobs:
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-$gh_branch
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ env.img_tag }}
           tags: |
             type=ref,event=tag
       
@@ -43,7 +43,7 @@ jobs:
       #   id: metaBackend
       #   uses: docker/metadata-action@v4.3.0
       #   with:
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-$gh_branch
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-${{ env.img_tag }}
       #     tags: |
       #       type=ref,event=tag
 
@@ -51,7 +51,7 @@ jobs:
       #   id: metaSpace
       #   uses: docker/metadata-action@v4.3.0
       #   with:
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-$gh_branch
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-${{ env.img_tag }}
       #     tags: |
       #       type=ref,event=tag
 
@@ -59,7 +59,7 @@ jobs:
       #   id: metaProxy
       #   uses: docker/metadata-action@v4.3.0
       #   with:
-      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-$gh_branch
+      #     images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ env.img_tag }}
       #     tags: |
       #       type=ref,event=tag
 
@@ -69,7 +69,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
-          tags: $img_tag
+          tags: ${{ env.img_tag }}
           # tags: ${{ steps.metaFrontend.outputs.tags }}
           push: true
         env:
