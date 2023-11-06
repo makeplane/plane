@@ -2,7 +2,14 @@
 name: Docker Branch Build
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Dev/QA Builds'
 
 env:
   gh_branch: ${{ github.ref_name }}
