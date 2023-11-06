@@ -1452,15 +1452,16 @@ def issue_activity(
         issue_activities = []
 
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.filter(pk=issue_id).first()
         workspace_id = project.workspace_id
 
-        if issue is not None:
-            try:
-                issue.updated_at = timezone.now()
-                issue.save(update_fields=["updated_at"])
-            except Exception as e:
-                pass
+        if issue_id is not None:
+            issue = Issue.objects.filter(pk=issue_id).first()
+            if issue:
+                try:
+                    issue.updated_at = timezone.now()
+                    issue.save(update_fields=["updated_at"])
+                except Exception as e:
+                    pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,

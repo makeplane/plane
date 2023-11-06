@@ -511,12 +511,6 @@ class CycleIssueViewSet(BaseViewSet):
         "issue__assignees__id",
     ]
 
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            cycle_id=self.kwargs.get("cycle_id"),
-        )
-
     def get_queryset(self):
         return self.filter_queryset(
             super()
@@ -669,7 +663,7 @@ class CycleIssueViewSet(BaseViewSet):
             type="cycle.activity.created",
             requested_data=json.dumps({"cycles_list": issues}),
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
+            issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(
                 {

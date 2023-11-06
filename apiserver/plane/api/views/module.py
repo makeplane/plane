@@ -297,12 +297,6 @@ class ModuleIssueViewSet(BaseViewSet):
         ProjectEntityPermission,
     ]
 
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            module_id=self.kwargs.get("module_id"),
-        )
-
     def get_queryset(self):
         return self.filter_queryset(
             super()
@@ -446,7 +440,7 @@ class ModuleIssueViewSet(BaseViewSet):
             type="module.activity.created",
             requested_data=json.dumps({"modules_list": issues}),
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
+            issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(
                 {
