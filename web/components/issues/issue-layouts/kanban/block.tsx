@@ -42,7 +42,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
 
   return (
     <>
-      <Draggable draggableId={issue.id} index={index} isDragDisabled={isDragDisabled}>
+      <Draggable draggableId={issue.id} index={index}>
         {(provided, snapshot) => (
           <div
             className="group/kanban-block relative p-1.5 hover:cursor-default"
