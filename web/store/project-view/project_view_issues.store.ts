@@ -347,11 +347,7 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
       if (displayFilters.layout === "calendar") filteredRouteParams.group_by = "target_date";
       if (displayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
-      const issueResponse: any = await this.issueService.getIssuesWithParams(
-        workspaceSlug,
-        projectId,
-        filteredRouteParams
-      );
+      const response: any = await this.issueService.getIssuesWithParams(workspaceSlug, projectId, filteredRouteParams);
 
       const issueType = this.rootStore.issue.getIssueType;
 
@@ -360,7 +356,7 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
           ...this.viewIssues,
           [viewId]: {
             ...this.viewIssues[viewId],
-            [issueType]: issueResponse?.["data"],
+            [issueType]: response,
           },
         };
 

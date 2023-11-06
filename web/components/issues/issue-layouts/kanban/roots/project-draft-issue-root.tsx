@@ -81,6 +81,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const orderBy = draftIssueFiltersStore?.userDisplayFilters?.order_by || null;
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
@@ -102,6 +103,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
             handleKanBanToggle={handleKanBanToggle}
             states={states}
             stateGroups={stateGroups}
+            order_by={orderBy}
             priorities={priorities}
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
@@ -113,6 +115,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
+            order_by={orderBy}
             handleIssues={handleIssues}
             quickActions={(sub_group_by, group_by, issue) => (
               <DraftIssueQuickActions

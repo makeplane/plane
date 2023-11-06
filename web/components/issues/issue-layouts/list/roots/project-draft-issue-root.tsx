@@ -70,7 +70,7 @@ export const DraftIssueListLayout: FC = observer(() => {
             handleUpdate={(issue: any, action: any) => handleIssues(group_by, issue, action)}
           />
         )}
-        display_properties={display_properties}
+        displayProperties={display_properties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}
