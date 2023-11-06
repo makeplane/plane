@@ -57,7 +57,10 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   return (
     <div className={`flex ${sizeInfo.spacing}`}>
       {avatarsWithUpdatedProps.map((avatar, index) => (
-        <div key={index} className="ring-1 ring-custom-border-200 rounded-full">
+        <div
+          key={index}
+          className="ring-1 ring-custom-background-100 rounded-full"
+        >
           {avatar}
         </div>
       ))}
@@ -69,7 +72,7 @@ export const AvatarGroup: React.FC<Props> = (props) => {
           <div
             className={`${
               !isAValidNumber(size) ? sizeInfo.avatarSize : ""
-            } ring-1 ring-custom-border-200 bg-custom-primary-500 text-white rounded-full grid place-items-center text-[9px]`}
+            } ring-1 ring-custom-background-100 bg-custom-primary-10 text-custom-primary-100 rounded-full grid place-items-center text-[9px]`}
             style={
               isAValidNumber(size)
                 ? {

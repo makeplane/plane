@@ -261,6 +261,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               name="name"
                               type="text"
                               value={value}
+                              tabIndex={1}
                               onChange={handleNameChange(onChange)}
                               hasError={Boolean(errors.name)}
                               placeholder="Project Title"
@@ -293,6 +294,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               name="identifier"
                               type="text"
                               value={value}
+                              tabIndex={2}
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
@@ -311,6 +313,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               id="description"
                               name="description"
                               value={value}
+                              tabIndex={3}
                               placeholder="Description..."
                               onChange={onChange}
                               className="text-sm !h-24"
@@ -322,7 +325,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                     </div>
 
                     <div className="flex items-center gap-2 flex-wrap">
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0" tabIndex={4}>
                         <Controller
                           name="network"
                           control={control}
@@ -359,7 +362,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           )}
                         />
                       </div>
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0" tabIndex={5}>
                         <Controller
                           name="project_lead_member"
                           control={control}
@@ -377,10 +380,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" onClick={handleClose} tabIndex={6}>
                       Cancel
                     </Button>
-                    <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
+                    <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>
                       {isSubmitting ? "Creating..." : "Create Project"}
                     </Button>
                   </div>
