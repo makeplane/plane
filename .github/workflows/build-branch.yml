@@ -106,7 +106,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -136,7 +136,7 @@ jobs:
           context: .
           file: ./space/Dockerfile.space
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -167,7 +167,7 @@ jobs:
           file: ./Dockerfile.api
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -197,7 +197,7 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
