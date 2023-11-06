@@ -69,7 +69,8 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
-          tags: ${{ steps.metaFrontend.outputs.tags }}
+          tags: $img_tag
+          # tags: ${{ steps.metaFrontend.outputs.tags }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
