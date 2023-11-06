@@ -112,7 +112,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
 
   const user = userStore.currentUser;
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId);
+  const editorSuggestion = useEditorSuggestions();
 
   const { setToastAlert } = useToast();
 

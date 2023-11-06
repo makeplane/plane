@@ -17,6 +17,7 @@ import {
 export interface IIssueFilterStore {
   loader: boolean;
   error: any | null;
+  // TODO: store filters and properties separately for each project
   userDisplayProperties: IIssueDisplayProperties;
   userDisplayFilters: IIssueDisplayFilterOptions;
   userFilters: IIssueFilterOptions;

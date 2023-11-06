@@ -64,7 +64,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     },
   });
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
+  const editorSuggestion = useEditorSuggestions();
 
   const updatePageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;

@@ -2,6 +2,7 @@
   "name": "@plane/editor-core",
   "version": "0.0.1",
   "description": "Core Editor that powers Plane",
+  "private": true,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",

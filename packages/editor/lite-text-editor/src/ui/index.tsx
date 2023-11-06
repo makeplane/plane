@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import {
   EditorContainer,
@@ -32,7 +31,7 @@ interface ILiteTextEditor {
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
+    isSubmitting: "submitting" | "submitted" | "saved"
   ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
@@ -127,7 +126,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
 };
 
 const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ILiteTextEditor>(
-  (props, ref) => <LiteTextEditor {...props} forwardedRef={ref} />,
+  (props, ref) => <LiteTextEditor {...props} forwardedRef={ref} />
 );
 
 LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";

@@ -1,5 +1,4 @@
-import * as React from 'react';
-
+import * as React from "react";
 // next-themes
 import { useTheme } from "next-themes";
 // tooltip2
@@ -69,8 +68,16 @@ export const Tooltip: React.FC<Props> = ({
         </div>
       }
       position={position}
-      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
-        React.cloneElement(children, { ref: eleReference, ...tooltipProps, ...children.props })
+      renderTarget={({
+        isOpen: isTooltipOpen,
+        ref: eleReference,
+        ...tooltipProps
+      }) =>
+        React.cloneElement(children, {
+          ref: eleReference,
+          ...tooltipProps,
+          ...children.props,
+        })
       }
     />
   );
