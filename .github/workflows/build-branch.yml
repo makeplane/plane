@@ -17,7 +17,7 @@ env:
 
 jobs:
   branch_build_and_push:
-    name: Build and Push Web/Space/API/Proxy Docker Image
+    name: Build-Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
 
     steps:
@@ -58,7 +58,7 @@ jobs:
           source: ${{ steps.gh_branch_replace_dot.outputs.value }}
           find: '_'
           replace: ''
-      - name: Upload math result for job 1
+      - name: upload-src
         uses: actions/upload-artifact@v3
         with:
           name: src
@@ -140,7 +140,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: src
-          
+  
       - name: Build and Push Plane-Proxy to Docker Hub
         uses: docker/build-push-action@v4.0.0
         with:
