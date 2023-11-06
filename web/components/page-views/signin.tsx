@@ -212,13 +212,13 @@ export const SignInView = observer(() => {
                   <>
                     {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
                     {data?.magic_login && (
-                      <div className="flex flex-col divide-y divide-custom-border-200">
+                      <div className="flex flex-col divide-y divide-custom-border-200 max-w-[360px] mx-auto w-[80vw]">
                         <div className="pb-7">
                           <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                         </div>
                       </div>
                     )}
-                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7  max-w-[360px] w-[80vw] mx-auto overflow-hidden">
                       {data?.google && <GoogleLoginButton clientId={data?.google} handleSignIn={handleGoogleSignIn} />}
                       {data?.github && <GithubLoginButton clientId={data?.github} handleSignIn={handleGitHubSignIn} />}
                     </div>

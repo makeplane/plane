@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import { Menu } from "lucide-react";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -17,7 +18,6 @@ import { List, PlusIcon, Sheet } from "lucide-react";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TStaticViewTypes } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
   { key: "spreadsheet", title: "Spreadsheet", link: "/workspace-views/all-issues", icon: Sheet },
@@ -42,6 +42,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
     project: projectStore,
+    theme: themStore,
   } = useMobxStore();
 
   const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
@@ -99,7 +100,15 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div>
+        <div className="flex gap-2">
+          <button
+            className="grid md:hidden h-7 w-7 place-items-center rounded border border-custom-border-200"
+            onClick={() => {
+              themStore.setShowSidebarOnMobile(true);
+            }}
+          >
+            <Menu className="h-4 w-4 " fontSize={14} strokeWidth={2} />
+          </button>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
               type="text"

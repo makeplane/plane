@@ -30,7 +30,7 @@ export const EmailForgotPasswordForm: FC<IEmailForgotPasswordForm> = (props) => 
   });
 
   return (
-    <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
+    <form className="space-y-4 mt-10 w-[80vw] max-w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-1">
         <Controller
           control={control}

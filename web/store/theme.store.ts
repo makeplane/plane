@@ -6,13 +6,16 @@ import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 export interface IThemeStore {
   theme: string | null;
   sidebarCollapsed: boolean | undefined;
+  showSidebarOnMobile: boolean;
 
   toggleSidebar: (collapsed?: boolean) => void;
+  setShowSidebarOnMobile: (show: boolean) => void;
   setTheme: (theme: any) => void;
 }
 
 class ThemeStore implements IThemeStore {
   sidebarCollapsed: boolean | undefined = undefined;
+  showSidebarOnMobile: boolean = false;
   theme: string | null = null;
   // root store
   rootStore;
@@ -21,9 +24,11 @@ class ThemeStore implements IThemeStore {
     makeObservable(this, {
       // observable
       sidebarCollapsed: observable.ref,
+      showSidebarOnMobile: observable.ref,
       theme: observable.ref,
       // action
       toggleSidebar: action,
+      setShowSidebarOnMobile: action,
       setTheme: action,
       // computed
     });
@@ -38,6 +43,10 @@ class ThemeStore implements IThemeStore {
       this.sidebarCollapsed = collapsed;
     }
     localStorage.setItem("app_sidebar_collapsed", this.sidebarCollapsed.toString());
+  };
+
+  setShowSidebarOnMobile = (show: boolean) => {
+    this.showSidebarOnMobile = show;
   };
 
   setTheme = async (_theme: { theme: any }) => {

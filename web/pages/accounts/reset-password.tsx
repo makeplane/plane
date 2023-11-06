@@ -106,7 +106,7 @@ const ResetPasswordPage: NextPageWithLayout = () => {
       <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
         <div className="w-full">
           <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">Reset your password</h1>
-          <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-4 mt-10 w-[80vw] max-w-[360px] mx-auto" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-1">
               <Controller
                 control={control}
