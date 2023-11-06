@@ -10,12 +10,15 @@ import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 type Props = {
   children: React.ReactNode;
   className?: string;
+  showProfileIssuesFilter?: boolean;
 };
 
 // services
 const workspaceService = new WorkspaceService();
 
-export const ProfileAuthWrapper: React.FC<Props> = ({ children, className }) => {
+export const ProfileAuthWrapper: React.FC<Props> = (props) => {
+  const { children, className, showProfileIssuesFilter } = props;
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -30,7 +33,7 @@ export const ProfileAuthWrapper: React.FC<Props> = ({ children, className }) => 
     <div className="h-full w-full md:flex md:flex-row-reverse md:overflow-hidden">
       <ProfileSidebar />
       <div className="md:h-full w-full flex flex-col md:overflow-hidden">
-        <ProfileNavbar isAuthorized={isAuthorized} />
+        <ProfileNavbar isAuthorized={isAuthorized} showProfileIssuesFilter={showProfileIssuesFilter} />
         {isAuthorized ? (
           <div className={`md:h-full w-full overflow-hidden ${className}`}>{children}</div>
         ) : (

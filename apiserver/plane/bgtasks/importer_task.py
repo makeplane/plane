@@ -2,8 +2,6 @@
 import json
 import requests
 import uuid
-import jwt
-from datetime import datetime
 
 # Django imports
 from django.conf import settings
@@ -27,7 +25,6 @@ from plane.db.models import (
     User,
     IssueProperty,
 )
-from .workspace_invitation_task import workspace_invitation
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
@@ -58,7 +55,7 @@ def service_importer(service, importer_id):
                 ignore_conflicts=True,
             )
 
-            [
+            _ = [
                 send_welcome_slack.delay(
                     str(user.id),
                     True,
@@ -157,7 +154,7 @@ def service_importer(service, importer_id):
             )
 
             # Create repo sync
-            repo_sync = GithubRepositorySync.objects.create(
+            _ = GithubRepositorySync.objects.create(
                 repository=repo,
                 workspace_integration=workspace_integration,
                 actor=workspace_integration.actor,
@@ -179,7 +176,7 @@ def service_importer(service, importer_id):
                 ImporterSerializer(importer).data,
                 cls=DjangoJSONEncoder,
             )
-            res = requests.post(
+            _ = requests.post(
                 f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
                 json=import_data_json,
                 headers=headers,

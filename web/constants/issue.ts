@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 // icons
-import { Calendar, GanttChart, Kanban, List, Sheet } from "lucide-react";
+import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
 // types
 import {
   IIssueDisplayProperties,
@@ -129,10 +129,11 @@ export const ISSUE_LAYOUTS: {
   { key: "kanban", title: "Kanban Layout", icon: Kanban },
   { key: "calendar", title: "Calendar Layout", icon: Calendar },
   { key: "spreadsheet", title: "Spreadsheet Layout", icon: Sheet },
-  { key: "gantt_chart", title: "Gantt Chart Layout", icon: GanttChart },
+  { key: "gantt_chart", title: "Gantt Chart Layout", icon: GanttChartSquare },
 ];
 
 export const ISSUE_LIST_FILTERS = [
+  { key: "mentions", title: "Mentions" },
   { key: "priority", title: "Priority" },
   { key: "state", title: "State" },
   { key: "assignees", title: "Assignees" },
@@ -324,7 +325,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   issues: {
     list: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         group_by: ["state", "priority", "labels", "assignees", "created_by", null],
@@ -337,7 +338,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     kanban: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         group_by: ["state", "priority", "labels", "assignees", "created_by"],
@@ -351,7 +352,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     calendar: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date"],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date"],
       display_properties: true,
       display_filters: {
         type: [null, "active", "backlog"],
@@ -362,7 +363,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     spreadsheet: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
@@ -374,7 +375,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       },
     },
     gantt_chart: {
-      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
+      filters: ["priority", "state", "assignees", "mentions", "created_by", "labels", "start_date", "target_date"],
       display_properties: false,
       display_filters: {
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
@@ -394,7 +395,7 @@ export const getValueFromObject = (object: Object, key: string): string | number
   let value: any = object;
   if (!value || keys.length === 0) return null;
 
-  for (const _key of keys) value = value[_key];
+  for (const _key of keys) value = value?.[_key];
   return value;
 };
 
@@ -437,7 +438,6 @@ export const createIssuePayload: (
     archived_at: null,
     assignees: [],
     assignee_details: [],
-    assignees_list: [],
     attachment_count: 0,
     attachments: [],
     issue_relations: [],
@@ -459,7 +459,6 @@ export const createIssuePayload: (
     labels: [],
     label_details: [],
     is_draft: false,
-    labels_list: [],
     links_list: [],
     link_count: 0,
     module: null,

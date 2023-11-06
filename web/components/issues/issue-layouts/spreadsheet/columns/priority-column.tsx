@@ -20,11 +20,14 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
   const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
 
   return (
-    <div>
+    <>
       <PrioritySelect
         value={issue.priority}
         onChange={(data) => onChange({ priority: data })}
-        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+        className="h-full w-full"
+        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
+        showTitle
+        highlightUrgentPriority={false}
         hideDropdownArrow
         disabled={disabled}
       />
@@ -42,6 +45,6 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
             disabled={disabled}
           />
         ))}
-    </div>
+    </>
   );
 };

@@ -1,5 +1,4 @@
-import React from "react";
-import type { NextPage } from "next";
+import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -10,13 +9,14 @@ import { ProfileAuthWrapper } from "layouts/profile-layout";
 import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
-
 // types
+import { NextPageWithLayout } from "types/app";
 
-const ProfileAssignedIssues: NextPage = observer(() => {
+const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
   const {
     workspace: workspaceStore,
     project: projectStore,
@@ -30,7 +30,7 @@ const ProfileAssignedIssues: NextPage = observer(() => {
     userId: string;
   };
 
-  useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
+  const { isLoading } = useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
     if (workspaceSlug && userId) {
       // workspace labels
       workspaceStore.setWorkspaceSlug(workspaceSlug);
@@ -45,22 +45,30 @@ const ProfileAssignedIssues: NextPage = observer(() => {
   const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
 
   return (
-    <AppLayout header={<UserProfileHeader />}>
-      <ProfileAuthWrapper>
-        {profileIssuesStore.loader ? (
-          <div>Loading...</div>
-        ) : (
-          <div className="w-full h-full relative overflow-auto -z-1">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-        )}
-      </ProfileAuthWrapper>
-    </AppLayout>
+    <>
+      {isLoading ? (
+        <div className="flex justify-center items-center w-full h-full">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="w-full h-full relative overflow-auto -z-1">
+          {activeLayout === "list" ? (
+            <ProfileIssuesListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ProfileIssuesKanBanLayout />
+          ) : null}
+        </div>
+      )}
+    </>
   );
 });
 
-export default ProfileAssignedIssues;
+ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<UserProfileHeader title="Assigned" />}>
+      <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
+    </AppLayout>
+  );
+};
+
+export default ProfileAssignedIssuesPage;

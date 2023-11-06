@@ -18,7 +18,18 @@ import {
   IssueQuickAddStore,
 } from "store/issue";
 import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
-import { IProjectPublishStore, IProjectStore, ProjectPublishStore, ProjectStore } from "store/project";
+import {
+  IProjectPublishStore,
+  IProjectStore,
+  ProjectPublishStore,
+  ProjectStore,
+  IProjectStateStore,
+  ProjectStateStore,
+  IProjectLabelStore,
+  ProjectLabelStore,
+  ProjectEstimatesStore,
+  IProjectEstimateStore,
+} from "store/project";
 import {
   IModuleFilterStore,
   IModuleIssueKanBanViewStore,
@@ -73,6 +84,8 @@ import {
   IArchivedIssueStore,
   ArchivedIssueFilterStore,
   IArchivedIssueFilterStore,
+  ArchivedIssueDetailStore,
+  IArchivedIssueDetailStore,
 } from "store/archived-issues";
 import {
   DraftIssueFilterStore,
@@ -93,6 +106,8 @@ import {
   InboxStore,
 } from "store/inbox";
 
+import { IMentionsStore, MentionsStore } from "store/editor";
+
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
@@ -105,6 +120,9 @@ export class RootStore {
 
   projectPublish: IProjectPublishStore;
   project: IProjectStore;
+  projectState: IProjectStateStore;
+  projectLabel: IProjectLabelStore;
+  projectEstimates: IProjectEstimateStore;
   issue: IIssueStore;
 
   module: IModuleStore;
@@ -140,6 +158,7 @@ export class RootStore {
   profileIssueFilters: IProfileIssueFilterStore;
 
   archivedIssues: IArchivedIssueStore;
+  archivedIssueDetail: IArchivedIssueDetailStore;
   archivedIssueFilters: IArchivedIssueFilterStore;
 
   draftIssues: IIssueDraftStore;
@@ -151,6 +170,8 @@ export class RootStore {
   inboxIssueDetails: IInboxIssueDetailsStore;
   inboxFilters: IInboxFiltersStore;
 
+  mentionsStore: IMentionsStore;
+
   constructor() {
     this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);
@@ -160,6 +181,9 @@ export class RootStore {
     this.workspaceFilter = new WorkspaceFilterStore(this);
 
     this.project = new ProjectStore(this);
+    this.projectState = new ProjectStateStore(this);
+    this.projectLabel = new ProjectLabelStore(this);
+    this.projectEstimates = new ProjectEstimatesStore(this);
     this.projectPublish = new ProjectPublishStore(this);
 
     this.module = new ModuleStore(this);
@@ -196,6 +220,7 @@ export class RootStore {
     this.profileIssueFilters = new ProfileIssueFilterStore(this);
 
     this.archivedIssues = new ArchivedIssueStore(this);
+    this.archivedIssueDetail = new ArchivedIssueDetailStore(this);
     this.archivedIssueFilters = new ArchivedIssueFilterStore(this);
 
     this.draftIssues = new IssueDraftStore(this);
@@ -206,5 +231,7 @@ export class RootStore {
     this.inboxIssues = new InboxIssuesStore(this);
     this.inboxIssueDetails = new InboxIssueDetailsStore(this);
     this.inboxFilters = new InboxFiltersStore(this);
+
+    this.mentionsStore = new MentionsStore(this);
   }
 }

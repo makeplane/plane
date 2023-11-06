@@ -16,13 +16,20 @@ type Props = {
 export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const { estimatePoints } = useEstimateOption();
 
+  const currentEstimate = estimatePoints?.find((e) => e.key === value)?.value;
   return (
     <CustomSelect
       value={value}
       customButton={
-        <div className="flex items-center gap-1.5 !text-sm bg-custom-background-80 rounded px-2.5 py-0.5">
-          <Triangle className={`h-4 w-4 ${value !== null ? "text-custom-text-100" : "text-custom-text-200"}`} />
-          {estimatePoints?.find((e) => e.key === value)?.value ?? "No estimate"}
+        <div className="flex items-center gap-1.5 text-xs bg-custom-background-80 rounded px-2.5 py-0.5">
+          {currentEstimate ? (
+            <>
+              <Triangle className={`h-3 w-3 ${value !== null ? "text-custom-text-100" : "text-custom-text-200"}`} />
+              {currentEstimate}
+            </>
+          ) : (
+            "No Estimate"
+          )}
         </div>
       }
       onChange={onChange}
@@ -31,7 +38,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
       <CustomSelect.Option value={null}>
         <>
           <span>
-            <Triangle className="h-4 w-4" />
+            <Triangle className="h-3.5 w-3" />
           </span>
           None
         </>
@@ -41,7 +48,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
           <CustomSelect.Option key={point.key} value={point.key}>
             <>
               <span>
-                <Triangle className="h-4 w-4" />
+                <Triangle className="h-3.5 w-3.5" />
               </span>
               {point.value}
             </>

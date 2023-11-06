@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { Tab } from "@headlessui/react";
 import useSWR from "swr";
@@ -13,23 +13,29 @@ import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
 import { EmptyState } from "components/common";
+import { Tooltip } from "@plane/ui";
 // images
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
 import { TCycleView, TCycleLayout } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // constants
-import { CYCLE_TAB_LIST, CYCLE_VIEWS } from "constants/cycle";
+import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
 
-const ProjectCyclesPage: NextPage = observer(() => {
+const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId, peekCycle } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    peekCycle: string;
+  };
   // fetching project details
   useSWR(
     workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
@@ -74,19 +80,18 @@ const ProjectCyclesPage: NextPage = observer(() => {
     }
   }, [projectId, cycleStore, handleCurrentView, handleCurrentLayout]);
 
-  const projectDetails = projectId ? projectStore.project_details[projectId] : null;
   const cycleView = cycleStore?.cycleView;
   const cycleLayout = cycleStore?.cycleLayout;
 
   return (
-    <AppLayout header={<CyclesHeader name={projectDetails?.name} />} withProjectWrapper>
+    <>
       <CycleCreateUpdateModal
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         isOpen={createModal}
         handleClose={() => setCreateModal(false)}
       />
-      {projectDetails?.total_cycles === 0 ? (
+      {currentProjectDetails?.total_cycles === 0 ? (
         <div className="h-full grid place-items-center">
           <EmptyState
             title="Plan your project with cycles"
@@ -111,7 +116,7 @@ const ProjectCyclesPage: NextPage = observer(() => {
             handleCurrentView(CYCLE_TAB_LIST[i].key as TCycleView);
           }}
         >
-          <div className="flex flex-col sm:flex-row gap-4 justify-between border-b border-custom-border-300 px-4 sm:px-5 pb-4 sm:pb-0">
+          <div className="flex flex-col sm:flex-row gap-4 justify-between items-end sm:items-center border-b border-custom-border-200 px-4 sm:px-5 pb-4 sm:pb-0">
             <Tab.List as="div" className="flex items-center overflow-x-scroll">
               {CYCLE_TAB_LIST.map((tab) => (
                 <Tab
@@ -126,23 +131,30 @@ const ProjectCyclesPage: NextPage = observer(() => {
                 </Tab>
               ))}
             </Tab.List>
-            {CYCLE_VIEWS && CYCLE_VIEWS.length > 0 && cycleStore?.cycleView != "active" && (
-              <div className="justify-end sm:justify-start flex items-center gap-x-1">
-                {CYCLE_VIEWS.map((view) => {
-                  if (view.key === "gantt" && cycleStore?.cycleView === "draft") return null;
+            {cycleStore?.cycleView != "active" && (
+              <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+                {CYCLE_VIEW_LAYOUTS.map((layout) => {
+                  if (layout.key === "gantt" && cycleStore?.cycleView === "draft") return null;
+
                   return (
-                    <button
-                      key={view.key}
-                      type="button"
-                      className={`grid h-8 w-8 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-80 ${
-                        cycleStore?.cycleLayout === view.key
-                          ? "bg-custom-background-80 text-custom-text-100"
-                          : "text-custom-text-200"
-                      }`}
-                      onClick={() => handleCurrentLayout(view.key as TCycleLayout)}
-                    >
-                      {view.icon}
-                    </button>
+                    <Tooltip key={layout.key} tooltipContent={layout.title}>
+                      <button
+                        type="button"
+                        className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                          cycleStore?.cycleLayout == layout.key
+                            ? "bg-custom-background-100 shadow-custom-shadow-2xs"
+                            : ""
+                        }`}
+                        onClick={() => handleCurrentLayout(layout.key as TCycleLayout)}
+                      >
+                        <layout.icon
+                          strokeWidth={2}
+                          className={`h-3.5 w-3.5 ${
+                            cycleStore?.cycleLayout == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                          }`}
+                        />
+                      </button>
+                    </Tooltip>
                   );
                 })}
               </div>
@@ -150,13 +162,14 @@ const ProjectCyclesPage: NextPage = observer(() => {
           </div>
 
           <Tab.Panels as={Fragment}>
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"all"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
@@ -165,43 +178,54 @@ const ProjectCyclesPage: NextPage = observer(() => {
               <ActiveCycleDetails workspaceSlug={workspaceSlug} projectId={projectId} />
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"upcoming"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"completed"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
 
-            <Tab.Panel as="div" className="p-4 sm:p-5 h-full overflow-y-auto">
+            <Tab.Panel as="div" className="h-full overflow-y-auto">
               {cycleView && cycleLayout && workspaceSlug && projectId && (
                 <CyclesView
                   filter={"draft"}
                   layout={cycleLayout as TCycleLayout}
                   workspaceSlug={workspaceSlug}
                   projectId={projectId}
+                  peekCycle={peekCycle}
                 />
               )}
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       )}
-    </AppLayout>
+    </>
   );
 });
+
+ProjectCyclesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<CyclesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
 
 export default ProjectCyclesPage;

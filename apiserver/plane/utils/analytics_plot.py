@@ -12,19 +12,19 @@ from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, Conc
 from plane.db.models import Issue
 
 
-def annotate_with_monthly_dimension(queryset, field_name):
+def annotate_with_monthly_dimension(queryset, field_name, attribute):
     # Get the year and the months
     year = ExtractYear(field_name)
     month = ExtractMonth(field_name)
     # Concat the year and month
     dimension = Concat(year, Value("-"), month, output_field=CharField())
     # Annotate the dimension
-    return queryset.annotate(dimension=dimension)
+    return queryset.annotate(**{attribute: dimension})
 
 def extract_axis(queryset, x_axis):
     # Format the dimension when the axis is in date
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = annotate_with_monthly_dimension(queryset, x_axis)
+        queryset = annotate_with_monthly_dimension(queryset, x_axis, "dimension")
         return queryset, "dimension"
     else:
         return queryset.annotate(dimension=F(x_axis)), "dimension"
@@ -47,7 +47,7 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
 
     # 
     if segment in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = annotate_with_monthly_dimension(queryset, segment)
+        queryset = annotate_with_monthly_dimension(queryset, segment, "segmented")
         segment = "segmented"
 
     queryset = queryset.values(x_axis)
@@ -81,7 +81,6 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
 
-
     if cycle_id:
         # Get all dates between the two dates
         date_range = [
@@ -103,7 +102,7 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .values("date", "total_completed")
             .order_by("date")
         )
-    
+
     if module_id:
         # Get all dates between the two dates
         date_range = [
@@ -126,16 +125,13 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .order_by("date")
         )
 
-
     for date in date_range:
         cumulative_pending_issues = total_issues
         total_completed = 0
         total_completed = sum(
-            [
-                item["total_completed"]
-                for item in completed_issues_distribution
-                if item["date"] is not None and item["date"] <= date
-            ]
+            item["total_completed"]
+            for item in completed_issues_distribution
+            if item["date"] is not None and item["date"] <= date
         )
         cumulative_pending_issues -= total_completed
         chart_data[str(date)] = cumulative_pending_issues

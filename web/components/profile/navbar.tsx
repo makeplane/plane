@@ -8,6 +8,7 @@ import { ProfileIssuesFilter } from "components/profile";
 
 type Props = {
   isAuthorized: boolean;
+  showProfileIssuesFilter?: boolean;
 };
 
 const viewerTabs = [
@@ -36,7 +37,9 @@ const adminTabs = [
   },
 ];
 
-export const ProfileNavbar: React.FC<Props> = ({ isAuthorized }) => {
+export const ProfileNavbar: React.FC<Props> = (props) => {
+  const { isAuthorized, showProfileIssuesFilter } = props;
+
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
@@ -59,7 +62,7 @@ export const ProfileNavbar: React.FC<Props> = ({ isAuthorized }) => {
           </Link>
         ))}
       </div>
-      <ProfileIssuesFilter />
+      {showProfileIssuesFilter && <ProfileIssuesFilter />}
     </div>
   );
 };

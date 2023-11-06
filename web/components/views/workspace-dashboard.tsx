@@ -9,7 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // images
 import emptyDashboard from "public/empty-state/dashboard.svg";
 
@@ -67,7 +67,9 @@ export const WorkspaceDashboardView = observer(() => {
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
-                <PrimaryButton
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={() => {
                     const e = new KeyboardEvent("keydown", {
                       key: "p",
@@ -76,7 +78,7 @@ export const WorkspaceDashboardView = observer(() => {
                   }}
                 >
                   Create Project
-                </PrimaryButton>
+                </Button>
               </div>
               <div className="hidden md:block self-end overflow-hidden pt-8">
                 <Image src={emptyDashboard} alt="Empty Dashboard" />

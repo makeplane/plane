@@ -6,15 +6,12 @@ import { IIssue } from "types";
 // services
 import { IssueDraftService } from "services/issue";
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
-
-export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
-export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
-export type IIssueGroupWithSubGroupsStructure = {
-  [group_id: string]: {
-    [sub_group_id: string]: IIssue[];
-  };
-};
-export type IIssueUnGroupedStructure = IIssue[];
+import {
+  IIssueGroupWithSubGroupsStructure,
+  IIssueGroupedStructure,
+  IIssueType,
+  IIssueUnGroupedStructure,
+} from "store/issue";
 
 export interface IIssueDraftStore {
   loader: boolean;

@@ -8,8 +8,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -19,7 +17,7 @@ export interface IKanBanLayout {}
 
 export const KanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string };
 
   const {
     project: projectStore,
@@ -28,6 +26,7 @@ export const KanBanLayout: React.FC = observer(() => {
     issueKanBanView: issueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
 
   const issues = issueStore?.getIssues;
 
@@ -35,7 +34,9 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
+
+  const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
     ? "swimlanes"
@@ -74,17 +75,15 @@ export const KanBanLayout: React.FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
-
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const projects = workspaceSlug ? projectStore?.projects?.[workspaceSlug] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
+    currentProjectDetails?.estimate !== null
+      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (
@@ -103,7 +102,7 @@ export const KanBanLayout: React.FC = observer(() => {
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
               />
             )}
-            display_properties={display_properties}
+            displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
@@ -113,7 +112,7 @@ export const KanBanLayout: React.FC = observer(() => {
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
             enableQuickIssueCreate
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         ) : (
           <KanBanSwimLanes
@@ -128,7 +127,7 @@ export const KanBanLayout: React.FC = observer(() => {
                 handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
               />
             )}
-            display_properties={display_properties}
+            displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
@@ -137,7 +136,7 @@ export const KanBanLayout: React.FC = observer(() => {
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
           />
         )}
       </DragDropContext>

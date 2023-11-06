@@ -8,6 +8,7 @@ export type TIssueGroupByOptions =
   | "state_detail.group"
   | "project"
   | "assignees"
+  | "mentions"
   | null;
 
 export type TIssueOrderByOptions =
@@ -29,7 +30,13 @@ export type TIssueOrderByOptions =
   | "estimate_point"
   | "-estimate_point"
   | "start_date"
-  | "-start_date";
+  | "-start_date"
+  | "link_count"
+  | "-link_count"
+  | "attachment_count"
+  | "-attachment_count"
+  | "sub_issues_count"
+  | "-sub_issues_count";
 
 export type TIssueTypeFilters = "active" | "backlog" | null;
 
@@ -40,6 +47,7 @@ export type TIssueParams =
   | "state_group"
   | "state"
   | "assignees"
+  | "mentions"
   | "created_by"
   | "subscriber"
   | "labels"
@@ -58,6 +66,7 @@ export type TCalendarLayouts = "month" | "week";
 
 export interface IIssueFilterOptions {
   assignees?: string[] | null;
+  mentions?: string[] | null;
   created_by?: string[] | null;
   labels?: string[] | null;
   priority?: string[] | null;

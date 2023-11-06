@@ -30,6 +30,7 @@ import { Sparkle, X } from "lucide-react";
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const aiService = new AIService();
 const fileService = new FileService();
@@ -51,9 +52,7 @@ const defaultValues: Partial<IIssue> = {
   parent: null,
   priority: "none",
   assignees: [],
-  assignees_list: [],
   labels: [],
-  labels_list: [],
   start_date: null,
   target_date: null,
 };
@@ -122,6 +121,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
 
   const {
     formState: { errors, isSubmitting },
@@ -279,21 +280,12 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     <>
       {projectId && (
         <>
-          <CreateStateModal
-            isOpen={stateModal}
-            handleClose={() => setStateModal(false)}
-            projectId={projectId}
-            user={user}
-          />
+          <CreateStateModal isOpen={stateModal} handleClose={() => setStateModal(false)} projectId={projectId} />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
-            user={user}
-            onSuccess={(response) => {
-              setValue("labels", [...watch("labels"), response.id]);
-              setValue("labels_list", [...watch("labels_list"), response.id]);
-            }}
+            onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
           />
         </>
       )}
@@ -427,6 +419,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
+                        mentionHighlights={editorSuggestions.mentionHighlights}
+                        mentionSuggestions={editorSuggestions.mentionSuggestions}
                       />
                     )}
                   />

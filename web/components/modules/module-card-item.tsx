@@ -9,8 +9,7 @@ import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList } from "components/ui";
-import { CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, CustomMenu, LayersIcon, Tooltip } from "@plane/ui";
 // icons
 import { Info, LinkIcon, Pencil, Star, Trash2 } from "lucide-react";
 // helpers
@@ -28,8 +27,8 @@ type Props = {
 export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const { module } = props;
 
-  const [editModuleModal, setEditModuleModal] = useState(false);
-  const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -38,9 +37,34 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const { module: moduleStore } = useMobxStore();
 
-  const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
+  const moduleTotalIssues =
+    module.backlog_issues +
+    module.unstarted_issues +
+    module.started_issues +
+    module.completed_issues +
+    module.cancelled_issues;
 
-  const handleAddToFavorites = () => {
+  const completionPercentage = (module.completed_issues / moduleTotalIssues) * 100;
+
+  const endDate = new Date(module.target_date ?? "");
+  const startDate = new Date(module.start_date ?? "");
+
+  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+
+  const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
+
+  const issueCount =
+    moduleTotalIssues === 0
+      ? "0 Issue"
+      : moduleTotalIssues === module.completed_issues
+      ? moduleTotalIssues > 1
+        ? `${moduleTotalIssues} Issues`
+        : `${moduleTotalIssues} Issue`
+      : `${module.completed_issues}/${moduleTotalIssues} Issues`;
+
+  const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
     moduleStore.addModuleToFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
@@ -52,7 +76,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleRemoveFromFavorites = () => {
+  const handleRemoveFromFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
     moduleStore.removeModuleFromFavorites(workspaceSlug.toString(), projectId.toString(), module.id).catch(() => {
@@ -64,7 +90,9 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const handleCopyText = () => {
+  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module.id}`).then(() => {
       setToastAlert({
         type: "success",
@@ -74,7 +102,21 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const openModuleOverview = () => {
+  const handleEditModule = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setEditModal(true);
+  };
+
+  const handleDeleteModule = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDeleteModal(true);
+  };
+
+  const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     const { query } = router;
 
     router.push({
@@ -83,41 +125,23 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     });
   };
 
-  const endDate = new Date(module.target_date ?? "");
-  const startDate = new Date(module.start_date ?? "");
-
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
-
-  const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
-
-  const issueCount =
-    module.completed_issues && module.total_issues
-      ? module.total_issues === 0
-        ? "0 Issue"
-        : module.total_issues === module.completed_issues
-        ? module.total_issues > 1
-          ? `${module.total_issues} Issues`
-          : `${module.total_issues} Issue`
-        : `${module.completed_issues}/${module.total_issues} Issues`
-      : "0 Issue";
-
   return (
     <>
       {workspaceSlug && projectId && (
         <CreateUpdateModuleModal
-          isOpen={editModuleModal}
-          onClose={() => setEditModuleModal(false)}
+          isOpen={editModal}
+          onClose={() => setEditModal(false)}
           data={module}
           projectId={projectId.toString()}
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
-      <DeleteModuleModal data={module} isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} />
+      <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
         <a className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
-              <Tooltip tooltipContent={module.name} position="auto">
+              <Tooltip tooltipContent={module.name} position="top">
                 <span className="text-base font-medium truncate">{module.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2">
@@ -128,13 +152,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                     {moduleStatus.label}
                   </span>
                 )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    openModuleOverview();
-                  }}
-                >
+                <button onClick={openModuleOverview}>
                   <Info className="h-4 w-4 text-custom-text-400" />
                 </button>
               </div>
@@ -145,12 +163,16 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount}</span>
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
                   <div className="flex items-center gap-1 cursor-default">
-                    <AssigneesList users={module.members_detail} length={3} />
+                    <AvatarGroup showTooltip={false}>
+                      {module.members_detail.map((member) => (
+                        <Avatar key={member.id} name={member.display_name} src={member.avatar} />
+                      ))}
+                    </AvatarGroup>
                   </div>
                 </Tooltip>
               )}
@@ -184,60 +206,28 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </span>
               <div className="flex items-center gap-1.5 z-10">
                 {module.is_favorite ? (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      handleRemoveFromFavorites();
-                    }}
-                  >
+                  <button type="button" onClick={handleRemoveFromFavorites}>
                     <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />
                   </button>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      handleAddToFavorites();
-                    }}
-                  >
+                  <button type="button" onClick={handleAddToFavorites}>
                     <Star className="h-3.5 w-3.5 text-custom-text-200" />
                   </button>
                 )}
                 <CustomMenu width="auto" ellipsis className="z-10">
-                  <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setEditModuleModal(true);
-                    }}
-                  >
+                  <CustomMenu.MenuItem onClick={handleEditModule}>
                     <span className="flex items-center justify-start gap-2">
                       <Pencil className="h-3 w-3" />
                       <span>Edit module</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setModuleDeleteModal(true);
-                    }}
-                  >
+                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
                     <span className="flex items-center justify-start gap-2">
                       <Trash2 className="h-3 w-3" />
                       <span>Delete module</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleCopyText();
-                    }}
-                  >
+                  <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3 w-3" />
                       <span>Copy module link</span>

@@ -8,16 +8,23 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import {
   CycleAppliedFiltersRoot,
   CycleCalendarLayout,
+  CycleEmptyState,
   CycleGanttLayout,
   CycleKanBanLayout,
   CycleListLayout,
   CycleSpreadsheetLayout,
 } from "components/issues";
 import { TransferIssues, TransferIssuesModal } from "components/cycles";
+// ui
+import { Spinner } from "@plane/ui";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
-export const CycleLayoutRoot: React.FC = observer(() => {
+type Props = {
+  openIssuesListModal: () => void;
+};
+
+export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
@@ -50,25 +57,38 @@ export const CycleLayoutRoot: React.FC = observer(() => {
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "draft";
 
+  const issueCount = cycleIssueStore.getIssuesCount;
+
+  if (!cycleIssueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
+
   return (
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
-        <div className="w-full h-full overflow-auto">
-          {activeLayout === "list" ? (
-            <CycleListLayout />
-          ) : activeLayout === "kanban" ? (
-            <CycleKanBanLayout />
-          ) : activeLayout === "calendar" ? (
-            <CycleCalendarLayout />
-          ) : activeLayout === "gantt_chart" ? (
-            <CycleGanttLayout />
-          ) : activeLayout === "spreadsheet" ? (
-            <CycleSpreadsheetLayout />
-          ) : null}
-        </div>
+        {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
+          <CycleEmptyState openIssuesListModal={openIssuesListModal} />
+        ) : (
+          <div className="w-full h-full overflow-auto">
+            {activeLayout === "list" ? (
+              <CycleListLayout />
+            ) : activeLayout === "kanban" ? (
+              <CycleKanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <CycleCalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <CycleGanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <CycleSpreadsheetLayout />
+            ) : null}
+          </div>
+        )}
       </div>
     </>
   );

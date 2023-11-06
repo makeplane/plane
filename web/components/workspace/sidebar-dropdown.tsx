@@ -3,20 +3,15 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { useTheme } from "next-themes";
+import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // services
-import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
-// components
-import { Avatar } from "components/ui";
-import { Loader } from "@plane/ui";
-// icons
-import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
+// ui
+import { Avatar, Loader } from "@plane/ui";
 // types
 import { IWorkspace } from "types";
 
@@ -49,30 +44,24 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 
-const userService = new UserService();
 const authService = new AuthService();
 
 export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { theme: themeStore, workspace: workspaceStore } = useMobxStore();
-
+  const { theme: themeStore, workspace: workspaceStore, user: userStore } = useMobxStore();
   const { workspaces, currentWorkspace: activeWorkspace } = workspaceStore;
-
-  const { user, mutateUser } = useUser();
-
-  const { setTheme } = useTheme();
+  const user = userStore.currentUser;
 
   const { setToastAlert } = useToast();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
-    userService
-      .updateUser({
+    userStore
+      .updateCurrentUser({
         last_workspace_id: workspace?.id,
       })
       .then(() => {
-        mutateUser();
         router.push(`/${workspace.slug}/`);
       })
       .catch(() =>
@@ -88,9 +77,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
     await authService
       .signOut()
       .then(() => {
-        mutateUser(undefined);
         router.push("/");
-        setTheme("system");
       })
       .catch(() =>
         setToastAlert({
@@ -240,7 +227,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!themeStore.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar user={user} height="28px" width="28px" fontSize="14px" />
+            <Avatar name={user?.display_name} src={user?.avatar} size={32} shape="square" />
           </Menu.Button>
 
           <Transition

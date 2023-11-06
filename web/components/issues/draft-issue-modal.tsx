@@ -9,8 +9,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
-import useUser from "hooks/use-user";
-import useIssuesView from "hooks/use-issues-view";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -18,13 +16,7 @@ import { DraftIssueForm } from "components/issues";
 // types
 import type { IIssue } from "types";
 // fetch-keys
-import {
-  SUB_ISSUES,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_ISSUES_WITH_PARAMS,
-  CYCLE_DETAILS,
-  MODULE_DETAILS,
-} from "constants/fetch-keys";
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 interface IssuesModalProps {
   data?: IIssue | null;
@@ -77,13 +69,11 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     draftIssues: draftIssueStore,
     issueDetail: issueDetailStore,
     issue: issueStore,
+    user: userStore,
   } = useMobxStore();
 
+  const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
-
-  const { params } = useIssuesView();
-
-  const { user } = useUser();
 
   const { clearValue: clearDraftIssueLocalStorage } = useLocalStorage("draftedIssue", {});
 
@@ -207,51 +197,35 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   };
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!workspaceSlug || !activeProject) return;
+    if (!workspaceSlug || !activeProject || !user) return;
 
-    // TODO: switch to store
-    await issueService
-      .addIssueToCycle(
-        workspaceSlug as string,
-        activeProject ?? "",
-        cycleId,
-        {
-          issues: [issueId],
-        },
-        user
-      )
-      .then(() => {
-        if (cycleId) {
-          mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId, params));
-          mutate(CYCLE_DETAILS(cycleId as string));
-        }
-      });
+    await issueService.addIssueToCycle(
+      workspaceSlug as string,
+      activeProject ?? "",
+      cycleId,
+      {
+        issues: [issueId],
+      },
+      user
+    );
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
-    if (!workspaceSlug || !activeProject) return;
+    if (!workspaceSlug || !activeProject || !user) return;
 
-    // TODO: switch to store
-    await moduleService
-      .addIssuesToModule(
-        workspaceSlug as string,
-        activeProject ?? "",
-        moduleId as string,
-        {
-          issues: [issueId],
-        },
-        user
-      )
-      .then(() => {
-        if (moduleId) {
-          mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-          mutate(MODULE_DETAILS(moduleId as string));
-        }
-      });
+    await moduleService.addIssuesToModule(
+      workspaceSlug as string,
+      activeProject ?? "",
+      moduleId as string,
+      {
+        issues: [issueId],
+      },
+      user
+    );
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject) return;
+    if (!workspaceSlug || !activeProject || !user) return;
 
     await issueDetailStore
       .createIssue(workspaceSlug.toString(), activeProject, payload)
@@ -299,8 +273,6 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
     const payload: Partial<IIssue> = {
       ...formData,
-      assignees_list: formData.assignees ?? [],
-      labels_list: formData.labels ?? [],
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
@@ -357,7 +329,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
                     status={data ? true : false}
-                    user={user}
+                    user={user ?? undefined}
                     fieldsToShow={fieldsToShow}
                   />
                 </Dialog.Panel>

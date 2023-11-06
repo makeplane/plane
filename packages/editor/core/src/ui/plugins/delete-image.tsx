@@ -16,7 +16,7 @@ const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
   new Plugin({
     key: deleteKey,
     appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
-      const newImageSources = new Set();
+      const newImageSources = new Set<string>();
       newState.doc.descendants((node) => {
         if (node.type.name === IMAGE_NODE_TYPE) {
           newImageSources.add(node.attrs.src);

@@ -43,7 +43,7 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
       }}
       labelTextColor={{ from: "color", modifiers: [["darker", 1.6]] }}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
-      animate={true}
+      animate
       enableLabel={rest.enableLabel ?? false}
       {...rest}
     />

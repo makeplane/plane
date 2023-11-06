@@ -1,5 +1,5 @@
 # Python imports
-from datetime import timedelta, datetime, date
+from datetime import timedelta, date
 
 # Django imports
 from django.db.models import Exists, OuterRef, Q, Prefetch

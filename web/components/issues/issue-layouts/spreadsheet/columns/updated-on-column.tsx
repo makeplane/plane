@@ -21,7 +21,9 @@ export const SpreadsheetUpdatedOnColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      {renderLongDetailDateFormat(issue.updated_at)}
+      <div className="flex items-center justify-center text-xs h-full w-full">
+        {renderLongDetailDateFormat(issue.updated_at)}
+      </div>
 
       {isExpanded &&
         !isLoading &&

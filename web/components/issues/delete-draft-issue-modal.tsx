@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Dialog, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
+import { Dialog, Transition } from "@headlessui/react";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-
-import useUser from "hooks/use-user";
 // hooks
 import useToast from "hooks/use-toast";
 // icons
@@ -26,17 +23,18 @@ type Props = {
 export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
   const { isOpen, handleClose, data, onSuccess } = props;
 
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   // store
   const { draftIssues: draftIssueStore } = useMobxStore();
 
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
-  const { user } = useUser();
+  const { user: userStore } = useMobxStore();
+  const user = userStore.currentUser;
+
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const { setToastAlert } = useToast();
 
   useEffect(() => {

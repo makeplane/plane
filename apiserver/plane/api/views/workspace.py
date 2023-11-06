@@ -6,12 +6,10 @@ from uuid import uuid4
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import Prefetch
 from django.conf import settings
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.sites.shortcuts import get_current_site
 from django.db.models import (
     Prefetch,
     OuterRef,
@@ -55,7 +53,6 @@ from . import BaseViewSet
 from plane.db.models import (
     User,
     Workspace,
-    WorkspaceMember,
     WorkspaceMemberInvite,
     Team,
     ProjectMember,
@@ -472,7 +469,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     model = WorkspaceMember
 
     permission_classes = [
-        WorkSpaceAdminPermission,
+        WorkspaceEntityPermission,
     ]
 
     search_fields = [
@@ -488,6 +485,25 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .select_related("workspace", "workspace__owner")
             .select_related("member")
         )
+
+    def list(self, request, slug):
+        workspace_member = WorkspaceMember.objects.get(
+            member=request.user, workspace__slug=slug
+        )
+
+        workspace_members = WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member__is_bot=False,
+        ).select_related("workspace", "member")
+
+        if workspace_member.role > 10:
+            serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
+        else:
+            serializer = WorkSpaceMemberSerializer(
+                workspace_members,
+                many=True,
+            )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, pk):
         workspace_member = WorkspaceMember.objects.get(pk=pk, workspace__slug=slug)
@@ -1250,20 +1266,6 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
             project__project_projectmember__member=request.user,
         ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
         return Response(labels, status=status.HTTP_200_OK)
-
-
-class WorkspaceMembersEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
-    def get(self, request, slug):
-        workspace_members = WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            member__is_bot=False,
-        ).select_related("workspace", "member")
-        serialzier = WorkSpaceMemberSerializer(workspace_members, many=True)
-        return Response(serialzier.data, status=status.HTTP_200_OK)
 
 
 class LeaveWorkspaceEndpoint(BaseAPIView):

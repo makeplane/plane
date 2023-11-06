@@ -8,15 +8,12 @@ import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 // types
 import { IIssue } from "types";
 import { IBlockUpdateData } from "components/gantt-chart";
-
-export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
-export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
-export type IIssueGroupWithSubGroupsStructure = {
-  [group_id: string]: {
-    [sub_group_id: string]: IIssue[];
-  };
-};
-export type IIssueUnGroupedStructure = IIssue[];
+import {
+  IIssueGroupWithSubGroupsStructure,
+  IIssueGroupedStructure,
+  IIssueType,
+  IIssueUnGroupedStructure,
+} from "store/issue";
 
 export interface IModuleIssueStore {
   loader: boolean;
@@ -32,6 +29,7 @@ export interface IModuleIssueStore {
   // computed
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+  getIssuesCount: number;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
@@ -76,6 +74,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
       // computed
       getIssueType: computed,
       getIssues: computed,
+      getIssuesCount: computed,
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
@@ -130,6 +129,44 @@ export class ModuleIssueStore implements IModuleIssueStore {
     if (!moduleId || !issueType) return null;
 
     return this.issues?.[moduleId]?.[issueType] || null;
+  }
+
+  get getIssuesCount() {
+    const issueType = this.getIssueType;
+
+    let issuesCount = 0;
+
+    if (issueType === "grouped") {
+      const issues = this.getIssues as IIssueGroupedStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((group_id) => {
+        issuesCount += issues[group_id].length;
+      });
+    }
+
+    if (issueType === "groupWithSubGroups") {
+      const issues = this.getIssues as IIssueGroupWithSubGroupsStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((sub_group_id) => {
+        Object.keys(issues[sub_group_id]).map((group_id) => {
+          issuesCount += issues[sub_group_id][group_id].length;
+        });
+      });
+    }
+
+    if (issueType === "ungrouped") {
+      const issues = this.getIssues as IIssueUnGroupedStructure;
+
+      if (!issues) return 0;
+
+      issuesCount = issues.length;
+    }
+
+    return issuesCount;
   }
 
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
