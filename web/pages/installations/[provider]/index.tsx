@@ -27,53 +27,38 @@ const AppPostInstallation: NextPageWithLayout = () => {
           console.log(err);
         });
     } else if (provider === "slack" && state && code) {
-      appInstallationService
-        .getSlackAuthDetails(code.toString())
-        .then((res) => {
-          const [workspaceSlug, projectId, integrationId] = state.toString().split(",");
+      const [workspaceSlug, projectId, integrationId] = state.toString().split(",");
 
-          if (!projectId) {
-            const payload = {
-              metadata: {
-                ...res,
-              },
-            };
+      if (!projectId) {
+        const payload = {
+          code,
+        };
 
-            appInstallationService
-              .addInstallationApp(state.toString(), provider, payload)
-              .then((r) => {
-                window.opener = null;
-                window.open("", "_self");
-                window.close();
-              })
-              .catch((err) => {
-                throw err?.response;
-              });
-          } else {
-            const payload = {
-              access_token: res.access_token,
-              bot_user_id: res.bot_user_id,
-              webhook_url: res.incoming_webhook.url,
-              data: res,
-              team_id: res.team.id,
-              team_name: res.team.name,
-              scopes: res.scope,
-            };
-            appInstallationService
-              .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
-              .then((r) => {
-                window.opener = null;
-                window.open("", "_self");
-                window.close();
-              })
-              .catch((err) => {
-                throw err.response;
-              });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        appInstallationService
+          .addInstallationApp(state.toString(), provider, payload)
+          .then((r) => {
+            window.opener = null;
+            window.open("", "_self");
+            window.close();
+          })
+          .catch((err) => {
+            throw err?.response;
+          });
+      } else {
+        const payload = {
+          code,
+        };
+        appInstallationService
+          .addSlackChannel(workspaceSlug, projectId, integrationId, payload)
+          .then((r) => {
+            window.opener = null;
+            window.open("", "_self");
+            window.close();
+          })
+          .catch((err) => {
+            throw err.response;
+          });
+      }
     }
   }, [state, installation_id, provider, code]);
 
