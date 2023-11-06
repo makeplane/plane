@@ -2,6 +2,7 @@
   "name": "@plane/lite-text-editor",
   "version": "0.0.1",
   "description": "Package that powers Plane's Comment Editor",
+  "private": true,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -29,9 +30,6 @@
   "dependencies": {
     "@plane/editor-core": "*",
     "@tiptap/extension-list-item": "^2.1.11",
-    "@types/node": "18.15.3",
-    "@types/react": "^18.2.5",
-    "@types/react-dom": "18.0.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "eslint": "8.36.0",
@@ -46,6 +44,9 @@
     "use-debounce": "^9.0.4"
   },
   "devDependencies": {
+    "@types/node": "18.15.3",
+    "@types/react": "^18.2.35",
+    "@types/react-dom": "^18.2.14",
     "eslint": "^7.32.0",
     "postcss": "^8.4.29",
     "tailwind-config-custom": "*",

@@ -50,9 +50,9 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     control,

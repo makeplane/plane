@@ -38,7 +38,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
 
   const { setShowAlert } = useReloadConfirmations();
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug, issue.project_id)
+  const editorSuggestion = useEditorSuggestions();
 
   const {
     handleSubmit,
@@ -164,8 +164,9 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           )}
         />
         <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-            }`}
+          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
+            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+          }`}
         >
           {isSubmitting === "submitting" ? "Saving..." : "Saved"}
         </div>

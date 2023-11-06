@@ -56,7 +56,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestion = useEditorSuggestions();
 
   const { setToastAlert } = useToast();
 

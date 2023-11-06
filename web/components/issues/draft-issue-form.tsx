@@ -122,7 +122,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const { setToastAlert } = useToast();
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     formState: { errors, isSubmitting },
