@@ -1,0 +1,205 @@
+
+name: Docker Branch Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'     
+        required: true
+        default: 'warning'
+      tags:
+        description: 'Dev/QA Builds'
+
+env:
+  gh_branch: ${{ github.ref_name }}
+  img_tag: latest
+
+jobs:
+  branch_build_and_push:
+    name: Build-Push Web/Space/API/Proxy Docker Image
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3.3.0
+
+      - uses: ASzc/change-string-case-action@v2
+        id: gh_branch_upper_lower
+        with:
+          string: ${{ env.gh_branch }}
+
+      - uses: mad9000/actions-find-and-replace-string@2
+        id: gh_branch_replace_slash
+        with:
+          source: ${{ steps.gh_branch_upper_lower.outputs.lowercase }}
+          find: '/'        
+          replace: '-'
+
+      - uses: mad9000/actions-find-and-replace-string@2
+        id: gh_branch_replace_dot
+        with:
+          source: ${{ steps.gh_branch_replace_slash.outputs.value }}
+          find: '.'        
+          replace: ''
+          
+      - uses: mad9000/actions-find-and-replace-string@2
+        id: gh_branch_clean
+        with:
+          source: ${{ steps.gh_branch_replace_dot.outputs.value }}
+          find: '_'
+          replace: ''
+      - name: Uploading Proxy Source
+        uses: actions/upload-artifact@v3
+        with:
+          name: proxy-src-code
+          path: ./nginx
+      - name: Uploading Backend Source
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-src-code
+          path: ./apiserver
+      - name: Uploading Web Source
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-src-code
+          path: |
+            ./
+            !./apiserver
+            !./nginx
+            !./deploy
+            !./space
+      
+      - name: Uploading Space Source
+        uses: actions/upload-artifact@v3
+        with:
+          name: space-src-code
+          path: |
+            ./
+            !./apiserver
+            !./nginx
+            !./deploy
+            !./web
+    outputs:
+        gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
+
+  branch_build_push_frontend:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Downloading Web Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: web-src-code
+
+      - name: Build and Push Frontend to Docker Container Registry
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./web/Dockerfile.web
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_space:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Downloading Space Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: space-src-code
+
+      - name: Build and Push Space to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./space/Dockerfile.space
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_backend:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Downloading Backend Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-src-code
+
+      - name: Build and Push Backend to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./Dockerfile.api
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  branch_build_push_proxy:
+    runs-on: ubuntu-20.04
+    needs: [ branch_build_and_push ]
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2.5.0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Downloading Proxy Source Code
+        uses: actions/download-artifact@v3
+        with:
+          name: proxy-src-code
+
+      - name: Build and Push Plane-Proxy to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
