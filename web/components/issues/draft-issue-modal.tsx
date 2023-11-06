@@ -21,11 +21,10 @@ import type { IIssue } from "types";
 import { SUB_ISSUES } from "constants/fetch-keys";
 
 interface IssuesModalProps {
-  data?: IIssue | null;
   handleClose: () => void;
   isOpen: boolean;
   isUpdatingSingleIssue?: boolean;
-  prePopulateData?: Partial<IIssue>;
+  initialData?: Partial<IIssue>;
   fieldsToShow?: (
     | "project"
     | "name"
@@ -48,7 +47,7 @@ const issueService = new IssueService();
 const moduleService = new ModuleService();
 
 export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
+  const { handleClose, isOpen, initialData, fieldsToShow = ["all"], onSubmit } = props;
 
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -85,33 +84,30 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   };
 
   useEffect(() => {
-    setPreloadedData(prePopulateDataProps ?? {});
+    setPreloadedData(initialData ?? {});
 
-    if (cycleId && !prePopulateDataProps?.cycle) {
+    if (cycleId && !initialData?.cycle) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
-        ...prePopulateDataProps,
+        ...initialData,
         cycle: cycleId.toString(),
       }));
     }
-    if (moduleId && !prePopulateDataProps?.module) {
+    if (moduleId && !initialData?.module) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
-        ...prePopulateDataProps,
+        ...initialData,
         module: moduleId.toString(),
       }));
     }
-    if (
-      (router.asPath.includes("my-issues") || router.asPath.includes("assigned")) &&
-      !prePopulateDataProps?.assignees
-    ) {
+    if ((router.asPath.includes("my-issues") || router.asPath.includes("assigned")) && !initialData?.assignees) {
       setPreloadedData((prevData) => ({
         ...(prevData ?? {}),
-        ...prePopulateDataProps,
-        assignees: prePopulateDataProps?.assignees ?? [user?.id ?? ""],
+        ...initialData,
+        assignees: initialData?.assignees ?? [user?.id ?? ""],
       }));
     }
-  }, [prePopulateDataProps, cycleId, moduleId, router.asPath, user?.id]);
+  }, [initialData, cycleId, moduleId, router.asPath, user?.id]);
 
   useEffect(() => {
     // if modal is closed, reset active project to null
@@ -123,7 +119,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
 
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
-    if (data && data.project) return setActiveProject(data.project);
+    if (initialData && initialData.project) return setActiveProject(initialData.project);
 
     if (prePopulateData && prePopulateData.project && !activeProject) return setActiveProject(prePopulateData.project);
 
@@ -133,7 +129,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
     // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [activeProject, data, projectId, projects, isOpen, prePopulateData]);
+  }, [activeProject, initialData, projectId, projects, isOpen, prePopulateData]);
 
   const createDraftIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
@@ -328,15 +324,14 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
                   <DraftIssueForm
                     isOpen={isOpen}
                     handleFormSubmit={handleFormSubmit}
-                    prePopulatedData={prePopulateData}
-                    data={data}
+                    initialData={initialData}
                     createMore={createMore}
                     setCreateMore={setCreateMore}
                     handleClose={onClose}
                     handleDiscard={onDiscard}
                     projectId={activeProject ?? ""}
                     setActiveProject={setActiveProject}
-                    status={data ? true : false}
+                    status={initialData?.id ? true : false}
                     user={user ?? undefined}
                     fieldsToShow={fieldsToShow}
                   />

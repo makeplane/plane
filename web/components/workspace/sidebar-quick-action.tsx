@@ -21,7 +21,7 @@ export const WorkspaceSidebarQuickAction = () => {
       <CreateUpdateDraftIssueModal
         isOpen={isDraftIssueModalOpen}
         handleClose={() => setIsDraftIssueModalOpen(false)}
-        prePopulateData={storedValue ? JSON.parse(storedValue) : {}}
+        initialData={storedValue ? JSON.parse(storedValue) : {}}
         onSubmit={() => {
           localStorage.removeItem("draftedIssue");
           clearValue();

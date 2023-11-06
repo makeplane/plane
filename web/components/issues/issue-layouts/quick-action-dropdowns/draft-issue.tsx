@@ -28,9 +28,7 @@ export const DraftIssueQuickActions: React.FC<Props> = (props) => {
           setCreateUpdateIssueModal(false);
           setIssueToEdit(null);
         }}
-        // pre-populate date only if not editing
-        prePopulateData={!issueToEdit && createUpdateIssueModal ? { ...issue } : {}}
-        data={issueToEdit}
+        initialData={issueToEdit ? { ...issueToEdit } : { ...issue, name: issue?.name, description: issue.description }}
       />
       <CustomMenu ellipsis>
         <CustomMenu.MenuItem

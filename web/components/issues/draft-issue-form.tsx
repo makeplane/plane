@@ -61,9 +61,8 @@ interface IssueFormProps {
     formData: Partial<IIssue>,
     action?: "createDraft" | "createNewIssue" | "updateDraft" | "convertToNewIssue"
   ) => Promise<void>;
-  data?: Partial<IIssue> | null;
+  initialData?: Partial<IIssue> | null;
   isOpen: boolean;
-  prePopulatedData?: Partial<IIssue> | null;
   projectId: string;
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>;
   createMore: boolean;
@@ -91,9 +90,8 @@ interface IssueFormProps {
 export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const {
     handleFormSubmit,
-    data,
+    initialData,
     isOpen,
-    prePopulatedData,
     projectId,
     setActiveProject,
     createMore,
@@ -124,7 +122,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId);
 
   const {
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
     handleSubmit,
     reset,
     watch,
@@ -132,30 +130,30 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     getValues,
     setValue,
   } = useForm<IIssue>({
-    defaultValues: prePopulatedData ?? defaultValues,
+    defaultValues: initialData ?? defaultValues,
     reValidateMode: "onChange",
   });
 
   const issueName = watch("name");
 
   const payload: Partial<IIssue> = {
-    name: watch("name"),
-    description: watch("description"),
-    description_html: watch("description_html"),
-    state: watch("state"),
-    priority: watch("priority"),
-    assignees: watch("assignees"),
-    labels: watch("labels"),
-    start_date: watch("start_date"),
-    target_date: watch("target_date"),
-    project: watch("project"),
-    parent: watch("parent"),
-    cycle: watch("cycle"),
-    module: watch("module"),
+    name: getValues("name"),
+    description: getValues("description"),
+    description_html: getValues("description_html"),
+    state: getValues("state"),
+    priority: getValues("priority"),
+    assignees: getValues("assignees"),
+    labels: getValues("labels"),
+    start_date: getValues("start_date"),
+    target_date: getValues("target_date"),
+    project: getValues("project"),
+    parent: getValues("parent"),
+    cycle: getValues("cycle"),
+    module: getValues("module"),
   };
 
   useEffect(() => {
-    if (!isOpen || data) return;
+    if (!isOpen) return;
 
     setLocalStorageValue(
       JSON.stringify({
@@ -163,7 +161,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
       })
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(payload), isOpen, data]);
+  }, [JSON.stringify(payload), isOpen]);
 
   const handleCreateUpdateIssue = async (
     formData: Partial<IIssue>,
@@ -171,7 +169,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   ) => {
     await handleFormSubmit(
       {
-        ...(data ?? {}),
+        ...(initialData ?? {}),
         ...formData,
       },
       action
@@ -248,12 +246,14 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   };
 
   useEffect(() => {
+    // if form is dirty, don't reset
+    if (isDirty) return;
+
     reset({
       ...defaultValues,
-      ...(prePopulatedData ?? {}),
-      ...(data ?? {}),
+      ...(initialData ?? {}),
     });
-  }, [prePopulatedData, reset, data]);
+  }, [reset, initialData, isDirty]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
@@ -287,7 +287,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
       )}
       <form
         onSubmit={handleSubmit((formData) =>
-          handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createDraft")
+          handleCreateUpdateIssue(formData, initialData?.id ? "convertToNewIssue" : "createDraft")
         )}
       >
         <div className="space-y-5">
@@ -583,7 +583,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
               variant="neutral-primary"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
-                handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
+                handleCreateUpdateIssue(formData, initialData?.id ? "updateDraft" : "createDraft")
               )}
             >
               {isSubmitting ? "Saving..." : "Save Draft"}
@@ -592,7 +592,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
               loading={isSubmitting}
               variant="primary"
               onClick={handleSubmit((formData) =>
-                handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
+                handleCreateUpdateIssue(formData, initialData?.id ? "convertToNewIssue" : "createNewIssue")
               )}
             >
               {isSubmitting ? "Saving..." : "Add Issue"}
