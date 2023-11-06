@@ -16,7 +16,7 @@ import { getNumberCount } from "helpers/string.helper";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export const NotificationPopover = observer(() => {
-  const store: any = useMobxStore();
+  const { theme: themeStore } = useMobxStore();
 
   const {
     notifications,
@@ -45,6 +45,8 @@ export const NotificationPopover = observer(() => {
     markAllNotificationsAsRead,
   } = useUserNotification();
 
+  const isSidebarCollapsed = themeStore.sidebarCollapsed;
+
   return (
     <>
       <SnoozeNotificationModal
@@ -62,23 +64,18 @@ export const NotificationPopover = observer(() => {
 
           return (
             <>
-              <Tooltip
-                tooltipContent="Notifications"
-                position="right"
-                className="ml-2"
-                disabled={!store?.theme?.sidebarCollapsed}
-              >
+              <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <Popover.Button
                   className={`relative group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                  } ${store?.theme?.sidebarCollapsed ? "justify-center" : ""}`}
+                  } ${isSidebarCollapsed ? "justify-center" : ""}`}
                 >
                   <Bell className="h-4 w-4" />
-                  {store?.theme?.sidebarCollapsed ? null : <span>Notifications</span>}
+                  {isSidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
-                    store?.theme?.sidebarCollapsed ? (
+                    isSidebarCollapsed ? (
                       <span className="absolute right-3.5 top-2 h-2 w-2 bg-custom-primary-300 rounded-full" />
                     ) : (
                       <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
