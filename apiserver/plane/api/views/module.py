@@ -266,12 +266,12 @@ class ModuleViewSet(BaseViewSet):
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
         )
-        module.delete()
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps(
                 {
                     "module_id": str(pk),
+                    "module_name": str(module.name),
                     "issues": [str(issue_id) for issue_id in module_issues],
                 }
             ),
@@ -281,6 +281,7 @@ class ModuleViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        module.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

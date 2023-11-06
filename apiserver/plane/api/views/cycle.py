@@ -479,13 +479,13 @@ class CycleViewSet(BaseViewSet):
             )
         )
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        # Delete the cycle
-        cycle.delete()
+
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
                 {
                     "cycle_id": str(pk),
+                    "cycle_name": str(cycle.name),
                     "issues": [str(issue_id) for issue_id in cycle_issues],
                 }
             ),
@@ -495,6 +495,8 @@ class CycleViewSet(BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        # Delete the cycle
+        cycle.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
