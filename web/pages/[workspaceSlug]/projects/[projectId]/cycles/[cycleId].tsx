@@ -1,16 +1,14 @@
-import { useState, ReactElement } from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
-import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { CycleIssuesHeader } from "components/headers";
-import { ExistingIssuesListModal } from "components/core";
 import { CycleDetailsSidebar } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // ui
@@ -18,18 +16,13 @@ import { EmptyState } from "components/common";
 // assets
 import emptyCycle from "public/empty-state/cycle.svg";
 // types
-import { ISearchIssueResponse } from "types";
 import { NextPageWithLayout } from "types/app";
 
 const CycleDetailPage: NextPageWithLayout = () => {
-  const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { cycle: cycleStore, cycleIssue: cycleIssueStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
+  const { cycle: cycleStore } = useMobxStore();
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -45,35 +38,8 @@ const CycleDetailPage: NextPageWithLayout = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
 
-  const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-
-    const issueIds = data.map((i) => i.id);
-
-    await cycleIssueStore
-      .addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
-      });
-  };
-
-  const openIssuesListModal = () => {
-    setCycleIssuesListModal(true);
-  };
-
   return (
     <>
-      {/* TODO: Update logic to bulk add issues to a cycle */}
-      <ExistingIssuesListModal
-        isOpen={cycleIssuesListModal}
-        handleClose={() => setCycleIssuesListModal(false)}
-        searchParams={{ cycle: true }}
-        handleOnSubmit={handleAddIssuesToCycle}
-      />
       {error ? (
         <EmptyState
           image={emptyCycle}
@@ -88,7 +54,7 @@ const CycleDetailPage: NextPageWithLayout = () => {
         <>
           <div className="flex h-full w-full">
             <div className="h-full w-full overflow-hidden">
-              <CycleLayoutRoot openIssuesListModal={openIssuesListModal} />
+              <CycleLayoutRoot />
             </div>
             {cycleId && !isSidebarCollapsed && (
               <div

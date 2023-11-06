@@ -1,15 +1,13 @@
-import { useState, ReactElement } from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
-import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { ExistingIssuesListModal } from "components/core";
 import { ModuleDetailsSidebar } from "components/modules";
 import { ModuleLayoutRoot } from "components/issues";
 import { ModuleIssuesHeader } from "components/headers";
@@ -19,18 +17,13 @@ import { EmptyState } from "components/common";
 import emptyModule from "public/empty-state/module.svg";
 // types
 import { NextPageWithLayout } from "types/app";
-import { ISearchIssueResponse } from "types";
 
 const ModuleIssuesPage: NextPageWithLayout = () => {
-  // states
-  const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
   // store
-  const { module: moduleStore, moduleIssue: moduleIssueStore } = useMobxStore();
-
-  const { setToastAlert } = useToast();
+  const { module: moduleStore } = useMobxStore();
   // local storage
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
@@ -42,39 +35,12 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
       : null
   );
 
-  const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
-
-    const issueIds = data.map((i) => i.id);
-
-    await moduleIssueStore
-      .addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the module. Please try again.",
-        })
-      );
-  };
-
-  const openIssuesListModal = () => {
-    console.log("Opening...");
-    setModuleIssuesListModal(true);
-  };
-
   const toggleSidebar = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
 
   return (
     <>
-      <ExistingIssuesListModal
-        isOpen={moduleIssuesListModal}
-        handleClose={() => setModuleIssuesListModal(false)}
-        searchParams={{ module: true }}
-        handleOnSubmit={handleAddIssuesToModule}
-      />
       {error ? (
         <EmptyState
           image={emptyModule}
@@ -88,7 +54,7 @@ const ModuleIssuesPage: NextPageWithLayout = () => {
       ) : (
         <div className="flex h-full w-full">
           <div className="h-full w-full overflow-hidden">
-            <ModuleLayoutRoot openIssuesListModal={openIssuesListModal} />
+            <ModuleLayoutRoot />
           </div>
           {moduleId && !isSidebarCollapsed && (
             <div
