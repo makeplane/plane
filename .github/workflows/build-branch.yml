@@ -170,18 +170,15 @@ jobs:
         with:
           name: src
 
-      - name: Display structure of downloaded files
-        run: ls -R
-
-      # - name: Build and Push Plane-Proxy to Docker Hub
-      #   uses: docker/build-push-action@v4.0.0
-      #   with:
-      #     context: .
-      #     file: ./nginx/Dockerfile
-      #     platforms: linux/amd64
-      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
-      #     push: true
-      #   env:
-      #     DOCKER_BUILDKIT: 1
-      #     DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      #     DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and Push Plane-Proxy to Docker Hub
+        uses: docker/build-push-action@v4.0.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-${{ needs.branch_build_and_push.outputs.gh_branch_name }}:${{ env.img_tag }}
+          push: true
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
