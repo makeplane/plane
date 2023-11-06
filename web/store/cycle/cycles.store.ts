@@ -19,6 +19,7 @@ export interface ICycleStore {
   cycles: {
     [project_id: string]: ICycle[];
   };
+	projectCycles: ICycle[] | null;
   cycle_details: {
     [cycle_id: string]: ICycle;
   };

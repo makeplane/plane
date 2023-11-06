@@ -30,7 +30,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
-  const cyclesList = cycleStore.cycles?.[projectId];
+  const cyclesList = cycleStore.projectCycles;
 
   return (
     <>

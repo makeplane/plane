@@ -28,7 +28,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
   const { project: projectStore, cycle: cycleStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const { projectCycles } = cycleStore
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query as {
@@ -82,6 +82,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
   const cycleView = cycleStore?.cycleView;
   const cycleLayout = cycleStore?.cycleLayout;
+  const totalCycles = projectCycles?.length ?? 0
 
   return (
     <>
@@ -91,7 +92,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
         isOpen={createModal}
         handleClose={() => setCreateModal(false)}
       />
-      {currentProjectDetails?.total_cycles === 0 ? (
+      {totalCycles === 0 ? (
         <div className="h-full grid place-items-center">
           <EmptyState
             title="Plan your project with cycles"
