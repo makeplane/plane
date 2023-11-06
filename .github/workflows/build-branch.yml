@@ -67,6 +67,19 @@ jobs:
             ./
             !./apiserver
             !./nginx
+            !./deploy
+            !./space
+      
+      - name: Uploading Space Source
+        uses: actions/upload-artifact@v3
+        with:
+          name: space-src-code
+          path: |
+            ./
+            !./apiserver
+            !./nginx
+            !./deploy
+            !./web
     outputs:
         gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
 
@@ -112,10 +125,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Downloading Web Source Code
+      - name: Downloading Space Source Code
         uses: actions/download-artifact@v3
         with:
-          name: web-src-code
+          name: space-src-code
 
       - name: Build and Push Space to Docker Hub
         uses: docker/build-push-action@v4.0.0
