@@ -42,6 +42,10 @@ type Props = {
    * The source of the avatar image
    */
   src?: string;
+  /**
+   * The custom CSS class name to apply to the component
+   */
+  className?: string;
 };
 
 /**
@@ -94,7 +98,7 @@ export const getBorderRadius = (shape: "circle" | "square") => {
     case "circle":
       return "rounded-full";
     case "square":
-      return "rounded-md";
+      return "rounded";
     default:
       return "rounded-full";
   }
@@ -119,6 +123,7 @@ export const Avatar: React.FC<Props> = (props) => {
     size = "md",
     shape = "circle",
     src,
+    className = ""
   } = props;
 
   // get size details based on the size prop
@@ -145,14 +150,14 @@ export const Avatar: React.FC<Props> = (props) => {
         {src ? (
           <img
             src={src}
-            className={`h-full w-full ${getBorderRadius(shape)}`}
+            className={`h-full w-full ${getBorderRadius(shape)} ${className}`}
             alt={name}
           />
         ) : (
           <div
             className={`${
               sizeInfo.fontSize
-            } grid place-items-center h-full w-full ${getBorderRadius(shape)}`}
+            } grid place-items-center h-full w-full ${getBorderRadius(shape)} ${className}`}
             style={{
               backgroundColor:
                 fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",
