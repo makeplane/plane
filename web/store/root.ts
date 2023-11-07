@@ -1,5 +1,6 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
+import AppConfigStore, { IAppConfigStore } from "./app-config.store";
 import CommandPaletteStore, { ICommandPaletteStore } from "./command-palette.store";
 import UserStore, { IUserStore } from "store/user.store";
 import ThemeStore, { IThemeStore } from "store/theme.store";
@@ -107,6 +108,7 @@ enableStaticRendering(typeof window === "undefined");
 export class RootStore {
   user: IUserStore;
   theme: IThemeStore;
+  appConfig: IAppConfigStore;
 
   commandPalette: ICommandPaletteStore;
   workspace: IWorkspaceStore;
@@ -167,6 +169,7 @@ export class RootStore {
   mentionsStore: IMentionsStore;
 
   constructor() {
+    this.appConfig = new AppConfigStore(this);
     this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
