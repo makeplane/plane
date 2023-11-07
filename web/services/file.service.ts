@@ -49,6 +49,7 @@ export class FileService extends APIService {
     })
       .then((response) => response?.data)
       .catch((error) => {
+        console.log(workspaceSlug,"delted" ,error);
         if (axios.isCancel(error)) {
           console.log(error.message);
         } else {
