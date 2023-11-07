@@ -33,4 +33,5 @@ class ConfigurationEndpoint(BaseAPIView):
         data["slack_client_id"] = os.environ.get("SLACK_CLIENT_ID", None)
         data["posthog_api_key"] = os.environ.get("POSTHOG_API_KEY", None)
         data["posthog_host"] = os.environ.get("POSTHOG_HOST", None)
+        data["has_unsplash_configured"] = bool(settings.UNSPLASH_ACCESS_KEY)
         return Response(data, status=status.HTTP_200_OK)
