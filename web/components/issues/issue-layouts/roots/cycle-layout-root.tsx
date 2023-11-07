@@ -68,7 +68,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
-        {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
+        {(activeLayout === "list" || activeLayout === "spreadsheet" || activeLayout==="kanban") && issueCount === 0 ? (
           <CycleEmptyState
             workspaceSlug={workspaceSlug?.toString()}
             projectId={projectId?.toString()}
