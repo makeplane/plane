@@ -216,9 +216,8 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     await draftIssuesStore
       .createDraftIssue(workspaceSlug.toString(), activeProject, payload)
-      .then((response) => {
-        // TODO: replace with actual group id and sub group id
-        draftIssuesStore.updateIssueStructure(null, null, response);
+      .then(() => {
+        draftIssuesStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
         setToastAlert({
           type: "success",
