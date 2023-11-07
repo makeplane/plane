@@ -16,10 +16,10 @@ on:
       tags:
         description: 'Dev/QA Builds'
 
+
 env:
   gh_branch: ${{ github.ref_name }}
   gh_t_branch: ${{ github.event.pull_request.base.ref }}
-  
 
 jobs:
   branch_build_and_push:
@@ -30,20 +30,19 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
-      
-      - name: Set Environment Variable
-        run: |
-          if [ ${{ github.event_name }} == 'pull_request' ] && [ ${{github.event.action}} == 'closed' ] ; then
-            echo "::set-env name=TRG_BRANCH::${{github.event.pull_request.base.ref}}"
-          else
-            echo "::set-env name=TRG_BRANCH::${{github.ref_name}}"
-          fi
 
+      - name: Set Target Branch Name on PR close
+        if: ${{ github.event_name == 'pull_request' && github.event.action =='closed' }}
+        run: echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+
+      - name: Set Target Branch Name on other than PR close
+        if: ${{ github.event.action !='closed' }}
+        run: echo "TARGET_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+      
       - uses: ASzc/change-string-case-action@v2
         id: gh_branch_upper_lower
         with:
-          string: $TRG_BRANCH
-          # string: ${{ env.gh_branch }}
+          string: $TARGET_BRANCH
 
       - uses: mad9000/actions-find-and-replace-string@2
         id: gh_branch_replace_slash
