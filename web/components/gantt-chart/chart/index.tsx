@@ -27,7 +27,7 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
-import { GanttSidebarProps } from "components/issues";
+import { GanttSidebarProps } from "../sidebar";
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
 import { currentViewDataWithView } from "../data";

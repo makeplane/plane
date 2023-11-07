@@ -5,7 +5,7 @@ import { ChartViewRoot } from "./chart";
 import { ChartContextProvider } from "./contexts";
 // types
 import { IBlockUpdateData, IGanttBlock } from "./types";
-import { GanttSidebarProps } from "components/issues";
+import { GanttSidebarProps } from "./sidebar";
 
 type GanttChartRootProps = {
   border?: boolean;

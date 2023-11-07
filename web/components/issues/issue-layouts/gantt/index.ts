@@ -4,4 +4,3 @@ export * from "./module-root";
 export * from "./project-view-root";
 export * from "./root";
 export * from "./inline-create-issue-form";
-export * from "./sidebar";

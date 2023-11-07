@@ -4,8 +4,13 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { GanttChartRoot, IBlockUpdateData, renderIssueBlocksStructure } from "components/gantt-chart";
-import { IssueGanttBlock, IssueGanttSidebarBlock, CycleGanttSidebar } from "components/issues";
+import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
+import {
+  GanttChartRoot,
+  IBlockUpdateData,
+  renderIssueBlocksStructure,
+  CycleGanttSidebar,
+} from "components/gantt-chart";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
 import { IIssue } from "types";
