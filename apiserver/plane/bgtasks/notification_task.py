@@ -220,6 +220,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             requested_instance=requested_data, current_instance=current_instance)
         
         comment_mentions = []
+        all_comment_mentions = []
 
         # Get New Subscribers from the mentions of the newer instance
         requested_mentions = extract_mentions(
@@ -233,8 +234,13 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             issue_comment_old_value = issue_activity.get("old_value")
             if issue_comment is not None:
                 # TODO: Maybe save the comment mentions, so that in future, we can filter out the issues based on comment mentions as well.
+                
+                all_comment_mentions = all_comment_mentions + extract_comment_mentions(issue_comment_new_value)
+                
                 new_comment_mentions = get_new_comment_mentions(old_value=issue_comment_old_value, new_value=issue_comment_new_value)
                 comment_mentions = comment_mentions + new_comment_mentions
+                
+        comment_mention_subscribers = extract_mentions_as_subscribers( project_id=project_id, issue_id=issue_id, mentions=all_comment_mentions)
         """
         We will not send subscription activity notification to the below mentioned user sets
         - Those who have been newly mentioned in the issue description, we will send mention notification to them.
@@ -315,7 +321,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
 
         # Add Mentioned as Issue Subscribers
         IssueSubscriber.objects.bulk_create(
-            mention_subscribers, batch_size=100)
+            mention_subscribers + comment_mention_subscribers, batch_size=100)
 
         last_activity = (
             IssueActivity.objects.filter(issue_id=issue_id)
@@ -327,6 +333,8 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
         
         for mention_id in comment_mentions:
             if (mention_id != actor_id):
+                print("sending notification for the issue activity")
+                print(mention_id)
                 for issue_activity in issue_activities_created:
                     notification = createMentionNotification(
                         project=project,
@@ -337,7 +345,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                         issue_id=issue_id,
                         activity=issue_activity
                     )
-                    bulk_notifications.append(notification) 
+                    bulk_notifications.append(notification)
                     
 
         for mention_id in new_mentions:
