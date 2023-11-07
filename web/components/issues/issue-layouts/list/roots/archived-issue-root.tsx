@@ -32,7 +32,8 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
 
     if (action === "delete") {
-      archivedIssueStore.deleteArchivedIssue(group_by, null, issue);
+      archivedIssueStore.deleteArchivedIssue(group_by === "null" ? null : group_by, null, issue);
+      archivedIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
     }
   };
 
