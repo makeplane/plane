@@ -44,7 +44,7 @@ export interface IProjectStore {
   currentProjectDetails: IProject | undefined;
 
   // actions
-  setProjectId: (projectId: string) => void;
+  setProjectId: (projectId: string | null) => void;
   setSearchQuery: (query: string) => void;
 
   getProjectById: (workspaceSlug: string, projectId: string) => IProject | null;
@@ -251,8 +251,8 @@ export class ProjectStore implements IProjectStore {
   }
 
   // actions
-  setProjectId = (projectId: string) => {
-    this.projectId = projectId ?? null;
+  setProjectId = (projectId: string | null) => {
+    this.projectId = projectId;
   };
 
   setSearchQuery = (query: string) => {
