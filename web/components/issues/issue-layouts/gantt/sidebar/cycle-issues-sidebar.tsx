@@ -3,15 +3,13 @@ import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { MoreVertical } from "lucide-react";
 // hooks
-import { useChart } from "./hooks";
+import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
-// components
-import { GanttInlineCreateIssueForm } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
-import { IBlockUpdateData, IGanttBlock } from "./types";
+import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart/types";
 
 type Props = {
   title: string;
@@ -19,12 +17,11 @@ type Props = {
   blocks: IGanttBlock[] | null;
   sidebarBlockToRender: (block: any) => React.ReactNode;
   enableReorder: boolean;
-  enableQuickIssueCreate?: boolean;
 };
 
-export const GanttSidebar: React.FC<Props> = (props) => {
+export const CycleGanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder, enableQuickIssueCreate } = props;
+  const { title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -151,7 +148,6 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-            <GanttInlineCreateIssueForm />
           </div>
         )}
       </StrictModeDroppable>

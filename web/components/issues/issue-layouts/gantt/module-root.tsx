@@ -5,7 +5,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, IBlockUpdateData, renderIssueBlocksStructure } from "components/gantt-chart";
-import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
+import { IssueGanttBlock, IssueGanttSidebarBlock, ModuleGanttSidebar } from "components/issues";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
 import { IIssue } from "types";
@@ -39,6 +39,7 @@ export const ModuleGanttLayout: React.FC = observer(() => {
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
+          sidebarToRender={(data) => <ModuleGanttSidebar {...data} />}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
           sidebarBlockToRender={(data: IIssue) => <IssueGanttSidebarBlock data={data} handleIssue={updateIssue} />}
           enableBlockLeftResize={isAllowed}

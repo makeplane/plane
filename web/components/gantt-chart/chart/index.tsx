@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 // icons
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
-import { GanttSidebar } from "../sidebar";
+// import { GanttSidebar } from "../sidebar";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -27,6 +27,7 @@ import {
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
 // types
+import { GanttSidebarProps } from "components/issues";
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
 import { currentViewDataWithView } from "../data";
@@ -40,6 +41,7 @@ type ChartViewRootProps = {
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
+  sidebarToRender: (data: GanttSidebarProps) => React.ReactNode;
   sidebarBlockToRender: (block: any) => React.ReactNode;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -54,6 +56,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blocks = null,
   loaderTitle,
   blockUpdateHandler,
+  sidebarToRender,
   sidebarBlockToRender,
   blockToRender,
   enableBlockLeftResize,
@@ -285,13 +288,17 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             <h6>{title}</h6>
             <h6>Duration</h6>
           </div>
-          <GanttSidebar
+
+          {sidebarToRender &&
+            sidebarToRender({ title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder })}
+
+          {/* <GanttSidebar
             title={title}
             blockUpdateHandler={blockUpdateHandler}
             blocks={chartBlocks}
             sidebarBlockToRender={sidebarBlockToRender}
             enableReorder={enableReorder}
-          />
+          /> */}
         </div>
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
