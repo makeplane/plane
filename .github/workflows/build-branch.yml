@@ -8,6 +8,7 @@ on:
       - release
       - qa
       - develop
+      - dev/mg-branch-build-2
   pull_request:
     types: 
       - opened
