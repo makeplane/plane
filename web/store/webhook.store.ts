@@ -23,7 +23,8 @@ export interface IWebhookStore {
   create: (workspaceSlug: string, data: IWebhook) => Promise<IWebhook>;
   update: (workspaceSlug: string, webhook_id: string, data: IWebhook) => Promise<IWebhook>;
   remove: (workspaceSlug: string, webhook_id: string) => Promise<void>;
-  regenerate: (workspaceSlug: string, webhook_id: string, data: IWebhook) => Promise<void>;
+  regenerate: (workspaceSlug: string, webhook_id: string) => Promise<IWebhook>;
+  clearSecretKey: () => void;
 }
 
 export class WebhookStore implements IWebhookStore {
@@ -59,6 +60,7 @@ export class WebhookStore implements IWebhookStore {
       update: action,
       remove: action,
       regenerate: action,
+      clearSecretKey: action
     });
     this.rootStore = _rootStore;
     this.webhookService = new WebhookService();
@@ -100,6 +102,9 @@ export class WebhookStore implements IWebhookStore {
       runInAction(() => {
         this.webhookSecretKey = _secretKey || null;
         this.webhooks = _webhooks;
+        this.webhook_detail = {...this.webhook_detail, [webhookResponse.id!]: webhookResponse};
+        this.webhook_id = webhookResponse.id!;
+        console.log(this.webhook_detail);
       });
 
       return webhookResponse;
@@ -173,10 +178,18 @@ export class WebhookStore implements IWebhookStore {
   regenerate = async (workspaceSlug: string, webhook_id: string) => {
     try {
       const webhookResponse = await this.webhookService.regenerate(workspaceSlug, webhook_id);
+      runInAction(() => {
+        this.webhookSecretKey = webhookResponse.secret_key!;
+        this.webhook_detail = {...this.webhook_detail, [webhook_id]: webhookResponse};
+      });
       return webhookResponse;
     } catch (error) {
       console.log(error);
       throw error;
     }
   };
+
+  clearSecretKey = () => {
+    this.webhookSecretKey = null;
+  }
 }

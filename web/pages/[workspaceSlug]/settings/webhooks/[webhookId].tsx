@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // layout
 import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { WebhookDetails } from "components/web-hooks";
@@ -13,6 +13,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // types
 import { RootStore } from "store/root";
 import { IExtendedWebhook, IWebhook } from "types";
+import { Spinner } from "@plane/ui";
+import { useEffect } from "react";
 
 const Webhooks: NextPage = observer(() => {
   const router = useRouter();
@@ -20,12 +22,16 @@ const Webhooks: NextPage = observer(() => {
 
   const { webhook: webhookStore }: RootStore = useMobxStore();
 
+  useEffect(() => {
+    webhookStore.clearSecretKey();
+  }, []);
+
   const { isLoading } = useSWR(
     workspaceSlug && webhookId ? `WEBHOOKS_DETAIL_${workspaceSlug}_${webhookId}` : null,
     workspaceSlug && webhookId
       ? async () => {
-          await webhookStore.fetchById(workspaceSlug, webhookId);
-        }
+        await webhookStore.fetchById(workspaceSlug, webhookId);
+      }
       : null
   );
 
@@ -48,11 +54,13 @@ const Webhooks: NextPage = observer(() => {
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
         <div className="w-full overflow-y-auto py-3 pr-4">
-          {isLoading ? (
-            <div className="text-center py-10">Loading...</div>
-          ) : (
+          {isLoading ?
+            <div className="flex w-full h-full items-center justify-center">
+              <Spinner />
+            </div>
+            :
             <WebhookDetails type="edit" initialData={initialPayload} onSubmit={onSubmit} />
-          )}
+          }
         </div>
       </WorkspaceSettingLayout>
     </AppLayout>

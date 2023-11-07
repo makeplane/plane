@@ -50,8 +50,8 @@ export class WebhookService extends APIService {
       });
   }
 
-  async regenerate(workspaceSlug: string, webhook_id: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/regenerate/`)
+  async regenerate(workspaceSlug: string, webhook_id: string): Promise<IWebhook> {
+    return this.post(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/regenerate/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
