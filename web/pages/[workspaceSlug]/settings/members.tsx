@@ -35,7 +35,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = () => {
         />
       )}
       <section className="pr-9 py-8 w-full overflow-y-auto">
-        <div className="flex items-center justify-between gap-4 py-3.5 border-b-[0.5px] border-custom-border-200">
+        <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-100">
           <h4 className="text-xl font-medium">Members</h4>
           <div className="flex gap-1 items-center justify-start ml-auto text-custom-text-400 rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
             <Search className="h-3.5 w-3.5" />

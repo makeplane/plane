@@ -21,8 +21,8 @@ class ConfigurationEndpoint(BaseAPIView):
 
     def get(self, request):
         data = {}
-        data["google"] = os.environ.get("GOOGLE_CLIENT_ID", None)
-        data["github"] = os.environ.get("GITHUB_CLIENT_ID", None)
+        data["google_client_id"] = os.environ.get("GOOGLE_CLIENT_ID", None)
+        data["github_client_id"] = os.environ.get("GITHUB_CLIENT_ID", None)
         data["github_app_name"] = os.environ.get("GITHUB_APP_NAME", None)
         data["magic_login"] = (
             bool(settings.EMAIL_HOST_USER) and bool(settings.EMAIL_HOST_PASSWORD)
@@ -30,5 +30,5 @@ class ConfigurationEndpoint(BaseAPIView):
         data["email_password_login"] = (
             os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1"
         )
-        data["slack"] = os.environ.get("SLACK_CLIENT_ID", None)
+        data["slack_client_id"] = os.environ.get("SLACK_CLIENT_ID", None)
         return Response(data, status=status.HTTP_200_OK)
