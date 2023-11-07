@@ -71,7 +71,7 @@ export const EstimatesList: React.FC = observer(() => {
         data={projectStore.getProjectEstimateById(estimateToDelete!)}
       />
 
-      <section className="flex items-center justify-between py-3.5 border-b border-custom-border-200">
+      <section className="flex items-center justify-between py-3.5 border-b border-custom-border-100">
         <h3 className="text-xl font-medium">Estimates</h3>
         <div className="col-span-12 space-y-5 sm:col-span-7">
           <div className="flex items-center gap-2">

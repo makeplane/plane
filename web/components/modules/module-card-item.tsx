@@ -49,18 +49,19 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const endDate = new Date(module.target_date ?? "");
   const startDate = new Date(module.start_date ?? "");
 
+  const isDateValid = module.target_date || module.start_date;
+
   const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
-  const issueCount =
-    moduleTotalIssues === 0
+  const issueCount = module
+    ? moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
-      ? moduleTotalIssues > 1
-        ? `${moduleTotalIssues} Issues`
-        : `${moduleTotalIssues} Issue`
-      : `${module.completed_issues}/${moduleTotalIssues} Issues`;
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${module.completed_issues}/${moduleTotalIssues} Issues`
+    : "0 Issue";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -200,10 +201,17 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             </Tooltip>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-              </span>
+              {isDateValid ? (
+                <>
+                  <span className="text-xs text-custom-text-300">
+                    {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
+                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xs text-custom-text-400">No due date</span>
+              )}
+
               <div className="flex items-center gap-1.5 z-10">
                 {module.is_favorite ? (
                   <button type="button" onClick={handleRemoveFromFavorites}>

@@ -1,6 +1,5 @@
 // interfaces
 import {
-  IIssueBoardViews,
   // priority
   TIssuePriorityKey,
   // state groups

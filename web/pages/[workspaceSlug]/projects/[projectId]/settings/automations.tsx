@@ -69,7 +69,7 @@ const AutomationSettingsPage: NextPageWithLayout = () => {
 
   return (
     <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-      <div className="flex items-center py-3.5 border-b border-custom-border-200">
+      <div className="flex items-center py-3.5 border-b border-custom-border-100">
         <h3 className="text-xl font-medium">Automations</h3>
       </div>
       <AutoArchiveAutomation projectDetails={projectDetails} handleChange={handleChange} disabled={!isAdmin} />

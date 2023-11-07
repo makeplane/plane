@@ -93,7 +93,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
                           handleDeleteState={() => setSelectDeleteState(state.id)}
                         />
                       ) : (
-                        <div className="border-b border-custom-border-200 last:border-b-0" key={state.id}>
+                        <div className="border-b-[0.5px] border-custom-border-200 last:border-b-0" key={state.id}>
                           <CreateUpdateStateInline
                             onClose={() => {
                               setActiveGroup(null);

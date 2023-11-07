@@ -84,7 +84,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
   const propertyDetails = SPREADSHEET_PROPERTY_DETAILS[property];
 
   return (
-    <div className="relative flex flex-col h-max w-full bg-custom-background-100">
+    <div className="relative flex flex-col h-max w-full max-w-max bg-custom-background-100">
       <div className="flex items-center min-w-[8rem] px-4 py-1 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
         <CustomMenu
           customButtonClassName="!w-full"
