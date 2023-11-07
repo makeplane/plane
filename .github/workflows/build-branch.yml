@@ -2,6 +2,9 @@
 name: Docker Branch Build
 
 on:
+  push:
+    branches:
+      - "*"
   pull_request:
     types: 
       - opened
@@ -20,6 +23,7 @@ on:
 env:
   gh_branch: ${{ github.ref_name }}
   gh_t_branch: ${{ github.event.pull_request.base.ref }}
+  TARGET_BRANCH: ''
 
 jobs:
   branch_build_and_push:
@@ -42,7 +46,7 @@ jobs:
       - uses: ASzc/change-string-case-action@v2
         id: gh_branch_upper_lower
         with:
-          string: $TARGET_BRANCH
+          string: ${{env.TARGET_BRANCH}}
 
       - uses: mad9000/actions-find-and-replace-string@2
         id: gh_branch_replace_slash
