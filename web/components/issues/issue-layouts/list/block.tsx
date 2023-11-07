@@ -2,7 +2,7 @@
 import { KanBanProperties } from "./properties";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
@@ -49,15 +49,23 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
         </IssuePeekOverview>
 
         <div className="ml-auto flex-shrink-0 flex items-center gap-2">
-          <KanBanProperties
-            columnId={columnId}
-            issue={issue}
-            isReadonly={isReadonly}
-            handleIssues={updateIssue}
-            displayProperties={displayProperties}
-            showEmptyGroup={showEmptyGroup}
-          />
-          {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+          {!issue?.tempId ? (
+            <>
+              <KanBanProperties
+                columnId={columnId}
+                issue={issue}
+                isReadonly={isReadonly}
+                handleIssues={updateIssue}
+                displayProperties={displayProperties}
+                showEmptyGroup={showEmptyGroup}
+              />
+              {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+            </>
+          ) : (
+            <div className="w-4 h-4">
+              <Spinner className="w-4 h-4" />
+            </div>
+          )}
         </div>
       </div>
     </>

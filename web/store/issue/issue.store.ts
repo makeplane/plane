@@ -100,13 +100,16 @@ export class IssueStore implements IIssueStore {
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
+    const issueGroup = this.rootStore?.issueFilter?.userDisplayFilters?.group_by || null;
     const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
     if (!issueLayout) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
-      ? issueSubGroup
-        ? "groupWithSubGroups"
-        : "grouped"
+      ? issueGroup
+        ? issueSubGroup
+          ? "groupWithSubGroups"
+          : "grouped"
+        : "ungrouped"
       : ungroupedLayouts.includes(issueLayout)
       ? "ungrouped"
       : null;

@@ -7,8 +7,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { List } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
 import { Spinner } from "@plane/ui";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -17,6 +15,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 export const ListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
   // store
   const {
     project: projectStore,
@@ -24,18 +23,17 @@ export const ListLayout: FC = observer(() => {
     issueDetail: issueDetailStore,
     issueFilter: issueFilterStore,
   } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
 
-  const issues = issueStore?.getIssues;
+  const issues: IIssue[] = (issueStore?.getIssues as IIssue[]) || [];
 
   const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
   const group_by: string | null = userDisplayFilters?.group_by || null;
   const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
+  // TODO: remove the issue from the store
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
       if (!workspaceSlug) return;
-
       if (action === "update") {
         issueStore.updateIssueStructure(group_by, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
@@ -45,16 +43,13 @@ export const ListLayout: FC = observer(() => {
     [issueStore, issueDetailStore, workspaceSlug]
   );
 
+  // info: below variables are used to render the list layout based on the project group_by
   const states = projectStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
-  const estimates =
-    currentProjectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
-      : null;
 
   return (
     <>
@@ -76,15 +71,15 @@ export const ListLayout: FC = observer(() => {
               />
             )}
             displayProperties={displayProperties}
+            showEmptyGroup={userDisplayFilters.show_empty_groups ?? false}
+            enableIssueQuickAdd={true}
+            isReadonly={false}
             states={states}
             stateGroups={stateGroups}
             priorities={priorities}
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
-            enableQuickIssueCreate
-            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
-            showEmptyGroup={userDisplayFilters.show_empty_groups}
           />
         </div>
       )}

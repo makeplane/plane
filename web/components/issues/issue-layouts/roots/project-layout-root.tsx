@@ -17,23 +17,29 @@ import {
 import { Spinner } from "@plane/ui";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
+  // store
   const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  const { isLoading } = useSWR(
+  // SWR request
+  useSWR(
     workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null,
     async () => {
       if (workspaceSlug && projectId) {
         await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
         await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
       }
+    },
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 0,
     }
   );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
-
   const issueCount = issueStore.getIssuesCount;
 
   if (!issueStore.getIssues)

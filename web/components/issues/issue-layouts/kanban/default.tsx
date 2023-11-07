@@ -92,7 +92,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               >
                 {(provided: any, snapshot: any) => (
                   <div
-                    className={`w-full h-full relative transition-all ${
+                    className={`w-full h-full relative transition-all border border-red-500 ${
                       snapshot.isDraggingOver ? `bg-custom-background-80` : ``
                     }`}
                     {...provided.droppableProps}
