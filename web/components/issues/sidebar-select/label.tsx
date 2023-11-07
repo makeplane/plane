@@ -9,6 +9,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { IssueLabelService } from "services/issue";
 // hooks
 import useUser from "hooks/use-user";
+import useToast from "hooks/use-toast";
 // ui
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
@@ -57,6 +58,8 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     defaultValues,
   });
 
+  const { setToastAlert } = useToast();
+
   const { user } = useUser();
 
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
@@ -79,6 +82,14 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
 
         setCreateLabelForm(false);
+      })
+      .catch((e) => {
+        console.log(e);
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: e.error ? e.error : "Something went wrong. Please try again.",
+        });
       });
   };
 
