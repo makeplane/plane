@@ -29,7 +29,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
-
       - name: Set Target Branch Name on PR close
         if: ${{ github.event_name == 'pull_request' && github.event.action =='closed' }}
         run: echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
@@ -125,7 +124,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
@@ -155,7 +154,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
@@ -185,7 +184,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
@@ -216,4 +215,4 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}

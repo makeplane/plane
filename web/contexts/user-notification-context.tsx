@@ -1,17 +1,15 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
 
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import userNotificationServices from "services/notifications.service";
-
+import { NotificationService } from "services/notification.service";
 // fetch-keys
 import { UNREAD_NOTIFICATIONS_COUNT, USER_WORKSPACE_NOTIFICATIONS } from "constants/fetch-keys";
-
 // type
 import type { NotificationType, NotificationCount, IUserNotification } from "types";
+
+const notificationService = new NotificationService();
 
 export const userNotificationContext = createContext<ContextType>({} as ContextType);
 
@@ -104,17 +102,12 @@ const UserNotificationContextProvider: React.FC<{
 
   const { data: notifications, mutate: notificationsMutate } = useSWR(
     workspaceSlug ? USER_WORKSPACE_NOTIFICATIONS(workspaceSlug.toString(), params) : null,
-    workspaceSlug
-      ? () => userNotificationServices.getUserNotifications(workspaceSlug.toString(), params)
-      : null
+    workspaceSlug ? () => notificationService.getUserNotifications(workspaceSlug.toString(), params) : null
   );
 
   const { data: notificationCount, mutate: mutateNotificationCount } = useSWR(
     workspaceSlug ? UNREAD_NOTIFICATIONS_COUNT(workspaceSlug.toString()) : null,
-    () =>
-      workspaceSlug
-        ? userNotificationServices.getUnreadNotificationsCount(workspaceSlug.toString())
-        : null
+    () => (workspaceSlug ? notificationService.getUnreadNotificationsCount(workspaceSlug.toString()) : null)
   );
 
   const handleReadMutation = (action: "read" | "unread") => {
@@ -124,11 +117,7 @@ const UserNotificationContextProvider: React.FC<{
       if (!prev) return prev;
 
       const notificationType: keyof NotificationCount =
-        selectedTab === "assigned"
-          ? "my_issues"
-          : selectedTab === "created"
-          ? "created_issues"
-          : "watching_issues";
+        selectedTab === "assigned" ? "my_issues" : selectedTab === "created" ? "created_issues" : "watching_issues";
 
       return {
         ...prev,
@@ -139,15 +128,12 @@ const UserNotificationContextProvider: React.FC<{
 
   const markNotificationReadStatus = async (notificationId: string) => {
     if (!workspaceSlug) return;
-    const isRead =
-      notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
+    const isRead = notifications?.find((notification) => notification.id === notificationId)?.read_at !== null;
 
     notificationsMutate(
       (previousNotifications: any) =>
         previousNotifications?.map((notification: any) =>
-          notification.id === notificationId
-            ? { ...notification, read_at: isRead ? null : new Date() }
-            : notification
+          notification.id === notificationId ? { ...notification, read_at: isRead ? null : new Date() } : notification
         ),
       false
     );
@@ -155,7 +141,7 @@ const UserNotificationContextProvider: React.FC<{
     handleReadMutation(isRead ? "unread" : "read");
 
     if (isRead) {
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsUnread(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -165,7 +151,7 @@ const UserNotificationContextProvider: React.FC<{
           mutateNotificationCount();
         });
     } else {
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsRead(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -179,16 +165,14 @@ const UserNotificationContextProvider: React.FC<{
 
   const markNotificationArchivedStatus = async (notificationId: string) => {
     if (!workspaceSlug) return;
-    const isArchived =
-      notifications?.find((notification) => notification.id === notificationId)?.archived_at !==
-      null;
+    const isArchived = notifications?.find((notification) => notification.id === notificationId)?.archived_at !== null;
 
     if (!isArchived) {
       handleReadMutation("read");
     }
 
     if (isArchived) {
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsUnarchived(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -199,11 +183,10 @@ const UserNotificationContextProvider: React.FC<{
         });
     } else {
       notificationsMutate(
-        (prev: any) =>
-          prev?.filter((prevNotification: any) => prevNotification.id !== notificationId),
+        (prev: any) => prev?.filter((prevNotification: any) => prevNotification.id !== notificationId),
         false
       );
-      await userNotificationServices
+      await notificationService
         .markUserNotificationAsArchived(workspaceSlug.toString(), notificationId)
         .catch(() => {
           throw new Error("Something went wrong");
@@ -218,9 +201,7 @@ const UserNotificationContextProvider: React.FC<{
   const markSnoozeNotification = async (notificationId: string, dateTime?: Date) => {
     if (!workspaceSlug) return;
 
-    const isSnoozed =
-      notifications?.find((notification) => notification.id === notificationId)?.snoozed_till !==
-      null;
+    const isSnoozed = notifications?.find((notification) => notification.id === notificationId)?.snoozed_till !== null;
 
     notificationsMutate(
       (previousNotifications: any) =>
@@ -233,7 +214,7 @@ const UserNotificationContextProvider: React.FC<{
     );
 
     if (isSnoozed) {
-      await userNotificationServices
+      await notificationService
         .patchUserNotification(workspaceSlug.toString(), notificationId, {
           snoozed_till: null,
         })
@@ -241,7 +222,7 @@ const UserNotificationContextProvider: React.FC<{
           notificationsMutate();
         });
     } else {
-      await userNotificationServices
+      await notificationService
         .patchUserNotification(workspaceSlug.toString(), notificationId, {
           snoozed_till: dateTime,
         })

@@ -8,20 +8,18 @@ from django.conf import settings
 from celery import shared_task
 from sentry_sdk import capture_exception
 
-# Module imports
-from plane.db.models import User
 
 
 @shared_task
 def forgot_password(first_name, email, uidb64, token, current_site):
 
     try:
-        realtivelink = f"/reset-password/?uidb64={uidb64}&token={token}"
+        realtivelink = f"/accounts/reset-password/?uidb64={uidb64}&token={token}"
         abs_url = current_site + realtivelink
 
         from_email_string = settings.EMAIL_FROM
 
-        subject = f"Reset Your Password - Plane"
+        subject = "Reset Your Password - Plane"
 
         context = {
             "first_name": first_name,

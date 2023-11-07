@@ -1,15 +1,11 @@
 import React from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
+import { MoveRight } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Icon } from "components/ui";
-// icons
-import { East } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // store
@@ -44,7 +40,7 @@ const peekModes: {
 ];
 
 export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails } = props;
+  const { handleClose } = props;
 
   const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
@@ -68,11 +64,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-4">
           {issueDetailStore.peekMode === "side" && (
             <button type="button" onClick={handleClose}>
-              <East
-                sx={{
-                  fontSize: "14px",
-                }}
-              />
+              <MoveRight className="h-3.5 w-3.5" strokeWidth={2} />
             </button>
           )}
           <Listbox

@@ -7,7 +7,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { IssueBlockPriority } from "components/issues/board-views/block-priority";
 import { IssueBlockState } from "components/issues/board-views/block-state";
-import { IssueBlockLabels } from "components/issues/board-views/block-labels";
 import { IssueBlockDueDate } from "components/issues/board-views/block-due-date";
 // interfaces
 import { IIssue } from "types/issue";
@@ -37,7 +36,7 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
   };
 
   return (
-    <div className="py-3 px-4 h-[118px] flex flex-col gap-1.5 bg-custom-background-100 rounded shadow-custom-shadow-sm border-[0.5px] border-custom-border-200">
+    <div className="py-2 px-3 flex flex-col gap-1.5 bg-custom-background-100 rounded shadow-custom-shadow-2xs border-[0.5px] border-custom-border-200 space-y-2 text-sm">
       {/* id */}
       <div className="text-xs text-custom-text-300 break-words">
         {projectStore?.project?.identifier}-{issue?.sequence_id}

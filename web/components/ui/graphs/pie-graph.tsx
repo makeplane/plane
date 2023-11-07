@@ -16,7 +16,7 @@ export const PieGraph: React.FC<TGraph & Omit<PieSvgProps<any>, "height" | "widt
     <ResponsivePie
       margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
-      animate={true}
+      animate
       {...rest}
     />
   </div>
