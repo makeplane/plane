@@ -74,17 +74,19 @@ export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModule
           >
             <button
               type="button"
-              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
+              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex items-center ${
                 disabled ? "cursor-not-allowed" : ""
-              }`}
+              } max-w-[10rem]`}
             >
               <span
                 className={`flex items-center gap-1.5 truncate ${
                   issueModule ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
-                {issueModule && <DiceIcon className="h-3.5 w-3.5" />}
-                {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
+                <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
+                <span className="truncate">
+                  {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
+                </span>
               </span>
             </button>
           </Tooltip>
