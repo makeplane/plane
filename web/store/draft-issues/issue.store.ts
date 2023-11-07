@@ -84,7 +84,8 @@ export class IssueDraftStore implements IIssueDraftStore {
         workspaceSlug &&
         projectId &&
         this.rootStore.draftIssueFilters.userFilters &&
-        this.rootStore.draftIssueFilters.userDisplayFilters
+        this.rootStore.draftIssueFilters.userDisplayFilters &&
+        this.rootStore.draftIssueFilters.appliedFilters
       )
         this.fetchIssues(workspaceSlug, projectId);
     });
