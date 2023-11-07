@@ -1,11 +1,8 @@
 import { useState } from "react";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
@@ -21,7 +18,7 @@ import { IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
-import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+import { IMPORTERS_LIST } from "constants/workspace";
 
 // services
 const integrationService = new IntegrationService();
@@ -76,7 +73,7 @@ const IntegrationGuide = () => {
                 </div>
               </a>
             </div> */}
-            {IMPORTERS_EXPORTERS_LIST.map((service) => (
+            {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
                 className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
