@@ -154,7 +154,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
-      <div className="w-full !text-base">
+      <div className="w-full truncate !text-base">
         {children && (
           <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
             {children}
