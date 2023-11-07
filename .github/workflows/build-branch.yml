@@ -21,8 +21,6 @@ on:
 
 
 env:
-  gh_branch: ${{ github.ref_name }}
-  gh_t_branch: ${{ github.event.pull_request.base.ref }}
   TARGET_BRANCH: ''
 
 jobs:
@@ -192,33 +190,34 @@ jobs:
   #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   #         DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  branch_build_push_proxy:
-    runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
-    steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.5.0
+  # branch_build_push_proxy:
+  #   runs-on: ubuntu-20.04
+  #   needs: [ branch_build_and_push ]
+  #   steps:
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v2.5.0
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2.1.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v2.1.0
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Downloading Proxy Source Code
-        uses: actions/download-artifact@v3
-        with:
-          name: proxy-src-code
+  #     - name: Downloading Proxy Source Code
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: proxy-src-code
 
-      - name: Build and Push Plane-Proxy to Docker Hub
-        uses: docker/build-push-action@v4.0.0
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
-          push: true
-        env:
-          DOCKER_BUILDKIT: 1
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Build and Push Plane-Proxy to Docker Hub
+  #       uses: docker/build-push-action@v4.0.0
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile
+  #         platforms: linux/amd64
+  #         tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+  #         push: true
+  #       env:
+  #         DOCKER_BUILDKIT: 1
+  #         DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+
