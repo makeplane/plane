@@ -37,7 +37,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
     <>
       {userActivity ? (
         <section className="pr-9 py-8 w-full overflow-y-auto">
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+          <div className="flex items-center py-3.5 border-b border-custom-border-100">
             <h3 className="text-xl font-medium">Activity</h3>
           </div>
           <div className={`flex flex-col gap-2 py-4 w-full`}>
@@ -153,7 +153,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                 </div>
                               </div>
                             </div>
-                            <div className="min-w-0 flex-1 py-4 border-b border-custom-border-200">
+                            <div className="min-w-0 flex-1 py-4 border-b border-custom-border-100">
                               <div className="text-sm text-custom-text-200 break-words">
                                 {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                   <span className="text-gray font-medium">Plane</span>

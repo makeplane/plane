@@ -96,7 +96,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       {PROJECT_FEATURES_LIST.map((feature) => (
         <div
           key={feature.property}
-          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
+          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">{feature.icon}</div>
