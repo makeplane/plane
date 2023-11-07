@@ -7,7 +7,7 @@ from django.contrib.auth.hashers import make_password
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-from sentry_sdk import capture_exception
+from sentry_sdk import capture_exception, capture_message
 
 # Module imports
 from plane.api.views import BaseViewSet
@@ -109,6 +109,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             access_token = metadata.get("access_token", False)
             team_id = metadata.get("team", {}).get("id", False)
             if not metadata or not access_token or not team_id:
+                capture_message(slack_response)
                 return Response(
                     {"error": "Slack could not be installed. Please try again later"},
                     status=status.HTTP_400_BAD_REQUEST,
