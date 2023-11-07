@@ -1,5 +1,7 @@
 {
   "name": "@plane/ui",
+  "description": "UI components shared across multiple apps internally",
+  "private": true,
   "version": "0.0.1",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

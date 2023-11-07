@@ -8,6 +8,7 @@ interface IRichTextReadOnlyEditor {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
+  mentionHighlights?: string[];
 }
 
 interface RichTextReadOnlyEditorProps extends IRichTextReadOnlyEditor {
@@ -26,10 +27,12 @@ const RichReadOnlyEditor = ({
   customClassName,
   value,
   forwardedRef,
+  mentionHighlights,
 }: RichTextReadOnlyEditorProps) => {
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
+    mentionHighlights,
   });
 
   const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });

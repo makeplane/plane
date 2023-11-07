@@ -37,8 +37,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
-
-  const editorSuggestion = useEditorSuggestions(workspaceSlug, issue.project_id);
+  
+  const editorSuggestion = useEditorSuggestions();
 
   const {
     handleSubmit,

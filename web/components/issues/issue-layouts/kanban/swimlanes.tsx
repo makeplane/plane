@@ -58,6 +58,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 };
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
+  order_by: string | null;
   showEmptyGroup: boolean;
   states: IState[] | null;
   stateGroups: any;
@@ -76,12 +77,14 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  isDragStarted?: boolean;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
     issues,
     sub_group_by,
     group_by,
+    order_by,
     list,
     listKey,
     handleIssues,
@@ -96,6 +99,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     labels,
     members,
     projects,
+    isDragStarted,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -133,6 +137,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   issues={issues?.[getValueFromObject(_list, listKey) as string]}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
+                  order_by={order_by}
                   sub_group_id={getValueFromObject(_list, listKey) as string}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
@@ -147,6 +152,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   members={members}
                   projects={projects}
                   enableQuickIssueCreate
+                  isDragStarted={isDragStarted}
                 />
               </div>
             )}
@@ -160,6 +166,7 @@ export interface IKanBanSwimLanes {
   issues: any;
   sub_group_by: string | null;
   group_by: string | null;
+  order_by: string | null;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -177,6 +184,7 @@ export interface IKanBanSwimLanes {
   labels: IIssueLabels[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
+  isDragStarted?: boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -184,6 +192,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     issues,
     sub_group_by,
     group_by,
+    order_by,
     handleIssues,
     quickActions,
     displayProperties,
@@ -196,6 +205,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     labels,
     members,
     projects,
+    isDragStarted,
   } = props;
 
   return (
@@ -291,6 +301,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={projects}
           listKey={`id`}
           handleIssues={handleIssues}
@@ -305,6 +316,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -313,6 +325,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={states}
           listKey={`id`}
           handleIssues={handleIssues}
@@ -327,6 +340,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -335,6 +349,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={states}
           listKey={`id`}
           handleIssues={handleIssues}
@@ -349,6 +364,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -357,6 +373,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={stateGroups}
           listKey={`key`}
           handleIssues={handleIssues}
@@ -371,6 +388,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -379,6 +397,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={priorities}
           listKey={`key`}
           handleIssues={handleIssues}
@@ -393,6 +412,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -401,6 +421,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={labels ? [...labels, { id: "None", name: "None" }] : labels}
           listKey={`id`}
           handleIssues={handleIssues}
@@ -415,6 +436,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -423,6 +445,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={members ? [...members, { id: "None", display_name: "None" }] : members}
           listKey={`id`}
           handleIssues={handleIssues}
@@ -437,6 +460,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -445,6 +469,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
+          order_by={order_by}
           list={members}
           listKey={`id`}
           handleIssues={handleIssues}
@@ -459,6 +484,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           labels={labels}
           members={members}
           projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
     </div>

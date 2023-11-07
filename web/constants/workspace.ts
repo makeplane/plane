@@ -1,6 +1,6 @@
 // services images
 import GithubLogo from "public/services/github.png";
-import JiraLogo from "public/services/jira.png";
+import JiraLogo from "public/services/jira.svg";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
@@ -28,7 +28,7 @@ export const USER_ROLES = [
   { value: "Other", label: "Other" },
 ];
 
-export const IMPORTERS_EXPORTERS_LIST = [
+export const IMPORTERS_LIST = [
   {
     provider: "github",
     type: "import",

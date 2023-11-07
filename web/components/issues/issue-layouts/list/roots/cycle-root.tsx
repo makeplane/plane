@@ -31,7 +31,7 @@ export const CycleListLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
@@ -80,7 +80,7 @@ export const CycleListLayout: React.FC = observer(() => {
             handleRemoveFromCycle={async () => handleIssues(group_by, issue, "remove")}
           />
         )}
-        display_properties={display_properties}
+        displayProperties={displayProperties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}

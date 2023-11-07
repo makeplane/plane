@@ -29,7 +29,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
 
   const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = profileIssueFiltersStore?.userDisplayProperties || null;
+  const displayProperties = profileIssueFiltersStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
@@ -64,7 +64,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
             handleUpdate={async (data) => handleIssues(group_by, data, "update")}
           />
         )}
-        display_properties={display_properties}
+        displayProperties={displayProperties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}

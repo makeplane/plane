@@ -1,7 +1,7 @@
 from .analytic import urlpatterns as analytic_urls
 from .asset import urlpatterns as asset_urls
 from .authentication import urlpatterns as authentication_urls
-from .configuration import urlpatterns as configuration_urls
+from .config import urlpatterns as configuration_urls
 from .cycle import urlpatterns as cycle_urls
 from .estimate import urlpatterns as estimate_urls
 from .gpt import urlpatterns as gpt_urls
