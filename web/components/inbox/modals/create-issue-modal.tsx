@@ -134,6 +134,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             control={control}
                             render={({ field: { value, onChange } }) => (
                               <RichTextEditorWithRef
+                                cancelUploadImage={fileService.cancelUpload}
                                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                                 deleteFile={fileService.deleteImage}
                                 ref={editorRef}
