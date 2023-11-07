@@ -269,12 +269,16 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
 
         issue = Issue.objects.filter(pk=issue_id).first()
 
+        if (str(issue.created_by_id) != str(actor_id)):
+            issue_subscribers = issue_subscribers + [issue.created_by_id]
+
         if subscriber:
             # add the user to issue subscriber
             try:
-                _ = IssueSubscriber.objects.get_or_create(
-                    project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
-                )
+                if str(issue.created_by_id) != str(actor_id):
+                    _ = IssueSubscriber.objects.get_or_create(
+                        project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
+                    )
             except Exception as e:
                 pass
 
