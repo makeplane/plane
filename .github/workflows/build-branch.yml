@@ -1,33 +1,46 @@
 
-name: Docker Branch Build
+name: Branch Build
 
 on:
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'     
-        required: true
-        default: 'warning'
-      tags:
-        description: 'Dev/QA Builds'
+  push:
+    branches: 
+      - master
+      - release
+      - qa
+      - develop
+  pull_request:
+    types: 
+      - closed
+    branches: 
+      - master
+      - release
+      - qa
+      - develop
 
 env:
-  gh_branch: ${{ github.ref_name }}
-  img_tag: latest
+  TARGET_BRANCH: ''
 
 jobs:
   branch_build_and_push:
+    if: ${{ (github.event_name == 'push') || (github.event_name == 'pull_request' && github.event.action =='closed' && github.event.pull_request.merged == true) }}
     name: Build-Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
 
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
+      - name: Set Target Branch Name on PR close
+        if: ${{ github.event_name == 'pull_request' && github.event.action =='closed' }}
+        run: echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
 
+      - name: Set Target Branch Name on other than PR close
+        if: ${{ github.event_name == 'push' }}
+        run: echo "TARGET_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+      
       - uses: ASzc/change-string-case-action@v2
         id: gh_branch_upper_lower
         with:
-          string: ${{ env.gh_branch }}
+          string: ${{env.TARGET_BRANCH}}
 
       - uses: mad9000/actions-find-and-replace-string@2
         id: gh_branch_replace_slash
@@ -111,7 +124,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
@@ -141,7 +154,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
@@ -171,7 +184,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
@@ -202,4 +215,4 @@ jobs:
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
