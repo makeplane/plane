@@ -2,9 +2,12 @@
 name: Docker Branch Build
 
 on:
-  # push:
-  #   branches:
-  #     - "*"
+  push:
+    branches: 
+      - master
+      - release
+      - qa
+      - develop
   pull_request:
     types: 
       - opened
@@ -220,4 +223,10 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-
+      - name: Remove the images
+        uses: docker/build-push-action@v4.0.0
+        env:
+          DOCKER_BUILDKIT: 1
+          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKET_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        
