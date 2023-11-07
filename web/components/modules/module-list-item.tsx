@@ -50,7 +50,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
 
-  const completedModuleCheck = module.status === "completed" && module.total_issues - module.completed_issues;
+  const completedModuleCheck = module.status === "completed";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
