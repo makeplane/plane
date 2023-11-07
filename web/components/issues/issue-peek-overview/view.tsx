@@ -241,16 +241,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
             {/* content */}
             <div className="relative w-full h-full overflow-hidden overflow-y-auto">
-              {isArchived && (
-                <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
-              )}
               {isLoading && !issue ? (
                 <div className="text-center py-10">Loading...</div>
               ) : (
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 py-6 px-8">
+                      <div className="relative flex flex-col gap-3 py-6 px-8">
+                        {isArchived && (
+                          <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
+                        )}
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
@@ -282,7 +282,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-full flex">
+                      <div className="overflow-auto w-full h-full flex">
                         <div className="w-full h-full space-y-6 p-4 py-5">
                           <PeekOverviewIssueDetails
                             workspaceSlug={workspaceSlug}
