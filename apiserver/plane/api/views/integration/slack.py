@@ -59,6 +59,7 @@ class SlackProjectSyncViewSet(BaseViewSet):
                 team_id=slack_response.get("team", {}).get("id"),
                 team_name=slack_response.get("team", {}).get("name"),
                 workspace_integration=workspace_integration,
+                project_id=project_id,
             )
             _ = ProjectMember.objects.get_or_create(
                 member=workspace_integration.actor, role=20, project_id=project_id
