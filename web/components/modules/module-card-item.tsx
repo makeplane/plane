@@ -53,14 +53,13 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
-  const issueCount =
-    moduleTotalIssues === 0
+  const issueCount = module
+    ? moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
-      ? moduleTotalIssues > 1
-        ? `${moduleTotalIssues} Issues`
-        : `${moduleTotalIssues} Issue`
-      : `${module.completed_issues}/${moduleTotalIssues} Issues`;
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${module.completed_issues}/${moduleTotalIssues} Issues`
+    : "0 Issue";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

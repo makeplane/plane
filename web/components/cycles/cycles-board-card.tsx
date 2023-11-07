@@ -64,9 +64,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycle.completed_issues
-      ? cycleTotalIssues > 1
-        ? `${cycleTotalIssues} Issues`
-        : `${cycleTotalIssues} Issue`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
       : `${cycle.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
