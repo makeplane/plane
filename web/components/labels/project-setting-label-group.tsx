@@ -41,7 +41,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
   return (
     <Disclosure
       as="div"
-      className="rounded border border-custom-border-200 bg-custom-background-100 px-3.5 py-3 text-custom-text-100"
+      className="rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3.5 py-3 text-custom-text-100"
       defaultOpen
     >
       {({ open }) => (
@@ -95,7 +95,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                 {labelChildren.map((child) => (
                   <div
                     key={child.id}
-                    className="group flex items-center justify-between border-b border-custom-border-200 px-4 py-2.5 text-sm last:border-0"
+                    className="group flex items-center justify-between border-b-[0.5px] border-custom-border-200 px-4 py-2.5 text-sm last:border-0"
                   >
                     <h5 className="flex items-center gap-3">
                       <span
