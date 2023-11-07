@@ -2,6 +2,11 @@
 name: Docker Branch Build
 
 on:
+  pull_request:
+    types: 
+      - opened
+      - synchronize
+      - closed
   workflow_dispatch:
     inputs:
       logLevel:
@@ -17,6 +22,7 @@ env:
 
 jobs:
   branch_build_and_push:
+    if: ${{ (github.event_name == 'pull_request') && (( github.event.action =='closed' && github.event.pull_request.merged == true) || ( github.event.action =='opened'|| github.event.action =='synchronize'))}}
     name: Build-Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
 
