@@ -14,6 +14,7 @@ import { Button, Input } from "@plane/ui";
 import { IIssueLabels } from "types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
+import useToast from "hooks/use-toast";
 
 type Props = {
   labelForm: boolean;
@@ -39,6 +40,8 @@ export const CreateUpdateLabelInline = observer(
     // store
     const { projectLabel: projectLabelStore } = useMobxStore();
 
+    const { setToastAlert } = useToast();
+
     const {
       handleSubmit,
       control,
@@ -60,10 +63,20 @@ export const CreateUpdateLabelInline = observer(
     const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
-      await projectLabelStore.createLabel(workspaceSlug.toString(), projectId.toString(), formData).then(() => {
-        handleClose();
-        reset(defaultValues);
-      });
+      await projectLabelStore
+        .createLabel(workspaceSlug.toString(), projectId.toString(), formData)
+        .then(() => {
+          handleClose();
+          reset(defaultValues);
+        })
+        .catch((error) => {
+          setToastAlert({
+            title: "Oops!",
+            type: "error",
+            message: error?.error ?? "Error while adding the label",
+          });
+          reset(formData);
+        });
     };
 
     const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
@@ -74,6 +87,14 @@ export const CreateUpdateLabelInline = observer(
         .then(() => {
           reset(defaultValues);
           handleClose();
+        })
+        .catch((error) => {
+          setToastAlert({
+            title: "Oops!",
+            type: "error",
+            message: error?.error ?? "Error while updating the label",
+          });
+          reset(formData);
         });
     };
 
