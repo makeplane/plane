@@ -273,7 +273,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             # add the user to issue subscriber
             try:
                 _ = IssueSubscriber.objects.get_or_create(
-                    issue_id=issue_id, subscriber_id=actor_id
+                    project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
                 )
             except Exception as e:
                 pass
