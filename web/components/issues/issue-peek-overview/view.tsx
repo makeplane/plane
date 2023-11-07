@@ -218,20 +218,22 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               </div>
 
               <div className="flex items-center gap-4">
-                {!isArchived && (
-                  <Button
-                    size="sm"
-                    prependIcon={<Bell className="h-3 w-3" />}
-                    variant="outline-primary"
-                    onClick={() =>
-                      issueSubscription && issueSubscription.subscribed
-                        ? issueSubscriptionRemove
-                        : issueSubscriptionCreate
-                    }
-                  >
-                    {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                  </Button>
-                )}
+                {issue?.created_by !== user?.id &&
+                  !issue?.assignees.includes(user?.id ?? "") &&
+                  !router.pathname.includes("[archivedIssueId]") && (
+                    <Button
+                      size="sm"
+                      prependIcon={<Bell className="h-3 w-3" />}
+                      variant="outline-primary"
+                      onClick={() =>
+                        issueSubscription && issueSubscription.subscribed
+                          ? issueSubscriptionRemove()
+                          : issueSubscriptionCreate()
+                      }
+                    >
+                      {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                    </Button>
+                  )}
                 <button onClick={handleCopyText}>
                   <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
                 </button>
