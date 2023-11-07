@@ -333,8 +333,6 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
         
         for mention_id in comment_mentions:
             if (mention_id != actor_id):
-                print("sending notification for the issue activity")
-                print(mention_id)
                 for issue_activity in issue_activities_created:
                     notification = createMentionNotification(
                         project=project,
