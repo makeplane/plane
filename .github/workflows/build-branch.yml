@@ -17,7 +17,7 @@ on:
       - release
       - qa
       - develop
-      # - mg-test-develop
+      - mg-test-develop
 
 env:
   TARGET_BRANCH: ''
