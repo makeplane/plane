@@ -24,10 +24,11 @@ const pageService = new PageService();
 
 export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { showButton = false } = props;
+
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
 
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   const { data: pageDetails } = useSWR(
@@ -78,10 +79,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
             variant="primary"
             prependIcon={<Plus />}
             size="sm"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "d" });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreatePageModal(true)}
           >
             Create Page
           </Button>

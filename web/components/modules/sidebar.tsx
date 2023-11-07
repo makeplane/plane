@@ -246,11 +246,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <button onClick={handleCopyText}>
                 <LinkIcon className="h-3 w-3 text-custom-text-300" />
               </button>
-              <CustomMenu width="lg" ellipsis>
+              <CustomMenu width="lg" placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                   <span className="flex items-center justify-start gap-2">
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
+                    <Trash2 className="h-3 w-3" />
+                    <span>Delete module</span>
                   </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
