@@ -56,7 +56,7 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-3">
+    <div className="group flex items-center justify-between gap-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-4 py-3">
       <div className="flex items-center gap-3">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>
