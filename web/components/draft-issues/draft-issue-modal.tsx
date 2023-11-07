@@ -12,7 +12,7 @@ import { ModuleService } from "services/module.service";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { DraftIssueForm } from "components/issues";
+import { DraftIssueForm } from "components/draft-issues";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS, getValueFromObject } from "constants/issue";
 // types

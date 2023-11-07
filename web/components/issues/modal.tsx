@@ -9,7 +9,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { IssueForm, ConfirmIssueDiscard } from "components/issues";
+import { IssueForm } from "components/issues";
+import { ConfirmIssueDiscard } from "components/draft-issues";
 // types
 import type { IIssue } from "types";
 // fetch-keys

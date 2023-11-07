@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Pencil, Trash2 } from "lucide-react";
 // components
-import { CreateUpdateDraftIssueModal, DeleteDraftIssueModal } from "components/issues";
+import { CreateUpdateDraftIssueModal, DeleteDraftIssueModal } from "components/draft-issues";
 // types
 import { IIssue } from "types";
 

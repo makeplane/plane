@@ -5,7 +5,7 @@ import { ChevronDown, PenSquare, Search } from "lucide-react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
-import { CreateUpdateDraftIssueModal } from "components/issues";
+import { CreateUpdateDraftIssueModal } from "components/draft-issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
