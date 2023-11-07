@@ -133,6 +133,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             user=bot_user,
             user_type=1,  # bot user
             workspace=workspace,
+            description="",
         )
 
         workspace_integration = WorkspaceIntegration.objects.create(
