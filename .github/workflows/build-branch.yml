@@ -39,7 +39,7 @@ jobs:
 
       - name: Set Target Branch Name on other than PR close
         if: ${{ github.event.action !='closed' }}
-        run: echo "TARGET_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
+        run: echo "TARGET_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
       
       - uses: ASzc/change-string-case-action@v2
         id: gh_branch_upper_lower
