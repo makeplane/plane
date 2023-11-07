@@ -51,9 +51,9 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     control,
@@ -90,6 +90,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"
+                    editorContentCustomClassNames="min-h-[35px]"
                     debouncedUpdatesEnabled={false}
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}

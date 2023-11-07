@@ -25,7 +25,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
   // derived values
   const issues = archivedIssueStore.getIssues;
-  const display_properties = archivedIssueFiltersStore?.userDisplayProperties || null;
+  const displayProperties = archivedIssueFiltersStore?.userDisplayProperties || null;
   const group_by: string | null = archivedIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
   const handleIssues = (group_by: string | null, issue: IIssue, action: "delete" | "update") => {
@@ -59,7 +59,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
         quickActions={(group_by, issue) => (
           <ArchivedIssueQuickActions issue={issue} handleDelete={async () => handleIssues(group_by, issue, "delete")} />
         )}
-        display_properties={display_properties}
+        displayProperties={displayProperties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}

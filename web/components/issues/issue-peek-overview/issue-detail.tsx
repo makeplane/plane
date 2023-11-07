@@ -32,13 +32,13 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   // store
   const { user: userStore } = useMobxStore();
   const { currentProjectRole } = userStore;
-  const isAllowed = [5, 10].includes(currentProjectRole || 0);
+  const isAllowed = [15, 20].includes(currentProjectRole || 0);
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks
   const { setShowAlert } = useReloadConfirmations();
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, issue.project_detail.id);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     handleSubmit,
