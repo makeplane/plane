@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
@@ -26,15 +26,24 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
 
   // derived values
   const issues = draftIssuesStore.getDraftIssues;
-  const display_properties = draftIssueFiltersStore?.userDisplayProperties;
+  const displayProperties = draftIssueFiltersStore?.userDisplayProperties;
   const userDisplayFilters = draftIssueFiltersStore?.userDisplayFilters;
   const group_by: string | null = userDisplayFilters?.group_by || null;
+  const order_by: string | null = draftIssueFiltersStore?.userDisplayFilters?.order_by || null;
   const showEmptyGroup = userDisplayFilters?.show_empty_groups || false;
   const sub_group_by: string | null = userDisplayFilters?.sub_group_by || null;
 
   const currentKanBanView = "default";
 
+  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
+
+  const onDragStart = () => {
+    setIsDragStarted(true);
+  };
+
   const onDragEnd = (result: any) => {
+    setIsDragStarted(false);
+
     if (!result) return;
 
     if (
@@ -85,12 +94,13 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
 
   return (
     <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
         {currentKanBanView === "default" ? (
           <KanBan
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
+            order_by={order_by}
             handleIssues={handleIssues}
             quickActions={(sub_group_by, group_by, issue) => (
               <DraftIssueQuickActions
@@ -98,17 +108,17 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
                 handleUpdate={(issue: any, action: any) => handleIssues(sub_group_by, group_by, issue, action)}
               />
             )}
-            displayProperties={display_properties}
+            displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
             stateGroups={stateGroups}
-            order_by={orderBy}
             priorities={priorities}
             labels={labels}
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
             showEmptyGroup={showEmptyGroup}
+            isDragStarted={isDragStarted}
           />
         ) : (
           <KanBanSwimLanes
@@ -123,7 +133,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
                 handleUpdate={(issue: any, action: any) => handleIssues(sub_group_by, group_by, issue, action)}
               />
             )}
-            displayProperties={display_properties}
+            displayProperties={displayProperties}
             kanBanToggle={issueKanBanViewStore?.kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             states={states}
@@ -133,6 +143,7 @@ export const DraftIssueKanBanLayout: React.FC = observer(() => {
             members={members?.map((m) => m.member) ?? null}
             projects={projects}
             showEmptyGroup={showEmptyGroup}
+            isDragStarted={isDragStarted}
           />
         )}
       </DragDropContext>
