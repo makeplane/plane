@@ -37,8 +37,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     disabled,
     hideDropdownArrow = false,
     className,
-    buttonClassName,
-    optionsClassName,
+    buttonClassName = "",
+    optionsClassName = "",
     placement,
     maxRender = 2,
     noLabelBorder = false,
@@ -93,7 +93,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   });
 
   const label = (
-    <div className="flex items-center gap-2 text-custom-text-200 h-full">
+    <div className="flex items-center gap-2 text-custom-text-200">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
