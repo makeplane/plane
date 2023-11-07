@@ -1,16 +1,17 @@
-import React, { useEffect, useState, forwardRef, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 // react-hook-form
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 // services
-import aiService from "services/ai.service";
-import trackEventServices from "services/track-event.service";
+import { AIService } from "services/ai.service";
+import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useUserAuth from "hooks/use-user-auth";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
-import { TipTapEditor } from "components/tiptap";
+import { Button, Input } from "@plane/ui";
+// components
+import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -30,6 +31,10 @@ type FormData = {
   prompt: string;
   task: string;
 };
+
+// services
+const aiService = new AIService();
+const trackEventService = new TrackEventService();
 
 export const GptAssistantModal: React.FC<Props> = ({
   isOpen,
@@ -56,7 +61,7 @@ export const GptAssistantModal: React.FC<Props> = ({
 
   const {
     handleSubmit,
-    register,
+    control,
     reset,
     setFocus,
     formState: { isSubmitting },
@@ -110,9 +115,7 @@ export const GptAssistantModal: React.FC<Props> = ({
           setToastAlert({
             type: "error",
             title: "Error!",
-            message:
-              error ||
-              "You have reached the maximum number of requests of 50 requests per month per user.",
+            message: error || "You have reached the maximum number of requests of 50 requests per month per user.",
           });
         else
           setToastAlert({
@@ -140,13 +143,11 @@ export const GptAssistantModal: React.FC<Props> = ({
       {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
         <div className="text-sm">
           Content:
-          <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditorWithRef
             value={htmlContent ?? `<p>${content}</p>`}
             customClassName="-m-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
             ref={editorRef}
           />
         </div>
@@ -154,69 +155,60 @@ export const GptAssistantModal: React.FC<Props> = ({
       {response !== "" && (
         <div className="page-block-section text-sm">
           Response:
-          <TipTapEditor
-            workspaceSlug={workspaceSlug as string}
+          <RichReadOnlyEditor
             value={`<p>${response}</p>`}
             customClassName="-mx-3 -my-3"
             noBorder
             borderOnFocus={false}
-            editable={false}
           />
         </div>
       )}
       {invalidResponse && (
         <div className="text-sm text-red-500">
-          No response could be generated. This may be due to insufficient content or task
-          information. Please try again.
+          No response could be generated. This may be due to insufficient content or task information. Please try again.
         </div>
       )}
-      <Input
-        type="text"
+      <Controller
+        control={control}
         name="task"
-        register={register}
-        placeholder={`${
-          content && content !== ""
-            ? "Tell AI what action to perform on this content..."
-            : "Ask AI anything..."
-        }`}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="task"
+            name="task"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            placeholder={`${
+              content && content !== "" ? "Tell AI what action to perform on this content..." : "Ask AI anything..."
+            }`}
+            className="w-full"
+          />
+        )}
       />
       <div className={`flex gap-2 ${response === "" ? "justify-end" : "justify-between"}`}>
         {response !== "" && (
-          <PrimaryButton
+          <Button
+            variant="primary"
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block)
-                trackEventServices.trackUseGPTResponseEvent(
-                  block,
-                  "USE_GPT_RESPONSE_IN_PAGE_BLOCK",
-                  user
-                );
-              else if (issue)
-                trackEventServices.trackUseGPTResponseEvent(
-                  issue,
-                  "USE_GPT_RESPONSE_IN_ISSUE",
-                  user
-                );
+              if (block && user)
+                trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
+              else if (issue && user)
+                trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response
-          </PrimaryButton>
+          </Button>
         )}
         <div className="flex items-center gap-2">
-          <SecondaryButton onClick={onClose}>Close</SecondaryButton>
-          <PrimaryButton
-            type="button"
-            onClick={handleSubmit(handleResponse)}
-            loading={isSubmitting}
-          >
-            {isSubmitting
-              ? "Generating response..."
-              : response === ""
-              ? "Generate response"
-              : "Generate again"}
-          </PrimaryButton>
+          <Button variant="neutral-primary" onClick={onClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
+            {isSubmitting ? "Generating response..." : response === "" ? "Generate response" : "Generate again"}
+          </Button>
         </div>
       </div>
     </div>

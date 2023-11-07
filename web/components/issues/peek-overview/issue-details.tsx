@@ -26,6 +26,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({
       issue={{
         name: issue.name,
         description_html: issue.description_html,
+        project_id: issue.project_detail.id,
       }}
       workspaceSlug={workspaceSlug}
     />

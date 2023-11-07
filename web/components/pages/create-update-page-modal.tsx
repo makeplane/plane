@@ -7,31 +7,32 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/pages.service";
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { ICurrentUserResponse, IPage } from "types";
+import { IUser, IPage } from "types";
 // fetch-keys
-import {
-  ALL_PAGES_LIST,
-  FAVORITE_PAGES_LIST,
-  MY_PAGES_LIST,
-  RECENT_PAGES_LIST,
-} from "constants/fetch-keys";
+import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IPage | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+// services
+const pageService = new PageService();
+
+export const CreateUpdatePageModal: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -40,7 +41,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const createPage = async (payload: IPage) => {
-    await pagesService
+    await pageService
       .createPage(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
@@ -82,7 +83,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const updatePage = async (payload: IPage) => {
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));

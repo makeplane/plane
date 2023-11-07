@@ -177,7 +177,6 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
         type: "SET_PROPERTIES",
         payload: {
           display_properties: {
-            ...state.display_properties,
             [key]: !state.display_properties[key],
           },
         },

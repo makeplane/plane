@@ -24,7 +24,6 @@ export interface IIssueGroup {
   title: TIssueGroupTitle;
   color: string;
   className: string;
-  icon: React.FC;
 }
 
 export interface IIssue {
@@ -40,7 +39,12 @@ export interface IIssue {
   sequence_id: number;
   start_date: any;
   state: string;
-  state_detail: any;
+  state_detail: {
+    id: string;
+    name: string;
+    group: TIssueGroupKey;
+    color: string;
+  };
   target_date: any;
   votes: IVote[];
 }

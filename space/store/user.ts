@@ -2,7 +2,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service
 import UserService from "services/user.service";
-import { ActorDetail } from "types/issue";
 // types
 import { IUser } from "types/user";
 
