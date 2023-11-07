@@ -20,6 +20,8 @@ import { CheckCircle } from "lucide-react";
 import { IAppIntegration, IWorkspaceIntegration } from "types";
 // fetch-keys
 import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   integration: IAppIntegration;
@@ -41,7 +43,11 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const integrationService = new IntegrationService();
 
-export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
+export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
+
   const [deletingIntegration, setDeletingIntegration] = useState(false);
 
   const router = useRouter();
@@ -49,7 +55,11 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
   const { setToastAlert } = useToast();
 
-  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup(integration.provider);
+  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
+    provider: integration.provider,
+    github_app_name: envConfig?.github_app_name || "",
+    slack_client_id: envConfig?.slack_client_id || "",
+  });
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
@@ -132,4 +142,4 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
       )}
     </div>
   );
-};
+});
