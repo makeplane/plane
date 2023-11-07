@@ -91,6 +91,9 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
             issue_id=issue_id,
             subscriber=mention_id,
             project=project_id,
+        ).exists() and not IssueAssignee.objects.filter(
+            project_id=project_id, issue_id=issue_id,
+            assignee=mention_id
         ).exists():
             mentioned_user = User.objects.get(pk=mention_id)
 
@@ -247,20 +250,21 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
         - When the activity is a comment_created and there exist a mention in the comment, then we have to send the "mention_in_comment" notification
         - When the activity is a comment_updated and there exist a mention change, then also we have to send the "mention_in_comment" notification
         """
+        
+        issue_assignees = list(
+            IssueAssignee.objects.filter(
+                project_id=project_id, issue_id=issue_id)
+            .exclude(assignee_id__in=list([actor_id] + new_mentions + comment_mentions))
+            .values_list("assignee", flat=True)
+        )
+        
         issue_subscribers = list(
             IssueSubscriber.objects.filter(
                 project_id=project_id, issue_id=issue_id)
             .exclude(subscriber_id__in=list(new_mentions + comment_mentions + [actor_id]))
             .values_list("subscriber", flat=True)
         )
-
-        issue_assignees = list(
-            IssueAssignee.objects.filter(
-                project_id=project_id, issue_id=issue_id)
-            .exclude(assignee_id=actor_id)
-            .values_list("assignee", flat=True)
-        )
-
+        
         issue_subscribers = issue_subscribers + issue_assignees
 
         issue = Issue.objects.filter(pk=issue_id).first()
