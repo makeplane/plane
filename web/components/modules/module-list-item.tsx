@@ -134,9 +134,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               <span className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {completedModuleCheck ? (
-                    <span className="text-sm text-custom-primary-100">{`!`}</span>
-                  ) : progress === 100 ? (
-                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    progress === 100 ? (
+                      <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    ) : (
+                      <span className="text-sm text-custom-primary-100">{`!`}</span>
+                    )
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
