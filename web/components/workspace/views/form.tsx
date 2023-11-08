@@ -31,7 +31,11 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    workspaceMember: { workspaceMembers },
+  } = useMobxStore();
 
   const {
     formState: { errors, isSubmitting },
@@ -143,7 +147,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                     labels={workspaceStore.workspaceLabels ?? undefined}
-                    members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
+                    members={workspaceMembers?.map((m) => m.member) ?? undefined}
                     projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
                   />
                 </FiltersDropdown>
@@ -157,7 +161,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
                 labels={workspaceStore.workspaceLabels ?? undefined}
-                members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
+                members={workspaceMembers?.map((m) => m.member) ?? undefined}
                 states={undefined}
               />
             </div>
