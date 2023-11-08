@@ -26,16 +26,16 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   // SWR request
   useSWR(
-    workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null,
+    workspaceSlug && projectId && issueStore ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null,
     async () => {
-      if (workspaceSlug && projectId) {
+      if (workspaceSlug && projectId && issueStore) {
         await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-        await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+        await issueStore.fetchIssues(
+          workspaceSlug.toString(),
+          projectId.toString(),
+          issueStore?.issues ? "mutation" : "initial-load"
+        );
       }
-    },
-    {
-      revalidateOnFocus: false,
-      refreshInterval: 0,
     }
   );
 
@@ -52,22 +52,28 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
-      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ProjectEmptyState />
-      ) : (
-        <div className="w-full h-full overflow-auto">
-          {activeLayout === "list" ? (
-            <ListLayout />
-          ) : activeLayout === "kanban" ? (
-            <KanBanLayout />
-          ) : activeLayout === "calendar" ? (
-            <CalendarLayout />
-          ) : activeLayout === "gantt_chart" ? (
-            <GanttLayout />
-          ) : activeLayout === "spreadsheet" ? (
-            <ProjectSpreadsheetLayout />
-          ) : null}
+
+      {issueStore?.loader === "initial-load" ? (
+        <div className="w-full h-full">
+          <Spinner />
         </div>
+      ) : (
+        <>
+          {/* {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 && <ProjectEmptyState />} */}
+          <div className="w-full h-full relative overflow-auto">
+            {activeLayout === "list" ? (
+              <ListLayout />
+            ) : activeLayout === "kanban" ? (
+              <KanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <CalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <GanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectSpreadsheetLayout />
+            ) : null}
+          </div>
+        </>
       )}
     </div>
   );

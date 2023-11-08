@@ -137,9 +137,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetail={projectDetail} />
           </form>
-          <div className="text-xs italic text-custom-text-200 px-3 py-2">
-            Press {"'"}Enter{"'"} to add another issue
-          </div>
+          <div className="text-xs italic text-custom-text-200 px-3 py-2">{`Press 'Enter' to add another issue`}</div>
         </div>
       ) : (
         <div

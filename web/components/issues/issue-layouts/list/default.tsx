@@ -48,46 +48,58 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     }
   };
 
+  const validateEmptyIssueGroups = (issues: IIssue[]) => {
+    const issuesCount = issues?.length || 0;
+    if (!showEmptyGroup && issuesCount <= 0) return false;
+    return true;
+  };
+
+  if (!showEmptyGroup && (is_list ? issues.length <= 0 : Object.keys(issues).length <= 0)) return null;
+
   return (
     <div className="relative w-full h-full">
       {list &&
         list.length > 0 &&
-        list.map((_list: any) => (
-          <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
-            <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90">
-              <ListGroupByHeaderRoot
-                column_id={getValueFromObject(_list, listKey) as string}
-                column_value={_list}
-                group_by={group_by}
-                issues_count={
-                  is_list ? issues?.length || 0 : issues?.[getValueFromObject(_list, listKey) as string]?.length || 0
-                }
-              />
-            </div>
+        list.map(
+          (_list: any) =>
+            validateEmptyIssueGroups(is_list ? issues : issues?.[getValueFromObject(_list, listKey) as string]) && (
+              <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
+                <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90">
+                  <ListGroupByHeaderRoot
+                    column_id={getValueFromObject(_list, listKey) as string}
+                    column_value={_list}
+                    group_by={group_by}
+                    issues_count={
+                      is_list
+                        ? issues?.length || 0
+                        : issues?.[getValueFromObject(_list, listKey) as string]?.length || 0
+                    }
+                  />
+                </div>
 
-            {issues && (
-              <IssueBlocksList
-                columnId={getValueFromObject(_list, listKey) as string}
-                issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
-                handleIssues={handleIssues}
-                quickActions={quickActions}
-                displayProperties={displayProperties}
-                isReadonly={isReadonly}
-                showEmptyGroup={showEmptyGroup}
-              />
-            )}
+                {issues && (
+                  <IssueBlocksList
+                    columnId={getValueFromObject(_list, listKey) as string}
+                    issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
+                    handleIssues={handleIssues}
+                    quickActions={quickActions}
+                    displayProperties={displayProperties}
+                    isReadonly={isReadonly}
+                  />
+                )}
 
-            {enableIssueQuickAdd && (
-              <div className="flex-shrink-0 w-full sticky bottom-0 z-[1]">
-                <ListQuickAddIssueForm
-                  formKey="name"
-                  groupId={getValueFromObject(_list, listKey) as string}
-                  prePopulatedData={prePopulateQuickAddData(group_by, getValueFromObject(_list, listKey))}
-                />
+                {enableIssueQuickAdd && (
+                  <div className="flex-shrink-0 w-full sticky bottom-0 z-[1]">
+                    <ListQuickAddIssueForm
+                      formKey="name"
+                      groupId={getValueFromObject(_list, listKey) as string}
+                      prePopulatedData={prePopulateQuickAddData(group_by, getValueFromObject(_list, listKey))}
+                    />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            )
+        )}
     </div>
   );
 });

@@ -32,13 +32,19 @@ export const ListLayout: FC = observer(() => {
 
   // TODO: remove the issue from the store
   const handleIssues = useCallback(
-    (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
+    async (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
       if (!workspaceSlug) return;
+
       if (action === "update") {
         issueStore.updateIssueStructure(group_by, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+        await issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+        await issueStore.fetchIssues(workspaceSlug.toString(), issue.project, "mutation");
       }
-      if (action === "delete") issueStore.deleteIssue(group_by, null, issue);
+
+      if (action === "delete") {
+        await issueStore.deleteIssue(group_by, null, issue);
+        await issueStore.fetchIssues(workspaceSlug.toString(), issue.project, "mutation");
+      }
     },
     [issueStore, issueDetailStore, workspaceSlug]
   );
@@ -53,36 +59,36 @@ export const ListLayout: FC = observer(() => {
 
   return (
     <>
-      {issueStore.loader ? (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
-      ) : (
-        <div className="relative w-full h-full bg-custom-background-90">
-          <List
-            issues={issues}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={(group_by, issue) => (
-              <ProjectIssueQuickActions
-                issue={issue}
-                handleDelete={async () => handleIssues(group_by, issue, "delete")}
-                handleUpdate={async (data) => handleIssues(group_by, data, "update")}
-              />
-            )}
-            displayProperties={displayProperties}
-            showEmptyGroup={userDisplayFilters.show_empty_groups ?? false}
-            enableIssueQuickAdd={true}
-            isReadonly={false}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-          />
+      {issueStore?.loader === "mutation" && (
+        <div className="fixed top-16 right-2 z-30 bg-custom-background-80 shadow-custom-shadow-sm w-10 h-10 rounded flex justify-center items-center">
+          <Spinner className="w-5 h-5" />
         </div>
       )}
+
+      <div className="relative w-full h-full bg-custom-background-90">
+        <List
+          issues={issues}
+          group_by={group_by}
+          handleIssues={handleIssues}
+          quickActions={(group_by, issue) => (
+            <ProjectIssueQuickActions
+              issue={issue}
+              handleDelete={async () => handleIssues(group_by, issue, "delete")}
+              handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+            />
+          )}
+          displayProperties={displayProperties}
+          showEmptyGroup={userDisplayFilters.show_empty_groups ?? false}
+          enableIssueQuickAdd={true}
+          isReadonly={false}
+          states={states}
+          stateGroups={stateGroups}
+          priorities={priorities}
+          labels={labels}
+          members={members?.map((m) => m.member) ?? null}
+          projects={projects}
+        />
+      </div>
     </>
   );
 });

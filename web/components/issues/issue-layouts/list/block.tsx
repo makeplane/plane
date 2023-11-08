@@ -1,5 +1,5 @@
 // components
-import { KanBanProperties } from "./properties";
+import { ListProperties } from "./properties";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
 import { Spinner, Tooltip } from "@plane/ui";
@@ -13,11 +13,10 @@ interface IssueBlockProps {
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   isReadonly?: boolean;
-  showEmptyGroup?: boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, displayProperties, showEmptyGroup, isReadonly } = props;
+  const { columnId, issue, handleIssues, quickActions, displayProperties, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
     handleIssues(group_by, issueToUpdate, "update");
@@ -51,13 +50,12 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
         <div className="ml-auto flex-shrink-0 flex items-center gap-2">
           {!issue?.tempId ? (
             <>
-              <KanBanProperties
+              <ListProperties
                 columnId={columnId}
                 issue={issue}
                 isReadonly={isReadonly}
                 handleIssues={updateIssue}
                 displayProperties={displayProperties}
-                showEmptyGroup={showEmptyGroup}
               />
               {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
             </>
