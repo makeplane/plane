@@ -79,19 +79,32 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
+  const getTooltipContent = (): string => {
+    if (!value || value.length === 0) return "No Assignee";
+
+    // if multiple assignees
+    if (Array.isArray(value)) {
+      const assignees = workspaceMembers?.filter((m) => value.includes(m.member.id));
+
+      if (!assignees || assignees.length === 0) return "No Assignee";
+
+      // if only one assignee in list
+      if (assignees.length === 1) {
+        return "1 assignee";
+      } else return `${assignees.length} assignees`;
+    }
+
+    // if single assignee
+    const assignee = workspaceMembers?.find((m) => m.member.id === value)?.member;
+
+    if (!assignee) return "No Assignee";
+
+    // if assignee not null & not list
+    return "1 assignee";
+  };
+
   const label = (
-    <Tooltip
-      tooltipHeading="Assignee"
-      tooltipContent={
-        value && value.length > 0
-          ? (workspaceMembers ? workspaceMembers : [])
-              ?.filter((m) => value.includes(m.member.display_name))
-              .map((m) => m.member.display_name)
-              .join(", ")
-          : "No Assignee"
-      }
-      position="top"
-    >
+    <Tooltip tooltipHeading="Assignee" tooltipContent={getTooltipContent()} position="top">
       <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
