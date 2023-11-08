@@ -61,9 +61,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     }}
                   >
                     <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                      <div className="w-full">
-                        <span className="text-xs flex-grow truncate">{issue.name}</span>
-                      </div>
+                      <span className="text-xs flex-grow truncate">{issue.name}</span>
                     </Tooltip>
                   </IssuePeekOverview>
                   <div className="hidden group-hover/calendar-block:block">{quickActions(issue)}</div>
