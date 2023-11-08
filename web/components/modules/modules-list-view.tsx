@@ -84,7 +84,7 @@ export const ModulesListView: React.FC = observer(() => {
           image={emptyModule}
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
-            text: "New Module",
+            text: "New module",
             onClick: () => {
               const e = new KeyboardEvent("keydown", {
                 key: "m",

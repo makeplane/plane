@@ -79,7 +79,7 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete issue</h3>
                     </span>
                   </div>
                   <span>
@@ -97,7 +97,7 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
                       Cancel
                     </Button>
                     <Button variant="danger" onClick={handleIssueDelete} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                      {isDeleteLoading ? "Deleting..." : "Delete issue"}
                     </Button>
                   </div>
                 </div>

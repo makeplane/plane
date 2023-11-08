@@ -58,7 +58,7 @@ export const CycleForm: React.FC<Props> = (props) => {
               />
             )}
           />
-          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Cycle</h3>
+          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{data?.id ? "Update cycle" : "New cycle"}</h3>
         </div>
         <div className="space-y-3">
           <div className="mt-2 space-y-3">
@@ -142,11 +142,11 @@ export const CycleForm: React.FC<Props> = (props) => {
         <Button variant="primary" type="submit" loading={isSubmitting}>
           {data
             ? isSubmitting
-              ? "Updating Cycle..."
-              : "Update Cycle"
+              ? "Updating cycle..."
+              : "Update cycle"
             : isSubmitting
-            ? "Creating Cycle..."
-            : "Create Cycle"}
+            ? "Creating cycle..."
+            : "Create cycle"}
         </Button>
       </div>
     </form>

@@ -282,7 +282,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
           ) : (
             isEditable && (
               <div className="flex justify-between items-center">
-                <div className="text-xs py-2 text-custom-text-300 italic">No Sub-Issues yet</div>
+                <div className="text-xs py-2 text-custom-text-300 italic">No Sub-issues yet</div>
                 <div>
                   <CustomMenu
                     label={

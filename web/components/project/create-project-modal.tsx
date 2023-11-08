@@ -384,7 +384,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                       Cancel
                     </Button>
                     <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>
-                      {isSubmitting ? "Creating..." : "Create Project"}
+                      {isSubmitting ? "Creating..." : "Create project"}
                     </Button>
                   </div>
                 </form>

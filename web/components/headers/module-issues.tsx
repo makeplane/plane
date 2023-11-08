@@ -202,7 +202,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
             size="sm"
             prependIcon={<Plus />}
           >
-            Add Issue
+            Add issue
           </Button>
           <button
             type="button"

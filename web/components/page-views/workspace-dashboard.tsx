@@ -77,7 +77,7 @@ export const WorkspaceDashboardView = observer(() => {
                     document.dispatchEvent(e);
                   }}
                 >
-                  Create Project
+                  Create project
                 </Button>
               </div>
               <div className="hidden md:block self-end overflow-hidden pt-8">

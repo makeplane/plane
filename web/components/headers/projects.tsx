@@ -51,7 +51,7 @@ export const ProjectsHeader = observer(() => {
             document.dispatchEvent(e);
           }}
         >
-          Add Project
+          Add project
         </Button>
       </div>
     </div>

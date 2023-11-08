@@ -152,7 +152,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 onClick={() => setIsInlineCreateIssueFormOpen(true)}
               >
                 <PlusIcon className="h-4 w-4" />
-                New Issue
+                New issue
               </button>
             ) : (
               <CustomMenu
@@ -163,7 +163,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     type="button"
                   >
                     <PlusIcon className="h-4 w-4" />
-                    New Issue
+                    New issue
                   </button>
                 }
                 optionsClassName="left-5 !w-36"

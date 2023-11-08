@@ -284,7 +284,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               />
             )}
             <h3 className="text-xl font-semibold leading-6 text-custom-text-100">
-              {status ? "Update" : "Create"} Issue
+              {status ? "Update issue" : "Create issue"}
             </h3>
           </div>
           {watch("parent") &&
@@ -619,11 +619,11 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
             <Button variant="primary" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
-                  ? "Updating Issue..."
-                  : "Update Issue"
+                  ? "Updating issue..."
+                  : "Update issue"
                 : isSubmitting
-                ? "Adding Issue..."
-                : "Add Issue"}
+                ? "Adding issue..."
+                : "Add issue"}
             </Button>
           </div>
         </div>

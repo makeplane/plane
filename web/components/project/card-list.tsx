@@ -52,7 +52,7 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
           description="Get started by creating your first project"
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
-            text: "New Project",
+            text: "New project",
             onClick: () => {
               const e = new KeyboardEvent("keydown", {
                 key: "p",

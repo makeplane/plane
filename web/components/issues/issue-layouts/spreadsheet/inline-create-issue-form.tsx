@@ -179,7 +179,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />
-            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+            <span className="text-sm font-medium text-custom-primary-100">New issue</span>
           </button>
         </div>
       )}

@@ -59,7 +59,7 @@ export const CyclesHeader: FC<ICyclesHeader> = (props) => {
             document.dispatchEvent(e);
           }}
         >
-          Add Cycle
+          Build cycle
         </Button>
       </div>
     </div>

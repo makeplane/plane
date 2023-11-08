@@ -95,7 +95,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
             image={emptyAnalytics}
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
-              text: "New Project",
+              text: "New project",
               onClick: () => {
                 const e = new KeyboardEvent("keydown", {
                   key: "p",

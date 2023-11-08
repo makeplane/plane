@@ -173,7 +173,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                         Discard
                       </Button>
                       <Button variant="primary" type="submit" loading={isSubmitting}>
-                        {isSubmitting ? "Adding Issue..." : "Add Issue"}
+                        {isSubmitting ? "Adding issue..." : "Add issue"}
                       </Button>
                     </div>
                   </div>

@@ -92,7 +92,7 @@ export const ModuleForm: React.FC<Props> = ({
               />
             )}
           />
-          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update" : "New"} Module</h3>
+          <h3 className="text-xl font-medium leading-6 text-custom-text-200">{status ? "Update module" : "New module"}</h3>
         </div>
 
         <div className="space-y-3">
@@ -189,11 +189,11 @@ export const ModuleForm: React.FC<Props> = ({
         <Button variant="primary" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
-              ? "Updating Module..."
-              : "Update Module"
+              ? "Updating module..."
+              : "Update module"
             : isSubmitting
-            ? "Creating Module..."
-            : "Create Module"}
+            ? "Creating module..."
+            : "Create module"}
         </Button>
       </div>
     </form>

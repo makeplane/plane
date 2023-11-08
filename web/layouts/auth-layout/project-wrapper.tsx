@@ -130,7 +130,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
           description="Try creating a new project"
           image={emptyProject}
           primaryButton={{
-            text: "Create Project",
+            text: "Create project",
             onClick: () => {
               const e = new KeyboardEvent("keydown", {
                 key: "p",

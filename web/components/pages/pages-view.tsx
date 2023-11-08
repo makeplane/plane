@@ -263,7 +263,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               image={emptyPage}
               primaryButton={{
                 icon: <Plus className="h-4 w-4" />,
-                text: "New Page",
+                text: "New page",
                 onClick: () => {
                   const e = new KeyboardEvent("keydown", {
                     key: "d",

@@ -272,7 +272,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         <div className="flex items-center justify-between py-2">
           <>
             <Button variant="primary" type="submit" loading={isSubmitting} disabled={!isAdmin}>
-              {isSubmitting ? "Updating Project..." : "Update Project"}
+              {isSubmitting ? "Updating project..." : "Update project"}
             </Button>
             <span className="text-sm text-custom-sidebar-text-400 italic">
               Created on {renderShortDateWithYearFormat(project?.created_at)}

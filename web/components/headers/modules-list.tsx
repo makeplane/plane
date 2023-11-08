@@ -82,7 +82,7 @@ export const ModulesListHeader: React.FC = observer(() => {
             document.dispatchEvent(e);
           }}
         >
-          Add Module
+          Add module
         </Button>
       </div>
     </div>

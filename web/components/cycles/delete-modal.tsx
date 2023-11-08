@@ -90,7 +90,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         <div className="flex-shrink-0 flex justify-center items-center rounded-full bg-red-500/20 w-12 h-12">
                           <AlertTriangle width={16} strokeWidth={2} className="text-red-600" />
                         </div>
-                        <div className="text-xl font-medium 2xl:text-2xl">Delete Cycle</div>
+                        <div className="text-xl font-medium 2xl:text-2xl">Delete cycle</div>
                       </div>
                       <span>
                         <p className="text-sm text-custom-text-200">
@@ -106,7 +106,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         </Button>
 
                         <Button variant="danger" size="sm" onClick={formSubmit}>
-                          {loader ? "Deleting..." : "Delete Cycle"}
+                          {loader ? "Deleting..." : "Delete cycle"}
                         </Button>
                       </div>
                     </div>

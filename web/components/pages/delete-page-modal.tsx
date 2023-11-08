@@ -118,11 +118,11 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        Delete Page
+                        Delete page
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete Page-{" "}
+                          Are you sure you want to delete page-{" "}
                           <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
                           data related to the page will be permanently removed. This action cannot be undone.
                         </p>

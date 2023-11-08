@@ -45,7 +45,7 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
       <div className="space-y-5">
-        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update" : "Create"} Page</h3>
+        <h3 className="text-lg font-medium leading-6 text-custom-text-100">{status ? "Update page" : "Create page"}</h3>
         <div className="space-y-3">
           <div>
             <Controller
@@ -82,11 +82,11 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         <Button variant="primary" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
-              ? "Updating Page..."
-              : "Update Page"
+              ? "Updating page..."
+              : "Update page"
             : isSubmitting
-            ? "Creating Page..."
-            : "Create Page"}
+            ? "Creating page..."
+            : "Create page"}
         </Button>
       </div>
     </form>

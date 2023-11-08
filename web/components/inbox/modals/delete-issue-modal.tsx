@@ -99,7 +99,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete issue</h3>
                     </span>
                   </div>
                   <span>
@@ -116,7 +116,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
                       Cancel
                     </Button>
                     <Button variant="danger" onClick={handleDelete} loading={isDeleting}>
-                      {isDeleting ? "Deleting..." : "Delete Issue"}
+                      {isDeleting ? "Deleting..." : "Delete issue"}
                     </Button>
                   </div>
                 </div>

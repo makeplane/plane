@@ -99,7 +99,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
             image={emptyCycle}
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
-              text: "New Cycle",
+              text: "Build cycle",
               onClick: () => {
                 setCreateModal(true);
               },

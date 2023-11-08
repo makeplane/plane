@@ -83,7 +83,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
               document.dispatchEvent(e);
             }}
           >
-            Create Page
+            Create page
           </Button>
         </div>
       )}

@@ -127,7 +127,7 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
                       Cancel
                     </Button>
                     <Button variant="danger" onClick={handleDeletion} loading={isDeleteLoading}>
-                      {isDeleteLoading ? "Deleting..." : "Delete Issue"}
+                      {isDeleteLoading ? "Deleting..." : "Delete issue"}
                     </Button>
                   </div>
                 </div>

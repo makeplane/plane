@@ -52,7 +52,7 @@ export const WorkspaceSidebarQuickAction = () => {
             }}
           >
             <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
-            {!store?.theme?.sidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
+            {!store?.theme?.sidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
           </button>
 
           {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (

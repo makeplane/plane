@@ -158,7 +158,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 >
                   <span className="flex items-center justify-start gap-2">
                     <Pencil className="h-3.5 w-3.5" />
-                    <span>Edit Page</span>
+                    <span>Edit page</span>
                   </span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
@@ -170,7 +170,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                 >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3.5 w-3.5" />
-                    <span>Delete Page</span>
+                    <span>Delete page</span>
                   </span>
                 </CustomMenu.MenuItem>
                 <CustomMenu.MenuItem
