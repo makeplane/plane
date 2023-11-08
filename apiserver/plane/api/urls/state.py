@@ -20,9 +20,17 @@ urlpatterns = [
         StateViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
+            }
+        ),
+        name="project-state",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/mark-default/",
+        StateViewSet.as_view(
+            {
+                "post": "mark_as_default",
             }
         ),
         name="project-state",

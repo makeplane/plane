@@ -59,6 +59,16 @@ class StateViewSet(BaseViewSet):
             return Response(state_dict, status=status.HTTP_200_OK)
         return Response(states, status=status.HTTP_200_OK)
 
+    def mark_as_default(self, request, slug, project_id, pk):
+        # Select all the states which are marked as default
+        _ = State.objects.filter(
+            workspace__slug=slug, project_id=project_id, default=True
+        ).update(default=False)
+        _ = State.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        ).update(default=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
             ~Q(name="Triage"),
