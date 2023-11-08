@@ -16,14 +16,13 @@ export const JiraGetImportDetail: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
   const {
     control,
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
-
-  const { project: projectStore } = useMobxStore();
-
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   return (
     <div className="h-full w-full space-y-8 overflow-y-auto">
@@ -190,10 +189,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 <div>
                   <button
                     type="button"
-                    onClick={() => {
-                      const event = new KeyboardEvent("keydown", { key: "p" });
-                      document.dispatchEvent(event);
-                    }}
+                    onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
                     <Plus className="h-4 w-4 text-custom-text-200" />
