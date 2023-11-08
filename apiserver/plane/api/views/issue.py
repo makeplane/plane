@@ -312,6 +312,60 @@ class IssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class IssueListEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        filters = issue_filters(request.query_params, "GET")
+
+        # Custom ordering for priority and state
+        priority_order = ["urgent", "high", "medium", "low", "none"]
+        state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
+
+        order_by_param = request.GET.get("order_by", "-created_at")
+
+        issue_queryset = (
+            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .distinct()
+        )
+
+        serializer = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserWorkSpaceIssues(BaseAPIView):
     @method_decorator(gzip_page)
     def get(self, request, slug):

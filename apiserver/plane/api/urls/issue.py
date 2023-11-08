@@ -3,6 +3,7 @@ from django.urls import path
 
 from plane.api.views import (
     IssueViewSet,
+    IssueListEndpoint,
     LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
@@ -33,6 +34,11 @@ urlpatterns = [
                 "post": "create",
             }
         ),
+        name="project-issue",
+    ),
+    path(
+        "v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
+        IssueListEndpoint.as_view(),
         name="project-issue",
     ),
     path(
