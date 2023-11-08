@@ -1,17 +1,23 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // types
 import { RootStore } from "../root";
 import { IState } from "types";
 // services
 import { ProjectService, ProjectStateService } from "services/project";
-import { groupBy, orderArrayBy } from "helpers/array.helper";
+import { groupBy, orderArrayBy, groupByField } from "helpers/array.helper";
 import { orderStateGroups } from "helpers/state.helper";
 
 export interface IProjectStateStore {
   loader: boolean;
   error: any | null;
 
-  // states
+  states: {
+    [projectId: string]: IState[]; // projectId: states
+  };
+  groupedProjectStates: { [groupId: string]: IState[] } | null;
+  projectStates: IState[] | null;
+
+  fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
   updateState: (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => Promise<IState>;
   deleteState: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
@@ -28,7 +34,9 @@ export interface IProjectStateStore {
 export class ProjectStateStore implements IProjectStateStore {
   loader: boolean = false;
   error: any | null = null;
-
+  states: {
+    [projectId: string]: IState[]; // projectId: states
+  } = {};
   // root store
   rootStore;
   // service
@@ -38,10 +46,13 @@ export class ProjectStateStore implements IProjectStateStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
-      loader: observable,
-      error: observable,
-
-      // states
+      loader: observable.ref,
+      error: observable.ref,
+      states: observable.ref,
+      // computed
+      projectStates: computed,
+      groupedProjectStates: computed,
+      // actions
       createState: action,
       updateState: action,
       deleteState: action,
@@ -54,6 +65,43 @@ export class ProjectStateStore implements IProjectStateStore {
     this.stateService = new ProjectStateService();
   }
 
+  get groupedProjectStates() {
+    if (!this.rootStore.project.projectId) return null;
+    const states = this.states[this.rootStore.project.projectId];
+    if (!states) return null;
+    return groupByField(states, "group");
+  }
+
+  get projectStates() {
+    if (!this.rootStore.project.projectId) return null;
+    const states = this.states[this.rootStore.project.projectId];
+    if (!states) return null;
+    return states;
+  }
+
+  fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const states = await this.stateService.getStates(workspaceSlug, projectId);
+      runInAction(() => {
+        this.states = {
+          ...this.states,
+          [projectId]: states,
+        };
+      });
+      return states;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getProjectStateById = (stateId: string) => {
+    if (!this.rootStore.project.projectId) return null;
+    const states = this.states[this.rootStore.project.projectId];
+    if (!states) return null;
+    const stateInfo: IState | null = states.find((state) => state.id === stateId) || null;
+    return stateInfo;
+  };
+
   createState = async (workspaceSlug: string, projectId: string, data: Partial<IState>) => {
     try {
       const response = await this.stateService.createState(
@@ -64,12 +112,9 @@ export class ProjectStateStore implements IProjectStateStore {
       );
 
       runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: {
-            ...this.rootStore.project.states?.[projectId],
-            [response.group]: [...(this.rootStore.project.states?.[projectId]?.[response.group] || []), response],
-          },
+        this.states = {
+          ...this.states,
+          [projectId]: [...this.states?.[projectId], response],
         };
       });
 
@@ -81,21 +126,23 @@ export class ProjectStateStore implements IProjectStateStore {
   };
 
   updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => {
-    const originalStates = this.rootStore.project.states || {};
-
-    runInAction(() => {
-      this.rootStore.project.states = {
-        ...this.rootStore.project.states,
-        [projectId]: {
-          ...this.rootStore.project.states?.[projectId],
-          [data.group as string]: (this.rootStore.project.states?.[projectId]?.[data.group as string] || []).map(
-            (state) => (state.id === stateId ? { ...state, ...data } : state)
-          ),
-        },
-      };
-    });
+    const originalStates = this.states;
 
     try {
+      runInAction(() => {
+        this.states = {
+          ...this.states,
+          [projectId]: [
+            ...this.states?.[projectId].map((state) => {
+              if (state.id === stateId) {
+                return { ...state, ...data };
+              }
+              return state;
+            }),
+          ],
+        };
+      });
+
       const response = await this.stateService.patchState(
         workspaceSlug,
         projectId,
@@ -104,41 +151,30 @@ export class ProjectStateStore implements IProjectStateStore {
         this.rootStore.user.currentUser!
       );
 
-      runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: {
-            ...this.rootStore.project.states?.[projectId],
-            [response.group]: (this.rootStore.project.states?.[projectId]?.[response.group] || []).map((state) =>
-              state.id === stateId ? { ...state, ...response } : state
-            ),
-          },
-        };
-      });
-
       return response;
     } catch (error) {
       console.log("Failed to update state from project store");
       runInAction(() => {
-        this.rootStore.project.states = originalStates;
+        this.states = originalStates;
       });
       throw error;
     }
   };
 
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
-    const originalStates = this.rootStore.project.projectStates;
+    const originalStates = this.states;
 
     try {
       runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: {
-            ...this.rootStore.project.states?.[projectId],
-            [originalStates?.[0]?.group || ""]: (
-              this.rootStore.project.states?.[projectId]?.[originalStates?.[0]?.group || ""] || []
-            ).filter((state) => state.id !== stateId),
-          },
+        this.states = {
+          ...this.states,
+          [projectId]: [
+            ...this.states?.[projectId].filter((state) => {
+              if (state.id !== stateId) {
+                return stateId;
+              }
+            }),
+          ],
         };
       });
 
@@ -148,65 +184,41 @@ export class ProjectStateStore implements IProjectStateStore {
       console.log("Failed to delete state from project store");
       // reverting back to original label list
       runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: {
-            ...this.rootStore.project.states?.[projectId],
-            [originalStates?.[0]?.group || ""]: originalStates || [],
-          },
-        };
+        this.states = originalStates;
       });
+      throw error;
     }
   };
 
   markStateAsDefault = async (workspaceSlug: string, projectId: string, stateId: string) => {
-    const states = this.rootStore.project.projectStates;
-    const currentDefaultState = states?.find((state) => state.default);
-
-    let newStateList =
-      states?.map((state) => {
-        if (state.id === stateId) return { ...state, default: true };
-        if (state.id === currentDefaultState?.id) return { ...state, default: false };
-        return state;
-      }) ?? [];
-    newStateList = orderArrayBy(newStateList, "sequence", "ascending");
-
-    const newOrderedStateGroups = orderStateGroups(groupBy(newStateList, "group"));
-    const oldOrderedStateGroup = this.rootStore.project.states?.[projectId] || {}; // for reverting back to old state group if api fails
-
-    runInAction(() => {
-      this.rootStore.project.states = {
-        ...this.rootStore.project.states,
-        [projectId]: newOrderedStateGroups || {},
-      };
-    });
-
-    // updating using api
+    const originalStates = this.states;
     try {
-      this.stateService.patchState(
-        workspaceSlug,
-        projectId,
-        stateId,
-        { default: true },
-        this.rootStore.user.currentUser!
-      );
+      const currentDefaultStateIds = this.projectStates?.filter((s) => s.default).map((state) => state.id);
 
-      if (currentDefaultState)
-        this.stateService.patchState(
-          workspaceSlug,
-          projectId,
-          currentDefaultState.id,
-          { default: false },
-          this.rootStore.user.currentUser!
-        );
-    } catch (err) {
-      console.log("Failed to mark state as default");
       runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: oldOrderedStateGroup,
+        this.states = {
+          ...this.states,
+          [projectId]: [
+            ...this.states[projectId].map((state) => {
+              if (currentDefaultStateIds?.includes(state.id)) {
+                return { ...state, default: false };
+              } else if (state.id === stateId) {
+                return { ...state, default: true };
+              }
+              return state;
+            }),
+          ],
         };
       });
+
+      // updating using api
+      await this.stateService.markDefault(workspaceSlug, projectId, stateId);
+    } catch (error) {
+      console.log("Failed to mark state as default");
+      runInAction(() => {
+        this.states = originalStates;
+      });
+      throw error;
     }
   };
 
@@ -218,40 +230,35 @@ export class ProjectStateStore implements IProjectStateStore {
     groupIndex: number
   ) => {
     const SEQUENCE_GAP = 15000;
-    let newSequence = SEQUENCE_GAP;
+    const originalStates = this.states;
 
-    const states = this.rootStore.project.projectStates || [];
-    const groupedStates = groupBy(states || [], "group");
-
-    const selectedState = states?.find((state) => state.id === stateId);
-    const groupStates = states?.filter((state) => state.group === selectedState?.group);
-    const groupLength = groupStates.length;
-
-    if (direction === "up") {
-      if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
-      else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
-    } else {
-      if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
-      else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
-    }
-
-    const newStateList = states?.map((state) => {
-      if (state.id === stateId) return { ...state, sequence: newSequence };
-      return state;
-    });
-    const newOrderedStateGroups = orderStateGroups(
-      groupBy(orderArrayBy(newStateList, "sequence", "ascending"), "group")
-    );
-
-    runInAction(() => {
-      this.rootStore.project.states = {
-        ...this.rootStore.project.states,
-        [projectId]: newOrderedStateGroups || {},
-      };
-    });
-
-    // updating using api
     try {
+      let newSequence = SEQUENCE_GAP;
+      const states = this.projectStates || [];
+      const selectedState = states?.find((state) => state.id === stateId);
+      const groupStates = states?.filter((state) => state.group === selectedState?.group);
+      const groupLength = groupStates.length;
+      if (direction === "up") {
+        if (groupIndex === 1) newSequence = groupStates[0].sequence - SEQUENCE_GAP;
+        else newSequence = (groupStates[groupIndex - 2].sequence + groupStates[groupIndex - 1].sequence) / 2;
+      } else {
+        if (groupIndex === groupLength - 2) newSequence = groupStates[groupLength - 1].sequence + SEQUENCE_GAP;
+        else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
+      }
+
+      const newStateList = states?.map((state) => {
+        if (state.id === stateId) return { ...state, sequence: newSequence };
+        return state;
+      });
+
+      // updating using api
+      runInAction(() => {
+        this.states = {
+          ...this.states,
+          [projectId]: newStateList,
+        };
+      });
+
       await this.stateService.patchState(
         workspaceSlug,
         projectId,
@@ -263,10 +270,7 @@ export class ProjectStateStore implements IProjectStateStore {
       console.log("Failed to move state position");
       // reverting back to old state group if api fails
       runInAction(() => {
-        this.rootStore.project.states = {
-          ...this.rootStore.project.states,
-          [projectId]: groupedStates,
-        };
+        this.states = originalStates;
       });
     }
   };

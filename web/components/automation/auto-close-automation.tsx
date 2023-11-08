@@ -13,8 +13,6 @@ import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
 import { STATES_LIST } from "constants/fetch-keys";
 // types
 import { IProject } from "types";
-// helper
-import { getStatesList } from "helpers/state.helper";
 
 type Props = {
   projectDetails: IProject | undefined;
@@ -30,13 +28,14 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: stateGroups } = useSWR(
+  const { data: statesData } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId
       ? () => projectStateService.getStates(workspaceSlug as string, projectId as string)
       : null
   );
-  const states = getStatesList(stateGroups);
+
+  const states = statesData || [];
 
   const options = states
     ?.filter((state) => state.group === "cancelled")
@@ -53,7 +52,7 @@ export const AutoCloseAutomation: React.FC<Props> = ({ projectDetails, handleCha
 
   const multipleOptions = (options ?? []).length > 1;
 
-  const defaultState = stateGroups && stateGroups.cancelled ? stateGroups.cancelled[0].id : null;
+  const defaultState = states.find((s) => s.group === "cancelled")?.id || null;
 
   const selectedOption = states?.find((s) => s.id === projectDetails?.default_state ?? defaultState);
   const currentDefaultState = states?.find((s) => s.id === defaultState);

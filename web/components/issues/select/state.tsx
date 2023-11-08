@@ -1,17 +1,12 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { ProjectStateService } from "services/project";
 // ui
 import { CustomSearchSelect, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 // icons
 import { Plus } from "lucide-react";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -30,11 +25,10 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: stateGroups } = useSWR(
+  const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId ? () => projectStateService.getStates(workspaceSlug as string, projectId) : null
   );
-  const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
     value: state.id,
