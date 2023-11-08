@@ -107,7 +107,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
               }
             : (datum) => (
                 <g transform={`translate(${datum.x},${datum.y})`}>
-                  <text x={0} y={21} textAnchor="middle" fontSize={10}>
+                  <text x={0} y={21} textAnchor="middle" fontSize={10} fill="rgb(var(--color-text-200))">
                     {generateDisplayName(datum.value, analytics, params, "x_axis")}
                   </text>
                 </g>
