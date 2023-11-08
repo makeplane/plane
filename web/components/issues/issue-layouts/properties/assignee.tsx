@@ -82,20 +82,24 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const getTooltipContent = (): string => {
     if (!value || value.length === 0) return "No Assignee";
 
+    // if multiple assignees
     if (Array.isArray(value)) {
-      const assignees = projectMembers?.filter((m) => value.includes(m.member.id));
+      const assignees = workspaceMembers?.filter((m) => value.includes(m.member.id));
 
       if (!assignees || assignees.length === 0) return "No Assignee";
 
+      // if only one assignee in list
       if (assignees.length === 1) {
         return "1 assignee";
       } else return `${assignees.length} assignees`;
     }
 
-    const assignee = projectMembers?.find((m) => m.member.id === value)?.member;
+    // if single assignee
+    const assignee = workspaceMembers?.find((m) => m.member.id === value)?.member;
 
     if (!assignee) return "No Assignee";
 
+    // if assignee not null & not list
     return "1 assignee";
   };
 
