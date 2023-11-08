@@ -2,7 +2,7 @@ import { FC } from "react";
 import Link from "next/link";
 import { History } from "lucide-react";
 // packages
-import { Loader, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { IssueCommentCard } from "./comment-card";

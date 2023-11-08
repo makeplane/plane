@@ -27,6 +27,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
+    workspaceMember: { workspaceMembers },
     issueDetail: issueDetailStore,
     project: projectStore,
   } = useMobxStore();
@@ -106,7 +107,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
             displayFilters={workspaceFilterStore.workspaceDisplayFilters}
             handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
             issues={issues}
-            members={workspaceStore.workspaceMembers ? workspaceStore.workspaceMembers.map((m) => m.member) : undefined}
+            members={workspaceMembers?.map((m) => m.member)}
             labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
             handleIssueAction={() => {}}
             handleUpdateIssue={handleUpdateIssue}

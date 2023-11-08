@@ -39,17 +39,18 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     multiple = false,
     noLabelBorder = false,
   } = props;
-
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
+  // store
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    workspaceMember: { workspaceMembers, fetchWorkspaceMembers },
+  } = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
-
-  const workspaceMembers = workspaceSlug ? workspaceStore?.workspaceMembers : undefined;
 
   const fetchProjectMembers = () => {
     setIsLoading(true);
@@ -59,10 +60,9 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
         projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
-  const fetchWorkspaceMembers = () => {
+  const getWorkspaceMembers = () => {
     setIsLoading(true);
-    if (workspaceSlug)
-      workspaceSlug && workspaceStore.fetchWorkspaceMembers(workspaceSlug).then(() => setIsLoading(false));
+    if (workspaceSlug) workspaceSlug && fetchWorkspaceMembers(workspaceSlug).then(() => setIsLoading(false));
   };
 
   const options = (workspaceMembers ?? [])?.map((member) => ({
@@ -151,7 +151,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
-          onClick={() => !workspaceMembers && fetchWorkspaceMembers()}
+          onClick={() => !workspaceMembers && getWorkspaceMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

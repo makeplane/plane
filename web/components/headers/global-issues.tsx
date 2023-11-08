@@ -41,6 +41,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
+    workspaceMember: { workspaceMembers },
     project: projectStore,
   } = useMobxStore();
 
@@ -145,7 +146,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                     handleFiltersUpdate={handleFiltersUpdate}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                     labels={workspaceStore.workspaceLabels ?? undefined}
-                    members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
+                    members={workspaceMembers?.map((m) => m.member) ?? undefined}
                     projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
                   />
                 </FiltersDropdown>

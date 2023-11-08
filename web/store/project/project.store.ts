@@ -28,7 +28,7 @@ export interface IProjectStore {
 
   // computed
   searchedProjects: IProject[];
-  workspaceProjects: IProject[];
+  workspaceProjects: IProject[] | null;
   projectLabels: IIssueLabels[] | null;
   projectMembers: IProjectMember[] | null;
   projectEstimates: IEstimate[] | null;
@@ -183,8 +183,10 @@ export class ProjectStore implements IProjectStore {
   }
 
   get workspaceProjects() {
-    if (!this.rootStore.workspace.workspaceSlug) return [];
-    return this.projects?.[this.rootStore.workspace.workspaceSlug];
+    if (!this.rootStore.workspace.workspaceSlug) return null;
+    const projects = this.projects[this.rootStore.workspace.workspaceSlug];
+    if (!projects) return null;
+    return projects;
   }
 
   get currentProjectDetails() {
