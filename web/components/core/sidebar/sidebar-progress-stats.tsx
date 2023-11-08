@@ -5,15 +5,13 @@ import Image from "next/image";
 import { Tab } from "@headlessui/react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
-import useIssuesView from "hooks/use-issues-view";
 // images
 import emptyLabel from "public/empty-state/empty_label.svg";
 import emptyMembers from "public/empty-state/empty_members.svg";
 // components
-import { StateGroupIcon } from "@plane/ui";
 import { SingleProgressStats } from "components/core";
 // ui
-import { Avatar } from "components/ui";
+import { Avatar, StateGroupIcon } from "@plane/ui";
 // types
 import {
   IModule,
@@ -36,7 +34,7 @@ type Props = {
   module?: IModule;
   roundedTab?: boolean;
   noBackground?: boolean;
-  isPeekModuleDetails?: boolean;
+  isPeekView?: boolean;
 };
 
 export const SidebarProgressStats: React.FC<Props> = ({
@@ -46,10 +44,8 @@ export const SidebarProgressStats: React.FC<Props> = ({
   module,
   roundedTab,
   noBackground,
-  isPeekModuleDetails = false,
+  isPeekView = false,
 }) => {
-  const { filters, setFilters } = useIssuesView();
-
   const { storedValue: tab, setValue: setTab } = useLocalStorage("tab", "Assignees");
 
   const currentValue = (tab: string | null) => {
@@ -138,34 +134,25 @@ export const SidebarProgressStats: React.FC<Props> = ({
                     key={assignee.assignee_id}
                     title={
                       <div className="flex items-center gap-2">
-                        <Avatar
-                          user={{
-                            id: assignee.assignee_id,
-                            avatar: assignee.avatar ?? "",
-                            first_name: assignee.first_name ?? "",
-                            last_name: assignee.last_name ?? "",
-                            display_name: assignee.display_name ?? "",
-                          }}
-                          height="18px"
-                          width="18px"
-                        />
+                        <Avatar name={assignee.display_name ?? undefined} src={assignee?.avatar ?? undefined} />
                         <span>{assignee.display_name}</span>
                       </div>
                     }
                     completed={assignee.completed_issues}
                     total={assignee.total_issues}
-                    {...(!isPeekModuleDetails && {
+                    {...(!isPeekView && {
                       onClick: () => {
-                        if (filters?.assignees?.includes(assignee.assignee_id ?? ""))
-                          setFilters({
-                            assignees: filters?.assignees?.filter((a) => a !== assignee.assignee_id),
-                          });
-                        else
-                          setFilters({
-                            assignees: [...(filters?.assignees ?? []), assignee.assignee_id ?? ""],
-                          });
+                        // TODO: set filters here
+                        // if (filters?.assignees?.includes(assignee.assignee_id ?? ""))
+                        //   setFilters({
+                        //     assignees: filters?.assignees?.filter((a) => a !== assignee.assignee_id),
+                        //   });
+                        // else
+                        //   setFilters({
+                        //     assignees: [...(filters?.assignees ?? []), assignee.assignee_id ?? ""],
+                        //   });
                       },
-                      selected: filters?.assignees?.includes(assignee.assignee_id ?? ""),
+                      // selected: filters?.assignees?.includes(assignee.assignee_id ?? ""),
                     })}
                   />
                 );
@@ -213,15 +200,16 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 }
                 completed={label.completed_issues}
                 total={label.total_issues}
-                {...(!isPeekModuleDetails && {
+                {...(!isPeekView && {
+                  // TODO: set filters here
                   onClick: () => {
-                    if (filters.labels?.includes(label.label_id ?? ""))
-                      setFilters({
-                        labels: filters?.labels?.filter((l) => l !== label.label_id),
-                      });
-                    else setFilters({ labels: [...(filters?.labels ?? []), label.label_id ?? ""] });
+                    // if (filters.labels?.includes(label.label_id ?? ""))
+                    //   setFilters({
+                    //     labels: filters?.labels?.filter((l) => l !== label.label_id),
+                    //   });
+                    // else setFilters({ labels: [...(filters?.labels ?? []), label.label_id ?? ""] });
                   },
-                  selected: filters?.labels?.includes(label.label_id ?? ""),
+                  // selected: filters?.labels?.includes(label.label_id ?? ""),
                 })}
               />
             ))

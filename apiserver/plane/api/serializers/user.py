@@ -79,14 +79,14 @@ class UserMeSettingsSerializer(BaseSerializer):
             email=obj.email
         ).count()
         if obj.last_workspace_id is not None:
-            workspace = Workspace.objects.get(
+            workspace = Workspace.objects.filter(
                 pk=obj.last_workspace_id, workspace_member__member=obj.id
-            )
+            ).first()
             return {
                 "last_workspace_id": obj.last_workspace_id,
-                "last_workspace_slug": workspace.slug,
+                "last_workspace_slug": workspace.slug if workspace is not None else "",
                 "fallback_workspace_id": obj.last_workspace_id,
-                "fallback_workspace_slug": workspace.slug,
+                "fallback_workspace_slug": workspace.slug if workspace is not None else "",
                 "invites": workspace_invites,
             }
         else:

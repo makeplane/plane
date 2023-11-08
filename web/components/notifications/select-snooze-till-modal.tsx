@@ -2,14 +2,14 @@ import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Transition, Dialog } from "@headlessui/react";
+import { X } from "lucide-react";
 // date helper
 import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
 // hooks
 import useToast from "hooks/use-toast";
-// components
+// ui
 import { Button, CustomSelect } from "@plane/ui";
 import { CustomDatePicker } from "components/ui";
-import { X } from "lucide-react";
 // types
 import type { IUserNotification } from "types";
 
@@ -172,6 +172,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                               onChange(val);
                             }}
                             className="px-3 py-2 w-full rounded-md border border-custom-border-300 bg-custom-background-100 text-custom-text-100 focus:outline-none !text-sm"
+                            wrapperClassName="w-full"
                             noBorder
                             minDate={new Date()}
                           />

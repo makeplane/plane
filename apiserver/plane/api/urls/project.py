@@ -4,17 +4,15 @@ from plane.api.views import (
     ProjectViewSet,
     InviteProjectEndpoint,
     ProjectMemberViewSet,
-    ProjectMemberEndpoint,
     ProjectMemberInvitationsViewset,
     ProjectMemberUserEndpoint,
-    AddMemberToProjectEndpoint,
     ProjectJoinEndpoint,
     AddTeamToProjectEndpoint,
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
     LeaveProjectEndpoint,
-    ProjectPublicCoverImagesEndpoint
+    ProjectPublicCoverImagesEndpoint,
 )
 
 
@@ -53,7 +51,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/",
-        ProjectMemberViewSet.as_view({"get": "list"}),
+        ProjectMemberViewSet.as_view({"get": "list", "post": "create"}),
         name="project-member",
     ),
     path(
@@ -66,16 +64,6 @@ urlpatterns = [
             }
         ),
         name="project-member",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/",
-        ProjectMemberEndpoint.as_view(),
-        name="project-member",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/members/add/",
-        AddMemberToProjectEndpoint.as_view(),
-        name="project",
     ),
     path(
         "workspaces/<str:slug>/projects/join/",

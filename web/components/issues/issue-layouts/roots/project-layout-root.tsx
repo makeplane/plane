@@ -12,7 +12,9 @@ import {
   KanBanLayout,
   ProjectAppliedFiltersRoot,
   ProjectSpreadsheetLayout,
+  ProjectEmptyState,
 } from "components/issues";
+import { Spinner } from "@plane/ui";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -20,32 +22,47 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-
-      await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+        await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+      }
     }
-  });
+  );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
+
+  const issueCount = issueStore.getIssuesCount;
+
+  if (!issueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
-      <div className="w-full h-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ListLayout />
-        ) : activeLayout === "kanban" ? (
-          <KanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <CalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <GanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ProjectSpreadsheetLayout />
-        ) : null}
-      </div>
+      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
+        <ProjectEmptyState />
+      ) : (
+        <div className="w-full h-full overflow-auto">
+          {activeLayout === "list" ? (
+            <ListLayout />
+          ) : activeLayout === "kanban" ? (
+            <KanBanLayout />
+          ) : activeLayout === "calendar" ? (
+            <CalendarLayout />
+          ) : activeLayout === "gantt_chart" ? (
+            <GanttLayout />
+          ) : activeLayout === "spreadsheet" ? (
+            <ProjectSpreadsheetLayout />
+          ) : null}
+        </div>
+      )}
     </div>
   );
 });

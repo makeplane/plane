@@ -72,4 +72,25 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "updated_at",
     descendingOrderTitle: "Old",
   },
+  link: {
+    title: "Link",
+    ascendingOrderKey: "-link_count",
+    ascendingOrderTitle: "Most",
+    descendingOrderKey: "link_count",
+    descendingOrderTitle: "Least",
+  },
+  attachment_count: {
+    title: "Attachment",
+    ascendingOrderKey: "-attachment_count",
+    ascendingOrderTitle: "Most",
+    descendingOrderKey: "attachment_count",
+    descendingOrderTitle: "Least",
+  },
+  sub_issue_count: {
+    title: "Sub-issue",
+    ascendingOrderKey: "-sub_issues_count",
+    ascendingOrderTitle: "Most",
+    descendingOrderKey: "sub_issues_count",
+    descendingOrderTitle: "Least",
+  },
 };

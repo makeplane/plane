@@ -77,7 +77,7 @@ export const NavbarIssueFilter = observer(() => {
             return {
               display: (
                 <span className="capitalize flex items-center gap-x-2">
-                  {stateGroup && <stateGroup.icon />}
+                  {/* {stateGroup && <stateGroup.icon />} */}
                   {state.name}
                 </span>
               ),

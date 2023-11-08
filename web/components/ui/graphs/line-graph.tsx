@@ -30,7 +30,7 @@ export const LineGraph: React.FC<Props & TGraph & LineSvgProps> = ({
           : undefined,
       }}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
-      animate={true}
+      animate
       {...rest}
     />
   </div>

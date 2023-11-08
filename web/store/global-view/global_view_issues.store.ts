@@ -7,6 +7,7 @@ import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
 import { RootStore } from "../root";
 import { IIssue, IIssueFilterOptions, TStaticViewTypes } from "types";
+import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 
 export interface IGlobalViewIssuesStore {
   // states
@@ -21,6 +22,7 @@ export interface IGlobalViewIssuesStore {
   // actions
   fetchViewIssues: (workspaceSlug: string, viewId: string, filters: IIssueFilterOptions) => Promise<any>;
   fetchStaticIssues: (workspaceSlug: string, type: TStaticViewTypes) => Promise<any>;
+  updateIssueStructure: (viewId: string, issue: IIssue) => Promise<any>;
 }
 
 export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
@@ -52,6 +54,7 @@ export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
       // actions
       fetchViewIssues: action,
       fetchStaticIssues: action,
+      updateIssueStructure: action,
     });
 
     this.rootStore = _rootStore;
@@ -173,5 +176,29 @@ export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
 
       throw error;
     }
+  };
+
+  updateIssueStructure = async (viewId: string, issue: IIssue) => {
+    let issues = this.viewIssues[viewId];
+
+    if (!issues) return null;
+
+    const _currentIssueId = issues?.find((_i) => _i?.id === issue.id);
+    issues = _currentIssueId
+      ? issues?.map((i: IIssue) => (i?.id === issue?.id ? { ...i, ...issue } : i))
+      : [...(issues ?? []), issue];
+
+    const orderBy = this.rootStore?.workspaceFilter?.workspaceDisplayFilters?.order_by || "";
+    if (orderBy === "-created_at") issues = sortArrayByDate(issues as any, "created_at");
+
+    if (orderBy === "-updated_at") issues = sortArrayByDate(issues as any, "updated_at");
+
+    if (orderBy === "start_date") issues = sortArrayByDate(issues as any, "updated_at");
+
+    if (orderBy === "priority") issues = sortArrayByPriority(issues as any, "priority");
+
+    runInAction(() => {
+      this.viewIssues = { ...this.viewIssues, [viewId]: issues };
+    });
   };
 }

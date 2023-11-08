@@ -7,7 +7,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IImporterService } from "types";
 // constants
-import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+import { IMPORTERS_LIST } from "constants/workspace";
 
 type Props = {
   service: IImporterService;
@@ -21,10 +21,8 @@ export const SingleImport: React.FC<Props> = ({ service, refreshing, handleDelet
       <h4 className="flex items-center gap-2 text-sm">
         <span>
           Import from{" "}
-          <span className="font-medium">
-            {IMPORTERS_EXPORTERS_LIST.find((i) => i.provider === service.service)?.title}
-          </span>{" "}
-          to <span className="font-medium">{service.project_detail.name}</span>
+          <span className="font-medium">{IMPORTERS_LIST.find((i) => i.provider === service.service)?.title}</span> to{" "}
+          <span className="font-medium">{service.project_detail.name}</span>
         </span>
         <span
           className={`rounded px-2 py-0.5 text-xs capitalize ${

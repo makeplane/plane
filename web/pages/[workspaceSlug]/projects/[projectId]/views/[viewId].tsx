@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
@@ -12,9 +13,9 @@ import { EmptyState } from "components/common";
 // assets
 import emptyView from "public/empty-state/view.svg";
 // types
-import { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const ProjectViewIssues: NextPage = () => {
+const ProjectViewIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, viewId } = router.query;
 
@@ -28,7 +29,7 @@ const ProjectViewIssues: NextPage = () => {
   );
 
   return (
-    <AppLayout header={<ProjectViewIssuesHeader />} withProjectWrapper>
+    <>
       {error ? (
         <EmptyState
           image={emptyView}
@@ -42,8 +43,16 @@ const ProjectViewIssues: NextPage = () => {
       ) : (
         <ProjectViewLayoutRoot />
       )}
+    </>
+  );
+};
+
+ProjectViewIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectViewIssuesHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectViewIssues;
+export default ProjectViewIssuesPage;

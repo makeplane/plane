@@ -64,6 +64,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
           issues={issues as IIssueGroupedStructure | null}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
           showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
+          handleIssues={handleIssues}
           quickActions={(issue) => (
             <CycleIssueQuickActions
               issue={issue}

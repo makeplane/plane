@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import {
   EditorContainer,
@@ -11,6 +10,16 @@ import { LiteTextEditorExtensions } from "./extensions";
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
+export type IMentionSuggestion = {
+  id: string;
+  type: string;
+  avatar: string;
+  title: string;
+  subtitle: string;
+  redirect_uri: string;
+};
+
+export type IMentionHighlight = string;
 
 interface ILiteTextEditor {
   value: string;
@@ -38,6 +47,9 @@ interface ILiteTextEditor {
     }[];
   };
   onEnterKeyPress?: (e?: any) => void;
+  mentionHighlights?: string[];
+  mentionSuggestions?: IMentionSuggestion[];
+  submitButton?: React.ReactNode;
 }
 
 interface LiteTextEditorProps extends ILiteTextEditor {
@@ -49,22 +61,27 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-const LiteTextEditor = ({
-  onChange,
-  debouncedUpdatesEnabled,
-  setIsSubmitting,
-  setShouldShowAlert,
-  editorContentCustomClassNames,
-  value,
-  uploadFile,
-  deleteFile,
-  noBorder,
-  borderOnFocus,
-  customClassName,
-  forwardedRef,
-  commentAccessSpecifier,
-  onEnterKeyPress,
-}: LiteTextEditorProps) => {
+const LiteTextEditor = (props: LiteTextEditorProps) => {
+  const {
+    onChange,
+    debouncedUpdatesEnabled,
+    setIsSubmitting,
+    setShouldShowAlert,
+    editorContentCustomClassNames,
+    value,
+    uploadFile,
+    deleteFile,
+    noBorder,
+    borderOnFocus,
+    customClassName,
+    forwardedRef,
+    commentAccessSpecifier,
+    onEnterKeyPress,
+    mentionHighlights,
+    mentionSuggestions,
+    submitButton,
+  } = props;
+
   const editor = useEditor({
     onChange,
     debouncedUpdatesEnabled,
@@ -75,6 +92,8 @@ const LiteTextEditor = ({
     deleteFile,
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
+    mentionHighlights,
+    mentionSuggestions,
   });
 
   const editorClassNames = getEditorClassNames({
@@ -98,6 +117,7 @@ const LiteTextEditor = ({
             uploadFile={uploadFile}
             setIsSubmitting={setIsSubmitting}
             commentAccessSpecifier={commentAccessSpecifier}
+            submitButton={submitButton}
           />
         </div>
       </div>

@@ -47,8 +47,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
       {isDisplayFilterEnabled("group_by") && (
         <div className="py-2">
           <FilterGroupBy
-            selectedGroupBy={displayFilters.group_by}
-            selectedSubGroupBy={displayFilters.sub_group_by}
+            displayFilters={displayFilters}
             groupByOptions={layoutDisplayFiltersOptions?.display_filters.group_by ?? []}
             handleUpdate={(val) =>
               handleDisplayFiltersUpdate({
@@ -65,8 +64,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
         displayFilters.layout === "kanban" && (
           <div className="py-2">
             <FilterSubGroupBy
-              selectedGroupBy={displayFilters.group_by}
-              selectedSubGroupBy={displayFilters.sub_group_by}
+              displayFilters={displayFilters}
               handleUpdate={(val) =>
                 handleDisplayFiltersUpdate({
                   sub_group_by: val,

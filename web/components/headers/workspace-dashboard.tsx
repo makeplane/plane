@@ -24,13 +24,15 @@ export const WorkspaceDashboardHeader = () => {
           Dashboard
         </div>
         <div className="flex items-center gap-3 px-3">
-          <button
-            onClick={() => setIsProductUpdatesModalOpen(true)}
+          <a
+            href="https://plane.so/changelog"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"
           >
             <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
             {"What's New?"}
-          </button>
+          </a>
           <a
             className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded"
             href="https://github.com/makeplane/plane"

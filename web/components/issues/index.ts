@@ -1,6 +1,5 @@
 export * from "./attachment";
 export * from "./comment";
-export * from "./my-issues";
 export * from "./sidebar-select";
 export * from "./view-select";
 export * from "./activity";
@@ -21,3 +20,6 @@ export * from "./confirm-issue-discard";
 export * from "./draft-issue-form";
 export * from "./draft-issue-modal";
 export * from "./delete-draft-issue-modal";
+
+// archived issue
+export * from "./delete-archived-issue-modal";

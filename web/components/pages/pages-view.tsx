@@ -54,7 +54,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   const { data: people } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug.toString(), projectId.toString())
+      ? () => projectService.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 

@@ -1,16 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
-
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService, IssueCommentService } from "services/issue";
 // hooks
-import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
-import useProjectDetails from "hooks/use-project-details";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import {
   AddComment,
@@ -40,16 +37,18 @@ type Props = {
 const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
-export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges, uneditable = false }) => {
+export const IssueMainContent: React.FC<Props> = observer((props) => {
+  const { issueDetails, submitChanges, uneditable = false } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { user } = useUserAuth();
-  const { memberRole } = useProjectMyMembership();
-
-  const { projectDetails } = useProjectDetails();
+  const { user: userStore, project: projectStore } = useMobxStore();
+  const user = userStore.currentUser ?? undefined;
+  const userRole = userStore.currentProjectRole;
+  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
 
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
@@ -75,7 +74,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId) return;
+    if (!workspaceSlug || !projectId || !issueId || !user) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
@@ -85,7 +84,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
   };
 
   const handleAddComment = async (formData: IIssueComment) => {
-    if (!workspaceSlug || !issueDetails) return;
+    if (!workspaceSlug || !issueDetails || !user) return;
 
     await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
@@ -167,7 +166,7 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
-          isAllowed={memberRole.isMember || memberRole.isOwner || !uneditable}
+          isAllowed={userRole === 20 || userRole === 15 || !uneditable}
         />
 
         <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
@@ -199,4 +198,4 @@ export const IssueMainContent: React.FC<Props> = ({ issueDetails, submitChanges,
       </div>
     </>
   );
-};
+});

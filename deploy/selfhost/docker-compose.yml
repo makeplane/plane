@@ -10,6 +10,8 @@ x-app-env : &app-env
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-""}
     - DOCKERIZED=${DOCKERIZED:-1}
+      # Gunicorn Workers
+    - GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
     #DB SETTINGS
     - PGHOST=${PGHOST:-plane-db}
     - PGDATABASE=${PGDATABASE:-plane}

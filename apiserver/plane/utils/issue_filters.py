@@ -150,6 +150,17 @@ def filter_assignees(params, filter, method):
             filter["assignees__in"] = params.get("assignees")
     return filter
 
+def filter_mentions(params, filter, method):
+    if method == "GET":
+        mentions = [item for item in params.get("mentions").split(",") if item != 'null']
+        mentions = filter_valid_uuids(mentions)
+        if len(mentions) and "" not in mentions:
+            filter["issue_mention__mention__id__in"] = mentions
+    else:
+        if params.get("mentions", None) and len(params.get("mentions")) and params.get("mentions") != 'null':
+            filter["issue_mention__mention__id__in"] = params.get("mentions")
+    return filter
+
 
 def filter_created_by(params, filter, method):
     if method == "GET":
@@ -198,7 +209,7 @@ def filter_start_date(params, filter, method):
             date_filter(filter=filter, date_term="start_date", queries=start_dates)
     else:
         if params.get("start_date", None) and len(params.get("start_date")):
-            date_filter(filter=filter, date_term="start_date", queries=params.get("start_date", []))
+            filter["start_date"] = params.get("start_date")
     return filter
 
 
@@ -209,7 +220,7 @@ def filter_target_date(params, filter, method):
             date_filter(filter=filter, date_term="target_date", queries=target_dates)
     else:
         if params.get("target_date", None) and len(params.get("target_date")):
-            date_filter(filter=filter, date_term="target_date", queries=params.get("target_date", []))
+            filter["target_date"] = params.get("target_date")
     return filter
 
 
@@ -316,7 +327,7 @@ def filter_start_target_date_issues(params, filter, method):
 
 
 def issue_filters(query_params, method):
-    filter = dict()
+    filter = {}
 
     ISSUE_FILTER = {
         "state": filter_state,
@@ -326,6 +337,7 @@ def issue_filters(query_params, method):
         "parent": filter_parent,
         "labels": filter_labels,
         "assignees": filter_assignees,
+        "mentions": filter_mentions,
         "created_by": filter_created_by,
         "name": filter_name,
         "created_at": filter_created_at,

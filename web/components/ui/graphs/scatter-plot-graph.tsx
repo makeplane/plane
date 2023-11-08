@@ -11,7 +11,7 @@ export const ScatterPlotGraph: React.FC<
   <div style={{ height, width }}>
     <ResponsiveScatterPlot
       margin={{ ...DEFAULT_MARGIN, ...(margin ?? {}) }}
-      animate={true}
+      animate
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
       {...rest}
     />

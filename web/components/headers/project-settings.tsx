@@ -1,11 +1,10 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 
 // ui
-import { BreadcrumbItem, Breadcrumbs } from "@plane/ui";
+import { Breadcrumbs } from "@plane/ui";
 // helper
-import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
@@ -17,10 +16,10 @@ export interface IProjectSettingHeader {
 export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) => {
   const { title } = props;
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
   // store
   const { project: projectStore } = useMobxStore();
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
+  const { currentProjectDetails } = projectStore;
 
   return (
     <div
@@ -28,17 +27,24 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
     >
       <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p className="truncate">{`${truncateText(projectDetails?.name ?? "Project", 32)}`}</p>
-                  </a>
-                </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={currentProjectDetails?.name ?? "Project"}
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
               }
+              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
-            <BreadcrumbItem title={title} unshrinkTitle />
+            <Breadcrumbs.BreadcrumbItem type="text" label={title} />
           </Breadcrumbs>
         </div>
       </div>

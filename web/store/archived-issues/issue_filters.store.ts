@@ -1,20 +1,53 @@
-import { observable, computed, makeObservable } from "mobx";
+import { observable, computed, makeObservable, action, runInAction } from "mobx";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
+// services
+import { IssueService } from "services/issue";
+import { ProjectService } from "services/project";
 // types
 import { RootStore } from "../root";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
+import {
+  IIssueDisplayFilterOptions,
+  IIssueDisplayProperties,
+  IIssueFilterOptions,
+  TIssueParams,
+  IProjectViewProps,
+} from "types";
 
 export interface IArchivedIssueFilterStore {
+  loader: boolean;
+  error: any | null;
+
+  // observables
   userDisplayProperties: IIssueDisplayProperties;
   userDisplayFilters: IIssueDisplayFilterOptions;
   userFilters: IIssueFilterOptions;
 
+  // services
+  projectService: ProjectService;
+  issueService: IssueService;
+
   // computed
   appliedFilters: TIssueParams[] | null;
+
+  // actions
+  fetchUserProjectFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
+  updateUserFilters: (
+    workspaceSlug: string,
+    projectId: string,
+    properties: Partial<IProjectViewProps>
+  ) => Promise<void>;
+  updateDisplayProperties: (
+    workspaceSlug: string,
+    projectId: string,
+    properties: Partial<IIssueDisplayProperties>
+  ) => Promise<void>;
 }
 
 export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
+  loader: boolean = false;
+  error: any | null = null;
+
   // observables
   userFilters: IIssueFilterOptions = {
     priority: null,
@@ -52,6 +85,10 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
   // root store
   rootStore;
 
+  // services
+  projectService: ProjectService;
+  issueService: IssueService;
+
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
@@ -61,9 +98,19 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
 
       // computed
       appliedFilters: computed,
+
+      // actions
+      fetchUserProjectFilters: action,
+      updateUserFilters: action,
+      updateDisplayProperties: action,
+      computedFilter: action,
     });
 
     this.rootStore = _rootStore;
+
+    // services
+    this.issueService = new IssueService();
+    this.projectService = new ProjectService();
   }
 
   computedFilter = (filters: any, filteredParams: any) => {
@@ -89,7 +136,7 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
       labels: this.userFilters?.labels || undefined,
       start_date: this.userFilters?.start_date || undefined,
       target_date: this.userFilters?.target_date || undefined,
-      group_by: this.userDisplayFilters?.group_by || "state",
+      group_by: this.userDisplayFilters?.group_by,
       order_by: this.userDisplayFilters?.order_by || "-created_at",
       sub_group_by: this.userDisplayFilters?.sub_group_by || undefined,
       type: this.userDisplayFilters?.type || undefined,
@@ -98,12 +145,100 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
       start_target_date: this.userDisplayFilters?.start_target_date || true,
     };
 
-    const filteredParams = handleIssueQueryParamsByLayout(this.userDisplayFilters.layout, "issues");
+    const filteredParams = handleIssueQueryParamsByLayout("list", "issues");
     if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
-
-    if (this.userDisplayFilters.layout === "calendar") filteredRouteParams.group_by = "target_date";
-    if (this.userDisplayFilters.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
 
     return filteredRouteParams;
   }
+
+  updateUserFilters = async (workspaceSlug: string, projectId: string, properties: Partial<IProjectViewProps>) => {
+    const newViewProps = {
+      display_filters: {
+        ...this.userDisplayFilters,
+        ...properties.display_filters,
+      },
+      filters: {
+        ...this.userFilters,
+        ...properties.filters,
+      },
+    };
+
+    // set sub_group_by to null if group_by is set to null
+    if (newViewProps.display_filters.group_by === null) newViewProps.display_filters.sub_group_by = null;
+
+    // set group_by to state if layout is switched to kanban and group_by is null
+    if (newViewProps.display_filters.layout === "kanban" && newViewProps.display_filters.group_by === null)
+      newViewProps.display_filters.group_by = "state";
+
+    try {
+      runInAction(() => {
+        this.userFilters = newViewProps.filters;
+        this.userDisplayFilters = {
+          ...newViewProps.display_filters,
+          layout: "list",
+        };
+      });
+
+      this.projectService.setProjectView(workspaceSlug, projectId, {
+        view_props: newViewProps,
+      });
+    } catch (error) {
+      this.fetchUserProjectFilters(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      console.log("Failed to update user filters in issue filter store", error);
+    }
+  };
+
+  updateDisplayProperties = async (
+    workspaceSlug: string,
+    projectId: string,
+    properties: Partial<IIssueDisplayProperties>
+  ) => {
+    const newProperties: IIssueDisplayProperties = {
+      ...this.userDisplayProperties,
+      ...properties,
+    };
+
+    try {
+      runInAction(() => {
+        this.userDisplayProperties = newProperties;
+      });
+
+      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, newProperties);
+    } catch (error) {
+      this.fetchUserProjectFilters(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      console.log("Failed to update user display properties in issue filter store", error);
+    }
+  };
+
+  fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
+    try {
+      const memberResponse = await this.projectService.projectMemberMe(workspaceSlug, projectId);
+      const issueProperties = await this.issueService.getIssueDisplayProperties(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.userFilters = memberResponse?.view_props?.filters;
+        this.userDisplayFilters = {
+          ...(memberResponse?.view_props?.display_filters ?? {}),
+          layout: "list",
+        };
+        this.userDisplayProperties = issueProperties?.properties;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.error = error;
+      });
+
+      console.log("Failed to fetch user filters in issue filter store", error);
+    }
+  };
 }
