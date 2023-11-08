@@ -47,36 +47,45 @@ class StateViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
-        state_dict = dict()
         states = StateSerializer(self.get_queryset(), many=True).data
+        grouped = request.GET.get("grouped", False)
+        if grouped == "true":
+            state_dict = {}
+            for key, value in groupby(
+                sorted(states, key=lambda state: state["group"]),
+                lambda state: state.get("group"),
+            ):
+                state_dict[str(key)] = list(value)
+            return Response(state_dict, status=status.HTTP_200_OK)
+        return Response(states, status=status.HTTP_200_OK)
 
-        for key, value in groupby(
-            sorted(states, key=lambda state: state["group"]),
-            lambda state: state.get("group"),
-        ):
-            state_dict[str(key)] = list(value)
-
-        return Response(state_dict, status=status.HTTP_200_OK)
+    def mark_as_default(self, request, slug, project_id, pk):
+        # Select all the states which are marked as default
+        _ = State.objects.filter(
+            workspace__slug=slug, project_id=project_id, default=True
+        ).update(default=False)
+        _ = State.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        ).update(default=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
             ~Q(name="Triage"),
-            pk=pk, project_id=project_id, workspace__slug=slug,
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
         )
 
         if state.default:
-            return Response(
-                {"error": "Default state cannot be deleted"}, status=False
-            )
+            return Response({"error": "Default state cannot be deleted"}, status=False)
 
         # Check for any issues in the state
         issue_exist = Issue.issue_objects.filter(state=pk).exists()
 
         if issue_exist:
             return Response(
-                {
-                    "error": "The state is not empty, only empty states can be deleted"
-                },
+                {"error": "The state is not empty, only empty states can be deleted"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
