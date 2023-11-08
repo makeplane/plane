@@ -41,12 +41,12 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   );
 
   // derived values
-  const issueLabels = projectStore.labels?.[projectId?.toString()!] ?? null;
+  const projectLabels = projectStore.projectLabels;
 
   const filteredLabels: IIssueLabels[] =
     query === ""
-      ? issueLabels ?? []
-      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
+      ? projectLabels ?? []
+      : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
 
   const handleModalClose = () => {
     handleClose();
@@ -108,7 +108,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {
-                          const children = issueLabels?.filter((l) => l.parent === label.id);
+                          const children = projectLabels?.filter((l) => l.parent === label.id);
 
                           if (
                             (label.parent === "" || label.parent === null) && // issue does not have any other parent
@@ -128,7 +128,6 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                                 }
                                 onClick={() => {
                                   addChildLabel(label);
-                                  handleClose();
                                 }}
                               >
                                 <span
