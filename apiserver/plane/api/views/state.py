@@ -47,16 +47,17 @@ class StateViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, slug, project_id):
-        state_dict = dict()
         states = StateSerializer(self.get_queryset(), many=True).data
-
-        for key, value in groupby(
-            sorted(states, key=lambda state: state["group"]),
-            lambda state: state.get("group"),
-        ):
-            state_dict[str(key)] = list(value)
-
-        return Response(state_dict, status=status.HTTP_200_OK)
+        grouped = request.GET.get("grouped", False)
+        if grouped == "true":
+            state_dict = {}
+            for key, value in groupby(
+                sorted(states, key=lambda state: state["group"]),
+                lambda state: state.get("group"),
+            ):
+                state_dict[str(key)] = list(value)
+            return Response(state_dict, status=status.HTTP_200_OK)
+        return Response(states, status=status.HTTP_200_OK)
 
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
@@ -80,16 +81,3 @@ class StateViewSet(BaseViewSet):
 
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class StateListEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        states = State.objects.filter(
-            workspace__slug=slug, project_id=project_id
-        )
-        serializer = StateSerializer(states, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)

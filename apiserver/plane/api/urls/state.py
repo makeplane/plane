@@ -1,7 +1,7 @@
 from django.urls import path
 
 
-from plane.api.views import StateViewSet, StateListEndpoint
+from plane.api.views import StateViewSet
 
 
 urlpatterns = [
@@ -13,11 +13,6 @@ urlpatterns = [
                 "post": "create",
             }
         ),
-        name="project-states",
-    ),
-    path(
-        "v2/workspaces/<str:slug>/projects/<uuid:project_id>/states/",
-        StateListEndpoint.as_view(),
         name="project-states",
     ),
     path(

@@ -53,7 +53,7 @@ from .workspace import (
     WorkspaceLabelsEndpoint,
     LeaveWorkspaceEndpoint,
 )
-from .state import StateViewSet, StateListEndpoint
+from .state import StateViewSet
 from .view import GlobalViewViewSet, GlobalViewIssuesViewSet, IssueViewViewSet, IssueViewFavoriteViewSet
 from .cycle import (
     CycleViewSet,
