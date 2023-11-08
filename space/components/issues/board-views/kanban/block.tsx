@@ -11,7 +11,7 @@ import { IssueBlockDueDate } from "components/issues/board-views/block-due-date"
 // interfaces
 import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
   const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();

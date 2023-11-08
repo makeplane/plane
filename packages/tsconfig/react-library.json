@@ -4,9 +4,13 @@
   "extends": "./base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
+    "strict": true,
     "lib": ["ES2015", "DOM"],
     "module": "ESNext",
     "target": "es6",
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "react": [ "./node_modules/@types/react" ]
+    }
   }
 }

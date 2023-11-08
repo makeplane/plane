@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 // next
 import { NextPage } from "next";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 const Index: NextPage = () => {
   const router = useRouter();
