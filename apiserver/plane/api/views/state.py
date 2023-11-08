@@ -61,24 +61,35 @@ class StateViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(
             ~Q(name="Triage"),
-            pk=pk, project_id=project_id, workspace__slug=slug,
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
         )
 
         if state.default:
-            return Response(
-                {"error": "Default state cannot be deleted"}, status=False
-            )
+            return Response({"error": "Default state cannot be deleted"}, status=False)
 
         # Check for any issues in the state
         issue_exist = Issue.issue_objects.filter(state=pk).exists()
 
         if issue_exist:
             return Response(
-                {
-                    "error": "The state is not empty, only empty states can be deleted"
-                },
+                {"error": "The state is not empty, only empty states can be deleted"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StateListEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        states = State.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        )
+        serializer = StateSerializer(states, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
