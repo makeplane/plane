@@ -362,6 +362,10 @@ class IssueListEndpoint(BaseAPIView):
 
 class IssueListGroupedEndpoint(BaseAPIView):
 
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
