@@ -1,7 +1,19 @@
 import { Editor } from "@tiptap/core";
 import { Check, Trash } from "lucide-react";
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef } from "react";
-import { cn, isValidHttpUrl, setLinkEditor, unsetLinkEditor, } from "@plane/editor-core";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
+import {
+  cn,
+  isValidHttpUrl,
+  setLinkEditor,
+  unsetLinkEditor,
+} from "@plane/editor-core";
 
 interface LinkSelectorProps {
   editor: Editor;
@@ -9,7 +21,11 @@ interface LinkSelectorProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
+export const LinkSelector: FC<LinkSelectorProps> = ({
+  editor,
+  isOpen,
+  setIsOpen,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onLinkSubmit = useCallback(() => {
@@ -31,7 +47,7 @@ export const LinkSelector: FC<LinkSelectorProps> = ({ editor, isOpen, setIsOpen 
         type="button"
         className={cn(
           "flex h-full items-center space-x-2 px-3 py-1.5 text-sm font-medium text-custom-text-300 hover:bg-custom-background-100 active:bg-custom-background-100",
-          { "bg-custom-background-100": isOpen }
+          { "bg-custom-background-100": isOpen },
         )}
         onClick={() => {
           setIsOpen(!isOpen);

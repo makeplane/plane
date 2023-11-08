@@ -36,10 +36,7 @@ const generateMonthDataByMonthAndYearInMonthView = (month: number, year: number)
   return weekPayload;
 };
 
-export const generateQuarterChart = (
-  quarterPayload: ChartDataType,
-  side: null | "left" | "right"
-) => {
+export const generateQuarterChart = (quarterPayload: ChartDataType, side: null | "left" | "right") => {
   let renderState = quarterPayload;
   const renderPayload: any = [];
 

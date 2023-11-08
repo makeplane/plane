@@ -34,16 +34,8 @@ export const MonthChartView: FC<any> = () => {
                         style={{ width: `${currentViewData?.data.width}px` }}
                       >
                         <div className="text-xs space-x-1">
-                          <span className="text-custom-text-200">
-                            {monthDay.dayData.shortTitle[0]}
-                          </span>{" "}
-                          <span
-                            className={
-                              monthDay.today
-                                ? "bg-custom-primary-100 text-white px-1 rounded-full"
-                                : ""
-                            }
-                          >
+                          <span className="text-custom-text-200">{monthDay.dayData.shortTitle[0]}</span>{" "}
+                          <span className={monthDay.today ? "bg-custom-primary-100 text-white px-1 rounded-full" : ""}>
                             {monthDay.day}
                           </span>
                         </div>
@@ -63,9 +55,7 @@ export const MonthChartView: FC<any> = () => {
                     >
                       <div
                         className={`relative h-full w-full flex-1 flex justify-center ${
-                          ["sat", "sun"].includes(monthDay?.dayData?.shortTitle || "")
-                            ? `bg-custom-background-90`
-                            : ``
+                          ["sat", "sun"].includes(monthDay?.dayData?.shortTitle || "") ? `bg-custom-background-90` : ``
                         }`}
                       >
                         {/* {monthDay?.today && (
