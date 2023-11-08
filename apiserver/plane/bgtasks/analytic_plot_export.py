@@ -408,7 +408,6 @@ def analytic_export_task(email, data, slug):
                 distribution,
                 x_axis,
                 y_axis,
-                segment,
                 key,
                 assignee_details,
                 label_details,

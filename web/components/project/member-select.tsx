@@ -1,18 +1,12 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
-// services
-import { ProjectService } from "services/project";
-// ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
-// icon
 import { Ban } from "lucide-react";
-// fetch-keys
-import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 
 type Props = {
   value: any;
@@ -20,26 +14,31 @@ type Props = {
   isDisabled?: boolean;
 };
 
-// services
-const projectService = new ProjectService();
+export const MemberSelect: React.FC<Props> = observer((props) => {
+  const { value, onChange, isDisabled = false } = props;
 
-export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = false }) => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { data: members } = useSWR(
-    workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
+  // store
+  const { project: projectStore } = useMobxStore();
+
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
+
+  const members = projectStore.members?.[projectId?.toString()!];
 
   const options = members?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -52,7 +51,7 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
       value={value}
       label={
         <div className="flex items-center gap-2">
-          {selectedOption && <Avatar user={selectedOption} />}
+          {selectedOption && <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />}
           {selectedOption ? (
             selectedOption?.display_name
           ) : (
@@ -86,4 +85,4 @@ export const MemberSelect: React.FC<Props> = ({ value, onChange, isDisabled = fa
       disabled={isDisabled}
     />
   );
-};
+});

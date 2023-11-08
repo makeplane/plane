@@ -15,7 +15,7 @@ import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
 import { Check, ChevronDown, Plus, X } from "lucide-react";
 // types
-import { IUser, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 
@@ -28,7 +28,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
 };
 
 type FormValues = {

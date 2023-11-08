@@ -4,9 +4,8 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer
 from .user import UserLiteSerializer
-from .project import ProjectSerializer, ProjectLiteSerializer
+from .project import ProjectLiteSerializer
 from .workspace import WorkspaceLiteSerializer
-from .issue import IssueStateSerializer
 
 from plane.db.models import (
     User,
@@ -19,7 +18,7 @@ from plane.db.models import (
 
 
 class ModuleWriteSerializer(BaseSerializer):
-    members_list = serializers.ListField(
+    members = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
@@ -39,6 +38,11 @@ class ModuleWriteSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['members'] = [str(member.id) for member in instance.members.all()]
+        return data
 
     def validate(self, data):
         if data.get("start_date", None) is not None and data.get("target_date", None) is not None and data.get("start_date", None) > data.get("target_date", None):
@@ -46,7 +50,7 @@ class ModuleWriteSerializer(BaseSerializer):
         return data    
 
     def create(self, validated_data):
-        members = validated_data.pop("members_list", None)
+        members = validated_data.pop("members", None)
 
         project = self.context["project"]
 
@@ -72,7 +76,7 @@ class ModuleWriteSerializer(BaseSerializer):
         return module
 
     def update(self, instance, validated_data):
-        members = validated_data.pop("members_list", None)
+        members = validated_data.pop("members", None)
 
         if members is not None:
             ModuleMember.objects.filter(module=instance).delete()

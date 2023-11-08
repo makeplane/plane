@@ -93,7 +93,7 @@ export const PeekOverviewIssueProperties: FC<Props> = (props) => {
           <div className="w-3/4">
             <SidebarAssigneeSelect
               value={issue.assignees}
-              onChange={(val: string[]) => handleUpdateIssue({ assignees_list: val })}
+              onChange={(val: string[]) => handleUpdateIssue({ assignees: val })}
               disabled={readOnly}
             />
           </div>

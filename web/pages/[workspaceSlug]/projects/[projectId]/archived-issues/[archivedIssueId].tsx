@@ -1,10 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
-
+import { useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
 // services
 import { IssueService, IssueArchiveService } from "services/issue";
@@ -22,7 +18,7 @@ import { ArchiveIcon, Loader } from "@plane/ui";
 import { History } from "lucide-react";
 // types
 import { IIssue } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
 
@@ -32,24 +28,23 @@ const defaultValues: Partial<IIssue> = {
   description_html: "",
   estimate_point: null,
   state: "",
-  assignees_list: [],
   priority: "low",
   target_date: new Date().toString(),
   issue_cycle: null,
   issue_module: null,
-  labels_list: [],
 };
 
 // services
 const issueService = new IssueService();
 const issueArchiveService = new IssueArchiveService();
 
-const ArchivedIssueDetailsPage: NextPage = () => {
-  const [isRestoring, setIsRestoring] = useState(false);
-
+const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
-
+  // states
+  const [isRestoring, setIsRestoring] = useState(false);
+  // hooks
   const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
@@ -109,9 +104,6 @@ const ArchivedIssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
     reset({
       ...issueDetails,
-      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, archivedIssueId]);
 
@@ -141,7 +133,7 @@ const ArchivedIssueDetailsPage: NextPage = () => {
   };
 
   return (
-    <AppLayout header={<ProjectArchivedIssueDetailsHeader />} withProjectWrapper>
+    <>
       {issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-2 divide-y-2 divide-custom-border-300 p-5">
@@ -192,6 +184,14 @@ const ArchivedIssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
+    </>
+  );
+};
+
+ArchivedIssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectArchivedIssueDetailsHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };

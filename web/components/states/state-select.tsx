@@ -4,8 +4,7 @@ import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
 // ui
-import { StateGroupIcon } from "@plane/ui";
-import { Tooltip } from "components/ui";
+import { StateGroupIcon, Tooltip } from "@plane/ui";
 // types
 import { IState } from "types";
 
@@ -21,17 +20,19 @@ type Props = {
   disabled?: boolean;
 };
 
-export const StateSelect: React.FC<Props> = ({
-  value,
-  onChange,
-  states,
-  className = "",
-  buttonClassName = "",
-  optionsClassName = "",
-  placement,
-  hideDropdownArrow = false,
-  disabled = false,
-}) => {
+export const StateSelect: React.FC<Props> = (props) => {
+  const {
+    value,
+    onChange,
+    states,
+    className = "",
+    buttonClassName = "",
+    optionsClassName = "",
+    placement,
+    hideDropdownArrow = false,
+    disabled = false,
+  } = props;
+
   const [query, setQuery] = useState("");
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);

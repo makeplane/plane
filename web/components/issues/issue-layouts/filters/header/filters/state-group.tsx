@@ -11,19 +11,25 @@ import { ISSUE_STATE_GROUPS } from "constants/issue";
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
-  itemsToRender: number;
   searchQuery: string;
-  viewButtons: React.ReactNode;
 };
 
 export const FilterStateGroup: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery, viewButtons } = props;
+  const { appliedFilters, handleUpdate, searchQuery } = props;
 
+  const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
   const filteredOptions = ISSUE_STATE_GROUPS.filter((s) => s.key.includes(searchQuery.toLowerCase()));
+
+  const handleViewToggle = () => {
+    if (!filteredOptions) return;
+
+    if (itemsToRender === filteredOptions.length) setItemsToRender(5);
+    else setItemsToRender(filteredOptions.length);
+  };
 
   return (
     <>
@@ -45,7 +51,15 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
                   title={stateGroup.title}
                 />
               ))}
-              {viewButtons}
+              {filteredOptions.length > 5 && (
+                <button
+                  type="button"
+                  className="text-custom-primary-100 text-xs font-medium ml-8"
+                  onClick={handleViewToggle}
+                >
+                  {itemsToRender === filteredOptions.length ? "View less" : "View all"}
+                </button>
+              )}
             </>
           ) : (
             <p className="text-xs text-custom-text-400 italic">No matches found</p>

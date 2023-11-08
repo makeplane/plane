@@ -1,12 +1,9 @@
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { WorkspaceService } from "services/workspace.service";
 // ui
-import { Avatar } from "components/ui";
-import { CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
+import { Avatar, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // types
 import { IGithubRepoCollaborator } from "types";
 import { IUserDetails } from "./root";
@@ -44,7 +41,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
 
   const { data: members } = useSWR(
     workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => workspaceService.workspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
 
   const options = members?.map((member) => ({
@@ -52,7 +49,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
     query: member.member.display_name ?? "",
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),

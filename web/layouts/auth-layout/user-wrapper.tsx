@@ -13,17 +13,25 @@ export interface IUserAuthWrapper {
 export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   const { children } = props;
   // store
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, workspace: workspaceStore } = useMobxStore();
   // router
   const router = useRouter();
   // fetching user information
-  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser());
+  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => userStore.fetchCurrentUser(), {
+    shouldRetryOnError: false,
+  });
   // fetching user settings
-  useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings());
+  useSWR("CURRENT_USER_SETTINGS", () => userStore.fetchCurrentUserSettings(), {
+    shouldRetryOnError: false,
+  });
+  // fetching all workspaces
+  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces(), {
+    shouldRetryOnError: false,
+  });
 
   if (!currentUser && !error) {
     return (
-      <div className="h-screen grid place-items-center p-4">
+      <div className="h-screen grid place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">
           <Spinner />
         </div>

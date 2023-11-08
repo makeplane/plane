@@ -1,7 +1,7 @@
 import { action, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "../root";
-import { IIssueType } from "./module_issue.store";
+import { IIssueType } from "store/issue";
 
 export interface IModuleIssueCalendarViewStore {
   // actions
@@ -36,8 +36,8 @@ export class ModuleIssueCalendarViewStore implements IModuleIssueCalendarViewSto
         projectId: projectId,
       };
 
-      const droppableSourceColumnId = source.droppableId;
-      const droppableDestinationColumnId = destination.droppableId;
+      const droppableSourceColumnId = source?.droppableId || null;
+      const droppableDestinationColumnId = destination?.droppableId || null;
 
       if (droppableSourceColumnId === droppableDestinationColumnId) return;
 

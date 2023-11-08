@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // types
 import { IProjectView } from "types";
 // constants
@@ -32,7 +32,6 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
-    register,
     reset,
     setValue,
     watch,
@@ -70,32 +69,45 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  id="name"
+                  type="name"
+                  name="name"
+                  value={value}
+                  onChange={onChange}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="resize-none text-xl"
+                />
+              )}
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  placeholder="Description"
+                  className="resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
             />
           </div>
           <div>
@@ -147,8 +159,10 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" size="sm" type="submit">
           {data
             ? isSubmitting
               ? "Updating View..."
@@ -156,7 +170,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

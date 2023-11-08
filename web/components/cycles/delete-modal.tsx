@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // components
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -101,10 +101,13 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         </p>
                       </span>
                       <div className="flex justify-end gap-2">
-                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                        <DangerButton onClick={formSubmit} loading={loader}>
+                        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                          Cancel
+                        </Button>
+
+                        <Button variant="danger" size="sm" onClick={formSubmit}>
                           {loader ? "Deleting..." : "Delete Cycle"}
-                        </DangerButton>
+                        </Button>
                       </div>
                     </div>
                   </Dialog.Panel>

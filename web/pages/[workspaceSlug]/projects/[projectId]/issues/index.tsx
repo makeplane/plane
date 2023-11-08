@@ -1,17 +1,24 @@
+import { ReactElement } from "react";
 // components
 import { ProjectLayoutRoot } from "components/issues";
 import { ProjectIssuesHeader } from "components/headers";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 
-const ProjectIssues: NextPage = () => (
-  <AppLayout header={<ProjectIssuesHeader />} withProjectWrapper>
-    <div className="h-full w-full">
-      <ProjectLayoutRoot />
-    </div>
-  </AppLayout>
+const ProjectIssuesPage: NextPageWithLayout = () => (
+  <div className="h-full w-full">
+    <ProjectLayoutRoot />
+  </div>
 );
 
-export default ProjectIssues;
+ProjectIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectIssuesHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
+
+export default ProjectIssuesPage;

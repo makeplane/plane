@@ -1,11 +1,8 @@
 import { useState } from "react";
-
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // services
@@ -21,7 +18,7 @@ import { IImporterService } from "types";
 // fetch-keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
 // constants
-import { IMPORTERS_EXPORTERS_LIST } from "constants/workspace";
+import { IMPORTERS_LIST } from "constants/workspace";
 
 // services
 const integrationService = new IntegrationService();
@@ -76,10 +73,10 @@ const IntegrationGuide = () => {
                 </div>
               </a>
             </div> */}
-            {IMPORTERS_EXPORTERS_LIST.map((service) => (
+            {IMPORTERS_LIST.map((service) => (
               <div
                 key={service.provider}
-                className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6"
+                className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6"
               >
                 <div className="flex items-start gap-4">
                   <div className="relative h-10 w-10 flex-shrink-0">
@@ -100,7 +97,7 @@ const IntegrationGuide = () => {
               </div>
             ))}
             <div>
-              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-200">
+              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-100">
                 <h3 className="flex gap-2 text-xl font-medium">
                   Previous Imports
                   <button

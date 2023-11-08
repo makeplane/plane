@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { ProjectViewListItem } from "components/views";
 import { EmptyState } from "components/common";
 // ui
-import { Input, Loader } from "components/ui";
+import { Input, Loader } from "@plane/ui";
 // assets
 import emptyView from "public/empty-state/view.svg";
 // icons
@@ -48,7 +48,7 @@ export const ProjectViewsList = observer(() => {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search"
-                mode="trueTransparent"
+                mode="true-transparent"
               />
             </div>
           </div>

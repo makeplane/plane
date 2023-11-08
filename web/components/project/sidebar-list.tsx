@@ -1,6 +1,6 @@
 import React, { useState, FC, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
@@ -121,7 +121,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
@@ -186,7 +186,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (

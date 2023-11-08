@@ -42,7 +42,7 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
           <>
             <Popover.Button
               ref={dropdownBtn}
-              className={`px-2.5 py-1 h-5 flex items-center rounded border-[0.5px] border-custom-border-300 duration-300 outline-none ${
+              className={`px-2.5 py-1 h-5 flex items-center rounded border-[0.5px] border-custom-border-300 duration-300 outline-none w-full ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               }`}
             >

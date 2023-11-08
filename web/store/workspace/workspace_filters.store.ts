@@ -9,7 +9,7 @@ import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
   IIssueFilterOptions,
-  IWorkspaceMember,
+  IWorkspaceMemberMe,
   IWorkspaceViewProps,
   TIssueParams,
 } from "types";
@@ -25,7 +25,7 @@ export interface IWorkspaceFilterStore {
   workspaceDisplayProperties: IIssueDisplayProperties;
 
   // actions
-  fetchUserWorkspaceFilters: (workspaceSlug: string) => Promise<IWorkspaceMember>;
+  fetchUserWorkspaceFilters: (workspaceSlug: string) => Promise<IWorkspaceMemberMe>;
   updateWorkspaceFilters: (workspaceSlug: string, filterToUpdate: Partial<IWorkspaceViewProps>) => Promise<void>;
 
   // computed
