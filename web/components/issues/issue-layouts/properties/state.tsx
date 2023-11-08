@@ -94,7 +94,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
-        <span className="truncate line-clamp-1 inline-block">{value?.name ?? "State"}</span>
+        <span className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -104,7 +104,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       {workspaceSlug && projectId && (
         <Combobox
           as="div"
-          className={`flex-shrink-0 text-left w-auto max-w-full ${className}`}
+          className={`text-left w-auto max-w-full ${className}`}
           value={value.id}
           onChange={(data: string) => {
             const selectedState = projectStates?.find((state) => state.id === data);
