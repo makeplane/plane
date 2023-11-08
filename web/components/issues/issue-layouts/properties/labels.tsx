@@ -93,7 +93,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   });
 
   const label = (
-    <div className="flex flex-wrap items-center gap-2 text-custom-text-200 w-full">
+    <div className="overflow-hidden flex flex-wrap items-center gap-2 text-custom-text-200 w-full">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
@@ -116,7 +116,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                           backgroundColor: label?.color ?? "#000000",
                         }}
                       />
-                      <div className="truncate line-clamp-1 inline-block">
+                      <div className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">
                         {label.name}
                       </div>
                     </div>
