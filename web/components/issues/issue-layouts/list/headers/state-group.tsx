@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 // ui
 import { StateGroupIcon } from "@plane/ui";
+// helpers
+import { capitalizeFirstLetter } from "helpers/string.helper";
 
 export interface IStateGroupHeader {
   column_id: string;
@@ -27,7 +29,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
       {stateGroup && (
         <HeaderGroupByCard
           icon={<Icon stateGroup={stateGroup?.key} />}
-          title={stateGroup?.key || ""}
+          title={capitalizeFirstLetter(stateGroup?.key) || ""}
           count={issues_count}
           issuePayload={{}}
         />

@@ -18,7 +18,7 @@ export interface IProjectCardList {
 export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   const { workspaceSlug } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
@@ -53,12 +53,7 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
             text: "New Project",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            },
+            onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
           }}
         />
       )}

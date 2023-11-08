@@ -18,7 +18,7 @@ export const PagesHeader: FC<IPagesHeaderProps> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   return (
@@ -56,10 +56,7 @@ export const PagesHeader: FC<IPagesHeaderProps> = observer((props) => {
             variant="primary"
             prependIcon={<Plus />}
             size="sm"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "d" });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreatePageModal(true)}
           >
             Create Page
           </Button>

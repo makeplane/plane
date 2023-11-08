@@ -25,7 +25,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
-    <div className="relative group flex items-center justify-between gap-2 space-y-3 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-2.5">
+    <div className="relative group flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-4 py-2.5">
       <div className="flex items-center gap-3">
         <span
           className="h-3.5 w-3.5 flex-shrink-0 rounded-full"

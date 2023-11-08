@@ -25,6 +25,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
     module: moduleStore,
     projectViews: projectViewsStore,
     inbox: inboxStore,
+    commandPalette: commandPaletteStore,
   } = useMobxStore();
   // router
   const router = useRouter();
@@ -131,12 +132,7 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
           image={emptyProject}
           primaryButton={{
             text: "Create Project",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            },
+            onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
           }}
         />
       </div>

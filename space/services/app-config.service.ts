@@ -3,12 +3,13 @@ import APIService from "services/api.service";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
-export interface IEnvConfig {
-  github: string;
-  google: string;
-  github_app_name: string | null;
+export interface IAppConfig {
   email_password_login: boolean;
+  google_client_id: string | null;
+  github_app_name: string | null;
+  github_client_id: string | null;
   magic_login: boolean;
+  slack_client_id: string | null;
 }
 
 export class AppConfigService extends APIService {
@@ -16,7 +17,7 @@ export class AppConfigService extends APIService {
     super(API_BASE_URL);
   }
 
-  async envConfig(): Promise<IEnvConfig> {
+  async envConfig(): Promise<IAppConfig> {
     return this.get("/api/configs/", {
       headers: {
         "Content-Type": "application/json",

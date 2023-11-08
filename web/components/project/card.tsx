@@ -168,7 +168,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
         </div>
 
         <div className="h-[104px] w-full flex flex-col justify-between p-4 rounded-b">
-          <p className="text-sm text-custom-text-300 font-medium break-words line-clamp-2">{project.description}</p>
+          <p className="text-sm text-custom-text-300 break-words line-clamp-2">{project.description}</p>
           <div className="flex item-center justify-between">
             <Tooltip
               tooltipHeading="Members"
