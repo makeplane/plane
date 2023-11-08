@@ -85,6 +85,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                 render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
                   <LiteTextEditorWithRef
                     onEnterKeyPress={handleSubmit(handleAddComment)}
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}

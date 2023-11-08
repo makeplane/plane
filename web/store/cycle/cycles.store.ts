@@ -32,7 +32,7 @@ export interface ICycleStore {
   // actions
   setCycleView: (_cycleView: TCycleView) => void;
   setCycleLayout: (_cycleLayout: TCycleLayout) => void;
-  setCycleId: (cycleId: string) => void;
+  setCycleId: (cycleId: string | null) => void;
 
   validateDate: (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => Promise<any>;
 
@@ -131,7 +131,7 @@ export class CycleStore implements ICycleStore {
   // actions
   setCycleView = (_cycleView: TCycleView) => (this.cycleView = _cycleView);
   setCycleLayout = (_cycleLayout: TCycleLayout) => (this.cycleLayout = _cycleLayout);
-  setCycleId = (cycleId: string) => (this.cycleId = cycleId);
+  setCycleId = (cycleId: string | null) => (this.cycleId = cycleId);
 
   validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => {
     try {

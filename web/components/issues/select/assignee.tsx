@@ -3,8 +3,7 @@ import useSWR from "swr";
 // services
 import { ProjectService } from "services/project";
 // ui
-import { Avatar, AvatarGroup, CustomSearchSelect } from "@plane/ui";
-import { User2 } from "lucide-react";
+import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -58,9 +57,9 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
               </AvatarGroup>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2 px-1.5 py-1 rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
-              <User2 className="h-4 w-4" />
-              <span className="text-custom-text-200">Assignee</span>
+            <div className="flex items-center justify-center gap-1 w-full text-custom-text-300 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs">
+              <UserGroupIcon className="h-3 w-3" />
+              <span>Assignee</span>
             </div>
           )}
         </div>

@@ -65,8 +65,8 @@ const CustomSelect = (props: ICustomSelectProps) => {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none ${
-                input ? "px-3 py-2 text-sm" : "px-2.5 py-1 text-xs"
+              className={`flex items-center justify-between gap-1 w-full rounded border-[0.5px] border-custom-border-300 ${
+                input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
               } ${
                 disabled
                   ? "cursor-not-allowed text-custom-text-200"

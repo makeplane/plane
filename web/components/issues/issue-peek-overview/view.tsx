@@ -7,7 +7,7 @@ import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
-import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
+import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 import { DeleteIssueModal } from "../delete-issue-modal";
 import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
 // types
@@ -154,7 +154,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
-      <div className="w-full !text-base">
+      <div className="w-full truncate !text-base">
         {children && (
           <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
             {children}
@@ -251,7 +251,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
               )}
               {isLoading && !issue ? (
-                <div className="text-center py-10">Loading...</div>
+                <div className="h-full w-full flex items-center justify-center"><Spinner/></div>
               ) : (
                 issue && (
                   <>

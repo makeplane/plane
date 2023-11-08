@@ -48,10 +48,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       : options?.filter((option) => option.member.display_name.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <div
-      className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
-            "
-    >
+    <div className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded border-[0.5px] border-custom-border-300">
       {value ? (
         <>
           <Avatar name={value?.member.display_name} src={value?.member.avatar} />
@@ -81,7 +78,7 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       </Listbox.Button>
       <Listbox.Options>
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1`}
+          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs  focus:outline-none w-48 whitespace-nowrap my-1`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}

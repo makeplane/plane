@@ -34,7 +34,7 @@ export interface IModuleStore {
   };
 
   // actions
-  setModuleId: (moduleSlug: string) => void;
+  setModuleId: (moduleId: string | null) => void;
 
   getModuleById: (moduleId: string) => IModule | null;
 
@@ -144,8 +144,8 @@ export class ModuleStore implements IModuleStore {
   getModuleById = (moduleId: string) => this.moduleDetails[moduleId] || null;
 
   // actions
-  setModuleId = (moduleSlug: string) => {
-    this.moduleId = moduleSlug ?? null;
+  setModuleId = (moduleId: string | null) => {
+    this.moduleId = moduleId;
   };
 
   fetchModules = async (workspaceSlug: string, projectId: string) => {

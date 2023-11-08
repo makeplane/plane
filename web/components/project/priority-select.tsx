@@ -107,9 +107,13 @@ export const PrioritySelect: React.FC<Props> = ({
                 ? "border-red-500/20 bg-red-500"
                 : "border-custom-border-300"
               : "border-custom-border-300"
-          } ${!disabled ? "hover:bg-custom-background-80" : ""} ${
-            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
-          } ${buttonClassName}`}
+          } ${
+            !disabled
+              ? `${
+                  value === "urgent" && highlightUrgentPriority ? "hover:bg-red-400" : "hover:bg-custom-background-80"
+                }`
+              : ""
+          } ${disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"} ${buttonClassName}`}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}
