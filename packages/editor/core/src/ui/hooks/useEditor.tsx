@@ -29,11 +29,13 @@ interface CustomEditorProps {
   forwardedRef?: any;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
+  cancelUploadImage?: () => any;
 }
 
 export const useEditor = ({
   uploadFile,
   deleteFile,
+  cancelUploadImage,
   editorProps = {},
   value,
   extensions = [],
@@ -42,7 +44,7 @@ export const useEditor = ({
   forwardedRef,
   setShouldShowAlert,
   mentionHighlights,
-  mentionSuggestions
+  mentionSuggestions,
 }: CustomEditorProps) => {
   const editor = useCustomEditor(
     {
@@ -50,7 +52,17 @@ export const useEditor = ({
         ...CoreEditorProps(uploadFile, setIsSubmitting),
         ...editorProps,
       },
-      extensions: [...CoreEditorExtensions({ mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []}, deleteFile), ...extensions],
+      extensions: [
+        ...CoreEditorExtensions(
+          {
+            mentionSuggestions: mentionSuggestions ?? [],
+            mentionHighlights: mentionHighlights ?? [],
+          },
+          deleteFile,
+          cancelUploadImage,
+        ),
+        ...extensions,
+      ],
       content:
         typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
       onUpdate: async ({ editor }) => {
@@ -83,3 +95,4 @@ export const useEditor = ({
 
   return editor;
 };
+

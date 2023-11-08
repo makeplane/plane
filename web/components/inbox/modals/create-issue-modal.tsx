@@ -15,6 +15,7 @@ import { IssuePrioritySelect } from "components/issues/select";
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
 import { IIssue } from "types";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   isOpen: boolean;
@@ -39,6 +40,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const [createMore, setCreateMore] = useState(false);
 
   const editorRef = useRef<any>(null);
+
+  const editorSuggestion = useEditorSuggestions()
 
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
@@ -134,6 +137,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                             control={control}
                             render={({ field: { value, onChange } }) => (
                               <RichTextEditorWithRef
+                                cancelUploadImage={fileService.cancelUpload}
                                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                                 deleteFile={fileService.deleteImage}
                                 ref={editorRef}
@@ -143,6 +147,8 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 onChange={(description, description_html: string) => {
                                   onChange(description_html);
                                 }}
+                                mentionSuggestions={editorSuggestion.mentionSuggestions}
+                                mentionHighlights={editorSuggestion.mentionHighlights}
                               />
                             )}
                           />

@@ -381,6 +381,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditorWithRef
+                        cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
                         ref={editorRef}

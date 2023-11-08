@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
+    "@plane/ui": "*",
     "@tiptap/extension-list-item": "^2.1.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
