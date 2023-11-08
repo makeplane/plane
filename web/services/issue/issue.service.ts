@@ -32,6 +32,14 @@ export class IssueService extends APIService {
       });
   }
 
+  async getV2Issues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
+    return this.get(`/api/v2/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getIssuesWithParams(
     workspaceSlug: string,
     projectId: string,
