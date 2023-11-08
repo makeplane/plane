@@ -12,7 +12,7 @@ const ExportsPage: NextPageWithLayout = () => (
   <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
     <WorkspaceSettingLayout>
       <div className="pr-9 py-8 w-full overflow-y-auto">
-        <div className="flex items-center py-3.5 border-b border-custom-border-200">
+        <div className="flex items-center py-3.5 border-b border-custom-border-100">
           <h3 className="text-xl font-medium">Exports</h3>
         </div>
         <ExportGuide />

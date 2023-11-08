@@ -83,7 +83,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
 
   return (
     <>
-      <div className="flex items-center py-3.5 border-b border-custom-border-200">
+      <div className="flex items-center py-3.5 border-b border-custom-border-100">
         <h3 className="text-xl font-medium">Defaults</h3>
       </div>
 

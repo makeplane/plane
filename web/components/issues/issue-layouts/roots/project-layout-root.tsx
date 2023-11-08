@@ -22,13 +22,15 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-
-      await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+  const { isLoading } = useSWR(
+    workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+        await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+      }
     }
-  });
+  );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
