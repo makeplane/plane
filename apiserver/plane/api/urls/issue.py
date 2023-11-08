@@ -4,6 +4,7 @@ from django.urls import path
 from plane.api.views import (
     IssueViewSet,
     IssueListEndpoint,
+    IssueListGroupedEndpoint,
     LabelViewSet,
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
@@ -39,6 +40,11 @@ urlpatterns = [
     path(
         "v2/workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueListEndpoint.as_view(),
+        name="project-issue",
+    ),
+    path(
+        "v3/workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
+        IssueListGroupedEndpoint.as_view(),
         name="project-issue",
     ),
     path(
