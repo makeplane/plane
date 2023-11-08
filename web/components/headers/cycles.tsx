@@ -1,22 +1,20 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 
-export interface ICyclesHeader {}
-
-export const CyclesHeader: FC<ICyclesHeader> = (props) => {
-  const {} = props;
+export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   return (
@@ -54,14 +52,11 @@ export const CyclesHeader: FC<ICyclesHeader> = (props) => {
         <Button
           variant="primary"
           prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "q" });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
         >
           Add Cycle
         </Button>
       </div>
     </div>
   );
-};
+});

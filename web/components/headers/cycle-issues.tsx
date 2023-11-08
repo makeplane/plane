@@ -31,6 +31,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     cycle: cycleStore,
     cycleIssueFilter: cycleIssueFilterStore,
     project: projectStore,
+    commandPalette: commandPaletteStore,
   } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
@@ -139,7 +140,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               type="component"
               component={
                 <CustomMenu
-                  placement="bottom-start"
                   label={
                     <>
                       <ContrastIcon className="h-3 w-3" />
@@ -148,6 +148,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                   }
                   className="ml-1.5 flex-shrink-0"
                   width="auto"
+                  placement="bottom-start"
                 >
                   {cyclesList?.map((cycle) => (
                     <CustomMenu.MenuItem
@@ -194,16 +195,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
+          <Button onClick={() => commandPaletteStore.toggleCreateIssueModal(true)} size="sm" prependIcon={<Plus />}>
             Add Issue
           </Button>
           <button

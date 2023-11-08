@@ -11,7 +11,7 @@ export const ProjectsHeader = observer(() => {
   const { workspaceSlug } = router.query;
 
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : [];
 
@@ -43,14 +43,7 @@ export const ProjectsHeader = observer(() => {
           </div>
         )}
 
-        <Button
-          prependIcon={<Plus />}
-          size="md"
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "p" });
-            document.dispatchEvent(e);
-          }}
-        >
+        <Button prependIcon={<Plus />} size="md" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
           Add Project
         </Button>
       </div>
