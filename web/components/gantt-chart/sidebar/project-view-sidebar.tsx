@@ -6,6 +6,8 @@ import { MoreVertical } from "lucide-react";
 import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
+// components
+import { IssueGanttSidebarBlock } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
@@ -15,13 +17,13 @@ type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  sidebarBlockToRender: (block: any) => React.ReactNode;
   enableReorder: boolean;
+  enableQuickIssueCreate?: boolean;
 };
 
 export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder } = props;
+  const { title, blockUpdateHandler, blocks, enableReorder } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -127,7 +129,9 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                               </button>
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
-                              <div className="flex-grow truncate">{sidebarBlockToRender(block.data)}</div>
+                              <div className="flex-grow truncate">
+                                <IssueGanttSidebarBlock data={block.data} handleIssue={blockUpdateHandler} />
+                              </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
                               </div>

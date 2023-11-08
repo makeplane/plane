@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
+import { IssueGanttBlock } from "components/issues";
 import {
   GanttChartRoot,
   IBlockUpdateData,
@@ -48,7 +48,6 @@ export const ProjectViewGanttLayout: React.FC = observer(() => {
           blockUpdateHandler={updateIssue}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
           sidebarToRender={(props) => <ProjectViewGanttSidebar {...props} />}
-          sidebarBlockToRender={(data: IIssue) => <IssueGanttSidebarBlock data={data} handleIssue={updateIssue} />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}

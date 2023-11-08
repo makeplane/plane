@@ -9,7 +9,7 @@ import {
   GanttChartRoot,
   IBlockUpdateData,
   renderIssueBlocksStructure,
-  ModuleGanttSidebar,
+  IssueGanttSidebar,
 } from "components/gantt-chart";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
@@ -44,9 +44,8 @@ export const ModuleGanttLayout: React.FC = observer(() => {
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
-          sidebarToRender={(data) => <ModuleGanttSidebar {...data} />}
+          sidebarToRender={(data) => <IssueGanttSidebar {...data} />}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
-          sidebarBlockToRender={(data: IIssue) => <IssueGanttSidebarBlock data={data} handleIssue={updateIssue} />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}

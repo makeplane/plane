@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
-import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
+import { ModuleGanttBlock } from "components/modules";
 // types
 import { IModule } from "types";
 
@@ -46,7 +46,6 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         blocks={modules ? blockFormat(modules) : null}
         sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        sidebarBlockToRender={(data) => <ModuleGanttSidebarBlock data={data} />}
         blockToRender={(data: IModule) => <ModuleGanttBlock data={data} />}
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}

@@ -4,12 +4,12 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { IssueGanttBlock, IssueGanttSidebarBlock } from "components/issues";
+import { IssueGanttBlock } from "components/issues";
 import {
   GanttChartRoot,
   IBlockUpdateData,
   renderIssueBlocksStructure,
-  CycleGanttSidebar,
+  IssueGanttSidebar,
 } from "components/gantt-chart";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
@@ -45,8 +45,7 @@ export const CycleGanttLayout: React.FC = observer(() => {
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
-          sidebarToRender={(data) => <CycleGanttSidebar {...data} />}
-          sidebarBlockToRender={(data: IIssue) => <IssueGanttSidebarBlock data={data} handleIssue={updateIssue} />}
+          sidebarToRender={(props) => <IssueGanttSidebar {...props} />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
