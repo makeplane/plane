@@ -93,33 +93,39 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   });
 
   const label = (
-    <div className="flex items-center gap-2 text-custom-text-200">
+    <div className="flex flex-wrap items-center gap-2 text-custom-text-200 w-full">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
             {(projectLabels ? projectLabels : [])
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
-                <div
-                  key={label.id}
-                  className="overflow-hidden flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
+                <Tooltip
+                  position="top"
+                  tooltipHeading="Labels"
+                  tooltipContent={label.name ?? ''}
                 >
-                  <div className="flex items-center gap-1.5 text-custom-text-200 max-w-full">
-                    <span
-                      className="h-2 w-2 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color ?? "#000000",
-                      }}
-                    />
-                    <div className="flex-shrink-0 truncate line-clamp-1 inline-bloc">
-                      {label.name}
+                  <div
+                    key={label.id}
+                    className={`overflow-hidden flex hover:bg-custom-background-80 ${!disabled && "cursor-pointer"} items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full max-w-full`}
+                  >
+                    <div className="overflow-hidden flex items-center gap-1.5 text-custom-text-200 max-w-full">
+                      <span
+                        className="h-2 w-2 flex-shrink-0 rounded-full"
+                        style={{
+                          backgroundColor: label?.color ?? "#000000",
+                        }}
+                      />
+                      <div className="truncate line-clamp-1 inline-block">
+                        {label.name}
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Tooltip>
               ))}
           </>
         ) : (
-          <div className="h-full flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
+          <div className="h-full flex cursor-pointer items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
             <Tooltip
               position="top"
               tooltipHeading="Labels"
@@ -168,7 +174,6 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
           onClick={() => !projectLabels && fetchProjectLabels()}
         >
           {label}
-
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
         </button>
       </Combobox.Button>
