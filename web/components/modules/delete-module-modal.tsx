@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 // hooks
 import useToast from "hooks/use-toast";

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 // next
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // swr
 import useSWR from "swr";

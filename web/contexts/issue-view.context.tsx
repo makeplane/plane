@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useReducer } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 // components
 import ToastAlert from "components/toast-alert";

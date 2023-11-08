@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
 // services

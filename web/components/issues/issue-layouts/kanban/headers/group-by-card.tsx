@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // services
 import { ModuleService } from "services/module.service";

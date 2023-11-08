@@ -1,6 +1,6 @@
 import { useState, FC } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services

@@ -1,5 +1,5 @@
 import React, { useState, FC, useRef, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";

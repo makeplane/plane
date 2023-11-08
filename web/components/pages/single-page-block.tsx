@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { mutate } from "swr";
 import { useForm } from "react-hook-form";

@@ -1,5 +1,5 @@
 import { Fragment, FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import { Transition, Dialog } from "@headlessui/react";
 import { X } from "lucide-react";

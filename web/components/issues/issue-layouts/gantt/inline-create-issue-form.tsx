@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";

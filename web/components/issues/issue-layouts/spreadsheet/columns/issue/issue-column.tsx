@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Popover2 } from "@blueprintjs/popover2";
 import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react";
 // hooks

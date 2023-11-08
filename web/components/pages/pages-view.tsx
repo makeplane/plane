@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import useSWR, { mutate } from "swr";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // services
 import { PageService } from "services/page.service";

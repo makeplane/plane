@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Search, Plus, Briefcase } from "lucide-react";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";

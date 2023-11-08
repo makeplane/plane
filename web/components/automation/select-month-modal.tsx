@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
 // headless ui

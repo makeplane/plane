@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";

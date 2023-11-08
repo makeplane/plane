@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
 

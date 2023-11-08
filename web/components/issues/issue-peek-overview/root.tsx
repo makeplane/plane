@@ -1,5 +1,5 @@
 import { FC, Fragment, ReactNode } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // components

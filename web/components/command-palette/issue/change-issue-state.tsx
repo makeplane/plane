@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback } from "react";
 
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 import useSWR, { mutate } from "swr";
 

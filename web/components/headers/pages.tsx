@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import { FileText, Plus } from "lucide-react";
 // hooks

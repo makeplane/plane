@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { MoreVertical } from "lucide-react";

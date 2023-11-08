@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AIService } from "services/ai.service";

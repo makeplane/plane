@@ -1,5 +1,5 @@
 import { FC, MouseEvent, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 // hooks
 import useToast from "hooks/use-toast";

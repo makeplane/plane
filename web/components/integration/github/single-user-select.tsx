@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // services
 import { WorkspaceService } from "services/workspace.service";

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // swr
 import useSWR from "swr";
 import useSWRInfinite from "swr/infinite";

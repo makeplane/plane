@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // component
 import { SelectMonthModal } from "components/automation";
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon } from "@plane/ui";

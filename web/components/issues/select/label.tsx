@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { Combobox, Transition } from "@headlessui/react";
 import { usePopper } from "react-popper";

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";

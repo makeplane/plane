@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 // ui
 import { Input, Button } from "@plane/ui";

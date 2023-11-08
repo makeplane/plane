@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // ui
 import { Breadcrumbs } from "@plane/ui";

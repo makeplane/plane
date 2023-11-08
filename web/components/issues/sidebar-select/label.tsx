@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";

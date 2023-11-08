@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";

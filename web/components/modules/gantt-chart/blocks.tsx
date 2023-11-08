@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // ui
 import { Tooltip, ModuleStatusIcon } from "@plane/ui";

@@ -1,4 +1,4 @@
-import Router from "next/router";
+import Router from "next/navigation";
 import type { NextPageContext } from "next";
 
 const redirect = (context: NextPageContext, target: any) => {

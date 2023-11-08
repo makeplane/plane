@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // react-hook-form
 import { UseFormWatch } from "react-hook-form";
 // hooks

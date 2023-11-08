@@ -1,5 +1,5 @@
 import { FC, Fragment } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangleIcon } from "lucide-react";

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // services
 import { UserService } from "services/user.service";

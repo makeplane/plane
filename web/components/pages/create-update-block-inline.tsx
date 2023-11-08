@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, FC, Dispatch, SetStateAction, useRef } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 import { Sparkle } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";

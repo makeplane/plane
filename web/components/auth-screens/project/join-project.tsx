@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui

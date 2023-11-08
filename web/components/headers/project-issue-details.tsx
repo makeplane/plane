@@ -1,6 +1,6 @@
 import { FC } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 
 // ui

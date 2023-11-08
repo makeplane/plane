@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { mutate } from "swr";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm, Controller, useFieldArray } from "react-hook-form";

@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, BarChart2 } from "lucide-react";
 // ui
 import { Breadcrumbs } from "@plane/ui";

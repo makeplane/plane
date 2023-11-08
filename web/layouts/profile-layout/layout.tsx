@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // components

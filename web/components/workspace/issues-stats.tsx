@@ -6,7 +6,7 @@ import { Loader, Tooltip } from "@plane/ui";
 import { Info } from "lucide-react";
 // types
 import { IUserWorkspaceDashboard } from "types";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 type Props = {
   data: IUserWorkspaceDashboard | undefined;

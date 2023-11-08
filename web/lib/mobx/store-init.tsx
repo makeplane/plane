@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
@@ -11,7 +11,19 @@ import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 const MobxStoreInit = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, globalViewId, viewId, inboxId } = router.query;
+  const searchParams = useSearchParams()
+console.log("searchParams", searchParams);
+
+
+  const workspaceSlug = searchParams.get("workspaceSlug");
+  const projectId = searchParams.get("projectId");
+  const cycleId = searchParams.get("cycleId");
+  const moduleId = searchParams.get("moduleId");
+  const globalViewId = searchParams.get("globalViewId");
+  const viewId = searchParams.get("viewId");
+  const inboxId = searchParams.get("inboxId");
+  
+
   // store
   const {
     theme: { sidebarCollapsed, toggleSidebar },
