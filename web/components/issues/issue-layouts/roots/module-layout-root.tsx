@@ -15,6 +15,8 @@ import {
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
+// ui
+import { Spinner } from "@plane/ui";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -49,11 +51,22 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
 
   const issueCount = moduleIssueStore.getIssuesCount;
 
+  if (!moduleIssueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
+
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
       {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ModuleEmptyState />
+        <ModuleEmptyState
+          workspaceSlug={workspaceSlug?.toString()}
+          projectId={projectId?.toString()}
+          moduleId={moduleId?.toString()}
+        />
       ) : (
         <div className="h-full w-full overflow-auto">
           {activeLayout === "list" ? (

@@ -89,6 +89,7 @@ const LabelPill = ({ labelId }: { labelId: string }) => {
     />
   );
 };
+
 const EstimatePoint = ({ point }: { point: string }) => {
   const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
   const currentPoint = Number(point) + 1;

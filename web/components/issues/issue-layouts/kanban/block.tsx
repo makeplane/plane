@@ -1,6 +1,8 @@
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
+import { Tooltip } from "@plane/ui";
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 
@@ -10,6 +12,7 @@ interface IssueBlockProps {
   index: number;
   issue: IIssue;
   isDragDisabled: boolean;
+  showEmptyGroup: boolean;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -21,7 +24,17 @@ interface IssueBlockProps {
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { sub_group_id, columnId, index, issue, isDragDisabled, handleIssues, quickActions, displayProperties } = props;
+  const {
+    sub_group_id,
+    columnId,
+    index,
+    issue,
+    isDragDisabled,
+    showEmptyGroup,
+    handleIssues,
+    quickActions,
+    displayProperties,
+  } = props;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, "update");
@@ -29,7 +42,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
 
   return (
     <>
-      <Draggable draggableId={issue.id} index={index} isDragDisabled={isDragDisabled}>
+      <Draggable draggableId={issue.id} index={index}>
         {(provided, snapshot) => (
           <div
             className="group/kanban-block relative p-1.5 hover:cursor-default"
@@ -48,7 +61,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
               )}
             </div>
             <div
-              className={`text-sm rounded p-2 px-3 shadow-custom-shadow-2xs space-y-[8px] border transition-all bg-custom-background-100 ${
+              className={`text-sm rounded py-2 px-3 shadow-custom-shadow-2xs space-y-2 border-[0.5px] border-custom-border-200 transition-all bg-custom-background-100 ${
                 isDragDisabled ? "" : "hover:cursor-grab"
               } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
             >
@@ -57,7 +70,23 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+              <IssuePeekOverview
+                workspaceSlug={issue?.workspace_detail?.slug}
+                projectId={issue?.project_detail?.id}
+                issueId={issue?.id}
+                handleIssue={(issueToUpdate) => {
+                  handleIssues(
+                    !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
+                    !columnId && columnId === "null" ? null : columnId,
+                    { ...issue, ...issueToUpdate },
+                    "update"
+                  );
+                }}
+              >
+                <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                  <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+                </Tooltip>
+              </IssuePeekOverview>
               <div>
                 <KanBanProperties
                   sub_group_id={sub_group_id}
@@ -65,6 +94,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   issue={issue}
                   handleIssues={updateIssue}
                   displayProperties={displayProperties}
+                  showEmptyGroup={showEmptyGroup}
                 />
               </div>
             </div>

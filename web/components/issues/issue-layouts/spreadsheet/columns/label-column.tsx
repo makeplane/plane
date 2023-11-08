@@ -28,8 +28,9 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         projectId={issue.project_detail.id ?? null}
         value={issue.labels}
         onChange={(data) => onChange({ labels: data })}
-        className="h-full"
-        buttonClassName="!border-0 !h-full !w-full !rounded-none"
+        className="h-full w-full"
+        buttonClassName="px-2.5 h-full"
+        noLabelBorder
         hideDropdownArrow
         maxRender={1}
         disabled={disabled}

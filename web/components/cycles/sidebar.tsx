@@ -305,25 +305,23 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         <>
           <div className="flex items-center justify-between w-full">
             <div>
-              {peekCycle && (
-                <button
-                  className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
-                  onClick={() => handleClose()}
-                >
-                  <ChevronRight className="h-3 w-3 text-white stroke-2" />
-                </button>
-              )}
+              <button
+                className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
+                onClick={() => handleClose()}
+              >
+                <ChevronRight className="h-3 w-3 text-white stroke-2" />
+              </button>
             </div>
             <div className="flex items-center gap-3.5">
               <button onClick={handleCopyText}>
                 <LinkIcon className="h-3 w-3 text-custom-text-300" />
               </button>
               {!isCompleted && (
-                <CustomMenu width="lg" ellipsis>
+                <CustomMenu width="lg" placement="bottom-end" ellipsis>
                   <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
                     <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete</span>
+                      <Trash2 className="h-3 w-3" />
+                      <span>Delete cycle</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
@@ -383,41 +381,39 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                 </Popover>
                 <MoveRight className="h-4 w-4 text-custom-text-300" />
                 <Popover className="flex h-full items-center justify-center rounded-lg">
-                  {({}) => (
-                    <>
-                      <Popover.Button
-                        disabled={isCompleted ?? false}
-                        className="text-sm text-custom-text-300 font-medium cursor-default"
-                      >
-                        {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-                      </Popover.Button>
+                  <>
+                    <Popover.Button
+                      disabled={isCompleted ?? false}
+                      className="text-sm text-custom-text-300 font-medium cursor-default"
+                    >
+                      {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                    </Popover.Button>
 
-                      <Transition
-                        as={React.Fragment}
-                        enter="transition ease-out duration-200"
-                        enterFrom="opacity-0 translate-y-1"
-                        enterTo="opacity-100 translate-y-0"
-                        leave="transition ease-in duration-150"
-                        leaveFrom="opacity-100 translate-y-0"
-                        leaveTo="opacity-0 translate-y-1"
-                      >
-                        <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
-                          <CustomRangeDatePicker
-                            value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
-                            onChange={(val) => {
-                              if (val) {
-                                handleEndDateChange(val);
-                              }
-                            }}
-                            startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                            endDate={watch("end_date") ? `${watch("end_date")}` : null}
-                            minDate={new Date(`${watch("start_date")}`)}
-                            selectsEnd
-                          />
-                        </Popover.Panel>
-                      </Transition>
-                    </>
-                  )}
+                    <Transition
+                      as={React.Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
+                        <CustomRangeDatePicker
+                          value={watch("end_date") ? watch("end_date") : cycleDetails?.end_date}
+                          onChange={(val) => {
+                            if (val) {
+                              handleEndDateChange(val);
+                            }
+                          }}
+                          startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                          endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                          minDate={new Date(`${watch("start_date")}`)}
+                          selectsEnd
+                        />
+                      </Popover.Panel>
+                    </Transition>
+                  </>
                 </Popover>
               </div>
             </div>
@@ -459,7 +455,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Disclosure>
                 {({ open }) => (
                   <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <div className="flex w-full items-center justify-between gap-2">
+                    <Disclosure.Button
+                      className="flex w-full items-center justify-between gap-2 p-1.5"
+                      disabled={!isStartValid || !isEndValid}
+                    >
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
                       </div>
@@ -473,12 +472,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ""
                         )}
                         {isStartValid && isEndValid ? (
-                          <Disclosure.Button className="p-1.5">
-                            <ChevronDown
-                              className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </Disclosure.Button>
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         ) : (
                           <div className="flex items-center gap-1">
                             <AlertCircle height={14} width={14} className="text-custom-text-200" />
@@ -488,7 +482,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Disclosure.Button>
                     <Transition show={open}>
                       <Disclosure.Panel>
                         <div className="flex flex-col gap-3">

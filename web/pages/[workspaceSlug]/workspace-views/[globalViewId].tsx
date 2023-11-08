@@ -1,6 +1,6 @@
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
@@ -10,31 +10,35 @@ import { GlobalViewsHeader } from "components/workspace";
 import { GlobalViewLayoutRoot } from "components/issues";
 import { GlobalIssuesHeader } from "components/headers";
 // types
-import { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 
-const GlobalViewIssues: NextPage = () => {
+const GlobalViewIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, globalViewId } = router.query;
 
-  const { globalViews: globalViewsStore } = useMobxStore();
+  const {
+    globalViews: { fetchGlobalViewDetails },
+  } = useMobxStore();
 
   useSWR(
     workspaceSlug && globalViewId ? `GLOBAL_VIEW_DETAILS_${globalViewId.toString()}` : null,
     workspaceSlug && globalViewId
-      ? () => globalViewsStore.fetchGlobalViewDetails(workspaceSlug.toString(), globalViewId.toString())
+      ? () => fetchGlobalViewDetails(workspaceSlug.toString(), globalViewId.toString())
       : null
   );
 
   return (
-    <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>
-      <div className="h-full overflow-hidden bg-custom-background-100">
-        <div className="h-full w-full flex flex-col border-b border-custom-border-300">
-          <GlobalViewsHeader />
-          <GlobalViewLayoutRoot />
-        </div>
+    <div className="h-full overflow-hidden bg-custom-background-100">
+      <div className="h-full w-full flex flex-col border-b border-custom-border-300">
+        <GlobalViewsHeader />
+        <GlobalViewLayoutRoot />
       </div>
-    </AppLayout>
+    </div>
   );
 };
 
-export default GlobalViewIssues;
+GlobalViewIssuesPage.getLayout = function getLayout(page: ReactElement) {
+  return <AppLayout header={<GlobalIssuesHeader activeLayout="spreadsheet" />}>{page}</AppLayout>;
+};
+
+export default GlobalViewIssuesPage;

@@ -8,10 +8,12 @@ import { IssueReaction } from "./reactions";
 // hooks
 import { useDebouncedCallback } from "use-debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // types
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const fileService = new FileService();
 
@@ -27,12 +29,17 @@ interface IPeekOverviewIssueDetails {
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
   const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
-
+  // store
+  const { user: userStore } = useMobxStore();
+  const { currentProjectRole } = userStore;
+  const isAllowed = [15, 20].includes(currentProjectRole || 0);
+  // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-
   const [characterLimit, setCharacterLimit] = useState(false);
-
+  // hooks
   const { setShowAlert } = useReloadConfirmations();
+  const editorSuggestions = useEditorSuggestions();
+
   const {
     handleSubmit,
     watch,
@@ -94,7 +101,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       </span>
 
       <div className="relative">
-        {true ? (
+        {isAllowed ? (
           <Controller
             name="name"
             control={control}
@@ -132,20 +139,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-
-      <span className="text-black">
-        <RichTextEditor
-          uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-          deleteFile={fileService.deleteImage}
-          value={issue?.description_html}
-          debouncedUpdatesEnabled={false}
-          onChange={(description: Object, description_html: string) => {
-            debouncedIssueDescription(description_html);
-          }}
-          customClassName="mt-0"
-        />
-      </span>
-
+      <RichTextEditor
+        uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+        deleteFile={fileService.deleteImage}
+        value={issue?.description_html}
+        debouncedUpdatesEnabled={false}
+        onChange={(description: Object, description_html: string) => {
+          debouncedIssueDescription(description_html);
+        }}
+        customClassName="mt-0"
+        mentionSuggestions={editorSuggestions.mentionSuggestions}
+        mentionHighlights={editorSuggestions.mentionHighlights}
+      />
       <IssueReaction
         issueReactions={issueReactions}
         user={user}

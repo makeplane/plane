@@ -11,7 +11,6 @@ from django.db.models import (
     Q,
     Exists,
     OuterRef,
-    Func,
     F,
     Func,
     Subquery,
@@ -35,7 +34,6 @@ from plane.api.serializers import (
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
-    IssueLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
 )
@@ -84,7 +82,7 @@ class ProjectViewSet(BaseViewSet):
     ]
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.action == "update" or self.action == "partial_update":
+        if self.action in ["update", "partial_update"]:
             return ProjectSerializer
         return ProjectDetailSerializer
 
@@ -336,7 +334,7 @@ class ProjectViewSet(BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Project.DoesNotExist or Workspace.DoesNotExist as e:
+        except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )

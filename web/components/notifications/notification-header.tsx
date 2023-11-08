@@ -1,14 +1,9 @@
 import React from "react";
-
-// components
-import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
-
-//icon
 import { ArrowLeft, CheckCheck, Clock, ListFilter, MoreVertical, RefreshCw, X } from "lucide-react";
-
+// ui
+import { ArchiveIcon, CustomMenu, Tooltip } from "@plane/ui";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
-
 // type
 import type { NotificationType, NotificationCount } from "types";
 

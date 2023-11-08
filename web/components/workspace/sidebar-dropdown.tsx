@@ -3,15 +3,12 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { useTheme } from "next-themes";
 import { Check, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // services
-import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Loader } from "@plane/ui";
@@ -47,30 +44,24 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 
-const userService = new UserService();
 const authService = new AuthService();
 
 export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { theme: themeStore, workspace: workspaceStore } = useMobxStore();
-
+  const { theme: themeStore, workspace: workspaceStore, user: userStore } = useMobxStore();
   const { workspaces, currentWorkspace: activeWorkspace } = workspaceStore;
-
-  const { user, mutateUser } = useUser();
-
-  const { setTheme } = useTheme();
+  const user = userStore.currentUser;
 
   const { setToastAlert } = useToast();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
-    userService
-      .updateUser({
+    userStore
+      .updateCurrentUser({
         last_workspace_id: workspace?.id,
       })
       .then(() => {
-        mutateUser();
         router.push(`/${workspace.slug}/`);
       })
       .catch(() =>
@@ -86,9 +77,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
     await authService
       .signOut()
       .then(() => {
-        mutateUser(undefined);
         router.push("/");
-        setTheme("system");
       })
       .catch(() =>
         setToastAlert({
@@ -101,8 +90,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
 
   return (
     <div className="flex items-center gap-2 px-4 pt-4">
-      <Menu as="div" className="relative col-span-4 text-left flex-grow truncate">
-        <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full truncate">
+      <Menu as="div" className="relative col-span-4 text-left flex-grow h-full truncate">
+        <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full h-full truncate">
           <div
             className={`flex items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 truncate ${
               themeStore.sidebarCollapsed ? "justify-center" : ""
@@ -238,7 +227,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!themeStore.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar name={user?.display_name} src={user?.avatar} size={32} shape="square" />
+            <Avatar name={user?.display_name} src={user?.avatar} size={30} shape="square" className="!text-base" />
           </Menu.Button>
 
           <Transition

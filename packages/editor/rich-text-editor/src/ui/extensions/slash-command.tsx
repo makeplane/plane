@@ -1,4 +1,11 @@
-import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
+import {
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+  useRef,
+  useLayoutEffect,
+} from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
@@ -18,7 +25,18 @@ import {
   Table,
 } from "lucide-react";
 import { UploadImage } from "../";
-import { cn, insertTableCommand, toggleBlockquote, toggleBulletList, toggleOrderedList, toggleTaskList, insertImageCommand, toggleHeadingOne, toggleHeadingTwo, toggleHeadingThree } from "@plane/editor-core";
+import {
+  cn,
+  insertTableCommand,
+  toggleBlockquote,
+  toggleBulletList,
+  toggleOrderedList,
+  toggleTaskList,
+  insertImageCommand,
+  toggleHeadingOne,
+  toggleHeadingTwo,
+  toggleHeadingThree,
+} from "@plane/editor-core";
 
 interface CommandItemProps {
   title: string;
@@ -37,7 +55,15 @@ const Command = Extension.create({
     return {
       suggestion: {
         char: "/",
-        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
+        command: ({
+          editor,
+          range,
+          props,
+        }: {
+          editor: Editor;
+          range: Range;
+          props: any;
+        }) => {
           props.command({ editor, range });
         },
       },
@@ -59,127 +85,135 @@ const Command = Extension.create({
 const getSuggestionItems =
   (
     uploadFile: UploadImage,
-    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+    setIsSubmitting?: (
+      isSubmitting: "submitting" | "submitted" | "saved",
+    ) => void,
   ) =>
-    ({ query }: { query: string }) =>
-      [
-        {
-          title: "Text",
-          description: "Just start typing with plain text.",
-          searchTerms: ["p", "paragraph"],
-          icon: <Text size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
-          },
+  ({ query }: { query: string }) =>
+    [
+      {
+        title: "Text",
+        description: "Just start typing with plain text.",
+        searchTerms: ["p", "paragraph"],
+        icon: <Text size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .toggleNode("paragraph", "paragraph")
+            .run();
         },
-        {
-          title: "Heading 1",
-          description: "Big section heading.",
-          searchTerms: ["title", "big", "large"],
-          icon: <Heading1 size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleHeadingOne(editor, range);
-          },
+      },
+      {
+        title: "Heading 1",
+        description: "Big section heading.",
+        searchTerms: ["title", "big", "large"],
+        icon: <Heading1 size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingOne(editor, range);
         },
-        {
-          title: "Heading 2",
-          description: "Medium section heading.",
-          searchTerms: ["subtitle", "medium"],
-          icon: <Heading2 size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleHeadingTwo(editor, range);
-          },
+      },
+      {
+        title: "Heading 2",
+        description: "Medium section heading.",
+        searchTerms: ["subtitle", "medium"],
+        icon: <Heading2 size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingTwo(editor, range);
         },
-        {
-          title: "Heading 3",
-          description: "Small section heading.",
-          searchTerms: ["subtitle", "small"],
-          icon: <Heading3 size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleHeadingThree(editor, range);
-          },
+      },
+      {
+        title: "Heading 3",
+        description: "Small section heading.",
+        searchTerms: ["subtitle", "small"],
+        icon: <Heading3 size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingThree(editor, range);
         },
-        {
-          title: "To-do List",
-          description: "Track tasks with a to-do list.",
-          searchTerms: ["todo", "task", "list", "check", "checkbox"],
-          icon: <CheckSquare size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleTaskList(editor, range)
-          },
+      },
+      {
+        title: "To-do List",
+        description: "Track tasks with a to-do list.",
+        searchTerms: ["todo", "task", "list", "check", "checkbox"],
+        icon: <CheckSquare size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleTaskList(editor, range);
         },
-        {
-          title: "Bullet List",
-          description: "Create a simple bullet list.",
-          searchTerms: ["unordered", "point"],
-          icon: <List size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleBulletList(editor, range);
-          },
+      },
+      {
+        title: "Bullet List",
+        description: "Create a simple bullet list.",
+        searchTerms: ["unordered", "point"],
+        icon: <List size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleBulletList(editor, range);
         },
-        {
-          title: "Divider",
-          description: "Visually divide blocks",
-          searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
-          icon: <MinusSquare size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            editor.chain().focus().deleteRange(range).setHorizontalRule().run();
-          },
+      },
+      {
+        title: "Divider",
+        description: "Visually divide blocks",
+        searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
+        icon: <MinusSquare size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          editor.chain().focus().deleteRange(range).setHorizontalRule().run();
         },
-        {
-          title: "Table",
-          description: "Create a Table",
-          searchTerms: ["table", "cell", "db", "data", "tabular"],
-          icon: <Table size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            insertTableCommand(editor, range);
-          },
+      },
+      {
+        title: "Table",
+        description: "Create a Table",
+        searchTerms: ["table", "cell", "db", "data", "tabular"],
+        icon: <Table size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          insertTableCommand(editor, range);
         },
-        {
-          title: "Numbered List",
-          description: "Create a list with numbering.",
-          searchTerms: ["ordered"],
-          icon: <ListOrdered size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleOrderedList(editor, range)
-          },
+      },
+      {
+        title: "Numbered List",
+        description: "Create a list with numbering.",
+        searchTerms: ["ordered"],
+        icon: <ListOrdered size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleOrderedList(editor, range);
         },
-        {
-          title: "Quote",
-          description: "Capture a quote.",
-          searchTerms: ["blockquote"],
-          icon: <TextQuote size={18} />,
-          command: ({ editor, range }: CommandProps) =>
-            toggleBlockquote(editor, range)
+      },
+      {
+        title: "Quote",
+        description: "Capture a quote.",
+        searchTerms: ["blockquote"],
+        icon: <TextQuote size={18} />,
+        command: ({ editor, range }: CommandProps) =>
+          toggleBlockquote(editor, range),
+      },
+      {
+        title: "Code",
+        description: "Capture a code snippet.",
+        searchTerms: ["codeblock"],
+        icon: <Code size={18} />,
+        command: ({ editor, range }: CommandProps) =>
+          editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+      },
+      {
+        title: "Image",
+        description: "Upload an image from your computer.",
+        searchTerms: ["photo", "picture", "media"],
+        icon: <ImageIcon size={18} />,
+        command: ({ editor, range }: CommandProps) => {
+          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
         },
-        {
-          title: "Code",
-          description: "Capture a code snippet.",
-          searchTerms: ["codeblock"],
-          icon: <Code size={18} />,
-          command: ({ editor, range }: CommandProps) =>
-            editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
-        },
-        {
-          title: "Image",
-          description: "Upload an image from your computer.",
-          searchTerms: ["photo", "picture", "media"],
-          icon: <ImageIcon size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            insertImageCommand(editor, uploadFile, setIsSubmitting, range);
-          },
-        },
-      ].filter((item) => {
-        if (typeof query === "string" && query.length > 0) {
-          const search = query.toLowerCase();
-          return (
-            item.title.toLowerCase().includes(search) ||
-            item.description.toLowerCase().includes(search) ||
-            (item.searchTerms && item.searchTerms.some((term: string) => term.includes(search)))
-          );
-        }
-        return true;
-      });
+      },
+    ].filter((item) => {
+      if (typeof query === "string" && query.length > 0) {
+        const search = query.toLowerCase();
+        return (
+          item.title.toLowerCase().includes(search) ||
+          item.description.toLowerCase().includes(search) ||
+          (item.searchTerms &&
+            item.searchTerms.some((term: string) => term.includes(search)))
+        );
+      }
+      return true;
+    });
 
 export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   const containerHeight = container.offsetHeight;
@@ -213,7 +247,7 @@ const CommandList = ({
         command(item);
       }
     },
-    [command, items]
+    [command, items],
   );
 
   useEffect(() => {
@@ -266,11 +300,17 @@ const CommandList = ({
         <button
           className={cn(
             `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
-            { "bg-custom-primary-100/5  text-custom-text-100": index === selectedIndex }
+            {
+              "bg-custom-primary-100/5  text-custom-text-100":
+                index === selectedIndex,
+            },
           )}
           key={index}
           onClick={() => selectItem(index)}
         >
+          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-custom-border-300 bg-custom-background-100">
+            {item.icon}
+          </div>
           <div>
             <p className="font-medium">{item.title}</p>
             <p className="text-xs text-custom-text-300">{item.description}</p>
@@ -331,7 +371,9 @@ const renderItems = () => {
 
 export const SlashCommand = (
   uploadFile: UploadImage,
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
+  setIsSubmitting?: (
+    isSubmitting: "submitting" | "submitted" | "saved",
+  ) => void,
 ) =>
   Command.configure({
     suggestion: {

@@ -37,25 +37,31 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const { module: moduleStore } = useMobxStore();
 
-  const completionPercentage = (module.completed_issues / module.total_issues) * 100;
+  const moduleTotalIssues =
+    module.backlog_issues +
+    module.unstarted_issues +
+    module.started_issues +
+    module.completed_issues +
+    module.cancelled_issues;
+
+  const completionPercentage = (module.completed_issues / moduleTotalIssues) * 100;
 
   const endDate = new Date(module.target_date ?? "");
   const startDate = new Date(module.start_date ?? "");
+
+  const isDateValid = module.target_date || module.start_date;
 
   const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
-  const issueCount =
-    module.completed_issues && module.total_issues
-      ? module.total_issues === 0
-        ? "0 Issue"
-        : module.total_issues === module.completed_issues
-        ? module.total_issues > 1
-          ? `${module.total_issues} Issues`
-          : `${module.total_issues} Issue`
-        : `${module.completed_issues}/${module.total_issues} Issues`
-      : "0 Issue";
+  const issueCount = module
+    ? moduleTotalIssues === 0
+      ? "0 Issue"
+      : moduleTotalIssues === module.completed_issues
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${module.completed_issues}/${moduleTotalIssues} Issues`
+    : "0 Issue";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -158,7 +164,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-custom-text-200">
                 <LayersIcon className="h-4 w-4 text-custom-text-300" />
-                <span className="text-xs text-custom-text-300">{issueCount}</span>
+                <span className="text-xs text-custom-text-300">{issueCount ?? "0 Issue"}</span>
               </div>
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
@@ -195,10 +201,17 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
             </Tooltip>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-              </span>
+              {isDateValid ? (
+                <>
+                  <span className="text-xs text-custom-text-300">
+                    {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
+                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xs text-custom-text-400">No due date</span>
+              )}
+
               <div className="flex items-center gap-1.5 z-10">
                 {module.is_favorite ? (
                   <button type="button" onClick={handleRemoveFromFavorites}>

@@ -1,27 +1,30 @@
 import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
-import { PanelRightOpen, Square, SquareCode, MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
-import { Button, CustomSelect, FullScreenPeekIcon, ModalPeekIcon, SidePeekIcon } from "@plane/ui";
+import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
 import { DeleteIssueModal } from "../delete-issue-modal";
+import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
 // types
 import { IIssue } from "types";
 import { RootStore } from "store/root";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import useToast from "hooks/use-toast";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 
 interface IIssueView {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  issue: IIssue | null;
+  isLoading?: boolean;
+  isArchived?: boolean;
+  handleCopyText: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  redirectToIssueDetail: () => void;
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
@@ -34,6 +37,8 @@ interface IIssueView {
   issueSubscriptionRemove: () => void;
   handleDeleteIssue: () => Promise<void>;
   children: ReactNode;
+  disableUserActions?: boolean;
+  showCommentAccessSpecifier?: boolean;
 }
 
 type TPeekModes = "side-peek" | "modal" | "full-screen";
@@ -41,17 +46,17 @@ type TPeekModes = "side-peek" | "modal" | "full-screen";
 const peekOptions: { key: TPeekModes; icon: any; title: string }[] = [
   {
     key: "side-peek",
-    icon: SidePeekIcon,
+    icon: SidePanelIcon,
     title: "Side Peek",
   },
   {
     key: "modal",
-    icon: ModalPeekIcon,
+    icon: CenterPanelIcon,
     title: "Modal",
   },
   {
     key: "full-screen",
-    icon: FullScreenPeekIcon,
+    icon: FullScreenPanelIcon,
     title: "Full Screen",
   },
 ];
@@ -61,6 +66,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     workspaceSlug,
     projectId,
     issueId,
+    issue,
+    isLoading,
+    isArchived,
+    handleCopyText,
+    redirectToIssueDetail,
     issueUpdate,
     issueReactionCreate,
     issueReactionRemove,
@@ -73,6 +83,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueSubscriptionRemove,
     handleDeleteIssue,
     children,
+    disableUserActions = false,
+    showCommentAccessSpecifier = false,
   } = props;
 
   const router = useRouter();
@@ -83,22 +95,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const { setToastAlert } = useToast();
-
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    e.preventDefault();
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues/${peekIssueId}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
-
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
+      issueDetailStore.setPeekId(issueId);
       const { query } = router;
       router.push({
         pathname: router.pathname,
@@ -109,6 +108,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const removeRoutePeekId = () => {
     const { query } = router;
     if (query.peekIssueId) {
+      issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
       router.push({
         pathname: router.pathname,
@@ -116,23 +116,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       });
     }
   };
-
-  const redirectToIssueDetail = () => {
-    router.push({
-      pathname: `/${workspaceSlug}/projects/${projectId}/issues/${issueId}`,
-    });
-  };
-
-  useSWR(
-    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_PEEK_OVERVIEW_${workspaceSlug}_${projectId}_${peekIssueId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
-      }
-    }
-  );
 
   useSWR(
     workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
@@ -145,10 +128,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     }
   );
 
-  const issue = issueDetailStore.getIssue;
-  const issueReactions = issueDetailStore.getIssueReactions;
-  const issueComments = issueDetailStore.getIssueComments;
-  const issueSubscription = issueDetailStore.getIssueSubscription;
+  const issueReactions = issueDetailStore.getIssueReactions || [];
+  const issueComments = issueDetailStore.getIssueComments || [];
+  const issueSubscription = issueDetailStore.getIssueSubscription || [];
 
   const user = userStore?.currentUser;
 
@@ -156,7 +138,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   return (
     <>
-      {issue && (
+      {issue && !isArchived && (
         <DeleteIssueModal
           isOpen={deleteIssueModal}
           handleClose={() => setDeleteIssueModal(false)}
@@ -164,10 +146,20 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
+      {issue && isArchived && (
+        <DeleteArchivedIssueModal
+          data={issue}
+          isOpen={deleteIssueModal}
+          handleClose={() => setDeleteIssueModal(false)}
+          onSubmit={handleDeleteIssue}
+        />
+      )}
       <div className="w-full !text-base">
-        <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
-          {children}
-        </div>
+        {children && (
+          <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
+            {children}
+          </div>
+        )}
 
         {issueId === peekIssueId && (
           <div
@@ -182,7 +174,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             }}
           >
             {/* header */}
-            <div className="relative flex items-center justify-between p-5 border-b border-custom-border-200">
+            <div
+              className={`relative flex items-center justify-between p-4 ${
+                currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <button onClick={removeRoutePeekId}>
                   <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
@@ -204,7 +200,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                     >
                       {peekOptions.map((mode) => (
                         <CustomSelect.Option key={mode.key} value={mode.key}>
-                          <div className="flex items-center gap-1.5">
+                          <div
+                            className={`flex items-center gap-1.5 ${
+                              currentMode.key === mode.key
+                                ? "text-custom-text-200"
+                                : "text-custom-text-400 hover:text-custom-text-200"
+                            }`}
+                          >
                             <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1 `} />
                             {mode.title}
                           </div>
@@ -216,36 +218,45 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               </div>
 
               <div className="flex items-center gap-4">
-                <Button
-                  size="sm"
-                  prependIcon={<Bell className="h-3 w-3" />}
-                  variant="outline-primary"
-                  onClick={() =>
-                    issueSubscription && issueSubscription.subscribed
-                      ? issueSubscriptionRemove
-                      : issueSubscriptionCreate
-                  }
-                >
-                  {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                </Button>
+                {issue?.created_by !== user?.id &&
+                  !issue?.assignees.includes(user?.id ?? "") &&
+                  !router.pathname.includes("[archivedIssueId]") && (
+                    <Button
+                      size="sm"
+                      prependIcon={<Bell className="h-3 w-3" />}
+                      variant="outline-primary"
+                      onClick={() =>
+                        issueSubscription && issueSubscription.subscribed
+                          ? issueSubscriptionRemove()
+                          : issueSubscriptionCreate()
+                      }
+                    >
+                      {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                    </Button>
+                  )}
                 <button onClick={handleCopyText}>
                   <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
                 </button>
-                <button onClick={() => setDeleteIssueModal(true)}>
-                  <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
-                </button>
+                {!disableUserActions && (
+                  <button onClick={() => setDeleteIssueModal(true)}>
+                    <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                  </button>
+                )}
               </div>
             </div>
 
             {/* content */}
-            <div className="w-full h-full overflow-hidden overflow-y-auto">
-              {issueDetailStore?.loader && !issue ? (
+            <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+              {isArchived && (
+                <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
+              )}
+              {isLoading && !issue ? (
                 <div className="text-center py-10">Loading...</div>
               ) : (
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 px-10 py-6">
+                      <div className="flex flex-col gap-3 py-5 px-8">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
@@ -256,7 +267,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueReactionRemove={issueReactionRemove}
                         />
 
-                        <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} user={user} />
+                        <PeekOverviewProperties
+                          issue={issue}
+                          issueUpdate={issueUpdate}
+                          disableUserActions={disableUserActions}
+                        />
 
                         <IssueComment
                           workspaceSlug={workspaceSlug}
@@ -269,6 +284,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issueCommentRemove={issueCommentRemove}
                           issueCommentReactionCreate={issueCommentReactionCreate}
                           issueCommentReactionRemove={issueCommentReactionRemove}
+                          showCommentAccessSpecifier={showCommentAccessSpecifier}
                         />
                       </div>
                     ) : (
@@ -284,8 +300,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             issueReactionRemove={issueReactionRemove}
                           />
 
-                          <div className="border-t border-custom-border-400" />
-
                           <IssueComment
                             workspaceSlug={workspaceSlug}
                             projectId={projectId}
@@ -297,10 +311,15 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                             issueCommentRemove={issueCommentRemove}
                             issueCommentReactionCreate={issueCommentReactionCreate}
                             issueCommentReactionRemove={issueCommentReactionRemove}
+                            showCommentAccessSpecifier={showCommentAccessSpecifier}
                           />
                         </div>
                         <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
-                          <PeekOverviewProperties issue={issue} issueUpdate={issueUpdate} user={user} />
+                          <PeekOverviewProperties
+                            issue={issue}
+                            issueUpdate={issueUpdate}
+                            disableUserActions={disableUserActions}
+                          />
                         </div>
                       </div>
                     )}

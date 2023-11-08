@@ -131,7 +131,7 @@ def track_parent(
                 else "",
                 field="parent",
                 project_id=project_id,
-                workspace=workspace_id,
+                workspace_id=workspace_id,
                 comment=f"updated the parent issue to",
                 old_identifier=old_parent.id if old_parent is not None else None,
                 new_identifier=new_parent.id if new_parent is not None else None,
@@ -334,9 +334,7 @@ def track_assignees(
     issue_activities,
     epoch,
 ):
-    requested_assignees = set(
-        [str(asg) for asg in requested_data.get("assignees", [])]
-    )
+    requested_assignees = set([str(asg) for asg in requested_data.get("assignees", [])])
     current_assignees = set([str(asg) for asg in current_instance.get("assignees", [])])
 
     added_assignees = requested_assignees - current_assignees
@@ -363,17 +361,19 @@ def track_assignees(
     for dropped_assignee in dropped_assginees:
         assignee = User.objects.get(pk=dropped_assignee)
         issue_activities.append(
-            issue_id=issue_id,
-            actor_id=actor_id,
-            verb="updated",
-            old_value=assignee.display_name,
-            new_value="",
-            field="assignees",
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment=f"removed assignee ",
-            old_identifier=assignee.id,
-            epoch=epoch,
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=assignee.display_name,
+                new_value="",
+                field="assignees",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"removed assignee ",
+                old_identifier=assignee.id,
+                epoch=epoch,
+            )
         )
 
 
@@ -418,36 +418,37 @@ def track_archive_at(
     issue_activities,
     epoch,
 ):
-    if requested_data.get("archived_at") is None:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"has restored the issue",
-                verb="updated",
-                actor_id=actor_id,
-                field="archived_at",
-                old_value="archive",
-                new_value="restore",
-                epoch=epoch,
+    if current_instance.get("archived_at") != requested_data.get("archived_at"):
+        if requested_data.get("archived_at") is None:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    comment="has restored the issue",
+                    verb="updated",
+                    actor_id=actor_id,
+                    field="archived_at",
+                    old_value="archive",
+                    new_value="restore",
+                    epoch=epoch,
+                )
             )
-        )
-    else:
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment=f"Plane has archived the issue",
-                verb="updated",
-                actor_id=actor_id,
-                field="archived_at",
-                old_value=None,
-                new_value="archive",
-                epoch=epoch,
+        else:
+            issue_activities.append(
+                IssueActivity(
+                    issue_id=issue_id,
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                    comment="Plane has archived the issue",
+                    verb="updated",
+                    actor_id=actor_id,
+                    field="archived_at",
+                    old_value=None,
+                    new_value="archive",
+                    epoch=epoch,
+                )
             )
-        )
 
 
 def track_closed_to(
@@ -536,7 +537,7 @@ def update_issue_activity(
     )
 
     for key in requested_data:
-        func = ISSUE_ACTIVITY_MAPPER.get(key, None)
+        func = ISSUE_ACTIVITY_MAPPER.get(key)
         if func is not None:
             func(
                 requested_data=requested_data,
@@ -690,6 +691,10 @@ def create_cycle_issue_activity(
         new_cycle = Cycle.objects.filter(
             pk=updated_record.get("new_cycle_id", None)
         ).first()
+        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
+        if issue:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
 
         issue_activities.append(
             IssueActivity(
@@ -712,6 +717,10 @@ def create_cycle_issue_activity(
         cycle = Cycle.objects.filter(
             pk=created_record.get("fields").get("cycle")
         ).first()
+        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
+        if issue:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
 
         issue_activities.append(
             IssueActivity(
@@ -746,22 +755,27 @@ def delete_cycle_issue_activity(
     )
 
     cycle_id = requested_data.get("cycle_id", "")
+    cycle_name = requested_data.get("cycle_name", "")
     cycle = Cycle.objects.filter(pk=cycle_id).first()
     issues = requested_data.get("issues")
 
     for issue in issues:
+        current_issue = Issue.objects.filter(pk=issue).first()
+        if issue:
+            current_issue.updated_at = timezone.now()
+            current_issue.save(update_fields=["updated_at"])
         issue_activities.append(
             IssueActivity(
                 issue_id=issue,
                 actor_id=actor_id,
                 verb="deleted",
-                old_value=cycle.name if cycle is not None else "",
+                old_value=cycle.name if cycle is not None else cycle_name,
                 new_value="",
                 field="cycles",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"removed this issue from {cycle.name if cycle is not None else None}",
-                old_identifier=cycle.id if cycle is not None else None,
+                comment=f"removed this issue from {cycle.name if cycle is not None else cycle_name}",
+                old_identifier=cycle_id if cycle_id is not None else None,
                 epoch=epoch,
             )
         )
@@ -793,6 +807,10 @@ def create_module_issue_activity(
         new_module = Module.objects.filter(
             pk=updated_record.get("new_module_id", None)
         ).first()
+        issue = Issue.objects.filter(pk=updated_record.get("issue_id")).first()
+        if issue:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
 
         issue_activities.append(
             IssueActivity(
@@ -815,6 +833,10 @@ def create_module_issue_activity(
         module = Module.objects.filter(
             pk=created_record.get("fields").get("module")
         ).first()
+        issue = Issue.objects.filter(pk=created_record.get("fields").get("issue")).first()
+        if issue:
+            issue.updated_at = timezone.now()
+            issue.save(update_fields=["updated_at"])
         issue_activities.append(
             IssueActivity(
                 issue_id=created_record.get("fields").get("issue"),
@@ -848,22 +870,27 @@ def delete_module_issue_activity(
     )
 
     module_id = requested_data.get("module_id", "")
+    module_name = requested_data.get("module_name", "")
     module = Module.objects.filter(pk=module_id).first()
     issues = requested_data.get("issues")
 
     for issue in issues:
+        current_issue = Issue.objects.filter(pk=issue).first()
+        if issue:
+            current_issue.updated_at = timezone.now()
+            current_issue.save(update_fields=["updated_at"])
         issue_activities.append(
             IssueActivity(
                 issue_id=issue,
                 actor_id=actor_id,
                 verb="deleted",
-                old_value=module.name if module is not None else "",
+                old_value=module.name if module is not None else module_name,
                 new_value="",
                 field="modules",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment=f"removed this issue from ",
-                old_identifier=module.id if module is not None else None,
+                comment=f"removed this issue from {module.name if module is not None else module_name}",
+                old_identifier=module_id if module_id is not None else None,
                 epoch=epoch,
             )
         )
@@ -1451,15 +1478,16 @@ def issue_activity(
         issue_activities = []
 
         project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.filter(pk=issue_id).first()
         workspace_id = project.workspace_id
 
-        if issue is not None:
-            try:
-                issue.updated_at = timezone.now()
-                issue.save(update_fields=["updated_at"])
-            except Exception as e:
-                pass
+        if issue_id is not None:
+            issue = Issue.objects.filter(pk=issue_id).first()
+            if issue:
+                try:
+                    issue.updated_at = timezone.now()
+                    issue.save(update_fields=["updated_at"])
+                except Exception as e:
+                    pass
 
         ACTIVITY_MAPPER = {
             "issue.activity.created": create_issue_activity,
@@ -1534,6 +1562,8 @@ def issue_activity(
                 IssueActivitySerializer(issue_activities_created, many=True).data,
                 cls=DjangoJSONEncoder,
             ),
+            requested_data=requested_data,
+            current_instance=current_instance,
         )
 
         return

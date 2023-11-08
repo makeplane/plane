@@ -1,17 +1,17 @@
 import React, { useCallback, useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Controller, UseFormWatch } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 import useUserIssueNotificationSubscription from "hooks/use-issue-notification-subscription";
 import useEstimateOption from "hooks/use-estimate-option";
 // services
 import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { LinkModal, LinksList } from "components/core";
 import {
@@ -37,7 +37,7 @@ import { ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { ICycle, IIssue, IIssueLink, linkDetails, IModule } from "types";
+import type { IIssue, IIssueLink, linkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
@@ -72,22 +72,19 @@ type Props = {
 const issueService = new IssueService();
 const moduleService = new ModuleService();
 
-export const IssueDetailsSidebar: React.FC<Props> = ({
-  control,
-  submitChanges,
-  issueDetail,
-  watch: watchIssue,
-  fieldsToShow = ["all"],
-  uneditable = false,
-}) => {
+export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
+  const { control, submitChanges, issueDetail, watch: watchIssue, fieldsToShow = ["all"], uneditable = false } = props;
+
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
+  const { user: userStore } = useMobxStore();
+  const user = userStore.currentUser;
+  const userRole = userStore.currentProjectRole;
+
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { user } = useUserAuth();
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -97,19 +94,17 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     issueId
   );
 
-  const { memberRole } = useProjectMyMembership();
-
   const { setToastAlert } = useToast();
 
   const handleCycleChange = useCallback(
-    (cycleDetails: ICycle) => {
-      if (!workspaceSlug || !projectId || !issueDetail) return;
+    (cycleId: string) => {
+      if (!workspaceSlug || !projectId || !issueDetail || !user) return;
 
       issueService
         .addIssueToCycle(
           workspaceSlug as string,
           projectId as string,
-          cycleDetails.id,
+          cycleId,
           {
             issues: [issueDetail.id],
           },
@@ -123,14 +118,14 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
   );
 
   const handleModuleChange = useCallback(
-    (moduleDetail: IModule) => {
-      if (!workspaceSlug || !projectId || !issueDetail) return;
+    (moduleId: string) => {
+      if (!workspaceSlug || !projectId || !issueDetail || !user) return;
 
       moduleService
         .addIssuesToModule(
           workspaceSlug as string,
           projectId as string,
-          moduleDetail.id,
+          moduleId,
           {
             issues: [issueDetail.id],
           },
@@ -262,7 +257,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
     setLinkModal(true);
   };
 
-  const isNotAllowed = memberRole.isGuest || memberRole.isViewer;
+  const isNotAllowed = userRole === 5 || userRole === 10;
 
   return (
     <>
@@ -341,7 +336,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <SidebarStateSelect
                             value={value}
                             onChange={(val: string) => submitChanges({ state: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={isNotAllowed || uneditable}
                           />
                         )}
                       />
@@ -362,7 +357,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <SidebarAssigneeSelect
                             value={value}
                             onChange={(val: string[]) => submitChanges({ assignees: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={isNotAllowed || uneditable}
                           />
                         )}
                       />
@@ -383,7 +378,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <SidebarPrioritySelect
                             value={value}
                             onChange={(val) => submitChanges({ priority: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={isNotAllowed || uneditable}
                           />
                         )}
                       />
@@ -404,7 +399,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                           <SidebarEstimateSelect
                             value={value}
                             onChange={(val: number | null) => submitChanges({ estimate_point: val })}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={isNotAllowed || uneditable}
                           />
                         )}
                       />
@@ -432,7 +427,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                               onChange(val);
                             }}
                             issueDetails={issueDetail}
-                            disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                            disabled={isNotAllowed || uneditable}
                           />
                         )}
                       />
@@ -457,7 +452,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={isNotAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
@@ -478,7 +473,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={isNotAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
@@ -496,7 +491,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={isNotAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
@@ -514,7 +509,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                    disabled={isNotAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
@@ -587,7 +582,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
                         handleCycleChange={handleCycleChange}
-                        disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                        disabled={isNotAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -602,7 +597,7 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
                         handleModuleChange={handleModuleChange}
-                        disabled={memberRole.isGuest || memberRole.isViewer || uneditable}
+                        disabled={isNotAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -650,7 +645,12 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
                     links={issueDetail.issue_link}
                     handleDeleteLink={handleDeleteLink}
                     handleEditLink={handleEditLink}
-                    userAuth={memberRole}
+                    userAuth={{
+                      isGuest: userRole === 5,
+                      isViewer: userRole === 10,
+                      isMember: userRole === 15,
+                      isOwner: userRole === 20,
+                    }}
                   />
                 ) : null}
               </div>
@@ -660,4 +660,4 @@ export const IssueDetailsSidebar: React.FC<Props> = ({
       </div>
     </>
   );
-};
+});

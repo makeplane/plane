@@ -1,9 +1,6 @@
-import React, { useCallback, useEffect } from "react";
-
+import React, { useCallback, useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
 // services
 import { IssueService } from "services/issue";
@@ -21,10 +18,9 @@ import { Loader } from "@plane/ui";
 import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { IIssue } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
-// helper
 
 const defaultValues: Partial<IIssue> = {
   description: "",
@@ -42,10 +38,10 @@ const defaultValues: Partial<IIssue> = {
 // services
 const issueService = new IssueService();
 
-const IssueDetailsPage: NextPage = () => {
+const IssueDetailsPage: NextPageWithLayout = () => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-  // console.log(workspaceSlug, "workspaceSlug")
 
   const { user } = useUserAuth();
 
@@ -111,7 +107,8 @@ const IssueDetailsPage: NextPage = () => {
   }, [issueDetails, reset, issueId]);
 
   return (
-    <AppLayout header={<ProjectIssueDetailsHeader />} withProjectWrapper>
+    <>
+      {" "}
       {error ? (
         <EmptyState
           image={emptyIssue}
@@ -152,6 +149,14 @@ const IssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
+    </>
+  );
+};
+
+IssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectIssueDetailsHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };

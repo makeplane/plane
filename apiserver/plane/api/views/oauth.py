@@ -11,7 +11,6 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework import exceptions
 from rest_framework.permissions import AllowAny
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from sentry_sdk import capture_exception
@@ -113,7 +112,7 @@ def get_user_data(access_token: str) -> dict:
         url="https://api.github.com/user/emails", headers=headers
     ).json()
 
-    [
+    _ = [
         user_data.update({"email": item.get("email")})
         for item in response
         if item.get("primary") is True
@@ -147,7 +146,7 @@ class OauthEndpoint(BaseAPIView):
                 data = get_user_data(access_token)
 
             email = data.get("email", None)
-            if email == None:
+            if email is None:
                 return Response(
                     {
                         "error": "Something went wrong. Please try again later or contact the support team."
@@ -158,7 +157,6 @@ class OauthEndpoint(BaseAPIView):
             if "@" in email:
                 user = User.objects.get(email=email)
                 email = data["email"]
-                channel = "email"
                 mobile_number = uuid.uuid4().hex
                 email_verified = True
             else:
@@ -182,7 +180,7 @@ class OauthEndpoint(BaseAPIView):
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
             user.last_login_ip = request.META.get("REMOTE_ADDR")
-            user.last_login_medium = f"oauth"
+            user.last_login_medium = "oauth"
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.is_email_verified = email_verified
             user.save()
@@ -233,7 +231,6 @@ class OauthEndpoint(BaseAPIView):
             if "@" in email:
                 email = data["email"]
                 mobile_number = uuid.uuid4().hex
-                channel = "email"
                 email_verified = True
             else:
                 return Response(

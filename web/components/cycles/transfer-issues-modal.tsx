@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
 // fetch-key
-import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
+import { INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
 import { ICycle } from "types";
 //helper
@@ -30,15 +29,12 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { params } = useIssuesView();
-
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
     await cycleService
       .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then(() => {
-        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
         setToastAlert({
           type: "success",
           title: "Issues transfered successfully",

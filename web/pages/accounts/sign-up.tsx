@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, ReactElement } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // next-themes
@@ -15,7 +15,8 @@ import { EmailSignUpForm } from "components/account";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
+
 type EmailPasswordFormValues = {
   email: string;
   password?: string;
@@ -25,7 +26,7 @@ type EmailPasswordFormValues = {
 // services
 const authService = new AuthService();
 
-const SignUp: NextPage = () => {
+const SignUpPage: NextPageWithLayout = () => {
   const router = useRouter();
 
   const { setToastAlert } = useToast();
@@ -66,25 +67,27 @@ const SignUp: NextPage = () => {
   }, [setTheme]);
 
   return (
-    <DefaultLayout>
-      <>
-        <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
-        <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
-          <div className="grid place-items-center bg-custom-background-100">
-            <div className="h-[30px] w-[30px]">
-              <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
-            </div>
+    <>
+      <div className="hidden sm:block sm:fixed border-r-[0.5px] border-custom-border-200 h-screen w-[0.5px] top-0 left-20 lg:left-32" />
+      <div className="fixed grid place-items-center bg-custom-background-100 sm:py-5 top-11 sm:top-12 left-7 sm:left-16 lg:left-28">
+        <div className="grid place-items-center bg-custom-background-100">
+          <div className="h-[30px] w-[30px]">
+            <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" />
           </div>
         </div>
-      </>
+      </div>
       <div className="grid place-items-center h-full w-full overflow-y-auto py-5 px-7">
         <div>
           <h1 className="text-2xl text-center font-">SignUp on Plane</h1>
           <EmailSignUpForm onSubmit={handleSignUp} />
         </div>
       </div>
-    </DefaultLayout>
+    </>
   );
 };
 
-export default SignUp;
+SignUpPage.getLayout = function getLayout(page: ReactElement) {
+  return <DefaultLayout>{page}</DefaultLayout>;
+};
+
+export default SignUpPage;

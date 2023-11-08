@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -15,7 +14,9 @@ type Props = {
   workspaces: IWorkspace[] | undefined;
 };
 
-export const Workspace: React.FC<Props> = ({ finishOnboarding, stepChange, updateLastWorkspace, user, workspaces }) => {
+export const Workspace: React.FC<Props> = (props) => {
+  const { finishOnboarding, stepChange, updateLastWorkspace, user, workspaces } = props;
+
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
