@@ -49,7 +49,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectMembers = projectId ? projectStore?.members?.[projectId] : undefined;
+  const workspaceMembers = workspaceSlug ? workspaceStore?.workspaceMembers : undefined;
 
   const fetchProjectMembers = () => {
     setIsLoading(true);
@@ -59,7 +59,13 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
         projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
-  const options = (projectMembers ?? [])?.map((member) => ({
+  const fetchWorkspaceMembers = () => {
+    setIsLoading(true);
+    if (workspaceSlug)
+      workspaceSlug && workspaceStore.fetchWorkspaceMembers(workspaceSlug).then(() => setIsLoading(false));
+  };
+
+  const options = (workspaceMembers ?? [])?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -78,7 +84,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
       tooltipHeading="Assignee"
       tooltipContent={
         value && value.length > 0
-          ? (projectMembers ? projectMembers : [])
+          ? (workspaceMembers ? workspaceMembers : [])
               ?.filter((m) => value.includes(m.member.display_name))
               .map((m) => m.member.display_name)
               .join(", ")
@@ -90,10 +96,8 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
-              const member = projectMembers?.find((m) => m.member.id === assigneeId)?.member;
-
+              const member = workspaceMembers?.find((m) => m.member.id === assigneeId)?.member;
               if (!member) return null;
-
               return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
             })}
           </AvatarGroup>
@@ -134,7 +138,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
-          onClick={() => !projectMembers && fetchProjectMembers()}
+          onClick={() => !workspaceMembers && fetchWorkspaceMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

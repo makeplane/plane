@@ -68,14 +68,14 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
 
   const handleUpdateIssue = useCallback(
     (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug || !globalViewId) return;
+      if (!workspaceSlug) return;
 
       const payload = {
         ...issue,
         ...data,
       };
 
-      globalViewIssuesStore.updateIssueStructure(globalViewId.toString(), payload);
+      globalViewIssuesStore.updateIssueStructure(type ?? globalViewId!.toString(), payload);
       issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
     },
     [globalViewId, globalViewIssuesStore, workspaceSlug, issueDetailStore]
