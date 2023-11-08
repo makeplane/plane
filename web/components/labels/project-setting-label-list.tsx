@@ -132,7 +132,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                       behavior: "smooth",
                     });
                   }}
-                  handleLabelDelete={() => setSelectDeleteLabel(label)}
+                  handleLabelDelete={(label:IIssueLabels) => setSelectDeleteLabel(label)}
                 />
               );
             }

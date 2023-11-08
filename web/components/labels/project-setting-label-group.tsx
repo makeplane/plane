@@ -15,7 +15,7 @@ import { IIssueLabels } from "types";
 type Props = {
   label: IIssueLabels;
   labelChildren: IIssueLabels[];
-  handleLabelDelete: () => void;
+  handleLabelDelete: (label: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
   addLabelToGroup: (parentLabel: IIssueLabels) => void;
 };
@@ -65,7 +65,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                     <span>Edit label</span>
                   </span>
                 </CustomMenu.MenuItem>
-                <CustomMenu.MenuItem onClick={handleLabelDelete}>
+                <CustomMenu.MenuItem onClick={()=>handleLabelDelete(label)}>
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-4 w-4" />
                     <span>Delete label</span>
@@ -131,7 +131,10 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                       </div>
 
                       <div className="flex items-center">
-                        <button className="flex items-center justify-start gap-2" onClick={handleLabelDelete}>
+                        <button
+                          className="flex items-center justify-start gap-2"
+                          onClick={() => handleLabelDelete(child)}
+                        >
                           <X className="h-[18px] w-[18px] text-custom-sidebar-text-400 flex-shrink-0" />
                         </button>
                       </div>
