@@ -1,7 +1,6 @@
 // next
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { PlusIcon } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -10,7 +9,7 @@ import { EmptyState } from "components/common";
 import emptyIssue from "public/empty-state/issue.svg";
 import emptyProject from "public/empty-state/project.svg";
 // icons
-import { Plus } from "lucide-react";
+import { Plus, PlusIcon } from "lucide-react";
 
 export const GlobalViewEmptyState: React.FC = observer(() => {
   const router = useRouter();
