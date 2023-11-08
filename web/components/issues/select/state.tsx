@@ -1,17 +1,12 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
 import { ProjectStateService } from "services/project";
 // ui
 import { CustomSearchSelect, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 // icons
 import { Plus } from "lucide-react";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // fetch keys
 import { STATES_LIST } from "constants/fetch-keys";
 
@@ -30,11 +25,10 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: stateGroups } = useSWR(
+  const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId) : null,
     workspaceSlug && projectId ? () => projectStateService.getStates(workspaceSlug as string, projectId) : null
   );
-  const states = getStatesList(stateGroups);
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -56,17 +50,15 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 text-custom-text-200">
           {selectedOption ? (
             <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
           ) : currentDefaultState ? (
             <StateGroupIcon stateGroup={currentDefaultState.group} color={currentDefaultState.color} />
           ) : (
-            <DoubleCircleIcon className="h-3.5 w-3.5 text-custom-text-200" />
+            <DoubleCircleIcon className="h-3 w-3" />
           )}
-          {selectedOption?.name
-            ? selectedOption.name
-            : currentDefaultState?.name ?? <span className="text-custom-text-200">State</span>}
+          {selectedOption?.name ? selectedOption.name : currentDefaultState?.name ?? <span>State</span>}
         </div>
       }
       footerOption={

@@ -1,10 +1,12 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -25,7 +27,6 @@ import { ActiveCycleProgressStats } from "components/cycles";
 import { ViewIssueLabel } from "components/issues";
 // icons
 import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
-
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -65,12 +66,12 @@ interface IActiveCycleDetails {
   projectId: string;
 }
 
-export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
+export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   const router = useRouter();
 
   const { workspaceSlug, projectId } = props;
 
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -117,12 +118,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
           <button
             type="button"
             className="text-custom-primary-100 text-sm outline-none"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "q",
-              });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
           >
             Create a new cycle
           </button>
@@ -485,4 +481,4 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       </div>
     </div>
   );
-};
+});

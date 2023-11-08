@@ -1,8 +1,10 @@
 # Environment Variables
+
 ​
-Environment variables are distributed in various files. Please refer them carefully. 
+Environment variables are distributed in various files. Please refer them carefully.
 
 ## {PROJECT_FOLDER}/.env
+
 File is available in the project root folder​
 
 ```
@@ -41,25 +43,37 @@ USE_MINIO=1
 # Nginx Configuration
 NGINX_PORT=80
 ```
+
 ​
+
 ## {PROJECT_FOLDER}/web/.env.example
+
 ​
+
 ```
 # Enable/Disable OAUTH - default 0 for selfhosted instance
 NEXT_PUBLIC_ENABLE_OAUTH=0
 # Public boards deploy URL
 NEXT_PUBLIC_DEPLOY_URL="http://localhost/spaces"
 ```
+
 ​
+
 ## {PROJECT_FOLDER}/spaces/.env.example
+
 ​
+
 ```
 # Flag to toggle OAuth
 NEXT_PUBLIC_ENABLE_OAUTH=0
 ```
+
 ​
+
 ## {PROJECT_FOLDER}/apiserver/.env
+
 ​
+
 ```
 # Backend
 # Debug value for api server use it as 0 for production use
@@ -126,7 +140,9 @@ ENABLE_SIGNUP="1"
 # Email Redirection URL
 WEB_URL="http://localhost"
 ```
+
 ## Updates​
+
 - The environment variable NEXT_PUBLIC_API_BASE_URL has been removed from both the web and space projects.
 - The naming convention for containers and images has been updated.
 - The plane-worker image will no longer be maintained, as it has been merged with plane-backend.

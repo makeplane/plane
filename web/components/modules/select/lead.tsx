@@ -50,9 +50,13 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
           ) : (
-            <UserCircle className="h-4 w-4 text-custom-text-200" />
+            <UserCircle className="h-3 w-3 text-custom-text-300" />
           )}
-          {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">Lead</span>}
+          {selectedOption ? (
+            selectedOption?.display_name
+          ) : (
+            <span className={`${selectedOption ? "text-custom-text-200" : "text-custom-text-300"}`}>Lead</span>
+          )}
         </div>
       }
       onChange={onChange}

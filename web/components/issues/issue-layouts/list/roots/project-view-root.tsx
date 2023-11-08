@@ -11,7 +11,12 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 export interface IViewListLayout {}
 
 export const ProjectViewListLayout: React.FC = observer(() => {
-  const { project: projectStore, issue: issueStore, issueFilter: issueFilterStore }: RootStore = useMobxStore();
+  const {
+    project: projectStore,
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+    projectState: projectStateStore,
+  }: RootStore = useMobxStore();
 
   const issues = issueStore?.getIssues;
 
@@ -23,12 +28,12 @@ export const ProjectViewListLayout: React.FC = observer(() => {
     issueStore.updateIssueStructure(group_by, null, issue);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.projectStates || null;
+  const projects = projectStateStore?.projectStates || null;
   const estimates = null;
 
   return null;

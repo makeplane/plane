@@ -32,9 +32,7 @@ export const BarGraph: React.FC<Props & TGraph & Omit<BarSvgProps<any>, "height"
       axisLeft={{
         tickSize: 0,
         tickPadding: 10,
-        tickValues: customYAxisTickValues
-          ? generateYAxisTickValues(customYAxisTickValues)
-          : undefined,
+        tickValues: customYAxisTickValues ? generateYAxisTickValues(customYAxisTickValues) : undefined,
       }}
       axisBottom={{
         tickSize: 0,

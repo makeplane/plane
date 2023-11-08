@@ -1,12 +1,17 @@
-import { ReactRenderer } from '@tiptap/react'
+import { ReactRenderer } from "@tiptap/react";
 import { Editor } from "@tiptap/core";
-import tippy from 'tippy.js'
+import tippy from "tippy.js";
 
-import MentionList from './MentionList'
-import { IMentionSuggestion } from '../../types/mention-suggestion';
+import MentionList from "./MentionList";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
 
 const Suggestion = (suggestions: IMentionSuggestion[]) => ({
-  items: ({ query }: { query: string }) => suggestions.filter(suggestion => suggestion.title.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5),
+  items: ({ query }: { query: string }) =>
+    suggestions
+      .filter((suggestion) =>
+        suggestion.title.toLowerCase().startsWith(query.toLowerCase()),
+      )
+      .slice(0, 5),
   render: () => {
     let reactRenderer: ReactRenderer | null = null;
     let popup: any | null = null;
@@ -30,7 +35,7 @@ const Suggestion = (suggestions: IMentionSuggestion[]) => ({
       },
 
       onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
-        reactRenderer?.updateProps(props)
+        reactRenderer?.updateProps(props);
 
         popup &&
           popup[0].setProps({
@@ -49,11 +54,10 @@ const Suggestion = (suggestions: IMentionSuggestion[]) => ({
       },
       onExit: () => {
         popup?.[0].destroy();
-        reactRenderer?.destroy()
+        reactRenderer?.destroy();
       },
-    }
+    };
   },
-})
-
+});
 
 export default Suggestion;

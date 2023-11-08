@@ -22,7 +22,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
 
-  const { moduleIssue: moduleIssueStore } = useMobxStore();
+  const { moduleIssue: moduleIssueStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -58,12 +58,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
           primaryButton={{
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            },
+            onClick: () => commandPaletteStore.toggleCreateIssueModal(true),
           }}
           secondaryButton={
             <Button

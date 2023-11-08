@@ -1,21 +1,20 @@
 import { useState } from "react";
-
-import useSWR, { mutate } from "swr";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
+import useSWR, { mutate } from "swr";
+import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { PageService } from "services/page.service";
 import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 // components
 import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
-// ui
 import { EmptyState } from "components/common";
+// ui
 import { Loader } from "@plane/ui";
-// icons
-import { Plus } from "lucide-react";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // types
@@ -37,17 +36,19 @@ type Props = {
 const pageService = new PageService();
 const projectService = new ProjectService();
 
-export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
 
-  const { user } = useUserAuth();
+  const { user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const user = userStore.currentUser ?? undefined;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -163,7 +164,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   };
 
   const partialUpdatePage = (page: IPage, formData: Partial<IPage>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !user) return;
 
     mutate<IPage[]>(
       ALL_PAGES_LIST(projectId.toString()),
@@ -264,12 +265,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               primaryButton={{
                 icon: <Plus className="h-4 w-4" />,
                 text: "New Page",
-                onClick: () => {
-                  const e = new KeyboardEvent("keydown", {
-                    key: "d",
-                  });
-                  document.dispatchEvent(e);
-                },
+                onClick: () => commandPaletteStore.toggleCreatePageModal(true),
               }}
             />
           )}
@@ -294,4 +290,4 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       )}
     </>
   );
-};
+});

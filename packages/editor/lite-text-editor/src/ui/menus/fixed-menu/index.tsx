@@ -14,8 +14,8 @@ import {
   TableItem,
   UnderLineItem,
 } from "@plane/editor-core";
-import { Tooltip } from "../../tooltip";
-import { UploadImage } from "../..";
+import { Tooltip } from "@plane/ui";
+import { UploadImage } from "../../";
 
 export interface BubbleMenuItem {
   name: string;
