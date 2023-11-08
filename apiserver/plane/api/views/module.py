@@ -55,7 +55,6 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        order_by = self.request.GET.get("order_by", "sort_order")
 
         subquery = ModuleFavorite.objects.filter(
             user=self.request.user,
@@ -138,7 +137,7 @@ class ModuleViewSet(BaseViewSet):
                     ),
                 )
             )
-            .order_by(order_by, "name")
+            .order_by("-is_favorite","-created_at")
         )
 
     def create(self, request, slug, project_id):
