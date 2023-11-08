@@ -73,19 +73,28 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
+  const getTooltipContent = (): string => {
+    if (!value || value.length === 0) return "No Assignee";
+
+    if (Array.isArray(value)) {
+      const assignees = projectMembers?.filter((m) => value.includes(m.member.id));
+
+      if (!assignees || assignees.length === 0) return "No Assignee";
+
+      if (assignees.length === 1) {
+        return "1 assignee";
+      } else return `${assignees.length} assignees`;
+    }
+
+    const assignee = projectMembers?.find((m) => m.member.id === value)?.member;
+
+    if (!assignee) return "No Assignee";
+
+    return "1 assignee";
+  };
+
   const label = (
-    <Tooltip
-      tooltipHeading="Assignee"
-      tooltipContent={
-        value && value.length > 0
-          ? (projectMembers ? projectMembers : [])
-              ?.filter((m) => value.includes(m.member.display_name))
-              .map((m) => m.member.display_name)
-              .join(", ")
-          : "No Assignee"
-      }
-      position="top"
-    >
+    <Tooltip tooltipHeading="Assignee" tooltipContent={getTooltipContent()} position="top">
       <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
