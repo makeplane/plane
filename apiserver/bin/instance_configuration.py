@@ -36,11 +36,13 @@ def load_config():
     }
 
     for key, value in config_keys.items():
-        obj, created = InstanceConfiguration.objects.update_or_create(
-            key=key, value=value
+        obj, created = InstanceConfiguration.objects.get_or_create(
+            key=key
         )
-        action = "Created" if created else "Updated"
-        print(f"{action} {key} with value from environment variable.")
+        obj.value = value
+        obj.save()
+
+        print(f"{key} loaded with value from environment variable.")
 
 
 if __name__ == "__main__":
