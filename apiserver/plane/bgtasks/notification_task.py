@@ -1,9 +1,6 @@
 # Python imports
 import json
 
-# Django imports
-from django.utils import timezone
-
 # Module imports
 from plane.db.models import (
     IssueMention,
@@ -29,13 +26,12 @@ def update_mentions_for_issue(issue, project, new_mentions, removed_mention):
     aggregated_issue_mentions = []
 
     for mention_id in new_mentions:
-        mentioned_user = User.objects.get(pk=mention_id)
         aggregated_issue_mentions.append(
             IssueMention(
-                mention=mentioned_user,
+                mention_id=mention_id,
                 issue=issue,
                 project=project,
-                workspace=project.workspace
+                workspace_id=project.workspace_id
             )
         )
 
@@ -89,22 +85,22 @@ def extract_mentions_as_subscribers(project_id, issue_id, mentions):
         # If the particular mention has not already been subscribed to the issue, he must be sent the mentioned notification
         if not IssueSubscriber.objects.filter(
             issue_id=issue_id,
-            subscriber=mention_id,
-            project=project_id,
+            subscriber_id=mention_id,
+            project_id=project_id,
         ).exists() and not IssueAssignee.objects.filter(
             project_id=project_id, issue_id=issue_id,
-            assignee=mention_id
+            assignee_id=mention_id
+        ).exists() and not Issue.objects.filter(
+            project_id=project_id, pk=issue_id, created_by_id=mention_id
         ).exists():
-            mentioned_user = User.objects.get(pk=mention_id)
 
             project = Project.objects.get(pk=project_id)
-            issue = Issue.objects.get(pk=issue_id)
 
             bulk_mention_subscribers.append(IssueSubscriber(
-                workspace=project.workspace,
-                project=project,
-                issue=issue,
-                subscriber=mentioned_user,
+                workspace_id=project.workspace_id,
+                project_id=project_id,
+                issue_id=issue_id,
+                subscriber_id=mention_id,
             ))
     return bulk_mention_subscribers
 
@@ -155,7 +151,7 @@ def get_new_comment_mentions(new_value, old_value):
     return new_mentions
 
 
-def createMentionNotification(project, notication_comment, issue, actor_id, mention_id, issue_id, activity):
+def createMentionNotification(project, notification_comment, issue, actor_id, mention_id, issue_id, activity):
     return Notification(
         workspace=project.workspace,
         sender="in_app:issue_activities:mention",
@@ -164,7 +160,7 @@ def createMentionNotification(project, notication_comment, issue, actor_id, ment
         entity_identifier=issue_id,
         entity_name="issue",
         project=project,
-        message=notication_comment,
+        message=notification_comment,
         data={
             "issue": {
                 "id": str(issue_id),
@@ -269,7 +265,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
 
         issue = Issue.objects.filter(pk=issue_id).first()
 
-        if (str(issue.created_by_id) != str(actor_id)):
+        if (issue.created_by_id is not None and str(issue.created_by_id) != str(actor_id)):
             issue_subscribers = issue_subscribers + [issue.created_by_id]
 
         if subscriber:
@@ -345,7 +341,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                     notification = createMentionNotification(
                         project=project,
                         issue=issue,
-                        notication_comment=f"{actor.display_name} has mentioned you in a comment in issue {issue.name}",
+                        notification_comment=f"{actor.display_name} has mentioned you in a comment in issue {issue.name}",
                         actor_id=actor_id,
                         mention_id=mention_id,
                         issue_id=issue_id,
@@ -396,7 +392,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                         notification = createMentionNotification(
                             project=project,
                             issue=issue,
-                            notication_comment=f"You have been mentioned in the issue {issue.name}",
+                            notification_comment=f"You have been mentioned in the issue {issue.name}",
                             actor_id=actor_id,
                             mention_id=mention_id,
                             issue_id=issue_id,
