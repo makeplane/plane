@@ -49,7 +49,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   );
 
   // derived values
-  const issueLabels = projectStore.labels?.[projectId?.toString()!] ?? null;
+  const projectLabels = projectStore.projectLabels;
 
   const newLabel = () => {
     setIsUpdating(false);
@@ -99,9 +99,9 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
 
         {/* labels */}
-        {issueLabels &&
-          issueLabels.map((label) => {
-            const children = issueLabels?.filter((l) => l.parent === label.id);
+        {projectLabels &&
+          projectLabels.map((label) => {
+            const children = projectLabels?.filter((l) => l.parent === label.id);
 
             if (children && children.length === 0) {
               if (!label.parent)
@@ -139,7 +139,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           })}
 
         {/* loading state */}
-        {!issueLabels && (
+        {!projectLabels && (
           <Loader className="space-y-5">
             <Loader.Item height="42px" />
             <Loader.Item height="42px" />
@@ -149,7 +149,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         )}
 
         {/* empty state */}
-        {issueLabels && issueLabels.length === 0 && (
+        {projectLabels && projectLabels.length === 0 && (
           <EmptyState
             title="No labels yet"
             description="Create labels to help organize and filter issues in you project"
