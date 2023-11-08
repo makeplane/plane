@@ -93,7 +93,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   });
 
   const label = (
-    <div className="overflow-hidden flex flex-wrap items-center gap-2 text-custom-text-200 w-full">
+    <div className="overflow-hidden flex flex-wrap items-center h-5 gap-2 text-custom-text-200 w-full">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
