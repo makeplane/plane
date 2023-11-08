@@ -200,7 +200,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 value={value}
                 placeholder="Enter project description"
                 onChange={onChange}
-                className="min-h-[102px] text-sm"
+                className="min-h-[102px] text-sm font-medium"
                 hasError={Boolean(errors?.description)}
                 disabled={!isAdmin}
               />
@@ -236,7 +236,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   ref={ref}
                   hasError={Boolean(errors.identifier)}
                   placeholder="Enter identifier"
-                  className="w-full"
+                  className="w-full font-medium"
                   disabled={!isAdmin}
                 />
               )}
@@ -253,7 +253,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   value={value}
                   onChange={onChange}
                   label={selectedNetwork?.label ?? "Select network"}
-                  className="!border-custom-border-200 !shadow-none"
+                  className="!border-custom-border-200 !shadow-none font-medium"
                   input
                   disabled={!isAdmin}
                   optionsClassName="w-full"

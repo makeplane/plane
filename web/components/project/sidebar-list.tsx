@@ -19,17 +19,17 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectSidebarList: FC = observer(() => {
-  const { theme: themeStore, project: projectStore } = useMobxStore();
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   // states
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const { theme: themeStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
   // toast
   const { setToastAlert } = useToast();
@@ -254,12 +254,7 @@ export const ProjectSidebarList: FC = observer(() => {
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
           >
             <Plus className="h-5 w-5" />
             {!isCollapsed && "Add Project"}

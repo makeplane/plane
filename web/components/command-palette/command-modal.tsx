@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 import {
   FileText,
   FolderPlus,
@@ -16,12 +17,13 @@ import {
   UserMinus2,
   UserPlus2,
 } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
 // hooks
 import useDebounce from "hooks/use-debounce";
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -61,11 +63,8 @@ type Props = {
 const workspaceService = new WorkspaceService();
 const issueService = new IssueService();
 
-export const CommandModal: React.FC<Props> = (props) => {
+export const CommandModal: React.FC<Props> = observer((props) => {
   const { deleteIssue, isPaletteOpen, closePalette } = props;
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
   // states
   const [placeholder, setPlaceholder] = useState("Type a command or search...");
   const [resultsCount, setResultsCount] = useState(0);
@@ -86,13 +85,18 @@ export const CommandModal: React.FC<Props> = (props) => {
   const [isWorkspaceLevel, setIsWorkspaceLevel] = useState(false);
   const [pages, setPages] = useState<string[]>([]);
 
+  const { user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const user = userStore.currentUser ?? undefined;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, projectId, issueId } = router.query;
+
   const page = pages[pages.length - 1];
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { setToastAlert } = useToast();
-
-  const { user } = useUser();
 
   const { data: issueDetails } = useSWR(
     workspaceSlug && projectId && issueId ? ISSUE_DETAILS(issueId as string) : null,
@@ -468,10 +472,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                           <Command.Item
                             onSelect={() => {
                               closePalette();
-                              const e = new KeyboardEvent("keydown", {
-                                key: "c",
-                              });
-                              document.dispatchEvent(e);
+                              commandPaletteStore.toggleCreateIssueModal(true);
                             }}
                             className="focus:bg-custom-background-80"
                           >
@@ -488,10 +489,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                             <Command.Item
                               onSelect={() => {
                                 closePalette();
-                                const e = new KeyboardEvent("keydown", {
-                                  key: "p",
-                                });
-                                document.dispatchEvent(e);
+                                commandPaletteStore.toggleCreateProjectModal(true);
                               }}
                               className="focus:outline-none"
                             >
@@ -510,10 +508,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
-                                  const e = new KeyboardEvent("keydown", {
-                                    key: "q",
-                                  });
-                                  document.dispatchEvent(e);
+                                  commandPaletteStore.toggleCreateCycleModal(true);
                                 }}
                                 className="focus:outline-none"
                               >
@@ -528,10 +523,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
-                                  const e = new KeyboardEvent("keydown", {
-                                    key: "m",
-                                  });
-                                  document.dispatchEvent(e);
+                                  commandPaletteStore.toggleCreateModuleModal(true);
                                 }}
                                 className="focus:outline-none"
                               >
@@ -546,10 +538,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
-                                  const e = new KeyboardEvent("keydown", {
-                                    key: "v",
-                                  });
-                                  document.dispatchEvent(e);
+                                  commandPaletteStore.toggleCreateViewModal(true);
                                 }}
                                 className="focus:outline-none"
                               >
@@ -564,10 +553,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
-                                  const e = new KeyboardEvent("keydown", {
-                                    key: "d",
-                                  });
-                                  document.dispatchEvent(e);
+                                  commandPaletteStore.toggleCreatePageModal(true);
                                 }}
                                 className="focus:outline-none"
                               >
@@ -621,10 +607,7 @@ export const CommandModal: React.FC<Props> = (props) => {
                           <Command.Item
                             onSelect={() => {
                               closePalette();
-                              const e = new KeyboardEvent("keydown", {
-                                key: "h",
-                              });
-                              document.dispatchEvent(e);
+                              commandPaletteStore.toggleShortcutModal(true);
                             }}
                             className="focus:outline-none"
                           >
@@ -762,4 +745,4 @@ export const CommandModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

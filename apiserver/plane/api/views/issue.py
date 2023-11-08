@@ -2230,7 +2230,7 @@ class IssueDraftViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         current_instance = json.dumps(
-            IssueSerializer(current_instance).data, cls=DjangoJSONEncoder
+            IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         issue.delete()
         issue_activity.delay(

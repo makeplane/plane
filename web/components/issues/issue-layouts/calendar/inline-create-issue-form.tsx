@@ -1,55 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-
-// store
 import { observer } from "mobx-react-lite";
+// store
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
-// constants
-import { createIssuePayload } from "constants/issue";
-
+// helpers
+import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
-
 // types
 import { IIssue } from "types";
 
 type Props = {
   groupId?: string;
-  dependencies?: any[];
   prePopulatedData?: Partial<IIssue>;
   onSuccess?: (data: IIssue) => Promise<void> | void;
-};
-
-const useCheckIfThereIsSpaceOnRight = (ref: React.RefObject<HTMLDivElement>, deps: any[]) => {
-  const [isThereSpaceOnRight, setIsThereSpaceOnRight] = useState(true);
-
-  const router = useRouter();
-  const { moduleId, cycleId, viewId } = router.query;
-
-  const container = document.getElementById(`calendar-view-${cycleId ?? moduleId ?? viewId}`);
-
-  useEffect(() => {
-    if (!ref.current) return;
-
-    const { right } = ref.current.getBoundingClientRect();
-
-    const width = right;
-
-    const innerWidth = container?.getBoundingClientRect().width ?? window.innerWidth;
-
-    if (width > innerWidth) setIsThereSpaceOnRight(false);
-    else setIsThereSpaceOnRight(true);
-  }, [ref, deps, container]);
-
-  return isThereSpaceOnRight;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -80,7 +50,7 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData, dependencies = [], groupId } = props;
+  const { prePopulatedData, groupId } = props;
 
   // router
   const router = useRouter();
@@ -134,8 +104,6 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
       });
     });
   }, [errors, setToastAlert]);
-
-  const isSpaceOnRight = useCheckIfThereIsSpaceOnRight(ref, dependencies);
 
   const onSubmitHandler = async (formData: IIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
