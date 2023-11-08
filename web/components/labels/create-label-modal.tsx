@@ -15,6 +15,7 @@ import { ChevronDown } from "lucide-react";
 import type { IIssueLabels, IState } from "types";
 // constants
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
+import useToast from "hooks/use-toast";
 
 // types
 type Props = {
@@ -58,6 +59,8 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset(defaultValues);
   };
 
+  const { setToastAlert } = useToast();
+
   const onSubmit = async (formData: IIssueLabels) => {
     if (!workspaceSlug) return;
 
@@ -68,7 +71,12 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
         if (onSuccess) onSuccess(res);
       })
       .catch((error) => {
-        console.log(error);
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: error?.error ?? "Error while adding the label",
+        });
+        reset(formData);
       });
   };
 

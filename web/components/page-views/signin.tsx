@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -8,7 +7,6 @@ import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { AuthService } from "services/auth.service";
-import { AppConfigService } from "services/app_config.service";
 // components
 import {
   GoogleLoginButton,
@@ -24,12 +22,12 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import { IUser, IUserSettings } from "types";
 
-const appConfigService = new AppConfigService();
 const authService = new AuthService();
 
 export const SignInView = observer(() => {
   const {
     user: { fetchCurrentUser, fetchCurrentUserSettings },
+    appConfig: { envConfig },
   } = useMobxStore();
   // router
   const router = useRouter();
@@ -38,12 +36,16 @@ export const SignInView = observer(() => {
   const [isLoading, setLoading] = useState(false);
   // toast
   const { setToastAlert } = useToast();
-  // fetch app config
-  const { data, error: appConfigError } = useSWR("APP_CONFIG", () => appConfigService.envConfig());
   // computed
   const enableEmailPassword =
-    data &&
-    (data?.email_password_login || !(data?.email_password_login || data?.magic_login || data?.google || data?.github));
+    envConfig &&
+    (envConfig?.email_password_login ||
+      !(
+        envConfig?.email_password_login ||
+        envConfig?.magic_login ||
+        envConfig?.google_client_id ||
+        envConfig?.github_client_id
+      ));
 
   const handleLoginRedirection = useCallback(
     (user: IUser) => {
@@ -114,11 +116,11 @@ export const SignInView = observer(() => {
   const handleGitHubSignIn = async (credential: string) => {
     try {
       setLoading(true);
-      if (data && data.github && credential) {
+      if (envConfig && envConfig.github_client_id && credential) {
         const socialAuthPayload = {
           medium: "github",
           credential,
-          clientId: data.github,
+          clientId: envConfig.github_client_id,
         };
         const response = await authService.socialAuth(socialAuthPayload);
         if (response) {
@@ -195,7 +197,7 @@ export const SignInView = observer(() => {
                 Sign in to Plane
               </h1>
 
-              {!data && !appConfigError ? (
+              {!envConfig ? (
                 <div className="pt-10 w-ful">
                   <Loader className="space-y-4 w-full pb-4">
                     <Loader.Item height="46px" width="360px" />
@@ -211,7 +213,7 @@ export const SignInView = observer(() => {
                 <>
                   <>
                     {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
-                    {data?.magic_login && (
+                    {envConfig?.magic_login && (
                       <div className="flex flex-col divide-y divide-custom-border-200">
                         <div className="pb-7">
                           <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
@@ -219,8 +221,12 @@ export const SignInView = observer(() => {
                       </div>
                     )}
                     <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
-                      {data?.google && <GoogleLoginButton clientId={data?.google} handleSignIn={handleGoogleSignIn} />}
-                      {data?.github && <GithubLoginButton clientId={data?.github} handleSignIn={handleGitHubSignIn} />}
+                      {envConfig?.google_client_id && (
+                        <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
+                      )}
+                      {envConfig?.github_client_id && (
+                        <GithubLoginButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
+                      )}
                     </div>
                   </>
                   <p className="pt-16 text-custom-text-200 text-sm text-center">
