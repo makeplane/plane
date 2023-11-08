@@ -4,7 +4,7 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
-
+from plane.db.mixins import AuditModel
 
 class Instance(BaseModel):
     instance_id = models.CharField(max_length=25, unique=True)
@@ -27,3 +27,16 @@ class Instance(BaseModel):
         verbose_name_plural = "Instances"
         db_table = "instances"
         ordering = ("-created_at",)
+
+
+
+class InstanceConfiguration(AuditModel):
+    key = models.CharField(max_length=100, unique=True)
+    value = models.TextField()
+
+    class Meta:
+        verbose_name = "Instance Configuration"
+        verbose_name_plural = "Instance Configurations"
+        db_table = "instance_configurations"
+        ordering = ("-created_at",)
+

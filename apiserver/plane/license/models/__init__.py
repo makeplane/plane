@@ -1,1 +1,1 @@
-from .instance import Instance
+from .instance import Instance, InstanceConfiguration
