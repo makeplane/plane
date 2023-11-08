@@ -1,23 +1,26 @@
 import { useRef, useState } from "react";
-
 import { useRouter } from "next/router";
 
-const useIntegrationPopup = (provider: string | undefined, stateParams?: string) => {
+const useIntegrationPopup = ({
+  provider,
+  stateParams,
+  github_app_name,
+  slack_client_id,
+}: {
+  provider: string | undefined;
+  stateParams?: string;
+  github_app_name?: string;
+  slack_client_id?: string;
+}) => {
   const [authLoader, setAuthLoader] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const providerUrls: { [key: string]: string } = {
-    github: `https://github.com/apps/${
-      process.env.NEXT_PUBLIC_GITHUB_APP_NAME
-    }/installations/new?state=${workspaceSlug?.toString()}`,
-    slack: `https://slack.com/oauth/v2/authorize?scope=chat:write,im:history,im:write,links:read,links:write,users:read,users:read.email&amp;user_scope=&amp;&client_id=${
-      process.env.NEXT_PUBLIC_SLACK_CLIENT_ID
-    }&state=${workspaceSlug?.toString()}`,
-    slackChannel: `https://slack.com/oauth/v2/authorize?scope=incoming-webhook&client_id=${
-      process.env.NEXT_PUBLIC_SLACK_CLIENT_ID
-    }&state=${workspaceSlug?.toString()},${projectId?.toString()}${
+    github: `https://github.com/apps/${github_app_name}/installations/new?state=${workspaceSlug?.toString()}`,
+    slack: `https://slack.com/oauth/v2/authorize?scope=chat:write,im:history,im:write,links:read,links:write,users:read,users:read.email&amp;user_scope=&amp;&client_id=${slack_client_id}&state=${workspaceSlug?.toString()}`,
+    slackChannel: `https://slack.com/oauth/v2/authorize?scope=incoming-webhook&client_id=${slack_client_id}&state=${workspaceSlug?.toString()},${projectId?.toString()}${
       stateParams ? "," + stateParams : ""
     }`,
   };

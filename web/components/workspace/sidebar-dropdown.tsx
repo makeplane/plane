@@ -90,8 +90,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
 
   return (
     <div className="flex items-center gap-2 px-4 pt-4">
-      <Menu as="div" className="relative col-span-4 text-left flex-grow truncate">
-        <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full truncate">
+      <Menu as="div" className="relative col-span-4 text-left flex-grow h-full truncate">
+        <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full h-full truncate">
           <div
             className={`flex items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 truncate ${
               themeStore.sidebarCollapsed ? "justify-center" : ""
@@ -227,7 +227,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!themeStore.sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar name={user?.display_name} src={user?.avatar} size={32} shape="square" />
+            <Avatar name={user?.display_name} src={user?.avatar} size={30} shape="square" className="!text-base" />
           </Menu.Button>
 
           <Transition

@@ -174,7 +174,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             }}
           >
             {/* header */}
-            <div className="relative flex items-center justify-between p-5 border-b border-custom-border-200">
+            <div
+              className={`relative flex items-center justify-between p-4 ${
+                currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <button onClick={removeRoutePeekId}>
                   <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
@@ -214,20 +218,22 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               </div>
 
               <div className="flex items-center gap-4">
-                {!isArchived && (
-                  <Button
-                    size="sm"
-                    prependIcon={<Bell className="h-3 w-3" />}
-                    variant="outline-primary"
-                    onClick={() =>
-                      issueSubscription && issueSubscription.subscribed
-                        ? issueSubscriptionRemove
-                        : issueSubscriptionCreate
-                    }
-                  >
-                    {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                  </Button>
-                )}
+                {issue?.created_by !== user?.id &&
+                  !issue?.assignees.includes(user?.id ?? "") &&
+                  !router.pathname.includes("[archivedIssueId]") && (
+                    <Button
+                      size="sm"
+                      prependIcon={<Bell className="h-3 w-3" />}
+                      variant="outline-primary"
+                      onClick={() =>
+                        issueSubscription && issueSubscription.subscribed
+                          ? issueSubscriptionRemove()
+                          : issueSubscriptionCreate()
+                      }
+                    >
+                      {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                    </Button>
+                  )}
                 <button onClick={handleCopyText}>
                   <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
                 </button>
@@ -250,7 +256,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 py-6 px-8">
+                      <div className="flex flex-col gap-3 py-5 px-8">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}

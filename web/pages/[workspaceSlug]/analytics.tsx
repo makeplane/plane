@@ -28,7 +28,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, user: userStore } = useMobxStore();
+  const { project: projectStore, user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug?.toString()] : null;
@@ -96,12 +96,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
               text: "New Project",
-              onClick: () => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "p",
-                });
-                document.dispatchEvent(e);
-              },
+              onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
             }}
           />
         </>

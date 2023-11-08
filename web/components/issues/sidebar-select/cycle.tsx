@@ -79,17 +79,17 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
           <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}>
             <button
               type="button"
-              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex ${
+              className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex items-center ${
                 disabled ? "cursor-not-allowed" : ""
-              }`}
+              } max-w-[10rem]`}
             >
               <span
                 className={`flex items-center gap-1.5 truncate ${
                   issueCycle ? "text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
-                {issueCycle && <ContrastIcon className="h-3.5 w-3.5" />}
-                {issueCycle ? issueCycle.cycle_detail.name : "No cycle"}
+                <span className="flex-shrink-0">{issueCycle && <ContrastIcon className="h-3.5 w-3.5" />}</span>
+                <span className="truncate">{issueCycle ? issueCycle.cycle_detail.name : "No cycle"}</span>
               </span>
             </button>
           </Tooltip>

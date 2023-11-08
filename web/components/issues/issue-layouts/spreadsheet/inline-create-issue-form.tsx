@@ -1,23 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-
+import { observer } from "mobx-react-lite";
+import { PlusIcon } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
 // store
-import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
-// constants
-import { createIssuePayload } from "constants/issue";
-
+// helpers
+import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { IIssue } from "types";
-import { PlusIcon } from "lucide-react";
 
 type Props = {
   groupId?: string;
