@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import type { FieldError } from "react-hook-form";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // popper js
@@ -15,6 +16,7 @@ import { Check, Clipboard, Search } from "lucide-react";
 export interface IssueProjectSelectProps {
   value: string;
   onChange: (value: string) => void;
+  error?: FieldError;
 }
 
 export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((props) => {

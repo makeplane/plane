@@ -272,9 +272,13 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               <Controller
                 control={control}
                 name="project"
-                render={({ field: { value, onChange } }) => (
+                rules={{
+                  required: true,
+                }}
+                render={({ field: { value, onChange }, fieldState: { error } }) => (
                   <IssueProjectSelect
                     value={value}
+                    error={error}
                     onChange={(val: string) => {
                       onChange(val);
                       setActiveProject(val);
