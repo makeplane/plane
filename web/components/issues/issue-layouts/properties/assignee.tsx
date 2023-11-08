@@ -97,10 +97,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
               const member = workspaceMembers?.find((m) => m.member.id === assigneeId)?.member;
-
-              console.log("member : " + member);
               if (!member) return null;
-
               return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
             })}
           </AvatarGroup>
