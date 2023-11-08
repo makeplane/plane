@@ -32,7 +32,7 @@ class Instance(BaseModel):
 
 class InstanceConfiguration(AuditModel):
     key = models.CharField(max_length=100, unique=True)
-    value = models.TextField()
+    value = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name = "Instance Configuration"
