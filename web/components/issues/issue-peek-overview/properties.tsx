@@ -255,7 +255,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 placeholder="Start date"
                 value={issue.start_date}
                 onChange={handleStartDate}
-                className="bg-custom-background-80 border-none !px-2.5 !py-0.5"
+                className="bg-custom-background-80 !rounded border-none !px-2.5 !py-0.5"
                 maxDate={maxDate ?? undefined}
                 disabled={disableUserActions}
               />
@@ -273,7 +273,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 placeholder="Due date"
                 value={issue.target_date}
                 onChange={handleTargetDate}
-                className="bg-custom-background-80 border-none !px-2.5 !py-0.5"
+                className="bg-custom-background-80 !rounded border-none !px-2.5 !py-0.5"
                 minDate={minDate ?? undefined}
                 disabled={disableUserActions}
               />
