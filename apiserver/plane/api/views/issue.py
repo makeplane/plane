@@ -403,9 +403,9 @@ class IssueListGroupedEndpoint(BaseAPIView):
         )
 
         issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        grouped_results = group_results(issues, "id", False)
+        issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(
-            grouped_results,
+            issue_dict,
             status=status.HTTP_200_OK,
         )
 
