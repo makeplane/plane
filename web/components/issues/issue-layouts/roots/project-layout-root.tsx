@@ -32,10 +32,6 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     }
   );
 
-  console.log("--");
-  console.log("isLoading -- -->", isLoading);
-  console.log("--");
-
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   const issueCount = issueStore.getIssuesCount;

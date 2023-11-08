@@ -190,7 +190,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <div className="flex flex-col gap-5 py-5 w-full">
           {/* state */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
               <p>State</p>
             </div>
@@ -201,7 +201,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* assignee */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
@@ -216,7 +216,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* priority */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
@@ -231,7 +231,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* estimate */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <Triangle className="h-4 w-4 flex-shrink-0 " />
               <p>Estimate</p>
             </div>
@@ -246,7 +246,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* start date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Start date</p>
             </div>
@@ -264,7 +264,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* due date */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Due date</p>
             </div>
@@ -282,7 +282,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* parent */}
           <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <User2 className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
@@ -295,8 +295,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         <span className="border-t border-custom-border-200" />
 
         <div className="flex flex-col gap-5 py-5 w-full">
-          <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40 text-sm">
+          <div className="flex items-center gap-2 w-full">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <ContrastIcon className="h-4 w-4 flex-shrink-0" />
               <p>Cycle</p>
             </div>
@@ -309,8 +309,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-80">
-            <div className="flex items-center gap-2 w-40 text-sm">
+          <div className="flex items-center gap-2 w-full">
+            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <p>Module</p>
             </div>

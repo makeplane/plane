@@ -18,6 +18,7 @@ import { Plus, X } from "lucide-react";
 import { IIssue, IIssueLabels } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import useToast from "hooks/use-toast";
 
 type Props = {
   issueDetails: IIssue | undefined;
@@ -44,6 +45,9 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
   const router = useRouter();
+
+  const { setToastAlert } = useToast();
+
   const { workspaceSlug, projectId } = router.query;
 
   const {
@@ -79,6 +83,14 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
 
         setCreateLabelForm(false);
+      })
+      .catch((error) => {
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: error?.error ?? "Error while adding the label",
+        });
+        reset(formData);
       });
   };
 

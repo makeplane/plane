@@ -44,6 +44,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
+  const isDateValid = cycle.start_date || cycle.end_date;
 
   const router = useRouter();
 
@@ -64,9 +65,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycle.completed_issues
-      ? cycleTotalIssues > 1
-        ? `${cycleTotalIssues} Issues`
-        : `${cycleTotalIssues} Issue`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
       : `${cycle.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
@@ -225,10 +224,14 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
             </Tooltip>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-custom-text-300">
-                {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-                {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-              </span>
+              {isDateValid ? (
+                <span className="text-xs text-custom-text-300">
+                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
+                  {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                </span>
+              ) : (
+                <span className="text-xs text-custom-text-400">No due date</span>
+              )}
               <div className="flex items-center gap-1.5 z-10">
                 {cycle.is_favorite ? (
                   <button type="button" onClick={handleRemoveFromFavorites}>
