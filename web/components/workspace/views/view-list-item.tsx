@@ -1,14 +1,12 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { useState } from "react";
-
+import { Pencil, Trash2 } from "lucide-react";
 // components
 import { CreateUpdateWorkspaceViewModal, DeleteGlobalViewModal } from "components/workspace";
 // ui
-import { CustomMenu } from "@plane/ui";
-// icons
-import { Pencil, Sparkles, Trash2 } from "lucide-react";
+import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
@@ -38,7 +36,7 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4">
                 <div className="grid place-items-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
-                  <Sparkles size={14} strokeWidth={2} />
+                  <PhotoFilterIcon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
                   <p className="truncate text-sm leading-4 font-medium">{truncateText(view.name, 75)}</p>

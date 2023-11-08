@@ -34,7 +34,7 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
     if (workspaceSlug && projectId) cycleStore.fetchCycles(workspaceSlug, projectId, "all");
   };
 
-  const cycles = projectId ? cycleStore.cycles[projectId] : undefined;
+  const cycles = cycleStore.projectCycles;
 
   const selectedCycle = cycles ? cycles?.find((i) => i.id === value) : undefined;
 

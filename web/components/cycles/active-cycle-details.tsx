@@ -79,7 +79,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId] || null;
+  const activeCycle = cycleStore.cycles?.[projectId]?.["active"] || null;
   const cycle = activeCycle ? activeCycle[0] : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
@@ -147,7 +147,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -160,7 +160,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",

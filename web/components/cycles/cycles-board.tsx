@@ -9,7 +9,7 @@ export interface ICyclesBoard {
   filter: string;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string;
+  peekCycle: string | undefined;
 }
 
 export const CyclesBoard: FC<ICyclesBoard> = (props) => {
