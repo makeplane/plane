@@ -60,9 +60,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
       runInAction(() => {
         this.rootStore.project.labels = {
           ...this.rootStore.project.labels,
-          [projectId]: [response, ...(this.rootStore.project.labels?.[projectId] || [])].sort((a, b) =>
-            a.name.localeCompare(b.name)
-          ),
+          [projectId]: [response, ...(this.rootStore.project.labels?.[projectId] || [])],
         };
       });
 

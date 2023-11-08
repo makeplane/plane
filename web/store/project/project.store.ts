@@ -237,7 +237,7 @@ export class ProjectStore implements IProjectStore {
 
   get projectLabels() {
     if (!this.projectId) return null;
-    return this.labels?.[this.projectId] || null;
+    return this.labels?.[this.projectId]?.sort((a, b) => a.name.localeCompare(b.name)) || null;
   }
 
   get projectMembers() {
