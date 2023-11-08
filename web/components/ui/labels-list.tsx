@@ -17,7 +17,7 @@ export const IssueLabelsList: FC<IssueLabelsListProps> = (props) => {
       {labels && (
         <>
           <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labels.map((l) => l?.name).join(", ")}>
-            <div className="flex items-center gap-1.5 px-2 py-1 text-custom-text-200 rounded shadow-sm border border-custom-border-300">
+            <div className="flex items-center gap-1 px-2 py-1 text-xs text-custom-text-200 rounded border-[0.5px] border-custom-border-300">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
               {`${labels.length} Labels`}
             </div>

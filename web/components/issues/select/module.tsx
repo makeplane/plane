@@ -55,34 +55,24 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = selectedModule ? (
-    <div className="flex items-center gap-1.5">
-      <span className="flex justify-center items-center flex-shrink-0 w-3.5 h-3.5">
-        <DiceIcon />
-      </span>
-      <div className="truncate">{selectedModule.name}</div>
+    <div className="flex items-center gap-1 text-custom-text-200">
+      <DiceIcon className="h-3 w-3" />
+      <span className="truncate">{selectedModule.name}</span>
     </div>
   ) : (
-    <>
+    <div className="flex items-center gap-1 text-custom-text-300">
       <DiceIcon className="h-3 w-3" />
-      <span>Select Module</span>
-    </>
+      <span>Module</span>
+    </div>
   );
 
   return (
-    <Combobox
-      as="div"
-      className={`flex-shrink-0 text-left`}
-      value={value}
-      onChange={(val: string) => onChange(val)}
-      disabled={false}
-    >
+    <Combobox as="div" className={`flex-shrink-0 text-left`} value={value} onChange={(val: string) => onChange(val)}>
       <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2 py-1 rounded-md shadow-sm  text-custom-text-200 border border-custom-border-300 duration-300 focus:outline-none ${
-            false ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          }`}
+          className="flex items-center justify-between gap-1 w-full text-xs px-2 py-1 cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200  hover:bg-custom-background-80"
           onClick={fetchModules}
         >
           {label}
