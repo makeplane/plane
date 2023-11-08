@@ -7,8 +7,6 @@ import { SelectMonthModal } from "components/automation";
 import { CustomSelect, CustomSearchSelect, ToggleSwitch, StateGroupIcon, DoubleCircleIcon, Loader } from "@plane/ui";
 // icons
 import { ArchiveX } from "lucide-react";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // types
 import { IProject } from "types";
 // fetch keys
@@ -23,12 +21,12 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
   // states
   const [monthModal, setmonthModal] = useState(false);
 
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const { user: userStore, project: projectStore, projectState: projectStateStore } = useMobxStore();
 
   const userRole = userStore.currentProjectRole;
   const projectDetails = projectStore.currentProjectDetails;
-  const stateGroups = projectStore.projectStatesByGroups ?? undefined;
-  const states = getStatesList(stateGroups);
+  // const stateGroups = projectStateStore.groupedProjectStates ?? undefined;
+  const states = projectStateStore.projectStates;
 
   const options = states
     ?.filter((state) => state.group === "cancelled")
@@ -45,7 +43,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
 
   const multipleOptions = (options ?? []).length > 1;
 
-  const defaultState = stateGroups && stateGroups.cancelled ? stateGroups.cancelled[0].id : null;
+  const defaultState = states?.find((s) => s.group === "cancelled")?.id || null;
 
   const selectedOption = states?.find((s) => s.id === projectDetails?.default_state ?? defaultState);
   const currentDefaultState = states?.find((s) => s.id === defaultState);

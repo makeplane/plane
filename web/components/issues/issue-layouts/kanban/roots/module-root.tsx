@@ -9,8 +9,6 @@ import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { ModuleIssueQuickActions } from "components/issues";
 import { Spinner } from "@plane/ui";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -24,6 +22,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectState: projectStateStore,
     moduleIssue: moduleIssueStore,
     issueFilter: issueFilterStore,
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
@@ -96,7 +95,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;

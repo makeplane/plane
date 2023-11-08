@@ -251,7 +251,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
               )}
               {isLoading && !issue ? (
-                <div className="h-full w-full flex items-center justify-center"><Spinner/></div>
+                <div className="h-full w-full flex items-center justify-center">
+                  <Spinner />
+                </div>
               ) : (
                 issue && (
                   <>

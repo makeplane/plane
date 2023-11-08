@@ -1,7 +1,7 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // types
 import { RootStore } from "../root";
-import { IProject, IIssueLabels, IProjectMember, IStateResponse, IState, IEstimate } from "types";
+import { IProject, IIssueLabels, IProjectMember, IEstimate } from "types";
 // services
 import { ProjectService, ProjectStateService, ProjectEstimateService } from "services/project";
 import { IssueService, IssueLabelService } from "services/issue";
@@ -16,9 +16,6 @@ export interface IProjectStore {
   project_details: {
     [projectId: string]: IProject; // projectId: project Info
   };
-  states: {
-    [projectId: string]: IStateResponse; // project_id: states
-  } | null;
   labels: {
     [projectId: string]: IIssueLabels[] | null; // project_id: labels
   } | null;
@@ -32,8 +29,6 @@ export interface IProjectStore {
   // computed
   searchedProjects: IProject[];
   workspaceProjects: IProject[];
-  projectStatesByGroups: IStateResponse | null;
-  projectStates: IState[] | null;
   projectLabels: IIssueLabels[] | null;
   projectMembers: IProjectMember[] | null;
   projectEstimates: IEstimate[] | null;
@@ -48,7 +43,6 @@ export interface IProjectStore {
   setSearchQuery: (query: string) => void;
 
   getProjectById: (workspaceSlug: string, projectId: string) => IProject | null;
-  getProjectStateById: (stateId: string) => IState | null;
   getProjectLabelById: (labelId: string) => IIssueLabels | null;
   getProjectMemberById: (memberId: string) => IProjectMember | null;
   getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
@@ -56,7 +50,6 @@ export interface IProjectStore {
 
   fetchProjects: (workspaceSlug: string) => Promise<void>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
-  fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectMembers: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchProjectEstimates: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -93,9 +86,6 @@ export class ProjectStore implements IProjectStore {
   project_details: {
     [projectId: string]: IProject; // projectId: project
   } = {};
-  states: {
-    [projectId: string]: IStateResponse; // projectId: states
-  } | null = {};
   labels: {
     [projectId: string]: IIssueLabels[]; // projectId: labels
   } | null = {};
@@ -125,7 +115,6 @@ export class ProjectStore implements IProjectStore {
       projectId: observable.ref,
       projects: observable.ref,
       project_details: observable.ref,
-      states: observable.ref,
       labels: observable.ref,
       members: observable.ref,
       estimates: observable.ref,
@@ -133,8 +122,6 @@ export class ProjectStore implements IProjectStore {
       // computed
       searchedProjects: computed,
       workspaceProjects: computed,
-      projectStatesByGroups: computed,
-      projectStates: computed,
       projectLabels: computed,
       projectMembers: computed,
       projectEstimates: computed,
@@ -151,12 +138,10 @@ export class ProjectStore implements IProjectStore {
       fetchProjectDetails: action,
 
       getProjectById: action,
-      getProjectStateById: action,
       getProjectLabelById: action,
       getProjectMemberById: action,
       getProjectEstimateById: action,
 
-      fetchProjectStates: action,
       fetchProjectLabels: action,
       fetchProjectMembers: action,
       fetchProjectEstimates: action,
@@ -215,24 +200,6 @@ export class ProjectStore implements IProjectStore {
   get favoriteProjects() {
     if (!this.rootStore.workspace.workspaceSlug) return [];
     return this.projects?.[this.rootStore.workspace.workspaceSlug]?.filter((p) => p.is_favorite);
-  }
-
-  get projectStatesByGroups() {
-    if (!this.projectId) return null;
-    return this.states?.[this.projectId] || null;
-  }
-
-  get projectStates() {
-    if (!this.projectId) return null;
-    const stateByGroups: IStateResponse | null = this.projectStatesByGroups;
-    if (!stateByGroups) return null;
-    const _states: IState[] = [];
-    Object.keys(stateByGroups).forEach((_stateGroup: string) => {
-      stateByGroups[_stateGroup].map((state) => {
-        _states.push(state);
-      });
-    });
-    return _states.length > 0 ? _states : null;
   }
 
   get projectLabels() {
@@ -304,14 +271,6 @@ export class ProjectStore implements IProjectStore {
     return projectInfo;
   };
 
-  getProjectStateById = (stateId: string) => {
-    if (!this.projectId) return null;
-    const states = this.projectStates;
-    if (!states) return null;
-    const stateInfo: IState | null = states.find((state) => state.id === stateId) || null;
-    return stateInfo;
-  };
-
   getProjectLabelById = (labelId: string) => {
     if (!this.projectId) return null;
     const labels = this.projectLabels;
@@ -342,29 +301,6 @@ export class ProjectStore implements IProjectStore {
     if (!estimates) return null;
     const estimateInfo: IEstimate | null = estimates.find((estimate) => estimate.id === estimateId) || null;
     return estimateInfo;
-  };
-
-  fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const stateResponse = await this.stateService.getStates(workspaceSlug, projectId);
-      const _states = {
-        ...this.states,
-        [projectId]: stateResponse,
-      };
-
-      runInAction(() => {
-        this.states = _states;
-        this.loader = false;
-        this.error = null;
-      });
-    } catch (error) {
-      console.error(error);
-      this.loader = false;
-      this.error = error;
-    }
   };
 
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {

@@ -1,19 +1,16 @@
 import React, { useState } from "react";
-
 // components
 import { FilterHeader, FilterOption } from "components/issues";
 // ui
 import { Loader, StateGroupIcon } from "@plane/ui";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IStateResponse } from "types";
+import { IState } from "types";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string) => void;
   searchQuery: string;
-  states: IStateResponse | undefined;
+  states: IState[] | undefined;
 };
 
 export const FilterState: React.FC<Props> = (props) => {
@@ -22,11 +19,9 @@ export const FilterState: React.FC<Props> = (props) => {
   const [itemsToRender, setItemsToRender] = useState(5);
   const [previewEnabled, setPreviewEnabled] = useState(true);
 
-  const statesList = getStatesList(states);
-
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
-  const filteredOptions = statesList?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredOptions = states?.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const handleViewToggle = () => {
     if (!filteredOptions) return;

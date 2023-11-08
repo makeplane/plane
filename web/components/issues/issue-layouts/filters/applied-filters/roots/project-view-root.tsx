@@ -19,6 +19,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectState: projectStateStore,
     projectViews: projectViewsStore,
     projectViewFilters: projectViewFiltersStore,
   } = useMobxStore();
@@ -99,7 +100,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
         members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-        states={projectStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
       {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data ?? {}) && (
         <Button variant="primary" size="sm" onClick={handleUpdateView}>

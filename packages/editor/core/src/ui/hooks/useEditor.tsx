@@ -95,4 +95,3 @@ export const useEditor = ({
 
   return editor;
 };
-

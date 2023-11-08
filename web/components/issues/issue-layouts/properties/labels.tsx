@@ -100,14 +100,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             {(projectLabels ? projectLabels : [])
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
-                <Tooltip
-                  position="top"
-                  tooltipHeading="Labels"
-                  tooltipContent={label.name ?? ''}
-                >
+                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
                   <div
                     key={label.id}
-                    className={`overflow-hidden flex hover:bg-custom-background-80 ${!disabled && "cursor-pointer"} items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full max-w-full`}
+                    className={`overflow-hidden flex hover:bg-custom-background-80 ${
+                      !disabled && "cursor-pointer"
+                    } items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full max-w-full`}
                   >
                     <div className="overflow-hidden flex items-center gap-1.5 text-custom-text-200 max-w-full">
                       <span
@@ -116,9 +114,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                           backgroundColor: label?.color ?? "#000000",
                         }}
                       />
-                      <div className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">
-                        {label.name}
-                      </div>
+                      <div className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">{label.name}</div>
                     </div>
                   </div>
                 </Tooltip>
@@ -143,8 +139,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
         )
       ) : (
         <div
-          className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
-            }`}
+          className={`h-full flex items-center justify-center text-xs rounded px-2.5 py-1 hover:bg-custom-background-80 ${
+            noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
+          }`}
         >
           Select labels
         </div>
@@ -165,12 +162,13 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs ${disabled
-            ? "cursor-not-allowed text-custom-text-200"
-            : value.length <= maxRender
+          className={`flex items-center justify-between gap-1 w-full text-xs ${
+            disabled
+              ? "cursor-not-allowed text-custom-text-200"
+              : value.length <= maxRender
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
-            }  ${buttonClassName}`}
+          }  ${buttonClassName}`}
           onClick={() => !projectLabels && fetchProjectLabels()}
         >
           {label}
@@ -204,19 +202,19 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   key={option.value}
                   value={option.value}
                   className={({ active, selected }) =>
-                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${active ? "bg-custom-background-80" : ""
+                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                      active ? "bg-custom-background-80" : ""
                     } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
                 >
                   {({ selected }) => (
                     <>
                       {option.content}
-                      {selected &&
+                      {selected && (
                         <div className="flex-shrink-0">
-
                           <Check className={`h-3.5 w-3.5`} />
                         </div>
-                      }
+                      )}
                     </>
                   )}
                 </Combobox.Option>
