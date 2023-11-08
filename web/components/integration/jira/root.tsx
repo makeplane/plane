@@ -1,25 +1,15 @@
 import React, { useState } from "react";
-
-// next
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
-// swr
 import { mutate } from "swr";
-
-// react hook form
 import { FormProvider, useForm } from "react-hook-form";
-
 // icons
 import { ArrowLeft, Check, List, Settings } from "lucide-react";
-
 // services
 import { JiraImporterService } from "services/integrations";
-
 // fetch keys
 import { IMPORTER_SERVICES_LIST } from "constants/fetch-keys";
-
 // components
 import { Button, UserGroupIcon } from "@plane/ui";
 import {
@@ -31,9 +21,9 @@ import {
   TJiraIntegrationSteps,
   IJiraIntegrationData,
 } from ".";
-
-import JiraLogo from "public/services/jira.png";
-
+// assets
+import JiraLogo from "public/services/jira.svg";
+// types
 import { IUser, IJiraImporterForm } from "types";
 
 const integrationWorkflowData: Array<{
