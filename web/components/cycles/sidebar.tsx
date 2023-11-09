@@ -502,7 +502,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                               </div>
                               <div className="relative h-40 w-80">
                                 <ProgressChart
-                                  distribution={cycleDetails.distribution.completion_chart}
+                                  distribution={cycleDetails.distribution?.completion_chart ?? {}}
                                   startDate={cycleDetails.start_date ?? ""}
                                   endDate={cycleDetails.end_date ?? ""}
                                   totalIssues={cycleDetails.total_issues}
@@ -512,7 +512,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ) : (
                             ""
                           )}
-                          {cycleDetails.total_issues > 0 && (
+                          {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
                             <div className="h-full w-full pt-5 border-t border-custom-border-200">
                               <SidebarProgressStats
                                 distribution={cycleDetails.distribution}

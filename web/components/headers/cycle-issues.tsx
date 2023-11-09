@@ -103,7 +103,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
-  const cyclesList = projectId ? cycleStore.cycles[projectId.toString()] : undefined;
+  const cyclesList = cycleStore.projectCycles;
   const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
 
   return (
