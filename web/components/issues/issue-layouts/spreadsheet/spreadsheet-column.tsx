@@ -27,14 +27,7 @@ import {
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import {
-  IIssue,
-  IIssueDisplayFilterOptions,
-  IIssueLabels,
-  IStateResponse,
-  IUserLite,
-  TIssueOrderByOptions,
-} from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueLabels, IState, IUserLite, TIssueOrderByOptions } from "types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
@@ -48,7 +41,7 @@ type Props = {
   property: string;
   members?: IUserLite[] | undefined;
   labels?: IIssueLabels[] | undefined;
-  states?: IStateResponse | undefined;
+  states?: IState[] | undefined;
 };
 
 export const SpreadsheetColumn: React.FC<Props> = (props) => {

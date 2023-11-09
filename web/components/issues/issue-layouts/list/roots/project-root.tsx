@@ -19,6 +19,7 @@ export const ListLayout: FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectState: projectStateStore,
     issue: issueStore,
     issueDetail: issueDetailStore,
     issueFilter: issueFilterStore,
@@ -45,8 +46,7 @@ export const ListLayout: FC = observer(() => {
     [issueStore, issueDetailStore, workspaceSlug]
   );
 
-  // info: below variables are used to render the list layout based on the project group_by
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;

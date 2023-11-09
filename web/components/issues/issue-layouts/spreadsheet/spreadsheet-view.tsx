@@ -6,14 +6,7 @@ import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetInlineCreat
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner } from "@plane/ui";
 // types
-import {
-  IIssue,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueLabels,
-  IStateResponse,
-  IUserLite,
-} from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -22,7 +15,7 @@ type Props = {
   issues: IIssue[] | undefined;
   members?: IUserLite[] | undefined;
   labels?: IIssueLabels[] | undefined;
-  states?: IStateResponse | undefined;
+  states?: IState[] | undefined;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;

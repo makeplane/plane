@@ -26,7 +26,7 @@ const defaultValues: Partial<IProjectView> = {
 };
 
 export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, projectState: projectStateStore } = useMobxStore();
 
   const {
     control,
@@ -88,7 +88,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                   onChange={onChange}
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
-                  className="resize-none text-xl"
+                  className="resize-none w-full text-xl focus:border-blue-400"
                 />
               )}
             />
@@ -138,7 +138,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
                     labels={projectStore.projectLabels ?? undefined}
                     members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
-                    states={projectStore.projectStatesByGroups ?? undefined}
+                    states={projectStateStore.projectStates ?? undefined}
                   />
                 </FiltersDropdown>
               )}
@@ -152,7 +152,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                 handleRemoveFilter={() => {}}
                 labels={projectStore.projectLabels ?? undefined}
                 members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
-                states={projectStore.projectStatesByGroups ?? undefined}
+                states={projectStateStore.projectStates ?? undefined}
               />
             </div>
           )}

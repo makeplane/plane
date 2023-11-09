@@ -420,6 +420,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
                         <RichTextEditor
+                          cancelUploadImage={fileService.cancelUpload}
                           uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                           deleteFile={fileService.deleteImage}
                           value={block.description_html}

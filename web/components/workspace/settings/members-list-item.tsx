@@ -3,8 +3,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -33,17 +31,16 @@ type Props = {
   };
 };
 
-// services
-const workspaceService = new WorkspaceService();
-
 export const WorkspaceMembersListItem: FC<Props> = (props) => {
   const { member } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { workspace: workspaceStore, user: userStore } = useMobxStore();
-  const { currentWorkspaceMemberInfo, currentWorkspaceRole } = userStore;
+  const {
+    workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
+    user: { currentWorkspaceMemberInfo, currentWorkspaceRole },
+  } = useMobxStore();
   const isAdmin = currentWorkspaceRole === 20;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
@@ -54,7 +51,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
     if (!workspaceSlug) return;
 
     if (member.member)
-      await workspaceStore.removeMember(workspaceSlug.toString(), member.id).catch((err) => {
+      await removeMember(workspaceSlug.toString(), member.id).catch((err) => {
         const error = err?.error;
         setToastAlert({
           type: "error",
@@ -63,8 +60,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
         });
       });
     else
-      await workspaceService
-        .deleteWorkspaceInvitations(workspaceSlug.toString(), member.id)
+      await deleteWorkspaceInvitation(workspaceSlug.toString(), member.id)
         .then(() => {
           setToastAlert({
             type: "success",
@@ -157,17 +153,15 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
             onChange={(value: TUserWorkspaceRole | undefined) => {
               if (!workspaceSlug || !value) return;
 
-              workspaceStore
-                .updateMember(workspaceSlug.toString(), member.id, {
-                  role: value,
-                })
-                .catch(() => {
-                  setToastAlert({
-                    type: "error",
-                    title: "Error!",
-                    message: "An error occurred while updating member role. Please try again.",
-                  });
+              updateMember(workspaceSlug.toString(), member.id, {
+                role: value,
+              }).catch(() => {
+                setToastAlert({
+                  type: "error",
+                  title: "Error!",
+                  message: "An error occurred while updating member role. Please try again.",
                 });
+              });
             }}
             disabled={
               member.memberId === currentWorkspaceMemberInfo.member ||

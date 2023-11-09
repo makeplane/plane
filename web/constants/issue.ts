@@ -1,4 +1,3 @@
-import { v4 as uuidV4 } from "uuid";
 // icons
 import { Calendar, GanttChartSquare, Kanban, List, Sheet } from "lucide-react";
 // types
@@ -12,9 +11,6 @@ import {
   TIssuePriorities,
   TIssueTypeFilters,
   TStateGroups,
-  IIssue,
-  IProject,
-  IWorkspace,
 } from "types";
 
 export const ISSUE_PRIORITIES: {
@@ -419,31 +415,4 @@ export const groupReactionEmojis = (reactions: any) => {
   }
 
   return _groupedEmojis;
-};
-
-/**
- *
- * @param workspaceDetail workspace detail to be added in the issue payload
- * @param projectDetail project detail to be added in the issue payload
- * @param formData partial issue data from the form. This will override the default values
- * @returns full issue payload with some default values
- */
-
-export const createIssuePayload: (
-  workspaceDetail: IWorkspace,
-  projectDetail: IProject,
-  formData: Partial<IIssue>
-) => IIssue = (workspaceDetail: IWorkspace, projectDetail: IProject, formData: Partial<IIssue>) => {
-  const payload = {
-    project: projectDetail.id,
-    project_detail: projectDetail,
-    workspace: workspaceDetail.id,
-    workspace_detail: workspaceDetail,
-    id: uuidV4(),
-    tempId: uuidV4(),
-    // to be overridden by the form data
-    ...formData,
-  } as IIssue;
-
-  return payload;
 };

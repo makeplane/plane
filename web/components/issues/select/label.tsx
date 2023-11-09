@@ -68,10 +68,10 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
                   />
                 </span>
               ) : (
-                <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs rounded shadow-sm border border-custom-border-300 hover:bg-custom-background-80">
-                  <Tag className="h-3.5 w-3.5 text-custom-text-200" />
-                  <span className=" text-custom-text-200">Label</span>
-                </span>
+                <div className="flex items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs hover:bg-custom-background-80">
+                  <Tag className="h-3 w-3 text-custom-text-300" />
+                  <span className="text-custom-text-300">Label</span>
+                </div>
               )}
             </div>
           </Combobox.Button>

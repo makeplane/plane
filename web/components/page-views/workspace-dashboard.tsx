@@ -18,7 +18,8 @@ export const WorkspaceDashboardView = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const { user: userStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
   const workspaceDashboardInfo = userStore.dashboardInfo;
@@ -67,16 +68,7 @@ export const WorkspaceDashboardView = observer(() => {
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "p",
-                    });
-                    document.dispatchEvent(e);
-                  }}
-                >
+                <Button variant="primary" size="sm" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
                   Create Project
                 </Button>
               </div>

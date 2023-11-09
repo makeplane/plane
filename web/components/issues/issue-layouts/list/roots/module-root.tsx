@@ -21,6 +21,7 @@ export const ModuleListLayout: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectState: projectStateStore,
     issueFilter: issueFilterStore,
     moduleIssue: moduleIssueStore,
     issueDetail: issueDetailStore,
@@ -55,7 +56,7 @@ export const ModuleListLayout: React.FC = observer(() => {
     [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
   );
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;

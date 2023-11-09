@@ -12,7 +12,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId } = router.query;
 
-  const { project: projectStore, moduleFilter: moduleFilterStore } = useMobxStore();
+  const { project: projectStore, moduleFilter: moduleFilterStore, projectState: projectStateStore } = useMobxStore();
 
   const userFilters = moduleFilterStore.moduleFilters;
 
@@ -70,7 +70,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
         members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-        states={projectStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
     </div>
   );
