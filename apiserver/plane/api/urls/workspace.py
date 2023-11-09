@@ -17,7 +17,6 @@ from plane.api.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    LeaveWorkspaceEndpoint,
 )
 
 
@@ -84,6 +83,15 @@ urlpatterns = [
             }
         ),
         name="workspace-member",
+    ),
+    path(
+        "workspaces/<str:slug>/members/leave/",
+        WorkSpaceMemberViewSet.as_view(
+            {
+                "post": "leave",
+            },
+        ),
+        name="leave-workspace-members",
     ),
     path(
         "workspaces/<str:slug>/teams/",
@@ -167,10 +175,5 @@ urlpatterns = [
         "workspaces/<str:slug>/labels/",
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
-    ),
-    path(
-        "workspaces/<str:slug>/members/leave/",
-        LeaveWorkspaceEndpoint.as_view(),
-        name="leave-workspace-members",
     ),
 ]

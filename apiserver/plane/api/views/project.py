@@ -780,7 +780,9 @@ class ProjectJoinEndpoint(BaseAPIView):
 
         # Get the workspace user role
         workspace_member = WorkspaceMember.objects.get(
-            member=request.user, workspace__slug=slug
+            member=request.user,
+            workspace__slug=slug,
+            is_deactivated=False,
         )
 
         workspace_role = workspace_member.role
