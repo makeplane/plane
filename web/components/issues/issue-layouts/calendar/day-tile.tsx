@@ -4,7 +4,7 @@ import { Droppable } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarIssueBlocks, ICalendarDate, CalendarInlineCreateIssueForm } from "components/issues";
+import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
@@ -67,7 +67,8 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 <CalendarIssueBlocks issues={issuesList} handleIssues={handleIssues} quickActions={quickActions} />
                 {enableQuickIssueCreate && (
                   <div className="py-1 px-2">
-                    <CalendarInlineCreateIssueForm
+                    <CalendarQuickAddIssueForm
+                      formKey="target_date"
                       groupId={renderDateFormat(date.date)}
                       prePopulatedData={{
                         target_date: renderDateFormat(date.date),

@@ -128,7 +128,6 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-sm">
                           {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
                         </div>
-                        <div className=""></div>
                       )
                     )}
 

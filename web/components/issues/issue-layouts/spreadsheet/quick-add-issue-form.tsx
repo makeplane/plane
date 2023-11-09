@@ -6,19 +6,19 @@ import { PlusIcon } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
-import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // types
-import { IIssue } from "types";
+import { IIssue, IProject } from "types";
 
 type Props = {
+  formKey: keyof IIssue;
   groupId?: string;
+  subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
-  onSuccess?: (data: IIssue) => Promise<void> | void;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -48,17 +48,20 @@ const Inputs = (props: any) => {
   );
 };
 
-export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData, groupId } = props;
+export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
+  const { formKey, groupId, subGroupId = null, prePopulatedData } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   // store
-  const { workspace: workspaceStore, quickAddIssue: quickAddStore } = useMobxStore();
-
-  const { projectDetails } = useProjectDetails();
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    issue: issueStore,
+    quickAddIssue: quickAddIssueStore,
+  } = useMobxStore();
 
   const {
     reset,
@@ -82,7 +85,9 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
   const { setToastAlert } = useToast();
 
   // derived values
-  const workspaceDetail = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString()!);
+  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
+  const projectDetail: IProject | null =
+    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
 
   useEffect(() => {
     setFocus("name");
@@ -106,43 +111,73 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
     });
   }, [errors, setToastAlert]);
 
-  const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !workspaceSlug || !projectId) return;
+  // const onSubmitHandler = async (formData: IIssue) => {
+  //   if (isSubmitting || !workspaceSlug || !projectId) return;
 
-    // resetting the form so that user can add another issue quickly
+  //   // resetting the form so that user can add another issue quickly
+  //   reset({ ...defaultValues });
+
+  //   const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+  //     ...(prePopulatedData ?? {}),
+  //     ...formData,
+  //   });
+
+  //   try {
+  //     quickAddStore.createIssue(
+  //       workspaceSlug.toString(),
+  //       projectId.toString(),
+  //       {
+  //         group_id: groupId ?? null,
+  //         sub_group_id: null,
+  //       },
+  //       payload
+  //     );
+
+  //     setToastAlert({
+  //       type: "success",
+  //       title: "Success!",
+  //       message: "Issue created successfully.",
+  //     });
+  //   } catch (err: any) {
+  //     Object.keys(err || {}).forEach((key) => {
+  //       const error = err?.[key];
+  //       const errorTitle = error ? (Array.isArray(error) ? error.join(", ") : error) : null;
+
+  //       setToastAlert({
+  //         type: "error",
+  //         title: "Error!",
+  //         message: errorTitle || "Some error occurred. Please try again.",
+  //       });
+  //     });
+  //   }
+  // };
+
+  const onSubmitHandler = async (formData: IIssue) => {
+    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+
     reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+    const payload = createIssuePayload(workspaceDetail, projectDetail, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
     try {
-      quickAddStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          group_id: groupId ?? null,
-          sub_group_id: null,
-        },
-        payload
-      );
-
+      issueStore.updateIssueStructure(groupId, subGroupId, payload);
+      await quickAddIssueStore.updateQuickAddIssueStructure(workspaceSlug, groupId, subGroupId, {
+        ...payload,
+      });
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
-      Object.keys(err || {}).forEach((key) => {
-        const error = err?.[key];
-        const errorTitle = error ? (Array.isArray(error) ? error.join(", ") : error) : null;
-
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: errorTitle || "Some error occurred. Please try again.",
-        });
+      console.error(err);
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: err?.message || "Some error occurred. Please try again.",
       });
     }
   };
@@ -156,7 +191,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex border-[0.5px] border-t-0 border-custom-border-100 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-sm z-10"
           >
-            <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
+            <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>
         </div>
       )}
