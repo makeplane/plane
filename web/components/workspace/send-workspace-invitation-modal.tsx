@@ -14,8 +14,6 @@ import { Plus, X } from "lucide-react";
 import { IUser, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
-// fetch-keys
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
