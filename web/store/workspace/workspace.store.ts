@@ -359,29 +359,38 @@ export class WorkspaceStore implements IWorkspaceStore {
    * @param data
    */
   updateMember = async (workspaceSlug: string, memberId: string, data: Partial<IWorkspaceMember>) => {
-    const members = this.members?.[workspaceSlug];
-    members?.map((m) => (m.id === memberId ? { ...m, ...data } : m));
+    const originalMembers = [...this.members?.[workspaceSlug]]; // in case of error, we will revert back to original members
+
+    const members = [...this.members?.[workspaceSlug]];
+
+    const index = members.findIndex((m) => m.id === memberId);
+    members[index] = { ...members[index], ...data };
+
+    // optimistic update
+    runInAction(() => {
+      this.loader = true;
+      this.error = null;
+      this.members = {
+        ...this.members,
+        [workspaceSlug]: members,
+      };
+    });
 
     try {
-      runInAction(() => {
-        this.loader = true;
-        this.error = null;
-      });
-
       await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberId, data);
 
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.members = {
-          ...this.members,
-          [workspaceSlug]: members,
-        };
       });
     } catch (error) {
       runInAction(() => {
         this.loader = false;
         this.error = error;
+        this.members = {
+          ...this.members,
+          [workspaceSlug]: originalMembers,
+        };
       });
 
       throw error;
