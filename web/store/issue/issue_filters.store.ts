@@ -1,6 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { IssueService } from "services/issue";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
@@ -72,6 +72,7 @@ export class IssueFilterStore implements IIssueFilterStore {
 
   // services
   projectService;
+  projectMemberService;
   issueService;
 
   constructor(_rootStore: RootStore) {
@@ -98,6 +99,7 @@ export class IssueFilterStore implements IIssueFilterStore {
     this.rootStore = _rootStore;
 
     this.projectService = new ProjectService();
+    this.projectMemberService = new ProjectMemberService();
     this.issueService = new IssueService();
   }
 
@@ -145,7 +147,7 @@ export class IssueFilterStore implements IIssueFilterStore {
 
   fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
     try {
-      const memberResponse = await this.projectService.projectMemberMe(workspaceSlug, projectId);
+      const memberResponse = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
       const issueProperties = await this.issueService.getIssueDisplayProperties(workspaceSlug, projectId);
 
       runInAction(() => {

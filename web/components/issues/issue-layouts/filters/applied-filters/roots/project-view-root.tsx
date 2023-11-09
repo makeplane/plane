@@ -19,6 +19,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     projectViews: projectViewsStore,
     projectViewFilters: projectViewFiltersStore,
@@ -99,7 +100,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
-        members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
+        members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
       {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data ?? {}) && (

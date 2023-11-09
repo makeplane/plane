@@ -9,8 +9,6 @@ import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { CycleIssueQuickActions } from "components/issues";
 import { Spinner } from "@plane/ui";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
@@ -25,13 +23,13 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     cycleIssue: cycleIssueStore,
     issueFilter: issueFilterStore,
     cycleIssueKanBanView: cycleIssueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
 
   const issues = cycleIssueStore?.getIssues;
 
@@ -51,9 +49,9 @@ export const CycleKanBanLayout: React.FC = observer(() => {
 
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
 
-  const onDragStart = () => {
-    setIsDragStarted(true);
-  };
+  // const onDragStart = () => {
+  //   setIsDragStarted(true);
+  // };
 
   const onDragEnd = (result: any) => {
     setIsDragStarted(false);
@@ -102,13 +100,12 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
-  const estimates =
-    currentProjectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
-      : null;
+  // const estimates =
+  //   currentProjectDetails?.estimate !== null
+  //     ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
+  //     : null;
 
   return (
     <>
@@ -141,7 +138,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}
@@ -168,7 +165,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}

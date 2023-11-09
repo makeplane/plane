@@ -20,6 +20,7 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
   const {
     workspace: workspaceStore,
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     profileIssues: profileIssuesStore,
     profileIssueFilters: profileIssueFiltersStore,
@@ -48,9 +49,9 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
 
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
 
-  const onDragStart = () => {
-    setIsDragStarted(true);
-  };
+  // const onDragStart = () => {
+  //   setIsDragStarted(true);
+  // };
 
   const onDragEnd = (result: any) => {
     setIsDragStarted(false);
@@ -89,7 +90,6 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = workspaceStore.workspaceLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStore?.workspaceProjects || null;
 
@@ -123,7 +123,7 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}
@@ -149,7 +149,7 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}
