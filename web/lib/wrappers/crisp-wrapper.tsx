@@ -1,7 +1,6 @@
-import { useCallback, useEffect } from "react";
-import { observer } from "mobx-react-lite";
+import { useCallback, useEffect, ReactNode, FC } from "react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IUser } from "types";
 
 declare global {
   interface Window {
@@ -10,15 +9,18 @@ declare global {
   }
 }
 
-const Crisp = observer(() => {
-  const {
-    user: { currentUser },
-  } = useMobxStore();
+export interface ICrispWrapper {
+  children: ReactNode;
+  user: IUser;
+}
+
+const CrispWrapper: FC<ICrispWrapper> = (props) => {
+  const { children, user } = props;
 
   const validateCurrentUser = useCallback(() => {
-    if (currentUser) return currentUser.email;
+    if (user) return user.email;
     return null;
-  }, [currentUser]);
+  }, [user]);
 
   useEffect(() => {
     if (typeof window && validateCurrentUser()) {
@@ -40,6 +42,7 @@ const Crisp = observer(() => {
     }
   }, [validateCurrentUser]);
 
-  return <></>;
-});
-export default Crisp;
+  return <>{children}</>;
+};
+
+export default CrispWrapper;

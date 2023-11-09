@@ -1,6 +1,5 @@
 import { ReactElement } from "react";
 import Head from "next/head";
-import dynamic from "next/dynamic";
 import Router from "next/router";
 import { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
@@ -19,11 +18,9 @@ import { THEMES } from "constants/themes";
 import { SITE_TITLE } from "constants/seo-variables";
 // mobx store provider
 import { MobxStoreProvider } from "lib/mobx/store-provider";
-import MobxStoreInit from "lib/mobx/store-init";
+import { AppProvider } from "lib/app-provider";
 // types
 import { NextPageWithLayout } from "types/app";
-
-const CrispWithNoSSR = dynamic(() => import("constants/crisp"), { ssr: false });
 
 // nprogress
 NProgress.configure({ showSpinner: false });
@@ -47,9 +44,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <MobxStoreProvider {...pageProps}>
         <ThemeProvider themes={THEMES} defaultTheme="system">
           <ToastContextProvider>
-            <CrispWithNoSSR />
-            <MobxStoreInit />
-            {getLayout(<Component {...pageProps} />)}
+            <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
           </ToastContextProvider>
         </ThemeProvider>
       </MobxStoreProvider>
