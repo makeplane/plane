@@ -1,5 +1,5 @@
 # Django imports
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -8,6 +8,8 @@ from django.conf import settings
 from celery import shared_task
 from sentry_sdk import capture_exception
 
+# Module imports
+from plane.license.models import InstanceConfiguration
 
 @shared_task
 def magic_link(email, key, token, current_site):
@@ -25,7 +27,18 @@ def magic_link(email, key, token, current_site):
 
         text_content = strip_tags(html_content)
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email_string, [email])
+        # Configure email connection from the database
+        instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values()
+        connection = get_connection(
+            host=instance_configuration.get("EMAIL_HOST", ""),
+            port=int(instance_configuration.get("EMAIL_PORT", "587")),
+            username=instance_configuration.get("EMAIL_HOST_USER", ""),
+            password=instance_configuration.get("EMAIL_HOST_PASSWORD", ""),
+            use_tls=bool(instance_configuration.get("EMAIL_USE_TLS", "")),
+            use_ssl=bool(instance_configuration.get("EMAIL_USE_SSL", ""))
+        )
+        # Initiate email alternatives
+        msg = EmailMultiAlternatives(subject=subject, text_content=text_content, from_email=settings.EMAIL_FROM, to=[email], connection=connection)
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         return
