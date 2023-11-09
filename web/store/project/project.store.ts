@@ -48,6 +48,9 @@ export interface IProjectStore {
   getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
 
+  getProjectLabelIds: () => string[];
+  getProjectMemberIds: () => string[];
+
   fetchProjects: (workspaceSlug: string) => Promise<void>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -141,6 +144,9 @@ export class ProjectStore implements IProjectStore {
       getProjectLabelById: action,
       getProjectMemberById: action,
       getProjectEstimateById: action,
+
+      getProjectLabelIds: action,
+      getProjectMemberIds: action,
 
       fetchProjectLabels: action,
       fetchProjectMembers: action,
@@ -303,6 +309,16 @@ export class ProjectStore implements IProjectStore {
     if (!estimates) return null;
     const estimateInfo: IEstimate | null = estimates.find((estimate) => estimate.id === estimateId) || null;
     return estimateInfo;
+  };
+
+  getProjectLabelIds = () => {
+    if (!this.projectLabels) return [];
+    return (this.projectLabels ?? []).map((label) => label.id);
+  };
+
+  getProjectMemberIds = () => {
+    if (!this.projectMembers) return [];
+    return (this.projectMembers ?? []).map((member) => member.member.id);
   };
 
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {

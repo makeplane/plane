@@ -17,6 +17,7 @@ export interface IProjectStateStore {
   groupedProjectStates: { [groupId: string]: IState[] } | null;
   projectStates: IState[] | null;
 
+  getProjectStateIds: () => string[] | undefined;
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
   updateState: (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => Promise<IState>;
@@ -53,6 +54,7 @@ export class ProjectStateStore implements IProjectStateStore {
       projectStates: computed,
       groupedProjectStates: computed,
       // actions
+      getProjectStateIds: action,
       createState: action,
       updateState: action,
       deleteState: action,
@@ -78,6 +80,13 @@ export class ProjectStateStore implements IProjectStateStore {
     if (!states) return null;
     return states;
   }
+
+  getProjectStateIds = () => {
+    if (!this.rootStore.project.projectId) return undefined;
+    const states = this.states[this.rootStore.project.projectId];
+    if (!states) return undefined;
+    return (states ?? []).map((state) => state.id);
+  };
 
   fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
     try {

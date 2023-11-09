@@ -178,6 +178,7 @@ export class ProjectIssueStore implements IProjectIssueStore {
       this.rootStore?.project.setProjectId(projectId);
 
       const response = await this.issueService.getV3Issues(workspaceSlug, projectId);
+
       const _issues = {
         ...this.issues,
         [projectId]: { ...response },
