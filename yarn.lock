@@ -2804,10 +2804,28 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.0.28", "@types/react@18.2.0", "@types/react@^18.2.35", "@types/react@^18.2.5":
+"@types/react@*", "@types/react@18.2.0":
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.0.tgz#15cda145354accfc09a18d2f2305f9fc099ada21"
   integrity sha512-0FLj93y5USLHdnhIhABk83rm8XEGA7kH3cr+YUlvxoUGp1xNt/DINUMvqPxLyOQMzLmZe8i4RTHbvb8MC7NmrA==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@18.0.28":
+  version "18.0.28"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.28.tgz#accaeb8b86f4908057ad629a26635fe641480065"
+  integrity sha512-RD0ivG1kEztNBdoAK7lekI9M+azSnitIn85h4iOiaLjaTrMjzslhaqCGaI4IyCJ1RljWiLCEu4jyrLLgqxBTew==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.2.35", "@types/react@^18.2.5":
+  version "18.2.37"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.37.tgz#0f03af69e463c0f19a356c2660dbca5d19c44cae"
+  integrity sha512-RGAYMi2bhRgEXT3f4B92WTohopH6bIXw05FuGlmJEnv/omEn190+QYEIYxIAuIBdKgboYYdVved2p1AxZVQnaw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -7003,10 +7021,10 @@ postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.29:
     picocolors "^1.0.0"
     source-map-js "^1.0.2"
 
-posthog-js@^1.88.1:
-  version "1.88.1"
-  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.88.1.tgz#ab81f21ec158a9c57be0e696744a9c9f6967ba3b"
-  integrity sha512-+8kFFU5KIcFSm8zB3tX8l0GSPyq/OtMtdrS9dYpMJk6nsEwXvOjkwFEpSrYzL5eGEpTPdbM65M52HvMqqsjpXw==
+posthog-js@^1.88.4:
+  version "1.88.4"
+  resolved "https://registry.yarnpkg.com/posthog-js/-/posthog-js-1.88.4.tgz#480995e18b2c3052f29142a6c5f02e1eafadc759"
+  integrity sha512-ZKgC0q22Bv0WGsi/BJcamDIoBR3DPpF26kCq0eFxtV3gKDMpGIlhlODQCo28bSENziGVO4LSeGrUvo/6OsQ7xA==
   dependencies:
     fflate "^0.4.1"
 
