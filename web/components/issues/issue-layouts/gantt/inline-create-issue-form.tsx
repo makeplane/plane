@@ -14,8 +14,8 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
-// constants
-import { createIssuePayload } from "constants/issue";
+// helpers
+import { createIssuePayload } from "helpers/issue.helper";
 
 type Props = {
   prePopulatedData?: Partial<IIssue>;

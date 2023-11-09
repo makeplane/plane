@@ -123,7 +123,7 @@ export const Avatar: React.FC<Props> = (props) => {
     size = "md",
     shape = "circle",
     src,
-    className = ""
+    className = "",
   } = props;
 
   // get size details based on the size prop
@@ -157,7 +157,9 @@ export const Avatar: React.FC<Props> = (props) => {
           <div
             className={`${
               sizeInfo.fontSize
-            } grid place-items-center h-full w-full ${getBorderRadius(shape)} ${className}`}
+            } grid place-items-center h-full w-full ${getBorderRadius(
+              shape,
+            )} ${className}`}
             style={{
               backgroundColor:
                 fallbackBackgroundColor ?? "rgba(var(--color-primary-500))",

@@ -76,6 +76,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
                   handleSubmit(onSubmit)(e);
                 });
               }}
+              cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
               deleteFile={fileService.deleteImage}
               ref={editorRef}

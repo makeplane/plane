@@ -20,7 +20,7 @@ export const ProjectViewsList = observer(() => {
   const router = useRouter();
   const { projectId } = router.query;
 
-  const { projectViews: projectViewsStore } = useMobxStore();
+  const { projectViews: projectViewsStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
 
@@ -66,12 +66,7 @@ export const ProjectViewsList = observer(() => {
           primaryButton={{
             icon: <Plus size={14} strokeWidth={2} />,
             text: "New View",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "v",
-              });
-              document.dispatchEvent(e);
-            },
+            onClick: () => commandPaletteStore.toggleCreateViewModal(true),
           }}
         />
       )}

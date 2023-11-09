@@ -62,12 +62,13 @@ const MobxStoreInit = observer(() => {
    */
   useEffect(() => {
     if (workspaceSlug) setWorkspaceSlug(workspaceSlug.toString());
-    if (projectId) setProjectId(projectId.toString());
-    if (cycleId) setCycleId(cycleId.toString());
-    if (moduleId) setModuleId(moduleId.toString());
-    if (globalViewId) setGlobalViewId(globalViewId.toString());
-    if (viewId) setViewId(viewId.toString());
-    if (inboxId) setInboxId(inboxId.toString());
+
+    setProjectId(projectId?.toString() ?? null);
+    setCycleId(cycleId?.toString() ?? null);
+    setModuleId(moduleId?.toString() ?? null);
+    setGlobalViewId(globalViewId?.toString() ?? null);
+    setViewId(viewId?.toString() ?? null);
+    setInboxId(inboxId?.toString() ?? null);
   }, [
     workspaceSlug,
     projectId,

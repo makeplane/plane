@@ -20,6 +20,7 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
   const {
     workspace: workspaceStore,
     project: projectStore,
+    projectState: projectStateStore,
     profileIssues: profileIssuesStore,
     profileIssueFilters: profileIssueFiltersStore,
     issueKanBanView: issueKanBanViewStore,
@@ -85,7 +86,7 @@ export const ProfileIssuesKanBanLayout: FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = workspaceStore.workspaceLabels || null;
   const members = projectStore?.projectMembers || null;

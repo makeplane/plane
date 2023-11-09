@@ -5,12 +5,12 @@ import { IssuePropertyState } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, IStateResponse } from "types";
+import { IIssue, IState } from "types";
 
 type Props = {
   issue: IIssue;
   onChange: (data: Partial<IIssue>) => void;
-  states: IStateResponse | undefined;
+  states: IState[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };

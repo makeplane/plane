@@ -9,7 +9,7 @@ interface ICircularProgressIndicator {
 }
 
 export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
-  props
+  props,
 ) => {
   const { size = 40, percentage = 25, strokeWidth = 6, children } = props;
 

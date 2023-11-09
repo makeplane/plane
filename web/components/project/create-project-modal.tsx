@@ -63,8 +63,10 @@ export interface ICreateProjectForm {
 export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
-  const { project: projectStore, workspace: workspaceStore } = useMobxStore();
-  const workspaceMembers = workspaceStore.members[workspaceSlug] || [];
+  const {
+    project: projectStore,
+    workspaceMember: { workspaceMembers },
+  } = useMobxStore();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // toast
@@ -265,7 +267,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               onChange={handleNameChange(onChange)}
                               hasError={Boolean(errors.name)}
                               placeholder="Project Title"
-                              className="w-full"
+                              className="w-full focus:border-blue-400"
                             />
                           )}
                         />
@@ -298,7 +300,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               onChange={handleIdentifierChange(onChange)}
                               hasError={Boolean(errors.identifier)}
                               placeholder="Identifier"
-                              className="text-xs w-full"
+                              className="text-xs w-full focus:border-blue-400"
                             />
                           )}
                         />
@@ -316,7 +318,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                               tabIndex={3}
                               placeholder="Description..."
                               onChange={onChange}
-                              className="text-sm !h-24"
+                              className="text-sm !h-24 focus:border-blue-400"
                               hasError={Boolean(errors?.description)}
                             />
                           )}
@@ -370,7 +372,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                             <WorkspaceMemberSelect
                               value={value}
                               onChange={onChange}
-                              options={workspaceMembers}
+                              options={workspaceMembers || []}
                               placeholder="Select Lead"
                             />
                           )}

@@ -1,39 +1,42 @@
-import { findParentNodeClosestToPos, KeyboardShortcutCommand } from "@tiptap/core"
+import {
+  findParentNodeClosestToPos,
+  KeyboardShortcutCommand,
+} from "@tiptap/core";
 
-import { isCellSelection } from "./is-cell-selection"
+import { isCellSelection } from "./is-cell-selection";
 
 export const deleteTableWhenAllCellsSelected: KeyboardShortcutCommand = ({
-    editor
+  editor,
 }) => {
-    const { selection } = editor.state
+  const { selection } = editor.state;
 
-    if (!isCellSelection(selection)) {
-        return false
+  if (!isCellSelection(selection)) {
+    return false;
+  }
+
+  let cellCount = 0;
+  const table = findParentNodeClosestToPos(
+    selection.ranges[0].$from,
+    (node) => node.type.name === "table",
+  );
+
+  table?.node.descendants((node) => {
+    if (node.type.name === "table") {
+      return false;
     }
 
-    let cellCount = 0
-    const table = findParentNodeClosestToPos(
-        selection.ranges[0].$from,
-        (node) => node.type.name === "table"
-    )
-
-    table?.node.descendants((node) => {
-        if (node.type.name === "table") {
-            return false
-        }
-
-        if (["tableCell", "tableHeader"].includes(node.type.name)) {
-            cellCount += 1
-        }
-    })
-
-    const allCellsSelected = cellCount === selection.ranges.length
-
-    if (!allCellsSelected) {
-        return false
+    if (["tableCell", "tableHeader"].includes(node.type.name)) {
+      cellCount += 1;
     }
+  });
 
-    editor.commands.deleteTable()
+  const allCellsSelected = cellCount === selection.ranges.length;
 
-    return true
-}
+  if (!allCellsSelected) {
+    return false;
+  }
+
+  editor.commands.deleteTable();
+
+  return true;
+};
