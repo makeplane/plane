@@ -71,6 +71,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (envConfig?.posthog_api_key && envConfig.posthog_host && currentUser) {
