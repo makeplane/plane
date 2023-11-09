@@ -107,7 +107,7 @@ export const KanBanLayout: React.FC = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+        <div className="relative min-w-full min-h-full h-max bg-custom-background-90 px-3 horizontal-scroll-enable">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {currentKanBanView === "default" ? (
               <KanBan
