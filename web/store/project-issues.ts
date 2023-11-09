@@ -87,14 +87,9 @@ export class ProjectIssueStore implements IProjectIssueStore {
     this.issueService = new IssueService();
   }
 
-  get groupedIssues() {
-    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
-    const projectId: string | undefined | null = this.rootStore?.project.projectId;
-
-    if (!groupBy || !projectId || !this.issues || !this.issues[projectId]) return undefined;
-
-    const displayFiltersDefaultData: { [filter_key: string]: string[] } = {
-      state: (this.rootStore?.projectState?.states?.[projectId] ?? []).map((i: IState) => i.id),
+  issueDisplayFiltersDefaultData = (): { [filter_key: string]: string[] } => {
+    const data: { [filter_key: string]: string[] } = {
+      state: (this.rootStore?.projectState?.projectStates ?? []).map((i: IState) => i.id),
       "state_detail.group": ISSUE_STATE_GROUPS.map((i) => i.key),
       priority: ISSUE_PRIORITIES.map((i) => i.key),
       labels: [...(this.rootStore?.project?.projectLabels ?? []).map((i) => i.id), "None"],
@@ -102,6 +97,17 @@ export class ProjectIssueStore implements IProjectIssueStore {
       project: (this.rootStore?.project.workspaceProjects ?? []).map((i) => i.id),
       assignees: [...(this.rootStore?.project?.projectMembers ?? []).map((i) => i.member.id), "None"],
     };
+
+    return data;
+  };
+
+  get groupedIssues() {
+    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
+    const projectId: string | undefined | null = this.rootStore?.project.projectId;
+
+    if (!groupBy || !projectId || !this.issues || !this.issues[projectId]) return undefined;
+
+    const displayFiltersDefaultData: { [filter_key: string]: string[] } = this.issueDisplayFiltersDefaultData();
 
     const issues: { [group_id: string]: string[] } = {};
     displayFiltersDefaultData[groupBy].forEach((group) => {
@@ -131,15 +137,7 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
     if (!subGroupBy || !groupBy || !projectId || !this.issues || !this.issues[projectId]) return undefined;
 
-    const displayFiltersDefaultData: { [filter_key: string]: string[] } = {
-      state: (this.rootStore?.projectState?.states?.[projectId] ?? []).map((i: IState) => i.id),
-      "state_detail.group": ISSUE_STATE_GROUPS.map((i) => i.key),
-      priority: ISSUE_PRIORITIES.map((i) => i.key),
-      labels: [...(this.rootStore?.project?.projectLabels ?? []).map((i) => i.id), "None"],
-      created_by: (this.rootStore?.project?.projectMembers ?? []).map((i) => i.member.id),
-      project: (this.rootStore?.project.workspaceProjects ?? []).map((i) => i.id),
-      assignees: [...(this.rootStore?.project?.projectMembers ?? []).map((i) => i.member.id), "None"],
-    };
+    const displayFiltersDefaultData: { [filter_key: string]: string[] } = this.issueDisplayFiltersDefaultData();
 
     const issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
     displayFiltersDefaultData[subGroupBy].forEach((sub_group: any) => {
