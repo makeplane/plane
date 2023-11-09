@@ -112,7 +112,7 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                   <text
                     x={0}
                     y={datum.y}
-                    textAnchor="end"
+                    textAnchor={`${barGraphData.data.length > 7 ? "end" : "middle"}`}
                     fontSize={10}
                     fill="rgb(var(--color-text-200))"
                     className={`${barGraphData.data.length > 7 ? "-rotate-45" : ""}`}
