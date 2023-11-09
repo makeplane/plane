@@ -32,7 +32,14 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
   const createView = async (payload: IProjectView) => {
     await projectViewsStore
       .createView(workspaceSlug, projectId, payload)
-      .then(() => handleClose())
+      .then(() => {
+        handleClose();
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "View created successfully.",
+        });
+      })
       .catch(() =>
         setToastAlert({
           type: "error",

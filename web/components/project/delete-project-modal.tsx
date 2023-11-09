@@ -62,6 +62,11 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Project deleted successfully.",
+        });
       })
       .catch(() => {
         setToastAlert({

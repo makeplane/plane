@@ -54,7 +54,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
   };
 
   return (
-    <div className="relative flex gap-2 overflow-x-auto whitespace-nowrap">
+    <div className="relative flex items-center gap-2 overflow-x-auto whitespace-nowrap">
       {/* basic properties */}
       {/* state */}
       {displayProperties && displayProperties?.state && (

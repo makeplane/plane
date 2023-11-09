@@ -55,9 +55,9 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
               <span className="text-custom-text-200">{value.length} Assignees</span>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
-              <span className="text-custom-text-200">Assignee</span>
+            <div className="flex items-center justify-center gap-2 text-custom-text-300">
+              <UserGroupIcon className="h-3 w-3" />
+              <span>Assignee</span>
             </div>
           )}
         </div>

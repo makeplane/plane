@@ -73,9 +73,7 @@ const ContextMenu = ({ clickEvent, children, title, isOpen, setIsOpen }: Props) 
         className={`fixed z-50 flex min-w-[8rem] flex-col items-stretch gap-1 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs shadow-lg`}
       >
         {title && (
-          <h4 className="border-b border-custom-border-200 px-1 py-1 pb-2 text-[0.8rem] font-medium">
-            {title}
-          </h4>
+          <h4 className="border-b border-custom-border-200 px-1 py-1 pb-2 text-[0.8rem] font-medium">{title}</h4>
         )}
         {children}
       </div>
@@ -92,14 +90,7 @@ type MenuItemProps = {
   Icon?: any;
 };
 
-const MenuItem: React.FC<MenuItemProps> = ({
-  children,
-  renderAs,
-  href = "",
-  onClick,
-  className = "",
-  Icon,
-}) => (
+const MenuItem: React.FC<MenuItemProps> = ({ children, renderAs, href = "", onClick, className = "", Icon }) => (
   <>
     {renderAs === "a" ? (
       <Link href={href}>

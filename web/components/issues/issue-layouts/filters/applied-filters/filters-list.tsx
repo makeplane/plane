@@ -15,7 +15,7 @@ import { X } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabels, IProject, IStateResponse, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabels, IProject, IState, IUserLite } from "types";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -24,7 +24,7 @@ type Props = {
   labels?: IIssueLabels[] | undefined;
   members?: IUserLite[] | undefined;
   projects?: IProject[] | undefined;
-  states?: IStateResponse | undefined;
+  states?: IState[] | undefined;
 };
 
 const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
@@ -70,7 +70,7 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
             {filterKey === "priority" && (
               <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
             )}
-            {filterKey === "state" && (
+            {filterKey === "state" && states && (
               <AppliedStateFilters
                 handleRemove={(val) => handleRemoveFilter("state", val)}
                 states={states}

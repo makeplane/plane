@@ -55,17 +55,15 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = selectedCycle ? (
-    <div className="flex items-center gap-1.5">
-      <span className="flex justify-center items-center flex-shrink-0 w-3.5 h-3.5">
-        <ContrastIcon />
-      </span>
+    <div className="flex items-center gap-1 text-custom-text-200">
+      <ContrastIcon className="h-3 w-3" />
       <div className="truncate">{selectedCycle.name}</div>
     </div>
   ) : (
-    <>
+    <div className="flex items-center gap-1 text-custom-text-300">
       <ContrastIcon className="h-3 w-3" />
-      <span>Select Cycle</span>
-    </>
+      <span>Cycle</span>
+    </div>
   );
 
   return (
@@ -80,9 +78,7 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2 py-1 rounded-md shadow-sm  text-custom-text-200 border border-custom-border-300 duration-300 focus:outline-none ${
-            false ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          }`}
+          className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
           onClick={fetchCycles}
         >
           {label}

@@ -2,19 +2,16 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { PlusIcon } from "lucide-react";
-// store
 import { observer } from "mobx-react-lite";
+// store
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
-// constants
-import { createIssuePayload } from "constants/issue";
-
+// helpers
+import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { IIssue } from "types";
 

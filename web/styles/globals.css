@@ -53,6 +53,8 @@
     --color-text-300: 82, 82, 82; /* tertiary text */
     --color-text-400: 163, 163, 163; /* placeholder text */
 
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
     --color-border-100: 245, 245, 245; /* subtle border= 1 */
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
@@ -117,6 +119,8 @@
     --color-text-300: 82, 82, 82; /* tertiary text */
     --color-text-400: 163, 163, 163; /* placeholder text */
 
+    --color-scrollbar: 163, 163, 163; /* scrollbar thumb */
+
     --color-border-100: 245, 245, 245; /* subtle border= 1 */
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
@@ -128,6 +132,8 @@
     --color-text-200: 38, 38, 38; /* secondary text */
     --color-text-300: 58, 58, 58; /* tertiary text */
     --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
 
     --color-border-100: 34, 34, 34; /* subtle border= 1 */
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
@@ -160,6 +166,8 @@
     --color-text-300: 115, 115, 115; /* tertiary text */
     --color-text-400: 82, 82, 82; /* placeholder text */
 
+    --color-scrollbar: 82, 82, 82; /* scrollbar thumb */
+
     --color-border-100: 34, 34, 34; /* subtle border= 1 */
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
     --color-border-300: 46, 46, 46; /* strong border- 1 */
@@ -171,6 +179,8 @@
     --color-text-200: 241, 241, 241; /* secondary text */
     --color-text-300: 212, 212, 212; /* tertiary text */
     --color-text-400: 115, 115, 115; /* placeholder text */
+
+    --color-scrollbar: 115, 115, 115; /* scrollbar thumb */
 
     --color-border-100: 245, 245, 245; /* subtle border= 1 */
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
@@ -256,7 +266,7 @@ body {
 
 .horizontal-scroll-enable::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: rgba(var(--color-background-80));
+  background-color: rgba(var(--color-scrollbar));
 }
 
 .vertical-scroll-enable::-webkit-scrollbar {

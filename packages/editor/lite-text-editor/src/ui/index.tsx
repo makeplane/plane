@@ -31,7 +31,7 @@ interface ILiteTextEditor {
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
   setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved"
+    isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
@@ -47,6 +47,7 @@ interface ILiteTextEditor {
     }[];
   };
   onEnterKeyPress?: (e?: any) => void;
+  cancelUploadImage?: () => any;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
   submitButton?: React.ReactNode;
@@ -64,6 +65,7 @@ interface EditorHandle {
 const LiteTextEditor = (props: LiteTextEditorProps) => {
   const {
     onChange,
+    cancelUploadImage,
     debouncedUpdatesEnabled,
     setIsSubmitting,
     setShouldShowAlert,
@@ -84,6 +86,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
 
   const editor = useEditor({
     onChange,
+    cancelUploadImage,
     debouncedUpdatesEnabled,
     setIsSubmitting,
     setShouldShowAlert,
@@ -126,7 +129,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
 };
 
 const LiteTextEditorWithRef = React.forwardRef<EditorHandle, ILiteTextEditor>(
-  (props, ref) => <LiteTextEditor {...props} forwardedRef={ref} />
+  (props, ref) => <LiteTextEditor {...props} forwardedRef={ref} />,
 );
 
 LiteTextEditorWithRef.displayName = "LiteTextEditorWithRef";

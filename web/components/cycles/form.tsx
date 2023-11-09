@@ -135,7 +135,7 @@ export const CycleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-200 ">
+      <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-100 ">
         <Button variant="neutral-primary" onClick={handleClose}>
           Cancel
         </Button>

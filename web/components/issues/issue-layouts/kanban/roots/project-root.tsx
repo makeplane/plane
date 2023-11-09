@@ -22,6 +22,7 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectState: projectStateStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
@@ -88,7 +89,7 @@ export const KanBanLayout: React.FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
@@ -106,7 +107,7 @@ export const KanBanLayout: React.FC = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+        <div className="relative min-w-full min-h-full h-max bg-custom-background-90 px-3 horizontal-scroll-enable">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {currentKanBanView === "default" ? (
               <KanBan

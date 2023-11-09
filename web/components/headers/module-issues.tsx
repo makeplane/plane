@@ -31,6 +31,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     module: moduleStore,
     moduleFilter: moduleFilterStore,
     project: projectStore,
+    projectState: projectStateStore,
+    commandPalette: commandPaletteStore,
   } = useMobxStore();
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
   const { currentProjectDetails } = projectStore;
@@ -146,6 +148,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
                   }
                   className="ml-1.5 flex-shrink-0"
                   width="auto"
+                  placement="bottom-start"
                 >
                   {modulesList?.map((module) => (
                     <CustomMenu.MenuItem
@@ -175,7 +178,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               }
               labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
               members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-              states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+              states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -192,17 +195,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
-            Add issue
+          <Button onClick={() => commandPaletteStore.toggleCreateIssueModal(true)} size="sm" prependIcon={<Plus />}>
+            Add job
           </Button>
           <button
             type="button"
