@@ -1,5 +1,6 @@
 # Python imports
 import json
+import uuid
 
 # Module imports
 from plane.db.models import (
@@ -154,7 +155,7 @@ def get_new_comment_mentions(new_value, old_value):
 def createMentionNotification(project, notification_comment, issue, actor_id, mention_id, issue_id, activity):
     return Notification(
         workspace=project.workspace,
-        sender="in_app:issue_activities:mention",
+        sender="in_app:issue_activities:mentioned",
         triggered_by_id=actor_id,
         receiver_id=mention_id,
         entity_identifier=issue_id,
@@ -250,7 +251,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
         issue_assignees = list(
             IssueAssignee.objects.filter(
                 project_id=project_id, issue_id=issue_id)
-            .exclude(assignee_id__in=list([actor_id] + new_mentions + comment_mentions))
+            .exclude(assignee_id__in=list(new_mentions + comment_mentions))
             .values_list("assignee", flat=True)
         )
         
@@ -260,8 +261,6 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             .exclude(subscriber_id__in=list(new_mentions + comment_mentions + [actor_id]))
             .values_list("subscriber", flat=True)
         )
-        
-        issue_subscribers = issue_subscribers + issue_assignees
 
         issue = Issue.objects.filter(pk=issue_id).first()
 
@@ -271,7 +270,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
         if subscriber:
             # add the user to issue subscriber
             try:
-                if str(issue.created_by_id) != str(actor_id):
+                if str(issue.created_by_id) != str(actor_id) and uuid.UUID(actor_id) not in issue_assignees:
                     _ = IssueSubscriber.objects.get_or_create(
                         project_id=project_id, issue_id=issue_id, subscriber_id=actor_id
                     )
@@ -280,7 +279,16 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
 
         project = Project.objects.get(pk=project_id)
 
-        for subscriber in list(set(issue_subscribers)):
+        issue_subscribers = list(set(issue_subscribers + issue_assignees) - {uuid.UUID(actor_id)})
+
+        for subscriber in issue_subscribers:
+            if subscriber in issue_subscribers:
+                sender = "in_app:issue_activities:subscribed"
+            if issue.created_by_id is not None and subscriber == issue.created_by_id:
+                sender = "in_app:issue_activities:created"
+            if subscriber in issue_assignees:
+                sender = "in_app:issue_activities:assigned"
+
             for issue_activity in issue_activities_created:
                 issue_comment = issue_activity.get("issue_comment")
                 if issue_comment is not None:
@@ -290,7 +298,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                 bulk_notifications.append(
                     Notification(
                         workspace=project.workspace,
-                        sender="in_app:issue_activities",
+                        sender=sender,
                         triggered_by_id=actor_id,
                         receiver_id=subscriber,
                         entity_identifier=issue_id,
@@ -360,7 +368,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
                     bulk_notifications.append(
                          Notification(
                              workspace=project.workspace,
-                            sender="in_app:issue_activities:mention",
+                            sender="in_app:issue_activities:mentioned",
                             triggered_by_id=actor_id,
                             receiver_id=mention_id,
                             entity_identifier=issue_id,
