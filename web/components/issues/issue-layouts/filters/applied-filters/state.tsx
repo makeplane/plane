@@ -16,7 +16,7 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, states, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((stateId) => {
         const stateDetails = states?.find((s) => s.id === stateId);
 
@@ -36,6 +36,6 @@ export const AppliedStateFilters: React.FC<Props> = observer((props) => {
           </div>
         );
       })}
-    </div>
+    </>
   );
 });

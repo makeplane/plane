@@ -15,7 +15,7 @@ export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((priority) => (
         <div key={priority} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
           <PriorityIcon
@@ -42,6 +42,6 @@ export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 });
