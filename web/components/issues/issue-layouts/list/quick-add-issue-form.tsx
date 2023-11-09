@@ -47,7 +47,6 @@ interface IListQuickAddIssueForm {
   formKey: keyof IIssue;
   groupId?: string;
   prePopulatedData?: Partial<IIssue>;
-  onSuccess?: (data: IIssue) => Promise<void> | void;
 }
 
 const defaultValues: Partial<IIssue> = {

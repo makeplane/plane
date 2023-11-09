@@ -5,9 +5,9 @@ import { Droppable } from "@hello-pangea/dnd";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { KanbanIssueBlocksList, BoardInlineCreateIssueForm } from "components/issues";
+import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from "components/issues";
 // types
-import { IIssueDisplayProperties, IIssue } from "types";
+import { IIssueDisplayProperties, IIssue, IState } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -20,6 +20,7 @@ export interface IGroupByKanBan {
   sub_group_id: string;
   list: any;
   listKey: string;
+  states: IState[] | null;
   isDragDisabled: boolean;
   handleIssues: (
     sub_group_by: string | null,
@@ -45,6 +46,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     sub_group_id = "null",
     list,
     listKey,
+    states,
     isDragDisabled,
     handleIssues,
     showEmptyGroup,
@@ -58,6 +60,18 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
   const verticalAlignPosition = (_list: any) =>
     kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
+
+  const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
+    const defaultState = states?.find((state) => state.default);
+    if (groupByKey === "state") return { state: groupByKey === "state" ? value : defaultState?.id };
+    else return { state: defaultState?.id, [groupByKey]: value };
+  };
+
+  const validateEmptyIssueGroups = (issues: IIssue[]) => {
+    const issuesCount = issues?.length || 0;
+    if (!showEmptyGroup && issuesCount <= 0) return false;
+    return true;
+  };
 
   return (
     <div className="relative w-full h-full flex gap-3">
@@ -92,7 +106,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               >
                 {(provided: any, snapshot: any) => (
                   <div
-                    className={`w-full h-full relative transition-all border border-red-500 ${
+                    className={`w-full h-full relative transition-all ${
                       snapshot.isDraggingOver ? `bg-custom-background-80` : ``
                     }`}
                     {...provided.droppableProps}
@@ -114,6 +128,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-sm">
                           {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
                         </div>
+                        <div className=""></div>
                       )
                     )}
 
@@ -125,7 +140,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
             <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky bottom-0 z-[0]">
               {enableQuickIssueCreate && (
-                <BoardInlineCreateIssueForm
+                <KanBanQuickAddIssueForm
+                  formKey="name"
                   groupId={getValueFromObject(_list, listKey) as string}
                   subGroupId={sub_group_id}
                   prePopulatedData={{
@@ -214,6 +230,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={projects}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -235,6 +252,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={states}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -256,6 +274,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={stateGroups}
           listKey={`key`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -277,6 +296,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={priorities}
           listKey={`key`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -298,6 +318,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={labels ? [...labels, { id: "None", name: "None" }] : labels}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -319,6 +340,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={members ? [...members, { id: "None", display_name: "None" }] : members}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -340,6 +362,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           sub_group_id={sub_group_id}
           list={members}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}

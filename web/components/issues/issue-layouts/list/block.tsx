@@ -30,9 +30,11 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
         )}
+
         {issue?.tempId !== undefined && (
           <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
         )}
+
         <IssuePeekOverview
           workspaceSlug={issue?.workspace_detail?.slug}
           projectId={issue?.project_detail?.id}

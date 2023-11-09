@@ -14,7 +14,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
 export const ListLayout: FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string };
 
   // store
   const {
@@ -30,20 +30,16 @@ export const ListLayout: FC = observer(() => {
   const group_by: string | null = userDisplayFilters?.group_by || null;
   const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
-  // TODO: remove the issue from the store
   const handleIssues = useCallback(
     async (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
       if (!workspaceSlug) return;
-
       if (action === "update") {
         issueStore.updateIssueStructure(group_by, null, issue);
-        await issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-        await issueStore.fetchIssues(workspaceSlug.toString(), issue.project, "mutation");
+        await issueDetailStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
       }
-
       if (action === "delete") {
-        await issueStore.deleteIssue(group_by, null, issue);
-        await issueStore.fetchIssues(workspaceSlug.toString(), issue.project, "mutation");
+        issueStore.removeIssueFromStructure(group_by, null, issue);
+        await issueDetailStore.deleteIssue(workspaceSlug, issue.project, issue.id);
       }
     },
     [issueStore, issueDetailStore, workspaceSlug]
@@ -55,7 +51,7 @@ export const ListLayout: FC = observer(() => {
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
+  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug] || null : null;
 
   return (
     <>

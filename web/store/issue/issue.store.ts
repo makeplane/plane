@@ -5,7 +5,6 @@ import { RootStore } from "../root";
 import { IIssue } from "types";
 // services
 import { IssueService } from "services/issue";
-import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 import { IBlockUpdateData } from "components/gantt-chart";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
@@ -36,8 +35,7 @@ export interface IIssueStore {
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, loadType?: "initial-load" | "mutation") => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  // removeIssueFromStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  removeIssueFromStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   updateGanttIssueStructure: (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => void;
 }
 
@@ -74,8 +72,7 @@ export class IssueStore implements IIssueStore {
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
-      // removeIssueFromStructure: action,
-      deleteIssue: action,
+      removeIssueFromStructure: action,
       updateGanttIssueStructure: action,
     });
 
@@ -203,61 +200,46 @@ export class IssueStore implements IIssueStore {
         : [...(issues ?? []), issue];
     }
 
-    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
-    if (orderBy === "-created_at") {
-      issues = sortArrayByDate(issues as any, "created_at");
+    runInAction(() => {
+      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
+    });
+  };
+
+  removeIssueFromStructure = (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
+    const projectId: string | null = issue?.project;
+    const issueType = this.getIssueType;
+    if (!projectId || !issueType) return null;
+
+    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
+      this.getIssues;
+    if (!issues) return null;
+
+    if (issueType === "grouped" && group_id) {
+      issues = issues as IIssueGroupedStructure;
+      issues = {
+        ...issues,
+        [group_id]: (issues[group_id] ?? []).filter((i) => i?.id !== issue?.id),
+      };
     }
-    if (orderBy === "-updated_at") {
-      issues = sortArrayByDate(issues as any, "updated_at");
+    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
+      issues = issues as IIssueGroupWithSubGroupsStructure;
+      issues = {
+        ...issues,
+        [sub_group_id]: {
+          ...issues[sub_group_id],
+          [group_id]: (issues[sub_group_id]?.[group_id] ?? []).filter((i) => i?.id !== issue?.id),
+        },
+      };
     }
-    if (orderBy === "start_date") {
-      issues = sortArrayByDate(issues as any, "updated_at");
-    }
-    if (orderBy === "priority") {
-      issues = sortArrayByPriority(issues as any, "priority");
+    if (issueType === "ungrouped") {
+      issues = issues as IIssueUnGroupedStructure;
+      issues = issues.filter((i) => i?.id !== issue?.id);
     }
 
     runInAction(() => {
       this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
     });
   };
-
-  // removeIssueFromStructure = (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-  //   const projectId: string | null = issue?.project;
-  //   const issueType = this.getIssueType;
-
-  //   if (!projectId || !issueType) return null;
-
-  //   let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
-  //     this.getIssues;
-  //   if (!issues) return null;
-
-  //   if (issueType === "grouped" && group_id) {
-  //     issues = issues as IIssueGroupedStructure;
-  //     issues = {
-  //       ...issues,
-  //       [group_id]: (issues[group_id] ?? []).filter((i) => i?.id !== issue?.id),
-  //     };
-  //   }
-  //   if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
-  //     issues = issues as IIssueGroupWithSubGroupsStructure;
-  //     issues = {
-  //       ...issues,
-  //       [sub_group_id]: {
-  //         ...issues[sub_group_id],
-  //         [group_id]: (issues[sub_group_id]?.[group_id] ?? []).filter((i) => i?.id !== issue?.id),
-  //       },
-  //     };
-  //   }
-  //   if (issueType === "ungrouped") {
-  //     issues = issues as IIssueUnGroupedStructure;
-  //     issues = issues.filter((i) => i?.id !== issue?.id);
-  //   }
-
-  //   runInAction(() => {
-  //     this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
-  //   });
-  // };
 
   updateGanttIssueStructure = async (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => {
     if (!issue || !workspaceSlug) return;
@@ -297,42 +279,6 @@ export class IssueStore implements IIssueStore {
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
     this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
-  };
-
-  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const projectId: string | null = issue?.project;
-    const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
-
-    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
-      this.getIssues;
-    if (!issues) return null;
-
-    if (issueType === "grouped" && group_id) {
-      issues = issues as IIssueGroupedStructure;
-      issues = {
-        ...issues,
-        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
-      };
-    }
-    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
-      issues = issues as IIssueGroupWithSubGroupsStructure;
-      issues = {
-        ...issues,
-        [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
-        },
-      };
-    }
-    if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.filter((i) => i?.id !== issue?.id);
-    }
-
-    runInAction(() => {
-      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
-    });
   };
 
   fetchIssues = async (

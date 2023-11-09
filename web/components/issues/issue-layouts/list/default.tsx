@@ -54,8 +54,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     return true;
   };
 
-  if (!showEmptyGroup && (is_list ? issues.length <= 0 : Object.keys(issues).length <= 0)) return null;
-
   return (
     <div className="relative w-full h-full">
       {list &&
