@@ -108,6 +108,9 @@ import {
   InboxStore,
 } from "store/inbox";
 
+// v3
+import { ProjectIssueStore, IProjectIssueStore } from "store/project-issues";
+
 import { IMentionsStore, MentionsStore } from "store/editor";
 
 enableStaticRendering(typeof window === "undefined");
@@ -176,6 +179,8 @@ export class RootStore {
 
   mentionsStore: IMentionsStore;
 
+  projectIssues: IProjectIssueStore;
+
   constructor() {
     this.appConfig = new AppConfigStore(this);
     this.commandPalette = new CommandPaletteStore(this);
@@ -239,5 +244,7 @@ export class RootStore {
     this.inboxFilters = new InboxFiltersStore(this);
 
     this.mentionsStore = new MentionsStore(this);
+
+    this.projectIssues = new ProjectIssueStore(this);
   }
 }

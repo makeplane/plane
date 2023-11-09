@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR from "swr";
@@ -19,7 +19,6 @@ export const WorkspaceDashboardView = observer(() => {
   const { workspaceSlug } = router.query;
   // store
   const { user: userStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
-
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
   const workspaceDashboardInfo = userStore.dashboardInfo;
