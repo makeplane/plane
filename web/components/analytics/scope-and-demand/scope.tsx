@@ -22,9 +22,7 @@ export const AnalyticsScope: React.FC<Props> = ({ defaultAnalytics }) => (
             keys={["count"]}
             height="250px"
             colors={() => `#f97316`}
-            customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) =>
-              d.count > 0 ? d.count : 50
-            )}
+            customYAxisTickValues={defaultAnalytics.pending_issue_user.map((d) => (d.count > 0 ? d.count : 50))}
             tooltip={(datum) => {
               const assignee = defaultAnalytics.pending_issue_user.find(
                 (a) => a.assignees__id === `${datum.indexValue}`

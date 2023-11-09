@@ -2,12 +2,7 @@ import React from "react";
 
 import type { Props } from "./types";
 
-export const ExternalLinkIcon: React.FC<Props> = ({
-  width = "24",
-  height = "24",
-  className,
-  color = "black",
-}) => (
+export const ExternalLinkIcon: React.FC<Props> = ({ width = "24", height = "24", className, color = "black" }) => (
   <svg
     width={width}
     height={height}

@@ -28,38 +28,36 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
-
-  const user = userStore.currentUser;
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug?.toString()] : null;
+  const {
+    project: { workspaceProjects },
+    user: { currentUser },
+    commandPalette: { toggleCreateProjectModal },
+  } = useMobxStore();
 
   const trackAnalyticsEvent = (tab: string) => {
-    if (!user) return;
-
+    if (!currentUser) return;
     const eventPayload = {
       workspaceSlug: workspaceSlug?.toString(),
     };
-
     const eventType =
       tab === "scope_and_demand" ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS" : "WORKSPACE_CUSTOM_ANALYTICS";
-
-    trackEventService.trackAnalyticsEvent(eventPayload, eventType, user);
+    trackEventService.trackAnalyticsEvent(eventPayload, eventType, currentUser);
   };
 
   useEffect(() => {
     if (!workspaceSlug) return;
 
-    if (user && workspaceSlug)
+    if (currentUser && workspaceSlug)
       trackEventService.trackAnalyticsEvent(
         { workspaceSlug: workspaceSlug?.toString() },
         "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
-        user
+        currentUser
       );
-  }, [user, workspaceSlug]);
+  }, [currentUser, workspaceSlug]);
 
   return (
     <>
-      {projects && projects.length > 0 ? (
+      {workspaceProjects && workspaceProjects.length > 0 ? (
         <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
@@ -96,7 +94,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
               text: "New Project",
-              onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+              onClick: () => toggleCreateProjectModal(true),
             }}
           />
         </>

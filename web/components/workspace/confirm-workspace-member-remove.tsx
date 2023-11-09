@@ -19,8 +19,9 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
 
   const [isRemoving, setIsRemoving] = useState(false);
 
-  const { user: userStore } = useMobxStore();
-  const user = userStore.currentUser;
+  const {
+    user: { currentUser },
+  } = useMobxStore();
 
   const handleClose = () => {
     onClose();
@@ -69,10 +70,10 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        {user?.id === data?.memberId ? "Leave workspace?" : `Remove ${data?.display_name}?`}
+                        {currentUser?.id === data?.memberId ? "Leave workspace?" : `Remove ${data?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
-                        {user?.id === data?.memberId ? (
+                        {currentUser?.id === data?.memberId ? (
                           <p className="text-sm text-custom-text-200">
                             Are you sure you want to leave the workspace? You will no longer have access to this
                             workspace. This action cannot be undone.

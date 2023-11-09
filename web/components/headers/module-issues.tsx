@@ -31,6 +31,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     module: moduleStore,
     moduleFilter: moduleFilterStore,
     project: projectStore,
+    projectState: projectStateStore,
     commandPalette: commandPaletteStore,
   } = useMobxStore();
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
@@ -177,7 +178,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               }
               labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
               members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-              states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+              states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">

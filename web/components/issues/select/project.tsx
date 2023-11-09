@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import type { FieldError } from "react-hook-form";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // popper js
@@ -15,6 +16,7 @@ import { Check, Clipboard, Search } from "lucide-react";
 export interface IssueProjectSelectProps {
   value: string;
   onChange: (value: string) => void;
+  error?: FieldError;
 }
 
 export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((props) => {
@@ -71,20 +73,12 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
     </>
   );
   return (
-    <Combobox
-      as="div"
-      className={`flex-shrink-0 text-left`}
-      value={value}
-      onChange={(val: string) => onChange(val)}
-      disabled={false}
-    >
+    <Combobox as="div" className="flex-shrink-0 text-left" value={value} onChange={(val: string) => onChange(val)}>
       <Combobox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 w-full text-xs px-2 py-1 rounded-md shadow-sm  text-custom-text-200 border border-custom-border-300 duration-300 focus:outline-none ${
-            false ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          }`}
+          className="flex items-center justify-center gap-1 w-full text-xs px-2 py-1 rounded text-custom-text-300  border-[0.5px] border-custom-border-300   hover:bg-custom-background-80"
         >
           {label}
         </button>

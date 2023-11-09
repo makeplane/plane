@@ -42,9 +42,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 colors={(datum) => datum.data.color}
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
-                    <span className="text-custom-text-200 capitalize">
-                      {datum.datum.label} issues:
-                    </span>{" "}
+                    <span className="text-custom-text-200 capitalize">{datum.datum.label} issues:</span>{" "}
                     {datum.datum.value}
                   </div>
                 )}
@@ -59,10 +57,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
             <div className="flex items-center">
               <div className="space-y-4 w-full">
                 {stateDistribution.map((group) => (
-                  <div
-                    key={group.state_group}
-                    className="flex items-center justify-between gap-2 text-xs"
-                  >
+                  <div key={group.state_group} className="flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-1.5">
                       <div
                         className="h-2.5 w-2.5 rounded-sm"
