@@ -3,12 +3,7 @@ import { createContext, useCallback, useReducer } from "react";
 // components
 import ToastAlert from "components/toast-alert";
 // types
-import {
-  IIssueFilterOptions,
-  Properties,
-  IWorkspaceViewProps,
-  IIssueDisplayFilterOptions,
-} from "types";
+import { IIssueFilterOptions, Properties, IWorkspaceViewProps, IIssueDisplayFilterOptions } from "types";
 
 export const profileIssuesContext = createContext<ContextType>({} as ContextType);
 
@@ -117,9 +112,7 @@ export const reducer: ReducerFunctionType = (state, action) => {
   }
 };
 
-export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const setDisplayFilters = useCallback(
@@ -133,11 +126,7 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
         },
       });
 
-      if (
-        displayFilter.layout &&
-        displayFilter.layout === "kanban" &&
-        state.display_filters?.group_by === null
-      ) {
+      if (displayFilter.layout && displayFilter.layout === "kanban" && state.display_filters?.group_by === null) {
         dispatch({
           type: "SET_DISPLAY_FILTERS",
           payload: {
@@ -154,8 +143,7 @@ export const ProfileIssuesContextProvider: React.FC<{ children: React.ReactNode 
   const setFilters = useCallback(
     (property: Partial<IIssueFilterOptions>) => {
       Object.keys(property).forEach((key) => {
-        if (property[key as keyof typeof property]?.length === 0)
-          property[key as keyof typeof property] = null;
+        if (property[key as keyof typeof property]?.length === 0) property[key as keyof typeof property] = null;
       });
 
       dispatch({

@@ -42,12 +42,12 @@ export const WorkspaceSidebarQuickAction = observer(() => {
           className={`relative flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
             isSidebarCollapsed
               ? "px-2 hover:bg-custom-sidebar-background-80"
-              : "px-3 shadow border-[0.5px] border-custom-border-300"
+              : "px-3 shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
           }`}
         >
           <button
             type="button"
-            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 ${
+            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none ${
               isSidebarCollapsed ? "justify-center" : ""
             }`}
             onClick={() => commandPaletteStore.toggleCreateIssueModal(true)}
@@ -92,10 +92,10 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         </div>
 
         <button
-          className={`flex items-center justify-center rounded flex-shrink-0 p-2 ${
+          className={`flex items-center justify-center rounded flex-shrink-0 p-2 outline-none ${
             isSidebarCollapsed
               ? "hover:bg-custom-sidebar-background-80"
-              : "shadow border-[0.5px] border-custom-border-300"
+              : "shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
           }`}
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >

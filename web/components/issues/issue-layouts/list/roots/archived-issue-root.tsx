@@ -19,6 +19,8 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
   const {
     project: projectStore,
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
     archivedIssues: archivedIssueStore,
     archivedIssueFilters: archivedIssueFiltersStore,
   } = useMobxStore();
@@ -38,10 +40,9 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : null;
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
@@ -64,7 +65,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members?.map((m) => m.member) ?? null}
+        members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
       />

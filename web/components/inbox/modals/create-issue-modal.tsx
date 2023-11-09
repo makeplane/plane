@@ -41,7 +41,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
 
   const editorRef = useRef<any>(null);
 
-  const editorSuggestion = useEditorSuggestions()
+  const editorSuggestion = useEditorSuggestions();
 
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;

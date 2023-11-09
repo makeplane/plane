@@ -11,8 +11,9 @@ declare global {
 }
 
 const Crisp = observer(() => {
-  const { user: userStore } = useMobxStore();
-  const { currentUser } = userStore;
+  const {
+    user: { currentUser },
+  } = useMobxStore();
 
   const validateCurrentUser = useCallback(() => {
     if (currentUser) return currentUser.email;

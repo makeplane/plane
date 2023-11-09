@@ -10,7 +10,7 @@ export interface TextAreaProps
 // Updates the height of a <textarea> when the value changes.
 const useAutoSizeTextArea = (
   textAreaRef: HTMLTextAreaElement | null,
-  value: any
+  value: any,
 ) => {
   React.useEffect(() => {
     if (textAreaRef) {
@@ -63,7 +63,7 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
         {...rest}
       />
     );
-  }
+  },
 );
 
 export { TextArea };

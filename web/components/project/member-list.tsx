@@ -4,7 +4,7 @@ import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { ProjectInvitationService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // hooks
 import useUser from "hooks/use-user";
 // components
@@ -15,7 +15,7 @@ import { Button, Loader } from "@plane/ui";
 import { Search } from "lucide-react";
 
 // services
-const projectInvitationService = new ProjectInvitationService();
+const projectInvitationService = new ProjectMemberService();
 
 export const ProjectMemberList: React.FC = observer(() => {
   // router
@@ -23,7 +23,10 @@ export const ProjectMemberList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: projectStore,
+    projectMember: { projectMembers, fetchProjectMembers },
+  } = useMobxStore();
 
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -39,7 +42,6 @@ export const ProjectMemberList: React.FC = observer(() => {
   );
 
   // derived values
-  const projectMembers = projectStore.projectMembers;
 
   const members = [
     ...(projectMembers?.map((item) => ({
@@ -83,7 +85,7 @@ export const ProjectMemberList: React.FC = observer(() => {
         user={user}
         onSuccess={() => {
           mutate(`PROJECT_INVITATIONS_${projectId?.toString()}`);
-          projectStore.fetchProjectMembers(workspaceSlug?.toString()!, projectId?.toString()!);
+          fetchProjectMembers(workspaceSlug?.toString()!, projectId?.toString()!);
         }}
       />
 

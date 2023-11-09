@@ -41,7 +41,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     placement,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const { workspace: workspaceStore, projectState: projectStateStore }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -50,7 +50,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   const projectStates: IState[] = [];
-  const projectStatesByGroup = projectId && projectStore?.states?.[projectId];
+  const projectStatesByGroup = projectStateStore.groupedProjectStates;
   if (projectStatesByGroup)
     for (const group in projectStatesByGroup) projectStates.push(...projectStatesByGroup[group]);
 
@@ -59,7 +59,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     if (workspaceSlug && projectId)
       workspaceSlug &&
         projectId &&
-        projectStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
+        projectStateStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const dropdownOptions = projectStates?.map((state) => ({

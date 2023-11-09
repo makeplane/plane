@@ -3,25 +3,27 @@ import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { MoreVertical } from "lucide-react";
 // hooks
-import { useChart } from "./hooks";
+import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
+// components
+import { GanttInlineCreateIssueForm, IssueGanttSidebarBlock } from "components/issues";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
-import { IBlockUpdateData, IGanttBlock } from "./types";
+import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 
 type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  SidebarBlockRender: React.FC<any>;
   enableReorder: boolean;
+  enableQuickIssueCreate?: boolean;
 };
 
-export const GanttSidebar: React.FC<Props> = (props) => {
+export const IssueGanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, SidebarBlockRender, enableReorder } = props;
+  const { title, blockUpdateHandler, blocks, enableReorder, enableQuickIssueCreate } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -128,7 +130,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
                               <div className="flex-grow truncate">
-                                <SidebarBlockRender data={block.data} />
+                                <IssueGanttSidebarBlock data={block.data} handleIssue={blockUpdateHandler} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
@@ -150,6 +152,7 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
+            {enableQuickIssueCreate && <GanttInlineCreateIssueForm />}
           </div>
         )}
       </StrictModeDroppable>

@@ -10,7 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -48,7 +48,7 @@ const defaultValues: FormValues = {
 };
 
 // services
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 const workspaceService = new WorkspaceService();
 
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
@@ -90,7 +90,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     const payload = { ...formData };
 
-    await projectService
+    await projectMemberService
       .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload, user)
       .then(() => {
         setIsOpen(false);
