@@ -12,6 +12,8 @@ import TableHeader from "./table/table-header/table-header";
 import Table from "./table/table";
 import TableCell from "./table/table-cell/table-cell";
 import TableRow from "./table/table-row/table-row";
+import DragDrop from "./drag-drop";
+import HorizontalRule from "./horizontal-rule";
 
 import ImageExtension from "./image";
 
@@ -96,6 +98,7 @@ export const CoreEditorExtensions = (
     html: true,
     transformCopiedText: true,
   }),
+  HorizontalRule,
   Table,
   TableHeader,
   TableCell,
@@ -105,4 +108,5 @@ export const CoreEditorExtensions = (
     mentionConfig.mentionHighlights,
     false,
   ),
+  DragDrop,
 ];

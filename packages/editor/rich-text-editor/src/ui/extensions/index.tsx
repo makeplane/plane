@@ -18,29 +18,29 @@ export const RichTextEditorExtensions = (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void,
 ) => [
-  HorizontalRule.extend({
-    addInputRules() {
-      return [
-        new InputRule({
-          find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-          handler: ({ state, range, commands }) => {
-            commands.splitBlock();
-
-            const attributes = {};
-            const { tr } = state;
-            const start = range.from;
-            const end = range.to;
-            // @ts-ignore
-            tr.replaceWith(start - 1, end, this.type.create(attributes));
-          },
-        }),
-      ];
-    },
-  }).configure({
-    HTMLAttributes: {
-      class: "mb-6 border-t border-custom-border-300",
-    },
-  }),
+  // HorizontalRule.extend({
+  //   addInputRules() {
+  //     return [
+  //       new InputRule({
+  //         find: /^(?:---|—-|___\s|\*\*\*\s)$/,
+  //         handler: ({ state, range, commands }) => {
+  //           commands.splitBlock();
+  //
+  //           const attributes = {};
+  //           const { tr } = state;
+  //           const start = range.from;
+  //           const end = range.to;
+  //           // @ts-ignore
+  //           tr.replaceWith(start - 1, end, this.type.create(attributes));
+  //         },
+  //       }),
+  //     ];
+  //   },
+  // }).configure({
+  //   HTMLAttributes: {
+  //     class: "mb-6 border-t border-custom-border-300",
+  //   },
+  // }),
   SlashCommand(uploadFile, setIsSubmitting),
   CodeBlockLowlight.configure({
     lowlight,
