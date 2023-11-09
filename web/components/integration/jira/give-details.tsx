@@ -56,6 +56,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 ref={ref}
                 placeholder="XXXXXXXX"
                 className="w-full"
+                autoComplete="off"
               />
             )}
           />
