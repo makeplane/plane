@@ -52,10 +52,17 @@ export const WorkspaceMembersList: React.FC<{ searchQuery: string }> = observer(
       accountCreated: true,
     })) || []),
   ];
+
   const searchedMembers = members?.filter((member) => {
-    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
+    const email = member.email?.toLowerCase();
     const displayName = member.display_name.toLowerCase();
-    return displayName.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
+    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
+
+    return (
+      displayName.includes(searchQuery.toLowerCase()) ||
+      fullName.includes(searchQuery.toLowerCase()) ||
+      email?.includes(searchQuery.toLowerCase())
+    );
   });
 
   if (!workspaceMembers || !workspaceInvitations || !user)
