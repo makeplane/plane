@@ -401,7 +401,7 @@ class InviteProjectEndpoint(BaseAPIView):
             token=token,
             role=role,
         )
-        domain = settings.WEB_URL
+        domain = f"{request.scheme}://{request.get_host()}"
         project_invitation.delay(email, project_id, token, domain)
 
         return Response(
