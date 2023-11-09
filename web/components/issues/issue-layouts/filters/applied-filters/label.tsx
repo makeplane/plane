@@ -15,7 +15,7 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, labels, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((labelId) => {
         const labelDetails = labels?.find((l) => l.id === labelId);
 
@@ -40,6 +40,6 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
           </div>
         );
       })}
-    </div>
+    </>
   );
 });
