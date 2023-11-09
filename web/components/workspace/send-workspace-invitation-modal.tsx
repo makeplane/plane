@@ -94,7 +94,7 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
           message: `${err.error ?? "Something went wrong. Please try again."}`,
         })
       )
-      .finally(() => mutate(WORKSPACE_INVITATIONS));
+      .finally(() => mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`));
   };
 
   const appendField = () => {

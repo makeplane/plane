@@ -394,8 +394,20 @@ export class WorkspaceStore implements IWorkspaceStore {
    * @param memberId
    */
   removeMember = async (workspaceSlug: string, memberId: string) => {
-    const members = this.members?.[workspaceSlug];
-    members?.filter((m) => m.id !== memberId);
+    const members = [...this.members?.[workspaceSlug]];
+    const originalMembers = this.members?.[workspaceSlug]; // in case of error, we will revert back to original members
+
+    // removing member from the array
+    const index = members.findIndex((m) => m.id === memberId);
+    members.splice(index, 1);
+
+    // optimistic update
+    runInAction(() => {
+      this.members = {
+        ...this.members,
+        [workspaceSlug]: members,
+      };
+    });
 
     try {
       runInAction(() => {
@@ -408,15 +420,15 @@ export class WorkspaceStore implements IWorkspaceStore {
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.members = {
-          ...this.members,
-          [workspaceSlug]: members,
-        };
       });
     } catch (error) {
       runInAction(() => {
         this.loader = false;
         this.error = error;
+        this.members = {
+          ...this.members,
+          [workspaceSlug]: originalMembers,
+        };
       });
 
       throw error;

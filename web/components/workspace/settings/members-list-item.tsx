@@ -1,6 +1,7 @@
 import { useState, FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { mutate } from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
@@ -79,6 +80,13 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
             type: "error",
             title: "Error",
             message: error || "Something went wrong",
+          });
+        })
+        .finally(() => {
+          mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`, (prevData) => {
+            if (!prevData) return prevData;
+
+            return prevData.filter((item: any) => item.id !== member.id);
           });
         });
   };
