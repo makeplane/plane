@@ -361,14 +361,14 @@ class InviteProjectEndpoint(BaseAPIView):
             )
 
         validate_email(email)
-        # Check if user is already a member of workspace
+        # Check if user is already a member of project
         if ProjectMember.objects.filter(
             project_id=project_id,
             member__email=email,
             member__is_bot=False,
         ).exists():
             return Response(
-                {"error": "User is already member of workspace"},
+                {"error": "User is already member of Project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -475,6 +475,7 @@ class ProjectMemberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(member__is_bot=False)
+            .filter()
             .select_related("project")
             .select_related("member")
             .select_related("workspace", "workspace__owner")
