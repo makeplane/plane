@@ -202,6 +202,7 @@ function createToolbox({
           "div",
           {
             className: "toolboxItem",
+            itemType: "button",
             onClick() {
               onClickItem(item);
             },
@@ -253,6 +254,7 @@ function createColorPickerToolbox({
           "div",
           {
             className: "toolboxItem",
+            itemType: "button",
             onClick: () => {
               onSelectColor(value);
               colorPicker.hide();
@@ -331,7 +333,9 @@ export class TableView implements NodeView {
       this.rowsControl = h(
         "div",
         { className: "rowsControl" },
-        h("button", {
+        h("div", {
+          itemType: "button",
+          className: "rowsControlDiv",
           onClick: () => this.selectRow(),
         }),
       );
@@ -339,7 +343,9 @@ export class TableView implements NodeView {
       this.columnsControl = h(
         "div",
         { className: "columnsControl" },
-        h("button", {
+        h("div", {
+          itemType: "button",
+          className: "columnsControlDiv",
           onClick: () => this.selectColumn(),
         }),
       );
@@ -352,7 +358,7 @@ export class TableView implements NodeView {
       );
 
       this.columnsToolbox = createToolbox({
-        triggerButton: this.columnsControl.querySelector("button"),
+        triggerButton: this.columnsControl.querySelector(".columnsControlDiv"),
         items: columnsToolboxItems,
         tippyOptions: {
           ...defaultTippyOptions,

@@ -15,7 +15,7 @@ import {
   FilterTargetDate,
 } from "components/issues";
 // types
-import { IIssueFilterOptions, IIssueLabels, IProject, IStateResponse, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
@@ -26,7 +26,7 @@ type Props = {
   labels?: IIssueLabels[] | undefined;
   members?: IUserLite[] | undefined;
   projects?: IProject[] | undefined;
-  states?: IStateResponse | undefined;
+  states?: IState[] | undefined;
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {

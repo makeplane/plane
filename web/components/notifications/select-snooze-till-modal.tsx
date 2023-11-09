@@ -171,7 +171,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                               setValue("time", null);
                               onChange(val);
                             }}
-                            className="px-3 py-2 w-full rounded-md border border-custom-border-300 bg-custom-background-100 text-custom-text-100 focus:outline-none !text-sm"
+                            className="px-3 py-2 w-full rounded-md border border-custom-border-300 bg-custom-background-100 text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none !text-sm"
                             wrapperClassName="w-full"
                             noBorder
                             minDate={new Date()}

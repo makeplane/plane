@@ -7,7 +7,7 @@ import {
 } from "react";
 import { CoreReadOnlyEditorExtensions } from "../../ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "../../ui/read-only/props";
-import { EditorProps } from '@tiptap/pm/view';
+import { EditorProps } from "@tiptap/pm/view";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 
 interface CustomReadOnlyEditorProps {
@@ -19,7 +19,14 @@ interface CustomReadOnlyEditorProps {
   mentionSuggestions?: IMentionSuggestion[];
 }
 
-export const useReadOnlyEditor = ({ value, forwardedRef, extensions = [], editorProps = {}, mentionHighlights, mentionSuggestions}: CustomReadOnlyEditorProps) => {
+export const useReadOnlyEditor = ({
+  value,
+  forwardedRef,
+  extensions = [],
+  editorProps = {},
+  mentionHighlights,
+  mentionSuggestions,
+}: CustomReadOnlyEditorProps) => {
   const editor = useCustomEditor({
     editable: false,
     content:
@@ -28,7 +35,13 @@ export const useReadOnlyEditor = ({ value, forwardedRef, extensions = [], editor
       ...CoreReadOnlyEditorProps,
       ...editorProps,
     },
-    extensions: [...CoreReadOnlyEditorExtensions({ mentionSuggestions: mentionSuggestions ?? [], mentionHighlights: mentionHighlights ?? []}), ...extensions],
+    extensions: [
+      ...CoreReadOnlyEditorExtensions({
+        mentionSuggestions: mentionSuggestions ?? [],
+        mentionHighlights: mentionHighlights ?? [],
+      }),
+      ...extensions,
+    ],
   });
 
   const hasIntiliazedContent = useRef(false);

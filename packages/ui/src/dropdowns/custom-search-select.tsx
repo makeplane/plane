@@ -35,7 +35,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
   const [referenceElement, setReferenceElement] =
     useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null
+    null,
   );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
@@ -46,7 +46,7 @@ export const CustomSearchSelect = (props: ICustomSearchSelectProps) => {
     query === ""
       ? options
       : options?.filter((option) =>
-          option.query.toLowerCase().includes(query.toLowerCase())
+          option.query.toLowerCase().includes(query.toLowerCase()),
         );
 
   const comboboxProps: any = {

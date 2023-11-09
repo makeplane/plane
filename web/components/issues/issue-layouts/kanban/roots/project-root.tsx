@@ -22,6 +22,7 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectState: projectStateStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
@@ -88,7 +89,7 @@ export const KanBanLayout: React.FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;

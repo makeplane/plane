@@ -49,18 +49,19 @@ const authService = new AuthService();
 export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { theme: themeStore, workspace: workspaceStore, user: userStore } = useMobxStore();
-  const { workspaces, currentWorkspace: activeWorkspace } = workspaceStore;
-  const user = userStore.currentUser;
-
+  // store
+  const {
+    theme: { sidebarCollapsed },
+    workspace: { workspaces, currentWorkspace: activeWorkspace },
+    user: { currentUser, updateCurrentUser },
+  } = useMobxStore();
+  // hooks
   const { setToastAlert } = useToast();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
-    userStore
-      .updateCurrentUser({
-        last_workspace_id: workspace?.id,
-      })
+    updateCurrentUser({
+      last_workspace_id: workspace?.id,
+    })
       .then(() => {
         router.push(`/${workspace.slug}/`);
       })
@@ -94,7 +95,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
         <Menu.Button className="text-custom-sidebar-text-200 rounded-sm text-sm font-medium focus:outline-none w-full h-full truncate">
           <div
             className={`flex items-center gap-x-2 rounded-sm bg-custom-sidebar-background-80 p-1 truncate ${
-              themeStore.sidebarCollapsed ? "justify-center" : ""
+              sidebarCollapsed ? "justify-center" : ""
             }`}
           >
             <div className="relative grid h-6 w-6 place-items-center rounded bg-gray-700 uppercase text-white flex-shrink-0">
@@ -109,7 +110,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               )}
             </div>
 
-            {!themeStore.sidebarCollapsed && (
+            {!sidebarCollapsed && (
               <h4 className="text-custom-text-100 truncate">
                 {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
               </h4>
@@ -198,7 +199,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               )}
             </div>
             <div className="flex w-full flex-col items-start justify-start gap-2 border-t border-custom-sidebar-border-200 px-3 py-2 text-sm">
-              {userLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
+              {userLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                 <Menu.Item
                   key={index}
                   as="div"
@@ -224,10 +225,16 @@ export const WorkspaceSidebarDropdown = observer(() => {
         </Transition>
       </Menu>
 
-      {!themeStore.sidebarCollapsed && (
+      {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-            <Avatar name={user?.display_name} src={user?.avatar} size={30} shape="square" className="!text-base" />
+            <Avatar
+              name={currentUser?.display_name}
+              src={currentUser?.avatar}
+              size={30}
+              shape="square"
+              className="!text-base"
+            />
           </Menu.Button>
 
           <Transition
@@ -244,8 +251,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
           border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
-                <span className="px-2 text-custom-sidebar-text-200">{user?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", user?.id ?? "").map((link, index) => (
+                <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                   <Menu.Item key={index} as="button" type="button">
                     <Link href={link.link}>
                       <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">

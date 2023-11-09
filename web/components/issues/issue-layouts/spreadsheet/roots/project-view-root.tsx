@@ -20,6 +20,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
     projectViewIssues: projectViewIssueStore,
     issueDetail: issueDetailStore,
     project: projectStore,
+    projectState: projectStateStore,
   } = useMobxStore();
 
   const issues = projectViewIssueStore.getIssues;
@@ -60,7 +61,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
       issues={issues as IIssueUnGroupedStructure}
       members={projectId ? projectStore.members?.[projectId.toString()]?.map((m) => m.member) : undefined}
       labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
-      states={projectId ? projectStore.states?.[projectId.toString()] : undefined}
+      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssueAction={() => {}}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
