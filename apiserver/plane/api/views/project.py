@@ -364,10 +364,8 @@ class InviteProjectEndpoint(BaseAPIView):
 
         # If the user is also part of workspace directly add him to project
         if WorkspaceMember.objects.filter(
-            project_id=project_id,
             member__email=email,
             member__is_bot=False,
-            member__is_deactivated=False,
         ).exists():
             # Check if user is already a member of project
             if ProjectMember.objects.filter(
