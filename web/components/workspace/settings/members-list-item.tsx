@@ -55,14 +55,26 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
     if (!workspaceSlug) return;
 
     if (member.member)
-      await workspaceStore.removeMember(workspaceSlug.toString(), member.id).catch((err) => {
-        const error = err?.error;
-        setToastAlert({
-          type: "error",
-          title: "Error",
-          message: error || "Something went wrong",
+      await workspaceStore
+        .removeMember(workspaceSlug.toString(), member.id)
+        .then(() => {
+          const memberId = member.memberId;
+
+          if (memberId === userStore.currentUser?.id) {
+            userStore.fetchCurrentUserSettings().then((userSettings) => {
+              if (userSettings.workspace.invites > 0) router.push("/invitations");
+              else router.push("/create-workspace");
+            });
+          }
+        })
+        .catch((err) => {
+          const error = err?.error;
+          setToastAlert({
+            type: "error",
+            title: "Error",
+            message: error || "Something went wrong",
+          });
         });
-      });
     else
       await workspaceService
         .deleteWorkspaceInvitations(workspaceSlug.toString(), member.id)
@@ -83,7 +95,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
           });
         })
         .finally(() => {
-          mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`, (prevData) => {
+          mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`, (prevData: any) => {
             if (!prevData) return prevData;
 
             return prevData.filter((item: any) => item.id !== member.id);
