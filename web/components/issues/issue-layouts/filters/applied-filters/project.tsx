@@ -16,7 +16,7 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, projects, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((projectId) => {
         const projectDetails = projects?.find((p) => p.id === projectId);
 
@@ -44,6 +44,6 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
           </div>
         );
       })}
-    </div>
+    </>
   );
 });

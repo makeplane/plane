@@ -145,6 +145,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <RichTextEditor
+              cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               value={value}

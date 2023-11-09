@@ -133,18 +133,13 @@ export const formatDateDistance = (date: string | Date) => {
 export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
   if (!startDate || !endDate) return "draft";
 
-  const today = renderDateFormat(new Date());
-  const now = new Date(today);
+  const now = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (start <= now && end >= now) {
-    return "current";
-  } else if (start > now) {
-    return "upcoming";
-  } else {
-    return "completed";
-  }
+  if (start <= now && end >= now) return "current";
+  else if (start > now) return "upcoming";
+  else return "completed";
 };
 
 export const renderShortDateWithYearFormat = (date: string | Date, placeholder?: string) => {
@@ -373,7 +368,7 @@ export const findTotalDaysInRange = (startDate: Date | string, endDate: Date | s
 
   // find number of days between startDate and endDate
   const diffInTime = endDate.getTime() - startDate.getTime();
-  const diffInDays = diffInTime / (1000 * 3600 * 24);
+  const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
 
   // if inclusive is true, add 1 to diffInDays
   if (inclusive) return diffInDays + 1;

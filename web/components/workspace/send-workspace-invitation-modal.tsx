@@ -1,28 +1,19 @@
 import React, { useEffect } from "react";
-import { mutate } from "swr";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // icons
 import { Plus, X } from "lucide-react";
 // types
-import { IUser, TUserWorkspaceRole } from "types";
+import { IWorkspaceBulkInviteFormData, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
-// fetch-keys
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  workspaceSlug: string;
-  user: IUser | undefined;
-  onSuccess?: () => Promise<void>;
+  onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
 };
 
 type EmailRole = {
@@ -43,11 +34,10 @@ const defaultValues: FormValues = {
   ],
 };
 
-const workspaceService = new WorkspaceService();
-
 export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
-  const { isOpen, onClose, workspaceSlug, user, onSuccess } = props;
+  const { isOpen, onClose, onSubmit } = props;
 
+  // form info
   const {
     control,
     reset,
@@ -60,8 +50,6 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     name: "emails",
   });
 
-  const { setToastAlert } = useToast();
-
   const handleClose = () => {
     onClose();
 
@@ -71,31 +59,29 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     }, 350);
   };
 
-  const onSubmit = async (formData: FormValues) => {
-    if (!workspaceSlug) return;
+  // const onSubmit = async (formData: FormValues) => {
+  //   if (!workspaceSlug) return;
 
-    await workspaceService
-      .inviteWorkspace(workspaceSlug, formData, user)
-      .then(async () => {
-        if (onSuccess) await onSuccess();
+  //   return workspaceService
+  //     .inviteWorkspace(workspaceSlug, formData, user)
 
-        handleClose();
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Invitations sent successfully.",
-        });
-      })
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: `${err.error ?? "Something went wrong. Please try again."}`,
-        })
-      )
-      .finally(() => mutate(WORKSPACE_INVITATIONS));
-  };
+  //     .then(async () => {
+  //       if (onSuccess) await onSuccess();
+  //       handleClose();
+  //       setToastAlert({
+  //         type: "success",
+  //         title: "Success!",
+  //         message: "Invitations sent successfully.",
+  //       });
+  //     })
+  //     .catch((err) =>
+  //       setToastAlert({
+  //         type: "error",
+  //         title: "Error!",
+  //         message: `${err.error ?? "Something went wrong. Please try again."}`,
+  //       })
+  //     );
+  // };
 
   const appendField = () => {
     append({ email: "", role: 15 });

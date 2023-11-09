@@ -1,5 +1,4 @@
-import { FC, useEffect, useState, Dispatch, SetStateAction, Fragment } from "react";
-// headless ui
+import { FC, useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { Command, Search, X } from "lucide-react";

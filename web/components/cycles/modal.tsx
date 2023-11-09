@@ -50,7 +50,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
 
   const updateCycle = async (cycleId: string, payload: Partial<ICycle>) =>
     cycleStore
-      .updateCycle(workspaceSlug, projectId, cycleId, payload)
+      .patchCycle(workspaceSlug, projectId, cycleId, payload)
       .then(() => {
         setToastAlert({
           type: "success",

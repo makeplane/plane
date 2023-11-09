@@ -17,7 +17,7 @@ export const ModulesListHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
@@ -77,10 +77,7 @@ export const ModulesListHeader: React.FC = observer(() => {
         <Button
           variant="primary"
           prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "m" });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCreateModuleModal(true)}
         >
           Add Module
         </Button>
