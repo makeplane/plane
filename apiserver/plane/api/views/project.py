@@ -352,7 +352,17 @@ class InviteProjectEndpoint(BaseAPIView):
 
     def post(self, request, slug, project_id):
         email = request.data.get("email", False)
-        role = request.data.get("role", False)
+        role = request.data.get("role", 15)
+
+        requested_user_role = ProjectMember.objects.get(
+            workspace__slug=slug, project_id=project_id, member_id=request.user.id
+        )
+
+        if int(role) > int(requested_user_role.role):
+            return Response(
+                {"error": "You cannot invite a user with higher role."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Check if email is provided
         if not email:
@@ -411,7 +421,6 @@ class InviteProjectEndpoint(BaseAPIView):
             },
             status=status.HTTP_200_OK,
         )
-
 
 
 class UserProjectInvitationsViewset(BaseViewSet):
