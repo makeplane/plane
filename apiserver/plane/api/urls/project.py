@@ -51,7 +51,12 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/members/",
-        ProjectMemberViewSet.as_view({"get": "list", "post": "create"}),
+        ProjectMemberViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
         name="project-member",
     ),
     path(
@@ -61,6 +66,15 @@ urlpatterns = [
                 "get": "retrieve",
                 "patch": "partial_update",
                 "delete": "destroy",
+            }
+        ),
+        name="project-member",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
+        ProjectMemberViewSet.as_view(
+            {
+                "post": "leave",
             }
         ),
         name="project-member",

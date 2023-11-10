@@ -592,54 +592,66 @@ class ProjectMemberViewSet(BaseViewSet):
 
     def destroy(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+            member__is_bot=False,
+            is_deactivated=False,
         )
         # check requesting user role
         requesting_project_member = ProjectMember.objects.get(
-            workspace__slug=slug, member=request.user, project_id=project_id
+            workspace__slug=slug,
+            member=request.user,
+            project_id=project_id,
+            is_deactivated=False,
         )
+        # User cannot remove himself
+        if str(project_member.id) == str(requesting_project_member.id):
+            return Response(
+                {
+                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # User cannot deactivate higher role
         if requesting_project_member.role < project_member.role:
             return Response(
-                {"error": "You cannot remove a user having role higher than yourself"},
+                {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Remove all favorites
-        ProjectFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        CycleFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        ModuleFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        PageFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        IssueViewFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        # Also remove issue from issue assigned
-        IssueAssignee.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            assignee=project_member.member,
-        ).delete()
+        project_member.is_deactivated = True
+        project_member.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-        # Remove if module member
-        ModuleMember.objects.filter(
+    def leave(self, request, slug, project_id):
+        project_member = ProjectMember.objects.get(
             workspace__slug=slug,
             project_id=project_id,
-            member=project_member.member,
-        ).delete()
-        # Delete owned Pages
-        Page.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            owned_by=project_member.member,
-        ).delete()
-        project_member.delete()
+            member=request.user,
+            is_deactivated=False,
+        )
+
+        # Check if the leaving user is the only admin of the project
+        if (
+            project_member.role == 20
+            and not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                role=20,
+                is_deactivated=False,
+            ).count()
+            > 1
+        ):
+            return Response(
+                {
+                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Deactivate the user
+        project_member.is_deactivated = True
+        project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
