@@ -1,10 +1,12 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Editor } from "@tiptap/core";
 import { EditorContainer, EditorContentWrapper, cn, getEditorClassNames, useEditor } from '@plane/editor-core';
 import { DocumentEditorExtensions } from './extensions';
-import { FixedMenu } from './menu';
+import { FixedMenu } from './menu/fixed-menu';
 import { AlertCircle, FileLineChart, MenuSquare, MoreVertical } from 'lucide-react';
+import { usePopper } from 'react-popper';
+import { ContentBrowser } from './components/content-browser';
 
 
 export type UploadImage = (file: File) => Promise<string>;
@@ -32,24 +34,12 @@ interface EditorHandle {
   setEditorValue: (content: string) => void;
 }
 
-interface Marking {
+export interface IMarking {
   type: "heading",
   level: number,
   text: string,
   sequence: number
 }
-
-const HeadingComp = ({ heading, onClick }: { heading: string, onClick: (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>) => void; }) => (
-  <h3 onClick={onClick} className="cursor-pointer font-bold text-sm font-medium leading-[125%] hover:text-custom-primary tracking-tight ml-4 mt-3 max-md:ml-2.5">
-    {heading}
-  </h3>
-)
-
-const SubheadingComp = ({ subHeading, onClick }: { subHeading: string, onClick: (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>) => void; }) => (
-  <p onClick={onClick} className="text-xs font-medium leading-[150%] text-gray-400 hover:text-custom-primary tracking-tight ml-4 mt-2">
-    {subHeading}
-  </p>
-)
 
 
 const DocumentEditor = ({
@@ -64,16 +54,26 @@ const DocumentEditor = ({
   forwardedRef,
 }: IDocumentEditor) => {
 
-  const [markings, setMarkings] = useState<Marking[]>([])
+  const [markings, setMarkings] = useState<IMarking[]>([])
 
-  const onChange = (json: any, html: string) => {
+
+  const summaryMenuRef = useRef(null);
+  const summaryButtonRef = useRef(null);
+  const [summaryPopoverVisible, setSummaryPopoverVisible] = useState(false);
+  const [menuItemVisible, setMenuItemVisible] = useState(false)
+
+  const { styles: summaryPopoverStyles, attributes: summaryPopoverAttributes } = usePopper(summaryButtonRef.current, summaryMenuRef.current, {
+    placement: "auto",
+  })
+
+  const onChange = (json: any) => {
     const nodes = json.content as any[]
-    const tempMarkings: Marking[] = []
+    const tempMarkings: IMarking[] = []
     let h1Sequence: number = 0
     let h2Sequence: number = 0
     if (nodes) {
       nodes.forEach((node) => {
-        if (node.type === "heading" && ( node.attrs.level === 1 || node.attrs.level === 2 ) && node.content) {
+        if (node.type === "heading" && (node.attrs.level === 1 || node.attrs.level === 2) && node.content) {
           tempMarkings.push({
             type: "heading",
             level: node.attrs.level,
@@ -123,7 +123,7 @@ const DocumentEditor = ({
     }
   }
 
-  function scrollSummary(marking: Marking) {
+  function scrollSummary(marking: IMarking) {
     if (editor) {
       console.log(marking)
       const pos = findNthH1(editor, marking.sequence, marking.level)
@@ -140,15 +140,31 @@ const DocumentEditor = ({
   return (
     <main className="flex flex-col h-full">
       <header className="border-custom-border self-stretch flex flex-col border-b border-solid max-md:max-w-full">
-        <nav className="self-center flex ml-0 w-full items-start justify-between gap-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
-          <button
-            className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
-            onClick={() => setSidePeakVisible(!sidePeakVisible)}
+        <nav
+          className="self-center flex ml-0 w-full items-start justify-between gap-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
+          <div
+            ref={summaryButtonRef}
+            onMouseEnter={() => setSummaryPopoverVisible(true)}
+            onMouseLeave={() => setSummaryPopoverVisible(false)}
           >
-            <MenuSquare
-              size={20}
-            />
-          </button>
+            <button
+              className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
+              onClick={() => {
+                setSidePeakVisible(!sidePeakVisible)
+                setSummaryPopoverVisible(false)
+              }}
+            >
+              <MenuSquare
+                size={20}
+              />
+            </button>
+            {summaryPopoverVisible &&
+              <div style={summaryPopoverStyles.popper} {...summaryPopoverAttributes.popper} className="z-10 ml-[40px] mt-[110px] h-[300px] w-[300px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b pl-3 pr-3 pb-3 overflow-scroll">
+                <ContentBrowser markings={markings} scrollSummary={scrollSummary} />
+              </div>
+            }
+          </div>
+          {/* <PopoverSummaryMenu ref={summaryMenuRef} style={styles.popper} attributes={attributes} /> */}
           <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />
           <div className="self-center flex items-start gap-3 my-auto max-md:justify-center"
           >
@@ -166,13 +182,16 @@ const DocumentEditor = ({
                 size={20}
               />
             </button>
-            <button
-              className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
-            >
-              <MoreVertical
-                size={20}
-              />
-            </button>
+            <div>
+              <button
+                className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
+                onClick={() => setMenuItemVisible(!menuItemVisible)}
+              >
+                <MoreVertical
+                  size={20}
+                />
+              </button>
+            </div>
           </div>
         </nav>
       </header>
@@ -180,16 +199,7 @@ const DocumentEditor = ({
       <section className="self-center items-stretch w-full max-md:max-w-full h-full">
         <div className={cn("gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0 h-full", { "justify-center": !sidePeakVisible })}>
           <aside className={`flex flex-col items-stretch w-[21%] max-md:w-full max-md:ml-0 border-custom-border border-r border-solid transition-all duration-200 ease-in-out transform ${sidePeakVisible ? 'translate-x-0' : '-translate-x-full'}`}>
-            <div className="flex flex-col w-[250px] mt-4 h-full">
-              <h2 className="font-medium py-5 border-custom-border border-b border-solid leading-[85.714%] tracking-tight ml-4 max-md:ml-2.5">
-                Summary
-              </h2>
-              <div className="border-custom-border self-stretch w-full h-0.5 mt-3" />
-              {markings.length !== 0 ? markings.map((marking) => marking.level === 1
-                ? <HeadingComp onClick={() => scrollSummary(marking)} heading={marking.text} />
-                : <SubheadingComp onClick={() => scrollSummary(marking)} subHeading={marking.text} />) : <p className="px-5 ml-3 mr-3 text-gray-500 text-xs text-center flex items-center h-full">{"Headings will be displayed here for Navigation"}</p>
-              }
-            </div>
+            <ContentBrowser markings={markings} scrollSummary={scrollSummary} />
           </aside>
           {/* Page Element */}
           <div className={`flex h-full flex-col w-[90%] max-md:w-full max-md:ml-0  transition-all duration-200 ease-in-out ${sidePeakVisible ? 'ml-[12%] w-[79%]' : 'ml-0 w-[90%]'}`}>
