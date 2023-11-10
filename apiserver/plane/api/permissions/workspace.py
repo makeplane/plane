@@ -32,7 +32,7 @@ class WorkSpaceBasePermission(BasePermission):
                 member=request.user,
                 workspace__slug=view.workspace_slug,
                 role__in=[Owner, Admin],
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
         # allow only owner to delete the workspace
@@ -41,7 +41,7 @@ class WorkSpaceBasePermission(BasePermission):
                 member=request.user,
                 workspace__slug=view.workspace_slug,
                 role=Owner,
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
 
@@ -54,7 +54,7 @@ class WorkSpaceAdminPermission(BasePermission):
             member=request.user,
             workspace__slug=view.workspace_slug,
             role__in=[Owner, Admin],
-            is_deactivated=False,
+            is_active=True,
         ).exists()
 
 
@@ -68,14 +68,14 @@ class WorkspaceEntityPermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
         return WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=view.workspace_slug,
             role__in=[Owner, Admin],
-            is_deactivated=False,
+            is_active=True,
         ).exists()
 
 
@@ -88,5 +88,5 @@ class WorkspaceViewerPermission(BasePermission):
             member=request.user,
             workspace__slug=view.workspace_slug,
             role__gte=10,
-            is_deactivated=False,
+            is_active=True,
         ).exists()

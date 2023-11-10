@@ -21,7 +21,7 @@ class ProjectBasePermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
         ## Only workspace owners or admins can create the projects
@@ -30,7 +30,7 @@ class ProjectBasePermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 role__in=[Admin, Member],
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
         ## Only Project Admins can update project attributes
@@ -39,7 +39,7 @@ class ProjectBasePermission(BasePermission):
             member=request.user,
             role=Admin,
             project_id=view.project_id,
-            is_deactivated=False,
+            is_active=True,
         ).exists()
 
 
@@ -53,7 +53,7 @@ class ProjectMemberPermission(BasePermission):
             return ProjectMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
-                is_deactivated=False,
+                is_active=True,
             ).exists()
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
@@ -61,7 +61,7 @@ class ProjectMemberPermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 role__in=[Admin, Member],
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
         ## Only Project Admins can update project attributes
@@ -70,7 +70,7 @@ class ProjectMemberPermission(BasePermission):
             member=request.user,
             role__in=[Admin, Member],
             project_id=view.project_id,
-            is_deactivated=False,
+            is_active=True,
         ).exists()
 
 
@@ -85,7 +85,7 @@ class ProjectEntityPermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 project_id=view.project_id,
-                is_deactivated=False,
+                is_active=True,
             ).exists()
 
         ## Only project members or admins can create and edit the project attributes
@@ -94,7 +94,7 @@ class ProjectEntityPermission(BasePermission):
             member=request.user,
             role__in=[Admin, Member],
             project_id=view.project_id,
-            is_deactivated=False,
+            is_active=True,
         ).exists()
 
 
@@ -107,5 +107,5 @@ class ProjectLitePermission(BasePermission):
             workspace__slug=view.workspace_slug,
             member=request.user,
             project_id=view.project_id,
-            is_deactivated=False,
+            is_active=True,
         ).exists()

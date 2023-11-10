@@ -168,7 +168,6 @@ class OauthEndpoint(BaseAPIView):
                 )
 
             ## Login Case
-
             if not user.is_active:
                 return Response(
                     {

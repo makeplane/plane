@@ -100,7 +100,7 @@ class WorkSpaceViewSet(BaseViewSet):
             WorkspaceMember.objects.filter(
                 workspace=OuterRef("id"),
                 member__is_bot=False,
-                is_deactivated=False,
+                is_active=True,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -177,7 +177,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             WorkspaceMember.objects.filter(
                 workspace=OuterRef("id"),
                 member__is_bot=False,
-                is_deactivated=False,
+                is_active=True,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -240,7 +240,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
         requesting_user = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
         if len(
             [
@@ -260,7 +260,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
         workspace_members = WorkspaceMember.objects.filter(
             workspace_id=workspace.id,
             member__email__in=[email.get("email") for email in emails],
-            is_deactivated=False,
+            is_active=True,
         ).select_related("member", "workspace", "workspace__owner")
 
         if len(workspace_members):
@@ -483,7 +483,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             .filter(
                 workspace__slug=self.kwargs.get("slug"),
                 member__is_bot=False,
-                is_deactivated=False,
+                is_active=True,
             )
             .select_related("workspace", "workspace__owner")
             .select_related("member")
@@ -493,7 +493,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
             workspace__slug=slug,
-            is_deactivated=False,
+            is_active=True,
         )
 
         # Get all active workspace members
@@ -513,7 +513,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             pk=pk,
             workspace__slug=slug,
             member__is_bot=False,
-            is_deactivated=False,
+            is_active=True,
         )
         if request.user.id == workspace_member.member_id:
             return Response(
@@ -525,7 +525,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         requested_workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
         # Check if role is being updated
         # One cannot update role higher than his own role
@@ -554,14 +554,14 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug,
             pk=pk,
             member__is_bot=False,
-            is_deactivated=False,
+            is_active=True,
         )
 
         # check requesting user role
         requesting_workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
 
         if str(workspace_member.id) == str(requesting_workspace_member.id):
@@ -601,7 +601,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_deactivated=False,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True,
         ).update(is_deactivated=True)
 
         workspace_member.is_deactivated = True
@@ -612,7 +612,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
 
         # Check if the leaving user is the only admin of the workspace
@@ -621,7 +621,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             and not WorkspaceMember.objects.filter(
                 workspace__slug=slug,
                 role=20,
-                is_deactivated=False,
+                is_active=True,
             ).count()
             > 1
         ):
@@ -655,7 +655,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_deactivated=False,
+            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True,
         ).update(is_deactivated=True)
 
         # # Deactivate the user
@@ -690,7 +690,7 @@ class TeamMemberViewSet(BaseViewSet):
             WorkspaceMember.objects.filter(
                 workspace__slug=slug,
                 member__id__in=request.data.get("members", []),
-                is_deactivated=False,
+                is_active=True,
             )
             .annotate(member_str_id=Cast("member", output_field=CharField()))
             .distinct()
@@ -774,7 +774,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
             workspace__slug=slug,
-            is_deactivated=False,
+            is_active=True,
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -785,7 +785,7 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
         workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
         workspace_member.view_props = request.data.get("view_props", {})
         workspace_member.save()
@@ -1113,7 +1113,7 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
         requesting_workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
         projects = []
         if requesting_workspace_member.role >= 10:

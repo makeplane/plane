@@ -319,6 +319,13 @@ class MagicSignInEndpoint(BaseAPIView):
             if str(token) == str(user_token):
                 if User.objects.filter(email=email).exists():
                     user = User.objects.get(email=email)
+                    if not user.is_active:
+                        return Response(
+                            {
+                                "error": "Your account has been deactivated. Please contact your site administrator."
+                            },
+                            status=status.HTTP_403_FORBIDDEN,
+                        )
                     # Send event to Jitsu for tracking
                     if settings.ANALYTICS_BASE_API:
                         _ = requests.post(

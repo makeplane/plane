@@ -26,7 +26,11 @@ urlpatterns = [
     path(
         "users/me/",
         UserEndpoint.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "deactivate",
+            }
         ),
         name="users",
     ),

@@ -525,7 +525,7 @@ class IssueCommentViewSet(BaseViewSet):
                         workspace__slug=self.kwargs.get("slug"),
                         project_id=self.kwargs.get("project_id"),
                         member_id=self.request.user.id,
-                        is_deactivated=False,
+                        is_active=True,
                     )
                 )
             )
@@ -1160,7 +1160,7 @@ class IssueSubscriberViewSet(BaseViewSet):
             ProjectMember.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
-                is_deactivated=False,
+                is_active=True,
             )
             .annotate(
                 is_subscribed=Exists(
@@ -1405,7 +1405,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                                 workspace__slug=self.kwargs.get("slug"),
                                 project_id=self.kwargs.get("project_id"),
                                 member_id=self.request.user.id,
-                                is_deactivated=False,
+                                is_active=True,
                             )
                         )
                     )
@@ -1446,7 +1446,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
-                is_deactivated=False,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1560,7 +1560,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
-                is_deactivated=False,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1656,7 +1656,7 @@ class CommentReactionPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
-                is_deactivated=False,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1743,7 +1743,7 @@ class IssueVotePublicViewSet(BaseViewSet):
         if not ProjectMember.objects.filter(
             project_id=project_id,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         ).exists():
             _ = ProjectPublicMember.objects.get_or_create(
                 project_id=project_id,

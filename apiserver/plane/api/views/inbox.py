@@ -215,7 +215,7 @@ class InboxIssueViewSet(BaseViewSet):
             workspace__slug=slug,
             project_id=project_id,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
         # Only project members admins and created_by users can access this endpoint
         if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
@@ -337,7 +337,7 @@ class InboxIssueViewSet(BaseViewSet):
             workspace__slug=slug,
             project_id=project_id,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
 
         if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(

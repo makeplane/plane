@@ -110,7 +110,7 @@ class ProjectViewSet(BaseViewSet):
                         member=self.request.user,
                         project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
-                        is_deactivated=False,
+                        is_active=True,
                     )
                 )
             )
@@ -118,7 +118,7 @@ class ProjectViewSet(BaseViewSet):
                 total_members=ProjectMember.objects.filter(
                     project_id=OuterRef("id"),
                     member__is_bot=False,
-                    is_deactivated=False,
+                    is_active=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -140,7 +140,7 @@ class ProjectViewSet(BaseViewSet):
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
-                    is_deactivated=False,
+                    is_active=True,
                 ).values("role")
             )
             .annotate(
@@ -161,7 +161,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
-            is_deactivated=False,
+            is_active=True,
         ).values("sort_order")
         projects = (
             self.get_queryset()
@@ -171,7 +171,7 @@ class ProjectViewSet(BaseViewSet):
                     "project_projectmember",
                     queryset=ProjectMember.objects.filter(
                         workspace__slug=slug,
-                        is_deactivated=False,
+                        is_active=True,
                     ).select_related("member"),
                 )
             )
@@ -372,7 +372,7 @@ class InviteProjectEndpoint(BaseAPIView):
             project_id=project_id,
             member__email=email,
             member__is_bot=False,
-            is_deactivated=False,
+            is_active=True,
         ).exists():
             return Response(
                 {"error": "User is already member of Project"},
@@ -506,7 +506,7 @@ class ProjectMemberViewSet(BaseViewSet):
             ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member_id__in=[member.get("member_id") for member in members],
-                is_deactivated=False,
+                is_active=True,
             )
             .values("member_id", "sort_order")
             .order_by("sort_order")
@@ -554,14 +554,14 @@ class ProjectMemberViewSet(BaseViewSet):
             member=request.user,
             workspace__slug=slug,
             project_id=project_id,
-            is_deactivated=False,
+            is_active=True,
         )
 
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
             member__is_bot=False,
-            is_deactivated=False,
+            is_active=True,
         ).select_related("project", "member", "workspace")
 
         if project_member.role > 10:
@@ -572,7 +572,7 @@ class ProjectMemberViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, is_deactivated=False,
+            pk=pk, workspace__slug=slug, project_id=project_id, is_active=True,
         )
         if request.user.id == project_member.member_id:
             return Response(
@@ -581,7 +581,7 @@ class ProjectMemberViewSet(BaseViewSet):
             )
         # Check while updating user roles
         requested_project_member = ProjectMember.objects.get(
-            project_id=project_id, workspace__slug=slug, member=request.user, is_deactivated=False,
+            project_id=project_id, workspace__slug=slug, member=request.user, is_active=True,
         )
         if (
             "role" in request.data
@@ -608,14 +608,14 @@ class ProjectMemberViewSet(BaseViewSet):
             project_id=project_id,
             pk=pk,
             member__is_bot=False,
-            is_deactivated=False,
+            is_active=True,
         )
         # check requesting user role
         requesting_project_member = ProjectMember.objects.get(
             workspace__slug=slug,
             member=request.user,
             project_id=project_id,
-            is_deactivated=False,
+            is_active=True,
         )
         # User cannot remove himself
         if str(project_member.id) == str(requesting_project_member.id):
@@ -641,7 +641,7 @@ class ProjectMemberViewSet(BaseViewSet):
             workspace__slug=slug,
             project_id=project_id,
             member=request.user,
-            is_deactivated=False,
+            is_active=True,
         )
 
         # Check if the leaving user is the only admin of the project
@@ -651,7 +651,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 workspace__slug=slug,
                 project_id=project_id,
                 role=20,
-                is_deactivated=False,
+                is_active=True,
             ).count()
             > 1
         ):
@@ -807,7 +807,7 @@ class ProjectJoinEndpoint(BaseAPIView):
         workspace_member = WorkspaceMember.objects.get(
             member=request.user,
             workspace__slug=slug,
-            is_deactivated=False,
+            is_active=True,
         )
 
         workspace_role = workspace_member.role
@@ -853,7 +853,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         project_member = ProjectMember.objects.filter(
-            member=request.user, project=project, is_deactivated=False,
+            member=request.user, project=project, is_active=True,
         ).first()
 
         if project_member is None:
@@ -877,7 +877,7 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 class ProjectMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         project_member = ProjectMember.objects.get(
-            project_id=project_id, workspace__slug=slug, member=request.user, is_deactivated=False,
+            project_id=project_id, workspace__slug=slug, member=request.user, is_active=True,
         )
         serializer = ProjectMemberSerializer(project_member)
 

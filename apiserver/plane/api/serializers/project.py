@@ -105,7 +105,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     def get_members(self, obj):
         project_members = ProjectMember.objects.filter(
             project_id=obj.id,
-            is_deactivated=False,
+            is_active=True,
         ).values(
             "id",
             "member_id",

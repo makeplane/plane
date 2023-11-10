@@ -88,7 +88,7 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
                 workspace__slug=slug,
                 member=request.user,
                 role__lt=15,
-                is_deactivated=False,
+                is_active=True,
             ).exists():
                 notifications = Notification.objects.none()
             else:
@@ -261,7 +261,7 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
                 workspace__slug=slug,
                 member=request.user,
                 role__lt=15,
-                is_deactivated=False,
+                is_active=True,
             ).exists():
                 notifications = Notification.objects.none()
             else:
