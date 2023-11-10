@@ -1,14 +1,7 @@
 import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
-<<<<<<< HEAD
-
-// react-hook-form
-import { useForm, Controller } from "react-hook-form";
-// headless ui
-=======
 import { Controller, useForm } from "react-hook-form";
->>>>>>> develop
 import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
@@ -28,29 +21,16 @@ import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
 import { PageDetailsHeader } from "components/headers/page-details";
 // ui
-<<<<<<< HEAD
-import { DocumentEditorWithRef, FixedMenu } from "@plane/document-editor"
+import { DocumentEditorWithRef } from "@plane/document-editor"
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
-import {
-  CustomSearchSelect,
-  EmptyState,
-  Loader,
-  TextArea,
-  ToggleSwitch,
-  Tooltip,
-} from "components/ui";
-=======
-import { EmptyState } from "components/common";
+
 import { CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
->>>>>>> develop
 // images
 import emptyPage from "public/empty-state/page.svg";
-// icons
-import { ArrowLeft, Lock, LinkIcon, Palette, Plus, Star, Unlock, X, ChevronDown } from "lucide-react";
-// helpers
-import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard } from "helpers/string.helper";
+
+import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
+import { EmptyState } from "components/common";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
@@ -62,10 +42,11 @@ import {
   PROJECT_ISSUE_LABELS,
   USER_PROJECT_VIEW,
 } from "constants/fetch-keys";
-import fileService from "services/file.service";
+import { FileService } from "services/file.service";
 
 // services
 const projectService = new ProjectService();
+const fileService = new FileService();
 const projectMemberService = new ProjectMemberService();
 const pageService = new PageService();
 const issueLabelService = new IssueLabelService();
@@ -338,7 +319,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
               name="description_html"
               control={control}
               render={({ field: { value, onChange } }) =>
-              (<DocumentEditorWithRef
+              (
+              <DocumentEditorWithRef
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 ref={editorRef}
@@ -355,311 +337,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
               />)
               }
             />
-            {/* <div className="flex items-start justify-between gap-2">
-              <div className="flex w-full flex-col gap-2">
-                <div className="flex w-full items-center gap-2">
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 text-sm text-custom-text-200"
-                    onClick={() => router.back()}
-                  >
-                    <ArrowLeft className="h-4 w-4" />
-                  </button>
-
-                  <Controller
-                    name="name"
-                    control={control}
-                    render={() => (
-                      <TextArea
-                        id="name"
-                        name="name"
-                        value={watch("name")}
-                        placeholder="Page Title"
-                        onBlur={handleSubmit(updatePage)}
-                        onChange={(e) => setValue("name", e.target.value)}
-                        required
-                        className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent !px-3 !py-2 text-xl font-semibold outline-none ring-0"
-                        role="textbox"
-                      />
-                    )}
-                  />
-                </div>
-
-                <div className="flex w-full flex-wrap gap-1">
-                  {pageDetails.labels.length > 0 && (
-                    <>
-                      {pageDetails.labels.map((labelId) => {
-                        const label = labels?.find((label) => label.id === labelId);
-
-                        if (!label) return;
-
-                        return (
-                          <div
-                            key={label.id}
-                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
-                            onClick={() => {
-                              const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
-                              partialUpdatePage({ labels: updatedLabels });
-                            }}
-                            style={{
-                              backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"}20`,
-                            }}
-                          >
-                            <span
-                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                              style={{
-                                backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
-                              }}
-                            />
-                            {label.name}
-                            <X className="h-2.5 w-2.5 group-hover:text-red-500" />
-                          </div>
-                        );
-                      })}
-                    </>
-                  )}
-                  <CustomSearchSelect
-                    customButton={
-                      <div className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs">
-                        <Plus className="h-3.5 w-3.5" />
-                        {pageDetails.labels.length <= 0 && <span>Add Label</span>}
-                      </div>
-                    }
-                    value={pageDetails.labels}
-                    footerOption={
-                      <button
-                        type="button"
-                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
-                        onClick={() => {
-                          setLabelModal(true);
-                        }}
-                      >
-                        <span className="flex items-center justify-start gap-1 text-custom-text-200">
-                          <Plus className="h-4 w-4" aria-hidden="true" />
-                          <span>Create New Label</span>
-                        </span>
-                      </button>
-                    }
-                    onChange={(val: string[]) => partialUpdatePage({ labels: val })}
-                    options={options}
-                    multiple
-                    noChevron
-                  />
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div className="flex items-center gap-6 text-custom-text-200">
-                  <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(
-                      pageDetails.updated_at
-                    )} on ${renderShortDate(pageDetails.updated_at)}`}
-                  >
-                    <p className="text-sm">{render24HourFormatTime(pageDetails.updated_at)}</p>
-                  </Tooltip>
-                  <Popover className="relative">
-                    {({ open }) => (
-                      <>
-                        <Popover.Button
-                          className={`group flex items-center gap-2 rounded-md border border-custom-sidebar-border-200 bg-transparent px-2 py-1 text-xs hover:bg-custom-sidebar-background-90 hover:text-custom-sidebar-text-100 focus:outline-none duration-300 ${
-                            open
-                              ? "bg-custom-sidebar-background-90 text-custom-sidebar-text-100"
-                              : "text-custom-sidebar-text-200"
-                          }`}
-                        >
-                          Display
-                          <ChevronDown className="h-3 w-3" aria-hidden="true" />
-                        </Popover.Button>
-
-                        <Transition
-                          as={React.Fragment}
-                          enter="transition ease-out duration-200"
-                          enterFrom="opacity-0 translate-y-1"
-                          enterTo="opacity-100 translate-y-0"
-                          leave="transition ease-in duration-150"
-                          leaveFrom="opacity-100 translate-y-0"
-                          leaveTo="opacity-0 translate-y-1"
-                        >
-                          <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
-                            <div className="relative divide-y-2 divide-custom-border-200">
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm text-custom-text-200">Show full block content</span>
-                                <ToggleSwitch
-                                  value={showBlock}
-                                  onChange={(value) => {
-                                    setShowBlock(value);
-                                    handleShowBlockToggle();
-                                  }}
-                                />
-                              </div>
-                            </div>
-                          </Popover.Panel>
-                        </Transition>
-                      </>
-                    )}
-                  </Popover>
-                  <button className="flex items-center gap-2" onClick={handleCopyText}>
-                    <LinkIcon className="h-4 w-4" />
-                  </button>
-                  <div className="flex-shrink-0">
-                    <Popover className="relative grid place-items-center">
-                      {({ open }) => (
-                        <>
-                          <Popover.Button
-                            type="button"
-                            className={`group inline-flex items-center outline-none ${
-                              open ? "text-custom-text-100" : "text-custom-text-200"
-                            }`}
-                          >
-                            {watch("color") && watch("color") !== "" ? (
-                              <span
-                                className="h-4 w-4 rounded"
-                                style={{
-                                  backgroundColor: watch("color") ?? "black",
-                                }}
-                              />
-                            ) : (
-                              <Palette height={16} width={16} />
-                            )}
-                          </Popover.Button>
-
-                          <Transition
-                            as={React.Fragment}
-                            enter="transition ease-out duration-200"
-                            enterFrom="opacity-0 translate-y-1"
-                            enterTo="opacity-100 translate-y-0"
-                            leave="transition ease-in duration-150"
-                            leaveFrom="opacity-100 translate-y-0"
-                            leaveTo="opacity-0 translate-y-1"
-                          >
-                            <Popover.Panel className="absolute top-full right-0 z-20 mt-1 max-w-xs px-2 sm:px-0">
-                              <TwitterPicker
-                                color={pageDetails.color}
-                                styles={{
-                                  default: {
-                                    card: {
-                                      backgroundColor: `rgba(var(--color-background-80))`,
-                                    },
-                                    triangle: {
-                                      position: "absolute",
-                                      borderColor:
-                                        "transparent transparent rgba(var(--color-background-80)) transparent",
-                                    },
-                                    input: {
-                                      border: "none",
-                                      height: "1.85rem",
-                                      fontSize: "0.875rem",
-                                      paddingLeft: "0.25rem",
-                                      color: `rgba(var(--color-text-200))`,
-                                      boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-background-90))`,
-                                      borderLeft: `1px solid rgba(var(--color-background-80))`,
-                                    },
-                                    hash: {
-                                      color: `rgba(var(--color-text-200))`,
-                                      boxShadow: "none",
-                                      backgroundColor: `rgba(var(--color-background-90))`,
-                                    },
-                                  },
-                                }}
-                                onChange={(val) => partialUpdatePage({ color: val.hex })}
-                              />
-                            </Popover.Panel>
-                          </Transition>
-                        </>
-                      )}
-                    </Popover>
-                  </div>
-                  {pageDetails.created_by === user?.id && (
-                    <Tooltip
-                      tooltipContent={`${
-                        pageDetails.access
-                          ? "This page is only visible to you."
-                          : "This page can be viewed by anyone in the project."
-                      }`}
-                    >
-                      {pageDetails.access ? (
-                        <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                          <Lock className="h-4 w-4" />
-                        </button>
-                      ) : (
-                        <button onClick={() => partialUpdatePage({ access: 1 })} type="button" className="z-10">
-                          <Unlock className="h-4 w-4" />
-                        </button>
-                      )}
-                    </Tooltip>
-                  )}
-                  {pageDetails.is_favorite ? (
-                    <button onClick={handleRemoveFromFavorites} className="z-10">
-                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                    </button>
-                  ) : (
-                    <button onClick={handleAddToFavorites} type="button" className="z-10">
-                      <Star className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div> */}
-
-            {/* <div className="mt-5 h-full w-full">
-              {pageBlocks ? (
-                <>
-                  <DragDropContext onDragEnd={handleOnDragEnd}>
-                    {pageBlocks.length !== 0 && (
-                      <StrictModeDroppable droppableId="blocks-list">
-                        {(provided) => (
-                          <div
-                            className="flex w-full flex-col gap-2"
-                            ref={provided.innerRef}
-                            {...provided.droppableProps}
-                          >
-                            <>
-                              {pageBlocks.map((block, index) => (
-                                <SinglePageBlock
-                                  key={block.id}
-                                  block={block}
-                                  projectDetails={projectDetails}
-                                  showBlockDetails={showBlock}
-                                  index={index}
-                                  user={user}
-                                />
-                              ))}
-                              {provided.placeholder}
-                            </>
-                          </div>
-                        )}
-                      </StrictModeDroppable>
-                    )}
-                  </DragDropContext>
-                  {createBlockForm && (
-                    <div className="mt-4" ref={scrollToRef}>
-                      <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} focus="name" user={user} />
-                    </div>
-                  )}
-                  {labelModal && typeof projectId === "string" && (
-                    <CreateLabelModal
-                      isOpen={labelModal}
-                      handleClose={() => setLabelModal(false)}
-                      projectId={projectId}
-                      onSuccess={(response) => {
-                        partialUpdatePage({
-                          labels: [...(pageDetails.labels ?? []), response.id],
-                        });
-                      }}
-                    />
-                  )}
-                </>
-              ) : (
-                <Loader>
-                  <Loader.Item height="150px" />
-                  <Loader.Item height="150px" />
-                </Loader>
-              )}
-            </div> */}
           </div>
-          {/* <div>
-            <CreateBlock user={user} />
-          </div> */}
         </div>
       ) : (
         <Loader className="p-8">
