@@ -7,6 +7,7 @@ import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // types
 import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 import { RootStore } from "store/root";
+import { renderDateFormat } from "helpers/date-time.helper";
 
 export interface IGroupedIssues {
   [group_id: string]: string[];
@@ -62,6 +63,9 @@ export class ProjectIssueStore implements IProjectIssueStore {
       getIssues: computed,
       // action
       fetchIssues: action,
+      createIssue: action,
+      updateIssue: action,
+      removeIssue: action,
     });
 
     this.rootStore = _rootStore;
@@ -80,63 +84,75 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
     const subGroupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.sub_group_by;
     const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
+    const orderBy: TIssueOrderByOptions | undefined =
+      this.rootStore?.issueFilter.userDisplayFilters.order_by || undefined;
+    const layout: string | undefined = this.rootStore?.issueFilter.userDisplayFilters.layout || undefined;
 
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
-    if (subGroupBy && groupBy) issues = this.subGroupedIssues();
-    else if (groupBy) issues = this.groupedIssues();
-    else issues = this.unGroupedIssues();
+
+    if (layout && layout === "calendar") {
+      issues = this.groupedIssues(
+        "target_date" as TIssueGroupByOptions,
+        "target_date" as TIssueOrderByOptions,
+        this.issues[projectId],
+        true
+      );
+    } else {
+      if (subGroupBy && groupBy && orderBy)
+        issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
+      else if (groupBy && orderBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
+      else if (orderBy) issues = this.unGroupedIssues(projectId, orderBy, this.issues[projectId]);
+    }
 
     return issues;
   }
 
-  groupedIssues = () => {
-    const projectId: string | undefined | null = this.rootStore?.project.projectId;
-    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
-    const orderBy: TIssueOrderByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.order_by;
+  groupedIssues = (
+    groupBy: TIssueGroupByOptions,
+    orderBy: TIssueOrderByOptions,
+    issues: IIssueResponse,
+    isCalendarIssues: boolean = false
+  ) => {
+    const _issues: { [group_id: string]: string[] } = {};
 
-    if (!projectId || !groupBy || !orderBy || !this.issues || !this.issues[projectId]) return undefined;
-
-    const issues: { [group_id: string]: string[] } = {};
     this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
-      issues[group] = [];
+      _issues[group] = [];
     });
 
-    const projectIssues = this.issuesSortWithOrderBy(this.issues[projectId], orderBy);
+    const projectIssues = this.issuesSortWithOrderBy(issues, orderBy);
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
-      const groupArray = this.getGroupArray(_.get(_issue, groupBy as keyof IIssue));
+      const groupArray = this.getGroupArray(_.get(_issue, groupBy as keyof IIssue), isCalendarIssues);
 
       for (const group of groupArray) {
-        if (group && issues[group]) {
-          issues[group].push(_issue.id);
-        }
+        if (group && _issues[group]) _issues[group].push(_issue.id);
+        else if (group) _issues[group] = [_issue.id];
       }
     }
 
-    return issues;
+    return _issues;
   };
 
-  subGroupedIssues = () => {
-    const projectId: string | undefined | null = this.rootStore?.project.projectId;
-    const subGroupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.sub_group_by;
-    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
-    const orderBy: TIssueOrderByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.order_by;
+  subGroupedIssues = (
+    subGroupBy: TIssueGroupByOptions,
+    groupBy: TIssueGroupByOptions,
+    orderBy: TIssueOrderByOptions,
+    issues: IIssueResponse
+  ) => {
+    const _issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
 
-    if (!projectId || !subGroupBy || !groupBy || !orderBy || !this.issues || !this.issues[projectId]) return undefined;
-
-    const issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
     this.issueDisplayFiltersDefaultData(subGroupBy).forEach((sub_group: any) => {
       const groupByIssues: { [group_id: string]: string[] } = {};
       this.issueDisplayFiltersDefaultData(groupBy).forEach((group) => {
         groupByIssues[group] = [];
       });
-      issues[sub_group] = groupByIssues;
+      _issues[sub_group] = groupByIssues;
     });
 
-    const projectIssues = this.issuesSortWithOrderBy(this.issues[projectId], orderBy);
+    const projectIssues = this.issuesSortWithOrderBy(issues, orderBy);
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
@@ -146,41 +162,34 @@ export class ProjectIssueStore implements IProjectIssueStore {
       for (const subGroup of subGroupArray) {
         for (const group of groupArray) {
           if (subGroup && group && issues[subGroup]) {
-            issues[subGroup][group].push(_issue.id);
+            _issues[subGroup][group].push(_issue.id);
           }
         }
       }
     }
 
-    return issues;
+    return _issues;
   };
 
-  unGroupedIssues = () => {
-    const projectId = this.rootStore?.project.projectId;
-    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
-    const orderBy: TIssueOrderByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.order_by;
+  unGroupedIssues = (projectId: string, orderBy: TIssueOrderByOptions, issues: IIssueResponse) =>
+    this.issuesSortWithOrderBy(issues, orderBy).map((issue) => issue.id);
 
-    if (!projectId || !orderBy || groupBy || !this.issues || !this.issues[projectId]) return undefined;
-
-    return this.issuesSortWithOrderBy(this.issues[projectId], orderBy).map((issue) => issue.id);
-  };
-
-  issueDisplayFiltersDefaultData = (groupBy: string): string[] => {
+  issueDisplayFiltersDefaultData = (groupBy: string | null): string[] => {
     switch (groupBy) {
       case "state":
-        return this.rootStore?.projectState.projectStateIds() ?? [];
+        return this.rootStore?.projectState.projectStateIds();
       case "state_detail.group":
         return ISSUE_STATE_GROUPS.map((i) => i.key);
       case "priority":
         return ISSUE_PRIORITIES.map((i) => i.key);
       case "labels":
-        return this.rootStore?.project?.projectLabelIds(true) || [];
+        return this.rootStore?.project?.projectLabelIds(true);
       case "created_by":
-        return this.rootStore?.projectMember?.projectMemberIds(true) || [];
+        return this.rootStore?.projectMember?.projectMemberIds(true);
       case "assignees":
-        return this.rootStore?.projectMember?.projectMemberIds(true) || [];
+        return this.rootStore?.projectMember?.projectMemberIds(true);
       case "project":
-        return this.rootStore?.project?.workspaceProjectIds() ?? [];
+        return this.rootStore?.project?.workspaceProjectIds();
       default:
         return [];
     }
@@ -209,12 +218,10 @@ export class ProjectIssueStore implements IProjectIssueStore {
     }
   };
 
-  getGroupArray(value: string[] | string | null) {
-    if (Array.isArray(value)) {
-      return value;
-    } else {
-      return [value || "None"];
-    }
+  getGroupArray(value: string[] | string | null, isDate: boolean = false) {
+    if (Array.isArray(value)) return value;
+    else if (isDate) return [renderDateFormat(value) || "None"];
+    else return [value || "None"];
   }
 
   fetchIssues = async (workspaceSlug: string, projectId: string) => {
@@ -229,9 +236,9 @@ export class ProjectIssueStore implements IProjectIssueStore {
       runInAction(() => {
         this.issues = _issues;
       });
+
       return response;
     } catch (error) {
-      console.log("Failed to fetch project issues from project store");
       throw error;
     }
   };
@@ -241,10 +248,9 @@ export class ProjectIssueStore implements IProjectIssueStore {
       const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
 
-      const _issues = {
-        ...this.issues,
-        [projectId]: { ...this.issues?.[projectId], ...{ [response.id]: response } },
-      };
+      let _issues = this.issues;
+      if (!_issues) _issues = {};
+      if (!_issues[projectId]) _issues[projectId] = {};
 
       runInAction(() => {
         this.issues = _issues;
@@ -252,7 +258,6 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
       return response;
     } catch (error) {
-      console.log("Failed to create issue from project store");
       this.fetchIssues(workspaceSlug, projectId);
       throw error;
     }
@@ -260,24 +265,14 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
     try {
-      const issues = this.issues?.[projectId];
-      if (issues && issues?.[issueId]) issues[issueId] = data as IIssue;
-
-      const _issues = {
-        ...this.issues,
-        [projectId]: { ...issues },
-      };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      if (this.issues?.[projectId]?.[issueId])
+        this.issues[projectId][issueId] = { ...this.issues[projectId][issueId], ...data };
 
       const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data, user);
 
       return response;
     } catch (error) {
-      console.log("Failed to update issue from project store");
       this.fetchIssues(workspaceSlug, projectId);
       throw error;
     }
@@ -285,24 +280,13 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      const issues = this.issues?.[projectId];
-      if (issues && issues?.[issueId]) delete issues[issueId];
-
-      const _issues = {
-        ...this.issues,
-        [projectId]: { ...issues },
-      };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      delete this.issues?.[projectId]?.[issueId];
 
       const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
 
       return response;
     } catch (error) {
-      console.log("Failed to delete issue from project store");
       this.fetchIssues(workspaceSlug, projectId);
       throw error;
     }

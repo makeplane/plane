@@ -23,7 +23,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const {
     issue: issueStore,
     issueFilter: issueFilterStore,
-    projectIssues: { fetchIssues, getIssues },
+    projectIssues: { getIssues, fetchIssues },
   } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
