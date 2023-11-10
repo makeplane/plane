@@ -203,10 +203,10 @@ export const GptAssistantModal: React.FC<Props> = ({
           </Button>
         )}
         <div className="flex items-center gap-2">
-          <Button variant="neutral-primary" onClick={onClose}>
+          <Button variant="neutral-primary" size="sm" onClick={onClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
+          <Button variant="primary" size="sm" onClick={handleSubmit(handleResponse)} loading={isSubmitting}>
             {isSubmitting ? "Generating response..." : response === "" ? "Generate response" : "Generate again"}
           </Button>
         </div>
