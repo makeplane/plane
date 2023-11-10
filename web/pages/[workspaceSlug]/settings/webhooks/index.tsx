@@ -19,27 +19,33 @@ const Webhooks: NextPage = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string };
 
-  const { webhook: webhookStore }: RootStore = useMobxStore();
+  const {
+    webhook: { fetchWebhooks, webhooks },
+  }: RootStore = useMobxStore();
 
   const { isLoading } = useSWR(
     workspaceSlug ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
-    workspaceSlug
-      ? async () => {
-        await webhookStore.fetchAll(workspaceSlug);
-      }
-      : null
+    workspaceSlug ? () => fetchWebhooks(workspaceSlug) : null
   );
 
   return (
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
         <div className="w-full overflow-y-auto py-3 pr-4">
-          {webhookStore.webhooks.length > 0 ? isLoading ? <div className="flex h-full w-ful items-center justify-center" >
-            <Spinner /> 
-          </div> : (
-            <WebhookLists workspaceSlug={workspaceSlug} />
+          {webhooks.length > 0 ? (
+            isLoading ? (
+              <div className="flex h-full w-ful items-center justify-center">
+                <Spinner />
+              </div>
+            ) : (
+              <WebhookLists workspaceSlug={workspaceSlug} />
+            )
           ) : (
-            <EmptyWebhooks workspaceSlug={workspaceSlug} />
+            <div className="flex justify-center w-full h-full items-center">
+              <div className="w-auto h-fit">
+                <EmptyWebhooks workspaceSlug={workspaceSlug} />
+              </div>
+            </div>
           )}
         </div>
       </WorkspaceSettingLayout>

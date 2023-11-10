@@ -27,20 +27,20 @@ export const WorkspaceSettingsSidebar = () => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
-      label: "Webhooks",
-      href: `/${workspaceSlug}/settings/webhooks`,
-    },
-    {
-      label: "Api tokens",
-      href: `/${workspaceSlug}/settings/api-tokens`,
-    },
-    {
       label: "Imports",
       href: `/${workspaceSlug}/settings/imports`,
     },
     {
       label: "Exports",
       href: `/${workspaceSlug}/settings/exports`,
+    },
+    {
+      label: "Webhooks",
+      href: `/${workspaceSlug}/settings/webhooks`,
+    },
+    {
+      label: "API Tokens",
+      href: `/${workspaceSlug}/settings/api-tokens`,
     },
   ];
 

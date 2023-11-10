@@ -18,7 +18,7 @@ export interface IWebhookStore {
   currentWebhook: IWebhook | null;
 
   // actions
-  fetchAll: (workspaceSlug: string) => Promise<IWebhook[]>;
+  fetchWebhooks: (workspaceSlug: string) => Promise<IWebhook[]>;
   fetchById: (workspaceSlug: string, webhook_id: string) => Promise<IWebhook>;
   create: (workspaceSlug: string, data: IWebhook) => Promise<IWebhook>;
   update: (workspaceSlug: string, webhook_id: string, data: IWebhook) => Promise<IWebhook>;
@@ -54,13 +54,13 @@ export class WebhookStore implements IWebhookStore {
 
       currentWebhook: computed,
 
-      fetchAll: action,
+      fetchWebhooks: action,
       create: action,
       fetchById: action,
       update: action,
       remove: action,
       regenerate: action,
-      clearSecretKey: action
+      clearSecretKey: action,
     });
     this.rootStore = _rootStore;
     this.webhookService = new WebhookService();
@@ -72,7 +72,7 @@ export class WebhookStore implements IWebhookStore {
     return currentWebhook;
   }
 
-  fetchAll = async (workspaceSlug: string) => {
+  fetchWebhooks = async (workspaceSlug: string) => {
     try {
       this.loader = true;
       this.error = null;
@@ -102,7 +102,7 @@ export class WebhookStore implements IWebhookStore {
       runInAction(() => {
         this.webhookSecretKey = _secretKey || null;
         this.webhooks = _webhooks;
-        this.webhook_detail = {...this.webhook_detail, [webhookResponse.id!]: webhookResponse};
+        this.webhook_detail = { ...this.webhook_detail, [webhookResponse.id!]: webhookResponse };
         this.webhook_id = webhookResponse.id!;
         console.log(this.webhook_detail);
       });
@@ -180,7 +180,7 @@ export class WebhookStore implements IWebhookStore {
       const webhookResponse = await this.webhookService.regenerate(workspaceSlug, webhook_id);
       runInAction(() => {
         this.webhookSecretKey = webhookResponse.secret_key!;
-        this.webhook_detail = {...this.webhook_detail, [webhook_id]: webhookResponse};
+        this.webhook_detail = { ...this.webhook_detail, [webhook_id]: webhookResponse };
       });
       return webhookResponse;
     } catch (error) {
@@ -191,5 +191,5 @@ export class WebhookStore implements IWebhookStore {
 
   clearSecretKey = () => {
     this.webhookSecretKey = null;
-  }
+  };
 }

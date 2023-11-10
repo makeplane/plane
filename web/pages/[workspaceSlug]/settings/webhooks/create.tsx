@@ -46,49 +46,55 @@ const Webhooks: NextPage = () => {
       issue_comment: data?.issue_comment,
     };
 
-      const response = await webhookStore.create(workspaceSlug, payload).then(
-        (webhook) => {
-          setToastAlert({
-            title: "Success",
-            type: "success",
-            message: "Successfully created",
-          });
-          csvDownload([[
-            "id",
-            "url",
-            "created_at",
-            "updated_at",
-            "is_active",
-            "secret_key",
-            "project",
-            "issue",
-            "module",
-            "cycle",
-            "issue_comment",
-            "workspace"
-          ], [
-            webhook.id!,
-            webhook.url!,
-            renderDateFormat(webhook.updated_at!),
-            renderDateFormat(webhook.created_at!),
-            webhookStore.webhookSecretKey!,
-            String(webhook.is_active!),
-            String(webhook.issue!),
-            String(webhook.project!),
-            String(webhook.module!),
-            String(webhook.cycle!),
-            String(webhook.issue_comment!),
-            workspaceStore.currentWorkspace?.name!,
-          ]
-          ], "Secret-key");
-        }
-      ).catch((error) => {
+    return webhookStore
+      .create(workspaceSlug, payload)
+      .then((webhook) => {
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Successfully created",
+        });
+        csvDownload(
+          [
+            [
+              "id",
+              "url",
+              "created_at",
+              "updated_at",
+              "is_active",
+              "secret_key",
+              "project",
+              "issue",
+              "module",
+              "cycle",
+              "issue_comment",
+              "workspace",
+            ],
+            [
+              webhook.id!,
+              webhook.url!,
+              renderDateFormat(webhook.updated_at!),
+              renderDateFormat(webhook.created_at!),
+              webhookStore.webhookSecretKey!,
+              String(webhook.is_active!),
+              String(webhook.issue!),
+              String(webhook.project!),
+              String(webhook.module!),
+              String(webhook.cycle!),
+              String(webhook.issue_comment!),
+              workspaceStore.currentWorkspace?.name!,
+            ],
+          ],
+          "Secret-key"
+        );
+      })
+      .catch((error) => {
         setToastAlert({
           title: "Oops!",
           type: "error",
           message: error?.error ?? "Something went wrong!",
         });
-      })
+      });
   };
 
   useEffect(() => {

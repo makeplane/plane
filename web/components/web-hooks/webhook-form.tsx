@@ -4,8 +4,6 @@ import { Button, Input, ToggleSwitch } from "@plane/ui";
 import { IWebhook, IExtendedWebhook } from "types";
 import { GenerateKey } from "./generate-key";
 import { observer } from "mobx-react-lite";
-import { RootStore } from "store/root";
-import { useMobxStore } from "lib/mobx/store-provider";
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { DeleteWebhookModal } from "./delete-webhook-modal";
@@ -18,15 +16,16 @@ interface IWebhookDetails {
 
 export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
   const { type, initialData, onSubmit } = props;
-  const { webhook: webhookStore }: RootStore = useMobxStore();
+  // states
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  // use form
   const {
     reset,
     watch,
     handleSubmit,
     control,
     getValues,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<IExtendedWebhook>();
 
   const checkWebhookEvent = (initialData: IWebhook) => {
@@ -35,7 +34,7 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
       return "individual";
     }
     return "all";
-  }
+  };
 
   useEffect(() => {
     if (initialData && reset) reset({ ...initialData, webhook_events: checkWebhookEvent(initialData) });
@@ -44,9 +43,23 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
   useEffect(() => {
     if (watch("webhook_events")) {
       if (watch("webhook_events") === "all")
-        reset({ ...getValues(), project: watch('project') ?? true, module: watch('module') ?? true, cycle: watch('cycle') ?? true, issue: watch('issue') ?? true, issue_comment: watch('issue_comment') ?? true });
+        reset({
+          ...getValues(),
+          project: watch("project") ?? true,
+          module: watch("module") ?? true,
+          cycle: watch("cycle") ?? true,
+          issue: watch("issue") ?? true,
+          issue_comment: watch("issue_comment") ?? true,
+        });
       if (watch("webhook_events") === "individual")
-        reset({ ...getValues(), project: watch('project') ?? false, module: watch('module') ?? false, cycle: watch('cycle') ?? false, issue: watch('issue') ?? false, issue_comment: watch('issue_comment') ?? false });
+        reset({
+          ...getValues(),
+          project: watch("project") ?? false,
+          module: watch("module") ?? false,
+          cycle: watch("cycle") ?? false,
+          issue: watch("issue") ?? false,
+          issue_comment: watch("issue_comment") ?? false,
+        });
     }
   }, [watch && watch("webhook_events")]);
 
@@ -55,7 +68,9 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
       <DeleteWebhookModal
         isOpen={openDeleteModal}
         webhook_url=""
-        onClose={() => {setOpenDeleteModal(false)}}
+        onClose={() => {
+          setOpenDeleteModal(false);
+        }}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-8 py-5">
@@ -64,6 +79,10 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
             <Controller
               control={control}
               name="url"
+              rules={{
+                required: "URL is Required",
+                validate: (value) => (/^(ftp|http|https):\/\/[^ "]+$/.test(value) ? true : "Enter a valid URL"),
+              }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   className="w-full"
@@ -75,6 +94,7 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
                 />
               )}
             />
+            {errors.url && <p className="py-2 text-sm text-red-500">{errors.url.message}</p>}
           </div>
 
           <div className="flex gap-6">
@@ -243,11 +263,15 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
               {isSubmitting ? "processing..." : type === "create" ? "Create webhook" : "Save webhook"}
             </Button>
           </div>
-          {type === "edit" &&
+          {type === "edit" && (
             <Disclosure as="div" className="border-t border-custom-border-200">
               {({ open }) => (
                 <div className="w-full">
-                  <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+                  <Disclosure.Button
+                    as="button"
+                    type="button"
+                    className="flex items-center justify-between w-full py-4"
+                  >
                     <span className="text-lg tracking-tight">Danger Zone</span>
                     {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                   </Disclosure.Button>
@@ -269,7 +293,12 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
                           that workspace will be permanently removed and cannot be recovered.
                         </span>
                         <div>
-                          <Button variant="danger" onClick={() => {setOpenDeleteModal(true)}}>
+                          <Button
+                            variant="danger"
+                            onClick={() => {
+                              setOpenDeleteModal(true);
+                            }}
+                          >
                             Delete Webhook
                           </Button>
                         </div>
@@ -278,7 +307,8 @@ export const WebhookDetails: FC<IWebhookDetails> = observer((props) => {
                   </Transition>
                 </div>
               )}
-            </Disclosure>}
+            </Disclosure>
+          )}
         </div>
       </form>
     </>
