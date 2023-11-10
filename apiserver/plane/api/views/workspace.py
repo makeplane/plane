@@ -229,9 +229,9 @@ class InviteWorkspaceEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug):
-        emails = request.data.get("emails", False)
+        emails = request.data.get("emails", [])
         # Check if email is provided
-        if not emails or not len(emails):
+        if not emails:
             return Response(
                 {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -263,7 +263,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             is_active=True,
         ).select_related("member", "workspace", "workspace__owner")
 
-        if len(workspace_members):
+        if workspace_members:
             return Response(
                 {
                     "error": "Some users are already member of workspace",
@@ -370,11 +370,20 @@ class JoinWorkspaceEndpoint(BaseAPIView):
 
                 # If the user is present then create the workspace member
                 if user is not None:
-                    WorkspaceMember.objects.create(
-                        workspace=workspace_invite.workspace,
-                        member=user,
-                        role=workspace_invite.role,
-                    )
+                    # Check if the user was already a member of workspace then activate the user
+                    workspace_member = WorkspaceMember.objects.filter(
+                        workspace=workspace_invite.workspace, member=user
+                    ).first()
+                    if workspace_member is not None:
+                        workspace_member.is_active = True
+                        workspace_member.save()
+                    else:
+                        # Create a Workspace
+                        _ = WorkspaceMember.objects.create(
+                            workspace=workspace_invite.workspace,
+                            member=user,
+                            role=workspace_invite.role,
+                        )
 
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
@@ -443,6 +452,12 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
     def create(self, request):
         invitations = request.data.get("invitations")
         workspace_invitations = WorkspaceMemberInvite.objects.filter(pk__in=invitations)
+
+        # If user was already part of any workspace and is reinvited
+        WorkspaceMember.objects.filter(
+            workspace_id__in=[invitation.id for invitation in workspace_invitations],
+            member=request.user,
+        ).update(is_active=True)
 
         WorkspaceMember.objects.bulk_create(
             [
@@ -601,7 +616,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True,
+            workspace__slug=slug,
+            member_id=workspace_member.member_id,
+            is_active=True,
         ).update(is_deactivated=True)
 
         workspace_member.is_deactivated = True
@@ -655,7 +672,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True,
+            workspace__slug=slug,
+            member_id=workspace_member.member_id,
+            is_active=True,
         ).update(is_deactivated=True)
 
         # # Deactivate the user
