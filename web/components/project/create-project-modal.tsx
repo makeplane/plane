@@ -186,7 +186,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -200,7 +200,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-xl transition-all p-3 w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
+              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all p-3 w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
                 <div className="group relative h-44 w-full rounded-lg bg-custom-background-80">
                   {watch("cover_image") !== null && (
                     <img
@@ -382,7 +382,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   </div>
 
                   <div className="flex justify-end gap-2 pt-5">
-                    <Button variant="neutral-primary" onClick={handleClose} tabIndex={6}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose} tabIndex={6}>
                       Cancel
                     </Button>
                     <Button variant="primary" type="submit" size="sm" loading={isSubmitting} tabIndex={7}>

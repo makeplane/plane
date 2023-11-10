@@ -245,7 +245,7 @@ export const CommandModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -259,7 +259,7 @@ export const CommandModal: React.FC<Props> = observer((props) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <Dialog.Panel className="relative flex items-center justify-center w-full ">
-              <div className="w-full max-w-2xl transform   divide-y divide-custom-border-200 divide-opacity-10 rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <Command
                   filter={(value, search) => {
                     if (value.toLowerCase().includes(search.toLowerCase())) return 1;
