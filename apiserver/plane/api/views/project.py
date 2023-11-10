@@ -360,6 +360,16 @@ class InviteProjectEndpoint(BaseAPIView):
         email = request.data.get("email", False)
         role = request.data.get("role", False)
 
+        requested_user_role = ProjectMember.objects.get(
+            workspace__slug=slug, project_id=project_id, member_id=request.user.id
+        )
+
+        if int(role) > int(requested_user_role.role):
+            return Response(
+                {"error": "You cannot invite a user with higher role."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Check if email is provided
         if not email:
             return Response(
@@ -367,59 +377,65 @@ class InviteProjectEndpoint(BaseAPIView):
             )
 
         validate_email(email)
-        # Check if user is already a member of project
-        if ProjectMember.objects.filter(
+
+        # If the user is also part of workspace directly add him to project
+        if WorkspaceMember.objects.filter(
             project_id=project_id,
             member__email=email,
             member__is_bot=False,
             is_active=True,
         ).exists():
-            return Response(
-                {"error": "User is already member of Project"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user = User.objects.filter(email=email).first()
-
-        if user is None:
-            token = jwt.encode(
-                {"email": email, "timestamp": datetime.now().timestamp()},
-                settings.SECRET_KEY,
-                algorithm="HS256",
-            )
-            project_invitation_obj = ProjectMemberInvite.objects.create(
-                email=email.strip().lower(),
+            # Check if user is already a member of project
+            if ProjectMember.objects.filter(
                 project_id=project_id,
-                token=token,
-                role=role,
-            )
-            domain = settings.WEB_URL
-            project_invitation.delay(email, project_id, token, domain)
+                member__email=email,
+                member__is_bot=False,
+                is_active=True,
+            ).exists():
+                return Response(
+                    {"error": "User is already member of project"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-            return Response(
-                {
-                    "message": "Email sent successfully",
-                    "id": project_invitation_obj.id,
-                },
-                status=status.HTTP_200_OK,
-            )
+            # Add that user
+            user = User.objects.get(emai=email)
+            # Else create the user and return
+            project_member = ProjectMember.objects.filter(workspace__slug=slug, member=user, project_id=project_id)
 
-        project_member = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id=project_id, member=user
-        ).first()
+            if project_member is not None:
+                project_member.is_active = True
+                project_member.role = role
+                project_member.save()
+            else:
+                project_member = ProjectMember.objects.create(
+                    member=user, project_id=project_id, role=role
+                )
+                _ = IssueProperty.objects.create(user=user, project_id=project_id)
+                return Response(
+                    ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
+                )
 
-        if project_member is not None:
-            project_member.is_active = True
-            project_member.role = role
-            project_member.save()
-        else:
-            project_member = ProjectMember.objects.create(
-                member=user, project_id=project_id, role=role
-            )
-            _ = IssueProperty.objects.create(user=user, project_id=project_id)
+        # If the user doesn't exist
+        token = jwt.encode(
+            {"email": email, "timestamp": datetime.now().timestamp()},
+            settings.SECRET_KEY,
+            algorithm="HS256",
+        )
+        project_invitation_obj = ProjectMemberInvite.objects.create(
+            email=email.strip().lower(),
+            project_id=project_id,
+            token=token,
+            role=role,
+        )
+        domain = f"{request.scheme}://{request.get_host()}"
+        project_invitation.delay(email, project_id, token, domain)
 
         return Response(
-            ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
+            {
+                "message": "Email sent successfully",
+                "id": project_invitation_obj.id,
+            },
+            status=status.HTTP_200_OK,
         )
 
 
@@ -436,7 +452,8 @@ class UserProjectInvitationsViewset(BaseViewSet):
         )
 
     def create(self, request):
-        invitations = request.data.get("invitations")
+        # Invitations
+        invitations = request.data.get("invitations", [])
         project_invitations = ProjectMemberInvite.objects.filter(
             pk__in=invitations, accepted=True
         )
