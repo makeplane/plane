@@ -27,6 +27,10 @@ export const WorkspaceSettingsSidebar = () => {
       href: `/${workspaceSlug}/settings/integrations`,
     },
     {
+      label: "Webhooks",
+      href: `/${workspaceSlug}/settings/webhooks`,
+    },
+    {
       label: "Api tokens",
       href: `/${workspaceSlug}/settings/api-tokens`,
     },

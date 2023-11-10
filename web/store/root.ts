@@ -97,6 +97,7 @@ import {
   InboxIssuesStore,
   InboxStore,
 } from "store/inbox";
+import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 import { IMentionsStore, MentionsStore } from "store/editor";
 
@@ -161,6 +162,8 @@ export class RootStore {
   inboxIssueDetails: IInboxIssueDetailsStore;
   inboxFilters: IInboxFiltersStore;
 
+  webhook: IWebhookStore;
+
   mentionsStore: IMentionsStore;
 
   constructor() {
@@ -221,6 +224,8 @@ export class RootStore {
     this.inboxIssues = new InboxIssuesStore(this);
     this.inboxIssueDetails = new InboxIssueDetailsStore(this);
     this.inboxFilters = new InboxFiltersStore(this);
+
+    this.webhook = new WebhookStore(this);
 
     this.mentionsStore = new MentionsStore(this);
   }
