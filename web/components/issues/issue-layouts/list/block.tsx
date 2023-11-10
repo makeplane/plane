@@ -44,7 +44,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           }}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-            <div className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full">{issue.name}</div>
+            <div className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full">{issue.id} ---- {issue.name}</div>
           </Tooltip>
         </IssuePeekOverview>
 

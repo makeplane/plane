@@ -18,9 +18,13 @@ import { Spinner } from "@plane/ui";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
+  const {
+    issue: issueStore,
+    issueFilter: issueFilterStore,
+    projectIssues: { fetchProjectIssues, getIssues, groupedIssues, subGroupedIssues, unGroupedIssues },
+  } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
@@ -32,6 +36,17 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   const issueCount = issueStore.getIssuesCount;
+
+  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
+    if (workspaceSlug && projectId) await fetchProjectIssues(workspaceSlug, projectId);
+  });
+
+  console.log("---");
+
+  console.log("unGroupedIssues", groupedIssues);
+  // console.log("unGroupedIssues", subGroupedIssues);
+  // console.log("unGroupedIssues", unGroupedIssues);
+  console.log("---");
 
   if (!issueStore.getIssues)
     return (

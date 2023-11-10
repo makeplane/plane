@@ -38,6 +38,10 @@ export interface IProjectStore {
 
   currentProjectDetails: IProject | undefined;
 
+  projectLabelIds: () => string[];
+  projectMemberIds: () => string[];
+  workspaceProjectIds: () => string[];
+
   // actions
   setProjectId: (projectId: string | null) => void;
   setSearchQuery: (query: string) => void;
@@ -47,9 +51,6 @@ export interface IProjectStore {
   getProjectMemberById: (memberId: string) => IProjectMember | null;
   getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
   getProjectEstimateById: (estimateId: string) => IEstimate | null;
-
-  getProjectLabelIds: () => string[];
-  getProjectMemberIds: () => string[];
 
   fetchProjects: (workspaceSlug: string) => Promise<void>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -145,9 +146,6 @@ export class ProjectStore implements IProjectStore {
       getProjectMemberById: action,
       getProjectEstimateById: action,
 
-      getProjectLabelIds: action,
-      getProjectMemberIds: action,
-
       fetchProjectLabels: action,
       fetchProjectMembers: action,
       fetchProjectEstimates: action,
@@ -234,6 +232,21 @@ export class ProjectStore implements IProjectStore {
     this.searchQuery = query;
   };
 
+  projectLabelIds = () => {
+    if (!this.projectLabels) return [];
+    return (this.projectLabels ?? []).map((label) => label.id);
+  };
+
+  projectMemberIds = () => {
+    if (!this.projectMembers) return [];
+    return (this.projectMembers ?? []).map((member) => member.member.id);
+  };
+
+  workspaceProjectIds = () => {
+    if (!this.workspaceProjects) return [];
+    return (this.workspaceProjects ?? []).map((workspace) => workspace.id);
+  };
+
   /**
    * get Workspace projects using workspace slug
    * @param workspaceSlug
@@ -309,16 +322,6 @@ export class ProjectStore implements IProjectStore {
     if (!estimates) return null;
     const estimateInfo: IEstimate | null = estimates.find((estimate) => estimate.id === estimateId) || null;
     return estimateInfo;
-  };
-
-  getProjectLabelIds = () => {
-    if (!this.projectLabels) return [];
-    return (this.projectLabels ?? []).map((label) => label.id);
-  };
-
-  getProjectMemberIds = () => {
-    if (!this.projectMembers) return [];
-    return (this.projectMembers ?? []).map((member) => member.member.id);
   };
 
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {

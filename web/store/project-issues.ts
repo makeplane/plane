@@ -1,10 +1,11 @@
 import { action, observable, makeObservable, computed, runInAction } from "mobx";
+import _, { orderBy } from "lodash";
 // services
 import { IssueService } from "services/issue/issue.service";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // types
-import { IIssue, IState, TIssueGroupByOptions } from "types";
+import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 import { RootStore } from "store/root";
 
 export interface IGroupedIssues {
@@ -29,39 +30,33 @@ enum issueGroupByKeys {
   priority = "priority",
   labels = "labels",
   created_by = "created_by",
-  project = "project",
   assignees = "assignees",
+  project = "project",
   mentions = "assignees",
 }
 
 export interface IProjectIssueStore {
+  // observable
   loader: "init-loader" | "mutation" | null;
-  projectId: string | undefined;
   issues:
     | {
-        [project_id: string]: {
-          [issue_id: string]: IIssue;
-        };
+        [project_id: string]: IIssueResponse;
       }
     | undefined;
-
   // computed
+  getIssues: IIssueResponse | undefined;
   groupedIssues: IGroupedIssues | undefined;
   subGroupedIssues: ISubGroupedIssues | undefined;
   unGroupedIssues: TUnGroupedIssues | undefined;
-
   // actions
   fetchProjectIssues: (workspaceSlug: string, projectId: string) => Promise<IIssueResponse> | undefined;
 }
 
 export class ProjectIssueStore implements IProjectIssueStore {
   loader: "init-loader" | "mutation" | null = null;
-  projectId: string | undefined = undefined;
   issues:
     | {
-        [project_id: string]: {
-          [issue_id: string]: IIssue;
-        };
+        [project_id: string]: IIssueResponse;
       }
     | undefined = undefined;
   // root store
@@ -73,9 +68,9 @@ export class ProjectIssueStore implements IProjectIssueStore {
     makeObservable(this, {
       // observable
       loader: observable.ref,
-      projectId: observable.ref,
       issues: observable.ref,
       // computed
+      getIssues: computed,
       groupedIssues: computed,
       subGroupedIssues: computed,
       unGroupedIssues: computed,
@@ -87,34 +82,36 @@ export class ProjectIssueStore implements IProjectIssueStore {
     this.issueService = new IssueService();
   }
 
-  issueDisplayFiltersDefaultData = (): { [filter_key: string]: string[] } => {
-    const data: { [filter_key: string]: string[] } = {
-      state: (this.rootStore?.projectState?.projectStates ?? []).map((i: IState) => i.id),
-      "state_detail.group": ISSUE_STATE_GROUPS.map((i) => i.key),
-      priority: ISSUE_PRIORITIES.map((i) => i.key),
-      labels: [...(this.rootStore?.project?.projectLabels ?? []).map((i) => i.id), "None"],
-      created_by: (this.rootStore?.project?.projectMembers ?? []).map((i) => i.member.id),
-      project: (this.rootStore?.project.workspaceProjects ?? []).map((i) => i.id),
-      assignees: [...(this.rootStore?.project?.projectMembers ?? []).map((i) => i.member.id), "None"],
-    };
+  get getIssues() {
+    const projectId = this.rootStore?.project.projectId;
 
-    return data;
-  };
+    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+    return this.issues[projectId];
+  }
 
   get groupedIssues() {
-    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
     const projectId: string | undefined | null = this.rootStore?.project.projectId;
+    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
+    const orderBy: TIssueOrderByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.order_by;
 
-    if (!groupBy || !projectId || !this.issues || !this.issues[projectId]) return undefined;
+    if (!projectId || !groupBy || !orderBy || !this.issues || !this.issues[projectId]) return undefined;
 
-    const displayFiltersDefaultData: { [filter_key: string]: string[] } = this.issueDisplayFiltersDefaultData();
+    const displayFiltersDefaultData: { [filter_key: string]: string[] } = {
+      state: this.issueDisplayFiltersDefaultData("state"),
+      "state_detail.group": this.issueDisplayFiltersDefaultData("state_detail.group"),
+      priority: this.issueDisplayFiltersDefaultData("priority"),
+      labels: this.issueDisplayFiltersDefaultData("labels"),
+      created_by: this.issueDisplayFiltersDefaultData("created_by"),
+      project: this.issueDisplayFiltersDefaultData("project"),
+      assignees: this.issueDisplayFiltersDefaultData("assignees"),
+    };
 
     const issues: { [group_id: string]: string[] } = {};
     displayFiltersDefaultData[groupBy].forEach((group) => {
       issues[group] = [];
     });
 
-    const projectIssues = this.issues[projectId];
+    const projectIssues = this.issuesSortWithOrderBy(this.issues[projectId], orderBy);
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
@@ -131,13 +128,22 @@ export class ProjectIssueStore implements IProjectIssueStore {
   }
 
   get subGroupedIssues() {
+    const projectId: string | undefined | null = this.rootStore?.project.projectId;
     const subGroupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.sub_group_by;
     const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
-    const projectId: string | undefined | null = this.rootStore?.project.projectId;
+    const orderBy: TIssueOrderByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.order_by;
 
-    if (!subGroupBy || !groupBy || !projectId || !this.issues || !this.issues[projectId]) return undefined;
+    if (!projectId || !subGroupBy || !groupBy || !orderBy || !this.issues || !this.issues[projectId]) return undefined;
 
-    const displayFiltersDefaultData: { [filter_key: string]: string[] } = this.issueDisplayFiltersDefaultData();
+    const displayFiltersDefaultData: { [filter_key: string]: string[] } = {
+      state: this.issueDisplayFiltersDefaultData("state"),
+      "state_detail.group": this.issueDisplayFiltersDefaultData("state_detail.group"),
+      priority: this.issueDisplayFiltersDefaultData("priority"),
+      labels: this.issueDisplayFiltersDefaultData("labels"),
+      created_by: this.issueDisplayFiltersDefaultData("created_by"),
+      project: this.issueDisplayFiltersDefaultData("project"),
+      assignees: this.issueDisplayFiltersDefaultData("assignees"),
+    };
 
     const issues: { [sub_group_id: string]: { [group_id: string]: string[] } } = {};
     displayFiltersDefaultData[subGroupBy].forEach((sub_group: any) => {
@@ -148,7 +154,7 @@ export class ProjectIssueStore implements IProjectIssueStore {
       issues[sub_group] = groupByIssues;
     });
 
-    const projectIssues = this.issues[projectId];
+    const projectIssues = this.issuesSortWithOrderBy(this.issues[projectId], orderBy);
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
@@ -168,36 +174,75 @@ export class ProjectIssueStore implements IProjectIssueStore {
   }
 
   get unGroupedIssues() {
-    if (!this.projectId || !this.issues || !this.issues[this.projectId]) return undefined;
-    return Object.keys(this.issues[this.projectId]);
+    const projectId = this.rootStore?.project.projectId;
+    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
+    const orderBy: TIssueOrderByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.order_by;
+
+    if (!projectId || !orderBy || groupBy || !this.issues || !this.issues[projectId]) return undefined;
+
+    return this.issuesSortWithOrderBy(this.issues[projectId], orderBy).map((issue) => issue.id);
   }
 
   fetchProjectIssues = async (workspaceSlug: string, projectId: string) => {
     try {
-      this.projectId = projectId;
-      this.rootStore?.project.setProjectId(projectId);
-
       const response = await this.issueService.getV3Issues(workspaceSlug, projectId);
-
       const _issues = {
         ...this.issues,
         [projectId]: { ...response },
       };
-
       runInAction(() => {
         this.issues = _issues;
       });
-
       return response;
     } catch (error) {
       throw error;
     }
   };
 
-  /**
-   *
-   * @description this function helps to convert the typeof value (array | string | null) to array and returns an array
-   */
+  // issue helpers
+  issueDisplayFiltersDefaultData = (groupBy: string): string[] => {
+    switch (groupBy) {
+      case "state":
+        return this.rootStore?.projectState.projectStateIds() ?? [];
+      case "state_detail.group":
+        return ISSUE_STATE_GROUPS.map((i) => i.key);
+      case "priority":
+        return ISSUE_PRIORITIES.map((i) => i.key);
+      case "labels":
+        return [...(this.rootStore?.project?.projectLabelIds() || []), "None"];
+      case "created_by":
+        return [...(this.rootStore?.project?.projectMemberIds() || []), "None"];
+      case "assignees":
+        return [...(this.rootStore?.project?.projectMemberIds() || []), "None"];
+      case "project":
+        return this.rootStore?.project?.workspaceProjectIds() ?? [];
+      default:
+        return [];
+    }
+  };
+
+  issuesSortWithOrderBy = (issueObject: IIssueResponse, key: Partial<TIssueOrderByOptions>): IIssue[] => {
+    const array = _.values(issueObject);
+    switch (key) {
+      case "sort_order":
+        return _.sortBy(array, "sort_order");
+      case "-created_at":
+        return _.sortBy(array, "created_at");
+      case "-updated_at":
+        return _.sortBy(array, "created_at");
+      case "start_date":
+        return _.sortBy(array, "start_date");
+      case "target_date":
+        return _.sortBy(array, "target_date");
+      case "priority": {
+        const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
+        return _.sortBy(array, (_issue: IIssue) => _.indexOf(sortArray, _issue.priority));
+      }
+      default:
+        return array;
+    }
+  };
+
   getGroupArray(value: string[] | string | null) {
     if (Array.isArray(value)) {
       return value;
