@@ -578,6 +578,36 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if (
+            Project.objects.annotate(
+                total_members=Count("project_projectmember"),
+                member_with_role=Count(
+                    "project_projectmember",
+                    filter=Q(
+                        project_projectmember__member_id=request.user.id,
+                        project_projectmember__role=20,
+                    ),
+                ),
+            )
+            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
+            .exists()
+        ):
+            return Response(
+                {
+                    "error": "User is part of some projects where they are the only admin you should leave that project first"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # # Deactivate the users from the projects where the user is part of
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).update(is_deactivated=True)
+        # Deactivate the users from the projects where the user is part of
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).update(is_deactivated=True)
+
         workspace_member.is_deactivated = True
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -605,7 +635,34 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        # Deactivate the user
+
+        if (
+            Project.objects.annotate(
+                total_members=Count("project_projectmember"),
+                member_with_role=Count(
+                    "project_projectmember",
+                    filter=Q(
+                        project_projectmember__member_id=request.user.id,
+                        project_projectmember__role=20,
+                    ),
+                ),
+            )
+            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
+            .exists()
+        ):
+            return Response(
+                {
+                    "error": "User is part of some projects where they are the only admin you should leave that project first"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # # Deactivate the users from the projects where the user is part of
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug, member_id=workspace_member.member_id
+        ).update(is_deactivated=True)
+
+        # # Deactivate the user
         workspace_member.is_deactivated = True
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
