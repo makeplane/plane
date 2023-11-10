@@ -3,7 +3,7 @@ import { APIService } from "services/api.service";
 import { TrackEventService } from "services/track_event.service";
 // type
 import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
-import type { IIssueResponse } from "store/project-issues";
+import type { IIssueResponse } from "store/project-issues/issue.store";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 

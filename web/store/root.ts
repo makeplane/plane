@@ -110,8 +110,7 @@ import {
   InboxStore,
 } from "store/inbox";
 
-// v3
-import { ProjectIssueStore, IProjectIssueStore } from "store/project-issues";
+import { ProjectIssueStore, IProjectIssueStore } from "store/project-issues/issue.store";
 
 import { IMentionsStore, MentionsStore } from "store/editor";
 
@@ -154,6 +153,7 @@ export class RootStore {
   projectViewIssueCalendarView: IProjectViewIssueCalendarViewStore;
 
   issueFilter: IIssueFilterStore;
+
   issueDetail: IIssueDetailStore;
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: IIssueCalendarViewStore;

@@ -23,7 +23,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const {
     issue: issueStore,
     issueFilter: issueFilterStore,
-    projectIssues: { fetchProjectIssues, getIssues, groupedIssues, subGroupedIssues, unGroupedIssues },
+    projectIssues: { fetchIssues, getIssues },
   } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
@@ -38,14 +38,11 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const issueCount = issueStore.getIssuesCount;
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) await fetchProjectIssues(workspaceSlug, projectId);
+    if (workspaceSlug && projectId) await fetchIssues(workspaceSlug, projectId);
   });
 
   console.log("---");
-
-  console.log("unGroupedIssues", groupedIssues);
-  // console.log("unGroupedIssues", subGroupedIssues);
-  // console.log("unGroupedIssues", unGroupedIssues);
+  console.log("getIssues", getIssues);
   console.log("---");
 
   if (!issueStore.getIssues)

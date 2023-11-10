@@ -34,8 +34,7 @@ export interface IProjectStore {
 
   currentProjectDetails: IProject | undefined;
 
-  projectLabelIds: () => string[];
-  projectMemberIds: () => string[];
+  projectLabelIds: (isLayoutRender?: boolean) => string[];
   workspaceProjectIds: () => string[];
 
   // actions
@@ -200,14 +199,11 @@ export class ProjectStore implements IProjectStore {
     this.searchQuery = query;
   };
 
-  projectLabelIds = () => {
+  projectLabelIds = (isLayoutRender: boolean = false) => {
     if (!this.projectLabels) return [];
-    return (this.projectLabels ?? []).map((label) => label.id);
-  };
-
-  projectMemberIds = () => {
-    if (!this.projectMembers) return [];
-    return (this.projectMembers ?? []).map((member) => member.member.id);
+    let labelIds = (this.projectLabels ?? []).map((label) => label.id);
+    labelIds = isLayoutRender ? [...labelIds, "None"] : labelIds;
+    return labelIds;
   };
 
   workspaceProjectIds = () => {
