@@ -1,32 +1,34 @@
-import React, { useEffect, useRef, useState } from "react";
-
+import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
+<<<<<<< HEAD
 
 // react-hook-form
 import { useForm, Controller } from "react-hook-form";
 // headless ui
+=======
+import { Controller, useForm } from "react-hook-form";
+>>>>>>> develop
 import { Popover, Transition } from "@headlessui/react";
-// react-color
 import { TwitterPicker } from "react-color";
-// react-beautiful-dnd
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // services
-import projectService from "services/project.service";
-import pagesService from "services/pages.service";
-import issuesService from "services/issues.service";
+import { ProjectService, ProjectMemberService } from "services/project";
+import { PageService } from "services/page.service";
+import { IssueLabelService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
+import { PageDetailsHeader } from "components/headers/page-details";
 // ui
+<<<<<<< HEAD
 import { DocumentEditorWithRef, FixedMenu } from "@plane/document-editor"
 import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
 import {
@@ -37,26 +39,20 @@ import {
   ToggleSwitch,
   Tooltip,
 } from "components/ui";
+=======
+import { EmptyState } from "components/common";
+import { CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+>>>>>>> develop
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
-import {
-  ArrowLeftIcon,
-  LockClosedIcon,
-  LockOpenIcon,
-  PlusIcon,
-  StarIcon,
-  LinkIcon,
-  XMarkIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/outline";
-import { ColorPalletteIcon } from "components/icons";
+import { ArrowLeft, Lock, LinkIcon, Palette, Plus, Star, Unlock, X, ChevronDown } from "lucide-react";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
@@ -68,24 +64,15 @@ import {
 } from "constants/fetch-keys";
 import fileService from "services/file.service";
 
-const SinglePage: NextPage = () => {
+// services
+const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
+const pageService = new PageService();
+const issueLabelService = new IssueLabelService();
 
-  // ============ Document Editor ===========
+const PageDetailsPage: NextPageWithLayout = () => {
+
   const editorRef = useRef<any>(null);
-  const [editorInitialized, setEditorInitialized] = useState(false)
-
-  useEffect(() => {
-    if (editorRef.current) {
-      console.log("Editor Initialized")
-      setEditorInitialized(true)
-    } else {
-      console.log("Editor Not Initialized")
-    }
-  }, [editorRef.current])
-
-
-  // ============ Document Editor ===========
-
 
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
@@ -106,46 +93,34 @@ const SinglePage: NextPage = () => {
 
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => projectService.getProject(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
   );
 
   const { data: pageDetails, error } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-        pagesService.getPageDetails(
-          workspaceSlug as string,
-          projectId as string,
-          pageId as string
-        )
+      ? () => pageService.getPageDetails(workspaceSlug as string, projectId as string, pageId as string)
       : null
   );
 
   const { data: pageBlocks } = useSWR(
     workspaceSlug && projectId && pageId ? PAGE_BLOCKS_LIST(pageId as string) : null,
     workspaceSlug && projectId
-      ? () =>
-        pagesService.listPageBlocks(
-          workspaceSlug as string,
-          projectId as string,
-          pageId as string
-        )
+      ? () => pageService.listPageBlocks(workspaceSlug as string, projectId as string, pageId as string)
       : null
   );
 
   const { data: labels } = useSWR<IIssueLabels[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => issuesService.getIssueLabels(workspaceSlug as string, projectId as string)
+      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -154,7 +129,7 @@ const SinglePage: NextPage = () => {
 
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate<IPage>(
@@ -176,12 +151,11 @@ const SinglePage: NextPage = () => {
       (prevData) => ({
         ...(prevData as IPage),
         ...formData,
-        labels: formData.labels_list ? formData.labels_list : (prevData as IPage).labels,
       }),
       false
     );
 
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
       .then(() => {
         mutate(PAGE_DETAILS(pageId as string));
@@ -206,7 +180,7 @@ const SinglePage: NextPage = () => {
       });
     });
 
-    pagesService.addPageToFavorites(workspaceSlug as string, projectId as string, {
+    pageService.addPageToFavorites(workspaceSlug as string, projectId as string, {
       page: pageId as string,
     });
   };
@@ -229,11 +203,7 @@ const SinglePage: NextPage = () => {
       });
     });
 
-    pagesService.removePageFromFavorites(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string
-    );
+    pageService.removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
   };
 
   const handleOnDragEnd = (result: DropResult) => {
@@ -248,15 +218,9 @@ const SinglePage: NextPage = () => {
       newSortOrder = pageBlocks[pageBlocks.length - 1].sort_order + 10000;
     else {
       if (destination.index > source.index)
-        newSortOrder =
-          (pageBlocks[destination.index].sort_order +
-            pageBlocks[destination.index + 1].sort_order) /
-          2;
+        newSortOrder = (pageBlocks[destination.index].sort_order + pageBlocks[destination.index + 1].sort_order) / 2;
       else if (destination.index < source.index)
-        newSortOrder =
-          (pageBlocks[destination.index - 1].sort_order +
-            pageBlocks[destination.index].sort_order) /
-          2;
+        newSortOrder = (pageBlocks[destination.index - 1].sort_order + pageBlocks[destination.index].sort_order) / 2;
     }
 
     const newBlocksList = pageBlocks.map((p) => ({
@@ -269,7 +233,7 @@ const SinglePage: NextPage = () => {
       false
     );
 
-    pagesService.patchPageBlock(
+    pageService.patchPageBlock(
       workspaceSlug as string,
       projectId as string,
       pageId as string,
@@ -282,18 +246,15 @@ const SinglePage: NextPage = () => {
   };
 
   const handleCopyText = () => {
-    const originURL =
-      typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
+    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
 
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(
-      () => {
-        setToastAlert({
-          type: "success",
-          title: "Link Copied!",
-          message: "Page link copied to clipboard.",
-        });
-      }
-    );
+    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Link Copied!",
+        message: "Page link copied to clipboard.",
+      });
+    });
   };
 
   const handleShowBlockToggle = async () => {
@@ -308,9 +269,7 @@ const SinglePage: NextPage = () => {
     };
 
     mutate<IProjectMember>(
-      (workspaceSlug as string) && (projectId as string)
-        ? USER_PROJECT_VIEW(projectId as string)
-        : null,
+      (workspaceSlug as string) && (projectId as string) ? USER_PROJECT_VIEW(projectId as string) : null,
       (prevData) => {
         if (!prevData) return prevData;
 
@@ -322,15 +281,13 @@ const SinglePage: NextPage = () => {
       false
     );
 
-    await projectService
-      .setProjectView(workspaceSlug as string, projectId as string, payload)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
-        });
+    await projectService.setProjectView(workspaceSlug as string, projectId as string, payload).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Something went wrong. Please try again.",
       });
+    });
   };
 
   const options = labels?.map((label) => ({
@@ -363,14 +320,7 @@ const SinglePage: NextPage = () => {
   }, [memberDetails]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem title="Projects" link={`/${workspaceSlug}/projects`} />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
-        </Breadcrumbs>
-      }
-    >
+    <>
       {error ? (
         <EmptyState
           image={emptyPage}
@@ -413,22 +363,90 @@ const SinglePage: NextPage = () => {
                     className="flex items-center gap-2 text-sm text-custom-text-200"
                     onClick={() => router.back()}
                   >
-                    <ArrowLeftIcon className="h-4 w-4" />
+                    <ArrowLeft className="h-4 w-4" />
                   </button>
 
-                  <TextArea
-                    id="name"
+                  <Controller
                     name="name"
-                    placeholder="Page Title"
-                    value={watch("name")}
-                    onBlur={handleSubmit(updatePage)}
-                    onChange={(e) => setValue("name", e.target.value)}
-                    required={true}
-                    className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl font-semibold outline-none ring-0"
-                    role="textbox"
-                    noPadding
+                    control={control}
+                    render={() => (
+                      <TextArea
+                        id="name"
+                        name="name"
+                        value={watch("name")}
+                        placeholder="Page Title"
+                        onBlur={handleSubmit(updatePage)}
+                        onChange={(e) => setValue("name", e.target.value)}
+                        required
+                        className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent !px-3 !py-2 text-xl font-semibold outline-none ring-0"
+                        role="textbox"
+                      />
+                    )}
                   />
                 </div>
+
+                <div className="flex w-full flex-wrap gap-1">
+                  {pageDetails.labels.length > 0 && (
+                    <>
+                      {pageDetails.labels.map((labelId) => {
+                        const label = labels?.find((label) => label.id === labelId);
+
+                        if (!label) return;
+
+                        return (
+                          <div
+                            key={label.id}
+                            className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
+                            onClick={() => {
+                              const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
+                              partialUpdatePage({ labels: updatedLabels });
+                            }}
+                            style={{
+                              backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"}20`,
+                            }}
+                          >
+                            <span
+                              className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: label?.color && label.color !== "" ? label.color : "#000000",
+                              }}
+                            />
+                            {label.name}
+                            <X className="h-2.5 w-2.5 group-hover:text-red-500" />
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+                  <CustomSearchSelect
+                    customButton={
+                      <div className="flex items-center gap-1 rounded-sm bg-custom-background-80 p-1.5 text-xs">
+                        <Plus className="h-3.5 w-3.5" />
+                        {pageDetails.labels.length <= 0 && <span>Add Label</span>}
+                      </div>
+                    }
+                    value={pageDetails.labels}
+                    footerOption={
+                      <button
+                        type="button"
+                        className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
+                        onClick={() => {
+                          setLabelModal(true);
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-1 text-custom-text-200">
+                          <Plus className="h-4 w-4" aria-hidden="true" />
+                          <span>Create New Label</span>
+                        </span>
+                      </button>
+                    }
+                    onChange={(val: string[]) => partialUpdatePage({ labels: val })}
+                    options={options}
+                    multiple
+                    noChevron
+                  />
+                </div>
+              </div>
               <div className="flex items-center">
                 <div className="flex items-center gap-6 text-custom-text-200">
                   <Tooltip
@@ -449,7 +467,7 @@ const SinglePage: NextPage = () => {
                           }`}
                         >
                           Display
-                          <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                          <ChevronDown className="h-3 w-3" aria-hidden="true" />
                         </Popover.Button>
 
                         <Transition
@@ -464,9 +482,7 @@ const SinglePage: NextPage = () => {
                           <Popover.Panel className="absolute right-0 z-30 mt-1 w-screen max-w-xs transform rounded-lg border border-custom-border-200 bg-custom-background-90 p-3 shadow-lg">
                             <div className="relative divide-y-2 divide-custom-border-200">
                               <div className="flex items-center justify-between">
-                                <span className="text-sm text-custom-text-200">
-                                  Show full block content
-                                </span>
+                                <span className="text-sm text-custom-text-200">Show full block content</span>
                                 <ToggleSwitch
                                   value={showBlock}
                                   onChange={(value) => {
@@ -502,7 +518,7 @@ const SinglePage: NextPage = () => {
                                 }}
                               />
                             ) : (
-                              <ColorPalletteIcon height={16} width={16} />
+                              <Palette height={16} width={16} />
                             )}
                           </Popover.Button>
 
@@ -563,26 +579,22 @@ const SinglePage: NextPage = () => {
                     >
                       {pageDetails.access ? (
                         <button onClick={() => partialUpdatePage({ access: 0 })} className="z-10">
-                          <LockClosedIcon className="h-4 w-4" />
+                          <Lock className="h-4 w-4" />
                         </button>
                       ) : (
-                        <button
-                          onClick={() => partialUpdatePage({ access: 1 })}
-                          type="button"
-                          className="z-10"
-                        >
-                          <LockOpenIcon className="h-4 w-4" />
+                        <button onClick={() => partialUpdatePage({ access: 1 })} type="button" className="z-10">
+                          <Unlock className="h-4 w-4" />
                         </button>
                       )}
                     </Tooltip>
                   )}
                   {pageDetails.is_favorite ? (
                     <button onClick={handleRemoveFromFavorites} className="z-10">
-                      <StarIcon className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
                     </button>
                   ) : (
                     <button onClick={handleAddToFavorites} type="button" className="z-10">
-                      <StarIcon className="h-4 w-4" />
+                      <Star className="h-4 w-4" />
                     </button>
                   )}
                 </div>
@@ -621,11 +633,7 @@ const SinglePage: NextPage = () => {
                   </DragDropContext>
                   {createBlockForm && (
                     <div className="mt-4" ref={scrollToRef}>
-                      <CreateUpdateBlockInline
-                        handleClose={() => setCreateBlockForm(false)}
-                        focus="name"
-                        user={user}
-                      />
+                      <CreateUpdateBlockInline handleClose={() => setCreateBlockForm(false)} focus="name" user={user} />
                     </div>
                   )}
                   {labelModal && typeof projectId === "string" && (
@@ -633,10 +641,9 @@ const SinglePage: NextPage = () => {
                       isOpen={labelModal}
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
-                      user={user}
                       onSuccess={(response) => {
                         partialUpdatePage({
-                          labels_list: [...(pageDetails.labels ?? []), response.id],
+                          labels: [...(pageDetails.labels ?? []), response.id],
                         });
                       }}
                     />
@@ -659,8 +666,16 @@ const SinglePage: NextPage = () => {
           <Loader.Item height="200px" />
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </>
   );
 };
 
-export default SinglePage;
+PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<PageDetailsHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
+
+export default PageDetailsPage;

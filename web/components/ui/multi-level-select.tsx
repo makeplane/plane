@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // icons
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 type TSelectOption = {
   id: string;
@@ -52,7 +52,7 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
             >
               <span className="block truncate">{selected?.label ?? label}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                <ChevronUpDownIcon className="h-5 w-5 text-custom-text-200" aria-hidden="true" />
+                <ChevronsUpDown className="h-5 w-5 text-custom-text-200" />
               </span>
             </Listbox.Button>
             <Transition
@@ -105,16 +105,12 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                               >
                                 {({ selected }) => (
                                   <>
-                                    <span
-                                      className={`block truncate ${
-                                        selected ? "font-medium" : "font-normal"
-                                      }`}
-                                    >
+                                    <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
                                       {child.label}
                                     </span>
                                     {selected ? (
                                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-custom-text-200">
-                                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                                        <Check className="h-5 w-5" aria-hidden="true" />
                                       </span>
                                     ) : null}
                                   </>
@@ -131,14 +127,12 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                             />
                           </div>
                         )}
-                        <span
-                          className={`block truncate ${selected ? "font-medium" : "font-normal"}`}
-                        >
+                        <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>
                           {option.label}
                         </span>
                         {selected ? (
                           <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-custom-text-200">
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                            <Check className="h-5 w-5" aria-hidden="true" />
                           </span>
                         ) : null}
                       </>

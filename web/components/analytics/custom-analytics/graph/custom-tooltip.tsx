@@ -49,10 +49,7 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
             : ""
         }`}
       >
-        {params.segment === "assignees__id"
-          ? renderAssigneeName(tooltipValue.toString())
-          : tooltipValue}
-        :
+        {params.segment === "assignees__id" ? renderAssigneeName(tooltipValue.toString()) : tooltipValue}:
       </span>
       <span>{datum.value}</span>
     </div>

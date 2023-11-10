@@ -31,9 +31,7 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
             alt="ProjectSettingImg"
           />
         </div>
-        <h1 className="text-xl font-medium text-custom-text-100">
-          Oops! You are not authorized to view this page
-        </h1>
+        <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
 
         <div className="w-full max-w-md text-base text-custom-text-200">
           {user ? (

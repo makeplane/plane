@@ -1,12 +1,5 @@
 {
-  "extends": "tsconfig/react.json",
-  "include": [
-    "src/**/*",
-    "index.d.ts"
-  ],
-  "exclude": [
-    "dist",
-    "build",
-    "node_modules"
-  ]
+  "extends": "tsconfig/react-library.json",
+  "include": ["src/**/*", "index.d.ts"],
+  "exclude": ["dist", "build", "node_modules"]
 }

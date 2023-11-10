@@ -1,8 +1,5 @@
 import React from "react";
-
-// next-themes
 import { useTheme } from "next-themes";
-// tooltip2
 import { Tooltip2 } from "@blueprintjs/popover2";
 
 type Props = {
@@ -51,17 +48,11 @@ export const Tooltip: React.FC<Props> = ({
       content={
         <div
           className={`relative z-50 max-w-xs gap-1 rounded-md p-2 text-xs shadow-md ${
-            theme === "custom"
-              ? "bg-custom-background-100 text-custom-text-200"
-              : "bg-black text-gray-400"
+            theme === "custom" ? "bg-custom-background-100 text-custom-text-200" : "bg-black text-gray-400"
           } break-words overflow-hidden ${className}`}
         >
           {tooltipHeading && (
-            <h5
-              className={`font-medium ${
-                theme === "custom" ? "text-custom-text-100" : "text-white"
-              }`}
-            >
+            <h5 className={`font-medium ${theme === "custom" ? "text-custom-text-100" : "text-white"}`}>
               {tooltipHeading}
             </h5>
           )}
@@ -69,7 +60,7 @@ export const Tooltip: React.FC<Props> = ({
         </div>
       }
       position={position}
-      renderTarget={({ isOpen: isTooltipOpen, ref: eleReference, ...tooltipProps }) =>
+      renderTarget={({ ref: eleReference, ...tooltipProps }) =>
         React.cloneElement(children, { ref: eleReference, ...tooltipProps, ...children.props })
       }
     />

@@ -1,18 +1,18 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
+import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import pagesService from "services/pages.service";
+import { PageService } from "services/page.service";
 // components
 import { PagesView } from "components/pages";
+import { EmptyState } from "components/common";
 // ui
-import { EmptyState, Loader } from "components/ui";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
-// images
+import { Loader } from "@plane/ui";
+// assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -22,15 +22,20 @@ import { RecentPagesResponse } from "types";
 // fetch-keys
 import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
-export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
+// services
+const pageService = new PageService();
+
+export const RecentPagesList: React.FC<TPagesListProps> = observer((props) => {
+  const { viewType } = props;
+
+  const { commandPalette: commandPaletteStore } = useMobxStore();
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { data: pages } = useSWR(
     workspaceSlug && projectId ? RECENT_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => pagesService.getRecentPages(workspaceSlug as string, projectId as string)
-      : null
+    workspaceSlug && projectId ? () => pageService.getRecentPages(workspaceSlug as string, projectId as string) : null
   );
 
   const isEmpty = pages && Object.keys(pages).every((key) => pages[key].length === 0);
@@ -44,9 +49,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
 
             return (
               <div key={key} className="h-full overflow-hidden pb-9">
-                <h2 className="text-xl font-semibold capitalize mb-2">
-                  {replaceUnderscoreIfSnakeCase(key)}
-                </h2>
+                <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
                 <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
               </div>
             );
@@ -57,14 +60,9 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             description="You can think of Pages as an AI-powered notepad."
             image={emptyPage}
             primaryButton={{
-              icon: <PlusIcon className="h-4 w-4" />,
+              icon: <Plus className="h-4 w-4" />,
               text: "New Page",
-              onClick: () => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "d",
-                });
-                document.dispatchEvent(e);
-              },
+              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
           />
         )
@@ -77,4 +75,4 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
       )}
     </>
   );
-};
+});

@@ -7,7 +7,7 @@ import {
   TPeekOverviewModes,
 } from "components/issues";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { IIssue } from "types";
 
@@ -69,13 +69,7 @@ export const SidePeekView: React.FC<Props> = ({
         <div className="h-[1] w-full border-t border-custom-border-200 my-5" />
         {/* issue activity/comments */}
         <div className="w-full pb-5">
-          {issue && (
-            <PeekOverviewIssueActivity
-              workspaceSlug={workspaceSlug}
-              issue={issue}
-              readOnly={readOnly}
-            />
-          )}
+          {issue && <PeekOverviewIssueActivity workspaceSlug={workspaceSlug} issue={issue} readOnly={readOnly} />}
         </div>
       </div>
     ) : (

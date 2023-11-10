@@ -38,10 +38,10 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center px-6 py-3.5 relative gap-10 bg-custom-background-100">
-      <div className="relative flex items-center gap-5 w-full flex-grow overflow-hidden">
+    <div className="flex items-center p-3 relative gap-10 bg-custom-background-100">
+      <div className="relative flex items-center gap-3 w-full flex-grow overflow-hidden">
         {/* id */}
-        <div className="flex-shrink-0 text-sm text-custom-text-300">
+        <div className="flex-shrink-0 text-xs text-custom-text-300 font-medium">
           {projectStore?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}

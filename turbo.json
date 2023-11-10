@@ -3,11 +3,8 @@
   "globalEnv": [
     "NEXT_PUBLIC_API_BASE_URL",
     "NEXT_PUBLIC_DEPLOY_URL",
-    "API_BASE_URL",
     "NEXT_PUBLIC_SENTRY_DSN",
-    "SENTRY_AUTH_TOKEN",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT",
-    "NEXT_PUBLIC_GITHUB_APP_NAME",
     "NEXT_PUBLIC_ENABLE_SENTRY",
     "NEXT_PUBLIC_ENABLE_OAUTH",
     "NEXT_PUBLIC_TRACK_EVENTS",
@@ -28,13 +25,8 @@
   ],
   "pipeline": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        ".next/**",
-        "dist/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
     "web#develop": {
       "cache": false,
@@ -42,7 +34,8 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
-        "@plane/document-editor#build"
+        "@plane/document-editor#build",
+        "@plane/ui#build"
       ]
     },
     "space#develop": {
@@ -51,7 +44,8 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
-        "@plane/document-editor#build"
+        "@plane/document-editor#build",
+        "@plane/ui#build"
       ]
     },
     "web#build": {
@@ -59,7 +53,8 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
-        "@plane/document-editor#build"
+        "@plane/document-editor#build",
+        "@plane/ui#build"
       ]
     },
     "space#build": {
@@ -67,20 +62,17 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
-        "@plane/document-editor#build"
+        "@plane/document-editor#build",
+        "@plane/ui#build"
       ]
     },
     "@plane/lite-text-editor#build": {
       "cache": true,
-      "dependsOn": [
-        "@plane/editor-core#build"
-      ]
+      "dependsOn": ["@plane/editor-core#build"]
     },
     "@plane/rich-text-editor#build": {
       "cache": true,
-      "dependsOn": [
-        "@plane/editor-core#build"
-      ]
+      "dependsOn": ["@plane/editor-core#build"]
     },
     "@plane/document-editor#build": {
       "cache": true,
@@ -89,9 +81,7 @@
       ]
     },
     "test": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "outputs": []
     },
     "lint": {

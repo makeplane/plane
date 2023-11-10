@@ -1,9 +1,9 @@
 // components
 import { ActivityGraph } from "components/workspace";
 // ui
-import { Loader, Tooltip } from "components/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // icons
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Info } from "lucide-react";
 // types
 import { IUserWorkspaceDashboard } from "types";
 import { useRouter } from "next/router";
@@ -23,10 +23,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
             <h4 className="text-sm">Issues assigned to you</h4>
             <h5 className="mt-2 text-2xl font-semibold">
               {data ? (
-                <div
-                  className="cursor-pointer"
-                  onClick={() => router.push(`/${workspaceSlug}/me/my-issues`)}
-                >
+                <div className="cursor-pointer" onClick={() => router.push(`/${workspaceSlug}/me/my-issues`)}>
                   {data.assigned_issues_count}
                 </div>
               ) : (
@@ -83,7 +80,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
             tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
             className="w-72 border border-custom-border-200"
           >
-            <InformationCircleIcon className="h-3 w-3" />
+            <Info className="h-3 w-3" />
           </Tooltip>
         </h3>
         <ActivityGraph activities={data?.issue_activities} />
