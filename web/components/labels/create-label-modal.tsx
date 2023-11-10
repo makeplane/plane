@@ -46,9 +46,17 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     control,
     reset,
     setValue,
+    setFocus,
   } = useForm<IIssueLabels>({
     defaultValues,
   });
+
+  /**
+   * For setting focus on name input
+   */
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus, isOpen]);
 
   useEffect(() => {
     if (isOpen) setValue("color", getRandomLabelColor());

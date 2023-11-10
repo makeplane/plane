@@ -54,7 +54,12 @@ from .workspace import (
     LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet
-from .view import GlobalViewViewSet, GlobalViewIssuesViewSet, IssueViewViewSet, IssueViewFavoriteViewSet
+from .view import (
+    GlobalViewViewSet,
+    GlobalViewIssuesViewSet,
+    IssueViewViewSet,
+    IssueViewFavoriteViewSet,
+)
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
@@ -65,6 +70,8 @@ from .cycle import (
 from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (
     IssueViewSet,
+    IssueListEndpoint,
+    IssueListGroupedEndpoint,
     WorkSpaceIssuesEndpoint,
     IssueActivityEndpoint,
     IssueCommentViewSet,
@@ -162,7 +169,11 @@ from .analytic import (
     DefaultAnalyticsEndpoint,
 )
 
-from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
+from .notification import (
+    NotificationViewSet,
+    UnreadNotificationEndpoint,
+    MarkAllReadNotificationViewSet,
+)
 
 from .exporter import ExportIssuesEndpoint
 

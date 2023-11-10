@@ -2,7 +2,7 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
@@ -15,7 +15,7 @@ type Props = {
   onChange: (val: string) => void;
 };
 
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const SidebarLeadSelect: FC<Props> = (props) => {
   const { value, onChange } = props;
@@ -26,7 +26,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 

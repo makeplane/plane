@@ -3,7 +3,7 @@ import { observable, computed, makeObservable, action, runInAction } from "mobx"
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // services
 import { IssueService } from "services/issue";
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 // types
 import { RootStore } from "../root";
 import {
@@ -25,6 +25,7 @@ export interface IArchivedIssueFilterStore {
 
   // services
   projectService: ProjectService;
+  projectMemberService: ProjectMemberService;
   issueService: IssueService;
 
   // computed
@@ -87,6 +88,7 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
 
   // services
   projectService: ProjectService;
+  projectMemberService: ProjectMemberService;
   issueService: IssueService;
 
   constructor(_rootStore: RootStore) {
@@ -111,6 +113,7 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
     // services
     this.issueService = new IssueService();
     this.projectService = new ProjectService();
+    this.projectMemberService = new ProjectMemberService();
   }
 
   computedFilter = (filters: any, filteredParams: any) => {
@@ -222,7 +225,7 @@ export class ArchivedIssueFilterStore implements IArchivedIssueFilterStore {
 
   fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
     try {
-      const memberResponse = await this.projectService.projectMemberMe(workspaceSlug, projectId);
+      const memberResponse = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
       const issueProperties = await this.issueService.getIssueDisplayProperties(workspaceSlug, projectId);
 
       runInAction(() => {

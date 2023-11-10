@@ -4,7 +4,7 @@ import useSWR, { mutate } from "swr";
 // components
 import ToastAlert from "components/toast-alert";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { CycleService } from "services/cycle.service";
 import { ModuleService } from "services/module.service";
 import { ViewService } from "services/view.service";
@@ -16,6 +16,7 @@ import { IIssueFilterOptions, IProjectMember, IUser, IIssueDisplayFilterOptions,
 import { CYCLE_DETAILS, MODULE_DETAILS, USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 
 const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 const cycleService = new CycleService();
 const moduleService = new ModuleService();
 const viewService = new ViewService();
@@ -218,7 +219,7 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.projectMemberMe(workspaceSlug as string, projectId as string)
       : null
   );
 
