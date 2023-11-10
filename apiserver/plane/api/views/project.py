@@ -440,6 +440,13 @@ class UserProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.filter(
             pk__in=invitations, accepted=True
         )
+
+        # Update all the project invitations
+        for project_invitation in project_invitations:
+            ProjectMember.objects.filter(
+                project=project_invitation.project, member=request.user
+            ).update(is_active=True, role=project_invitation.role)
+
         # Check if any of the projects user was previously a member then activate
         ProjectMember.objects.bulk_create(
             [

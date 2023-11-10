@@ -454,11 +454,15 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
         invitations = request.data.get("invitations")
         workspace_invitations = WorkspaceMemberInvite.objects.filter(pk__in=invitations).order_by("-created_at")
 
-        # If user was already part of any workspace and is reinvited
-        WorkspaceMember.objects.filter(
-            workspace_id__in=[invitation.id for invitation in workspace_invitations],
-            member=request.user,
-        ).update(is_active=True)
+        for invitation in workspace_invitations:
+            # Update the WorkspaceMember for this specific invitation
+            WorkspaceMember.objects.filter(
+                workspace_id=invitation.workspace_id,
+                member=request.user
+            ).update(
+                is_active=True,
+                role=invitation.role
+            )
 
         WorkspaceMember.objects.bulk_create(
             [
