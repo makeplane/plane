@@ -219,11 +219,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
                     <Menu.Item
                       key={index}
                       as="div"
-                      className="flex w-full items-center justify-start rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                      onClick={() => {
+                        router.push(link.href);
+                      }}
+                      className="flex w-full items-center cursor-pointer justify-start rounded px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                     >
-                      <Link href={link.href}>
-                        <a className="w-full">{link.name}</a>
-                      </Link>
+                      {link.name}
                     </Menu.Item>
                   ))}
                 </div>
