@@ -39,6 +39,7 @@ class ProjectBasePermission(BasePermission):
             member=request.user,
             role=Admin,
             project_id=view.project_id,
+            is_deactivated=False,
         ).exists()
 
 
@@ -50,7 +51,9 @@ class ProjectMemberPermission(BasePermission):
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return ProjectMember.objects.filter(
-                workspace__slug=view.workspace_slug, member=request.user
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+                is_deactivated=False,
             ).exists()
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
@@ -67,6 +70,7 @@ class ProjectMemberPermission(BasePermission):
             member=request.user,
             role__in=[Admin, Member],
             project_id=view.project_id,
+            is_deactivated=False,
         ).exists()
 
 
@@ -81,6 +85,7 @@ class ProjectEntityPermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 project_id=view.project_id,
+                is_deactivated=False,
             ).exists()
 
         ## Only project members or admins can create and edit the project attributes
@@ -89,6 +94,7 @@ class ProjectEntityPermission(BasePermission):
             member=request.user,
             role__in=[Admin, Member],
             project_id=view.project_id,
+            is_deactivated=False,
         ).exists()
 
 
@@ -101,4 +107,5 @@ class ProjectLitePermission(BasePermission):
             workspace__slug=view.workspace_slug,
             member=request.user,
             project_id=view.project_id,
+            is_deactivated=False,
         ).exists()

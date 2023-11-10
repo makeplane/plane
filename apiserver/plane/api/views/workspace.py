@@ -599,13 +599,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # # Deactivate the users from the projects where the user is part of
-        _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id
-        ).update(is_deactivated=True)
         # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id
+            workspace__slug=slug, member_id=workspace_member.member_id, is_deactivated=False,
         ).update(is_deactivated=True)
 
         workspace_member.is_deactivated = True
@@ -659,7 +655,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # # Deactivate the users from the projects where the user is part of
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id
+            workspace__slug=slug, member_id=workspace_member.member_id, is_deactivated=False,
         ).update(is_deactivated=True)
 
         # # Deactivate the user

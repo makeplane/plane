@@ -11,7 +11,6 @@ from plane.api.views import (
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
-    LeaveProjectEndpoint,
     ProjectPublicCoverImagesEndpoint,
 )
 
@@ -132,11 +131,6 @@ urlpatterns = [
             }
         ),
         name="project-favorite",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/members/leave/",
-        LeaveProjectEndpoint.as_view(),
-        name="leave-project",
     ),
     path(
         "project-covers/",

@@ -14,7 +14,6 @@ from .project import (
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
-    LeaveProjectEndpoint,
     ProjectPublicCoverImagesEndpoint,
 )
 from .user import (
