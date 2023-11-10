@@ -40,7 +40,7 @@ export const CommentCard: React.FC<Props> = ({
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, comment.project_detail.id)
+  const editorSuggestions = useEditorSuggestions();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -105,6 +105,7 @@ export const CommentCard: React.FC<Props> = ({
             <div>
               <LiteTextEditorWithRef
                 onEnterKeyPress={handleSubmit(onEnter)}
+                cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 ref={editorRef}
@@ -147,6 +148,7 @@ export const CommentCard: React.FC<Props> = ({
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+              mentionHighlights={editorSuggestions.mentionHighlights}
             />
             <CommentReaction projectId={comment.project} commentId={comment.id} />
           </div>

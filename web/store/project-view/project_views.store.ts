@@ -20,7 +20,7 @@ export interface IProjectViewsStore {
   };
 
   // actions
-  setViewId: (viewId: string) => void;
+  setViewId: (viewId: string | null) => void;
 
   fetchAllViews: (workspaceSlug: string, projectId: string) => Promise<IProjectView[]>;
   fetchViewDetails: (workspaceSlug: string, projectId: string, viewId: string) => Promise<IProjectView>;
@@ -82,7 +82,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
     this.viewService = new ViewService();
   }
 
-  setViewId = (viewId: string) => {
+  setViewId = (viewId: string | null) => {
     this.viewId = viewId;
   };
 

@@ -168,7 +168,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
         </div>
 
         <div className="h-[104px] w-full flex flex-col justify-between p-4 rounded-b">
-          <p className="text-sm text-custom-text-300 font-medium break-words line-clamp-2">{project.description}</p>
+          <p className="text-sm text-custom-text-300 break-words line-clamp-2">{project.description}</p>
           <div className="flex item-center justify-between">
             <Tooltip
               tooltipHeading="Members"
@@ -181,7 +181,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
-                      const member = project.members?.find((m) => m.id === memberId);
+                      const member = project.members?.find((m) => m.member_id === memberId);
 
                       if (!member) return null;
 
@@ -211,7 +211,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               <div className="flex items-center">
                 <Button
                   variant="link-primary"
-                  className="!p-0"
+                  className="!p-0 font-semibold"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();

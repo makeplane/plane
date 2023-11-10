@@ -32,13 +32,13 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   // store
   const { user: userStore } = useMobxStore();
   const { currentProjectRole } = userStore;
-  const isAllowed = [5, 10].includes(currentProjectRole || 0);
+  const isAllowed = [15, 20].includes(currentProjectRole || 0);
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks
   const { setShowAlert } = useReloadConfirmations();
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, issue.project_detail.id);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     handleSubmit,
@@ -139,22 +139,19 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-
-      <span className="">
-        <RichTextEditor
-          uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
-          deleteFile={fileService.deleteImage}
-          value={issue?.description_html}
-          debouncedUpdatesEnabled={false}
-          onChange={(description: Object, description_html: string) => {
-            debouncedIssueDescription(description_html);
-          }}
-          customClassName="mt-0"
-          mentionSuggestions={editorSuggestions.mentionSuggestions}
-          mentionHighlights={editorSuggestions.mentionHighlights}
-        />
-      </span>
-
+      <RichTextEditor
+        cancelUploadImage={fileService.cancelUpload}
+        uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+        deleteFile={fileService.deleteImage}
+        value={issue?.description_html}
+        debouncedUpdatesEnabled={false}
+        onChange={(description: Object, description_html: string) => {
+          debouncedIssueDescription(description_html);
+        }}
+        customClassName="mt-0"
+        mentionSuggestions={editorSuggestions.mentionSuggestions}
+        mentionHighlights={editorSuggestions.mentionHighlights}
+      />
       <IssueReaction
         issueReactions={issueReactions}
         user={user}

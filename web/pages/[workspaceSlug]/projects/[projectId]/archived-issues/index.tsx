@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { AppLayout } from "layouts/app-layout";
 // contexts
 import { IssueViewContextProvider } from "contexts/issue-view.context";
+import { ArchivedIssueLayoutRoot } from "components/issues";
 // ui
 import { ArchiveIcon } from "@plane/ui";
 import { ProjectArchivedIssuesHeader } from "components/headers";
@@ -29,7 +30,7 @@ const ProjectArchivedIssuesPage: NextPageWithLayout = () => {
           <X className="h-3 w-3" />
         </button>
       </div>
-      {/* <IssuesView /> */}
+      <ArchivedIssueLayoutRoot />
     </div>
   );
 };

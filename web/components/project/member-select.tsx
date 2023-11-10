@@ -16,24 +16,20 @@ type Props = {
 
 export const MemberSelect: React.FC<Props> = observer((props) => {
   const { value, onChange, isDisabled = false } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    projectMember: { fetchProjectMembers, projectMembers },
+  } = useMobxStore();
 
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
   );
 
-  const members = projectStore.members?.[projectId?.toString()!];
-
-  const options = members?.map((member) => ({
+  const options = projectMembers?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -44,7 +40,7 @@ export const MemberSelect: React.FC<Props> = observer((props) => {
     ),
   }));
 
-  const selectedOption = members?.find((m) => m.member.id === value)?.member;
+  const selectedOption = projectMembers?.find((m) => m.member.id === value)?.member;
 
   return (
     <CustomSearchSelect

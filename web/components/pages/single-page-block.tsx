@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { mutate } from "swr";
 import { useForm } from "react-hook-form";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 // services
 import { PageService } from "services/page.service";
 import { IssueService } from "services/issue/issue.service";
@@ -64,7 +64,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     },
   });
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestion = useEditorSuggestions();
 
   const updatePageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -420,6 +420,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
                         <RichTextEditor
+                          cancelUploadImage={fileService.cancelUpload}
                           uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                           deleteFile={fileService.deleteImage}
                           value={block.description_html}

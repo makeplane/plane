@@ -4,7 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // icons
-import { Spinner, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -15,30 +15,35 @@ export interface IWorkspaceAuthWrapper {
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { user: userStore, project: projectStore, workspace: workspaceStore } = useMobxStore();
-  const { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace } = userStore;
+  const {
+    user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
+    project: { fetchProjects },
+    workspace: { fetchWorkspaceLabels },
+    workspaceMember: { fetchWorkspaceMembers },
+  } = useMobxStore();
+
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // fetching user workspace information
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug ? () => userStore.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
   );
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null
   );
   // fetch workspace members
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
   // fetch workspace labels
   useSWR(
     workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
 
   // while data is being loaded
@@ -67,12 +72,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <a>
-                  <SecondaryButton>Check pending invites</SecondaryButton>
+                  <Button variant="neutral-primary" size="sm">
+                    Check pending invites
+                  </Button>
                 </a>
               </Link>
               <Link href="/create-workspace">
                 <a>
-                  <PrimaryButton>Create new workspace</PrimaryButton>
+                  <Button variant="primary" size="sm">
+                    Create new workspace
+                  </Button>
                 </a>
               </Link>
             </div>

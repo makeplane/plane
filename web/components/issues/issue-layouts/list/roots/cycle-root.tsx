@@ -21,6 +21,8 @@ export const CycleListLayout: React.FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
     issueFilter: issueFilterStore,
     cycleIssue: cycleIssueStore,
     issueDetail: issueDetailStore,
@@ -31,7 +33,7 @@ export const CycleListLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
@@ -55,10 +57,9 @@ export const CycleListLayout: React.FC = observer(() => {
     [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
   );
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
@@ -80,12 +81,12 @@ export const CycleListLayout: React.FC = observer(() => {
             handleRemoveFromCycle={async () => handleIssues(group_by, issue, "remove")}
           />
         )}
-        display_properties={display_properties}
+        displayProperties={displayProperties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members?.map((m) => m.member) ?? null}
+        members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
       />

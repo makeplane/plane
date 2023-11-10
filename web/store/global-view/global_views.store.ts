@@ -19,7 +19,7 @@ export interface IGlobalViewsStore {
   };
 
   // actions
-  setGlobalViewId: (viewId: string) => void;
+  setGlobalViewId: (viewId: string | null) => void;
 
   fetchAllGlobalViews: (workspaceSlug: string) => Promise<IWorkspaceView[]>;
   fetchGlobalViewDetails: (workspaceSlug: string, viewId: string) => Promise<IWorkspaceView>;
@@ -72,7 +72,7 @@ export class GlobalViewsStore implements IGlobalViewsStore {
     this.workspaceService = new WorkspaceService();
   }
 
-  setGlobalViewId = (viewId: string) => {
+  setGlobalViewId = (viewId: string | null) => {
     this.globalViewId = viewId;
   };
 

@@ -1,24 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
-import { Transition } from "@headlessui/react";
-
+import { observer } from "mobx-react-lite";
+import { PlusIcon } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
-
 // store
-import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
-// constants
-import { createIssuePayload } from "constants/issue";
-
+// helpers
+import { createIssuePayload } from "helpers/issue.helper";
 // types
 import { IIssue } from "types";
-import { PlusIcon } from "lucide-react";
 
 type Props = {
   groupId?: string;
@@ -39,7 +34,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="text-sm font-medium leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-xs w-20 leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -47,7 +42,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full px-2 py-3 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full py-3 rounded-md bg-transparent text-sm leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -154,15 +149,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
 
   return (
     <div>
-      <Transition
-        show={isOpen}
-        enter="transition ease-in-out duration-200 transform"
-        enterFrom="opacity-0 scale-95"
-        enterTo="opacity-100 scale-100"
-        leave="transition ease-in-out duration-200 transform"
-        leaveFrom="opacity-100 scale-100"
-        leaveTo="opacity-0 scale-95"
-      >
+      {isOpen && (
         <div>
           <form
             ref={ref}
@@ -172,7 +159,7 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
             <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
           </form>
         </div>
-      </Transition>
+      )}
 
       {isOpen && (
         <p className="text-xs ml-3 mt-3 italic text-custom-text-200">
@@ -181,14 +168,16 @@ export const SpreadsheetInlineCreateIssueForm: React.FC<Props> = observer((props
       )}
 
       {!isOpen && (
-        <button
-          type="button"
-          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
-          onClick={() => setIsOpen(true)}
-        >
-          <PlusIcon className="h-4 w-4" />
-          <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-        </button>
+        <div className="flex items-center">
+          <button
+            type="button"
+            className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pt-3 rounded-md"
+            onClick={() => setIsOpen(true)}
+          >
+            <PlusIcon className="h-3.5 w-3.5 stroke-2" />
+            <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
+          </button>
+        </div>
       )}
     </div>
   );

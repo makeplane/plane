@@ -4,9 +4,9 @@ import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { PageService } from "services/page.service";
 import { IssueLabelService } from "services/issue";
 // hooks
@@ -19,7 +19,7 @@ import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
-import { PagesHeader } from "components/headers";
+import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { EmptyState } from "components/common";
 import { CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
@@ -45,6 +45,7 @@ import {
 
 // services
 const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 const pageService = new PageService();
 const issueLabelService = new IssueLabelService();
 
@@ -95,7 +96,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -626,7 +627,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
 PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<PagesHeader />} withProjectWrapper>
+    <AppLayout header={<PageDetailsHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );

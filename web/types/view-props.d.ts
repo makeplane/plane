@@ -30,7 +30,13 @@ export type TIssueOrderByOptions =
   | "estimate_point"
   | "-estimate_point"
   | "start_date"
-  | "-start_date";
+  | "-start_date"
+  | "link_count"
+  | "-link_count"
+  | "attachment_count"
+  | "-attachment_count"
+  | "sub_issues_count"
+  | "-sub_issues_count";
 
 export type TIssueTypeFilters = "active" | "backlog" | null;
 

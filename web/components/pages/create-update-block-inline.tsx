@@ -56,7 +56,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestion = useEditorSuggestions();
 
   const { setToastAlert } = useToast();
 
@@ -295,6 +295,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
                 if (!data)
                   return (
                     <RichTextEditorWithRef
+                      cancelUploadImage={fileService.cancelUpload}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
                       ref={editorRef}
@@ -316,6 +317,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
 
                 return (
                   <RichTextEditorWithRef
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}

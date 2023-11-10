@@ -1,37 +1,23 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { GanttChartSquare, LayoutGrid, List, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button, Tooltip } from "@plane/ui";
+import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
 // helper
-import { replaceUnderscoreIfSnakeCase, truncateText } from "helpers/string.helper";
-
-const moduleViewOptions: { type: "list" | "grid" | "gantt_chart"; icon: any }[] = [
-  {
-    type: "list",
-    icon: List,
-  },
-  {
-    type: "grid",
-    icon: LayoutGrid,
-  },
-  {
-    type: "gantt_chart",
-    icon: GanttChartSquare,
-  },
-];
+import { renderEmoji } from "helpers/emoji.helper";
+// constants
+import { MODULE_VIEW_LAYOUTS } from "constants/module";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
@@ -42,45 +28,56 @@ export const ModulesListHeader: React.FC = observer(() => {
     >
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p>Projects</p>
-                  </a>
-                </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={currentProjectDetails?.name ?? "Project"}
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
               }
+              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
-            <BreadcrumbItem title={`${truncateText(currentProjectDetails?.name ?? "Project", 32)} Modules`} />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<DiceIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Modules"
+            />
           </Breadcrumbs>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {moduleViewOptions.map((option) => (
-          <Tooltip
-            key={option.type}
-            tooltipContent={<span className="capitalize">{replaceUnderscoreIfSnakeCase(option.type)} Layout</span>}
-            position="bottom"
-          >
-            <button
-              type="button"
-              className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-sidebar-background-80 ${
-                modulesView === option.type ? "bg-custom-sidebar-background-80" : "text-custom-sidebar-text-200"
-              }`}
-              onClick={() => setModulesView(option.type)}
-            >
-              <option.icon className="h-3.5 w-3.5" />
-            </button>
-          </Tooltip>
-        ))}
+        <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+          {MODULE_VIEW_LAYOUTS.map((layout) => (
+            <Tooltip key={layout.key} tooltipContent={layout.title}>
+              <button
+                type="button"
+                className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                  modulesView == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                }`}
+                onClick={() => setModulesView(layout.key)}
+              >
+                <layout.icon
+                  strokeWidth={2}
+                  className={`h-3.5 w-3.5 ${
+                    modulesView == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                  }`}
+                />
+              </button>
+            </Tooltip>
+          ))}
+        </div>
         <Button
           variant="primary"
           prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "m" });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCreateModuleModal(true)}
         >
           Add Module
         </Button>

@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import {
   EditorContainer,
@@ -48,6 +47,7 @@ interface ILiteTextEditor {
     }[];
   };
   onEnterKeyPress?: (e?: any) => void;
+  cancelUploadImage?: () => any;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
   submitButton?: React.ReactNode;
@@ -65,6 +65,7 @@ interface EditorHandle {
 const LiteTextEditor = (props: LiteTextEditorProps) => {
   const {
     onChange,
+    cancelUploadImage,
     debouncedUpdatesEnabled,
     setIsSubmitting,
     setShouldShowAlert,
@@ -85,6 +86,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
 
   const editor = useEditor({
     onChange,
+    cancelUploadImage,
     debouncedUpdatesEnabled,
     setIsSubmitting,
     setShouldShowAlert,

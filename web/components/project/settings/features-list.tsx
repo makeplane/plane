@@ -72,9 +72,10 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
-  const { project: projectStore, user: userStore } = useMobxStore();
-  const { currentUser, currentProjectRole } = userStore;
-  const { currentProjectDetails } = projectStore;
+  const {
+    project: { currentProjectDetails, updateProject },
+    user: { currentUser, currentProjectRole },
+  } = useMobxStore();
   const isAdmin = currentProjectRole === 20;
   // hooks
   const { setToastAlert } = useToast();
@@ -86,7 +87,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       title: "Success!",
       message: "Project feature updated successfully.",
     });
-    projectStore.updateProject(workspaceSlug.toString(), projectId.toString(), formData);
+    updateProject(workspaceSlug.toString(), projectId.toString(), formData);
   };
 
   if (!currentUser) return <></>;
@@ -96,7 +97,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       {PROJECT_FEATURES_LIST.map((feature) => (
         <div
           key={feature.property}
-          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
+          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">{feature.icon}</div>

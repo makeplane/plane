@@ -11,9 +11,15 @@ type Props = {
   issue: IIssue;
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   properties: IIssueDisplayProperties;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
+  setIssuePeekOverView: React.Dispatch<
+    React.SetStateAction<{
+      workspaceSlug: string;
+      projectId: string;
+      issueId: string;
+    } | null>
+  >;
   disableUserActions: boolean;
   nestingLevel?: number;
 };
@@ -22,7 +28,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   issue,
   expandedIssues,
   setExpandedIssues,
-  handleUpdateIssue,
+  setIssuePeekOverView,
   properties,
   handleIssueAction,
   disableUserActions,
@@ -51,9 +57,9 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
         properties={properties}
-        handleUpdateIssue={handleUpdateIssue}
         handleEditIssue={() => handleIssueAction(issue, "edit")}
         handleDeleteIssue={() => handleIssueAction(issue, "delete")}
+        setIssuePeekOverView={setIssuePeekOverView}
         disableUserActions={disableUserActions}
         nestingLevel={nestingLevel}
       />
@@ -67,10 +73,10 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
             key={subIssue.id}
             issue={subIssue}
             expandedIssues={expandedIssues}
-            handleUpdateIssue={handleUpdateIssue}
             setExpandedIssues={setExpandedIssues}
             properties={properties}
             handleIssueAction={handleIssueAction}
+            setIssuePeekOverView={setIssuePeekOverView}
             disableUserActions={disableUserActions}
             nestingLevel={nestingLevel + 1}
           />

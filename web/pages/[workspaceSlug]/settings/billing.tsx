@@ -12,7 +12,7 @@ import { NextPageWithLayout } from "types/app";
 const BillingSettingsPage: NextPageWithLayout = () => (
   <section className="pr-9 py-8 w-full overflow-y-auto">
     <div>
-      <div className="flex  items-center py-3.5 border-b border-custom-border-200">
+      <div className="flex  items-center py-3.5 border-b border-custom-border-100">
         <h3 className="text-xl font-medium">Billing & Plans</h3>
       </div>
     </div>

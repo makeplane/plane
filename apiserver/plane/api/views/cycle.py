@@ -177,9 +177,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
-        order_by = request.GET.get("order_by", "sort_order")
 
-        queryset = queryset.order_by(order_by)
+        queryset = queryset.order_by("-is_favorite","-created_at")
 
         # Current Cycle
         if cycle_view == "current":
@@ -480,13 +479,13 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             )
         )
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        # Delete the cycle
-        cycle.delete()
+
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
                 {
                     "cycle_id": str(pk),
+                    "cycle_name": str(cycle.name),
                     "issues": [str(issue_id) for issue_id in cycle_issues],
                 }
             ),
@@ -496,6 +495,8 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        # Delete the cycle
+        cycle.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -511,12 +512,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         "issue__labels__id",
         "issue__assignees__id",
     ]
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            cycle_id=self.kwargs.get("cycle_id"),
-        )
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -670,7 +665,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             type="cycle.activity.created",
             requested_data=json.dumps({"cycles_list": issues}),
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
+            issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(
                 {

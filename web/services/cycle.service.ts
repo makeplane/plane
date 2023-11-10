@@ -71,23 +71,6 @@ export class CycleService extends APIService {
       });
   }
 
-  async updateCycle(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    data: any,
-    user: IUser | undefined
-  ): Promise<any> {
-    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`, data)
-      .then((response) => {
-        trackEventService.trackCycleEvent(response?.data, "CYCLE_UPDATE", user as IUser);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async patchCycle(
     workspaceSlug: string,
     projectId: string,
@@ -97,7 +80,7 @@ export class CycleService extends APIService {
   ): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`, data)
       .then((response) => {
-        trackEventService.trackCycleEvent(response?.data, "CYCLE_UPDATE", user as IUser);
+        if (user) trackEventService.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
         return response?.data;
       })
       .catch((error) => {

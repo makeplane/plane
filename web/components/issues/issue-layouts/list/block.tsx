@@ -4,19 +4,20 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueDisplayProperties } from "types";
 
 interface IssueBlockProps {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
+  isReadonly?: boolean;
   showEmptyGroup?: boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, display_properties, showEmptyGroup } = props;
+  const { columnId, issue, handleIssues, quickActions, displayProperties, showEmptyGroup, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
     handleIssues(group_by, issueToUpdate, "update");
@@ -25,8 +26,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
   return (
     <>
       <div className="text-sm p-3 relative bg-custom-background-100 flex items-center gap-3">
-        {display_properties && display_properties?.key && (
-          <div className="flex-shrink-0 text-xs text-custom-text-300">
+        {displayProperties && displayProperties?.key && (
+          <div className="flex-shrink-0 text-xs text-custom-text-300 font-medium">
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
         )}
@@ -37,6 +38,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           workspaceSlug={issue?.workspace_detail?.slug}
           projectId={issue?.project_detail?.id}
           issueId={issue?.id}
+          isArchived={issue?.archived_at !== null}
           handleIssue={(issueToUpdate) => {
             handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
           }}
@@ -50,8 +52,9 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           <KanBanProperties
             columnId={columnId}
             issue={issue}
+            isReadonly={isReadonly}
             handleIssues={updateIssue}
-            display_properties={display_properties}
+            displayProperties={displayProperties}
             showEmptyGroup={showEmptyGroup}
           />
           {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}

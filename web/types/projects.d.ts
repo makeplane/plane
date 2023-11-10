@@ -43,7 +43,6 @@ export interface IProject {
   page_view: boolean;
   project_lead: IUserLite | string | null;
   sort_order: number | null;
-  slug: string;
   total_cycles: number;
   total_members: number;
   total_modules: number;

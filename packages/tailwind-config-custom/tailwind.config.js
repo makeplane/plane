@@ -174,7 +174,7 @@ module.exports = {
               DEFAULT: convertToRGB("--color-sidebar-border-200"),
             },
           },
-          backdrop: "#131313",
+          backdrop: "rgba(0, 0, 0, 0.25)",
         },
       },
       keyframes: {

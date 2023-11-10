@@ -25,7 +25,6 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
       await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-
       await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
     }
   });

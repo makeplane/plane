@@ -56,7 +56,6 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         )
 
     def get_queryset(self):
-        order_by = self.request.GET.get("order_by", "sort_order")
 
         subquery = ModuleFavorite.objects.filter(
             user=self.request.user,
@@ -139,7 +138,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
                     ),
                 )
             )
-            .order_by(order_by, "name")
+            .order_by("-is_favorite","-created_at")
         )
 
     def create(self, request, slug, project_id):
@@ -267,12 +266,12 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         module_issues = list(
             ModuleIssue.objects.filter(module_id=pk).values_list("issue", flat=True)
         )
-        module.delete()
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps(
                 {
                     "module_id": str(pk),
+                    "module_name": str(module.name),
                     "issues": [str(issue_id) for issue_id in module_issues],
                 }
             ),
@@ -282,6 +281,7 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        module.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -297,12 +297,6 @@ class ModuleIssueViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
     ]
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            module_id=self.kwargs.get("module_id"),
-        )
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -447,7 +441,7 @@ class ModuleIssueViewSet(BaseViewSet):
             type="module.activity.created",
             requested_data=json.dumps({"modules_list": issues}),
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
+            issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(
                 {

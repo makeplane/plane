@@ -1,9 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback } from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
 // cmdk
 import { Command } from "cmdk";
 // services
@@ -13,8 +10,6 @@ import { ProjectStateService } from "services/project";
 import { Spinner, StateGroupIcon } from "@plane/ui";
 // icons
 import { Check } from "lucide-react";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // types
 import { IUser, IIssue } from "types";
 // fetch keys
@@ -34,11 +29,10 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
-  const { data: stateGroups, mutate: mutateIssueDetails } = useSWR(
+  const { data: states, mutate: mutateStates } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
-  const states = getStatesList(stateGroups);
 
   const submitChanges = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -60,14 +54,14 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
       await issueService
         .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
         .then(() => {
-          mutateIssueDetails();
+          mutateStates();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
         .catch((e) => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateIssueDetails, user]
+    [workspaceSlug, issueId, projectId, mutateStates, user]
   );
 
   const handleIssueState = (stateId: string) => {

@@ -1,10 +1,12 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { SingleProgressStats } from "components/core";
 import {
@@ -25,7 +27,6 @@ import { ActiveCycleProgressStats } from "components/cycles";
 import { ViewIssueLabel } from "components/issues";
 // icons
 import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
-
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
@@ -65,21 +66,21 @@ interface IActiveCycleDetails {
   projectId: string;
 }
 
-export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
+export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   const router = useRouter();
 
   const { workspaceSlug, projectId } = props;
 
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId] || null;
+  const activeCycle = cycleStore.cycles?.[projectId]?.active || null;
   const cycle = activeCycle ? activeCycle[0] : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
@@ -93,7 +94,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
   //     : null
   // ) as { data: IIssue[] | undefined };
 
-  if (isLoading)
+  if (!cycle)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -117,12 +118,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
           <button
             type="button"
             className="text-custom-primary-100 text-sm outline-none"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "q",
-              });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
           >
             Create a new cycle
           </button>
@@ -147,7 +143,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -160,7 +156,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -485,4 +481,4 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       </div>
     </div>
   );
-};
+});

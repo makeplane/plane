@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
@@ -15,7 +15,7 @@ type Props = {
   onChange: () => void;
 };
 
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
@@ -24,7 +24,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -50,9 +50,13 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
           {selectedOption ? (
             <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
           ) : (
-            <UserCircle className="h-4 w-4 text-custom-text-200" />
+            <UserCircle className="h-3 w-3 text-custom-text-300" />
           )}
-          {selectedOption ? selectedOption?.display_name : <span className="text-custom-text-200">Lead</span>}
+          {selectedOption ? (
+            selectedOption?.display_name
+          ) : (
+            <span className={`${selectedOption ? "text-custom-text-200" : "text-custom-text-300"}`}>Lead</span>
+          )}
         </div>
       }
       onChange={onChange}

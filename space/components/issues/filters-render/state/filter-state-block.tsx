@@ -29,7 +29,7 @@ export const RenderIssueState = observer(({ state }: { state: IIssueState }) => 
   return (
     <div className={`inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 ${stateGroup.className || ``}`}>
       <div className="flex-shrink-0 w-3 h-3 flex justify-center items-center overflow-hidden rounded-full">
-        <stateGroup.icon />
+        {/* <stateGroup.icon /> */}
       </div>
       <div className="text-xs font-medium whitespace-nowrap">{state?.name}</div>
       <div

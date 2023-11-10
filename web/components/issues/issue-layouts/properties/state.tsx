@@ -41,28 +41,34 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     placement,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const { workspace: workspaceStore, projectState: projectStateStore }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   const projectStates: IState[] = [];
-  const projectStatesByGroup = projectId && projectStore?.states?.[projectId];
+  const projectStatesByGroup = projectStateStore.groupedProjectStates;
   if (projectStatesByGroup)
     for (const group in projectStatesByGroup) projectStates.push(...projectStatesByGroup[group]);
 
-  const fetchProjectStates = () =>
-    workspaceSlug && projectId && projectStore.fetchProjectStates(workspaceSlug, projectId);
+  const fetchProjectStates = () => {
+    setIsLoading(true);
+    if (workspaceSlug && projectId)
+      workspaceSlug &&
+        projectId &&
+        projectStateStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
+  };
 
   const dropdownOptions = projectStates?.map((state) => ({
     value: state.id,
     query: state.name,
     content: (
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 w-full overflow-hidden">
         <StateGroupIcon stateGroup={state.group} color={state.color} />
-        {state.name}
+        <div className="truncate inline-block line-clamp-1 w-full">{state.name}</div>
       </div>
     ),
   }));
@@ -88,7 +94,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
-        <span className="truncate">{value?.name ?? "State"}</span>
+        <span className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -98,7 +104,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       {workspaceSlug && projectId && (
         <Combobox
           as="div"
-          className={`flex-shrink-0 text-left ${className}`}
+          className={`text-left w-auto max-w-full ${className}`}
           value={value.id}
           onChange={(data: string) => {
             const selectedState = projectStates?.find((state) => state.id === data);
@@ -110,10 +116,10 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
+              className={`flex items-center justify-between h-5 gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
-              onClick={() => fetchProjectStates()}
+              onClick={() => !projectStatesByGroup && fetchProjectStates()}
             >
               {label}
               {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -137,33 +143,35 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
                 />
               </div>
               <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
-                {filteredOptions ? (
-                  filteredOptions.length > 0 ? (
-                    filteredOptions.map((option) => (
-                      <Combobox.Option
-                        key={option.value}
-                        value={option.value}
-                        className={({ active, selected }) =>
-                          `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                            active ? "bg-custom-background-80" : ""
-                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                        }
-                      >
-                        {({ selected }) => (
-                          <>
-                            {option.content}
-                            {selected && <Check className="h-3.5 w-3.5" />}
-                          </>
-                        )}
-                      </Combobox.Option>
-                    ))
-                  ) : (
-                    <span className="flex items-center gap-2 p-1">
-                      <p className="text-left text-custom-text-200 ">No matching results</p>
-                    </span>
-                  )
-                ) : (
+                {isLoading ? (
                   <p className="text-center text-custom-text-200">Loading...</p>
+                ) : filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <Combobox.Option
+                      key={option.value}
+                      value={option.value}
+                      className={({ active, selected }) =>
+                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                          active ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          {option.content}
+                          {selected && (
+                            <div className="flex-shrink-0">
+                              <Check className="h-3.5 w-3.5" />
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))
+                ) : (
+                  <span className="flex items-center gap-2 p-1">
+                    <p className="text-left text-custom-text-200 ">No matching results</p>
+                  </span>
                 )}
               </div>
             </div>

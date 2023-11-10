@@ -1,5 +1,7 @@
 // hooks
 import useToast from "hooks/use-toast";
+// ui
+import { StateGroupIcon } from "@plane/ui";
 // icons
 import { Icon } from "components/ui";
 // helpers
@@ -63,7 +65,7 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
             {stateGroup && (
               <div className="inline-flex bg-custom-background-80 text-sm rounded px-2.5 py-0.5">
                 <div className="flex items-center gap-1.5 text-left text-custom-text-100">
-                  <stateGroup.icon />
+                  <StateGroupIcon stateGroup={state.group} color={state.color} />
                   {addSpaceIfCamelCase(state?.name ?? "")}
                 </div>
               </div>

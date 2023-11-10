@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
+import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // icons
@@ -187,7 +187,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     )}
 
                     {!isCollapsed && (
-                      <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>{project.name}</p>
+                      <p className={`truncate text-custom-sidebar-text-200`}>{project.name}</p>
                     )}
                   </div>
                   {!isCollapsed && (
@@ -322,7 +322,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                             className={`group flex items-center rounded-md px-2 py-1.5 gap-2.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
                                 ? "bg-custom-primary-100/10 text-custom-primary-100"
-                                : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                                : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4 stroke-[1.5]" />

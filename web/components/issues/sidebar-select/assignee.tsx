@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // ui
 import { Avatar, AvatarGroup, CustomSearchSelect } from "@plane/ui";
 // fetch-keys
@@ -15,7 +15,7 @@ type Props = {
 };
 
 // services
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
@@ -24,7 +24,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
