@@ -42,8 +42,6 @@ export const IssueComment: FC<IIssueComment> = (props) => {
       <div className="font-medium text-lg">Activity</div>
 
       <div className="space-y-2">
-        <IssueCommentEditor onSubmit={handleAddComment} showAccessSpecifier={showCommentAccessSpecifier} />
-
         <IssueActivityCard
           workspaceSlug={workspaceSlug}
           projectId={projectId}
@@ -55,6 +53,7 @@ export const IssueComment: FC<IIssueComment> = (props) => {
           issueCommentReactionCreate={issueCommentReactionCreate}
           issueCommentReactionRemove={issueCommentReactionRemove}
         />
+        <IssueCommentEditor onSubmit={handleAddComment} showAccessSpecifier={showCommentAccessSpecifier} />
       </div>
     </div>
   );
