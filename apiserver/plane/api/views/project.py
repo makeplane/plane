@@ -404,11 +404,19 @@ class InviteProjectEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        project_member = ProjectMember.objects.create(
-            member=user, project_id=project_id, role=role
-        )
+        project_member = ProjectMember.objects.filter(
+            workspace__slug=slug, project_id=project_id, member=user
+        ).first()
 
-        _ = IssueProperty.objects.create(user=user, project_id=project_id)
+        if project_member is not None:
+            project_member.is_active = True
+            project_member.role = role
+            project_member.save()
+        else:
+            project_member = ProjectMember.objects.create(
+                member=user, project_id=project_id, role=role
+            )
+            _ = IssueProperty.objects.create(user=user, project_id=project_id)
 
         return Response(
             ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
@@ -432,6 +440,7 @@ class UserProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.filter(
             pk__in=invitations, accepted=True
         )
+        # Check if any of the projects user was previously a member then activate
         ProjectMember.objects.bulk_create(
             [
                 ProjectMember(
@@ -442,7 +451,8 @@ class UserProjectInvitationsViewset(BaseViewSet):
                     created_by=request.user,
                 )
                 for invitation in project_invitations
-            ]
+            ],
+            ignore_conflicts=True,
         )
 
         IssueProperty.objects.bulk_create(
@@ -454,7 +464,8 @@ class UserProjectInvitationsViewset(BaseViewSet):
                     created_by=request.user,
                 )
                 for invitation in project_invitations
-            ]
+            ],
+            ignore_conflicts=True,
         )
 
         # Delete joined project invites
@@ -572,7 +583,10 @@ class ProjectMemberViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, is_active=True,
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_active=True,
         )
         if request.user.id == project_member.member_id:
             return Response(
@@ -581,7 +595,10 @@ class ProjectMemberViewSet(BaseViewSet):
             )
         # Check while updating user roles
         requested_project_member = ProjectMember.objects.get(
-            project_id=project_id, workspace__slug=slug, member=request.user, is_active=True,
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
         if (
             "role" in request.data
@@ -853,7 +870,9 @@ class ProjectUserViewsEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         project_member = ProjectMember.objects.filter(
-            member=request.user, project=project, is_active=True,
+            member=request.user,
+            project=project,
+            is_active=True,
         ).first()
 
         if project_member is None:
@@ -877,7 +896,10 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 class ProjectMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         project_member = ProjectMember.objects.get(
-            project_id=project_id, workspace__slug=slug, member=request.user, is_active=True,
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
         serializer = ProjectMemberSerializer(project_member)
 

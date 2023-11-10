@@ -376,6 +376,7 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                     ).first()
                     if workspace_member is not None:
                         workspace_member.is_active = True
+                        workspace_member.role = workspace_invite.role
                         workspace_member.save()
                     else:
                         # Create a Workspace
@@ -451,7 +452,7 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
 
     def create(self, request):
         invitations = request.data.get("invitations")
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(pk__in=invitations)
+        workspace_invitations = WorkspaceMemberInvite.objects.filter(pk__in=invitations).order_by("-created_at")
 
         # If user was already part of any workspace and is reinvited
         WorkspaceMember.objects.filter(
