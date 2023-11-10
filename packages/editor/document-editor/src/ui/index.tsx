@@ -159,7 +159,7 @@ const DocumentEditor = ({
               />
             </button>
             {summaryPopoverVisible &&
-              <div style={summaryPopoverStyles.popper} {...summaryPopoverAttributes.popper} className="z-10 ml-[40px] mt-[110px] h-[300px] w-[300px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b pl-3 pr-3 pb-3 overflow-scroll">
+              <div style={summaryPopoverStyles.popper} {...summaryPopoverAttributes.popper} className="z-10 ml-9 mt-12 h-[300px] w-[300px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b pl-3 pr-3 pb-3 overflow-scroll">
                 <ContentBrowser markings={markings} scrollSummary={scrollSummary} />
               </div>
             }
