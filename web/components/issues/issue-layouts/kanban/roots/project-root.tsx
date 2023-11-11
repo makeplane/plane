@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
@@ -8,6 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanSwimLanes } from "../swimlanes";
 import { KanBan } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
+import { Spinner } from "@plane/ui";
 // types
 import { IIssue } from "types";
 // constants
@@ -21,6 +22,8 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
@@ -34,6 +37,8 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
 
+  const order_by: string | null = issueFilterStore?.userDisplayFilters?.order_by || null;
+
   const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
 
   const displayProperties = issueFilterStore?.userDisplayProperties || null;
@@ -42,12 +47,22 @@ export const KanBanLayout: React.FC = observer(() => {
     ? "swimlanes"
     : "default";
 
+  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
+
+  const onDragStart = () => {
+    setIsDragStarted(true);
+  };
+
   const onDragEnd = (result: any) => {
+    setIsDragStarted(false);
+
     if (!result) return;
 
     if (
       result.destination &&
       result.source &&
+      result.source.droppableId &&
+      result.destination.droppableId &&
       result.destination.droppableId === result.source.droppableId &&
       result.destination.index === result.source.index
     )
@@ -75,10 +90,9 @@ export const KanBanLayout: React.FC = observer(() => {
     issueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects?.[workspaceSlug] || null : null;
   const estimates =
@@ -87,59 +101,71 @@ export const KanBanLayout: React.FC = observer(() => {
       : null;
 
   return (
-    <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {currentKanBanView === "default" ? (
-          <KanBan
-            issues={issues}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={(sub_group_by, group_by, issue) => (
-              <ProjectIssueQuickActions
-                issue={issue}
-                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
-                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+    <>
+      {issueStore.loader ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="relative min-w-full min-h-full h-max bg-custom-background-90 px-3 horizontal-scroll-enable">
+          <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            {currentKanBanView === "default" ? (
+              <KanBan
+                issues={issues}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                order_by={order_by}
+                handleIssues={handleIssues}
+                quickActions={(sub_group_by, group_by, issue) => (
+                  <ProjectIssueQuickActions
+                    issue={issue}
+                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+                  />
+                )}
+                displayProperties={displayProperties}
+                kanBanToggle={issueKanBanViewStore?.kanBanToggle}
+                handleKanBanToggle={handleKanBanToggle}
+                states={states}
+                stateGroups={stateGroups}
+                priorities={priorities}
+                labels={labels}
+                members={projectMembers?.map((m) => m.member) ?? null}
+                projects={projects}
+                enableQuickIssueCreate
+                showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+                isDragStarted={isDragStarted}
+              />
+            ) : (
+              <KanBanSwimLanes
+                issues={issues}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                order_by={order_by}
+                handleIssues={handleIssues}
+                quickActions={(sub_group_by, group_by, issue) => (
+                  <ProjectIssueQuickActions
+                    issue={issue}
+                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
+                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
+                  />
+                )}
+                displayProperties={displayProperties}
+                kanBanToggle={issueKanBanViewStore?.kanBanToggle}
+                handleKanBanToggle={handleKanBanToggle}
+                states={states}
+                stateGroups={stateGroups}
+                priorities={priorities}
+                labels={labels}
+                members={projectMembers?.map((m) => m.member) ?? null}
+                projects={projects}
+                showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+                isDragStarted={isDragStarted}
               />
             )}
-            displayProperties={displayProperties}
-            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-            enableQuickIssueCreate
-            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-          />
-        ) : (
-          <KanBanSwimLanes
-            issues={issues}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            handleIssues={handleIssues}
-            quickActions={(sub_group_by, group_by, issue) => (
-              <ProjectIssueQuickActions
-                issue={issue}
-                handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
-                handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-              />
-            )}
-            displayProperties={displayProperties}
-            kanBanToggle={issueKanBanViewStore?.kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            states={states}
-            stateGroups={stateGroups}
-            priorities={priorities}
-            labels={labels}
-            members={members?.map((m) => m.member) ?? null}
-            projects={projects}
-            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-          />
-        )}
-      </DragDropContext>
-    </div>
+          </DragDropContext>
+        </div>
+      )}
+    </>
   );
 });

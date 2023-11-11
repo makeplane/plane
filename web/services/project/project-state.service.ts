@@ -4,7 +4,7 @@ import { TrackEventService } from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IUser, IState, IStateResponse } from "types";
+import type { IUser, IState } from "types";
 
 const trackEventService = new TrackEventService();
 
@@ -13,7 +13,7 @@ export class ProjectStateService extends APIService {
     super(API_BASE_URL);
   }
 
-  async createState(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<any> {
+  async createState(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<IState> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`, data)
       .then((response) => {
         trackEventService.trackStateEvent(response?.data, "STATE_CREATE", user as IUser);
@@ -24,17 +24,16 @@ export class ProjectStateService extends APIService {
       });
   }
 
-  async getStates(workspaceSlug: string, projectId: string): Promise<IStateResponse> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`)
+  async markDefault(workspaceSlug: string, projectId: string, stateId: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/mark-default/`, {})
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error?.response;
       });
   }
 
-  async getIssuesByState(workspaceSlug: string, projectId: string): Promise<any> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/?group_by=state`)
-
+  async getStates(workspaceSlug: string, projectId: string): Promise<IState[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer
 from .state import StateSerializer, StateLiteSerializer
 from .project import ProjectLiteSerializer
@@ -548,7 +548,7 @@ class IssueSerializer(BaseSerializer):
         ]
 
 
-class IssueLiteSerializer(BaseSerializer):
+class IssueLiteSerializer(DynamicBaseSerializer):
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")

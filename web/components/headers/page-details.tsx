@@ -24,10 +24,11 @@ const pageService = new PageService();
 
 export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const { showButton = false } = props;
+
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
 
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   const { data: pageDetails } = useSWR(
@@ -38,7 +39,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   );
 
   return (
-    <div className="relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
         <div>
           <Breadcrumbs>
@@ -78,10 +79,7 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
             variant="primary"
             prependIcon={<Plus />}
             size="sm"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", { key: "d" });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreatePageModal(true)}
           >
             Create Page
           </Button>

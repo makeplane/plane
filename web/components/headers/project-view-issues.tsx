@@ -23,6 +23,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     projectViewFilters: projectViewFiltersStore,
     project: projectStore,
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
     projectViews: projectViewsStore,
   } = useMobxStore();
 
@@ -93,7 +95,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
 
   return (
-    <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative w-full flex items-center z-10 h-[3.75rem] justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
@@ -162,8 +164,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
             labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
-            members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-            states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+            members={projectMembers?.map((m) => m.member)}
+            states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">

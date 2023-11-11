@@ -36,7 +36,7 @@ export interface ICycleIssueStore {
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   updateGanttIssueStructure: (workspaceSlug: string, cycleId: string, issue: IIssue, payload: IBlockUpdateData) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => void;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, bridgeId: string) => void;
 }
 
@@ -322,7 +322,7 @@ export class CycleIssueStore implements ICycleIssueStore {
     }
   };
 
-  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     try {
       const user = this.rootStore.user.currentUser ?? undefined;
 
@@ -331,7 +331,7 @@ export class CycleIssueStore implements ICycleIssueStore {
         projectId,
         cycleId,
         {
-          issues: [issueId],
+          issues: issueIds,
         },
         user
       );

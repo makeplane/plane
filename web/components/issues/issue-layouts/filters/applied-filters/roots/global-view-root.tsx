@@ -22,6 +22,7 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
     globalViewFilters: globalViewFiltersStore,
     project: projectStore,
     workspace: workspaceStore,
+    workspaceMember: { workspaceMembers },
   } = useMobxStore();
 
   const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
@@ -101,7 +102,7 @@ export const GlobalViewsAppliedFiltersRoot = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={workspaceStore.workspaceLabels ?? undefined}
-        members={workspaceStore.workspaceMembers?.map((m) => m.member)}
+        members={workspaceMembers?.map((m) => m.member)}
         projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
       />
       {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data.filters ?? {}) && (

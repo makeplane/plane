@@ -51,9 +51,9 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     control,
@@ -85,11 +85,13 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                 render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
                   <LiteTextEditorWithRef
                     onEnterKeyPress={handleSubmit(handleAddComment)}
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"
+                    editorContentCustomClassNames="min-h-[35px]"
                     debouncedUpdatesEnabled={false}
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
                     mentionHighlights={editorSuggestions.mentionHighlights}

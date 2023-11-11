@@ -15,7 +15,7 @@ export interface ICyclesView {
   layout: TCycleLayout;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string;
+  peekCycle: string | undefined;
 }
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
@@ -30,7 +30,14 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
-  const cyclesList = cycleStore.cycles?.[projectId];
+  const cyclesList =
+    filter === "completed"
+      ? cycleStore.projectCompletedCycles
+      : filter === "draft"
+      ? cycleStore.projectDraftCycles
+      : filter === "upcoming"
+      ? cycleStore.projectUpcomingCycles
+      : cycleStore.projectCycles;
 
   return (
     <>

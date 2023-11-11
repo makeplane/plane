@@ -17,15 +17,13 @@ export const ModulesListHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 
   return (
-    <div
-      className={`relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-    >
+    <div className="relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between h-[3.75rem] gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
           <Breadcrumbs>
@@ -76,11 +74,9 @@ export const ModulesListHeader: React.FC = observer(() => {
         </div>
         <Button
           variant="primary"
+          size="sm"
           prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "m" });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCreateModuleModal(true)}
         >
           Add Module
         </Button>

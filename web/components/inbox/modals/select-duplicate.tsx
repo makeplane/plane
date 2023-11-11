@@ -81,7 +81,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+              <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -94,7 +94,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+                <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                   <Combobox
                     value={selectedItem}
                     onChange={(value) => {
@@ -166,10 +166,10 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" onClick={handleSubmit}>
+                      <Button variant="primary" size="sm" onClick={handleSubmit}>
                         Mark as original
                       </Button>
                     </div>

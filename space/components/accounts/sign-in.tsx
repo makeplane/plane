@@ -116,7 +116,9 @@ export const SignInView = observer(() => {
           )}
 
           <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-[360px] mx-auto overflow-hidden">
-            {data?.google && <GoogleLoginButton clientId={data.google} handleSignIn={handleGoogleSignIn} />}
+            {data?.google_client_id && (
+              <GoogleLoginButton clientId={data.google_client_id} handleSignIn={handleGoogleSignIn} />
+            )}
           </div>
 
           <p className="pt-16 text-custom-text-200 text-sm text-center">

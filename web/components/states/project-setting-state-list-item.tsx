@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-
-// store
 import { observer } from "mobx-react-lite";
+// store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Tooltip, StateGroupIcon } from "@plane/ui";
 // icons
 import { Pencil, X, ArrowDown, ArrowUp } from "lucide-react";
-
 // helpers
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // types
@@ -30,7 +28,9 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { projectState: projectStateStore } = useMobxStore();
+  const {
+    projectState: { markStateAsDefault, moveStatePosition },
+  } = useMobxStore();
 
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,22 +41,19 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
 
   const handleMakeDefault = () => {
     if (!workspaceSlug || !projectId) return;
-
     setIsSubmitting(true);
-
-    projectStateStore.markStateAsDefault(workspaceSlug.toString(), projectId.toString(), state.id).finally(() => {
+    markStateAsDefault(workspaceSlug.toString(), projectId.toString(), state.id).finally(() => {
       setIsSubmitting(false);
     });
   };
 
   const handleMove = (state: IState, direction: "up" | "down") => {
     if (!workspaceSlug || !projectId) return;
-
-    projectStateStore.moveStatePosition(workspaceSlug.toString(), projectId.toString(), state.id, direction, index);
+    moveStatePosition(workspaceSlug.toString(), projectId.toString(), state.id, direction, index);
   };
 
   return (
-    <div className="group flex items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-100 px-4 py-3">
+    <div className="group flex items-center justify-between gap-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-4 py-3">
       <div className="flex items-center gap-3">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="16px" width="16px" />
         <div>

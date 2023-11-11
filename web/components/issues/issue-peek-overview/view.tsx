@@ -7,7 +7,7 @@ import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
-import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon } from "@plane/ui";
+import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 import { DeleteIssueModal } from "../delete-issue-modal";
 import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
 // types
@@ -154,7 +154,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
           onSubmit={handleDeleteIssue}
         />
       )}
-      <div className="w-full !text-base">
+      <div className="w-full truncate !text-base">
         {children && (
           <div onClick={updateRoutePeekId} className="w-full cursor-pointer">
             {children}
@@ -174,7 +174,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             }}
           >
             {/* header */}
-            <div className="relative flex items-center justify-between p-5 border-b border-custom-border-200">
+            <div
+              className={`relative flex items-center justify-between p-4 ${
+                currentMode?.key === "full-screen" ? "border-b border-custom-border-200" : ""
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <button onClick={removeRoutePeekId}>
                   <MoveRight className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
@@ -214,20 +218,22 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               </div>
 
               <div className="flex items-center gap-4">
-                {!isArchived && (
-                  <Button
-                    size="sm"
-                    prependIcon={<Bell className="h-3 w-3" />}
-                    variant="outline-primary"
-                    onClick={() =>
-                      issueSubscription && issueSubscription.subscribed
-                        ? issueSubscriptionRemove
-                        : issueSubscriptionCreate
-                    }
-                  >
-                    {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                  </Button>
-                )}
+                {issue?.created_by !== user?.id &&
+                  !issue?.assignees.includes(user?.id ?? "") &&
+                  !router.pathname.includes("[archivedIssueId]") && (
+                    <Button
+                      size="sm"
+                      prependIcon={<Bell className="h-3 w-3" />}
+                      variant="outline-primary"
+                      onClick={() =>
+                        issueSubscription && issueSubscription.subscribed
+                          ? issueSubscriptionRemove()
+                          : issueSubscriptionCreate()
+                      }
+                    >
+                      {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                    </Button>
+                  )}
                 <button onClick={handleCopyText}>
                   <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
                 </button>
@@ -245,12 +251,14 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
               )}
               {isLoading && !issue ? (
-                <div className="text-center py-10">Loading...</div>
+                <div className="h-full w-full flex items-center justify-center">
+                  <Spinner />
+                </div>
               ) : (
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 px-10 py-6">
+                      <div className="flex flex-col gap-3 py-5 px-8">
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}

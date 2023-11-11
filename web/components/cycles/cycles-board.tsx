@@ -1,19 +1,24 @@
 import { FC } from "react";
-// types
-import { ICycle } from "types";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclePeekOverview, CyclesBoardCard } from "components/cycles";
+// types
+import { ICycle } from "types";
 
 export interface ICyclesBoard {
   cycles: ICycle[];
   filter: string;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string;
+  peekCycle: string | undefined;
 }
 
-export const CyclesBoard: FC<ICyclesBoard> = (props) => {
+export const CyclesBoard: FC<ICyclesBoard> = observer((props) => {
   const { cycles, filter, workspaceSlug, projectId, peekCycle } = props;
+
+  const { commandPalette: commandPaletteStore } = useMobxStore();
 
   return (
     <>
@@ -53,12 +58,7 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
             <button
               type="button"
               className="text-custom-primary-100 text-sm outline-none"
-              onClick={() => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "q",
-                });
-                document.dispatchEvent(e);
-              }}
+              onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
             >
               Create a new cycle
             </button>
@@ -67,4 +67,4 @@ export const CyclesBoard: FC<ICyclesBoard> = (props) => {
       )}
     </>
   );
-};
+});

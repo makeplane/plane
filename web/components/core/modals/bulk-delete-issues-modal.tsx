@@ -116,7 +116,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+        <div className="fixed inset-0 bg-custom-backdrop transition-opacity z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -127,7 +127,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
             leaveTo="opacity-0 scale-95"
           >
             <Dialog.Panel className="relative flex items-center justify-center w-full ">
-              <div className="w-full max-w-2xl transform   divide-y divide-custom-border-200 divide-opacity-10 rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+              <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
                     onChange={(val: string) => {
@@ -211,10 +211,10 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
 
                   {filteredIssues.length > 0 && (
                     <div className="flex items-center justify-end gap-2 p-3">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="danger" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
+                      <Button variant="danger" size="sm" onClick={handleSubmit(handleDelete)} loading={isSubmitting}>
                         {isSubmitting ? "Deleting..." : "Delete selected issues"}
                       </Button>
                     </div>

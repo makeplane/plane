@@ -18,18 +18,21 @@ export const PriorityIcon: React.FC<IPriorityIcon> = ({
 }) => {
   if (!className || className === "") className = "h-3.5 w-3.5";
 
+  // Convert to lowercase for string comparison
+  const lowercasePriority = priority?.toLowerCase();
+
   return (
     <>
-      {priority === "urgent" ? (
-        <AlertCircle className={`${className}`} />
-      ) : priority === "high" ? (
-        <SignalHigh className={`${className}`} />
-      ) : priority === "medium" ? (
-        <SignalMedium className={`${className}`} />
-      ) : priority === "low" ? (
-        <SignalLow className={`${className}`} />
+      {lowercasePriority === "urgent" ? (
+        <AlertCircle className={`text-red-500 ${className}`} />
+      ) : lowercasePriority === "high" ? (
+        <SignalHigh className={`text-orange-500 ${className}`} />
+      ) : lowercasePriority === "medium" ? (
+        <SignalMedium className={`text-yellow-500 ${className}`} />
+      ) : lowercasePriority === "low" ? (
+        <SignalLow className={`text-green-500 ${className}`} />
       ) : (
-        <Ban className={`${className}`} />
+        <Ban className={`text-custom-text-200 ${className}`} />
       )}
     </>
   );

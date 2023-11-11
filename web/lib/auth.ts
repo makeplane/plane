@@ -76,15 +76,12 @@ export const requiredWorkspaceAdmin = async (workspaceSlug: string, cookie?: str
   let memberDetail: IWorkspaceMember | null = null;
 
   try {
-    const data = await fetch(
-      `${API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-members/me/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    const data = await fetch(`${API_BASE_URL}/api/workspaces/${workspaceSlug}/workspace-members/me/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((res) => res.json())
       .then((data) => data);
 
@@ -143,9 +140,7 @@ export const homePageRedirect = async (cookie?: string) => {
     };
   }
 
-  const lastActiveWorkspace = workspaces.find(
-    (workspace) => workspace.id === user.last_workspace_id
-  );
+  const lastActiveWorkspace = workspaces.find((workspace) => workspace.id === user.last_workspace_id);
 
   if (lastActiveWorkspace) {
     return {

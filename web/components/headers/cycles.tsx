@@ -1,28 +1,24 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 
-export interface ICyclesHeader {}
-
-export const CyclesHeader: FC<ICyclesHeader> = (props) => {
-  const {} = props;
+export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   return (
-    <div
-      className={`relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-    >
+    <div className="relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between h-[3.75rem] gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
           <Breadcrumbs>
@@ -53,15 +49,13 @@ export const CyclesHeader: FC<ICyclesHeader> = (props) => {
       <div className="flex items-center gap-3">
         <Button
           variant="primary"
+          size="sm"
           prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "q" });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
         >
           Add Cycle
         </Button>
       </div>
     </div>
   );
-};
+});

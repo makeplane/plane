@@ -10,7 +10,7 @@ import { NextPageWithLayout } from "types/app";
 
 const StatesSettingsPage: NextPageWithLayout = () => (
   <div className="pr-9 py-8 gap-10 w-full overflow-y-auto">
-    <div className="flex items-center py-3.5 border-b border-custom-border-200">
+    <div className="flex items-center py-3.5 border-b border-custom-border-100">
       <h3 className="text-xl font-medium">States</h3>
     </div>
     <ProjectSettingStateList />

@@ -18,8 +18,11 @@ export const IssueReaction: React.FC<Props> = (props) => {
 
   const { user } = useUserAuth();
 
-  const { reactions, groupedReactions, handleReactionCreate, handleReactionDelete } =
-    useIssueReaction(workspaceSlug, projectId, issueId);
+  const { reactions, groupedReactions, handleReactionCreate, handleReactionDelete } = useIssueReaction(
+    workspaceSlug,
+    projectId,
+    issueId
+  );
 
   const handleReactionClick = (reaction: string) => {
     if (!workspaceSlug || !projectId || !issueId) return;
@@ -38,9 +41,7 @@ export const IssueReaction: React.FC<Props> = (props) => {
       <ReactionSelector
         size="md"
         position="top"
-        value={
-          reactions?.filter((reaction) => reaction.actor === user?.id).map((r) => r.reaction) || []
-        }
+        value={reactions?.filter((reaction) => reaction.actor === user?.id).map((r) => r.reaction) || []}
         onSelect={handleReactionClick}
       />
 
