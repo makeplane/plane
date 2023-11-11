@@ -59,36 +59,17 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    if (envConfig?.posthog_api_key && envConfig?.posthog_host) {
-      posthog.init(envConfig?.posthog_api_key, {
-        api_host: envConfig?.posthog_host || "https://app.posthog.com",
-        // Enable debug mode in development
-        loaded: (posthog) => {
-          if (process.env.NODE_ENV === "development") posthog.debug();
-        },
-        autocapture: true,
-        capture_pageview: false, // Disable automatic pageview capture, as we capture manually
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (envConfig?.posthog_api_key && envConfig.posthog_host && currentUser) {
-    return (
-      <>
-        <CrispWrapper user={currentUser}>
-          <PosthogWrapper
-            user={currentUser}
-            posthogAPIKey={envConfig.posthog_api_key}
-            posthogHost={envConfig.posthog_host}
-          >
-            {children}
-          </PosthogWrapper>
-        </CrispWrapper>
-      </>
-    );
-  }
-
-  return <StoreWrapper>{children}</StoreWrapper>;
+  return (
+    <StoreWrapper>
+      <CrispWrapper user={currentUser}>
+        <PosthogWrapper
+          user={currentUser}
+          posthogAPIKey={envConfig?.posthog_api_key || null}
+          posthogHost={envConfig?.posthog_host || null}
+        >
+          {children}
+        </PosthogWrapper>
+      </CrispWrapper>
+    </StoreWrapper>
+  );
 });

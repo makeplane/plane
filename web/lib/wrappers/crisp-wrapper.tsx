@@ -1,4 +1,4 @@
-import { useCallback, useEffect, ReactNode, FC } from "react";
+import { useEffect, ReactNode, FC } from "react";
 // hooks
 import { IUser } from "types";
 
@@ -11,19 +11,14 @@ declare global {
 
 export interface ICrispWrapper {
   children: ReactNode;
-  user: IUser;
+  user: IUser | null;
 }
 
 const CrispWrapper: FC<ICrispWrapper> = (props) => {
   const { children, user } = props;
 
-  const validateCurrentUser = useCallback(() => {
-    if (user) return user.email;
-    return null;
-  }, [user]);
-
   useEffect(() => {
-    if (typeof window && validateCurrentUser()) {
+    if (typeof window && user?.email) {
       window.$crisp = [];
       window.CRISP_WEBSITE_ID = process.env.NEXT_PUBLIC_CRISP_ID;
       (function () {
@@ -32,15 +27,12 @@ const CrispWrapper: FC<ICrispWrapper> = (props) => {
         s.src = "https://client.crisp.chat/l.js";
         s.async = true;
         d.getElementsByTagName("head")[0].appendChild(s);
-        // defining email when logged in
-        if (validateCurrentUser()) {
-          window.$crisp.push(["set", "user:email", [validateCurrentUser()]]);
-          window.$crisp.push(["do", "chat:hide"]);
-          window.$crisp.push(["do", "chat:close"]);
-        }
+        window.$crisp.push(["set", "user:email", [user.email]]);
+        window.$crisp.push(["do", "chat:hide"]);
+        window.$crisp.push(["do", "chat:close"]);
       })();
     }
-  }, [validateCurrentUser]);
+  }, [user?.email]);
 
   return <>{children}</>;
 };

@@ -7,9 +7,9 @@ import { IUser } from "types";
 
 export interface IPosthogWrapper {
   children: ReactNode;
-  user: IUser;
-  posthogAPIKey: string;
-  posthogHost: string;
+  user: IUser | null;
+  posthogAPIKey: string | null;
+  posthogHost: string | null;
 }
 
 const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
@@ -30,6 +30,21 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
   }, [user]);
 
   useEffect(() => {
+    if (posthogAPIKey && posthogHost) {
+      posthog.init(posthogAPIKey, {
+        api_host: posthogHost || "https://app.posthog.com",
+        // Enable debug mode in development
+        loaded: (posthog) => {
+          if (process.env.NODE_ENV === "development") posthog.debug();
+        },
+        autocapture: true,
+        capture_pageview: false, // Disable automatic pageview capture, as we capture manually
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     // Track page views
     const handleRouteChange = () => {
       posthog?.capture("$pageview");
@@ -42,7 +57,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (posthogAPIKey && posthogHost) {
+  if (posthogAPIKey) {
     return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
   }
   return <>{children}</>;
