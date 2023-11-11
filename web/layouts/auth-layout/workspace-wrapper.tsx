@@ -4,7 +4,7 @@ import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // icons
-import { Spinner, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -12,44 +12,42 @@ export interface IWorkspaceAuthWrapper {
   children: ReactNode;
 }
 
-const HIGHER_ROLES = [20, 15];
-
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { user: userStore, project: projectStore, workspace: workspaceStore } = useMobxStore();
+  const {
+    user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
+    project: { fetchProjects },
+    workspace: { fetchWorkspaceLabels },
+    workspaceMember: { fetchWorkspaceMembers },
+  } = useMobxStore();
+
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // fetching all workspaces
-  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces());
   // fetching user workspace information
-  const { data: workspaceMemberInfo } = useSWR(
+  useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug ? () => userStore.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
   );
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null
   );
   // fetch workspace members
   useSWR(
-    workspaceSlug && workspaceMemberInfo && HIGHER_ROLES.includes(workspaceMemberInfo.role)
-      ? `WORKSPACE_MEMBERS_${workspaceSlug}`
-      : null,
-    workspaceSlug && workspaceMemberInfo && HIGHER_ROLES.includes(workspaceMemberInfo.role)
-      ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString())
-      : null
+    workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
   // fetch workspace labels
   useSWR(
     workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
 
   // while data is being loaded
-  if (!userStore.workspaceMemberInfo && userStore.hasPermissionToWorkspace === null) {
+  if (!currentWorkspaceMemberInfo && hasPermissionToCurrentWorkspace === undefined) {
     return (
       <div className="grid h-screen place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -59,7 +57,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     );
   }
   // while user does not have access to view that workspace
-  if (userStore.hasPermissionToWorkspace !== null && userStore.hasPermissionToWorkspace === false) {
+  if (hasPermissionToCurrentWorkspace !== undefined && hasPermissionToCurrentWorkspace === false) {
     return (
       <div className={`h-screen w-full overflow-hidden bg-custom-background-100`}>
         <div className="grid h-full place-items-center p-4">
@@ -74,12 +72,16 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
                 <a>
-                  <SecondaryButton>Check pending invites</SecondaryButton>
+                  <Button variant="neutral-primary" size="sm">
+                    Check pending invites
+                  </Button>
                 </a>
               </Link>
               <Link href="/create-workspace">
                 <a>
-                  <PrimaryButton>Create new workspace</PrimaryButton>
+                  <Button variant="primary" size="sm">
+                    Create new workspace
+                  </Button>
                 </a>
               </Link>
             </div>

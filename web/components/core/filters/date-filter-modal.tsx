@@ -62,7 +62,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
         <div className="fixed inset-0 z-20 flex w-full justify-center overflow-y-auto">
           <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
@@ -75,7 +75,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative flex transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative flex transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form className="space-y-4" onSubmit={handleSubmit(handleFormSubmit)}>
                   <div className="flex w-full justify-between">
                     <Controller
@@ -127,10 +127,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     </h6>
                   )}
                   <div className="flex justify-end gap-4">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" type="submit" disabled={isInvalid}>
+                    <Button variant="primary" size="sm" type="submit" disabled={isInvalid}>
                       Apply
                     </Button>
                   </div>

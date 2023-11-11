@@ -3,9 +3,7 @@ import { usePopper } from "react-popper";
 import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search } from "lucide-react";
-import { PriorityIcon } from "@plane/ui";
-// components
-import { Tooltip } from "components/ui";
+import { PriorityIcon, Tooltip } from "@plane/ui";
 // helpers
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
@@ -20,6 +18,8 @@ type Props = {
   buttonClassName?: string;
   optionsClassName?: string;
   placement?: Placement;
+  showTitle?: boolean;
+  highlightUrgentPriority?: boolean;
   hideDropdownArrow?: boolean;
   disabled?: boolean;
 };
@@ -31,6 +31,8 @@ export const PrioritySelect: React.FC<Props> = ({
   buttonClassName = "",
   optionsClassName = "",
   placement,
+  showTitle = false,
+  highlightUrgentPriority = true,
   hideDropdownArrow = false,
   disabled = false,
 }) => {
@@ -69,20 +71,13 @@ export const PrioritySelect: React.FC<Props> = ({
 
   const label = (
     <Tooltip tooltipHeading="Priority" tooltipContent={selectedOption} position="top">
-      <PriorityIcon
-        priority={value}
-        className={`h-3.5 w-3.5 ${
-          value === "urgent"
-            ? "text-white"
-            : value === "high"
-            ? "text-orange-500"
-            : value === "medium"
-            ? "text-yellow-500"
-            : value === "low"
-            ? "text-green-500"
-            : "text-custom-text-200"
-        }`}
-      />
+      <div className="flex items-center gap-2">
+        <PriorityIcon
+          priority={value}
+          className={`h-3.5 w-3.5 ${value === "urgent" ? (highlightUrgentPriority ? "text-white" : "text-red-500") : ""}`}
+        />
+        {showTitle && <span className="capitalize text-xs">{value}</span>}
+      </div>
     </Tooltip>
   );
 
@@ -99,10 +94,18 @@ export const PrioritySelect: React.FC<Props> = ({
           ref={setReferenceElement}
           type="button"
           className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded border-[0.5px] ${
-            value === "urgent" ? "border-red-500/20 bg-red-500" : "border-custom-border-300"
+            value === "urgent"
+              ? highlightUrgentPriority
+                ? "border-red-500/20 bg-red-500"
+                : "border-custom-border-300"
+              : "border-custom-border-300"
           } ${
-            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          } ${buttonClassName}`}
+            !disabled
+              ? `${
+                  value === "urgent" && highlightUrgentPriority ? "hover:bg-red-400" : "hover:bg-custom-background-80"
+                }`
+              : ""
+          } ${disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"} ${buttonClassName}`}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}

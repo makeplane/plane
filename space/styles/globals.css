@@ -199,9 +199,9 @@
     --color-sidebar-text-400: var(--color-text-400); /* sidebar placeholder text */
 
     --color-sidebar-border-100: var(--color-border-100); /* subtle sidebar border= 1 */
-    --color-sidebar-border-200: var(--color-border-100); /* subtle sidebar border- 2 */
-    --color-sidebar-border-300: var(--color-border-100); /* strong sidebar border- 1 */
-    --color-sidebar-border-400: var(--color-border-100); /* strong sidebar border- 2 */
+    --color-sidebar-border-200: var(--color-border-200); /* subtle sidebar border- 2 */
+    --color-sidebar-border-300: var(--color-border-300); /* strong sidebar border- 1 */
+    --color-sidebar-border-400: var(--color-border-400); /* strong sidebar border- 2 */
   }
 }
 

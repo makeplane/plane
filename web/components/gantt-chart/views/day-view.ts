@@ -10,8 +10,7 @@ export const getWeekNumberByDate = (date: Date) => {
   const firstWeekStart = firstDayOfYear.getTime() - daysOffset * 24 * 60 * 60 * 1000;
   const weekStart = new Date(firstWeekStart);
 
-  const weekNumber =
-    Math.floor((date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
+  const weekNumber = Math.floor((date.getTime() - weekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1;
 
   return weekNumber;
 };
@@ -25,8 +24,7 @@ export const getNumberOfDaysInMonth = (month: number, year: number) => {
   return date.getDate();
 };
 
-export const generateDate = (day: number, month: number, year: number) =>
-  new Date(year, month, day);
+export const generateDate = (day: number, month: number, year: number) => new Date(year, month, day);
 
 export const getDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
   const months = [];
@@ -45,8 +43,7 @@ export const getDatesBetweenTwoDates = (startDate: Date, endDate: Date) => {
     months.push(new Date(currentYear, currentMonth));
     currentDate.setMonth(currentDate.getMonth() + 1);
   }
-  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth())
-    months.push(endDate);
+  if (endYear === currentDate.getFullYear() && endMonth === currentDate.getMonth()) months.push(endDate);
 
   return months;
 };
@@ -73,9 +70,7 @@ export const getAllDaysInMonth = (month: number, year: number) => {
       weekNumber: getWeekNumberByDate(date),
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
       today:
-        currentDate.getFullYear() === year &&
-        currentDate.getMonth() === month &&
-        currentDate.getDate() === _day + 1
+        currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === _day + 1
           ? true
           : false,
     });
@@ -99,10 +94,7 @@ export const generateMonthDataByMonth = (month: number, year: number) => {
   return monthPayload;
 };
 
-export const generateMonthDataByYear = (
-  monthPayload: ChartDataType,
-  side: null | "left" | "right"
-) => {
+export const generateMonthDataByYear = (monthPayload: ChartDataType, side: null | "left" | "right") => {
   let renderState = monthPayload;
   const renderPayload: any = [];
 
@@ -114,16 +106,8 @@ export const generateMonthDataByYear = (
   if (side === null) {
     const currentDate = renderState.data.currentDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - range,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + range,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -138,16 +122,8 @@ export const generateMonthDataByYear = (
   } else if (side === "left") {
     const currentDate = renderState.data.startDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - range,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - 1,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -158,16 +134,8 @@ export const generateMonthDataByYear = (
   } else if (side === "right") {
     const currentDate = renderState.data.endDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + range,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 

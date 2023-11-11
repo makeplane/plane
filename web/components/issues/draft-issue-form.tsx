@@ -30,6 +30,7 @@ import { Sparkle, X } from "lucide-react";
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const aiService = new AIService();
 const fileService = new FileService();
@@ -51,9 +52,7 @@ const defaultValues: Partial<IIssue> = {
   parent: null,
   priority: "none",
   assignees: [],
-  assignees_list: [],
   labels: [],
-  labels_list: [],
   start_date: null,
   target_date: null,
 };
@@ -122,6 +121,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
   const { workspaceSlug } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     formState: { errors, isSubmitting },
@@ -299,21 +300,12 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     <>
       {projectId && (
         <>
-          <CreateStateModal
-            isOpen={stateModal}
-            handleClose={() => setStateModal(false)}
-            projectId={projectId}
-            user={user}
-          />
+          <CreateStateModal isOpen={stateModal} handleClose={() => setStateModal(false)} projectId={projectId} />
           <CreateLabelModal
             isOpen={labelModal}
             handleClose={() => setLabelModal(false)}
             projectId={projectId}
-            user={user}
-            onSuccess={(response) => {
-              setValue("labels", [...watch("labels"), response.id]);
-              setValue("labels_list", [...watch("labels_list"), response.id]);
-            }}
+            onSuccess={(response) => setValue("labels", [...watch("labels"), response.id])}
           />
         </>
       )}
@@ -433,6 +425,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditorWithRef
+                        cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
                         ref={editorRef}
@@ -447,6 +440,8 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                           onChange(description_html);
                           setValue("description", description);
                         }}
+                        mentionHighlights={editorSuggestions.mentionHighlights}
+                        mentionSuggestions={editorSuggestions.mentionSuggestions}
                       />
                     )}
                   />
@@ -605,11 +600,12 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" onClick={handleDiscard}>
+            <Button variant="neutral-primary" size="sm" onClick={handleDiscard}>
               Discard
             </Button>
             <Button
               variant="neutral-primary"
+              size="sm"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
@@ -620,6 +616,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <Button
               loading={isSubmitting}
               variant="primary"
+              size="sm"
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
               )}

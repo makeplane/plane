@@ -7,11 +7,7 @@ type Props = {
   color?: string;
 };
 
-export const ModuleInProgressIcon: React.FC<Props> = ({
-  width = "20",
-  height = "20",
-  className,
-}) => (
+export const ModuleInProgressIcon: React.FC<Props> = ({ width = "20", height = "20", className }) => (
   <svg
     width={width}
     height={height}
@@ -23,10 +19,7 @@ export const ModuleInProgressIcon: React.FC<Props> = ({
       <g id="Layer_1-2" data-name="Layer 1">
         <path fill="#f7b964" d="M0,111.14c.63.7.21,1.53.3,2.29-.07.26-.17.28-.3,0Z" />
         <path fill="#f6ab3e" d="M0,119.46a3.11,3.11,0,0,1,.3,2q-.19.33-.3,0Z" />
-        <path
-          fill="#facf96"
-          d="M.27,123.16c0,.66.38,1.38-.27,2v-2C.13,122.89.22,122.91.27,123.16Z"
-        />
+        <path fill="#facf96" d="M.27,123.16c0,.66.38,1.38-.27,2v-2C.13,122.89.22,122.91.27,123.16Z" />
         <path fill="#f5a939" d="M0,113.47l.3,0a2.39,2.39,0,0,1-.3,1.71Z" />
         <path fill="#f8ba67" d="M.27,123.16a.63.63,0,0,1-.27,0v-1.66l.3,0Z" />
         <path

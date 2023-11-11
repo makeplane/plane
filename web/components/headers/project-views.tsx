@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // mobx store
@@ -8,11 +7,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CreateUpdateProjectViewModal } from "components/views";
 // components
-import { Breadcrumbs, BreadcrumbItem } from "@plane/ui";
-// ui
-import { PrimaryButton } from "components/ui";
+import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // helpers
-import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
@@ -22,11 +19,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
   const [createViewModal, setCreateViewModal] = useState(false);
 
   const { project: projectStore } = useMobxStore();
-
-  const projectDetails =
-    workspaceSlug && projectId
-      ? projectStore.getProjectById(workspaceSlug.toString(), projectId.toString())
-      : undefined;
+  const { currentProjectDetails } = projectStore;
 
   return (
     <>
@@ -38,31 +31,48 @@ export const ProjectViewsHeader: React.FC = observer(() => {
           projectId={projectId.toString()}
         />
       )}
-      <div
-        className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-      >
+      <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
           <div>
-            <Breadcrumbs onBack={() => router.back()}>
-              <BreadcrumbItem
-                link={
-                  <Link href={`/${workspaceSlug}/projects`}>
-                    <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                      <p>Projects</p>
-                    </a>
-                  </Link>
+            <Breadcrumbs>
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                label={currentProjectDetails?.name ?? "Project"}
+                icon={
+                  currentProjectDetails?.emoji ? (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      {renderEmoji(currentProjectDetails.emoji)}
+                    </span>
+                  ) : currentProjectDetails?.icon_prop ? (
+                    <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                      {renderEmoji(currentProjectDetails.icon_prop)}
+                    </div>
+                  ) : (
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                      {currentProjectDetails?.name.charAt(0)}
+                    </span>
+                  )
                 }
+                link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
               />
-              <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Views`} />
+              <Breadcrumbs.BreadcrumbItem
+                type="text"
+                icon={<PhotoFilterIcon className="h-4 w-4 text-custom-text-300" />}
+                label="Views"
+              />
             </Breadcrumbs>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <div>
-            <PrimaryButton type="button" className="flex items-center gap-2" onClick={() => setCreateViewModal(true)}>
-              <Plus size={14} strokeWidth={2} />
+            <Button
+              variant="primary"
+              size="sm"
+              prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
+              onClick={() => setCreateViewModal(true)}
+            >
               Create View
-            </PrimaryButton>
+            </Button>
           </div>
         </div>
       </div>

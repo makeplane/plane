@@ -2,14 +2,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import {
-  IIssue,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueLabels,
-  IStateResponse,
-  IUserLite,
-} from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -21,7 +14,7 @@ type Props = {
   issues: IIssue[] | undefined;
   members?: IUserLite[] | undefined;
   labels?: IIssueLabels[] | undefined;
-  states?: IStateResponse | undefined;
+  states?: IState[] | undefined;
 };
 
 export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
@@ -140,6 +133,39 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
           handleUpdateIssue={handleUpdateIssue}
           issues={issues}
           property="updated_on"
+        />
+      )}
+      {displayProperties.link && (
+        <SpreadsheetColumn
+          displayFilters={displayFilters}
+          disableUserActions={disableUserActions}
+          expandedIssues={expandedIssues}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          handleUpdateIssue={handleUpdateIssue}
+          issues={issues}
+          property="link"
+        />
+      )}
+      {displayProperties.attachment_count && (
+        <SpreadsheetColumn
+          displayFilters={displayFilters}
+          disableUserActions={disableUserActions}
+          expandedIssues={expandedIssues}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          handleUpdateIssue={handleUpdateIssue}
+          issues={issues}
+          property="attachment_count"
+        />
+      )}
+      {displayProperties.sub_issue_count && (
+        <SpreadsheetColumn
+          displayFilters={displayFilters}
+          disableUserActions={disableUserActions}
+          expandedIssues={expandedIssues}
+          handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+          handleUpdateIssue={handleUpdateIssue}
+          issues={issues}
+          property="sub_issue_count"
         />
       )}
     </>

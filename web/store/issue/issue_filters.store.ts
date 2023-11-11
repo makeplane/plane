@@ -1,6 +1,6 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { IssueService } from "services/issue";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
@@ -17,6 +17,7 @@ import {
 export interface IIssueFilterStore {
   loader: boolean;
   error: any | null;
+  // TODO: store filters and properties separately for each project
   userDisplayProperties: IIssueDisplayProperties;
   userDisplayFilters: IIssueDisplayFilterOptions;
   userFilters: IIssueFilterOptions;
@@ -71,6 +72,7 @@ export class IssueFilterStore implements IIssueFilterStore {
 
   // services
   projectService;
+  projectMemberService;
   issueService;
 
   constructor(_rootStore: RootStore) {
@@ -97,6 +99,7 @@ export class IssueFilterStore implements IIssueFilterStore {
     this.rootStore = _rootStore;
 
     this.projectService = new ProjectService();
+    this.projectMemberService = new ProjectMemberService();
     this.issueService = new IssueService();
   }
 
@@ -119,6 +122,7 @@ export class IssueFilterStore implements IIssueFilterStore {
       state_group: this.userFilters?.state_group || undefined,
       state: this.userFilters?.state || undefined,
       assignees: this.userFilters?.assignees || undefined,
+      mentions: this.userFilters?.mentions || undefined,
       created_by: this.userFilters?.created_by || undefined,
       labels: this.userFilters?.labels || undefined,
       start_date: this.userFilters?.start_date || undefined,
@@ -143,12 +147,19 @@ export class IssueFilterStore implements IIssueFilterStore {
 
   fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
     try {
-      const memberResponse = await this.projectService.projectMemberMe(workspaceSlug, projectId);
+      const memberResponse = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
       const issueProperties = await this.issueService.getIssueDisplayProperties(workspaceSlug, projectId);
 
       runInAction(() => {
         this.userFilters = memberResponse?.view_props?.filters;
-        this.userDisplayFilters = memberResponse?.view_props?.display_filters ?? {};
+        this.userDisplayFilters = {
+          ...memberResponse?.view_props?.display_filters,
+          // add calendar display filters if not already present
+          calendar: {
+            show_weekends: memberResponse?.view_props?.display_filters?.calendar?.show_weekends || true,
+            layout: memberResponse?.view_props?.display_filters?.calendar?.layout || "month",
+          },
+        };
         this.userDisplayProperties = issueProperties?.properties || this.defaultDisplayProperties;
         // default props from api
         this.defaultFilters = memberResponse.default_props.filters;
@@ -177,6 +188,13 @@ export class IssueFilterStore implements IIssueFilterStore {
 
     // set sub_group_by to null if group_by is set to null
     if (newViewProps.display_filters.group_by === null) newViewProps.display_filters.sub_group_by = null;
+
+    // set sub_group_by to null if layout is switched to kanban group_by and sub_group_by are same
+    if (
+      newViewProps.display_filters.layout === "kanban" &&
+      newViewProps.display_filters.group_by === newViewProps.display_filters.sub_group_by
+    )
+      newViewProps.display_filters.sub_group_by = null;
 
     // set group_by to state if layout is switched to kanban and group_by is null
     if (newViewProps.display_filters.layout === "kanban" && newViewProps.display_filters.group_by === null)

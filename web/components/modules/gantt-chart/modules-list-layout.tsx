@@ -3,18 +3,18 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
-import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
+import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
+import { ModuleGanttBlock } from "components/modules";
 // types
 import { IModule } from "types";
 
 export const ModulesListGanttChartView: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
+  const { workspaceSlug } = router.query;
+  // store
   const { project: projectStore, module: moduleStore } = useMobxStore();
-
-  const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+  const { currentProjectDetails } = projectStore;
   const modules = moduleStore.projectModules;
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
@@ -36,7 +36,7 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
           }))
       : [];
 
-  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+  const isAllowed = currentProjectDetails?.member_role === 20 || currentProjectDetails?.member_role === 15;
 
   return (
     <div className="w-full h-full overflow-y-auto">
@@ -44,9 +44,9 @@ export const ModulesListGanttChartView: React.FC = observer(() => {
         title="Modules"
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
+        sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        SidebarBlockRender={ModuleGanttSidebarBlock}
-        BlockRender={ModuleGanttBlock}
+        blockToRender={(data: IModule) => <ModuleGanttBlock data={data} />}
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}

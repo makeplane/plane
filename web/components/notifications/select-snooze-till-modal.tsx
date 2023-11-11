@@ -2,14 +2,14 @@ import { Fragment, FC } from "react";
 import { useRouter } from "next/router";
 import { useForm, Controller } from "react-hook-form";
 import { Transition, Dialog } from "@headlessui/react";
+import { X } from "lucide-react";
 // date helper
 import { getAllTimeIn30MinutesInterval } from "helpers/date-time.helper";
 // hooks
 import useToast from "hooks/use-toast";
-// components
+// ui
 import { Button, CustomSelect } from "@plane/ui";
 import { CustomDatePicker } from "components/ui";
-import { X } from "lucide-react";
 // types
 import type { IUserNotification } from "types";
 
@@ -128,7 +128,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -142,7 +142,7 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="flex justify-between items-center">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -171,7 +171,8 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
                               setValue("time", null);
                               onChange(val);
                             }}
-                            className="px-3 py-2 w-full rounded-md border border-custom-border-300 bg-custom-background-100 text-custom-text-100 focus:outline-none !text-sm"
+                            className="px-3 py-2 w-full rounded-md border border-custom-border-300 bg-custom-background-100 text-custom-text-100 placeholder:!text-custom-text-400 focus:outline-none !text-sm"
+                            wrapperClassName="w-full"
                             noBorder
                             minDate={new Date()}
                           />
@@ -247,10 +248,10 @@ export const SnoozeNotificationModal: FC<SnoozeModalProps> = (props) => {
 
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <div className="w-full flex items-center gap-2 justify-end">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" type="submit" loading={isSubmitting}>
+                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Submitting..." : "Submit"}
                       </Button>
                     </div>

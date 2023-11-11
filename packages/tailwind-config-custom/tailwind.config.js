@@ -12,7 +12,7 @@ module.exports = {
       "./pages/**/*.tsx",
       "./ui/**/*.tsx",
       "../packages/ui/**/*.{js,ts,jsx,tsx}",
-      "../packages/editor/**/*.{js,ts,jsx,tsx}",
+      "../packages/editor/**/src/**/*.{js,ts,jsx,tsx}",
     ],
   },
   theme: {
@@ -174,7 +174,7 @@ module.exports = {
               DEFAULT: convertToRGB("--color-sidebar-border-200"),
             },
           },
-          backdrop: "#131313",
+          backdrop: "rgba(0, 0, 0, 0.25)",
         },
       },
       keyframes: {

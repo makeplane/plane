@@ -20,6 +20,8 @@ import { CheckCircle } from "lucide-react";
 import { IAppIntegration, IWorkspaceIntegration } from "types";
 // fetch-keys
 import { WORKSPACE_INTEGRATIONS } from "constants/fetch-keys";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   integration: IAppIntegration;
@@ -41,7 +43,11 @@ const integrationDetails: { [key: string]: any } = {
 // services
 const integrationService = new IntegrationService();
 
-export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
+export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
+
   const [deletingIntegration, setDeletingIntegration] = useState(false);
 
   const router = useRouter();
@@ -49,7 +55,11 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
 
   const { setToastAlert } = useToast();
 
-  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup(integration.provider);
+  const { startAuth, isConnecting: isInstalling } = useIntegrationPopup({
+    provider: integration.provider,
+    github_app_name: envConfig?.github_app_name || "",
+    slack_client_id: envConfig?.slack_client_id || "",
+  });
 
   const { data: workspaceIntegrations } = useSWR(
     workspaceSlug ? WORKSPACE_INTEGRATIONS(workspaceSlug as string) : null,
@@ -93,7 +103,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
   const isInstalled = workspaceIntegrations?.find((i: any) => i.integration_detail.id === integration.id);
 
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-custom-border-200 bg-custom-background-100 px-4 py-6">
+    <div className="flex items-center justify-between gap-2 border-b border-custom-border-100 bg-custom-background-100 px-4 py-6">
       <div className="flex items-start gap-4">
         <div className="h-10 w-10 flex-shrink-0">
           <Image src={integrationDetails[integration.provider].logo} alt={`${integration.title} Logo`} />
@@ -102,7 +112,7 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
           <h3 className="flex items-center gap-2 text-sm font-medium">
             {integration.title}
             {workspaceIntegrations
-              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 text-white fill-green-500" />
+              ? isInstalled && <CheckCircle className="h-3.5 w-3.5 text-green-500 fill-transparent" />
               : null}
           </h3>
           <p className="text-sm text-custom-text-200 tracking-tight">
@@ -132,4 +142,4 @@ export const SingleIntegrationCard: React.FC<Props> = ({ integration }) => {
       )}
     </div>
   );
-};
+});

@@ -42,28 +42,29 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
           <>
             <Popover.Button
               ref={dropdownBtn}
-              className={`px-2.5 py-1 h-5 flex items-center rounded border-[0.5px] border-custom-border-300 duration-300 outline-none ${
+              className={`px-2.5 py-1 h-5 flex items-center rounded border-[0.5px] border-custom-border-300 duration-300 outline-none w-full ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               }`}
             >
-              <Tooltip tooltipHeading={placeHolder} tooltipContent={value ?? "None"}>
-                <div className="overflow-hidden flex justify-center items-center gap-2">
-                  <Calendar className="h-3 w-3" strokeWidth={2} />
-                  {value && (
-                    <>
+              <div className="overflow-hidden flex justify-center items-center gap-2">
+                <Calendar className="h-3 w-3" strokeWidth={2} />
+                {value && (
+                  <>
+                    <Tooltip tooltipHeading={placeHolder} tooltipContent={value ?? "None"}>
                       <div className="text-xs">{value}</div>
-                      <div
-                        className="flex-shrink-0 flex justify-center items-center"
-                        onClick={() => {
-                          if (onChange) onChange(null);
-                        }}
-                      >
-                        <X className="h-2.5 w-2.5" strokeWidth={2} />
-                      </div>
-                    </>
-                  )}
-                </div>
-              </Tooltip>
+                    </Tooltip>
+
+                    <div
+                      className="flex-shrink-0 flex justify-center items-center"
+                      onClick={() => {
+                        if (onChange) onChange(null);
+                      }}
+                    >
+                      <X className="h-2.5 w-2.5" strokeWidth={2} />
+                    </div>
+                  </>
+                )}
+              </div>
             </Popover.Button>
 
             <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>

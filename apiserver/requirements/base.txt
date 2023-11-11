@@ -35,3 +35,4 @@ psycopg-c==3.1.10
 scout-apm==2.26.1
 openpyxl==3.1.2
 python-json-logger==2.0.7
+beautifulsoup4==4.12.2

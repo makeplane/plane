@@ -55,6 +55,7 @@ export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ project: project?.id }}
           />
         ))}
     </>

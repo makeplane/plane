@@ -1,4 +1,5 @@
 export * from "./assignee";
+export * from "./mentions";
 export * from "./created-by";
 export * from "./filters-selection";
 export * from "./labels";

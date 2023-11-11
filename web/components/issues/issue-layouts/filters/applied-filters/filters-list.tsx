@@ -15,7 +15,7 @@ import { X } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabels, IProject, IStateResponse, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabels, IProject, IState, IUserLite } from "types";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
@@ -24,10 +24,10 @@ type Props = {
   labels?: IIssueLabels[] | undefined;
   members?: IUserLite[] | undefined;
   projects?: IProject[] | undefined;
-  states?: IStateResponse | undefined;
+  states?: IState[] | undefined;
 };
 
-const membersFilters = ["assignees", "created_by", "subscriber"];
+const membersFilters = ["assignees", "mentions", "created_by", "subscriber"];
 const dateFilters = ["start_date", "target_date"];
 
 export const AppliedFiltersList: React.FC<Props> = observer((props) => {
@@ -50,50 +50,55 @@ export const AppliedFiltersList: React.FC<Props> = observer((props) => {
             className="capitalize py-1 px-2 border border-custom-border-200 rounded-md flex items-center gap-2 flex-wrap"
           >
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-            {membersFilters.includes(filterKey) && (
-              <AppliedMembersFilters
-                handleRemove={(val) => handleRemoveFilter(filterKey, val)}
-                members={members}
-                values={value}
-              />
-            )}
-            {dateFilters.includes(filterKey) && (
-              <AppliedDateFilters handleRemove={(val) => handleRemoveFilter(filterKey, val)} values={value} />
-            )}
-            {filterKey === "labels" && (
-              <AppliedLabelsFilters
-                handleRemove={(val) => handleRemoveFilter("labels", val)}
-                labels={labels}
-                values={value}
-              />
-            )}
-            {filterKey === "priority" && (
-              <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
-            )}
-            {filterKey === "state" && (
-              <AppliedStateFilters
-                handleRemove={(val) => handleRemoveFilter("state", val)}
-                states={states}
-                values={value}
-              />
-            )}
-            {filterKey === "state_group" && (
-              <AppliedStateGroupFilters handleRemove={(val) => handleRemoveFilter("state_group", val)} values={value} />
-            )}
-            {filterKey === "project" && (
-              <AppliedProjectFilters
-                handleRemove={(val) => handleRemoveFilter("project", val)}
-                projects={projects}
-                values={value}
-              />
-            )}
-            <button
-              type="button"
-              className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
-              onClick={() => handleRemoveFilter(filterKey, null)}
-            >
-              <X size={12} strokeWidth={2} />
-            </button>
+            <div className="flex items-center gap-1 flex-wrap">
+              {membersFilters.includes(filterKey) && (
+                <AppliedMembersFilters
+                  handleRemove={(val) => handleRemoveFilter(filterKey, val)}
+                  members={members}
+                  values={value}
+                />
+              )}
+              {dateFilters.includes(filterKey) && (
+                <AppliedDateFilters handleRemove={(val) => handleRemoveFilter(filterKey, val)} values={value} />
+              )}
+              {filterKey === "labels" && (
+                <AppliedLabelsFilters
+                  handleRemove={(val) => handleRemoveFilter("labels", val)}
+                  labels={labels}
+                  values={value}
+                />
+              )}
+              {filterKey === "priority" && (
+                <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
+              )}
+              {filterKey === "state" && states && (
+                <AppliedStateFilters
+                  handleRemove={(val) => handleRemoveFilter("state", val)}
+                  states={states}
+                  values={value}
+                />
+              )}
+              {filterKey === "state_group" && (
+                <AppliedStateGroupFilters
+                  handleRemove={(val) => handleRemoveFilter("state_group", val)}
+                  values={value}
+                />
+              )}
+              {filterKey === "project" && (
+                <AppliedProjectFilters
+                  handleRemove={(val) => handleRemoveFilter("project", val)}
+                  projects={projects}
+                  values={value}
+                />
+              )}
+              <button
+                type="button"
+                className="grid place-items-center text-custom-text-300 hover:text-custom-text-200"
+                onClick={() => handleRemoveFilter(filterKey, null)}
+              >
+                <X size={12} strokeWidth={2} />
+              </button>
+            </div>
           </div>
         );
       })}

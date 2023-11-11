@@ -78,6 +78,7 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ priority: priority?.key }}
           />
         ))}
     </>

@@ -55,11 +55,11 @@ class VerifyEmailEndpoint(BaseAPIView):
             return Response(
                 {"email": "Successfully activated"}, status=status.HTTP_200_OK
             )
-        except jwt.ExpiredSignatureError as indentifier:
+        except jwt.ExpiredSignatureError as _indentifier:
             return Response(
                 {"email": "Activation expired"}, status=status.HTTP_400_BAD_REQUEST
             )
-        except jwt.exceptions.DecodeError as indentifier:
+        except jwt.exceptions.DecodeError as _indentifier:
             return Response(
                 {"email": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST
             )

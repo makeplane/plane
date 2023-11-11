@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import { MembersSelect } from "components/project";
+import { IssuePropertyAssignee } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
@@ -22,11 +22,13 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
 
   return (
     <>
-      <MembersSelect
+      <IssuePropertyAssignee
+        projectId={issue.project_detail.id ?? null}
         value={issue.assignees}
-        onChange={(data) => onChange({ assignees_list: data })}
-        members={members ?? []}
-        buttonClassName="!p-0 !rounded-none !shadow-none !border-0"
+        onChange={(data) => onChange({ assignees: data })}
+        className="h-full w-full"
+        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
+        noLabelBorder
         hideDropdownArrow
         disabled={disabled}
         multiple

@@ -14,12 +14,13 @@ import { IIssue } from "types";
 type Props = {
   issues: IIssueGroupedStructure | null;
   week: ICalendarWeek | undefined;
+  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
-  const { issues, week, quickActions, enableQuickIssueCreate } = props;
+  const { issues, week, handleIssues, quickActions, enableQuickIssueCreate } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -42,6 +43,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             key={renderDateFormat(date.date)}
             date={date}
             issues={issues}
+            handleIssues={handleIssues}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
           />

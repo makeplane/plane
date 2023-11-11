@@ -14,6 +14,7 @@ import {
   ProjectSpreadsheetLayout,
   ProjectEmptyState,
 } from "components/issues";
+import { Spinner } from "@plane/ui";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -24,7 +25,6 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
       await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-
       await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
     }
   });
@@ -32,6 +32,13 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   const issueCount = issueStore.getIssuesCount;
+
+  if (!issueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">

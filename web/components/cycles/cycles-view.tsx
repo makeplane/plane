@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclesBoard, CyclesList, CyclesListGanttChartView } from "components/cycles";
 // ui components
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // types
 import { TCycleLayout } from "types";
 
@@ -15,7 +15,7 @@ export interface ICyclesView {
   layout: TCycleLayout;
   workspaceSlug: string;
   projectId: string;
-  peekCycle: string;
+  peekCycle: string | undefined;
 }
 
 export const CyclesView: FC<ICyclesView> = observer((props) => {
@@ -25,21 +25,28 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
   const { cycle: cycleStore } = useMobxStore();
 
   // api call to fetch cycles list
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId && filter ? `CYCLES_LIST_${projectId}_${filter}` : null,
     workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
-  const cyclesList = cycleStore.cycles?.[projectId];
+  const cyclesList =
+    filter === "completed"
+      ? cycleStore.projectCompletedCycles
+      : filter === "draft"
+      ? cycleStore.projectDraftCycles
+      : filter === "upcoming"
+      ? cycleStore.projectUpcomingCycles
+      : cycleStore.projectCycles;
 
   return (
     <>
       {layout === "list" && (
         <>
-          {!isLoading ? (
+          {cyclesList ? (
             <CyclesList cycles={cyclesList} filter={filter} workspaceSlug={workspaceSlug} projectId={projectId} />
           ) : (
-            <Loader className="space-y-4">
+            <Loader className="space-y-4 p-8">
               <Loader.Item height="50px" />
               <Loader.Item height="50px" />
               <Loader.Item height="50px" />
@@ -50,7 +57,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
       {layout === "board" && (
         <>
-          {!isLoading ? (
+          {cyclesList ? (
             <CyclesBoard
               cycles={cyclesList}
               filter={filter}
@@ -59,7 +66,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
               peekCycle={peekCycle}
             />
           ) : (
-            <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+            <Loader className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3 p-8">
               <Loader.Item height="200px" />
               <Loader.Item height="200px" />
               <Loader.Item height="200px" />
@@ -70,7 +77,7 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
       {layout === "gantt" && (
         <>
-          {!isLoading ? (
+          {cyclesList ? (
             <CyclesListGanttChartView cycles={cyclesList} workspaceSlug={workspaceSlug} />
           ) : (
             <Loader className="space-y-4">

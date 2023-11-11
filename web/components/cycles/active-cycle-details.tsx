@@ -1,16 +1,16 @@
 import { MouseEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
-// services
-import { CycleService } from "services/cycle.service";
+import { observer } from "mobx-react-lite";
+import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { AssigneesList } from "components/ui/avatar";
 import { SingleProgressStats } from "components/core";
 import {
+  AvatarGroup,
   Loader,
   Tooltip,
   LinearProgressIndicator,
@@ -19,6 +19,7 @@ import {
   LayersIcon,
   StateGroupIcon,
   PriorityIcon,
+  Avatar,
 } from "@plane/ui";
 // components
 import ProgressChart from "components/core/sidebar/progress-chart";
@@ -26,14 +27,11 @@ import { ActiveCycleProgressStats } from "components/cycles";
 import { ViewIssueLabel } from "components/issues";
 // icons
 import { AlarmClock, AlertTriangle, ArrowRight, CalendarDays, Star, Target } from "lucide-react";
-
 // helpers
 import { getDateRangeStatus, renderShortDateWithYearFormat, findHowManyDaysLeft } from "helpers/date-time.helper";
 import { truncateText } from "helpers/string.helper";
 // types
-import { ICycle, IIssue } from "types";
-// fetch-keys
-import { CURRENT_CYCLE_LIST, CYCLES_LIST, CYCLE_ISSUES_WITH_PARAMS } from "constants/fetch-keys";
+import { ICycle } from "types";
 
 const stateGroups = [
   {
@@ -68,24 +66,21 @@ interface IActiveCycleDetails {
   projectId: string;
 }
 
-export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
-  // services
-  const cycleService = new CycleService();
-
+export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
   const router = useRouter();
 
   const { workspaceSlug, projectId } = props;
 
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId] || null;
+  const activeCycle = cycleStore.cycles?.[projectId]?.active || null;
   const cycle = activeCycle ? activeCycle[0] : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
@@ -99,7 +94,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
   //     : null
   // ) as { data: IIssue[] | undefined };
 
-  if (isLoading)
+  if (!cycle)
     return (
       <Loader>
         <Loader.Item height="250px" />
@@ -123,12 +118,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
           <button
             type="button"
             className="text-custom-primary-100 text-sm outline-none"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "q",
-              });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
           >
             Create a new cycle
           </button>
@@ -153,7 +143,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -166,7 +156,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -306,7 +296,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
 
                 {cycle.assignees.length > 0 && (
                   <div className="flex items-center gap-1 text-custom-text-200">
-                    <AssigneesList users={cycle.assignees} length={4} />
+                    <AvatarGroup>
+                      {cycle.assignees.map((assignee) => (
+                        <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                      ))}
+                    </AvatarGroup>
                   </div>
                 )}
               </div>
@@ -406,7 +400,11 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
                         <div className={`flex items-center gap-2 text-custom-text-200`}>
                           {issue.assignees && issue.assignees.length > 0 && Array.isArray(issue.assignees) ? (
                             <div className="-my-0.5 flex items-center justify-center gap-2">
-                              <AssigneesList users={issue.assignee_details} length={3} showLength={false} />
+                              <AvatarGroup showTooltip={false}>
+                                {issue.assignee_details.map((assignee: any) => (
+                                  <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} />
+                                ))}
+                              </AvatarGroup>
                             </div>
                           ) : (
                             ""
@@ -473,7 +471,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
           </div>
           <div className="relative h-64">
             <ProgressChart
-              distribution={cycle.distribution.completion_chart}
+              distribution={cycle.distribution?.completion_chart ?? {}}
               startDate={cycle.start_date ?? ""}
               endDate={cycle.end_date ?? ""}
               totalIssues={cycle.total_issues}
@@ -483,4 +481,4 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = (props) => {
       </div>
     </div>
   );
-};
+});

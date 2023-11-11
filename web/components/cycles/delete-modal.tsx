@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
 // components
-import { DangerButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -70,7 +70,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+              <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
             </Transition.Child>
 
             <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -84,7 +84,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                   leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                   leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
-                  <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+                  <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                     <div className="flex flex-col gap-6 p-6">
                       <div className="flex w-full items-center justify-start gap-4">
                         <div className="flex-shrink-0 flex justify-center items-center rounded-full bg-red-500/20 w-12 h-12">
@@ -101,10 +101,13 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                         </p>
                       </span>
                       <div className="flex justify-end gap-2">
-                        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                        <DangerButton onClick={formSubmit} loading={loader}>
+                        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                          Cancel
+                        </Button>
+
+                        <Button variant="danger" size="sm" tabIndex={1} onClick={formSubmit}>
                           {loader ? "Deleting..." : "Delete Cycle"}
-                        </DangerButton>
+                        </Button>
                       </div>
                     </div>
                   </Dialog.Panel>

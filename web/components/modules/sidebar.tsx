@@ -8,8 +8,6 @@ import { Disclosure, Transition } from "@headlessui/react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { ModuleService } from "services/module.service";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -17,7 +15,7 @@ import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 // ui
-import { CustomMenu, Loader, LayersIcon } from "@plane/ui";
+import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon } from "@plane/ui";
 // icon
 import { AlertCircle, ChevronDown, ChevronRight, Info, LinkIcon, Plus, Trash2 } from "lucide-react";
 // helpers
@@ -32,7 +30,7 @@ import { MODULE_STATUS } from "constants/module";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
-  members_list: [],
+  members: [],
   start_date: null,
   target_date: null,
   status: "backlog",
@@ -60,9 +58,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { module: moduleStore, user: userStore } = useMobxStore();
 
   const user = userStore.currentUser ?? undefined;
+  const userRole = userStore.currentProjectRole;
   const moduleDetails = moduleStore.moduleDetails[moduleId] ?? undefined;
-
-  const { memberRole } = useProjectMyMembership();
 
   const { setToastAlert } = useToast();
 
@@ -186,7 +183,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     if (moduleDetails)
       reset({
         ...moduleDetails,
-        members_list: moduleDetails.members_list ?? moduleDetails.members_detail?.map((m) => m.id),
       });
   }, [moduleDetails, reset]);
 
@@ -239,24 +235,22 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         <>
           <div className="flex items-center justify-between w-full">
             <div>
-              {peekModule && (
-                <button
-                  className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
-                  onClick={() => handleClose()}
-                >
-                  <ChevronRight className="h-3 w-3 text-white stroke-2" />
-                </button>
-              )}
+              <button
+                className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
+                onClick={() => handleClose()}
+              >
+                <ChevronRight className="h-3 w-3 text-white stroke-2" />
+              </button>
             </div>
             <div className="flex items-center gap-3.5">
               <button onClick={handleCopyText}>
                 <LinkIcon className="h-3 w-3 text-custom-text-300" />
               </button>
-              <CustomMenu width="lg" ellipsis>
+              <CustomMenu width="lg" placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
                   <span className="flex items-center justify-start gap-2">
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
+                    <Trash2 className="h-3 w-3" />
+                    <span>Delete module</span>
                   </span>
                 </CustomMenu.MenuItem>
               </CustomMenu>
@@ -266,13 +260,35 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           <div className="flex flex-col gap-3">
             <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">{moduleDetails.name}</h4>
             <div className="flex items-center gap-5">
-              {moduleStatus && (
-                <span
-                  className={`flex items-center cursor-default justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
-                >
-                  {moduleStatus.label}
-                </span>
-              )}
+              <Controller
+                control={control}
+                name="status"
+                render={({ field: { value } }) => (
+                  <CustomSelect
+                    customButton={
+                      <span
+                        className={`flex items-center cursor-default justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus?.textColor} ${moduleStatus?.bgColor}`}
+                      >
+                        {moduleStatus?.label ?? "Backlog"}
+                      </span>
+                    }
+                    value={value}
+                    onChange={(value: any) => {
+                      submitChanges({ status: value });
+                    }}
+                  >
+                    {MODULE_STATUS.map((status) => (
+                      <CustomSelect.Option key={status.value} value={status.value}>
+                        <div className="flex items-center gap-2">
+                          <ModuleStatusIcon status={status.value} />
+                          {status.label}
+                        </div>
+                      </CustomSelect.Option>
+                    ))}
+                  </CustomSelect>
+                )}
+              />
+
               <span className="text-sm text-custom-text-300 font-mediu cursor-default">
                 {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
                 {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
@@ -301,12 +317,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             />
             <Controller
               control={control}
-              name="members_list"
+              name="members"
               render={({ field: { value } }) => (
                 <SidebarMembersSelect
                   value={value}
                   onChange={(val: string[]) => {
-                    submitChanges({ members_list: val });
+                    submitChanges({ members: val });
                   }}
                 />
               )}
@@ -328,7 +344,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Disclosure>
                 {({ open }) => (
                   <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <div className="flex w-full items-center justify-between gap-2">
+                    <Disclosure.Button
+                      className="flex w-full items-center justify-between gap-2 p-1.5"
+                      disabled={!isStartValid || !isEndValid}
+                    >
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Progress</span>
                       </div>
@@ -342,12 +361,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ""
                         )}
                         {isStartValid && isEndValid ? (
-                          <Disclosure.Button className="p-1.5">
-                            <ChevronDown
-                              className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`}
-                              aria-hidden="true"
-                            />
-                          </Disclosure.Button>
+                          <ChevronDown className={`h-3 w-3 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
                         ) : (
                           <div className="flex items-center gap-1">
                             <AlertCircle height={14} width={14} className="text-custom-text-200" />
@@ -357,7 +371,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Disclosure.Button>
                     <Transition show={open}>
                       <Disclosure.Panel>
                         <div className="flex flex-col gap-3">
@@ -416,24 +430,25 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Disclosure>
                 {({ open }) => (
                   <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <div className="flex w-full items-center justify-between gap-2">
+                    <Disclosure.Button
+                      className="flex w-full items-center justify-between gap-2 p-1.5"
+                      disabled={!isStartValid || !isEndValid}
+                    >
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Links</span>
                       </div>
 
                       <div className="flex items-center gap-2.5">
-                        <Disclosure.Button className="p-1.5">
-                          <ChevronDown
-                            className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
-                            aria-hidden="true"
-                          />
-                        </Disclosure.Button>
+                        <ChevronDown
+                          className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`}
+                          aria-hidden="true"
+                        />
                       </div>
-                    </div>
+                    </Disclosure.Button>
                     <Transition show={open}>
                       <Disclosure.Panel>
                         <div className="flex flex-col w-full mt-2 space-y-3 h-72 overflow-y-auto">
-                          {memberRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+                          {userRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                             <>
                               <div className="flex items-center justify-end w-full">
                                 <button
@@ -449,7 +464,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                                 links={moduleDetails.link_module}
                                 handleEditLink={handleEditLink}
                                 handleDeleteLink={handleDeleteLink}
-                                userAuth={memberRole}
+                                userAuth={{
+                                  isGuest: userRole === 5,
+                                  isViewer: userRole === 10,
+                                  isMember: userRole === 15,
+                                  isOwner: userRole === 20,
+                                }}
                               />
                             </>
                           ) : (

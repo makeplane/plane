@@ -16,7 +16,9 @@ export interface IProfileIssuesListLayout {}
 export const ProfileIssuesListLayout: FC = observer(() => {
   const {
     workspace: workspaceStore,
+    projectState: projectStateStore,
     project: projectStore,
+    projectMember: { projectMembers },
     profileIssueFilters: profileIssueFiltersStore,
     profileIssues: profileIssuesStore,
     issueDetail: issueDetailStore,
@@ -29,7 +31,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
 
   const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
 
-  const display_properties = profileIssueFiltersStore?.userDisplayProperties || null;
+  const displayProperties = profileIssueFiltersStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
@@ -44,10 +46,9 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     [profileIssuesStore, issueDetailStore, workspaceSlug]
   );
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = workspaceStore.workspaceLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStore?.workspaceProjects || null;
 
@@ -64,12 +65,12 @@ export const ProfileIssuesListLayout: FC = observer(() => {
             handleUpdate={async (data) => handleIssues(group_by, data, "update")}
           />
         )}
-        display_properties={display_properties}
+        displayProperties={displayProperties}
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members?.map((m) => m.member) ?? null}
+        members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={null}
       />

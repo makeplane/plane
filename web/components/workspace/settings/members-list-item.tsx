@@ -1,10 +1,8 @@
-import { useState } from "react";
+import { useState, FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -15,6 +13,7 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 import { ChevronDown, XCircle } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
+import { TUserWorkspaceRole } from "types";
 
 type Props = {
   member: {
@@ -25,36 +24,34 @@ type Props = {
     last_name: string;
     email: string | undefined;
     display_name: string;
-    role: 5 | 10 | 15 | 20;
+    role: TUserWorkspaceRole;
     status: boolean;
     member: boolean;
     accountCreated: boolean;
   };
 };
 
-// services
-const workspaceService = new WorkspaceService();
-
-export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
+export const WorkspaceMembersListItem: FC<Props> = (props) => {
   const { member } = props;
-
-  const [removeMemberModal, setRemoveMemberModal] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // store
+  const {
+    workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
+    user: { currentWorkspaceMemberInfo, currentWorkspaceRole },
+  } = useMobxStore();
+  const isAdmin = currentWorkspaceRole === 20;
+  // states
+  const [removeMemberModal, setRemoveMemberModal] = useState(false);
+  // hooks
   const { setToastAlert } = useToast();
-
-  const { workspace: workspaceStore, user: userStore } = useMobxStore();
-
-  const user = userStore.workspaceMemberInfo;
-  const isAdmin = userStore.workspaceMemberInfo?.role === 20;
 
   const handleRemoveMember = async () => {
     if (!workspaceSlug) return;
 
     if (member.member)
-      await workspaceStore.removeMember(workspaceSlug.toString(), member.id).catch((err) => {
+      await removeMember(workspaceSlug.toString(), member.id).catch((err) => {
         const error = err?.error;
         setToastAlert({
           type: "error",
@@ -63,8 +60,7 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
         });
       });
     else
-      await workspaceService
-        .deleteWorkspaceInvitations(workspaceSlug.toString(), member.id)
+      await deleteWorkspaceInvitation(workspaceSlug.toString(), member.id)
         .then(() => {
           setToastAlert({
             type: "success",
@@ -83,7 +79,7 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
         });
   };
 
-  if (!user) return null;
+  if (!currentWorkspaceMemberInfo) return null;
 
   return (
     <>
@@ -141,12 +137,12 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
               <div className="flex item-center gap-1 px-2 py-0.5 rounded">
                 <span
                   className={`flex items-center text-xs font-medium rounded ${
-                    member.memberId !== user.member ? "" : "text-custom-sidebar-text-400"
+                    member.memberId !== currentWorkspaceMemberInfo.member ? "" : "text-custom-sidebar-text-400"
                   }`}
                 >
                   {ROLE[member.role as keyof typeof ROLE]}
                 </span>
-                {member.memberId !== user.member && (
+                {member.memberId !== currentWorkspaceMemberInfo.member && (
                   <span className="grid place-items-center">
                     <ChevronDown className="h-3 w-3" />
                   </span>
@@ -154,28 +150,29 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
               </div>
             }
             value={member.role}
-            onChange={(value: 5 | 10 | 15 | 20 | undefined) => {
-              if (!workspaceSlug) return;
+            onChange={(value: TUserWorkspaceRole | undefined) => {
+              if (!workspaceSlug || !value) return;
 
-              workspaceStore
-                .updateMember(workspaceSlug.toString(), member.id, {
-                  role: value,
-                })
-                .catch(() => {
-                  setToastAlert({
-                    type: "error",
-                    title: "Error!",
-                    message: "An error occurred while updating member role. Please try again.",
-                  });
+              updateMember(workspaceSlug.toString(), member.id, {
+                role: value,
+              }).catch(() => {
+                setToastAlert({
+                  type: "error",
+                  title: "Error!",
+                  message: "An error occurred while updating member role. Please try again.",
                 });
+              });
             }}
             disabled={
-              member.memberId === user.member || !member.status || (user.role !== 20 && user.role < member.role)
+              member.memberId === currentWorkspaceMemberInfo.member ||
+              !member.status ||
+              Boolean(currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < member.role)
             }
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (user.role !== 20 && user.role < parseInt(key)) return null;
+              if (currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < parseInt(key))
+                return null;
 
               return (
                 <CustomSelect.Option key={key} value={parseInt(key, 10)}>
@@ -185,7 +182,11 @@ export const WorkspaceMembersListItem: React.FC<Props> = (props) => {
             })}
           </CustomSelect>
           {isAdmin && (
-            <Tooltip tooltipContent={member.memberId === user.member ? "Leave workspace" : "Remove member"}>
+            <Tooltip
+              tooltipContent={
+                member.memberId === currentWorkspaceMemberInfo.member ? "Leave workspace" : "Remove member"
+              }
+            >
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}

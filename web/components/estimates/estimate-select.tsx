@@ -3,7 +3,7 @@ import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
 import { Check, ChevronDown, Search, Triangle } from "lucide-react";
 // types
-import { Tooltip } from "components/ui";
+import { Tooltip } from "@plane/ui";
 import { Placement } from "@popperjs/core";
 // constants
 import { IEstimatePoint } from "types";

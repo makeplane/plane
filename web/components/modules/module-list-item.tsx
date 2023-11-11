@@ -9,8 +9,7 @@ import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateModuleModal, DeleteModuleModal } from "components/modules";
 // ui
-import { AssigneesList } from "components/ui";
-import { CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
+import { Avatar, AvatarGroup, CircularProgressIndicator, CustomMenu, Tooltip } from "@plane/ui";
 // icons
 import { Check, Info, LinkIcon, Pencil, Star, Trash2, User2 } from "lucide-react";
 // helpers
@@ -51,7 +50,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const progress = isNaN(completionPercentage) ? 0 : Math.floor(completionPercentage);
 
-  const completedModuleCheck = module.status === "completed" && module.total_issues - module.completed_issues;
+  const completedModuleCheck = module.status === "completed";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -129,15 +128,17 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <a className="group flex items-center justify-between gap-5 px-10 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
+        <a className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
           <div className="flex items-center gap-3 w-full truncate">
             <div className="flex items-center gap-4 truncate">
               <span className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {completedModuleCheck ? (
-                    <span className="text-sm text-custom-primary-100">{`!`}</span>
-                  ) : progress === 100 ? (
-                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    progress === 100 ? (
+                      <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    ) : (
+                      <span className="text-sm text-custom-primary-100">{`!`}</span>
+                    )
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
@@ -174,7 +175,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
               <div className="flex items-center justify-center gap-1 cursor-default w-16">
                 {module.members_detail.length > 0 ? (
-                  <AssigneesList users={module.members_detail} length={2} />
+                  <AvatarGroup showTooltip={false}>
+                    {module.members_detail.map((member) => (
+                      <Avatar key={member.id} name={member.display_name} src={member.avatar} />
+                    ))}
+                  </AvatarGroup>
                 ) : (
                   <span className="flex items-end justify-center h-5 w-5 bg-custom-background-80 rounded-full border border-dashed border-custom-text-400">
                     <User2 className="h-4 w-4 text-custom-text-400" />

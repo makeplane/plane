@@ -9,7 +9,7 @@ import { CURRENT_USER } from "constants/fetch-keys";
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // types
-import type { IWorkspace, IUser } from "types";
+import type { IUser } from "types";
 
 const userService = new UserService();
 const workspaceService = new WorkspaceService();
@@ -33,9 +33,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
       workspaceService.userWorkspaces().then(async (userWorkspaces) => {
-        const lastActiveWorkspace = userWorkspaces.find(
-          (workspace: IWorkspace) => workspace.id === user?.last_workspace_id
-        );
+        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);
           return;

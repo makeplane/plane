@@ -2,10 +2,9 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // ui
-import { Avatar } from "components/ui";
-import { CustomSearchSelect } from "@plane/ui";
+import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
 import { ChevronDown, UserCircle2 } from "lucide-react";
 // fetch-keys
@@ -16,7 +15,7 @@ type Props = {
   onChange: (val: string) => void;
 };
 
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const SidebarLeadSelect: FC<Props> = (props) => {
   const { value, onChange } = props;
@@ -27,7 +26,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -36,7 +35,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} height="18px" width="18px" />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -58,7 +57,7 @@ export const SidebarLeadSelect: FC<Props> = (props) => {
           customButton={
             selectedOption ? (
               <div className="flex items-center justify-start gap-2 p-0.5 w-full">
-                <Avatar user={selectedOption} />
+                <Avatar name={selectedOption.display_name} src={selectedOption.avatar} />
                 <span className="text-sm text-custom-text-200">{selectedOption?.display_name}</span>
               </div>
             ) : (

@@ -21,9 +21,9 @@ export const IssueEstimateSelect: React.FC<Props> = ({ value, onChange }) => {
     <CustomSelect
       value={value}
       label={
-        <div className="flex items-center gap-2 text-xs">
-          <Triangle className={`h-3.5 w-3.5 ${value !== null ? "text-custom-text-100" : "text-custom-text-200"}`} />
-          <span className={value !== null ? "text-custom-text-100" : "text-custom-text-200"}>
+        <div className="flex items-center justify-center gap-1 text-xs">
+          <Triangle className={`h-3 w-3 ${value !== null ? "text-custom-text-200" : "text-custom-text-300"}`} />
+          <span className={value !== null ? "text-custom-text-200" : "text-custom-text-300"}>
             {estimatePoints?.find((e) => e.key === value)?.value ?? "Estimate"}
           </span>
         </div>

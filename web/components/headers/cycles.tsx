@@ -1,55 +1,61 @@
-import * as React from "react";
-
+import { FC } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Breadcrumbs, BreadcrumbItem, Button } from "@plane/ui";
+import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
-import { truncateText } from "helpers/string.helper";
+import { renderEmoji } from "helpers/emoji.helper";
 
-export interface ICyclesHeader {
-  name: string | undefined;
-}
-
-export const CyclesHeader: React.FC<ICyclesHeader> = (props) => {
-  const { name } = props;
+export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // store
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
 
   return (
-    <div
-      className={`relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-    >
+    <div className="relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between h-[3.75rem] gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
         <div>
-          <Breadcrumbs onBack={() => router.back()}>
-            <BreadcrumbItem
-              link={
-                <Link href={`/${workspaceSlug}/projects`}>
-                  <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                    <p>Projects</p>
-                  </a>
-                </Link>
+          <Breadcrumbs>
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={currentProjectDetails?.name ?? "Project"}
+              icon={
+                currentProjectDetails?.emoji ? (
+                  renderEmoji(currentProjectDetails.emoji)
+                ) : currentProjectDetails?.icon_prop ? (
+                  renderEmoji(currentProjectDetails.icon_prop)
+                ) : (
+                  <span className="flex items-center justify-center h-4 w-4 rounded bg-gray-700 uppercase text-white">
+                    {currentProjectDetails?.name.charAt(0)}
+                  </span>
+                )
               }
+              link={`/${workspaceSlug}/projects/${currentProjectDetails?.id}/issues`}
             />
-            <BreadcrumbItem title={`${truncateText(name ?? "Project", 32)} Cycles`} />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              icon={<ContrastIcon className="h-4 w-4 text-custom-text-300" />}
+              label="Cycles"
+            />
           </Breadcrumbs>
         </div>
       </div>
       <div className="flex items-center gap-3">
         <Button
           variant="primary"
+          size="sm"
           prependIcon={<Plus />}
-          onClick={() => {
-            const e = new KeyboardEvent("keydown", { key: "q" });
-            document.dispatchEvent(e);
-          }}
+          onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
         >
           Add Cycle
         </Button>
       </div>
     </div>
   );
-};
+});

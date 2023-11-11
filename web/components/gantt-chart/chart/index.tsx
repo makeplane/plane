@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from "react";
 // icons
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
-import { GanttSidebar } from "../sidebar";
+// import { GanttSidebar } from "../sidebar";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -39,8 +39,8 @@ type ChartViewRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  SidebarBlockRender: React.FC<any>;
-  BlockRender: React.FC<any>;
+  blockToRender: (data: any) => React.ReactNode;
+  sidebarToRender: (props: any) => React.ReactNode;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
@@ -54,8 +54,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blocks = null,
   loaderTitle,
   blockUpdateHandler,
-  SidebarBlockRender,
-  BlockRender,
+  sidebarToRender,
+  blockToRender,
   enableBlockLeftResize,
   enableBlockRightResize,
   enableBlockMove,
@@ -165,6 +165,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
+    if (!scrollContainer) return;
+
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
     let scrollWidth: number = 0;
     let daysDifference: number = 0;
@@ -192,6 +194,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // handling scroll functionality
   const onScroll = () => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    if (!scrollContainer) return;
 
     const scrollWidth: number = scrollContainer?.scrollWidth;
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
@@ -281,13 +285,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             <h6>{title}</h6>
             <h6>Duration</h6>
           </div>
-          <GanttSidebar
-            title={title}
-            blockUpdateHandler={blockUpdateHandler}
-            blocks={chartBlocks}
-            SidebarBlockRender={SidebarBlockRender}
-            enableReorder={enableReorder}
-          />
+
+          {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
         </div>
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
@@ -307,7 +306,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             <GanttChartBlocks
               itemsContainerWidth={itemsContainerWidth}
               blocks={chartBlocks}
-              BlockRender={BlockRender}
+              blockToRender={blockToRender}
               blockUpdateHandler={blockUpdateHandler}
               enableBlockLeftResize={enableBlockLeftResize}
               enableBlockRightResize={enableBlockRightResize}
