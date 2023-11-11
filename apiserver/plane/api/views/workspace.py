@@ -309,21 +309,6 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             email__in=[email.get("email") for email in emails]
         ).select_related("workspace")
 
-        # create the user if signup is disabled
-        if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-            _ = User.objects.bulk_create(
-                [
-                    User(
-                        username=str(uuid4().hex),
-                        email=invitation.email,
-                        password=make_password(uuid4().hex),
-                        is_password_autoset=True,
-                    )
-                    for invitation in workspace_invitations
-                ],
-                batch_size=100,
-            )
-
         for invitation in workspace_invitations:
             workspace_invitation.delay(
                 invitation.email,
@@ -428,11 +413,6 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(
             pk=pk, workspace__slug=slug
         )
-        # delete the user if signup is disabled
-        if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-            user = User.objects.filter(email=workspace_member_invite.email).first()
-            if user is not None:
-                user.delete()
         workspace_member_invite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
