@@ -194,7 +194,7 @@ class OauthEndpoint(BaseAPIView):
 
             # Check if user has any accepted invites for workspace and add them to workspace
             workspace_member_invites = WorkspaceMemberInvite.objects.filter(
-                member=user, accepted=True
+                email=user.email, accepted=True
             )
 
             WorkspaceMember.objects.bulk_create(
@@ -211,19 +211,19 @@ class OauthEndpoint(BaseAPIView):
 
             # Check if user has any project invites
             project_member_invites = ProjectMemberInvite.objects.filter(
-                member=user, accepted=True
-            ).values("workspace_id", "project_id", "role")
+                email=user.email, accepted=True
+            )
 
             # Add user to workspace
             WorkspaceMember.objects.bulk_create(
                 [
                     WorkspaceMember(
-                        workspace_id=project_member_invite.get("workspace_id"),
-                        role=project_member_invite.get("role")
-                        if project_member_invite.get("role") in [5, 10, 15]
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
                         else 15,
                         member=user,
-                        created_by=project_member_invite.get("created_by"),
+                        created_by_id=project_member_invite.created_by_id,
                     )
                     for project_member_invite in project_member_invites
                 ],
@@ -234,18 +234,16 @@ class OauthEndpoint(BaseAPIView):
             ProjectMember.objects.bulk_create(
                 [
                     ProjectMember(
-                        workspace_id=project_member_invite.get("workspace_id"),
-                        role=project_member_invite.get("role")
-                        if project_member_invite.get("role") in [5, 10, 15]
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
                         else 15,
                         member=user,
-                        created_by=project_member_invite.get("created_by"),
-                    )
-                    for project_member_invite in project_member_invites
+                        created_by_id=project_member_invite.created_by_id,
+                    ) for project_member_invite in project_member_invites
                 ],
                 ignore_conflicts=True,
             )
-
             # Delete all the invites
             workspace_member_invites.delete()
             project_member_invites.delete()
@@ -330,7 +328,7 @@ class OauthEndpoint(BaseAPIView):
 
             # Check if user has any accepted invites for workspace and add them to workspace
             workspace_member_invites = WorkspaceMemberInvite.objects.filter(
-                member=user, accepted=True
+                email=user.email, accepted=True
             )
 
             WorkspaceMember.objects.bulk_create(
@@ -347,19 +345,19 @@ class OauthEndpoint(BaseAPIView):
 
             # Check if user has any project invites
             project_member_invites = ProjectMemberInvite.objects.filter(
-                member=user, accepted=True
-            ).values("workspace_id", "project_id", "role")
+                email=user.email, accepted=True
+            )
 
             # Add user to workspace
             WorkspaceMember.objects.bulk_create(
                 [
                     WorkspaceMember(
-                        workspace_id=project_member_invite.get("workspace_id"),
-                        role=project_member_invite.get("role")
-                        if project_member_invite.get("role") in [5, 10, 15]
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
                         else 15,
                         member=user,
-                        created_by=project_member_invite.get("created_by"),
+                        created_by_id=project_member_invite.created_by_id,
                     )
                     for project_member_invite in project_member_invites
                 ],
@@ -370,17 +368,16 @@ class OauthEndpoint(BaseAPIView):
             ProjectMember.objects.bulk_create(
                 [
                     ProjectMember(
-                        workspace_id=project_member_invite.get("workspace_id"),
-                        role=project_member_invite.get("role")
-                        if project_member_invite.get("role") in [5, 10, 15]
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
                         else 15,
                         member=user,
-                        created_by=project_member_invite.get("created_by"),
+                        created_by_id=project_member_invite.created_by_id,
                     ) for project_member_invite in project_member_invites
                 ],
                 ignore_conflicts=True,
             )
-
             # Delete all the invites
             workspace_member_invites.delete()
             project_member_invites.delete()
