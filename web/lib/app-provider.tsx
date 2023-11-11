@@ -27,37 +27,11 @@ if (typeof window !== "undefined") {
 
 export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
-  // router
-  const router = useRouter();
   // store
   const {
     user: { currentUser },
     appConfig: { envConfig },
   } = useMobxStore();
-
-  useEffect(() => {
-    if (currentUser) {
-      // Identify sends an event, so you want may want to limit how often you call it
-      posthog?.identify(currentUser.email, {
-        email: currentUser.email,
-        first_name: currentUser.first_name,
-        last_name: currentUser.last_name,
-        id: currentUser.id,
-      });
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    // Track page views
-    const handleRouteChange = () => {
-      posthog?.capture("$pageview");
-    };
-    router.events.on("routeChangeComplete", handleRouteChange);
-    return () => {
-      router.events.off("routeChangeComplete", handleRouteChange);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <StoreWrapper>
