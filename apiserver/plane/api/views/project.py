@@ -400,7 +400,9 @@ class InviteProjectEndpoint(BaseAPIView):
             # Add that user
             user = User.objects.get(emai=email)
             # Else create the user and return
-            project_member = ProjectMember.objects.filter(workspace__slug=slug, member=user, project_id=project_id)
+            project_member = ProjectMember.objects.filter(
+                workspace__slug=slug, member=user, project_id=project_id
+            )
 
             if project_member is not None:
                 project_member.is_active = True
@@ -412,7 +414,8 @@ class InviteProjectEndpoint(BaseAPIView):
                 )
                 _ = IssueProperty.objects.create(user=user, project_id=project_id)
                 return Response(
-                    ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
+                    ProjectMemberSerializer(project_member).data,
+                    status=status.HTTP_200_OK,
                 )
 
         # If the user doesn't exist
@@ -455,7 +458,8 @@ class UserProjectInvitationsViewset(BaseViewSet):
         # Invitations
         invitations = request.data.get("invitations", [])
         project_invitations = ProjectMemberInvite.objects.filter(
-            pk__in=invitations, accepted=True
+            pk__in=invitations,
+            email=request.user.email,
         )
 
         # Update all the project invitations
@@ -463,6 +467,20 @@ class UserProjectInvitationsViewset(BaseViewSet):
             ProjectMember.objects.filter(
                 project=project_invitation.project, member=request.user
             ).update(is_active=True, role=project_invitation.role)
+
+        # Workspace Member addition
+        WorkspaceMember.objects.bulk_create(
+            [
+                WorkspaceMember(
+                    workspace_id=invitation.workspace_id,
+                    member=request.user,
+                    role=invitation.role if invitation.role in [5, 10, 15] else 15,
+                    created_by=request.user,
+                )
+                for invitation in project_invitations
+            ],
+            ignore_conflicts=True,
+        )
 
         # Check if any of the projects user was previously a member then activate
         ProjectMember.objects.bulk_create(
