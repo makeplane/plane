@@ -604,9 +604,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug,
             member_id=workspace_member.member_id,
             is_active=True,
-        ).update(is_deactivated=True)
+        ).update(is_active=False)
 
-        workspace_member.is_deactivated = True
+        workspace_member.is_active = False
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -660,10 +660,10 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace__slug=slug,
             member_id=workspace_member.member_id,
             is_active=True,
-        ).update(is_deactivated=True)
+        ).update(is_active=False)
 
         # # Deactivate the user
-        workspace_member.is_deactivated = True
+        workspace_member.is_active = False
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

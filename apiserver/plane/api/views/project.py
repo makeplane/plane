@@ -673,7 +673,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        project_member.is_deactivated = True
+        project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -703,7 +703,7 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # Deactivate the user
-        project_member.is_deactivated = True
+        project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

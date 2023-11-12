@@ -39,7 +39,7 @@ class UserEndpoint(BaseViewSet):
         # Check all workspace user is active
         user = self.get_object()
         if WorkspaceMember.objects.filter(
-            member=request.user, is_deactivated=False
+            member=request.user, is_active=True
         ).exists():
             return Response(
                 {
