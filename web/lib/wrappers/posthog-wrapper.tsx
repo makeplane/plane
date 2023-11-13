@@ -43,7 +43,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
         loaded: (posthog) => {
           if (process.env.NODE_ENV === "development") posthog.debug();
         },
-        autocapture: true,
+        autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually
       });
     }

@@ -20,6 +20,7 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+import posthog from "posthog-js";
 
 type Props = {
   isOpen: boolean;
@@ -129,6 +130,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     return projectStore
       .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
+        posthog.capture("CREATE_PROJECT", {
+          ...payload,
+          id: res.id,
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
