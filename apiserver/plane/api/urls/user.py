@@ -69,23 +69,6 @@ urlpatterns = [
         UserWorkSpacesEndpoint.as_view(),
         name="user-workspace",
     ),
-    # user workspace invitations
-    path(
-        "users/me/invitations/workspaces/",
-        UserWorkspaceInvitationsEndpoint.as_view({"get": "list", "post": "create"}),
-        name="user-workspace-invitations",
-    ),
-    # user workspace invitation
-    path(
-        "users/me/invitations/<uuid:pk>/",
-        UserWorkspaceInvitationEndpoint.as_view(
-            {
-                "get": "retrieve",
-            }
-        ),
-        name="user-workspace-invitation",
-    ),
-    # user join workspace
     # User Graphs
     path(
         "users/me/workspaces/<str:slug>/activity-graph/",
