@@ -20,6 +20,7 @@ import { EmptyState } from "components/common";
 import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabels } from "types";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
@@ -27,8 +28,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { project: projectStore } = useMobxStore();
-
+  const { project: projectStore, projectLabel: projectLabelStore } = useMobxStore();
   // states
   const [labelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -67,6 +67,27 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     setLabelToUpdate(label);
   };
 
+  const onDragEnd = (result: DropResult) => {
+    const childLabel = result.draggableId.split(".")[3];
+    const parentLabel = (result.destination || result.combine)?.droppableId?.split(".")[3];
+
+    // single -> single || single -> group || group -> group
+    if (childLabel && parentLabel && result.reason == "DROP" && childLabel != parentLabel) {
+      projectLabelStore.updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
+        parent: parentLabel,
+      });
+      return;
+    }
+
+    // Parent -> NULL
+    if (result.reason == "DROP" && !result.combine && !result.destination) {
+      projectLabelStore.updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
+        parent: null,
+      });
+      return;
+    }
+  };
+
   return (
     <>
       <LabelsListModal isOpen={labelsListModal} parent={parentLabel} handleClose={() => setLabelsListModal(false)} />
@@ -76,13 +97,13 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         onClose={() => setSelectDeleteLabel(null)}
       />
 
-      <div className="flex items-center py-3.5 border-b border-custom-border-100 justify-between">
+      <div className="flex items-center py-3.5 border-b  border-custom-border-100 justify-between">
         <h3 className="text-xl font-medium">Labels</h3>
         <Button variant="primary" onClick={newLabel} size="sm">
           Add label
         </Button>
       </div>
-      <div className="space-y-3 py-6 h-full w-full">
+      <div className="space-y-3 py-6 overflow-auto  w-full">
         {labelForm && (
           <CreateUpdateLabelInline
             labelForm={labelForm}
@@ -98,45 +119,87 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           />
         )}
 
-        {/* labels */}
-        {projectLabels &&
-          projectLabels.map((label) => {
-            const children = projectLabels?.filter((l) => l.parent === label.id);
+        <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
+          {projectLabels &&
+            projectLabels.map((label, index) => {
+              const children = projectLabels?.filter((l) => l.parent === label.id);
+              if (children && children.length === 0 && label.parent) {
+                return <div />;
+              }
 
-            if (children && children.length === 0) {
-              if (!label.parent)
+              if (children && children.length === 0) {
                 return (
-                  <ProjectSettingLabelItem
-                    key={label.id}
-                    label={label}
-                    addLabelToGroup={() => addLabelToGroup(label)}
-                    editLabel={(label) => {
-                      editLabel(label);
-                      scrollToRef.current?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                    }}
-                    handleLabelDelete={() => setSelectDeleteLabel(label)}
-                  />
+                  <Droppable
+                    key={`child.label.droppable.${label.id}`}
+                    droppableId={`child.label.droppable.${label.id}`}
+                    isCombineEnabled={true}
+                    ignoreContainerClipping={true}
+                  >
+                    {(droppableProvided, droppableSnapshot) => (
+                      <div
+                        className={`max-h-full mt-3`}
+                        ref={droppableProvided.innerRef}
+                        {...droppableProvided.droppableProps}
+                      >
+                        <Draggable
+                          isDragDisabled={index == 6}
+                          key={`child.label.draggable.${label.id}`}
+                          draggableId={`child.label.draggable.${label.id}`}
+                          index={index}
+                        >
+                          {(provided, snapshot) => {
+                            if (children && children.length === 0) {
+                              if (!label.parent)
+                                return (
+                                  <div ref={provided.innerRef} {...provided.draggableProps}>
+                                    <ProjectSettingLabelItem
+                                      dragHandleProps={provided.dragHandleProps!}
+                                      droppableSnapshot={droppableSnapshot}
+                                      draggableSnapshot={snapshot}
+                                      key={label.id}
+                                      label={label}
+                                      addLabelToGroup={() => addLabelToGroup(label)}
+                                      editLabel={(label) => {
+                                        editLabel(label);
+                                        scrollToRef.current?.scrollIntoView({
+                                          behavior: "smooth",
+                                        });
+                                      }}
+                                      handleLabelDelete={() => setSelectDeleteLabel(label)}
+                                    />
+                                  </div>
+                                );
+                            }
+                          }}
+                        </Draggable>
+                        {droppableProvided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
                 );
-            } else {
-              return (
-                <ProjectSettingLabelGroup
-                  key={label.id}
-                  label={label}
-                  labelChildren={children}
-                  addLabelToGroup={addLabelToGroup}
-                  editLabel={(label) => {
-                    editLabel(label);
-                    scrollToRef.current?.scrollIntoView({
-                      behavior: "smooth",
-                    });
-                  }}
-                  handleLabelDelete={(label:IIssueLabels) => setSelectDeleteLabel(label)}
-                />
-              );
-            }
-          })}
+              } else {
+                return (
+                  <div>
+                    <ProjectSettingLabelGroup
+                      key={label.id}
+                      label={label}
+                      labelChildren={children}
+                      addLabelToGroup={addLabelToGroup}
+                      editLabel={(label) => {
+                        editLabel(label);
+                        scrollToRef.current?.scrollIntoView({
+                          behavior: "smooth",
+                        });
+                      }}
+                      handleLabelDelete={() => setSelectDeleteLabel(label)}
+                    />
+                  </div>
+                );
+              }
+            })}
+        </DragDropContext>
+
+        {/* labels */}
 
         {/* loading state */}
         {!projectLabels && (
