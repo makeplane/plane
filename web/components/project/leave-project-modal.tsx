@@ -30,7 +30,7 @@ export interface ILeaveProjectModal {
 }
 
 export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
-  const { project, isOpen } = props;
+  const { project, isOpen, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -48,6 +48,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
 
   const handleClose = () => {
     reset({ ...defaultValues });
+    onClose();
   };
 
   const onSubmit = async (data: any) => {
