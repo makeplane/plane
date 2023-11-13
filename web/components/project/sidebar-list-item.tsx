@@ -114,7 +114,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
-      <Disclosure key={project.id} defaultOpen={projectId === project.id}>
+      <Disclosure key={`${project.id} ${projectId}`} defaultOpen={projectId === project.id}>
         {({ open }) => (
           <>
             <div
