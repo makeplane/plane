@@ -4,6 +4,7 @@ from django.urls import path
 from plane.api.views import (
     FileAssetEndpoint,
     UserAssetsEndpoint,
+    AssetsEndpoint,
 )
 
 
@@ -16,6 +17,11 @@ urlpatterns = [
     path(
         "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
         FileAssetEndpoint.as_view(),
+        name="file-assets",
+    ),
+    path(
+        "<uuid:workspace_id>/<str:asset_key>/",
+        AssetsEndpoint.as_view(),
         name="file-assets",
     ),
     path(

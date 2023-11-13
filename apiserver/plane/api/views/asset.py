@@ -1,13 +1,14 @@
 # Third party imports
 from rest_framework import status
+from django.http import StreamingHttpResponse
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from sentry_sdk import capture_exception
 from django.conf import settings
 # Module imports
 from .base import BaseAPIView
 from plane.db.models import FileAsset, Workspace
 from plane.api.serializers import FileAssetSerializer
+from plane.api.permissions.workspace import WorkspaceEntityPermission
 
 
 class FileAssetEndpoint(BaseAPIView):
@@ -73,3 +74,16 @@ class UserAssetsEndpoint(BaseAPIView):
             # Delete the file object
             file_asset.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AssetsEndpoint(BaseAPIView):
+
+    permission_classes = [WorkspaceEntityPermission]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get(self, request, workspace_id, asset_key):
+
+        asset_key = str(workspace_id) + "/" + asset_key
+        file_asset = FileAsset.objects.get(workspace_id=workspace_id,asset=asset_key)
+        response = StreamingHttpResponse(file_asset.asset.open(mode='rb'), content_type='application/octet-stream')
+        return response
+

@@ -67,7 +67,7 @@ from .cycle import (
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
 )
-from .asset import FileAssetEndpoint, UserAssetsEndpoint
+from .asset import FileAssetEndpoint, UserAssetsEndpoint, AssetsEndpoint
 from .issue import (
     IssueViewSet,
     IssueListEndpoint,
