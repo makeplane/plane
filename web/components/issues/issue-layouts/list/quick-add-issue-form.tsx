@@ -10,9 +10,9 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
-import { createIssuePayload } from "constants/issue";
-// types
 import { IIssue, IProject } from "types";
+// types
+import { createIssuePayload } from "helpers/issue.helper";
 
 interface IInputProps {
   formKey: string;

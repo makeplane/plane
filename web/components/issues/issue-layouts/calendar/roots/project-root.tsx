@@ -43,7 +43,7 @@ export const CalendarLayout: React.FC = observer(() => {
         issueStore.updateIssueStructure(date, null, issue);
         issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
       } else {
-        issueStore.deleteIssue(date, null, issue);
+        issueStore.removeIssueFromStructure(date, null, issue);
         issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
       }
     },

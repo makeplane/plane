@@ -133,7 +133,7 @@ export const KanBanLayout: React.FC = observer(() => {
               stateGroups={stateGroups}
               priorities={priorities}
               labels={labels}
-              members={members?.map((m) => m.member) ?? null}
+              members={projectMembers?.map((m) => m.member) ?? null}
               projects={projects}
               enableQuickIssueCreate
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
