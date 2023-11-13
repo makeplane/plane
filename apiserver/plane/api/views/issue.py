@@ -755,6 +755,7 @@ class LabelViewSet(BaseViewSet):
             .select_related("parent")
             .order_by("name")
             .distinct()
+            .order_by("sort_order")
         )
 
 
