@@ -40,7 +40,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
   // store
   const {
     workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
-    user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, fetchCurrentUserSettings },
+    user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings },
   } = useMobxStore();
   const isAdmin = currentWorkspaceRole === 20;
   // states
@@ -56,19 +56,16 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
         .then(() => {
           const memberId = member.memberId;
 
-          if (memberId === currentUser?.id) {
-            fetchCurrentUserSettings().then((userSettings) => {
-              if (userSettings.workspace.invites > 0) router.push("/invitations");
-              else router.push("/create-workspace");
-            });
+          if (memberId === currentUser?.id && currentUserSettings) {
+            if (currentUserSettings.workspace?.invites > 0) router.push("/invitations");
+            else router.push("/create-workspace");
           }
         })
         .catch((err) => {
-          const error = err?.error;
           setToastAlert({
             type: "error",
             title: "Error",
-            message: error || "Something went wrong",
+            message: err?.error || "Something went wrong",
           });
         });
     else
@@ -81,12 +78,10 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
           });
         })
         .catch((err) => {
-          const error = err?.error;
-
           setToastAlert({
             type: "error",
             title: "Error",
-            message: error || "Something went wrong",
+            message: err?.error || "Something went wrong",
           });
         })
         .finally(() => {
