@@ -13,7 +13,6 @@ from plane.api.views import (
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
-    UserProjectInvitationsViewset,
     ## End Workspaces
 )
 
@@ -82,9 +81,4 @@ urlpatterns = [
         name="user-workspace-dashboard",
     ),
     ## End User Graph
-    path(
-        "users/me/invitations/projects/",
-        UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="user-project-invitations",
-    ),
 ]

@@ -11,12 +11,15 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 # Module imports
-from plane.db.models import Workspace, WorkspaceMemberInvite
+from plane.db.models import User, Workspace, WorkspaceMemberInvite
 
 
 @shared_task
 def workspace_invitation(email, workspace_id, token, current_site, invitor):
     try:
+
+        user = User.objects.get(email=invitor)
+
         workspace = Workspace.objects.get(pk=workspace_id)
         workspace_member_invite = WorkspaceMemberInvite.objects.get(
             token=token, email=email
@@ -34,7 +37,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         from_email_string = settings.EMAIL_FROM
 
         # Subject of the email
-        subject = f"{invitor or email} invited you to join {workspace.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} invited you to join {workspace.name} on Plane"
 
         context = {
             "email": email,
