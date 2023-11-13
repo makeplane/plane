@@ -17,13 +17,13 @@ from django.db.models import (
 )
 from django.core.validators import validate_email
 from django.conf import settings
+from django.utils import timezone
 
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseViewSet, BaseAPIView
@@ -39,6 +39,7 @@ from plane.api.serializers import (
 )
 
 from plane.api.permissions import (
+    WorkspaceUserPermission,
     ProjectBasePermission,
     ProjectEntityPermission,
     ProjectMemberPermission,
@@ -58,13 +59,6 @@ from plane.db.models import (
     ProjectIdentifier,
     Module,
     Cycle,
-    CycleFavorite,
-    ModuleFavorite,
-    PageFavorite,
-    IssueViewFavorite,
-    Page,
-    IssueAssignee,
-    ModuleMember,
     Inbox,
     ProjectDeployBoard,
     IssueProperty,
@@ -454,66 +448,46 @@ class UserProjectInvitationsViewset(BaseViewSet):
             .select_related("workspace", "workspace__owner", "project")
         )
 
-    def create(self, request):
-        # Invitations
-        invitations = request.data.get("invitations", [])
-        project_invitations = ProjectMemberInvite.objects.filter(
-            pk__in=invitations,
-            email=request.user.email,
+
+class JoinProjectEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request, slug, pk):
+        project_invite = ProjectMemberInvite.objects.get(
+            pk=pk,
+            workspace__slug=slug,
         )
 
-        # Update all the project invitations
-        for project_invitation in project_invitations:
-            ProjectMember.objects.filter(
-                project=project_invitation.project, member=request.user
-            ).update(is_active=True, role=project_invitation.role)
+        email = request.data.get("email", "")
 
-        # Workspace Member addition
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(
-                    workspace_id=invitation.workspace_id,
-                    member=request.user,
-                    role=invitation.role if invitation.role in [5, 10, 15] else 15,
-                    created_by=request.user,
+        if email == "" or project_invite.email != email:
+            return Response(
+                {"error": "You do not have permission to join the project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if project_invite.responded_at is None:
+            project_invite.accepted = request.data.get("accepted", False)
+            project_invite.responded_at = timezone.now()
+            project_invite.save()
+
+            if project_invite.accepted:
+                return Response(
+                    {"message": "Project Invitation Accepted"},
+                    status=status.HTTP_200_OK,
                 )
-                for invitation in project_invitations
-            ],
-            ignore_conflicts=True,
+
+            return Response(
+                {"message": "Project Invitation was not accepted"},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {"error": "You have already responded to the invitation request"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
-
-        # Check if any of the projects user was previously a member then activate
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    project=invitation.project,
-                    workspace=invitation.project.workspace,
-                    member=request.user,
-                    role=invitation.role,
-                    created_by=request.user,
-                )
-                for invitation in project_invitations
-            ],
-            ignore_conflicts=True,
-        )
-
-        IssueProperty.objects.bulk_create(
-            [
-                ProjectMember(
-                    project=invitation.project,
-                    workspace=invitation.project.workspace,
-                    user=request.user,
-                    created_by=request.user,
-                )
-                for invitation in project_invitations
-            ],
-            ignore_conflicts=True,
-        )
-
-        # Delete joined project invites
-        project_invitations.delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -559,7 +533,6 @@ class ProjectMemberViewSet(BaseViewSet):
             ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member_id__in=[member.get("member_id") for member in members],
-                is_active=True,
             )
             .values("member_id", "sort_order")
             .order_by("sort_order")
@@ -859,6 +832,11 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
 
 class ProjectJoinEndpoint(BaseAPIView):
+    """For joining all the public projects"""
+    permission_classes = [
+        WorkspaceUserPermission,
+    ]
+
     def post(self, request, slug):
         project_ids = request.data.get("project_ids", [])
 
@@ -877,9 +855,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                 ProjectMember(
                     project_id=project_id,
                     member=request.user,
-                    role=20
-                    if workspace_role >= 15
-                    else (15 if workspace_role == 10 else workspace_role),
+                    role=15 if workspace_role >= 15 else 10,
                     workspace=workspace,
                     created_by=request.user,
                 )

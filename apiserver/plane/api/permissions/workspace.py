@@ -90,3 +90,13 @@ class WorkspaceViewerPermission(BasePermission):
             role__gte=10,
             is_active=True,
         ).exists()
+
+
+class WorkspaceUserPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        return WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            is_active=True,
+        )
