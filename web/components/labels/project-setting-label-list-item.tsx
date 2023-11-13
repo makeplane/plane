@@ -11,7 +11,6 @@ import { DraggableProvidedDragHandleProps, DraggableStateSnapshot, DroppableStat
 
 type Props = {
   label: IIssueLabels;
-  addLabelToGroup: (parentLabel: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
   handleLabelDelete: () => void;
   droppableSnapshot: DroppableStateSnapshot;
@@ -20,15 +19,7 @@ type Props = {
 };
 
 export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
-  const {
-    label,
-    addLabelToGroup,
-    editLabel,
-    handleLabelDelete,
-    droppableSnapshot,
-    draggableSnapshot,
-    dragHandleProps,
-  } = props;
+  const { label, editLabel, handleLabelDelete, droppableSnapshot, draggableSnapshot, dragHandleProps } = props;
 
   const [isMenuActive, setIsMenuActive] = useState(false);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
@@ -46,7 +37,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
       <div className="flex items-center">
         <button
           type="button"
-          className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-1 hover:opacity-100 ${
+          className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-1 group-hover:opacity-100 ${
             draggableSnapshot.isDragging ? "opacity-100" : "opacity-0"
           }`}
           {...dragHandleProps}
@@ -78,12 +69,6 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
             </div>
           }
         >
-          <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
-            <span className="flex items-center justify-start gap-2">
-              <Component className="h-4 w-4 leading-4 text-custom-sidebar-text-400 flex-shrink-0" />
-              <span>Convert to group</span>
-            </span>
-          </CustomMenu.MenuItem>
           <CustomMenu.MenuItem onClick={() => editLabel(label)}>
             <span className="flex items-center justify-start gap-2">
               <Pencil className="h-4 w-4" />

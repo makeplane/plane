@@ -8,7 +8,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { CustomMenu } from "@plane/ui";
 // icons
-import { ChevronDown, Component, MoreVertical, Pencil, Plus, Trash2, X } from "lucide-react";
+import { ChevronDown, Component, MoreVertical, Pencil, Trash2, X } from "lucide-react";
 // types
 import { IIssueLabels } from "types";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
@@ -18,11 +18,10 @@ type Props = {
   labelChildren: IIssueLabels[];
   handleLabelDelete: (label: IIssueLabels) => void;
   editLabel: (label: IIssueLabels) => void;
-  addLabelToGroup: (parentLabel: IIssueLabels) => void;
 };
 
 export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
-  const { label, labelChildren, addLabelToGroup, editLabel, handleLabelDelete } = props;
+  const { label, labelChildren, editLabel, handleLabelDelete } = props;
 
   // router
   const router = useRouter();
@@ -62,12 +61,6 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                     </div>
                     <div className="flex items-center gap-2">
                       <CustomMenu ellipsis buttonClassName="!text-custom-sidebar-text-400">
-                        <CustomMenu.MenuItem onClick={() => addLabelToGroup(label)}>
-                          <span className="flex items-center justify-start gap-2">
-                            <Plus className="h-4 w-4" />
-                            <span>Add more labels</span>
-                          </span>
-                        </CustomMenu.MenuItem>
                         <CustomMenu.MenuItem onClick={() => editLabel(label)}>
                           <span className="flex items-center justify-start gap-2">
                             <Pencil className="h-4 w-4" />
@@ -102,7 +95,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                     <Disclosure.Panel>
                       <div className="mt-2.5 ml-6">
                         {labelChildren.map((child, index) => (
-                          <div className={`group w-full flex items-center text-sm`}>
+                          <div key={child.id} className={`group w-full flex items-center text-sm`}>
                             <Draggable
                               key={`child.label.draggable.${child.id}`}
                               draggableId={`child.label.draggable.${child.id}`}
@@ -123,7 +116,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                                 >
                                   <button
                                     type="button"
-                                    className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-2 hover:opacity-100  ${
+                                    className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-2 group-hover:opacity-100  ${
                                       snapshot.isDragging ? "opacity-100" : "opacity-0"
                                     }`}
                                     {...provided.dragHandleProps}

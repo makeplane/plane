@@ -9,7 +9,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import {
   CreateUpdateLabelInline,
   DeleteLabelModal,
-  LabelsListModal,
   ProjectSettingLabelItem,
   ProjectSettingLabelGroup,
 } from "components/labels";
@@ -32,9 +31,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // states
   const [labelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [labelsListModal, setLabelsListModal] = useState(false);
   const [labelToUpdate, setLabelToUpdate] = useState<IIssueLabels | null>(null);
-  const [parentLabel, setParentLabel] = useState<IIssueLabels | undefined>(undefined);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
 
   // ref
@@ -56,10 +53,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     setLabelForm(true);
   };
 
-  const addLabelToGroup = (parentLabel: IIssueLabels) => {
-    setLabelsListModal(true);
-    setParentLabel(parentLabel);
-  };
 
   const editLabel = (label: IIssueLabels) => {
     setLabelForm(true);
@@ -90,20 +83,19 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
   return (
     <>
-      <LabelsListModal isOpen={labelsListModal} parent={parentLabel} handleClose={() => setLabelsListModal(false)} />
       <DeleteLabelModal
         isOpen={!!selectDeleteLabel}
         data={selectDeleteLabel ?? null}
         onClose={() => setSelectDeleteLabel(null)}
       />
 
-      <div className="flex items-center py-3.5 border-b  border-custom-border-100 justify-between">
+      <div className="flex items-center py-3.5 border-b border-custom-border-100 justify-between">
         <h3 className="text-xl font-medium">Labels</h3>
         <Button variant="primary" onClick={newLabel} size="sm">
           Add label
         </Button>
       </div>
-      <div className="space-y-3 py-6 overflow-auto  w-full">
+      <div className="space-y-3 py-6 overflow-auto w-full">
         {labelForm && (
           <CreateUpdateLabelInline
             labelForm={labelForm}
@@ -118,13 +110,13 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
             }}
           />
         )}
-
+        {/* labels */}
         <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
           {projectLabels &&
             projectLabels.map((label, index) => {
               const children = projectLabels?.filter((l) => l.parent === label.id);
               if (children && children.length === 0 && label.parent) {
-                return <div />;
+                return <div key={index} />;
               }
 
               if (children && children.length === 0) {
@@ -142,7 +134,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                         {...droppableProvided.droppableProps}
                       >
                         <Draggable
-                          isDragDisabled={index == 6}
                           key={`child.label.draggable.${label.id}`}
                           draggableId={`child.label.draggable.${label.id}`}
                           index={index}
@@ -158,7 +149,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                                       draggableSnapshot={snapshot}
                                       key={label.id}
                                       label={label}
-                                      addLabelToGroup={() => addLabelToGroup(label)}
                                       editLabel={(label) => {
                                         editLabel(label);
                                         scrollToRef.current?.scrollIntoView({
@@ -179,12 +169,11 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                 );
               } else {
                 return (
-                  <div>
+                  <div key={label.id}>
                     <ProjectSettingLabelGroup
                       key={label.id}
                       label={label}
                       labelChildren={children}
-                      addLabelToGroup={addLabelToGroup}
                       editLabel={(label) => {
                         editLabel(label);
                         scrollToRef.current?.scrollIntoView({
@@ -198,8 +187,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
               }
             })}
         </DragDropContext>
-
-        {/* labels */}
 
         {/* loading state */}
         {!projectLabels && (
