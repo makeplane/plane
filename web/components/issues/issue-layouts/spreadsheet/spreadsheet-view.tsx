@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
-import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetInlineCreateIssueForm } from "components/issues";
+import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetQuickAddIssueForm } from "components/issues";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner } from "@plane/ui";
 // types
@@ -134,7 +134,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
         <div className="border-t border-custom-border-100">
           <div className="mb-3 z-50 sticky bottom-0 left-0">
-            {enableQuickCreateIssue && <SpreadsheetInlineCreateIssueForm />}
+            {enableQuickCreateIssue && <SpreadsheetQuickAddIssueForm formKey="name" />}
           </div>
 
           {/* {!disableUserActions &&
