@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // types
 import { RootStore } from "../root";
 import { IIssueLabels } from "types";
@@ -9,8 +9,14 @@ import { ProjectService } from "services/project";
 export interface IProjectLabelStore {
   loader: boolean;
   error: any | null;
-
-  // labels
+  labels: {
+    [projectId: string]: IIssueLabels[] | null; // project_id: labels
+  } | null;
+  // computed
+  projectLabels: IIssueLabels[] | null;
+  // actions
+  getProjectLabelById: (labelId: string) => IIssueLabels | null;
+  fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
   createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabels>) => Promise<IIssueLabels>;
   updateLabel: (
     workspaceSlug: string,
@@ -24,7 +30,9 @@ export interface IProjectLabelStore {
 export class ProjectLabelStore implements IProjectLabelStore {
   loader: boolean = false;
   error: any | null = null;
-
+  labels: {
+    [projectId: string]: IIssueLabels[]; // projectId: labels
+  } | null = {};
   // root store
   rootStore;
   // service
@@ -34,10 +42,14 @@ export class ProjectLabelStore implements IProjectLabelStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
-      loader: observable,
-      error: observable,
-
-      // labels
+      loader: observable.ref,
+      error: observable.ref,
+      labels: observable.ref,
+      // computed
+      projectLabels: computed,
+      // actions
+      getProjectLabelById: action,
+      fetchProjectLabels: action,
       createLabel: action,
       updateLabel: action,
       deleteLabel: action,
@@ -47,6 +59,41 @@ export class ProjectLabelStore implements IProjectLabelStore {
     this.projectService = new ProjectService();
     this.issueLabelService = new IssueLabelService();
   }
+
+  get projectLabels() {
+    if (!this.rootStore.project.projectId) return null;
+    return this.labels?.[this.rootStore.project.projectId]?.sort((a, b) => a.name.localeCompare(b.name)) || null;
+  }
+
+  getProjectLabelById = (labelId: string) => {
+    if (!this.rootStore.project.projectId) return null;
+    const labels = this.projectLabels;
+    if (!labels) return null;
+    const labelInfo: IIssueLabels | null = labels.find((label) => label.id === labelId) || null;
+    return labelInfo;
+  };
+
+  fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const labelResponse = await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.labels = {
+          ...this.labels,
+          [projectId]: labelResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error(error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
 
   createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabels>) => {
     try {
@@ -58,9 +105,9 @@ export class ProjectLabelStore implements IProjectLabelStore {
       );
 
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
-          [projectId]: [response, ...(this.rootStore.project.labels?.[projectId] || [])],
+        this.labels = {
+          ...this.labels,
+          [projectId]: [response, ...(this.labels?.[projectId] || [])],
         };
       });
 
@@ -72,15 +119,13 @@ export class ProjectLabelStore implements IProjectLabelStore {
   };
 
   updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabels>) => {
-    const originalLabel = this.rootStore.project.getProjectLabelById(labelId);
+    const originalLabel = this.getProjectLabelById(labelId);
 
     runInAction(() => {
-      this.rootStore.project.labels = {
-        ...this.rootStore.project.labels,
+      this.labels = {
+        ...this.labels,
         [projectId]:
-          this.rootStore.project.labels?.[projectId]?.map((label) =>
-            label.id === labelId ? { ...label, ...data } : label
-          ) || [],
+          this.labels?.[projectId]?.map((label) => (label.id === labelId ? { ...label, ...data } : label)) || [],
       };
     });
 
@@ -97,9 +142,9 @@ export class ProjectLabelStore implements IProjectLabelStore {
     } catch (error) {
       console.log("Failed to update label from project store");
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
-          [projectId]: (this.rootStore.project.labels?.[projectId] || [])?.map((label) =>
+        this.labels = {
+          ...this.labels,
+          [projectId]: (this.labels?.[projectId] || [])?.map((label) =>
             label.id === labelId ? { ...label, ...originalLabel } : label
           ),
         };
@@ -109,12 +154,12 @@ export class ProjectLabelStore implements IProjectLabelStore {
   };
 
   deleteLabel = async (workspaceSlug: string, projectId: string, labelId: string) => {
-    const originalLabelList = this.rootStore.project.projectLabels;
+    const originalLabelList = this.projectLabels;
 
     runInAction(() => {
-      this.rootStore.project.labels = {
-        ...this.rootStore.project.labels,
-        [projectId]: (this.rootStore.project.labels?.[projectId] || [])?.filter((label) => label.id !== labelId),
+      this.labels = {
+        ...this.labels,
+        [projectId]: (this.labels?.[projectId] || [])?.filter((label) => label.id !== labelId),
       };
     });
 
@@ -130,8 +175,8 @@ export class ProjectLabelStore implements IProjectLabelStore {
       console.log("Failed to delete label from project store");
       // reverting back to original label list
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
+        this.labels = {
+          ...this.labels,
           [projectId]: originalLabelList || [],
         };
       });

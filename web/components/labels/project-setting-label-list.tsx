@@ -27,7 +27,9 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { project: projectStore, projectLabel: projectLabelStore } = useMobxStore();
+  const {
+    projectLabel: { fetchProjectLabels, projectLabels, updateLabel },
+  } = useMobxStore();
   // states
   const [labelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -40,19 +42,13 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // api call to fetch project details
   useSWR(
     workspaceSlug && projectId ? "PROJECT_LABELS" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
   );
-
-  // derived values
-  const projectLabels = projectStore.projectLabels;
 
   const newLabel = () => {
     setIsUpdating(false);
     setLabelForm(true);
   };
-
 
   const editLabel = (label: IIssueLabels) => {
     setLabelForm(true);
@@ -66,7 +62,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
     // single -> single || single -> group || group -> group
     if (childLabel && parentLabel && result.reason == "DROP" && childLabel != parentLabel) {
-      projectLabelStore.updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
+      updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
         parent: parentLabel,
       });
       return;
@@ -74,7 +70,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
     // Parent -> NULL
     if (result.reason == "DROP" && !result.combine && !result.destination) {
-      projectLabelStore.updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
+      updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
         parent: null,
       });
       return;

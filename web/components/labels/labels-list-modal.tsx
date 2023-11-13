@@ -27,7 +27,9 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { projectLabel: projectLabelStore, project: projectStore } = useMobxStore();
+  const {
+    projectLabel: { projectLabels, fetchProjectLabels, updateLabel },
+  } = useMobxStore();
 
   // states
   const [query, setQuery] = useState("");
@@ -35,14 +37,10 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   // api call to fetch project details
   useSWR(
     workspaceSlug && projectId ? "PROJECT_LABELS" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   // derived values
-  const projectLabels = projectStore.projectLabels;
-
   const filteredLabels: IIssueLabels[] =
     query === ""
       ? projectLabels ?? []
@@ -56,7 +54,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   const addChildLabel = async (label: IIssueLabels) => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+    await updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
       parent: parent?.id!,
     });
   };
