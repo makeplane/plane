@@ -45,13 +45,13 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
               <div
                 className={`grid h-6 w-6 place-items-center rounded border items-center shadow-sm ${
                   issue.priority === "urgent"
-                    ? "border-red-500/20 bg-red-500/20 text-red-500"
+                    ? "border-red-500/20 bg-red-500/20"
                     : issue.priority === "high"
-                    ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                    ? "border-orange-500/20 bg-orange-500/20"
                     : issue.priority === "medium"
-                    ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                    ? "border-yellow-500/20 bg-yellow-500/20"
                     : issue.priority === "low"
-                    ? "border-green-500/20 bg-green-500/20 text-green-500"
+                    ? "border-green-500/20 bg-green-500/20"
                     : "border-custom-border-200"
                 }`}
               >
