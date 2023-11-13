@@ -7,18 +7,25 @@ from plane.db.models import BaseModel
 from plane.db.mixins import AuditModel
 
 class Instance(BaseModel):
+    # General informations
+    instance_name = models.CharField(max_length=255)
+    whitelist_emails = models.TextField(blank=True, null=True)
     instance_id = models.CharField(max_length=25, unique=True)
-    license_key = models.CharField(max_length=256)
+    license_key = models.CharField(max_length=256, null=True, blank=True)
     api_key = models.CharField(max_length=16)
     version = models.CharField(max_length=10)
+    # User information
     email = models.CharField(max_length=256)
-    user = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name="instance_owner",
     )
+    # Instnace specifics
     last_checked_at = models.DateTimeField()
+    namespace = models.CharField(max_length=50, blank=True, null=True)
+    # telemetry and support
     is_telemetry_enabled = models.BooleanField(default=True)
     is_support_required = models.BooleanField(default=True)
 
@@ -30,7 +37,8 @@ class Instance(BaseModel):
 
 
 
-class InstanceConfiguration(AuditModel):
+class InstanceConfiguration(BaseModel):
+    # The instance configuration variables
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField(null=True, blank=True, default=None)
 
