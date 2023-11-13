@@ -26,7 +26,7 @@ export const WebhookLists: FC<IWebHookLists> = observer((props) => {
       </div>
 
       <div className="divide-y divide-custom-border-200 overflow-y-scroll">
-        {webhookStore.webhooks.map((item) => (
+        {Object.values(webhookStore.webhooks).map((item) => (
           <WebhooksListItem workspaceSlug={workspaceSlug} webhook={item} />
         ))}
       </div>

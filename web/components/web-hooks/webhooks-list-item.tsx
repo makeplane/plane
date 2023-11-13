@@ -3,6 +3,8 @@ import { ToggleSwitch } from "@plane/ui";
 import { Pencil, XCircle } from "lucide-react";
 import { IWebhook } from "types";
 import Link from "next/link";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 interface IWebhookListItem {
   workspaceSlug: string;
@@ -12,7 +14,13 @@ interface IWebhookListItem {
 export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
   const { workspaceSlug, webhook } = props;
 
-  const [toggle, setToggle] = useState(false);
+  const { webhook: webhookStore }: RootStore = useMobxStore();
+
+  const handleToggle = () => {
+    if (webhook.id) {
+      webhookStore.update(workspaceSlug, webhook.id, { ...webhook, is_active: !webhook.is_active }).catch(() => {});
+    }
+  };
 
   return (
     <div>
@@ -24,9 +32,9 @@ export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
           </div> */}
           </div>
-          {/* <div className="flex gap-4 items-center">
-          <ToggleSwitch value={toggle} onChange={(value) => setToggle(!toggle)} />
-        </div> */}
+          <div className="flex gap-4 items-center">
+            <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
+          </div>
         </div>
       </Link>
     </div>

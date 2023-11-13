@@ -4,13 +4,14 @@ import type { NextPage } from "next";
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingHeader } from "components/headers";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
-import { WebhookDetails } from "components/web-hooks";
+import { WebHookForm } from "components/web-hooks";
 import { IWebhook, IExtendedWebhook } from "types";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { renderDateFormat } from "helpers/date-time.helper";
 import { csvDownload } from "helpers/download.helper";
 import useToast from "hooks/use-toast";
+import { WebHookFormTypes } from "components/web-hooks/WebHookForm/WebHookTypes";
+import { getCurrentHookAsCSV } from "components/web-hooks/utils";
 
 const Webhooks: NextPage = () => {
   const router = useRouter();
@@ -48,45 +49,18 @@ const Webhooks: NextPage = () => {
 
     return webhookStore
       .create(workspaceSlug, payload)
-      .then((webhook) => {
+      .then(({ webHook, secretKey }) => {
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Successfully created",
         });
-        csvDownload(
-          [
-            [
-              "id",
-              "url",
-              "created_at",
-              "updated_at",
-              "is_active",
-              "secret_key",
-              "project",
-              "issue",
-              "module",
-              "cycle",
-              "issue_comment",
-              "workspace",
-            ],
-            [
-              webhook.id!,
-              webhook.url!,
-              renderDateFormat(webhook.updated_at!),
-              renderDateFormat(webhook.created_at!),
-              webhookStore.webhookSecretKey!,
-              String(webhook.is_active!),
-              String(webhook.issue!),
-              String(webhook.project!),
-              String(webhook.module!),
-              String(webhook.cycle!),
-              String(webhook.issue_comment!),
-              workspaceStore.currentWorkspace?.name!,
-            ],
-          ],
-          "Secret-key"
-        );
+        const csvData = getCurrentHookAsCSV(workspaceStore.currentWorkspace, webHook, secretKey);
+        csvDownload(csvData, `Secret-key-${Date.now()}`);
+
+        if (webHook && webHook.id) {
+          router.push({ pathname: `/${workspaceSlug}/settings/webhooks/${webHook.id}`, query: { isCreated: true } });
+        }
       })
       .catch((error) => {
         setToastAlert({
@@ -105,7 +79,7 @@ const Webhooks: NextPage = () => {
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
         <div className="w-full overflow-y-auto py-3 pr-4">
-          <WebhookDetails type="create" initialData={initialWebhookPayload} onSubmit={onSubmit} />
+          <WebHookForm type={WebHookFormTypes.CREATE} initialData={initialWebhookPayload} onSubmit={onSubmit} />
         </div>
       </WorkspaceSettingLayout>
     </AppLayout>

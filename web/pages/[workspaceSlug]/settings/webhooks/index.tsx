@@ -32,7 +32,7 @@ const Webhooks: NextPage = observer(() => {
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
         <div className="w-full overflow-y-auto py-3 pr-4">
-          {webhooks.length > 0 ? (
+          {Object.keys(webhooks).length > 0 ? (
             isLoading ? (
               <div className="flex h-full w-ful items-center justify-center">
                 <Spinner />

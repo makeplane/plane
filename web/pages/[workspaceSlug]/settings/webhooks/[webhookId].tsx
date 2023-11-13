@@ -7,7 +7,7 @@ import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
-import { WebhookDetails } from "components/web-hooks";
+import { WebHookForm } from "components/web-hooks";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
@@ -15,23 +15,30 @@ import { RootStore } from "store/root";
 import { IExtendedWebhook, IWebhook } from "types";
 import { Spinner } from "@plane/ui";
 import { useEffect } from "react";
+import { WebHookFormTypes } from "components/web-hooks/WebHookForm/WebHookTypes";
 
 const Webhooks: NextPage = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, webhookId } = router.query as { workspaceSlug: string; webhookId: string };
+  const { workspaceSlug, webhookId, isCreated } = router.query as {
+    workspaceSlug: string;
+    webhookId: string;
+    isCreated: string;
+  };
 
   const { webhook: webhookStore }: RootStore = useMobxStore();
 
   useEffect(() => {
-    webhookStore.clearSecretKey();
+    if (isCreated !== "true") {
+      webhookStore.clearSecretKey();
+    }
   }, []);
 
   const { isLoading } = useSWR(
     workspaceSlug && webhookId ? `WEBHOOKS_DETAIL_${workspaceSlug}_${webhookId}` : null,
     workspaceSlug && webhookId
       ? async () => {
-        await webhookStore.fetchById(workspaceSlug, webhookId);
-      }
+          await webhookStore.fetchById(workspaceSlug, webhookId);
+        }
       : null
   );
 
@@ -54,13 +61,13 @@ const Webhooks: NextPage = observer(() => {
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
         <div className="w-full overflow-y-auto py-3 pr-4">
-          {isLoading ?
+          {isLoading ? (
             <div className="flex w-full h-full items-center justify-center">
               <Spinner />
             </div>
-            :
-            <WebhookDetails type="edit" initialData={initialPayload} onSubmit={onSubmit} />
-          }
+          ) : (
+            <WebHookForm type={WebHookFormTypes.EDIT} initialData={initialPayload} onSubmit={onSubmit} />
+          )}
         </div>
       </WorkspaceSettingLayout>
     </AppLayout>

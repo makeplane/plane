@@ -1,0 +1,115 @@
+import { useState, FC } from "react";
+import { Button } from "@plane/ui";
+import { Copy, RefreshCw } from "lucide-react";
+import { observer } from "mobx-react-lite";
+import { RootStore } from "store/root";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { copyTextToClipboard } from "helpers/string.helper";
+import { useRouter } from "next/router";
+import useToast from "hooks/use-toast";
+import { csvDownload } from "helpers/download.helper";
+import { WebHookFormTypes } from "./WebHookTypes";
+import { getCurrentHookAsCSV } from "../utils";
+
+interface IGenerateKey {
+  type: WebHookFormTypes.CREATE | WebHookFormTypes.EDIT;
+}
+
+export const GenerateKey: FC<IGenerateKey> = observer((props) => {
+  const { type } = props;
+  const [regenerating, setRegenerate] = useState(false);
+  const router = useRouter();
+  const { workspaceSlug, webhookId } = router.query as { workspaceSlug: string; webhookId: string };
+  const { webhook: webhookStore, workspace: workspaceStore }: RootStore = useMobxStore();
+  const { setToastAlert } = useToast();
+
+  const handleCopySecret = () => {
+    if (webhookStore.webhookSecretKey) {
+      navigator.clipboard.writeText(webhookStore.webhookSecretKey);
+      setToastAlert({
+        title: "Success",
+        type: "success",
+        message: "Secret key copied",
+      });
+    } else {
+      setToastAlert({
+        title: "Oops",
+        type: "error",
+        message: "Error occurred while copying secret key",
+      });
+    }
+  };
+
+  function handleRegenerate() {
+    setRegenerate(true);
+    webhookStore
+      .regenerate(workspaceSlug, webhookId)
+      .then(() => {
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Successfully regenerated",
+        });
+
+        const csvData = getCurrentHookAsCSV(
+          workspaceStore.currentWorkspace,
+          webhookStore.currentWebhook,
+          webhookStore.webhookSecretKey
+        );
+        csvDownload(csvData, `Secret-key-${Date.now()}`);
+      })
+      .catch((err) => {
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: err?.error,
+        });
+      })
+      .finally(() => {
+        setRegenerate(false);
+      });
+  }
+
+  return (
+    <>
+      {(type === WebHookFormTypes.EDIT || (type === WebHookFormTypes.CREATE && webhookStore?.webhookSecretKey)) && (
+        <div className="space-y-2">
+          <div className="text-sm font-medium">Secret Key</div>
+          <div className="text-sm text-neutral-400">Genarate a token to sign-in the webhook payload</div>
+
+          <div className="flex gap-5">
+            <div className="relative flex items-center p-2 rounded w-full border border-custom-border-200">
+              <div className="w-full overflow-hidden px-2 font-medium select-none">
+                {webhookStore?.webhookSecretKey ? (
+                  <div>{webhookStore?.webhookSecretKey}</div>
+                ) : (
+                  <div className="flex items-center gap-1.5">
+                    {[...Array(41)].map((_, index) => (
+                      <div key={index} className="w-[4px] h-[4px] bg-gray-300 rounded-full"></div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {webhookStore?.webhookSecretKey && (
+                <div
+                  className="w-7 h-7 flex-shrink-0 flex justify-center items-center cursor-pointer hover:bg-custom-background-80 rounded"
+                  onClick={() => copyTextToClipboard(webhookStore?.webhookSecretKey || "")}
+                >
+                  <Copy onClick={handleCopySecret} className="text-custom-text-400 w-4 h-4" />
+                </div>
+              )}
+            </div>
+            <div>
+              {type != WebHookFormTypes.CREATE && (
+                <Button disabled={regenerating} onClick={handleRegenerate} className="">
+                  <RefreshCw className={`h-3 w-3`} />
+                  {regenerating ? "Re-generating..." : "Re-genarate Key"}
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+});

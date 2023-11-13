@@ -3,7 +3,7 @@ export const addDays = ({ date, days }: { date: Date; days: number }): Date => {
   return date;
 };
 
-export const renderDateFormat = (date: string | Date | null, dayFirst: boolean = false) => {
+export const renderDateFormat = (date: string | Date | null | undefined, dayFirst: boolean = false) => {
   if (!date) return "N/A";
 
   var d = new Date(date),

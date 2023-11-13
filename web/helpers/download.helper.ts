@@ -1,7 +1,11 @@
-import { IApiToken } from "types/api_token";
-import { renderDateFormat } from "./date-time.helper";
+export const csvDownload = (data: Array<Array<string>> | { [key: string]: string }, name: string) => {
+  let rows = [];
 
-export const csvDownload = (rows: Array<Array<string>>, name: string) => {
+  if (Array.isArray(data)) {
+    rows = [...data];
+  } else {
+    rows = [Object.keys(data), Object.values(data)];
+  }
 
   let csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
   var encodedUri = encodeURI(csvContent);

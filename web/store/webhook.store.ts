@@ -5,51 +5,47 @@ import { WebhookService } from "services/webhook.service";
 
 export interface IWebhookStore {
   loader: boolean;
-  error: any | null;
+  error: any | undefined;
 
-  webhooks: IWebhook[] | [];
-  webhook_id: string | null;
-  webhook_detail: {
-    [webhook_id: string]: IWebhook;
-  } | null;
-  webhookSecretKey: string | null;
+  webhooks: { [webhookId: string]: IWebhook };
+  currentWebhookId: string | undefined;
+  webhookSecretKey: string | undefined;
 
   // computed
-  currentWebhook: IWebhook | null;
+  currentWebhook: IWebhook | undefined;
 
   // actions
   fetchWebhooks: (workspaceSlug: string) => Promise<IWebhook[]>;
   fetchById: (workspaceSlug: string, webhook_id: string) => Promise<IWebhook>;
-  create: (workspaceSlug: string, data: IWebhook) => Promise<IWebhook>;
-  update: (workspaceSlug: string, webhook_id: string, data: IWebhook) => Promise<IWebhook>;
+  create: (workspaceSlug: string, data: IWebhook) => Promise<{ webHook: IWebhook; secretKey: string | undefined }>;
+  update: (workspaceSlug: string, webhook_id: string, data: Partial<IWebhook>) => Promise<IWebhook>;
   remove: (workspaceSlug: string, webhook_id: string) => Promise<void>;
-  regenerate: (workspaceSlug: string, webhook_id: string) => Promise<IWebhook>;
+  regenerate: (
+    workspaceSlug: string,
+    webhook_id: string
+  ) => Promise<{ webHook: IWebhook; secretKey: string | undefined }>;
   clearSecretKey: () => void;
 }
 
 export class WebhookStore implements IWebhookStore {
   loader: boolean = false;
-  error: any | null = null;
+  error: any | undefined = undefined;
 
-  webhooks: IWebhook[] | [] = [];
-  webhook_id: string | null = null;
-  webhook_detail: {
-    [webhook_id: string]: IWebhook;
-  } | null = null;
-  webhookSecretKey: string | null = null;
+  webhooks: { [webhookId: string]: IWebhook } = {};
+  currentWebhookId: string | undefined = undefined;
+  webhookSecretKey: string | undefined = undefined;
 
   // root store
   rootStore;
   webhookService;
 
-  constructor(_rootStore: any | null = null) {
+  constructor(_rootStore: any | undefined = undefined) {
     makeObservable(this, {
       loader: observable.ref,
       error: observable.ref,
 
       webhooks: observable.ref,
-      webhook_id: observable.ref,
-      webhook_detail: observable.ref,
+      currentWebhookId: observable.ref,
       webhookSecretKey: observable.ref,
 
       currentWebhook: computed,
@@ -67,21 +63,29 @@ export class WebhookStore implements IWebhookStore {
   }
 
   get currentWebhook() {
-    if (!this.webhook_id) return null;
-    const currentWebhook = this.webhook_detail ? this.webhook_detail[this.webhook_id] : null;
+    if (!this.currentWebhookId) return undefined;
+    const currentWebhook = this.webhooks ? this.webhooks[this.currentWebhookId] : undefined;
     return currentWebhook;
   }
 
   fetchWebhooks = async (workspaceSlug: string) => {
     try {
       this.loader = true;
-      this.error = null;
+      this.error = undefined;
       const webhookResponse = await this.webhookService.getAll(workspaceSlug);
 
+      const webHookObject: { [webhookId: string]: IWebhook } = webhookResponse.reduce((accumulator, currentWebhook) => {
+        if (currentWebhook && currentWebhook.id) {
+          return { ...accumulator, [currentWebhook.id]: currentWebhook };
+        } else {
+          return accumulator;
+        }
+      }, {});
+
       runInAction(() => {
-        this.webhooks = webhookResponse;
+        this.webhooks = webHookObject;
         this.loader = true;
-        this.error = null;
+        this.error = undefined;
       });
 
       return webhookResponse;
@@ -98,16 +102,19 @@ export class WebhookStore implements IWebhookStore {
 
       const _secretKey = webhookResponse?.secret_key;
       delete webhookResponse?.secret_key;
-      const _webhooks = [...this.webhooks, webhookResponse];
+      const _webhooks = this.webhooks;
+
+      if (webhookResponse && webhookResponse.id) {
+        _webhooks[webhookResponse.id] = webhookResponse;
+      }
+
       runInAction(() => {
-        this.webhookSecretKey = _secretKey || null;
+        this.webhookSecretKey = _secretKey || undefined;
         this.webhooks = _webhooks;
-        this.webhook_detail = { ...this.webhook_detail, [webhookResponse.id!]: webhookResponse };
-        this.webhook_id = webhookResponse.id!;
-        console.log(this.webhook_detail);
+        this.currentWebhookId = webhookResponse.id;
       });
 
-      return webhookResponse;
+      return { webHook: webhookResponse, secretKey: _secretKey };
     } catch (error) {
       console.log(error);
       throw error;
@@ -118,13 +125,14 @@ export class WebhookStore implements IWebhookStore {
     try {
       const webhookResponse = await this.webhookService.getById(workspaceSlug, webhook_id);
 
-      const _webhook_detail = {
-        ...this.webhook_detail,
-        [webhook_id]: webhookResponse,
-      };
+      const _webhooks = this.webhooks;
+
+      if (webhookResponse && webhookResponse.id) {
+        _webhooks[webhookResponse.id] = webhookResponse;
+      }
       runInAction(() => {
-        this.webhook_id = webhook_id;
-        this.webhook_detail = _webhook_detail;
+        this.currentWebhookId = webhook_id;
+        this.webhooks = _webhooks;
       });
 
       return webhookResponse;
@@ -134,21 +142,26 @@ export class WebhookStore implements IWebhookStore {
     }
   };
 
-  update = async (workspaceSlug: string, webhook_id: string, data: IWebhook) => {
+  update = async (workspaceSlug: string, webhook_id: string, data: Partial<IWebhook>) => {
     try {
+      let _webhooks = this.webhooks;
+
+      if (webhook_id) {
+        _webhooks = { ..._webhooks, [webhook_id]: { ...this.webhooks[webhook_id], ...data } };
+      }
+
+      runInAction(() => {
+        this.webhooks = _webhooks;
+      });
+
       const webhookResponse = await this.webhookService.update(workspaceSlug, webhook_id, data);
 
-      const _updatedWebhooks = this.webhooks.map((element) => {
-        if (element.id === webhook_id) {
-          return webhookResponse;
-        } else {
-          return element;
-        }
-      });
-      const _webhookDetail = { ...this.webhook_detail, [webhook_id]: webhookResponse };
+      if (webhookResponse && webhookResponse.id) {
+        _webhooks = { ..._webhooks, [webhookResponse.id]: { ...webhookResponse } };
+      }
+
       runInAction(() => {
-        this.webhooks = _updatedWebhooks;
-        this.webhook_detail = _webhookDetail;
+        this.webhooks = _webhooks;
       });
 
       return webhookResponse;
@@ -162,12 +175,10 @@ export class WebhookStore implements IWebhookStore {
     try {
       await this.webhookService.remove(workspaceSlug, webhook_id);
 
-      const _webhooks = this.webhooks.filter((element) => element.id != webhook_id);
-      const _webhookDetail = { ...this.webhook_detail };
-      delete _webhookDetail[webhook_id];
+      const _webhooks = this.webhooks;
+      delete _webhooks[webhook_id];
       runInAction(() => {
         this.webhooks = _webhooks;
-        this.webhook_detail = _webhookDetail;
       });
     } catch (error) {
       console.log(error);
@@ -178,11 +189,20 @@ export class WebhookStore implements IWebhookStore {
   regenerate = async (workspaceSlug: string, webhook_id: string) => {
     try {
       const webhookResponse = await this.webhookService.regenerate(workspaceSlug, webhook_id);
+
+      const _secretKey = webhookResponse?.secret_key;
+      delete webhookResponse?.secret_key;
+      const _webhooks = this.webhooks;
+
+      if (webhookResponse && webhookResponse.id) {
+        _webhooks[webhookResponse.id] = webhookResponse;
+      }
+
       runInAction(() => {
-        this.webhookSecretKey = webhookResponse.secret_key!;
-        this.webhook_detail = { ...this.webhook_detail, [webhook_id]: webhookResponse };
+        this.webhookSecretKey = _secretKey || undefined;
+        this.webhooks = _webhooks;
       });
-      return webhookResponse;
+      return { webHook: webhookResponse, secretKey: _secretKey };
     } catch (error) {
       console.log(error);
       throw error;
@@ -190,6 +210,6 @@ export class WebhookStore implements IWebhookStore {
   };
 
   clearSecretKey = () => {
-    this.webhookSecretKey = null;
+    this.webhookSecretKey = undefined;
   };
 }
