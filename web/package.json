@@ -49,7 +49,6 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.38.0",
     "react-markdown": "^8.0.7",
-    "react-no-ssr": "^1.1.0",
     "react-popper": "^2.3.0",
     "sharp": "^0.32.1",
     "swr": "^2.1.3",

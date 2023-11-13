@@ -1,9 +1,7 @@
 import { ReactElement } from "react";
 import Head from "next/head";
-import Router from "next/router";
 import { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
-import NProgress from "nprogress";
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
@@ -21,12 +19,6 @@ import { MobxStoreProvider } from "lib/mobx/store-provider";
 import { AppProvider } from "lib/app-provider";
 // types
 import { NextPageWithLayout } from "types/app";
-
-// nprogress
-NProgress.configure({ showSpinner: false });
-Router.events.on("routeChangeStart", NProgress.start);
-Router.events.on("routeChangeError", NProgress.done);
-Router.events.on("routeChangeComplete", NProgress.done);
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
