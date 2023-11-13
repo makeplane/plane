@@ -14,8 +14,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# To access webhook
+ENABLE_WEBHOOK = os.environ.get("ENABLE_WEBHOOK", "1") == "1"
+
 # To access plane api through api tokens
-ENABLE_WEBHOOK_API = os.environ.get("ENABLE_WEBHOOK_API", "0") == "1"
+ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
 
 # Application definition
 

@@ -222,4 +222,7 @@ ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
 
 # Webhook API
-ENABLE_WEBHOOK_API = os.environ.get("ENABLE_WEBHOOK_API", "1") == "1"
+ENABLE_WEBHOOK = os.environ.get("ENABLE_WEBHOOK", "1") == "1"
+
+# API
+ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
