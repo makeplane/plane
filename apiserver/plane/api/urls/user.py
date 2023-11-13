@@ -9,11 +9,7 @@ from plane.api.views import (
     ChangePasswordEndpoint,
     ## End User
     ## Workspaces
-    UserWorkspaceInvitationsEndpoint,
     UserWorkSpacesEndpoint,
-    JoinWorkspaceEndpoint,
-    UserWorkspaceInvitationsEndpoint,
-    UserWorkspaceInvitationEndpoint,
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
@@ -86,12 +82,6 @@ urlpatterns = [
         name="user-workspace-dashboard",
     ),
     ## End User Graph
-    path(
-        "users/me/invitations/workspaces/<str:slug>/<uuid:pk>/join/",
-        JoinWorkspaceEndpoint.as_view(),
-        name="user-join-workspace",
-    ),
-    # user project invitations
     path(
         "users/me/invitations/projects/",
         UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),

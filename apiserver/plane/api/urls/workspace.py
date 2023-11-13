@@ -2,8 +2,9 @@ from django.urls import path
 
 
 from plane.api.views import (
+    UserWorkspaceInvitationsViewSet,
     WorkSpaceViewSet,
-    InviteWorkspaceEndpoint,
+    WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
     WorkspaceInvitationsViewset,
     WorkspaceMemberUserEndpoint,
@@ -49,13 +50,13 @@ urlpatterns = [
         name="workspace",
     ),
     path(
-        "workspaces/<str:slug>/invite/",
-        InviteWorkspaceEndpoint.as_view(),
-        name="invite-workspace",
-    ),
-    path(
         "workspaces/<str:slug>/invitations/",
-        WorkspaceInvitationsViewset.as_view({"get": "list"}),
+        WorkspaceInvitationsViewset.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            },
+        ),
         name="workspace-invitations",
     ),
     path(
@@ -68,6 +69,23 @@ urlpatterns = [
         ),
         name="workspace-invitations",
     ),
+    # user workspace invitations
+    path(
+        "users/me/workspaces/invitations/",
+        UserWorkspaceInvitationsViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            },
+        ),
+        name="user-workspace-invitations",
+    ),
+    path(
+        "workspaces/<str:slug>/invitations/<uuid:pk>/join/",
+        WorkspaceJoinEndpoint.as_view(),
+        name="workspace-join",
+    ),
+    # user join workspace
     path(
         "workspaces/<str:slug>/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),

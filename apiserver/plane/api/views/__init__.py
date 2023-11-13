@@ -31,13 +31,11 @@ from .workspace import (
     WorkSpaceViewSet,
     UserWorkSpacesEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
-    InviteWorkspaceEndpoint,
-    JoinWorkspaceEndpoint,
+    WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
     TeamMemberViewSet,
     WorkspaceInvitationsViewset,
-    UserWorkspaceInvitationsEndpoint,
-    UserWorkspaceInvitationEndpoint,
+    UserWorkspaceInvitationsViewSet,
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -52,7 +50,12 @@ from .workspace import (
     WorkspaceLabelsEndpoint,
 )
 from .state import StateViewSet
-from .view import GlobalViewViewSet, GlobalViewIssuesViewSet, IssueViewViewSet, IssueViewFavoriteViewSet
+from .view import (
+    GlobalViewViewSet,
+    GlobalViewIssuesViewSet,
+    IssueViewViewSet,
+    IssueViewFavoriteViewSet,
+)
 from .cycle import (
     CycleViewSet,
     CycleIssueViewSet,
@@ -160,7 +163,11 @@ from .analytic import (
     DefaultAnalyticsEndpoint,
 )
 
-from .notification import NotificationViewSet, UnreadNotificationEndpoint, MarkAllReadNotificationViewSet
+from .notification import (
+    NotificationViewSet,
+    UnreadNotificationEndpoint,
+    MarkAllReadNotificationViewSet,
+)
 
 from .exporter import ExportIssuesEndpoint
 

@@ -22,13 +22,18 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             token=token, email=email
         )
 
-        realtivelink = (
-            f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}"
+        # Relative link
+        relative_link = (
+            f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"
         )
-        abs_url = current_site + realtivelink
 
+        # The complete url including the domain
+        abs_url = current_site + relative_link
+
+        # The email from
         from_email_string = settings.EMAIL_FROM
 
+        # Subject of the email
         subject = f"{invitor or email} invited you to join {workspace.name} on Plane"
 
         context = {

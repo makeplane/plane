@@ -2,7 +2,6 @@
 import jwt
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-from uuid import uuid4
 
 # Django imports
 from django.db import IntegrityError
@@ -26,13 +25,11 @@ from django.db.models import (
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
-from django.contrib.auth.hashers import make_password
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # Module imports
 from plane.api.serializers import (
@@ -223,12 +220,25 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 
-class InviteWorkspaceEndpoint(BaseAPIView):
+class WorkspaceInvitationsViewset(BaseViewSet):
+    """Endpoint for creating, listing and  deleting workspaces"""
+
+    serializer_class = WorkSpaceMemberInviteSerializer
+    model = WorkspaceMemberInvite
+
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
 
-    def post(self, request, slug):
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "workspace__owner", "created_by")
+        )
+
+    def create(self, request, slug):
         emails = request.data.get("emails", [])
         # Check if email is provided
         if not emails:
@@ -236,12 +246,14 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # check for role level
+        # check for role level of the requesting user
         requesting_user = WorkspaceMember.objects.get(
             workspace__slug=slug,
             member=request.user,
             is_active=True,
         )
+
+        # Check if any invited user has an higher role
         if len(
             [
                 email
@@ -254,6 +266,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get the workspace object
         workspace = Workspace.objects.get(slug=slug)
 
         # Check if user is already a member of workspace
@@ -301,20 +314,20 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        WorkspaceMemberInvite.objects.bulk_create(
+        # Create workspace member invite
+        workspace_invitations = WorkspaceMemberInvite.objects.bulk_create(
             workspace_invitations, batch_size=10, ignore_conflicts=True
         )
 
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(
-            email__in=[email.get("email") for email in emails]
-        ).select_related("workspace")
+        current_site = f"{request.scheme}://{request.get_host()}",
 
+        # Send invitations
         for invitation in workspace_invitations:
             workspace_invitation.delay(
                 invitation.email,
                 workspace.id,
                 invitation.token,
-                settings.WEB_URL,
+                current_site,
                 request.user.email,
             )
 
@@ -325,11 +338,19 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    def destroy(self, request, slug, pk):
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(
+            pk=pk, workspace__slug=slug
+        )
+        workspace_member_invite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class JoinWorkspaceEndpoint(BaseAPIView):
+
+class WorkspaceJoinEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
+    """Invitation response endpoint the user can respond to the invitation"""
 
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
@@ -338,12 +359,14 @@ class JoinWorkspaceEndpoint(BaseAPIView):
 
         email = request.data.get("email", "")
 
+        # Check the email
         if email == "" or workspace_invite.email != email:
             return Response(
                 {"error": "You do not have permission to join the workspace"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # If already responded then return error
         if workspace_invite.responded_at is None:
             workspace_invite.accepted = request.data.get("accepted", False)
             workspace_invite.responded_at = timezone.now()
@@ -371,6 +394,7 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                             role=workspace_invite.role,
                         )
 
+                    # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
 
@@ -382,6 +406,7 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                     status=status.HTTP_200_OK,
                 )
 
+            # Workspace invitation rejected
             return Response(
                 {"message": "Workspace Invitation was not accepted"},
                 status=status.HTTP_200_OK,
@@ -392,32 +417,13 @@ class JoinWorkspaceEndpoint(BaseAPIView):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-
-class WorkspaceInvitationsViewset(BaseViewSet):
-    serializer_class = WorkSpaceMemberInviteSerializer
-    model = WorkspaceMemberInvite
-
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner", "created_by")
-        )
-
-    def destroy(self, request, slug, pk):
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
-        workspace_member_invite.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get(self, request, slug, pk):
+        workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
+        serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserWorkspaceInvitationsEndpoint(BaseViewSet):
+class UserWorkspaceInvitationsViewSet(BaseViewSet):
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
@@ -431,19 +437,19 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
         )
 
     def create(self, request):
-        invitations = request.data.get("invitations")
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(pk__in=invitations).order_by("-created_at")
+        invitations = request.data.get("invitations", [])
+        workspace_invitations = WorkspaceMemberInvite.objects.filter(
+            pk__in=invitations, email=request.user.email
+        ).order_by("-created_at")
 
+        # If the user is already a member of workspace and was deactivated then activate the user
         for invitation in workspace_invitations:
             # Update the WorkspaceMember for this specific invitation
             WorkspaceMember.objects.filter(
-                workspace_id=invitation.workspace_id,
-                member=request.user
-            ).update(
-                is_active=True,
-                role=invitation.role
-            )
+                workspace_id=invitation.workspace_id, member=request.user
+            ).update(is_active=True, role=invitation.role)
 
+        # Bulk create the user for all the workspaces
         WorkspaceMember.objects.bulk_create(
             [
                 WorkspaceMember(
@@ -721,23 +727,6 @@ class TeamMemberViewSet(BaseViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserWorkspaceInvitationEndpoint(BaseViewSet):
-    model = WorkspaceMemberInvite
-    serializer_class = WorkSpaceMemberInviteSerializer
-
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(pk=self.kwargs.get("pk"))
-            .select_related("workspace")
-        )
 
 
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
