@@ -158,7 +158,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -172,7 +172,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-80 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div className="space-y-5">
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -290,10 +290,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" type="submit" loading={isSubmitting}>
+                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {isSubmitting
                           ? `${fields && fields.length > 1 ? "Adding Members..." : "Adding Member..."}`
                           : `${fields && fields.length > 1 ? "Add Members" : "Add Member"}`}

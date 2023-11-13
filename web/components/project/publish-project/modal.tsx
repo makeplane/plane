@@ -276,7 +276,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -290,7 +290,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 border border-custom-border-100 text-left shadow-xl transition-all w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
+              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                   {/* heading */}
                   <div className="px-6 pt-4 flex items-center justify-between gap-2">
@@ -464,19 +464,19 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     </div>
                     {!projectPublishStore.fetchSettingsLoader && (
                       <div className="relative flex items-center gap-2">
-                        <Button variant="neutral-primary" onClick={handleClose}>
+                        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                           Cancel
                         </Button>
                         {project.is_deployed ? (
                           <>
                             {isUpdateRequired && (
-                              <Button variant="primary" type="submit" loading={isSubmitting}>
+                              <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                                 {isSubmitting ? "Updating..." : "Update settings"}
                               </Button>
                             )}
                           </>
                         ) : (
-                          <Button variant="primary" type="submit" loading={isSubmitting}>
+                          <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                             {isSubmitting ? "Publishing..." : "Publish"}
                           </Button>
                         )}
