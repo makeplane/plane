@@ -34,6 +34,9 @@ export interface IProjectStore {
 
   currentProjectDetails: IProject | undefined;
 
+  projectLabelIds: (isLayoutRender?: boolean) => string[];
+  workspaceProjectIds: () => string[];
+
   // actions
   setProjectId: (projectId: string | null) => void;
   setSearchQuery: (query: string) => void;
@@ -194,6 +197,18 @@ export class ProjectStore implements IProjectStore {
 
   setSearchQuery = (query: string) => {
     this.searchQuery = query;
+  };
+
+  projectLabelIds = (isLayoutRender: boolean = false) => {
+    if (!this.projectLabels) return [];
+    let labelIds = (this.projectLabels ?? []).map((label) => label.id);
+    labelIds = isLayoutRender ? [...labelIds, "None"] : labelIds;
+    return labelIds;
+  };
+
+  workspaceProjectIds = () => {
+    if (!this.workspaceProjects) return [];
+    return (this.workspaceProjects ?? []).map((workspace) => workspace.id);
   };
 
   /**

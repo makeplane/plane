@@ -110,6 +110,8 @@ import {
   InboxStore,
 } from "store/inbox";
 
+import { ProjectIssueStore, IProjectIssueStore } from "store/project-issues/issue.store";
+
 import { IMentionsStore, MentionsStore } from "store/editor";
 
 enableStaticRendering(typeof window === "undefined");
@@ -151,6 +153,7 @@ export class RootStore {
   projectViewIssueCalendarView: IProjectViewIssueCalendarViewStore;
 
   issueFilter: IIssueFilterStore;
+
   issueDetail: IIssueDetailStore;
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: IIssueCalendarViewStore;
@@ -179,6 +182,8 @@ export class RootStore {
   inboxFilters: IInboxFiltersStore;
 
   mentionsStore: IMentionsStore;
+
+  projectIssues: IProjectIssueStore;
 
   constructor() {
     this.appConfig = new AppConfigStore(this);
@@ -244,5 +249,7 @@ export class RootStore {
     this.inboxFilters = new InboxFiltersStore(this);
 
     this.mentionsStore = new MentionsStore(this);
+
+    this.projectIssues = new ProjectIssueStore(this);
   }
 }
