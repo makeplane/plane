@@ -51,6 +51,8 @@ urlpatterns = [
     *workspace_urls,
 ]
 
-if settings.ENABLE_WEBHOOK_API:
+if settings.ENABLE_WEBHOOK:
     urlpatterns += webhook_urls
+
+if settings.ENABLE_API:
     urlpatterns += api_urls

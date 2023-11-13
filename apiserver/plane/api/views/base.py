@@ -51,7 +51,7 @@ class WebhookMixin:
             self.webhook_event
             and self.request.method in ["POST", "PATCH", "DELETE"]
             and response.status_code in [200, 201, 204]
-            and settings.ENABLE_WEBHOOK_API
+            and settings.ENABLE_WEBHOOK
         ):
             send_webhook.delay(
                 event=self.webhook_event,

@@ -14,7 +14,7 @@ urlpatterns = [
     path("", include("plane.web.urls")),
 ]
 
-if settings.ENABLE_WEBHOOK_API:
+if settings.ENABLE_API:
     urlpatterns += path("api/v1/", include("plane.proxy.urls")),
 
 if settings.DEBUG:
