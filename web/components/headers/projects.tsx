@@ -16,9 +16,7 @@ export const ProjectsHeader = observer(() => {
   const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : [];
 
   return (
-    <div
-      className={`relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4`}
-    >
+    <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
         <div>
           <Breadcrumbs>
@@ -43,7 +41,7 @@ export const ProjectsHeader = observer(() => {
           </div>
         )}
 
-        <Button prependIcon={<Plus />} size="md" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
+        <Button prependIcon={<Plus />} size="sm" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
           Add Project
         </Button>
       </div>
