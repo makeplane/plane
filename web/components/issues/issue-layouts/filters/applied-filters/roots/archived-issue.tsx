@@ -12,7 +12,11 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { archivedIssueFilters: archivedIssueFiltersStore, project: projectStore } = useMobxStore();
+  const {
+    archivedIssueFilters: archivedIssueFiltersStore,
+    project: projectStore,
+    projectState: projectStateStore,
+  } = useMobxStore();
 
   const userFilters = archivedIssueFiltersStore.userFilters;
 
@@ -74,7 +78,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
         members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-        states={projectStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
     </div>
   );

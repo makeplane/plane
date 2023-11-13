@@ -295,6 +295,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
                 if (!data)
                   return (
                     <RichTextEditorWithRef
+                      cancelUploadImage={fileService.cancelUpload}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
                       ref={editorRef}
@@ -316,6 +317,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
 
                 return (
                   <RichTextEditorWithRef
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}

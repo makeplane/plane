@@ -2,6 +2,7 @@
 import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
+import axios from "axios";
 
 export interface UnSplashImage {
   id: string;
@@ -28,23 +29,36 @@ export interface UnSplashImageUrls {
 }
 
 export class FileService extends APIService {
+  private cancelSource: any;
+
   constructor() {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
     this.deleteImage = this.deleteImage.bind(this);
+    this.cancelUpload = this.cancelUpload.bind(this);
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
+    this.cancelSource = axios.CancelToken.source();
     return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
       headers: {
         ...this.getHeaders(),
         "Content-Type": "multipart/form-data",
       },
+      cancelToken: this.cancelSource.token,
     })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        if (axios.isCancel(error)) {
+          console.log(error.message);
+        } else {
+          throw error?.response?.data;
+        }
       });
+  }
+
+  cancelUpload() {
+    this.cancelSource.cancel("Upload cancelled");
   }
 
   getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {

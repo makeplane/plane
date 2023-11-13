@@ -1,7 +1,5 @@
 import React from "react";
-// react beautiful dnd
 import { DragDropContext } from "@hello-pangea/dnd";
-// mobx
 import { observer } from "mobx-react-lite";
 // components
 import { KanBanSwimLanes } from "../swimlanes";
@@ -17,6 +15,7 @@ export interface IViewKanBanLayout {}
 export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const {
     project: projectStore,
+    projectState: projectStateStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueKanBanView: issueKanBanViewStore,
@@ -54,12 +53,12 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
     issueStore.updateIssueStructure(group_by, sub_group_by, issue);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.projectStates || null;
+  const projects = projectStateStore?.projectStates || null;
   const estimates = null;
 
   return null;

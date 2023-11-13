@@ -3,26 +3,22 @@ import { observer } from "mobx-react-lite";
 // icons
 import { StateGroupIcon } from "@plane/ui";
 import { X } from "lucide-react";
-// helpers
-import { getStatesList } from "helpers/state.helper";
 // types
-import { IStateResponse } from "types";
+import { IState } from "types";
 
 type Props = {
   handleRemove: (val: string) => void;
-  states: IStateResponse | undefined;
+  states: IState[];
   values: string[];
 };
 
 export const AppliedStateFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, states, values } = props;
 
-  const statesList = getStatesList(states);
-
   return (
     <div className="flex items-center gap-1 flex-wrap">
       {values.map((stateId) => {
-        const stateDetails = statesList?.find((s) => s.id === stateId);
+        const stateDetails = states?.find((s) => s.id === stateId);
 
         if (!stateDetails) return null;
 

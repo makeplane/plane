@@ -5,10 +5,8 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-// helper
-import { truncateText } from "helpers/string.helper";
 // ui
-import { Breadcrumbs, BreadcrumbItem, LayersIcon } from "@plane/ui";
+import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // icons
 import { ArrowLeft } from "lucide-react";
 // components
@@ -22,7 +20,11 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { project: projectStore, archivedIssueFilters: archivedIssueFiltersStore } = useMobxStore();
+  const {
+    project: projectStore,
+    archivedIssueFilters: archivedIssueFiltersStore,
+    projectState: projectStateStore,
+  } = useMobxStore();
 
   const { currentProjectDetails } = projectStore;
 
@@ -118,7 +120,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
             }
             labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
             members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-            states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+            states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">

@@ -19,7 +19,14 @@ import {
   IIssueQuickAddStore,
   IssueQuickAddStore,
 } from "store/issue";
-import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
+import {
+  IWorkspaceFilterStore,
+  IWorkspaceStore,
+  WorkspaceFilterStore,
+  WorkspaceStore,
+  WorkspaceMemberStore,
+  IWorkspaceMemberStore,
+} from "store/workspace";
 import {
   IProjectPublishStore,
   IProjectStore,
@@ -113,6 +120,7 @@ export class RootStore {
   commandPalette: ICommandPaletteStore;
   workspace: IWorkspaceStore;
   workspaceFilter: IWorkspaceFilterStore;
+  workspaceMember: IWorkspaceMemberStore;
 
   projectPublish: IProjectPublishStore;
   project: IProjectStore;
@@ -176,6 +184,7 @@ export class RootStore {
 
     this.workspace = new WorkspaceStore(this);
     this.workspaceFilter = new WorkspaceFilterStore(this);
+    this.workspaceMember = new WorkspaceMemberStore(this);
 
     this.project = new ProjectStore(this);
     this.projectState = new ProjectStateStore(this);

@@ -25,6 +25,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectState: projectStateStore,
     cycleIssue: cycleIssueStore,
     issueFilter: issueFilterStore,
     cycleIssueKanBanView: cycleIssueKanBanViewStore,
@@ -98,7 +99,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     cycleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
   };
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
   const members = projectStore?.projectMembers || null;

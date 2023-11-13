@@ -1,7 +1,9 @@
 import { FC } from "react";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
-
 // ui
 import { Loader } from "@plane/ui";
 // types
@@ -14,8 +16,10 @@ export interface ICyclesList {
   projectId: string;
 }
 
-export const CyclesList: FC<ICyclesList> = (props) => {
+export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { cycles, filter, workspaceSlug, projectId } = props;
+
+  const { commandPalette: commandPaletteStore } = useMobxStore();
 
   return (
     <>
@@ -53,12 +57,7 @@ export const CyclesList: FC<ICyclesList> = (props) => {
                 <button
                   type="button"
                   className="text-custom-primary-100 text-sm outline-none"
-                  onClick={() => {
-                    const e = new KeyboardEvent("keydown", {
-                      key: "q",
-                    });
-                    document.dispatchEvent(e);
-                  }}
+                  onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
                 >
                   Create a new cycle
                 </button>
@@ -75,4 +74,4 @@ export const CyclesList: FC<ICyclesList> = (props) => {
       )}
     </>
   );
-};
+});

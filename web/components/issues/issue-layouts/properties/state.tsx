@@ -41,7 +41,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     placement,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const { workspace: workspaceStore, projectState: projectStateStore }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -50,7 +50,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
   const projectStates: IState[] = [];
-  const projectStatesByGroup = projectId && projectStore?.states?.[projectId];
+  const projectStatesByGroup = projectStateStore.groupedProjectStates;
   if (projectStatesByGroup)
     for (const group in projectStatesByGroup) projectStates.push(...projectStatesByGroup[group]);
 
@@ -59,7 +59,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     if (workspaceSlug && projectId)
       workspaceSlug &&
         projectId &&
-        projectStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
+        projectStateStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const dropdownOptions = projectStates?.map((state) => ({
@@ -94,7 +94,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
         {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
-        <span className="truncate line-clamp-1 inline-block">{value?.name ?? "State"}</span>
+        <span className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">{value?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -104,7 +104,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       {workspaceSlug && projectId && (
         <Combobox
           as="div"
-          className={`flex-shrink-0 text-left w-auto max-w-full ${className}`}
+          className={`text-left w-auto max-w-full ${className}`}
           value={value.id}
           onChange={(data: string) => {
             const selectedState = projectStates?.find((state) => state.id === data);
@@ -116,7 +116,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
+              className={`flex items-center justify-between h-5 gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
               onClick={() => !projectStatesByGroup && fetchProjectStates()}
