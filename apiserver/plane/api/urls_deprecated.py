@@ -124,7 +124,7 @@ from plane.api.views import (
     ## End Modules
     # Pages
     PageViewSet,
-    PageTransactionEndpoint,
+    PageLogEndpoint,
     SubPagesEndpoint,
     PageFavoriteViewSet,
     CreateIssueFromBlockEndpoint,
@@ -1268,11 +1268,11 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/transactions/",
-        PageTransactionEndpoint.as_view(), name="page-transactions"
+        PageLogEndpoint.as_view(), name="page-transactions"
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/transactions/<uuid:transaction>/",
-        PageTransactionEndpoint.as_view(), name="page-transactions"
+        PageLogEndpoint.as_view(), name="page-transactions"
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/sub-pages/",

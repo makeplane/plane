@@ -43,7 +43,7 @@ class Page(ProjectBaseModel):
         return f"{self.owned_by.email} <{self.name}>"
 
 
-class PageTransaction(ProjectBaseModel):
+class PageLog(ProjectBaseModel):
     TYPE_CHOICES = (
         ("to_do", "To Do"),
         ("issue", "issue"),
@@ -59,7 +59,7 @@ class PageTransaction(ProjectBaseModel):
     )
     transaction = models.UUIDField(null=True)
     page = models.ForeignKey(
-        Page, related_name="page_relation", on_delete=models.CASCADE
+        Page, related_name="page_log", on_delete=models.CASCADE
     )
     entity_identifier = models.UUIDField(null=True)
     entity_name = models.CharField(
@@ -71,9 +71,9 @@ class PageTransaction(ProjectBaseModel):
 
     class Meta:
         unique_together = ["page", "transaction"]
-        verbose_name = "Page Transaction"
-        verbose_name_plural = "Page Transactions"
-        db_table = "page_transactions"
+        verbose_name = "Page Log"
+        verbose_name_plural = "Page Logs"
+        db_table = "page_logs"
         ordering = ("-created_at",)
     
     def __str__(self):

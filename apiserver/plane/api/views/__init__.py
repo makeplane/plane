@@ -145,7 +145,7 @@ from .importer import (
 from .page import (
     PageViewSet,
     PageFavoriteViewSet,
-    PageTransactionEndpoint,
+    PageLogEndpoint,
     SubPagesEndpoint,
     CreateIssueFromBlockEndpoint,
 )

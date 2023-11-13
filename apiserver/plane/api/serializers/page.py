@@ -6,7 +6,7 @@ from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import Page, PageTransaction, PageFavorite, PageLabel, Label, Issue, Module
+from plane.db.models import Page, PageLog, PageFavorite, PageLabel, Label, Issue, Module
 
 
 class PageSerializer(BaseSerializer):
@@ -84,7 +84,7 @@ class SubPageSerializer(BaseSerializer):
     entity_details = serializers.SerializerMethodField()
 
     class Meta:
-        model = PageTransaction
+        model = PageLog
         fields = "__all__"
         read_only_fields = [
             "workspace",
@@ -103,10 +103,10 @@ class SubPageSerializer(BaseSerializer):
         return None
 
 
-class PageTransactionSerializer(BaseSerializer):
+class PageLogSerializer(BaseSerializer):
 
     class Meta:
-        model = PageTransaction
+        model = PageLog
         fields = "__all__"
         read_only_fields = [
             "workspace",

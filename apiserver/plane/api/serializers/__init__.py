@@ -85,7 +85,7 @@ from .integration import (
 
 from .importer import ImporterSerializer
 
-from .page import PageSerializer, PageTransactionSerializer, SubPageSerializer, PageFavoriteSerializer
+from .page import PageSerializer, PageLogSerializer, SubPageSerializer, PageFavoriteSerializer
 
 from .estimate import (
     EstimateSerializer,
