@@ -149,29 +149,38 @@ export const ProjectSidebarList: FC = observer(() => {
                             </button>
                           </div>
                         )}
-                        <Disclosure.Panel as="div" className="space-y-2">
-                          {orderedFavProjects.map((project, index) => (
-                            <Draggable
-                              key={project.id}
-                              draggableId={project.id}
-                              index={index}
-                              isDragDisabled={!project.is_member}
-                            >
-                              {(provided, snapshot) => (
-                                <div ref={provided.innerRef} {...provided.draggableProps}>
-                                  <ProjectSidebarListItem
-                                    key={project.id}
-                                    project={project}
-                                    provided={provided}
-                                    snapshot={snapshot}
-                                    handleCopyText={() => handleCopyText(project.id)}
-                                    shortContextMenu
-                                  />
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        </Disclosure.Panel>
+                        <Transition
+                          enter="transition duration-100 ease-out"
+                          enterFrom="transform scale-95 opacity-0"
+                          enterTo="transform scale-100 opacity-100"
+                          leave="transition duration-75 ease-out"
+                          leaveFrom="transform scale-100 opacity-100"
+                          leaveTo="transform scale-95 opacity-0"
+                        >
+                          <Disclosure.Panel as="div" className="space-y-2">
+                            {orderedFavProjects.map((project, index) => (
+                              <Draggable
+                                key={project.id}
+                                draggableId={project.id}
+                                index={index}
+                                isDragDisabled={!project.is_member}
+                              >
+                                {(provided, snapshot) => (
+                                  <div ref={provided.innerRef} {...provided.draggableProps}>
+                                    <ProjectSidebarListItem
+                                      key={project.id}
+                                      project={project}
+                                      provided={provided}
+                                      snapshot={snapshot}
+                                      handleCopyText={() => handleCopyText(project.id)}
+                                      shortContextMenu
+                                    />
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                          </Disclosure.Panel>
+                        </Transition>
                         {provided.placeholder}
                       </>
                     )}

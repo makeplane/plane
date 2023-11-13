@@ -3,28 +3,26 @@ import { DragDropContext, Draggable, DropResult } from "@hello-pangea/dnd";
 import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { MoreVertical } from "lucide-react";
 // hooks
-import { useChart } from "./hooks";
+import { useChart } from "components/gantt-chart/hooks";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { GanttInlineCreateIssueForm } from "components/issues";
+import { ModuleGanttSidebarBlock } from "components/modules";
 // helpers
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
-import { IBlockUpdateData, IGanttBlock } from "./types";
+import { IBlockUpdateData, IGanttBlock } from "components/gantt-chart";
 
 type Props = {
   title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
-  sidebarBlockToRender: (block: any) => React.ReactNode;
   enableReorder: boolean;
-  enableQuickIssueCreate?: boolean;
 };
 
-export const GanttSidebar: React.FC<Props> = (props) => {
+export const ModuleGanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, sidebarBlockToRender, enableReorder, enableQuickIssueCreate } = props;
+  const { title, blockUpdateHandler, blocks, enableReorder } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -130,7 +128,9 @@ export const GanttSidebar: React.FC<Props> = (props) => {
                               </button>
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
-                              <div className="flex-grow truncate">{sidebarBlockToRender(block.data)}</div>
+                              <div className="flex-grow truncate">
+                                <ModuleGanttSidebarBlock data={block.data} />
+                              </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
                               </div>
@@ -151,7 +151,6 @@ export const GanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-            <GanttInlineCreateIssueForm />
           </div>
         )}
       </StrictModeDroppable>

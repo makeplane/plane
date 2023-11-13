@@ -26,7 +26,11 @@ const defaultValues: Partial<IProjectView> = {
 };
 
 export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
-  const { project: projectStore, projectState: projectStateStore } = useMobxStore();
+  const {
+    project: projectStore,
+    projectState: projectStateStore,
+    projectMember: { projectMembers },
+  } = useMobxStore();
 
   const {
     control,
@@ -137,7 +141,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
                     labels={projectStore.projectLabels ?? undefined}
-                    members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
+                    members={projectMembers?.map((m) => m.member) ?? undefined}
                     states={projectStateStore.projectStates ?? undefined}
                   />
                 </FiltersDropdown>
@@ -151,7 +155,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
                 labels={projectStore.projectLabels ?? undefined}
-                members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
+                members={projectMembers?.map((m) => m.member) ?? undefined}
                 states={projectStateStore.projectStates ?? undefined}
               />
             </div>

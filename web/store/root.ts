@@ -38,6 +38,8 @@ import {
   ProjectLabelStore,
   ProjectEstimatesStore,
   IProjectEstimateStore,
+  ProjectMemberStore,
+  IProjectMemberStore,
 } from "store/project";
 import {
   IModuleFilterStore,
@@ -116,8 +118,8 @@ export class RootStore {
   user: IUserStore;
   theme: IThemeStore;
   appConfig: IAppConfigStore;
-
   commandPalette: ICommandPaletteStore;
+
   workspace: IWorkspaceStore;
   workspaceFilter: IWorkspaceFilterStore;
   workspaceMember: IWorkspaceMemberStore;
@@ -127,6 +129,8 @@ export class RootStore {
   projectState: IProjectStateStore;
   projectLabel: IProjectLabelStore;
   projectEstimates: IProjectEstimateStore;
+  projectMember: IProjectMemberStore;
+
   issue: IIssueStore;
 
   module: IModuleStore;
@@ -191,6 +195,7 @@ export class RootStore {
     this.projectLabel = new ProjectLabelStore(this);
     this.projectEstimates = new ProjectEstimatesStore(this);
     this.projectPublish = new ProjectPublishStore(this);
+    this.projectMember = new ProjectMemberStore(this);
 
     this.module = new ModuleStore(this);
     this.moduleIssue = new ModuleIssueStore(this);

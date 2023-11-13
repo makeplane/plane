@@ -80,7 +80,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -93,7 +93,7 @@ export const ParentIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <Combobox
                   value={value}
                   onChange={(val) => {

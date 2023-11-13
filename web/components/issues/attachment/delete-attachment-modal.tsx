@@ -74,7 +74,7 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-75 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -88,8 +88,8 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:my-8 sm:w-[40rem]">
-                  <div className="bg-custom-background-80 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
+                  <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
                       <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                         <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
@@ -108,12 +108,14 @@ export const DeleteAttachmentModal: React.FC<Props> = ({ isOpen, setIsOpen, data
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end gap-2 bg-custom-background-90 p-4 sm:px-6">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                  <div className="flex justify-end gap-2 p-4 sm:px-6">
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
                     <Button
                       variant="danger"
+                      size="sm"
+                      tabIndex={1}
                       onClick={() => {
                         handleDeletion(data.id);
                         handleClose();

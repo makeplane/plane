@@ -1,10 +1,7 @@
 import { useState } from "react";
-
 import Link from "next/link";
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // ui
 import { Tooltip } from "@plane/ui";
 import { DeleteAttachmentModal } from "./delete-attachment-modal";
@@ -13,7 +10,7 @@ import { getFileIcon } from "components/icons";
 import { AlertCircle, X } from "lucide-react";
 // services
 import { IssueAttachmentService } from "services/issue";
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // fetch-key
 import { ISSUE_ATTACHMENTS, PROJECT_MEMBERS } from "constants/fetch-keys";
 // helper
@@ -25,7 +22,7 @@ import { IIssueAttachment } from "types";
 
 // services
 const issueAttachmentService = new IssueAttachmentService();
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const IssueAttachments = () => {
   const [deleteAttachment, setDeleteAttachment] = useState<IIssueAttachment | null>(null);
@@ -44,7 +41,7 @@ export const IssueAttachments = () => {
   const { data: people } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 

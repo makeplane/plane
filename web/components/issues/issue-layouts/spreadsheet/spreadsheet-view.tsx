@@ -79,7 +79,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
       <div className="h-full w-full flex flex-col">
         <div
           ref={containerRef}
-          className="flex max-h-full h-full overflow-y-auto divide-x-[0.5px] divide-custom-border-200"
+          className="flex max-h-full h-full overflow-y-auto divide-x-[0.5px] divide-custom-border-200 horizontal-scroll-enable"
         >
           {issues && issues.length > 0 ? (
             <>
