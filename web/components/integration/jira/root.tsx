@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { FormProvider, useForm } from "react-hook-form";
 // icons
-import { ArrowLeft, Check, List, Settings } from "lucide-react";
+import { ArrowLeft, Check, List, Settings, Users2 } from "lucide-react";
 // services
 import { JiraImporterService } from "services/integrations";
 // fetch keys
@@ -98,7 +98,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
   };
 
   return (
-    <div className="flex h-full flex-col space-y-2">
+    <div className="flex h-full flex-col space-y-2 mt-4">
       <Link href={`/${workspaceSlug}/settings/imports`}>
         <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
           <div>
@@ -136,9 +136,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                   }`}
                 >
                   <integration.icon
-                    width="18px"
-                    height="18px"
-                    color={index <= activeIntegrationState() ? "#ffffff" : "#d1d5db"}
+                    className={`w-5 h-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
                   />
                 </button>
                 {index < integrationWorkflowData.length - 1 && (
