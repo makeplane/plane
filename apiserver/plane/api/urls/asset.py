@@ -20,7 +20,7 @@ urlpatterns = [
         name="file-assets",
     ),
     path(
-        "<uuid:workspace_id>/<str:asset_key>/",
+        "<str:slug>/<str:asset_key>/",
         AssetsEndpoint.as_view(),
         name="file-assets",
     ),

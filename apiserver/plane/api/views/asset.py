@@ -80,10 +80,10 @@ class AssetsEndpoint(BaseAPIView):
     permission_classes = [WorkspaceEntityPermission]
     parser_classes = (MultiPartParser, FormParser)
 
-    def get(self, request, workspace_id, asset_key):
-
-        asset_key = str(workspace_id) + "/" + asset_key
-        file_asset = FileAsset.objects.get(workspace_id=workspace_id,asset=asset_key)
+    def get(self, request, slug, asset_key):
+        workspace = Workspace.objects.get(slug=slug)
+        asset_key = str(workspace.id) + "/" + asset_key
+        file_asset = FileAsset.objects.get(workspace_id=workspace.id, asset=asset_key)
         response = StreamingHttpResponse(file_asset.asset.open(mode='rb'), content_type='application/octet-stream')
         return response
 
