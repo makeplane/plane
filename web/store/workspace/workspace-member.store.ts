@@ -1,7 +1,7 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { RootStore } from "../root";
 // types
-import { IUser, IWorkspaceMember, IWorkspaceMemberInvitation, IWorkspaceBulkInviteFormData } from "types";
+import { IWorkspaceMember, IWorkspaceMemberInvitation, IWorkspaceBulkInviteFormData } from "types";
 // services
 import { WorkspaceService } from "services/workspace.service";
 
@@ -175,7 +175,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    */
   inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
     try {
-      await this.workspaceService.inviteWorkspace(workspaceSlug, data, this.rootStore.user.currentUser as IUser);
+      await this.workspaceService.inviteWorkspace(workspaceSlug, data);
       await this.fetchWorkspaceMemberInvitations(workspaceSlug);
     } catch (error) {
       throw error;

@@ -4,16 +4,20 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 // mobx store provider
 import { IUser } from "types";
+// helpers
+import { getUserRole } from "helpers/user.helper";
 
 export interface IPosthogWrapper {
   children: ReactNode;
   user: IUser | null;
+  workspaceRole: number | undefined;
+  projectRole: number | undefined;
   posthogAPIKey: string | null;
   posthogHost: string | null;
 }
 
 const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
-  const { children, user, posthogAPIKey, posthogHost } = props;
+  const { children, user, workspaceRole, projectRole, posthogAPIKey, posthogHost } = props;
   // router
   const router = useRouter();
 
@@ -25,9 +29,11 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
         first_name: user.first_name,
         last_name: user.last_name,
         id: user.id,
+        workspace_role: workspaceRole ? getUserRole(workspaceRole) : undefined,
+        project_role: projectRole ? getUserRole(projectRole) : undefined,
       });
     }
-  }, [user]);
+  }, [user, workspaceRole, projectRole]);
 
   useEffect(() => {
     if (posthogAPIKey && posthogHost) {

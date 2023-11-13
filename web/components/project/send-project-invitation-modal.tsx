@@ -52,7 +52,7 @@ const projectMemberService = new ProjectMemberService();
 const workspaceService = new WorkspaceService();
 
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, setIsOpen, members, user, onSuccess } = props;
+  const { isOpen, setIsOpen, members, onSuccess } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -91,7 +91,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const payload = { ...formData };
 
     await projectMemberService
-      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload, user)
+      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
         setIsOpen(false);
         setToastAlert({

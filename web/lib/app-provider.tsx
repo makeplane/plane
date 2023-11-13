@@ -24,7 +24,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   const { children } = props;
   // store
   const {
-    user: { currentUser },
+    user: { currentUser, currentWorkspaceRole, currentProjectRole },
     appConfig: { envConfig },
   } = useMobxStore();
 
@@ -33,6 +33,8 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
       <CrispWrapper user={currentUser}>
         <PosthogWrapper
           user={currentUser}
+          workspaceRole={currentWorkspaceRole}
+          projectRole={currentProjectRole}
           posthogAPIKey={envConfig?.posthog_api_key || null}
           posthogHost={envConfig?.posthog_host || null}
         >

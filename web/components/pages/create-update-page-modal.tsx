@@ -1,10 +1,6 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { PageService } from "services/page.service";
@@ -30,7 +26,7 @@ type Props = {
 const pageService = new PageService();
 
 export const CreateUpdatePageModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
 
@@ -42,7 +38,7 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
 
   const createPage = async (payload: IPage) => {
     await pageService
-      .createPage(workspaceSlug as string, projectId as string, payload, user)
+      .createPage(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
@@ -84,7 +80,7 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
 
   const updatePage = async (payload: IPage) => {
     await pageService
-      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
+      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(

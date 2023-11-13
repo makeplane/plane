@@ -7,7 +7,6 @@ import { ProjectService, ProjectMemberService } from "services/project";
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // hooks
-import useUserAuth from "hooks/use-user-auth";
 import useProjectDetails from "hooks/use-project-details";
 import useToast from "hooks/use-toast";
 // components
@@ -27,7 +26,6 @@ const AutomationSettingsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
   const { projectDetails } = useProjectDetails();
@@ -43,7 +41,7 @@ const AutomationSettingsPage: NextPageWithLayout = () => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
     await projectService
-      .updateProject(workspaceSlug as string, projectId as string, formData, user)
+      .updateProject(workspaceSlug as string, projectId as string, formData)
       .then(() => {})
       .catch(() => {
         setToastAlert({

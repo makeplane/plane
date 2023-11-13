@@ -60,7 +60,7 @@ type Props = {
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
+export const JiraImporterRoot: React.FC<Props> = () => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -81,7 +81,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
     if (!workspaceSlug) return;
 
     await jiraImporterService
-      .createJiraImporter(workspaceSlug.toString(), data, user)
+      .createJiraImporter(workspaceSlug.toString(), data)
       .then(() => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug.toString()));
         router.push(`/${workspaceSlug}/settings/imports`);
