@@ -42,9 +42,12 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   return (
     <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
       <a
-        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        aria-disabled={activity.issue === null}
+        href={`${
+          activity.issue_detail ? `/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}` : "#"
+        }`}
+        target={activity.issue === null ? "_self" : "_blank"}
+        rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}

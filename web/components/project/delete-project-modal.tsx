@@ -139,6 +139,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           hasError={Boolean(errors.projectName)}
                           placeholder="Project name"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />
@@ -162,6 +163,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           hasError={Boolean(errors.confirmDelete)}
                           placeholder="Enter 'delete my project'"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />

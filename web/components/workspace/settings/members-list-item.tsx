@@ -1,6 +1,7 @@
 import { useState, FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { mutate } from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -39,7 +40,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
   // store
   const {
     workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
-    user: { currentWorkspaceMemberInfo, currentWorkspaceRole },
+    user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings },
   } = useMobxStore();
   const isAdmin = currentWorkspaceRole === 20;
   // states
@@ -51,14 +52,22 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
     if (!workspaceSlug) return;
 
     if (member.member)
-      await removeMember(workspaceSlug.toString(), member.id).catch((err) => {
-        const error = err?.error;
-        setToastAlert({
-          type: "error",
-          title: "Error",
-          message: error || "Something went wrong",
+      await removeMember(workspaceSlug.toString(), member.id)
+        .then(() => {
+          const memberId = member.memberId;
+
+          if (memberId === currentUser?.id && currentUserSettings) {
+            if (currentUserSettings.workspace?.invites > 0) router.push("/invitations");
+            else router.push("/create-workspace");
+          }
+        })
+        .catch((err) => {
+          setToastAlert({
+            type: "error",
+            title: "Error",
+            message: err?.error || "Something went wrong",
+          });
         });
-      });
     else
       await deleteWorkspaceInvitation(workspaceSlug.toString(), member.id)
         .then(() => {
@@ -69,12 +78,17 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
           });
         })
         .catch((err) => {
-          const error = err?.error;
-
           setToastAlert({
             type: "error",
             title: "Error",
-            message: error || "Something went wrong",
+            message: err?.error || "Something went wrong",
+          });
+        })
+        .finally(() => {
+          mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`, (prevData: any) => {
+            if (!prevData) return prevData;
+
+            return prevData.filter((item: any) => item.id !== member.id);
           });
         });
   };
