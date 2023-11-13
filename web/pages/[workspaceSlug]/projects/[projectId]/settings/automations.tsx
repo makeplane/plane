@@ -2,7 +2,7 @@ import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -21,6 +21,7 @@ import { USER_PROJECT_VIEW } from "constants/fetch-keys";
 
 // services
 const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 const AutomationSettingsPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -34,7 +35,7 @@ const AutomationSettingsPage: NextPageWithLayout = () => {
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 

@@ -26,15 +26,16 @@ const issueService = new IssueService();
 
 export const ChangeIssueAssignee: FC<Props> = observer((props) => {
   const { setIsPaletteOpen, issue, user } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-  const members = projectId ? projectStore.members?.[projectId.toString()] : undefined;
+  // store
+  const {
+    projectMember: { projectMembers },
+  } = useMobxStore();
 
   const options =
-    members?.map(({ member }) => ({
+    projectMembers?.map(({ member }) => ({
       value: member.id,
       query: member.display_name,
       content: (

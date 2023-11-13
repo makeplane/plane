@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { PageService } from "services/page.service";
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -34,7 +34,7 @@ type Props = {
 
 // services
 const pageService = new PageService();
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
   // states
@@ -55,7 +55,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
   const { data: people } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 

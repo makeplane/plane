@@ -133,18 +133,13 @@ export const formatDateDistance = (date: string | Date) => {
 export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
   if (!startDate || !endDate) return "draft";
 
-  const today = renderDateFormat(new Date());
-  const now = new Date(today);
+  const now = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (start <= now && end >= now) {
-    return "current";
-  } else if (start > now) {
-    return "upcoming";
-  } else {
-    return "completed";
-  }
+  if (start <= now && end >= now) return "current";
+  else if (start > now) return "upcoming";
+  else return "completed";
 };
 
 export const renderShortDateWithYearFormat = (date: string | Date, placeholder?: string) => {

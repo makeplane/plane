@@ -52,13 +52,13 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const fetchProjectMembers = () => {
-    setIsLoading(true);
-    if (workspaceSlug && projectId)
-      workspaceSlug &&
-        projectId &&
-        projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
-  };
+  // const fetchProjectMembers = () => {
+  //   setIsLoading(true);
+  //   if (workspaceSlug && projectId)
+  //     workspaceSlug &&
+  //       projectId &&
+  //       projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
+  // };
 
   const getWorkspaceMembers = () => {
     setIsLoading(true);

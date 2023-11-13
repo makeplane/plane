@@ -15,7 +15,7 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, members, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((memberId) => {
         const memberDetails = members?.find((m) => m.id === memberId);
 
@@ -35,6 +35,6 @@ export const AppliedMembersFilters: React.FC<Props> = observer((props) => {
           </div>
         );
       })}
-    </div>
+    </>
   );
 });
