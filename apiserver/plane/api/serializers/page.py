@@ -12,7 +12,7 @@ from plane.db.models import Page, PageTransaction, PageFavorite, PageLabel, Labe
 class PageSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    labels_list = serializers.ListField(
+    labels = serializers.ListField(
         child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
         write_only=True,
         required=False,
@@ -28,9 +28,13 @@ class PageSerializer(BaseSerializer):
             "project",
             "owned_by",
         ]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['labels'] = [str(label.id) for label in instance.labels.all()]
+        return data
 
     def create(self, validated_data):
-        labels = validated_data.pop("labels_list", None)
+        labels = validated_data.pop("labels", None)
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
         page = Page.objects.create(
@@ -55,7 +59,7 @@ class PageSerializer(BaseSerializer):
         return page
 
     def update(self, instance, validated_data):
-        labels = validated_data.pop("labels_list", None)
+        labels = validated_data.pop("labels", None)
         if labels is not None:
             PageLabel.objects.filter(page=instance).delete()
             PageLabel.objects.bulk_create(

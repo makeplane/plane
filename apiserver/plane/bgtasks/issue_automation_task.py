@@ -60,7 +60,7 @@ def archive_old_issues():
             # Check if Issues
             if issues:
                 # Set the archive time to current time
-                archive_at = timezone.now()
+                archive_at = timezone.now().date()
 
                 issues_to_update = []
                 for issue in issues:
@@ -72,14 +72,14 @@ def archive_old_issues():
                     Issue.objects.bulk_update(
                         issues_to_update, ["archived_at"], batch_size=100
                     )
-                    [
+                    _ = [
                         issue_activity.delay(
                             type="issue.activity.updated",
                             requested_data=json.dumps({"archived_at": str(archive_at)}),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
-                            current_instance=None,
+                            current_instance=json.dumps({"archived_at": None}),
                             subscriber=False,
                             epoch=int(timezone.now().timestamp()),
                         )

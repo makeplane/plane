@@ -7,31 +7,32 @@ import { mutate } from "swr";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
-import pagesService from "services/pages.service";
+import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { ICurrentUserResponse, IPage } from "types";
+import { IUser, IPage } from "types";
 // fetch-keys
-import {
-  ALL_PAGES_LIST,
-  FAVORITE_PAGES_LIST,
-  MY_PAGES_LIST,
-  RECENT_PAGES_LIST,
-} from "constants/fetch-keys";
+import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IPage | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+// services
+const pageService = new PageService();
+
+export const CreateUpdatePageModal: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -40,7 +41,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const createPage = async (payload: IPage) => {
-    await pagesService
+    await pageService
       .createPage(workspaceSlug as string, projectId as string, payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
@@ -82,7 +83,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
   };
 
   const updatePage = async (payload: IPage) => {
-    await pagesService
+    await pageService
       .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
@@ -152,7 +153,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -166,7 +167,7 @@ export const CreateUpdatePageModal: React.FC<Props> = ({ isOpen, handleClose, da
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <PageForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}

@@ -20,21 +20,18 @@ class ConfigurationEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
-        try:
-            data = {}
-            data["google"] = os.environ.get("GOOGLE_CLIENT_ID", None)
-            data["github"] = os.environ.get("GITHUB_CLIENT_ID", None)
-            data["github_app_name"] = os.environ.get("GITHUB_APP_NAME", None)
-            data["magic_login"] = (
-                bool(settings.EMAIL_HOST_USER) and bool(settings.EMAIL_HOST_PASSWORD)
-            ) and os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "0") == "1"
-            data["email_password_login"] = (
-                os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1"
-            )
-            return Response(data, status=status.HTTP_200_OK)
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        data = {}
+        data["google_client_id"] = os.environ.get("GOOGLE_CLIENT_ID", None)
+        data["github_client_id"] = os.environ.get("GITHUB_CLIENT_ID", None)
+        data["github_app_name"] = os.environ.get("GITHUB_APP_NAME", None)
+        data["magic_login"] = (
+            bool(settings.EMAIL_HOST_USER) and bool(settings.EMAIL_HOST_PASSWORD)
+        ) and os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "0") == "1"
+        data["email_password_login"] = (
+            os.environ.get("ENABLE_EMAIL_PASSWORD", "0") == "1"
+        )
+        data["slack_client_id"] = os.environ.get("SLACK_CLIENT_ID", None)
+        data["posthog_api_key"] = os.environ.get("POSTHOG_API_KEY", None)
+        data["posthog_host"] = os.environ.get("POSTHOG_HOST", None)
+        data["has_unsplash_configured"] = bool(settings.UNSPLASH_ACCESS_KEY)
+        return Response(data, status=status.HTTP_200_OK)

@@ -5,9 +5,9 @@ import useSWR from "swr";
 // hook
 import useEstimateOption from "hooks/use-estimate-option";
 // services
-import issuesService from "services/issues.service";
+import { IssueLabelService } from "services/issue";
 // icons
-import { Icon, Tooltip } from "components/ui";
+import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
   TagIcon,
   CopyPlus,
@@ -22,13 +22,8 @@ import {
   LayoutGridIcon,
   SignalMediumIcon,
   MessageSquareIcon,
+  UsersIcon,
 } from "lucide-react";
-import {
-  BlockedIcon,
-  BlockerIcon,
-  RelatedIcon,
-  StackedLayersHorizontalIcon,
-} from "components/icons";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
@@ -37,25 +32,25 @@ import { IIssueActivity } from "types";
 // fetch-keys
 import { WORKSPACE_LABELS } from "constants/fetch-keys";
 
+// services
+const issueLabelService = new IssueLabelService();
+
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   return (
-    <Tooltip
-      tooltipContent={
-        activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"
-      }
-    >
+    <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
       <a
-        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        aria-disabled={activity.issue === null}
+        href={`${
+          activity.issue_detail ? `/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}` : "#"
+        }`}
+        target={activity.issue === null ? "_self" : "_blank"}
+        rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
       >
-        {activity.issue_detail
-          ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}`
-          : "Issue"}
+        {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
         <RocketIcon size={12} color="#6b7280" />
       </a>
     </Tooltip>
@@ -84,7 +79,7 @@ const LabelPill = ({ labelId }: { labelId: string }) => {
 
   const { data: labels } = useSWR(
     workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issuesService.getWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString()) : null
   );
 
   return (
@@ -97,26 +92,21 @@ const LabelPill = ({ labelId }: { labelId: string }) => {
     />
   );
 };
+
 const EstimatePoint = ({ point }: { point: string }) => {
   const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
   const currentPoint = Number(point) + 1;
 
   return (
     <span className="font-medium text-custom-text-100">
-      {isEstimateActive
-        ? estimateValue
-        : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
+      {isEstimateActive ? estimateValue : `${currentPoint} ${currentPoint > 1 ? "points" : "point"}`}
     </span>
   );
 };
 
 const activityDetails: {
   [key: string]: {
-    message: (
-      activity: IIssueActivity,
-      showIssue: boolean,
-      workspaceSlug: string
-    ) => React.ReactNode;
+    message: (activity: IIssueActivity, showIssue: boolean, workspaceSlug: string) => React.ReactNode;
     icon: React.ReactNode;
   };
 } = {
@@ -209,8 +199,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the blocking issue{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the blocking issue <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );
     },
@@ -266,8 +255,7 @@ const activityDetails: {
       else
         return (
           <>
-            removed the relation from{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
           </>
         );
     },
@@ -374,7 +362,7 @@ const activityDetails: {
       if (activity.verb === "created") return "created the issue.";
       else return "deleted an issue.";
     },
-    icon: <StackedLayersHorizontalIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
+    icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
   labels: {
     message: (activity, showIssue) => {
@@ -532,7 +520,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: <Icon iconName="dataset" className="!text-xs !text-[#6b7280]" aria-hidden="true" />,
+    icon: <DiceIcon className="h-3 w-3 !text-[#6b7280]" aria-hidden="true" />,
   },
   name: {
     message: (activity, showIssue) => (
@@ -554,8 +542,7 @@ const activityDetails: {
       if (!activity.new_value)
         return (
           <>
-            removed the parent{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            removed the parent <span className="font-medium text-custom-text-100">{activity.old_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -568,8 +555,7 @@ const activityDetails: {
       else
         return (
           <>
-            set the parent to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            set the parent to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
             {showIssue && (
               <>
                 {" "}
@@ -580,13 +566,7 @@ const activityDetails: {
           </>
         );
     },
-    icon: (
-      <Icon
-        iconName="supervised_user_circle"
-        className="!text-xs !text-[#6b7280]"
-        aria-hidden="true"
-      />
-    ),
+    icon: <UsersIcon className="h-3 w-3 !text-[#6b7280]" aria-hidden="true" />,
   },
   priority: {
     message: (activity, showIssue) => (
@@ -643,8 +623,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to{" "}
-        <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+        set the state to <span className="font-medium text-custom-text-100">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -696,13 +675,7 @@ export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
   <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
 );
 
-export const ActivityMessage = ({
-  activity,
-  showIssue = false,
-}: {
-  activity: IIssueActivity;
-  showIssue?: boolean;
-}) => {
+export const ActivityMessage = ({ activity, showIssue = false }: { activity: IIssueActivity; showIssue?: boolean }) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 

@@ -1,13 +1,18 @@
 import React from "react";
 import { useRouter } from "next/router";
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
+
+// services
+import { FileService } from "services/file.service";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
-import { Icon, SecondaryButton, Tooltip } from "components/ui";
+import { Button } from "@plane/ui";
+import { Globe2, Lock } from "lucide-react";
+
 // types
 import type { IIssueComment } from "types";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 const defaultValues: Partial<IIssueComment> = {
   access: "INTERNAL",
@@ -20,28 +25,34 @@ type Props = {
   showAccessSpecifier?: boolean;
 };
 
-const commentAccess = [
+type commentAccessType = {
+  icon: any;
+  key: string;
+  label: "Private" | "Public";
+};
+const commentAccess: commentAccessType[] = [
   {
-    icon: "lock",
+    icon: Lock,
     key: "INTERNAL",
     label: "Private",
   },
   {
-    icon: "public",
+    icon: Globe2,
     key: "EXTERNAL",
     label: "Public",
   },
 ];
 
-export const AddComment: React.FC<Props> = ({
-  disabled = false,
-  onSubmit,
-  showAccessSpecifier = false,
-}) => {
+// services
+const fileService = new FileService();
+
+export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAccessSpecifier = false }) => {
   const editorRef = React.useRef<any>(null);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     control,
@@ -63,58 +74,47 @@ export const AddComment: React.FC<Props> = ({
     <div>
       <form onSubmit={handleSubmit(handleAddComment)}>
         <div>
-          <div className="relative">
-            {showAccessSpecifier && (
-              <div className="absolute bottom-2 left-3 z-[1]">
-                <Controller
-                  control={control}
-                  name="access"
-                  render={({ field: { onChange, value } }) => (
-                    <div className="flex border border-custom-border-300 divide-x divide-custom-border-300 rounded overflow-hidden">
-                      {commentAccess.map((access) => (
-                        <Tooltip key={access.key} tooltipContent={access.label}>
-                          <button
-                            type="button"
-                            onClick={() => onChange(access.key)}
-                            className={`grid place-items-center p-1 hover:bg-custom-background-80 ${
-                              value === access.key ? "bg-custom-background-80" : ""
-                            }`}
-                          >
-                            <Icon
-                              iconName={access.icon}
-                              className={`w-4 h-4 -mt-1 ${
-                                value === access.key
-                                  ? "!text-custom-text-100"
-                                  : "!text-custom-text-400"
-                              }`}
-                            />
-                          </button>
-                        </Tooltip>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
+          <Controller
+            name="access"
+            control={control}
+            render={({ field: { onChange: onAccessChange, value: accessValue } }) => (
+              <Controller
+                name="comment_html"
+                control={control}
+                render={({ field: { onChange: onCommentChange, value: commentValue } }) => (
+                  <LiteTextEditorWithRef
+                    onEnterKeyPress={handleSubmit(handleAddComment)}
+                    cancelUploadImage={fileService.cancelUpload}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    deleteFile={fileService.deleteImage}
+                    ref={editorRef}
+                    value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
+                    customClassName="p-2 h-full"
+                    editorContentCustomClassNames="min-h-[35px]"
+                    debouncedUpdatesEnabled={false}
+                    onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
+                    commentAccessSpecifier={
+                      showAccessSpecifier
+                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        : undefined
+                    }
+                    mentionSuggestions={editorSuggestions.mentionSuggestions}
+                    mentionHighlights={editorSuggestions.mentionHighlights}
+                    submitButton={
+                      <Button
+                        variant="primary"
+                        type="submit"
+                        className="!px-2.5 !py-1.5 !text-xs"
+                        disabled={isSubmitting || disabled}
+                      >
+                        {isSubmitting ? "Adding..." : "Comment"}
+                      </Button>
+                    }
+                  />
+                )}
+              />
             )}
-            <Controller
-              name="comment_html"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <TipTapEditor
-                  workspaceSlug={workspaceSlug as string}
-                  ref={editorRef}
-                  value={!value || value === "" ? "<p></p>" : value}
-                  customClassName="p-3 min-h-[100px] shadow-sm"
-                  debouncedUpdatesEnabled={false}
-                  onChange={(comment_json: Object, comment_html: string) => onChange(comment_html)}
-                />
-              )}
-            />
-          </div>
-
-          <SecondaryButton type="submit" disabled={isSubmitting || disabled} className="mt-2">
-            {isSubmitting ? "Adding..." : "Comment"}
-          </SecondaryButton>
+          />
         </div>
       </form>
     </div>

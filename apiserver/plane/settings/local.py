@@ -12,6 +12,10 @@ from .common import *  # noqa
 
 DEBUG = int(os.environ.get("DEBUG", 1)) == 1
 
+ALLOWED_HOSTS = [
+    "*",
+]
+
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 

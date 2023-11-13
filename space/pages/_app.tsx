@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 // styles
 import "styles/globals.css";
 import "styles/editor.css";
+import "styles/table.css";
+
 // contexts
 import { ToastContextProvider } from "contexts/toast.context";
 // mobx store provider

@@ -1,9 +1,8 @@
 # Python imports
-from datetime import timedelta, datetime, date
+from datetime import timedelta, date
 
 # Django imports
 from django.db import connection
-from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q, Prefetch
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -98,23 +97,15 @@ class PageViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        try:
-            serializer = PageSerializer(
-                data=request.data,
-                context={"project_id": project_id, "owned_by_id": request.user.id},
-            )
+        serializer = PageSerializer(
+            data=request.data,
+            context={"project_id": project_id, "owned_by_id": request.user.id},
+        )
 
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, pk):
         try:
@@ -163,12 +154,9 @@ class PageViewSet(BaseViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Page.DoesNotExist:
             return Response(
-                {"error": "Page Does not exist"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
+                {
+                    "error": "Access cannot be updated since this page is owned by someone else"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -380,53 +368,21 @@ class PageFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
-        try:
-            serializer = PageFavoriteSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(user=request.user, project_id=project_id)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except IntegrityError as e:
-            if "already exists" in str(e):
-                return Response(
-                    {"error": "The page is already added to favorites"},
-                    status=status.HTTP_410_GONE,
-                )
-            else:
-                capture_exception(e)
-                return Response(
-                    {"error": "Something went wrong please try again later"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        serializer = PageFavoriteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, project_id=project_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, page_id):
-        try:
-            page_favorite = PageFavorite.objects.get(
-                project=project_id,
-                user=request.user,
-                workspace__slug=slug,
-                page_id=page_id,
-            )
-            page_favorite.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except PageFavorite.DoesNotExist:
-            return Response(
-                {"error": "Page is not in favorites"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            capture_exception(e)
-            return Response(
-                {"error": "Something went wrong please try again later"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
+        page_favorite = PageFavorite.objects.get(
+            project=project_id,
+            user=request.user,
+            workspace__slug=slug,
+            page_id=page_id,
+        )
+        page_favorite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PageTransactionEndpoint(BaseAPIView):
     permission_classes = [

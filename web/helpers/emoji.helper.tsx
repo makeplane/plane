@@ -30,7 +30,7 @@ export const renderEmoji = (
 
   if (typeof emoji === "object")
     return (
-      <span style={{ color: emoji.color }} className="material-symbols-rounded text-lg">
+      <span style={{ color: emoji.color }} className="material-symbols-rounded !text-sm">
         {emoji.name}
       </span>
     );

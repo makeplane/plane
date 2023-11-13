@@ -7,11 +7,7 @@ type Props = {
   color?: string;
 };
 
-export const ModuleCompletedIcon: React.FC<Props> = ({
-  width = "20",
-  height = "20",
-  className,
-}) => (
+export const ModuleCompletedIcon: React.FC<Props> = ({ width = "20", height = "20", className }) => (
   <svg
     width={width}
     height={height}
