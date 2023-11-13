@@ -15,6 +15,7 @@ export interface IViewKanBanLayout {}
 export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const {
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
@@ -56,7 +57,6 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStateStore?.projectStates || null;
   const estimates = null;

@@ -37,7 +37,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 h-full w-full">
@@ -51,7 +51,7 @@ export const ProductUpdatesModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative overflow-hidden rounded-lg bg-custom-background-100 border border-custom-border-100 shadow-custom-shadow-rg] min-w-[100%] sm:min-w-[50%] sm:max-w-[50%]">
+              <Dialog.Panel className="relative overflow-hidden rounded-lg bg-custom-background-100 shadow-custom-shadow-md min-w-[100%] sm:min-w-[50%] sm:max-w-[50%]">
                 <div className="flex flex-col p-4 max-h-[90vh] w-full">
                   <Dialog.Title as="h3" className="flex items-center justify-between text-lg font-semibold">
                     <span>Product Updates</span>

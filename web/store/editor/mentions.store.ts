@@ -22,7 +22,7 @@ export class MentionsStore implements IMentionsStore {
   }
 
   get mentionSuggestions() {
-    const projectMembers = this.rootStore.project.projectMembers;
+    const projectMembers = this.rootStore.projectMember.projectMembers;
 
     const suggestions =
       projectMembers === null
