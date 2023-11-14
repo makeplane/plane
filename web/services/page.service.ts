@@ -212,4 +212,19 @@ export class PageService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  // =============== Archiving & Unarchiving Pages =================
+  async archivePage(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+  ): Promise<void> {
+    this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`
+    ).then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
 }
