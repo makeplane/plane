@@ -117,8 +117,8 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
         ) : (
           <span
             className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded duration-300 focus:outline-none ${
-              noLabelBorder ? "" : " px-2.5 py-1 border border-custom-border-300"
-            }}`}
+              noLabelBorder ? "" : " px-2.5 py-1 border-[0.5px] border-custom-border-300"
+            }`}
           >
             <User2 className="h-3 w-3" />
           </span>
