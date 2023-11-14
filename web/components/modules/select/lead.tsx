@@ -6,6 +6,7 @@ import { ProjectMemberService } from "services/project";
 // ui
 import { Avatar, CustomSearchSelect } from "@plane/ui";
 // icons
+import { Combobox } from "@headlessui/react";
 import { UserCircle } from "lucide-react";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
@@ -58,6 +59,16 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
             <span className={`${selectedOption ? "text-custom-text-200" : "text-custom-text-300"}`}>Lead</span>
           )}
         </div>
+      }
+      footerOption={
+        <Combobox.Option
+          value=""
+          className="flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5  text-custom-text-200"
+        >
+          <span className="flex items-center justify-start gap-1 text-custom-text-200">
+            <span>No Lead</span>
+          </span>
+        </Combobox.Option>
       }
       onChange={onChange}
       noChevron

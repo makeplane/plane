@@ -95,27 +95,37 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
-                filteredOptions.map((workspaceMember: IWorkspaceMember) => (
+                <>
+                  {filteredOptions.map((workspaceMember: IWorkspaceMember) => (
+                    <Listbox.Option
+                      key={workspaceMember.id}
+                      value={workspaceMember}
+                      className={({ active, selected }) =>
+                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                          active && !selected ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
+                            {workspaceMember.member.display_name}
+                          </div>
+                          {selected && <Check className="h-3.5 w-3.5" />}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
                   <Listbox.Option
-                    key={workspaceMember.id}
-                    value={workspaceMember}
-                    className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                    }
+                    value=""
+                    className="flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
-                    {({ selected }) => (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
-                          {workspaceMember.member.display_name}
-                        </div>
-                        {selected && <Check className="h-3.5 w-3.5" />}
-                      </>
-                    )}
+                    <span className="flex items-center justify-start gap-1 text-custom-text-200">
+                      <span>No Lead</span>
+                    </span>
                   </Listbox.Option>
-                ))
+                </>
               ) : (
                 <span className="flex items-center gap-2 p-1">
                   <p className="text-left text-custom-text-200 ">No matching results</p>
