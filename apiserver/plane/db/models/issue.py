@@ -450,6 +450,8 @@ class Label(ProjectBaseModel):
             if last_id is not None:
                 self.sort_order = last_id + 10000
 
+        super(Label, self).save(*args, **kwargs)
+
     def __str__(self):
         return str(self.name)
 
