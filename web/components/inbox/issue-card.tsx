@@ -42,21 +42,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Tooltip tooltipHeading="Priority" tooltipContent={`${issue.priority ?? "None"}`}>
-              <div
-                className={`grid h-6 w-6 place-items-center rounded border items-center shadow-sm ${
-                  issue.priority === "urgent"
-                    ? "border-red-500/20 bg-red-500/20"
-                    : issue.priority === "high"
-                    ? "border-orange-500/20 bg-orange-500/20"
-                    : issue.priority === "medium"
-                    ? "border-yellow-500/20 bg-yellow-500/20"
-                    : issue.priority === "low"
-                    ? "border-green-500/20 bg-green-500/20"
-                    : "border-custom-border-200"
-                }`}
-              >
                 <PriorityIcon priority={issue.priority ?? null} className="h-3.5 w-3.5" />
-              </div>
             </Tooltip>
             <Tooltip
               tooltipHeading="Created on"
