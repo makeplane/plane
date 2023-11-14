@@ -228,6 +228,7 @@ export const SLACK_CHANNEL_INFO = (workspaceSlug: string, projectId: string) =>
 // Pages
 export const RECENT_PAGES_LIST = (projectId: string) => `RECENT_PAGES_LIST_${projectId.toUpperCase()}`;
 export const ALL_PAGES_LIST = (projectId: string) => `ALL_PAGES_LIST_${projectId.toUpperCase()}`;
+export const ARCHIVED_PAGES_LIST = (projectId: string) => `ARCHIVED_PAGES_LIST_${projectId.toUpperCase}`;
 export const FAVORITE_PAGES_LIST = (projectId: string) => `FAVORITE_PAGES_LIST_${projectId.toUpperCase()}`;
 export const MY_PAGES_LIST = (projectId: string) => `MY_PAGES_LIST_${projectId.toUpperCase()}`;
 export const OTHER_PAGES_LIST = (projectId: string) => `OTHER_PAGES_LIST_${projectId.toUpperCase()}`;

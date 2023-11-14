@@ -34,4 +34,8 @@ export const PAGE_TABS_LIST: { key: string; title: string }[] = [
     key: "created-by-others",
     title: "Created by others",
   },
+	{
+		key: "archived-pages",
+		title: "Archived Pages"
+	}
 ];

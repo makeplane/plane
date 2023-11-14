@@ -227,4 +227,30 @@ export class PageService extends APIService {
       });
   }
 
+
+  async removePageFromArchives(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+  ): Promise<void> {
+    this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/unarchive/${pageId}`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getArchivedPages(
+    workspaceSlug: string,
+    projectId: string,
+  ): Promise<IPage[]> {
+    return this.get(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+				console.log(error)
+        throw error?.response?.data;
+      });
+  }
 }
