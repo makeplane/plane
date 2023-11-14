@@ -17,6 +17,7 @@ from plane.db.models import Issue
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
 from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
 
 row_mapping = {
     "state__name": "State",
@@ -50,14 +51,14 @@ def send_export_email(email, slug, csv_buffer):
     csv_buffer.seek(0)
 
     # Configure email connection from the database
-    instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values()
+    instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values("key", "value")
     connection = get_connection(
-        host=instance_configuration.get("EMAIL_HOST", ""),
-        port=int(instance_configuration.get("EMAIL_PORT", "587")),
-        username=instance_configuration.get("EMAIL_HOST_USER", ""),
-        password=instance_configuration.get("EMAIL_HOST_PASSWORD", ""),
-        use_tls=bool(instance_configuration.get("EMAIL_USE_TLS", "")),
-        use_ssl=bool(instance_configuration.get("EMAIL_USE_SSL", ""))
+        host=get_configuration_value(instance_configuration, "EMAIL_HOST"),
+        port=int(get_configuration_value(instance_configuration, "EMAIL_PORT", "587")),
+        username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
+        password=get_configuration_value(instance_configuration, "EMAIL_HOST_PASSWORD"),
+        use_tls=bool(get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")),
+        use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
     )
 
     msg = EmailMultiAlternatives(subject=subject, text_content=text_content, from_email=settings.EMAIL_FROM, to=[email], connection=connection)

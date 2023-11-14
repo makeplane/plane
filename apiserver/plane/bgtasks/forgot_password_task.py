@@ -10,7 +10,7 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.license.models import InstanceConfiguration
-
+from plane.license.utils.instance_value import get_configuration_value
 
 @shared_task
 def forgot_password(first_name, email, uidb64, token, current_site):
@@ -32,15 +32,14 @@ def forgot_password(first_name, email, uidb64, token, current_site):
 
         text_content = strip_tags(html_content)
 
-        # Configure email connection from the database
-        instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values()
+        instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values("key", "value")
         connection = get_connection(
-            host=instance_configuration.get("EMAIL_HOST", ""),
-            port=int(instance_configuration.get("EMAIL_PORT", "587")),
-            username=instance_configuration.get("EMAIL_HOST_USER", ""),
-            password=instance_configuration.get("EMAIL_HOST_PASSWORD", ""),
-            use_tls=bool(instance_configuration.get("EMAIL_USE_TLS", "")),
-            use_ssl=bool(instance_configuration.get("EMAIL_USE_SSL", ""))
+            host=get_configuration_value(instance_configuration, "EMAIL_HOST"),
+            port=int(get_configuration_value(instance_configuration, "EMAIL_PORT", "587")),
+            username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
+            password=get_configuration_value(instance_configuration, "EMAIL_HOST_PASSWORD"),
+            use_tls=bool(get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")),
+            use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
         )
         # Initiate email alternatives
         msg = EmailMultiAlternatives(subject=subject, text_content=text_content, from_email=settings.EMAIL_FROM, to=[email], connection=connection)
