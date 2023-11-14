@@ -60,12 +60,12 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
         <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
           <a className="flex items-center justify-between relative rounded p-4 w-full">
             <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 overflow-hidden">
                 <div className="grid place-items-center flex-shrink-0 h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
                   <PhotoFilterIcon className="h-3.5 w-3.5" />
                 </div>
-                <div className="flex flex-col">
-                  <p className="text-sm leading-4 font-medium break-all">{truncateText(view.name, 75)}</p>
+                <div className="flex flex-col overflow-hidden ">
+                  <p className="text-sm leading-4 font-medium truncate  break-all">{view.name}</p>
                   {view?.description && <p className="text-xs text-custom-text-200 break-all">{view.description}</p>}
                 </div>
               </div>
