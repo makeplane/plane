@@ -74,15 +74,7 @@ export const PrioritySelect: React.FC<Props> = ({
       <div className="flex items-center gap-2">
         <PriorityIcon
           priority={value}
-          className={`h-3.5 w-3.5 ${
-            value === "high"
-              ? "text-orange-500"
-              : value === "medium"
-              ? "text-yellow-500"
-              : value === "low"
-              ? "text-green-500"
-              : "text-custom-text-200"
-          } ${value === "urgent" ? (highlightUrgentPriority ? "text-white" : "text-red-500") : ""}`}
+          className={`h-3.5 w-3.5 ${value === "urgent" ? (highlightUrgentPriority ? "text-white" : "text-red-500") : ""}`}
         />
         {showTitle && <span className="capitalize text-xs">{value}</span>}
       </div>

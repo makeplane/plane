@@ -176,9 +176,8 @@ class CycleViewSet(BaseViewSet):
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
-        order_by = request.GET.get("order_by", "sort_order")
 
-        queryset = queryset.order_by(order_by)
+        queryset = queryset.order_by("-is_favorite","-created_at")
 
         # Current Cycle
         if cycle_view == "current":

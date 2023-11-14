@@ -6,7 +6,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { PageService } from "services/page.service";
 import { IssueLabelService } from "services/issue";
 // hooks
@@ -45,6 +45,7 @@ import {
 
 // services
 const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 const pageService = new PageService();
 const issueLabelService = new IssueLabelService();
 
@@ -95,7 +96,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 

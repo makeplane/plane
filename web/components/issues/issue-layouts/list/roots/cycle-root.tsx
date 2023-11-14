@@ -21,6 +21,7 @@ export const CycleListLayout: React.FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     issueFilter: issueFilterStore,
     cycleIssue: cycleIssueStore,
@@ -59,7 +60,6 @@ export const CycleListLayout: React.FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
@@ -86,7 +86,7 @@ export const CycleListLayout: React.FC = observer(() => {
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members?.map((m) => m.member) ?? null}
+        members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
       />

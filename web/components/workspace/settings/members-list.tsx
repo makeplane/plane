@@ -29,9 +29,15 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer(({ sea
   );
 
   const searchedMembers = workspaceMembersWithInvitations?.filter((member: any) => {
-    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
+    const email = member.email?.toLowerCase();
     const displayName = member.display_name.toLowerCase();
-    return displayName.includes(searchQuery.toLowerCase()) || fullName.includes(searchQuery.toLowerCase());
+    const fullName = `${member.first_name} ${member.last_name}`.toLowerCase();
+
+    return (
+      displayName.includes(searchQuery.toLowerCase()) ||
+      fullName.includes(searchQuery.toLowerCase()) ||
+      email?.includes(searchQuery.toLowerCase())
+    );
   });
 
   if (

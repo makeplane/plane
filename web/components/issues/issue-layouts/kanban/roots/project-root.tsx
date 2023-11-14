@@ -22,6 +22,7 @@ export const KanBanLayout: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     issue: issueStore,
     issueFilter: issueFilterStore,
@@ -92,7 +93,6 @@ export const KanBanLayout: React.FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects?.[workspaceSlug] || null : null;
   const estimates =
@@ -107,7 +107,7 @@ export const KanBanLayout: React.FC = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+        <div className="relative min-w-full min-h-full h-max bg-custom-background-90 px-3 horizontal-scroll-enable">
           <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
             {currentKanBanView === "default" ? (
               <KanBan
@@ -130,7 +130,7 @@ export const KanBanLayout: React.FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 enableQuickIssueCreate
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
@@ -157,7 +157,7 @@ export const KanBanLayout: React.FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}

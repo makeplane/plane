@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // ui
 import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // fetch-keys
@@ -13,7 +13,7 @@ type Props = {
   onChange: () => void;
 };
 
-const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 
 export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
@@ -22,7 +22,7 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.fetchProjectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
   const options = members?.map((member) => ({

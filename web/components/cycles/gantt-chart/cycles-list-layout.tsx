@@ -10,7 +10,7 @@ import { CycleService } from "services/cycle.service";
 import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
+import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
 import { CycleGanttBlock, CycleGanttSidebarBlock } from "components/cycles";
 // types
 import { ICycle } from "types";
@@ -85,8 +85,8 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
         loaderTitle="Cycles"
         blocks={cycles ? blockFormat(cycles) : null}
         blockUpdateHandler={(block, payload) => handleCycleUpdate(block, payload)}
+        sidebarToRender={(props) => <CycleGanttSidebar {...props} />}
         blockToRender={(data: ICycle) => <CycleGanttBlock data={data} />}
-        sidebarBlockToRender={(data: ICycle) => <CycleGanttSidebarBlock data={data} />}
         enableBlockLeftResize={false}
         enableBlockRightResize={false}
         enableBlockMove={false}

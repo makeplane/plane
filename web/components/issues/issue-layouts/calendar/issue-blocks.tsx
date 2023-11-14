@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
 // components
@@ -16,9 +14,6 @@ type Props = {
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues, handleIssues, quickActions } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
 
   return (
     <>

@@ -2,20 +2,18 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
+import { PencilIcon, StarIcon, TrashIcon } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components/views";
 // ui
-import { CustomMenu } from "@plane/ui";
-// icons
-import { PencilIcon, Sparkles, StarIcon, TrashIcon } from "lucide-react";
-// types
-import { IProjectView } from "types";
+import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
+// types
+import { IProjectView } from "types";
 
 type Props = {
   view: IProjectView;
@@ -63,12 +61,12 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
           <a className="flex items-center justify-between relative rounded p-4 w-full">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4">
-                <div className="grid place-items-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
-                  <Sparkles size={14} strokeWidth={2} />
+                <div className="grid place-items-center flex-shrink-0 h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
+                  <PhotoFilterIcon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
-                  <p className="truncate text-sm leading-4 font-medium">{truncateText(view.name, 75)}</p>
-                  {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
+                  <p className="text-sm leading-4 font-medium break-all">{truncateText(view.name, 75)}</p>
+                  {view?.description && <p className="text-xs text-custom-text-200 break-all">{view.description}</p>}
                 </div>
               </div>
               <div className="ml-2 flex flex-shrink-0">

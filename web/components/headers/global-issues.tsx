@@ -99,7 +99,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative w-full flex items-center z-10 justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative w-full flex items-center z-10 h-[3.75rem] justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -163,7 +163,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
               </FiltersDropdown>
             </>
           )}
-          <Button variant="primary" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
+          <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
             New View
           </Button>
         </div>

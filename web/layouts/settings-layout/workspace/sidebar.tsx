@@ -64,7 +64,7 @@ export const WorkspaceSettingsSidebar = () => {
               <a>
                 <div
                   className={`px-4 py-2 text-sm font-medium rounded-md ${
-                    (link.label === "Import" ? router.asPath.includes(link.href) : router.asPath === link.href)
+                    router.pathname.split("/")?.[3] === link.href.split("/")?.[3]
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                   }`}
