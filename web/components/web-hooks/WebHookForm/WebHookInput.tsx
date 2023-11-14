@@ -20,7 +20,7 @@ export const WebHookInput = ({ control, errors }: IWebHookInput) => {
         }}
         render={({ field: { onChange, value } }) => (
           <Input
-            className="w-full"
+            className="w-full h-11"
             onChange={onChange}
             value={value}
             id="url"

@@ -87,9 +87,9 @@ export const GenerateKey: FC<IGenerateKey> = observer((props) => {
           <div className="text-sm font-medium">Secret Key</div>
           <div className="text-sm text-neutral-400">Genarate a token to sign-in the webhook payload</div>
 
-          <div className="flex gap-5">
+          <div className="flex gap-5 items-center">
             <div className="relative flex items-center p-2 rounded w-full border border-custom-border-200">
-              <div className="w-full overflow-hidden px-2 font-medium select-none">
+              <div className="flex w-full overflow-hidden h-7 px-2 font-medium select-none">
                 {webhookStore?.webhookSecretKey && shouldShowKey ? (
                   <div>{webhookStore?.webhookSecretKey}</div>
                 ) : (

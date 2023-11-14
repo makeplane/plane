@@ -156,17 +156,10 @@ export class WebhookStore implements IWebhookStore {
 
       const webhookResponse = await this.webhookService.update(workspaceSlug, webhook_id, data);
 
-      if (webhookResponse && webhookResponse.id) {
-        _webhooks = { ..._webhooks, [webhookResponse.id]: { ...webhookResponse } };
-      }
-
-      runInAction(() => {
-        this.webhooks = _webhooks;
-      });
-
       return webhookResponse;
     } catch (error) {
       console.log(error);
+      this.fetchWebhooks(workspaceSlug);
       throw error;
     }
   };
