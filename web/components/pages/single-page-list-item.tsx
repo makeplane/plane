@@ -59,9 +59,9 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
         <a>
           <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
-              <div className="flex flex-wrap items-center gap-2">
-                <FileText className="h-4 w-4" />
-                <p className="mr-2 truncate text-sm text-custom-text-100">{truncateText(page.name, 75)}</p>
+              <div className="flex overflow-hidden items-center gap-2">
+                <FileText className="h-4 w-4 shrink-0" />
+                <p className="mr-2 truncate text-sm text-custom-text-100">{page.name}</p>
                 {page.label_details.length > 0 &&
                   page.label_details.map((label) => (
                     <div
