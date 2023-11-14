@@ -249,7 +249,33 @@ export class PageService extends APIService {
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-pages/`)
       .then((response) => response?.data)
       .catch((error) => {
-				console.log(error)
+        console.log(error)
+        throw error?.response?.data;
+      });
+  }
+  // ==================== Pages Locking Services ==========================
+  async lockPage(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+  ): Promise<any> {
+    this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async unlockPage(
+    workspaceSlug: string,
+    projectId: string,
+    pageId: string,
+	): Promise<any> {
+    this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock`)
+      .then((response) => response?.data)
+      .catch((error) => {
         throw error?.response?.data;
       });
   }
