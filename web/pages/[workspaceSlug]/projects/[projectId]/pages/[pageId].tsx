@@ -9,6 +9,7 @@ import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { ProjectService, ProjectMemberService } from "services/project";
 import { PageService } from "services/page.service";
 import { IssueLabelService } from "services/issue";
+import { useDebouncedCallback } from "use-debounce";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
@@ -55,11 +56,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   const editorRef = useRef<any>(null);
 
-  const [createBlockForm, setCreateBlockForm] = useState(false);
-  const [labelModal, setLabelModal] = useState(false);
   const [showBlock, setShowBlock] = useState(false);
-
-  const scrollToRef = useRef<HTMLDivElement>(null);
+  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -68,8 +66,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   const { user } = useUser();
 
-  const { handleSubmit, reset, watch, setValue, formState: { isSubmitting }, control } = useForm<IPage>({
-    defaultValues: { name: "" },
+  const { handleSubmit, reset, watch, setValue, getValues, formState: { errors }, control } = useForm<IPage>({
+    defaultValues: { name: "", description_html: "" },
   });
 
   const { data: projectDetails } = useSWR(
@@ -124,168 +122,20 @@ const PageDetailsPage: NextPageWithLayout = () => {
       });
   };
 
-  const partialUpdatePage = async (formData: Partial<IPage>) => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    mutate<IPage>(
-      PAGE_DETAILS(pageId as string),
-      (prevData) => ({
-        ...(prevData as IPage),
-        ...formData,
-      }),
-      false
-    );
-
+  const createPage = async (payload: Partial<IPage>) => {
     await pageService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
-      .then(() => {
-        mutate(PAGE_DETAILS(pageId as string));
-      });
+      .createPage(workspaceSlug as string, projectId as string, payload, user)
   };
 
-  const handleAddToFavorites = () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    mutate<IPage>(
-      PAGE_DETAILS(pageId as string),
-      (prevData) => ({
-        ...(prevData as IPage),
-        is_favorite: true,
-      }),
-      false
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Success",
-        message: "Added to favorites",
-      });
-    });
-
-    pageService.addPageToFavorites(workspaceSlug as string, projectId as string, {
-      page: pageId as string,
-    });
-  };
-
-  const handleRemoveFromFavorites = () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    mutate<IPage>(
-      PAGE_DETAILS(pageId as string),
-      (prevData) => ({
-        ...(prevData as IPage),
-        is_favorite: false,
-      }),
-      false
-    ).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Success",
-        message: "Removed from favorites",
-      });
-    });
-
-    pageService.removePageFromFavorites(workspaceSlug as string, projectId as string, pageId as string);
-  };
-
-  const handleOnDragEnd = (result: DropResult) => {
-    if (!result.destination || !workspaceSlug || !projectId || !pageId || !pageBlocks) return;
-
-    const { source, destination } = result;
-
-    let newSortOrder = pageBlocks.find((p) => p.id === result.draggableId)?.sort_order ?? 65535;
-
-    if (destination.index === 0) newSortOrder = pageBlocks[0].sort_order - 10000;
-    else if (destination.index === pageBlocks.length - 1)
-      newSortOrder = pageBlocks[pageBlocks.length - 1].sort_order + 10000;
-    else {
-      if (destination.index > source.index)
-        newSortOrder = (pageBlocks[destination.index].sort_order + pageBlocks[destination.index + 1].sort_order) / 2;
-      else if (destination.index < source.index)
-        newSortOrder = (pageBlocks[destination.index - 1].sort_order + pageBlocks[destination.index].sort_order) / 2;
+  const duplicate_page = async () => {
+    const currentPageValues = getValues()
+    const formData: Partial<IPage> = {
+      name: "Copy of " + currentPageValues.name,
+      description_html: currentPageValues.description_html
     }
 
-    const newBlocksList = pageBlocks.map((p) => ({
-      ...p,
-      sort_order: p.id === result.draggableId ? newSortOrder : p.sort_order,
-    }));
-    mutate<IPageBlock[]>(
-      PAGE_BLOCKS_LIST(pageId as string),
-      orderArrayBy(newBlocksList, "sort_order", "ascending"),
-      false
-    );
-
-    pageService.patchPageBlock(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string,
-      result.draggableId,
-      {
-        sort_order: newSortOrder,
-      },
-      user
-    );
-  };
-
-  const handleCopyText = () => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/pages/${pageId}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Page link copied to clipboard.",
-      });
-    });
-  };
-
-  const handleShowBlockToggle = async () => {
-    if (!workspaceSlug || !projectId) return;
-
-    const payload: Partial<IProjectMember> = {
-      preferences: {
-        pages: {
-          block_display: !showBlock,
-        },
-      },
-    };
-
-    mutate<IProjectMember>(
-      (workspaceSlug as string) && (projectId as string) ? USER_PROJECT_VIEW(projectId as string) : null,
-      (prevData) => {
-        if (!prevData) return prevData;
-
-        return {
-          ...prevData,
-          ...payload,
-        };
-      },
-      false
-    );
-
-    await projectService.setProjectView(workspaceSlug as string, projectId as string, payload).catch(() => {
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: "Something went wrong. Please try again.",
-      });
-    });
-  };
-
-  const options = labels?.map((label) => ({
-    value: label.id,
-    query: label.name,
-    content: (
-      <div className="flex items-center gap-2">
-        <span
-          className="h-2 w-2 flex-shrink-0 rounded-full"
-          style={{
-            backgroundColor: label.color && label.color !== "" ? label.color : "#000000",
-          }}
-        />
-        {label.name}
-      </div>
-    ),
-  }));
+    await createPage(formData)
+  }
 
   useEffect(() => {
     if (!pageDetails) return;
@@ -295,10 +145,10 @@ const PageDetailsPage: NextPageWithLayout = () => {
     });
   }, [reset, pageDetails]);
 
-  useEffect(() => {
-    if (!memberDetails) return;
-    setShowBlock(memberDetails.preferences.pages.block_display);
-  }, [memberDetails]);
+  const debouncedFormSave = useDebouncedCallback(async () => {
+    console.log("submitting the page")
+    handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
+  }, 1500);
 
   return (
     <>
@@ -321,10 +171,16 @@ const PageDetailsPage: NextPageWithLayout = () => {
               render={({ field: { value, onChange } }) =>
               (
               <DocumentEditorWithRef
+                documentDetails={
+                  {
+                    title: pageDetails.name
+                  }
+                }
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 ref={editorRef}
                 debouncedUpdatesEnabled={false}
+                setIsSubmitting={setIsSubmitting}
                 value={
                   !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
                     ? watch("description_html")
@@ -332,8 +188,16 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 }
                 customClassName="tracking-tight self-center w-full max-w-full px-0"
                 onChange={(description_json: Object, description_html: string) => {
+                  console.log("saving the form")
                   onChange(description_html);
+                  setIsSubmitting("submitting");
+                  debouncedFormSave();
                 }}
+                duplicationConfig={
+                  {
+										action: duplicate_page
+                  }
+                }
               />)
               }
             />
