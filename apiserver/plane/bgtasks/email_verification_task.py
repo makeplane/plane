@@ -46,7 +46,7 @@ def email_verification(first_name, email, token, current_site):
         )
 
         # Initiate email alternatives
-        msg = EmailMultiAlternatives(subject=subject, text_content=text_content, from_email=settings.EMAIL_FROM, to=[email], connection=connection)
+        msg = EmailMultiAlternatives(subject=subject, body=text_content, from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"), to=[email], connection=connection)
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         return
