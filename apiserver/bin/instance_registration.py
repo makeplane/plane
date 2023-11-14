@@ -84,14 +84,14 @@ def instance_registration():
                     role=20,
                 )
 
-                print(f"Instance succesfully registered with owner: {instance.owner.email}")
+                print(f"Instance succesfully registered with owner: {instance.primary_owner.email}")
                 return
 
             print("Instance could not be registered")
             return
         else:
             print(
-                f"Instance already registered with instance owner: {instance.owner.email}"
+                f"Instance already registered with instance owner: {instance.primary_owner.email}"
             )
             return
     except ImportError:
