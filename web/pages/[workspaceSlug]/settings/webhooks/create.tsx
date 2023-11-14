@@ -10,7 +10,7 @@ import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { csvDownload } from "helpers/download.helper";
 import useToast from "hooks/use-toast";
-import { WebHookFormTypes } from "components/web-hooks/WebHookForm/WebHookTypes";
+import { WebHookFormTypes } from "components/web-hooks/form";
 import { getCurrentHookAsCSV } from "components/web-hooks/utils";
 
 const Webhooks: NextPage = () => {

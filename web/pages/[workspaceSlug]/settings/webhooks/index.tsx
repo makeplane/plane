@@ -15,15 +15,15 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 import { Spinner } from "@plane/ui";
 
-const Webhooks: NextPage = observer(() => {
+const WebhooksPage: NextPage = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string };
 
   const {
-    webhook: { fetchWebhooks, webhooks },
+    webhook: { fetchWebhooks, webhooks, loader },
   }: RootStore = useMobxStore();
 
-  const { isLoading } = useSWR(
+  useSWR(
     workspaceSlug ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWebhooks(workspaceSlug) : null
   );
@@ -32,20 +32,22 @@ const Webhooks: NextPage = observer(() => {
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
         <div className="w-full overflow-y-auto py-3 pr-4">
-          {Object.keys(webhooks).length > 0 ? (
-            isLoading ? (
-              <div className="flex h-full w-ful items-center justify-center">
-                <Spinner />
-              </div>
-            ) : (
-              <WebhookLists workspaceSlug={workspaceSlug} />
-            )
-          ) : (
-            <div className="flex justify-center w-full h-full items-center">
-              <div className="w-auto h-fit">
-                <EmptyWebhooks workspaceSlug={workspaceSlug} />
-              </div>
+          {loader ? (
+            <div className="flex h-full w-ful items-center justify-center">
+              <Spinner />
             </div>
+          ) : (
+            <>
+              {Object.keys(webhooks).length > 0 ? (
+                <WebhookLists workspaceSlug={workspaceSlug} />
+              ) : (
+                <div className="flex justify-center w-full h-full items-center">
+                  <div className="w-auto h-fit">
+                    <EmptyWebhooks workspaceSlug={workspaceSlug} />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </WorkspaceSettingLayout>
@@ -53,4 +55,4 @@ const Webhooks: NextPage = observer(() => {
   );
 });
 
-export default Webhooks;
+export default WebhooksPage;

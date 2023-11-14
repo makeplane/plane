@@ -1,10 +1,11 @@
 import { FC } from "react";
 import Link from "next/link";
 import { Button } from "@plane/ui";
-import { WebhooksListItem } from "./webhooks-list-item";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 import { observer } from "mobx-react-lite";
+// components
+import { WebhooksListItem } from "./webhooks-list-item";
 
 interface IWebHookLists {
   workspaceSlug: string;
@@ -12,7 +13,9 @@ interface IWebHookLists {
 
 export const WebhookLists: FC<IWebHookLists> = observer((props) => {
   const { workspaceSlug } = props;
-  const { webhook: webhookStore }: RootStore = useMobxStore();
+  const {
+    webhook: { webhooks },
+  }: RootStore = useMobxStore();
 
   return (
     <>
@@ -26,8 +29,8 @@ export const WebhookLists: FC<IWebHookLists> = observer((props) => {
       </div>
 
       <div className="divide-y divide-custom-border-200 overflow-y-scroll">
-        {Object.values(webhookStore.webhooks).map((item) => (
-          <WebhooksListItem workspaceSlug={workspaceSlug} webhook={item} />
+        {Object.values(webhooks).map((item) => (
+          <WebhooksListItem workspaceSlug={workspaceSlug} webhook={item} key={item.id} />
         ))}
       </div>
     </>

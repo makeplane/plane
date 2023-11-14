@@ -77,14 +77,13 @@ export class WebhookStore implements IWebhookStore {
       const webHookObject: { [webhookId: string]: IWebhook } = webhookResponse.reduce((accumulator, currentWebhook) => {
         if (currentWebhook && currentWebhook.id) {
           return { ...accumulator, [currentWebhook.id]: currentWebhook };
-        } else {
-          return accumulator;
         }
+        return accumulator;
       }, {});
 
       runInAction(() => {
         this.webhooks = webHookObject;
-        this.loader = true;
+        this.loader = false;
         this.error = undefined;
       });
 

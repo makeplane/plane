@@ -1,6 +1,5 @@
 import { Control, Controller } from "react-hook-form";
-import { IWebhookIndividualOptions, IWebhookOptions } from "./WebHookTypes";
-import { IExtendedWebhook } from "types/webhook";
+import { IWebhookIndividualOptions, IExtendedWebhook } from "types/webhook";
 
 export enum IndividualWebhookTypes {
   PROJECTS = "Projects",

@@ -1,15 +1,20 @@
 import { useState, FC } from "react";
+import { useRouter } from "next/router";
 import { Button } from "@plane/ui";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
+// hooks
+import useToast from "hooks/use-toast";
+// store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
+// helpers
 import { copyTextToClipboard } from "helpers/string.helper";
-import { useRouter } from "next/router";
-import useToast from "hooks/use-toast";
 import { csvDownload } from "helpers/download.helper";
-import { WebHookFormTypes } from "./WebHookTypes";
+// utils
 import { getCurrentHookAsCSV } from "../utils";
+// enum
+import { WebHookFormTypes } from "./index";
 
 interface IGenerateKey {
   type: WebHookFormTypes.CREATE | WebHookFormTypes.EDIT;
@@ -17,11 +22,15 @@ interface IGenerateKey {
 
 export const GenerateKey: FC<IGenerateKey> = observer((props) => {
   const { type } = props;
+  // states
   const [regenerating, setRegenerate] = useState(false);
   const [shouldShowKey, setShouldShowKey] = useState(false);
+  // router
   const router = useRouter();
   const { workspaceSlug, webhookId } = router.query as { workspaceSlug: string; webhookId: string };
+  // store
   const { webhook: webhookStore, workspace: workspaceStore }: RootStore = useMobxStore();
+  // hooks
   const { setToastAlert } = useToast();
 
   const handleCopySecret = () => {

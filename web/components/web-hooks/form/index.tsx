@@ -1,16 +1,21 @@
 import React, { FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IWebhook, IExtendedWebhook } from "types";
-import { GenerateKey } from "./GenerateKey";
+import { GenerateKey } from "./generate-key";
 import { observer } from "mobx-react-lite";
+// components
 import { DeleteWebhookModal } from "../delete-webhook-modal";
-import { WebHookInput } from "./WebHookInput";
-import { WebHookToggle } from "./WebHookToggle";
-import { WEBHOOK_EVENTS, WebHookOptions, WebhookTypes } from "./WebHookOptions";
-import { WebHookIndividualOptions, individualWebhookOptions } from "./WebHookIndividualOptions";
-import { WebHookFormTypes } from "./WebHookTypes";
-import { WebHookSubmitButton } from "./WebHookSubmit";
-import { WebHookEditForm } from "./WebHookEditForm";
+import { WebHookInput } from "./input";
+import { WebHookToggle } from "./toggle";
+import { WEBHOOK_EVENTS, WebHookOptions, WebhookTypes } from "./options";
+import { WebHookIndividualOptions, individualWebhookOptions } from "./option";
+import { WebHookSubmitButton } from "./submit";
+import { WebHookEditForm } from "./edit-form";
+
+export enum WebHookFormTypes {
+  EDIT = "edit",
+  CREATE = "create",
+}
 
 interface IWebHookForm {
   type: WebHookFormTypes;

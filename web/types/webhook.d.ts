@@ -17,3 +17,15 @@ export interface IWebhook {
 interface IExtendedWebhook extends IWebhook {
   webhook_events: string;
 }
+
+export interface IWebhookIndividualOptions {
+  key: string;
+  label: string;
+  name: "project" | "cycle" | "module" | "issue" | "issue_comment";
+}
+
+export interface IWebhookOptions {
+  key: string;
+  label: string;
+  name: "webhook_events";
+}

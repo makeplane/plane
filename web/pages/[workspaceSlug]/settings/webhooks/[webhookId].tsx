@@ -15,7 +15,7 @@ import { RootStore } from "store/root";
 import { IExtendedWebhook, IWebhook } from "types";
 import { Spinner } from "@plane/ui";
 import { useEffect } from "react";
-import { WebHookFormTypes } from "components/web-hooks/WebHookForm/WebHookTypes";
+import { WebHookFormTypes } from "components/web-hooks/form";
 
 const Webhooks: NextPage = observer(() => {
   const router = useRouter();

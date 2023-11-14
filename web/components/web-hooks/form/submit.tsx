@@ -1,5 +1,5 @@
 import { Button } from "@plane/ui";
-import { WebHookFormTypes } from "./WebHookTypes";
+import { WebHookFormTypes } from "./index";
 
 interface IWebHookSubmitButton {
   isSubmitting: boolean;

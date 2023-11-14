@@ -1,13 +1,12 @@
 import { Control, Controller } from "react-hook-form";
-import { IExtendedWebhook } from "types/webhook";
-import { IWebhookOptions } from "./WebHookTypes";
+import { IExtendedWebhook, IWebhookOptions } from "types/webhook";
 
 export enum WebhookTypes {
   ALL = "all",
   INDIVIDUAL = "individual",
 }
 
-interface IWebHookOptions {
+interface IWebHookOptionsProps {
   control: Control<IExtendedWebhook, any>;
 }
 
@@ -26,7 +25,7 @@ const webhookOptions: IWebhookOptions[] = [
   },
 ];
 
-export const WebHookOptions = ({ control }: IWebHookOptions) => (
+export const WebHookOptions = ({ control }: IWebHookOptionsProps) => (
   <>
     <div className="text-sm font-medium">Which events do you like to trigger this webhook</div>
     {webhookOptions.map(({ key, label, name }: IWebhookOptions) => (
