@@ -1,6 +1,6 @@
 import { useState, FC } from "react";
 import { Button } from "@plane/ui";
-import { Copy, RefreshCw } from "lucide-react";
+import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -18,14 +18,15 @@ interface IGenerateKey {
 export const GenerateKey: FC<IGenerateKey> = observer((props) => {
   const { type } = props;
   const [regenerating, setRegenerate] = useState(false);
+  const [shouldShowKey, setShouldShowKey] = useState(false);
   const router = useRouter();
   const { workspaceSlug, webhookId } = router.query as { workspaceSlug: string; webhookId: string };
   const { webhook: webhookStore, workspace: workspaceStore }: RootStore = useMobxStore();
   const { setToastAlert } = useToast();
 
   const handleCopySecret = () => {
-    if (webhookStore.webhookSecretKey) {
-      navigator.clipboard.writeText(webhookStore.webhookSecretKey);
+    if (webhookStore?.webhookSecretKey) {
+      copyTextToClipboard(webhookStore.webhookSecretKey);
       setToastAlert({
         title: "Success",
         type: "success",
@@ -70,6 +71,15 @@ export const GenerateKey: FC<IGenerateKey> = observer((props) => {
       });
   }
 
+  const toggleShowKey = () => {
+    setShouldShowKey((prevState) => !prevState);
+  };
+
+  const icons = [
+    { Component: Copy, onClick: handleCopySecret, key: "copy" },
+    { Component: shouldShowKey ? EyeOff : Eye, onClick: toggleShowKey, key: "eye" },
+  ];
+
   return (
     <>
       {(type === WebHookFormTypes.EDIT || (type === WebHookFormTypes.CREATE && webhookStore?.webhookSecretKey)) && (
@@ -80,7 +90,7 @@ export const GenerateKey: FC<IGenerateKey> = observer((props) => {
           <div className="flex gap-5">
             <div className="relative flex items-center p-2 rounded w-full border border-custom-border-200">
               <div className="w-full overflow-hidden px-2 font-medium select-none">
-                {webhookStore?.webhookSecretKey ? (
+                {webhookStore?.webhookSecretKey && shouldShowKey ? (
                   <div>{webhookStore?.webhookSecretKey}</div>
                 ) : (
                   <div className="flex items-center gap-1.5">
@@ -91,17 +101,22 @@ export const GenerateKey: FC<IGenerateKey> = observer((props) => {
                 )}
               </div>
               {webhookStore?.webhookSecretKey && (
-                <div
-                  className="w-7 h-7 flex-shrink-0 flex justify-center items-center cursor-pointer hover:bg-custom-background-80 rounded"
-                  onClick={() => copyTextToClipboard(webhookStore?.webhookSecretKey || "")}
-                >
-                  <Copy onClick={handleCopySecret} className="text-custom-text-400 w-4 h-4" />
-                </div>
+                <>
+                  {icons.map(({ Component, onClick, key }) => (
+                    <div
+                      className="w-7 h-7 flex-shrink-0 flex justify-center items-center cursor-pointer hover:bg-custom-background-80 rounded"
+                      onClick={onClick}
+                      key={key}
+                    >
+                      <Component className="text-custom-text-400 w-4 h-4" />
+                    </div>
+                  ))}
+                </>
               )}
             </div>
             <div>
               {type != WebHookFormTypes.CREATE && (
-                <Button disabled={regenerating} onClick={handleRegenerate} className="">
+                <Button disabled={regenerating} onClick={handleRegenerate} variant="accent-primary" className="">
                   <RefreshCw className={`h-3 w-3`} />
                   {regenerating ? "Re-generating..." : "Re-genarate Key"}
                 </Button>
