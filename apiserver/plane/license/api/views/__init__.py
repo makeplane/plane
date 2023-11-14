@@ -1,1 +1,6 @@
-from .instance import InstanceEndpoint, TransferOwnerEndpoint
+from .instance import (
+    InstanceEndpoint,
+    TransferPrimaryOwnerEndpoint,
+    InstanceAdminEndpoint,
+    InstanceConfigurationEndpoint,
+)

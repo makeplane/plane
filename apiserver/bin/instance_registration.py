@@ -73,14 +73,15 @@ def instance_registration():
                     license_key=data.get("license_key"),
                     api_key=data.get("api_key"),
                     version=data.get("version"),
-                    email=data.get("email"),
-                    owner=user,
+                    primary_email=data.get("email"),
+                    primary_owner=user,
                     last_checked_at=timezone.now(),
                 )
                 # Create instance admin
                 _ = InstanceAdmin.objects.create(
                     user=user,
                     instance=instance,
+                    role=20,
                 )
 
                 print(f"Instance succesfully registered with owner: {instance.owner.email}")

@@ -6,6 +6,12 @@ from django.conf import settings
 from plane.db.models import BaseModel
 from plane.db.mixins import AuditModel
 
+ROLE_CHOICES = (
+    (20, "Owner"),
+    (15, "Admin"),
+)
+
+
 class Instance(BaseModel):
     # General informations
     instance_name = models.CharField(max_length=255)
@@ -15,12 +21,12 @@ class Instance(BaseModel):
     api_key = models.CharField(max_length=16)
     version = models.CharField(max_length=10)
     # User information
-    email = models.CharField(max_length=256)
-    owner = models.ForeignKey(
+    primary_email = models.CharField(max_length=256)
+    primary_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
-        related_name="instance_owner",
+        related_name="instance_primary_owner",
     )
     # Instnace specifics
     last_checked_at = models.DateTimeField()
@@ -43,7 +49,8 @@ class InstanceAdmin(BaseModel):
         null=True,
         related_name="instance_owner",
     )
-    instance = models.ForeignKey("db.Instance", on_delete=models.CASCADE, related_name="admins")
+    instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
+    role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=15)
 
     class Meta:
         verbose_name = "Instance Admin"
