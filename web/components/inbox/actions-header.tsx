@@ -160,7 +160,7 @@ export const InboxActionsHeader = observer(() => {
                         Snooze
                       </Button>
                     </Popover.Button>
-                    <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md border border-custom-border-200 bg-custom-background-80 shadow-lg">
+                    <Popover.Panel className="w-80 p-2 absolute right-0 z-10 mt-2 rounded-md bg-custom-background-100 shadow-lg">
                       {({ close }) => (
                         <div className="w-full h-full flex flex-col gap-y-1">
                           <DatePicker
