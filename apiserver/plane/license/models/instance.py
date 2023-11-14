@@ -36,6 +36,21 @@ class Instance(BaseModel):
         ordering = ("-created_at",)
 
 
+class InstanceAdmin(BaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name="instance_owner",
+    )
+    instance = models.ForeignKey("db.Instance", on_delete=models.CASCADE, related_name="admins")
+
+    class Meta:
+        verbose_name = "Instance Admin"
+        verbose_name_plural = "Instance Admins"
+        db_table = "instance_admins"
+        ordering = ("-created_at",)
+
 
 class InstanceConfiguration(BaseModel):
     # The instance configuration variables

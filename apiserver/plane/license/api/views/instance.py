@@ -79,3 +79,13 @@ class TransferOwnerEndpoint(BaseAPIView):
         return Response(
             {"message": "Owner successfully updated"}, status=status.HTTP_200_OK
         )
+
+
+class InstanceAdminEndpoint(BaseAPIView):
+
+
+    def get(self, request, pk=None):
+        instance = Instance.objects.first()
+        if instance is None:
+
+            

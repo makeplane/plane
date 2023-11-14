@@ -21,7 +21,7 @@ def instance_registration():
     try:
         # Module imports
         from plane.db.models import User
-        from plane.license.models import Instance
+        from plane.license.models import Instance, InstanceAdmin
 
         # Check if the instance is registered
         instance = Instance.objects.first()
@@ -66,18 +66,26 @@ def instance_registration():
 
             if response.status_code == 201:
                 data = response.json()
+                # Create instance
                 instance = Instance.objects.create(
                     instance_name="Plane Free",
                     instance_id=data.get("id"),
                     license_key=data.get("license_key"),
                     api_key=data.get("api_key"),
-                    version=0.1,
+                    version=data.get("version"),
                     email=data.get("email"),
                     owner=user,
                     last_checked_at=timezone.now(),
                 )
+                # Create instance admin
+                _ = InstanceAdmin.objects.create(
+                    user=user,
+                    instance=instance,
+                )
+
                 print(f"Instance succesfully registered with owner: {instance.owner.email}")
                 return
+
             print("Instance could not be registered")
             return
         else:
