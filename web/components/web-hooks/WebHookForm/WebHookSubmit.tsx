@@ -6,10 +6,8 @@ interface IWebHookSubmitButton {
   type: WebHookFormTypes;
 }
 
-export const WebHookSubmitButton = ({ isSubmitting, type }: IWebHookSubmitButton) => {
-  return (
-    <Button type="submit" disabled={isSubmitting}>
-      {isSubmitting ? "processing..." : type === "create" ? "Create webhook" : "Save webhook"}
-    </Button>
-  );
-};
+export const WebHookSubmitButton = ({ isSubmitting, type }: IWebHookSubmitButton) => (
+  <Button type="submit" disabled={isSubmitting}>
+    {isSubmitting ? "processing..." : type === "create" ? "Create webhook" : "Save webhook"}
+  </Button>
+);

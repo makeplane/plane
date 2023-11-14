@@ -18,40 +18,38 @@ export const ApiTokenDescription = ({
   focusDescription,
   setFocusTitle,
   setFocusDescription,
-}: IApiTokenDescription) => {
-  return (
-    <Controller
-      control={control}
-      name="description"
-      render={({ field: { value, onChange } }) =>
-        focusDescription ? (
-          <TextArea
-            id="description"
-            name="description"
-            autoFocus={true}
-            onBlur={() => {
-              setFocusDescription(false);
-            }}
-            value={value}
-            defaultValue={value}
-            onChange={onChange}
-            placeholder="Description"
-            className="mt-3"
-            rows={3}
-          />
-        ) : (
-          <p
-            onClick={() => {
-              if (generatedToken != null) return;
-              setFocusTitle(false);
-              setFocusDescription(true);
-            }}
-            className={`${value.length === 0 ? "text-custom-text-400/60" : "text-custom-text-300"} text-lg pt-3`}
-          >
-            {value.length != 0 ? value : "Description"}
-          </p>
-        )
-      }
-    />
-  );
-};
+}: IApiTokenDescription) => (
+  <Controller
+    control={control}
+    name="description"
+    render={({ field: { value, onChange } }) =>
+      focusDescription ? (
+        <TextArea
+          id="description"
+          name="description"
+          autoFocus={true}
+          onBlur={() => {
+            setFocusDescription(false);
+          }}
+          value={value}
+          defaultValue={value}
+          onChange={onChange}
+          placeholder="Description"
+          className="mt-3"
+          rows={3}
+        />
+      ) : (
+        <p
+          onClick={() => {
+            if (generatedToken != null) return;
+            setFocusTitle(false);
+            setFocusDescription(true);
+          }}
+          className={`${value.length === 0 ? "text-custom-text-400/60" : "text-custom-text-300"} text-lg pt-3`}
+        >
+          {value.length != 0 ? value : "Description"}
+        </p>
+      )
+    }
+  />
+);

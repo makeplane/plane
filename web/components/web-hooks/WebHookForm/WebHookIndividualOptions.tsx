@@ -42,34 +42,30 @@ interface IWebHookIndividualOptions {
   control: Control<IExtendedWebhook, any>;
 }
 
-export const WebHookIndividualOptions = ({ control }: IWebHookIndividualOptions) => {
-  return (
-    <>
-      <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 px-8 py-6 bg-custom-background-90">
-        {individualWebhookOptions.map(({ key, label, name }: IWebhookIndividualOptions) => {
-          return (
-            <Controller
-              control={control}
-              name={name}
-              key={key}
-              render={({ field: { onChange, value } }) => (
-                <div className="relative flex items-center gap-2">
-                  <input
-                    id={key}
-                    onChange={() => onChange(!value)}
-                    type="checkbox"
-                    name="selectIndividualEvents"
-                    checked={value == true}
-                  />
-                  <label className="text-sm" htmlFor={key}>
-                    {label}
-                  </label>
-                </div>
-              )}
-            />
-          );
-        })}
-      </div>
-    </>
-  );
-};
+export const WebHookIndividualOptions = ({ control }: IWebHookIndividualOptions) => (
+  <>
+    <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 px-8 py-6 bg-custom-background-90">
+      {individualWebhookOptions.map(({ key, label, name }: IWebhookIndividualOptions) => (
+        <Controller
+          control={control}
+          name={name}
+          key={key}
+          render={({ field: { onChange, value } }) => (
+            <div className="relative flex items-center gap-2">
+              <input
+                id={key}
+                onChange={() => onChange(!value)}
+                type="checkbox"
+                name="selectIndividualEvents"
+                checked={value == true}
+              />
+              <label className="text-sm" htmlFor={key}>
+                {label}
+              </label>
+            </div>
+          )}
+        />
+      ))}
+    </div>
+  </>
+);

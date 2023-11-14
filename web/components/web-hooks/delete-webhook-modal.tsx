@@ -1,14 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Button, Input } from "@plane/ui";
-import { error } from "console";
+import { Button } from "@plane/ui";
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { AlertTriangle } from "lucide-react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { FC } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { WebhookStore } from "store/webhook.store";
+import React, { FC, useState } from "react";
+import { useForm } from "react-hook-form";
 
 interface IDeleteWebhook {
   isOpen: boolean;
@@ -26,14 +23,6 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   const { setToastAlert } = useToast();
 
   const [deleting, setDelete] = useState(false);
-
-  const {
-    control,
-    formState: { errors, isSubmitting },
-    handleSubmit,
-    reset,
-    watch,
-  } = useForm({});
 
   const { workspaceSlug, webhookId } = router.query;
 
@@ -105,8 +94,8 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
 
                 <span>
                   <p className="text-sm leading-7 text-custom-text-200">
-                    Are you sure you want to delete workspace <span className="break-words font-semibold"></span>? All
-                    of the data related to the workspace will be permanently removed. This action cannot be undone.
+                    Are you sure you want to delete workspace <span className="break-words font-semibold" />? All of the
+                    data related to the workspace will be permanently removed. This action cannot be undone.
                   </p>
                 </span>
 

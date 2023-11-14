@@ -27,7 +27,7 @@ const DeleteTokenModal: FC<Props> = ({ isOpen, handleClose, tokenId }) => {
   const handleDeletion = () => {
     if (!workspaceSlug || (!tokenIdFromQuery && !tokenId)) return;
 
-    let token = tokenId || tokenIdFromQuery;
+    const token = tokenId || tokenIdFromQuery;
 
     setDeleteLoading(true);
     apiTokenService

@@ -26,34 +26,30 @@ const webhookOptions: IWebhookOptions[] = [
   },
 ];
 
-export const WebHookOptions = ({ control }: IWebHookOptions) => {
-  return (
-    <>
-      <div className="text-sm font-medium">Which events do you like to trigger this webhook</div>
-      {webhookOptions.map(({ key, label, name }: IWebhookOptions) => {
-        return (
-          <div className="flex items-center gap-2">
-            <Controller
-              control={control}
+export const WebHookOptions = ({ control }: IWebHookOptions) => (
+  <>
+    <div className="text-sm font-medium">Which events do you like to trigger this webhook</div>
+    {webhookOptions.map(({ key, label, name }: IWebhookOptions) => (
+      <div className="flex items-center gap-2">
+        <Controller
+          control={control}
+          name={name}
+          key={key}
+          render={({ field: { onChange, value } }) => (
+            <input
+              id={key}
+              type="radio"
               name={name}
-              key={key}
-              render={({ field: { onChange, value } }) => (
-                <input
-                  id={key}
-                  type="radio"
-                  name={name}
-                  value={key}
-                  checked={value == key}
-                  onChange={() => onChange(key)}
-                />
-              )}
+              value={key}
+              checked={value == key}
+              onChange={() => onChange(key)}
             />
-            <label className="text-sm" htmlFor={key}>
-              {label}
-            </label>
-          </div>
-        );
-      })}
-    </>
-  );
-};
+          )}
+        />
+        <label className="text-sm" htmlFor={key}>
+          {label}
+        </label>
+      </div>
+    ))}
+  </>
+);

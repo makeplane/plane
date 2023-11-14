@@ -8,11 +8,9 @@ interface IWebHookLists {
   workspaceSlug: string;
 }
 
+export const EmptyWebhooks: FC<IWebHookLists> = (props) => {
+  const { workspaceSlug } = props;
 
-export const EmptyWebhooks:FC<IWebHookLists>  = (props) => {
-
-  const {workspaceSlug} = props;
-  
   return (
     <div className="flex items-start justify-center">
       <div className="flex p-10 flex-col items-center justify-center rounded-[4px] border border-custom-border-200 bg-custom-color-background-90">

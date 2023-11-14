@@ -95,7 +95,7 @@ export const GenerateKey: FC<IGenerateKey> = observer((props) => {
                 ) : (
                   <div className="flex items-center gap-1.5">
                     {[...Array(41)].map((_, index) => (
-                      <div key={index} className="w-[4px] h-[4px] bg-gray-300 rounded-full"></div>
+                      <div key={index} className="w-[4px] h-[4px] bg-gray-300 rounded-full" />
                     ))}
                   </div>
                 )}

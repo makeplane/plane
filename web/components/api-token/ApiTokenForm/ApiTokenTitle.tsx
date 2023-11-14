@@ -20,52 +20,50 @@ export const ApiTokenTitle = ({
   focusTitle,
   setFocusTitle,
   setFocusDescription,
-}: IApiTokenTitle) => {
-  return (
-    <Controller
-      control={control}
-      name="title"
-      rules={{
-        required: "Title is required",
-        maxLength: {
-          value: 255,
-          message: "Title should be less than 255 characters",
-        },
-      }}
-      render={({ field: { value, onChange, ref } }) =>
-        focusTitle ? (
-          <Input
-            id="title"
-            name="title"
-            type="text"
-            inputSize="md"
-            onBlur={() => {
-              setFocusTitle(false);
-            }}
-            onError={() => {
-              console.log("error");
-            }}
-            autoFocus={true}
-            value={value}
-            onChange={onChange}
-            ref={ref}
-            hasError={!!errors.title}
-            placeholder="Title"
-            className="resize-none text-xl w-full"
-          />
-        ) : (
-          <p
-            onClick={() => {
-              if (generatedToken != null) return;
-              setFocusDescription(false);
-              setFocusTitle(true);
-            }}
-            className={`${value.length === 0 ? "text-custom-text-400/60" : ""} font-medium text-[24px]`}
-          >
-            {value.length != 0 ? value : "Api Title"}
-          </p>
-        )
-      }
-    />
-  );
-};
+}: IApiTokenTitle) => (
+  <Controller
+    control={control}
+    name="title"
+    rules={{
+      required: "Title is required",
+      maxLength: {
+        value: 255,
+        message: "Title should be less than 255 characters",
+      },
+    }}
+    render={({ field: { value, onChange, ref } }) =>
+      focusTitle ? (
+        <Input
+          id="title"
+          name="title"
+          type="text"
+          inputSize="md"
+          onBlur={() => {
+            setFocusTitle(false);
+          }}
+          onError={() => {
+            console.log("error");
+          }}
+          autoFocus={true}
+          value={value}
+          onChange={onChange}
+          ref={ref}
+          hasError={!!errors.title}
+          placeholder="Title"
+          className="resize-none text-xl w-full"
+        />
+      ) : (
+        <p
+          onClick={() => {
+            if (generatedToken != null) return;
+            setFocusDescription(false);
+            setFocusTitle(true);
+          }}
+          className={`${value.length === 0 ? "text-custom-text-400/60" : ""} font-medium text-[24px]`}
+        >
+          {value.length != 0 ? value : "Api Title"}
+        </p>
+      )
+    }
+  />
+);
