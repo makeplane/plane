@@ -14,20 +14,24 @@ import { Dialog, Transition } from "@headlessui/react";
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
+  tokenId?: string;
 };
 
 const apiTokenService = new ApiTokenService();
-const DeleteTokenModal: FC<Props> = ({ isOpen, handleClose }) => {
+const DeleteTokenModal: FC<Props> = ({ isOpen, handleClose, tokenId }) => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   const { setToastAlert } = useToast();
   const router = useRouter();
-  const { workspaceSlug, tokenId } = router.query;
+  const { workspaceSlug, tokenId: tokenIdFromQuery } = router.query;
 
   const handleDeletion = () => {
-    if (!workspaceSlug || !tokenId) return;
+    if (!workspaceSlug || (!tokenIdFromQuery && !tokenId)) return;
+
+    let token = tokenId || tokenIdFromQuery;
+
     setDeleteLoading(true);
     apiTokenService
-      .deleteApiToken(workspaceSlug.toString(), tokenId.toString())
+      .deleteApiToken(workspaceSlug.toString(), token!.toString())
       .then(() => {
         setToastAlert({
           message: "Token deleted successfully",

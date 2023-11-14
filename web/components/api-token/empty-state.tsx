@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // assets
 import emptyApiTokens from "public/empty-state/api-token.svg";
 
@@ -20,14 +20,14 @@ const ApiTokenEmptyState = () => {
             Create API tokens for safe and easy data sharing with external apps, maintaining control and security
           </p>
         }
-        <PrimaryButton
+        <Button
           className="flex items-center gap-1.5"
           onClick={() => {
             router.push(`${router.asPath}/create/`);
           }}
         >
           Add Token
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   );
