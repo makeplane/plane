@@ -1,14 +1,14 @@
 import { Editor } from "@tiptap/react"
-import { AlertCircle, ArchiveIcon, ClipboardIcon, Copy, FileLineChart, Link, Lock, MenuSquare, MoreVertical, XCircle } from "lucide-react"
+import { AlertCircle, FileLineChart, MenuSquare, MoreVertical} from "lucide-react"
 import { useRouter } from "next/router"
 import { useRef, useState } from "react"
 import { usePopper } from "react-popper"
 import { IMarking, UploadImage } from ".."
 import { FixedMenu } from "../menu"
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "../types/menu-actions"
-import { copyMarkdownToClipboard, CopyPageLink } from "../utils/menu-actions"
+import { getMenuOptions } from "../utils/menu-options"
 import { ContentBrowser } from "./content-browser"
-import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "./vertical-dropdown-menu"
+import { VerticalDropdownMenu } from "./vertical-dropdown-menu"
 
 interface IEditorHeader {
   editor: Editor,
@@ -49,60 +49,18 @@ export const EditorHeader = ({ editor, duplicationConfig, pageLockConfig, pageAr
     ],
   })
 
+	const KanbanMenuOptions = getMenuOptions({
+	  editor: editor,
+		router: router,
+		duplicationConfig: duplicationConfig,
+		pageLockConfig: pageLockConfig,
+		pageArchiveConfig: pageArchiveConfig
+	})
+
 
   const { styles: summaryPopoverStyles, attributes: summaryPopoverAttributes } = usePopper(summaryButtonRef.current, summaryMenuRef.current, {
     placement: "bottom-start"
   })
-
-  const KanbanMenuOptions: IVerticalDropdownItemProps[] = [
-    {
-      type: "copy_markdown",
-      Icon: ClipboardIcon,
-      action: () => copyMarkdownToClipboard(editor),
-      label: "Copy Markdown"
-    },
-    {
-      type: "close_page",
-      Icon: XCircle,
-      action: () => router.back(),
-      label: "Close the page"
-    },
-    {
-      type: "copy_page_link",
-      Icon: Link,
-      action: () => CopyPageLink(),
-      label: "Copy Page Link"
-    },
-  ]
-
-  // If duplicateConfig is given, page duplication will be allowed
-  if (duplicationConfig) {
-    KanbanMenuOptions.push({
-      type: "duplicate_page",
-      Icon: Copy,
-      action: duplicationConfig.action,
-      label: "Make a copy"
-    })
-  }
-  // If Lock Configuration is given then, lock page option will be available in the kanban menu
-  if (pageLockConfig) {
-    KanbanMenuOptions.push({
-      type: "lock_page",
-      Icon: Lock,
-      label: "Lock Page",
-      action: pageLockConfig.action
-    })
-  }
-
-  // Archiving will be visible in the menu bar config once the pageArchiveConfig is given.
-  if (pageArchiveConfig) {
-    KanbanMenuOptions.push({
-      type: "archive_page",
-      Icon: ArchiveIcon,
-      label: "Archive Page",
-      action: pageArchiveConfig.action,
-    })
-  }
 
   return (
 
