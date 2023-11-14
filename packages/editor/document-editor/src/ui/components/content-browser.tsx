@@ -1,17 +1,16 @@
 import { HeadingComp, SubheadingComp } from "./heading-component";
 import { IMarking } from "..";
 import { Editor } from "@tiptap/react";
+import { scrollSummary } from "../utils/editor-summary-utils";
 
 interface ContentBrowserProps {
   editor: Editor;
   markings: IMarking[];
-  scrollSummary: (editor: Editor, marking: IMarking) => void;
 }
 
 export const ContentBrowser = ({
   editor,
   markings,
-  scrollSummary,
 }: ContentBrowserProps) => (
   <div className="mt-4 flex h-full w-[250px] flex-col">
     <h2 className="ml-4 border-b border-solid border-custom-border py-5 font-medium leading-[85.714%] tracking-tight max-md:ml-2.5">

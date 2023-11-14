@@ -127,7 +127,7 @@ export const EditorHeader = ({ editor, duplicationConfig, pageLockConfig, pageAr
           </button>
           {summaryPopoverVisible &&
             <div style={summaryPopoverStyles.popper} {...summaryPopoverAttributes.popper} className="z-10 h-[300px] w-[300px] ml-[40px] mt-[50px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b pl-3 pr-3 pb-3 overflow-scroll">
-              <ContentBrowser editor={editor} markings={markings} scrollSummary={scrollSummary} />
+              <ContentBrowser editor={editor} markings={markings} />
             </div>
           }
         </div>
