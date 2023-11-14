@@ -49,7 +49,7 @@ export const FilterCreatedBy: React.FC<Props> = (props) => {
                     key={`created-by-${member.id}`}
                     isChecked={appliedFilters?.includes(member.id) ? true : false}
                     onClick={() => handleUpdate(member.id)}
-                    icon={<Avatar name={member.display_name} src={member.avatar} size="sm" />}
+                    icon={<Avatar name={member.display_name} src={member.avatar} size="md" />}
                     title={member.display_name}
                   />
                 ))}
