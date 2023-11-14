@@ -80,7 +80,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId]?.active || null;
+  const activeCycle = cycleStore.cycles?.[projectId]?.current || null;
   const cycle = activeCycle ? activeCycle[0] : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
