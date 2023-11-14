@@ -1,12 +1,15 @@
 import { HeadingComp, SubheadingComp } from "./heading-component";
 import { IMarking } from "..";
+import { Editor } from "@tiptap/react";
 
 interface ContentBrowserProps {
+  editor: Editor;
   markings: IMarking[];
-  scrollSummary: (marking: IMarking) => void;
+  scrollSummary: (editor: Editor, marking: IMarking) => void;
 }
 
 export const ContentBrowser = ({
+  editor,
   markings,
   scrollSummary,
 }: ContentBrowserProps) => (
@@ -19,12 +22,12 @@ export const ContentBrowser = ({
       markings.map((marking) =>
         marking.level === 1 ? (
           <HeadingComp
-            onClick={() => scrollSummary(marking)}
+            onClick={() => scrollSummary(editor, marking)}
             heading={marking.text}
           />
         ) : (
           <SubheadingComp
-            onClick={() => scrollSummary(marking)}
+            onClick={() => scrollSummary(editor,marking)}
             subHeading={marking.text}
           />
         )
