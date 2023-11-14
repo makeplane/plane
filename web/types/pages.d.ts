@@ -12,6 +12,7 @@ export interface IPage {
   description_stripped: string | null;
   id: string;
   is_favorite: boolean;
+	is_locked: boolean;
   label_details: IIssueLabels[];
   labels: string[];
   name: string;
