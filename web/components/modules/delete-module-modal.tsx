@@ -102,7 +102,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete module-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the
                           data related to the module will be permanently removed. This action cannot be undone.
                         </p>
                       </div>
