@@ -138,7 +138,10 @@ const MenuItem: React.FC<ICustomMenuItemProps> = (props) => {
           className={`w-full select-none truncate rounded px-1 py-1.5 text-left text-custom-text-200 hover:bg-custom-background-80 ${
             active ? "bg-custom-background-80" : ""
           } ${className}`}
-          onClick={onClick}
+          onClick={(e) => {
+            close();
+            onClick && onClick(e);
+          }}
         >
           {children}
         </button>
