@@ -1,30 +1,45 @@
 "use client"
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Editor } from "@tiptap/core";
 import { EditorContainer, EditorContentWrapper, cn, getEditorClassNames, useEditor } from '@plane/editor-core';
 import { DocumentEditorExtensions } from './extensions';
 import { FixedMenu } from './menu/fixed-menu';
-import { AlertCircle, FileLineChart, MenuSquare, MoreVertical } from 'lucide-react';
+import { AlertCircle, ArchiveIcon, ClipboardIcon, Copy, Cross, FileLineChart, Link, Lock, MenuSquare, MoreVertical, XCircle } from 'lucide-react';
 import { usePopper } from 'react-popper';
 import { ContentBrowser } from './components/content-browser';
-
+import { IVerticalDropdownItemProps, VerticalDropdownMenu } from './components/vertical-dropdown-menu';
+import { CopyPageLink, copyMarkdownToClipboard } from './utils/menu-actions';
+import { useRouter } from 'next/router';
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
+interface DocumentDetails {
+  title: string;
+}
+
 interface IDocumentEditor {
+  documentDetails: DocumentDetails,
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   customClassName?: string;
   editorContentCustomClassNames?: string;
-  onChange?: (json: any, html: string) => void;
+  onChange: (json: any, html: string) => void;
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
   debouncedUpdatesEnabled?: boolean;
+  duplicationConfig?: {
+    action: () => Promise<void>
+  },
+  pageLockConfig? : {
+    action: () => Promise<void>
+  },
+  pageArchiveConfig? : {
+    action: () => Promise<void>
+  }
 }
-
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
@@ -41,8 +56,9 @@ export interface IMarking {
   sequence: number
 }
 
-
 const DocumentEditor = ({
+  documentDetails,
+  onChange,
   debouncedUpdatesEnabled,
   setIsSubmitting,
   setShouldShowAlert,
@@ -52,21 +68,95 @@ const DocumentEditor = ({
   deleteFile,
   customClassName,
   forwardedRef,
+  duplicationConfig,
+  pageLockConfig,
+  pageArchiveConfig
 }: IDocumentEditor) => {
 
   const [markings, setMarkings] = useState<IMarking[]>([])
 
+  const [alert, setAlert] = useState<string>("")
+
+  const router = useRouter()
 
   const summaryMenuRef = useRef(null);
   const summaryButtonRef = useRef(null);
   const [summaryPopoverVisible, setSummaryPopoverVisible] = useState(false);
+
   const [menuItemVisible, setMenuItemVisible] = useState(false)
+  const vericalIconRef = useRef(null);
+  const verticalPopoverRef = useRef(null)
+
+
+  // Options that would always be in the kanban menu
+  const KanbanMenuOptions: IVerticalDropdownItemProps[] = [
+    {
+      type: "copy_markdown",
+      Icon: ClipboardIcon,
+      action: () => copyMarkdownToClipboard(editor),
+      label: "Copy Markdown"
+    },
+    {
+      type: "close_page",
+      Icon: XCircle,
+      action: () => router.back(),
+      label: "Close the page"
+    },
+    {
+      type: "copy_page_link",
+      Icon: Link,
+      action: () => CopyPageLink(),
+      label: "Copy Page Link"
+    },
+  ]
+
+  // If duplicateConfig is given, page duplication will be allowed
+  if (duplicationConfig){
+    KanbanMenuOptions.push({
+      type: "duplicate_page",
+      Icon: Copy,
+      action: duplicationConfig.action,
+      label: "Make a copy"
+    })
+  }
+
+  // If Lock Configuration is given then, lock page option will be available in the kanban menu
+  if (pageLockConfig){
+    KanbanMenuOptions.push({
+      type: "lock_page",
+      Icon: Lock,
+      label: "Lock Page",
+      action: pageLockConfig.action
+    })
+  }
+
+  // Archiving will be visible in the menu bar config once the pageArchiveConfig is given.
+  if (pageArchiveConfig){
+    KanbanMenuOptions.push({
+      type: "archive_page",
+      Icon: ArchiveIcon,
+      label: "Archive Page",
+      action: pageArchiveConfig.action,
+    })
+  }
 
   const { styles: summaryPopoverStyles, attributes: summaryPopoverAttributes } = usePopper(summaryButtonRef.current, summaryMenuRef.current, {
-    placement: "auto",
+    placement: "bottom-start"
   })
 
-  const onChange = (json: any) => {
+  const { styles: verticalPopoverStyles, attributes: verticalPopoverAttributes } = usePopper(vericalIconRef.current, verticalPopoverRef.current, {
+    placement: "bottom-end",
+    modifiers: [
+      {
+        name: 'offset',
+        options: {
+          offset: [0, -40],
+        },
+      },
+    ],
+  })
+
+  const onEditorChange = (json: any) => {
     const nodes = json.content as any[]
     const tempMarkings: IMarking[] = []
     let h1Sequence: number = 0
@@ -87,7 +177,13 @@ const DocumentEditor = ({
   }
 
   const editor = useEditor({
-    onChange,
+    onChange(json, html) {
+      onEditorChange(json)
+      onChange(json, html)
+    },
+    onStart(json) {
+      onEditorChange(json)
+    },
     debouncedUpdatesEnabled,
     setIsSubmitting,
     setShouldShowAlert,
@@ -143,11 +239,11 @@ const DocumentEditor = ({
         <nav
           className="self-center flex ml-0 w-full items-start justify-between gap-5 max-md:max-w-full max-md:flex-wrap max-md:justify-center">
           <div
-            ref={summaryButtonRef}
             onMouseEnter={() => setSummaryPopoverVisible(true)}
             onMouseLeave={() => setSummaryPopoverVisible(false)}
           >
             <button
+              ref={summaryButtonRef}
               className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
               onClick={() => {
                 setSidePeakVisible(!sidePeakVisible)
@@ -159,12 +255,12 @@ const DocumentEditor = ({
               />
             </button>
             {summaryPopoverVisible &&
-              <div style={summaryPopoverStyles.popper} {...summaryPopoverAttributes.popper} className="z-10 ml-9 mt-12 h-[300px] w-[300px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b pl-3 pr-3 pb-3 overflow-scroll">
+              <div style={summaryPopoverStyles.popper} {...summaryPopoverAttributes.popper} className="z-10 h-[300px] w-[300px] ml-[40px] mt-[50px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b pl-3 pr-3 pb-3 overflow-scroll">
                 <ContentBrowser markings={markings} scrollSummary={scrollSummary} />
               </div>
             }
           </div>
-          {/* <PopoverSummaryMenu ref={summaryMenuRef} style={styles.popper} attributes={attributes} /> */}
+
           <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />
           <div className="self-center flex items-start gap-3 my-auto max-md:justify-center"
           >
@@ -184,6 +280,7 @@ const DocumentEditor = ({
             </button>
             <div>
               <button
+                ref={vericalIconRef}
                 className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
                 onClick={() => setMenuItemVisible(!menuItemVisible)}
               >
@@ -191,6 +288,11 @@ const DocumentEditor = ({
                   size={20}
                 />
               </button>
+              {menuItemVisible &&
+                <div ref={verticalPopoverRef} style={verticalPopoverStyles.popper} {...verticalPopoverAttributes.popper} className="z-10 w-[250px] shadow-xl rounded border-custom-border border-solid border-2 bg-custom-background-100 border-b p-2 overflow-scroll">
+                  <VerticalDropdownMenu items={KanbanMenuOptions} />
+                </div>
+              }
             </div>
           </div>
         </nav>
@@ -205,12 +307,9 @@ const DocumentEditor = ({
           <div className={`flex h-full flex-col w-[90%] max-md:w-full max-md:ml-0  transition-all duration-200 ease-in-out ${sidePeakVisible ? 'ml-[12%] w-[79%]' : 'ml-0 w-[90%]'}`}>
             <div className="items-start h-full flex flex-col w-[892px] mt-8 max-md:max-w-full overflow-auto">
               <div className="flex flex-col py-2 max-md:max-w-full">
-                <input
-                  type="text"
-                  value={"Page Title"}
-                  onChange={(e) => { console.log(e.target.value) }}
+                <h1
                   className="border-none outline-none bg-transparent text-4xl font-bold leading-8 tracking-tight self-center w-[700px] max-w-full"
-                />
+                >{documentDetails.title}</h1>
               </div>
               <div className="border-custom-border border-b border-solid self-stretch w-full h-0.5 mt-3" />
               <div className="h-full items-start flex flex-col max-md:max-w-full">

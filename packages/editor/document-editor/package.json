@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
+    "@plane/ui": "*",
     "@plane/editor-core": "*",
     "@popperjs/core": "^2.11.8",
     "@tiptap/core": "^2.1.7",
