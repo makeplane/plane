@@ -30,6 +30,10 @@ const MyPagesList = dynamic<TPagesListProps>(() => import("components/pages").th
   ssr: false,
 });
 
+const ArchivedPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.ArchivedPagesList), {
+  ssr: false,
+})
+
 const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.OtherPagesList), {
   ssr: false,
 });
@@ -57,7 +61,8 @@ const ProjectPagesPage: NextPageWithLayout = () => {
         return 3;
       case "Created by others":
         return 4;
-
+      case "Archived Pages":
+			  return 5;
       default:
         return 0;
     }
@@ -82,16 +87,14 @@ const ProjectPagesPage: NextPageWithLayout = () => {
               <Tooltip key={layout.key} tooltipContent={layout.title}>
                 <button
                   type="button"
-                  className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
-                    viewType == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                  }`}
+                  className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${viewType == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
+                    }`}
                   onClick={() => setViewType(layout.key as TPageViewProps)}
                 >
                   <layout.icon
                     strokeWidth={2}
-                    className={`h-3.5 w-3.5 ${
-                      viewType == layout.key ? "text-custom-text-100" : "text-custom-text-200"
-                    }`}
+                    className={`h-3.5 w-3.5 ${viewType == layout.key ? "text-custom-text-100" : "text-custom-text-200"
+                      }`}
                   />
                 </button>
               </Tooltip>
@@ -113,7 +116,8 @@ const ProjectPagesPage: NextPageWithLayout = () => {
                 return setPageTab("Created by me");
               case 4:
                 return setPageTab("Created by others");
-
+              case 5:
+                return setPageTab("Archived Pages")
               default:
                 return setPageTab("Recent");
             }
@@ -125,10 +129,9 @@ const ProjectPagesPage: NextPageWithLayout = () => {
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `rounded-full border px-5 py-1.5 text-sm outline-none ${
-                      selected
-                        ? "border-custom-primary bg-custom-primary text-white"
-                        : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                    `rounded-full border px-5 py-1.5 text-sm outline-none ${selected
+                      ? "border-custom-primary bg-custom-primary text-white"
+                      : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
                     }`
                   }
                 >
@@ -152,6 +155,9 @@ const ProjectPagesPage: NextPageWithLayout = () => {
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
               <OtherPagesList viewType={viewType} />
+            </Tab.Panel>
+            <Tab.Panel as="div" className="h-full overflow-hidden">
+              <ArchivedPagesList viewType={viewType} />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

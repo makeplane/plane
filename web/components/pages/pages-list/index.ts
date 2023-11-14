@@ -1,4 +1,5 @@
 export * from "./all-pages-list";
+export * from "./archived-pages-list"
 export * from "./favorite-pages-list";
 export * from "./my-pages-list";
 export * from "./other-pages-list";
