@@ -542,13 +542,13 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <>
-                    <CustomMenu
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
-                        >
-                          {watch("parent") ? (
+                    {watch("parent") ? (
+                      <CustomMenu
+                        customButton={
+                          <button
+                            type="button"
+                            className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                          >
                             <div className="flex items-center gap-1 text-custom-text-200">
                               <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
                               <span className="whitespace-nowrap">
@@ -557,31 +557,30 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                                   ${selectedParentIssue.sequence_id}`}
                               </span>
                             </div>
-                          ) : (
-                            <div className="flex items-center gap-1 text-custom-text-300">
-                              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
-                              <span className="whitespace-nowrap">Add Parent</span>
-                            </div>
-                          )}
-                        </button>
-                      }
-                      placement="bottom-start"
-                    >
-                      {watch("parent") ? (
-                        <>
-                          <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                            Change parent issue
-                          </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
-                            Remove parent issue
-                          </CustomMenu.MenuItem>
-                        </>
-                      ) : (
+                          </button>
+                        }
+                        placement="bottom-start"
+                      >
                         <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                          Select Parent Issue
+                          Change parent issue
                         </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
+                        <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
+                          Remove parent issue
+                        </CustomMenu.MenuItem>
+                      </CustomMenu>
+                    ) : (
+                      <button
+                        type="button"
+                        className="flex items-center justify-between gap-1 w-min cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                        onClick={() => setParentIssueListModalOpen(true)}
+                      >
+                        <div className="flex items-center gap-1 text-custom-text-300">
+                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                          <span className="whitespace-nowrap">Add Parent</span>
+                        </div>
+                      </button>
+                    )}
+
                     <Controller
                       control={control}
                       name="parent"
