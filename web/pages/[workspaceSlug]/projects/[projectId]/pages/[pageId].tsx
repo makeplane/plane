@@ -70,6 +70,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
     defaultValues: { name: "", description_html: "" },
   });
 
+  // =================== Page Details ======================
   const { data: projectDetails } = useSWR(
     workspaceSlug && projectId ? PROJECT_DETAILS(projectId as string) : null,
     workspaceSlug && projectId ? () => projectService.getProject(workspaceSlug as string, projectId as string) : null
@@ -103,6 +104,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
+  // ================ Pages Api Requests ==================
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -127,14 +129,38 @@ const PageDetailsPage: NextPageWithLayout = () => {
       .createPage(workspaceSlug as string, projectId as string, payload, user)
   };
 
+  // ================ Page Menu Actions ==================
   const duplicate_page = async () => {
     const currentPageValues = getValues()
     const formData: Partial<IPage> = {
       name: "Copy of " + currentPageValues.name,
       description_html: currentPageValues.description_html
     }
-
     await createPage(formData)
+  }
+
+  const archivePage = async () => {
+    try {
+      await pageService.archivePage(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string
+      )
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const unArchivePage = async () => {
+    try {
+      await pageService.removePageFromArchives(
+        workspaceSlug as string,
+        projectId as string,
+        pageId as string
+      )
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   useEffect(() => {
@@ -170,35 +196,41 @@ const PageDetailsPage: NextPageWithLayout = () => {
               control={control}
               render={({ field: { value, onChange } }) =>
               (
-              <DocumentEditorWithRef
-                documentDetails={
-                  {
-                    title: pageDetails.name
+                <DocumentEditorWithRef
+                  documentDetails={
+                    {
+                      title: pageDetails.name
+                    }
                   }
-                }
-                uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                deleteFile={fileService.deleteImage}
-                ref={editorRef}
-                debouncedUpdatesEnabled={false}
-                setIsSubmitting={setIsSubmitting}
-                value={
-                  !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
-                    ? watch("description_html")
-                    : value
-                }
-                customClassName="tracking-tight self-center w-full max-w-full px-0"
-                onChange={(description_json: Object, description_html: string) => {
-                  console.log("saving the form")
-                  onChange(description_html);
-                  setIsSubmitting("submitting");
-                  debouncedFormSave();
-                }}
-                duplicationConfig={
-                  {
-										action: duplicate_page
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                  deleteFile={fileService.deleteImage}
+                  ref={editorRef}
+                  debouncedUpdatesEnabled={false}
+                  setIsSubmitting={setIsSubmitting}
+                  value={
+                    !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)
+                      ? watch("description_html")
+                      : value
                   }
-                }
-              />)
+                  customClassName="tracking-tight self-center w-full max-w-full px-0"
+                  onChange={(description_json: Object, description_html: string) => {
+                    console.log("saving the form")
+                    onChange(description_html);
+                    setIsSubmitting("submitting");
+                    debouncedFormSave();
+                  }}
+                  duplicationConfig={
+                    {
+                      action: duplicate_page
+                    }
+                  }
+                  pageArchiveConfig={
+                    {
+                      action: archivePage
+										}
+
+                  }
+                />)
               }
             />
           </div>
