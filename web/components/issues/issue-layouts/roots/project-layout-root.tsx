@@ -25,6 +25,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     issue: issueStore,
     issueFilter: issueFilterStore,
     projectIssues: { getIssues, fetchIssues },
+    projectIssueFilters: projectIssueFiltersStore,
   } = useMobxStore();
 
   // SWR request
@@ -33,6 +34,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && issueStore) {
         await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+        await projectIssueFiltersStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
         await issueStore.fetchIssues(
           workspaceSlug.toString(),
           projectId.toString(),
@@ -42,7 +44,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     }
   );
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = projectIssueFiltersStore.currentProjectDisplayFilters?.layout;
   const issueCount = issueStore.getIssuesCount;
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
