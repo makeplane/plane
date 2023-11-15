@@ -7,6 +7,8 @@ import uuid
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 # Module imports
 from plane.db.models import User
@@ -27,6 +29,12 @@ class Command(BaseCommand):
                 data = json.load(file)
 
             admin_email = os.environ.get("ADMIN_EMAIL")
+
+            try:
+                validate_email(admin_email)
+            except ValidationError:
+                CommandError(f"{admin_email} is not a valid ADMIN_EMAIL")
+
             # Raise an exception if the admin email is not provided
             if not admin_email:
                 raise CommandError("ADMIN_EMAIL is required")
