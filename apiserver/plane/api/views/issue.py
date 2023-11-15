@@ -753,7 +753,6 @@ class LabelViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
-            .order_by("name")
             .distinct()
             .order_by("sort_order")
         )
