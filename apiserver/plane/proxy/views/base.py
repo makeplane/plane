@@ -14,6 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 # Module imports
 from plane.authentication.api_authentication import APIKeyAuthentication
+from plane.proxy.rate_limit import ApiKeyRateThrottle
 
 
 class BaseAPIView(APIView):
@@ -23,6 +24,10 @@ class BaseAPIView(APIView):
 
     permission_classes = [
         IsAuthenticated,
+    ]
+
+    throttle_classes = [
+        ApiKeyRateThrottle,
     ]
 
     def _get_jwt_token(self, request):
@@ -67,6 +72,21 @@ class BaseAPIView(APIView):
             files=files_payload,
         )
         return response.json(), response.status_code
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        # Call super to get the default response
+        response = super().finalize_response(request, response, *args, **kwargs)
+
+        # Add custom headers if they exist in the request META
+        ratelimit_remaining = request.META.get('X-RateLimit-Remaining')
+        if ratelimit_remaining is not None:
+            response['X-RateLimit-Remaining'] = ratelimit_remaining
+
+        ratelimit_reset = request.META.get('X-RateLimit-Reset')
+        if ratelimit_reset is not None:
+            response['X-RateLimit-Reset'] = ratelimit_reset
+
+        return response
 
     def get(self, request, *args, **kwargs):
         response, status_code = self._make_request(request=request, method="GET")

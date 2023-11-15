@@ -65,6 +65,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_THROTTLE_CLASSES": ("plane.proxy.rate_limit.ApiKeyRateThrottle",),
+    "DEFAULT_THROTTLE_RATES": {
+        "api_key": "60/minute",
+    },
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -225,4 +229,3 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
 )
-
