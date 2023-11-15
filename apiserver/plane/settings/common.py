@@ -5,6 +5,7 @@ import ssl
 import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
+
 # Django imports
 from django.core.management.utils import get_random_secret_key
 
@@ -25,12 +26,6 @@ DEBUG = False
 
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
-
-# To access webhook
-ENABLE_WEBHOOK = os.environ.get("ENABLE_WEBHOOK", "1") == "1"
-
-# To access plane api through api tokens
-ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
 
 # Redirect if / is not present
 APPEND_SLASH = True
@@ -229,7 +224,9 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
+STORAGES["default"] = {
+    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+}
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
@@ -243,7 +240,6 @@ if AWS_S3_ENDPOINT_URL:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
-
 
 
 # JWT Auth Configuration
@@ -338,7 +334,5 @@ SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
 SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
 SCOUT_NAME = "Plane"
 
-# Set the variable true if running in docker environment
-DOCKERIZED = int(os.environ.get("DOCKERIZED", 1)) == 1
+# Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
-

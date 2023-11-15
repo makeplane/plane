@@ -35,8 +35,6 @@ OPENAI_API_BASE="https://api.openai.com/v1" # change if using a custom endpoint
 OPENAI_API_KEY="sk-" # add your openai key here
 GPT_ENGINE="gpt-3.5-turbo" # use "gpt-4" if you have access
 ​
-# Settings related to Docker
-DOCKERIZED=1
 # set to 1 If using the pre-configured minio setup
 USE_MINIO=1
 ​
@@ -119,11 +117,12 @@ OPENAI_API_BASE="https://api.openai.com/v1" # change if using a custom endpoint
 OPENAI_API_KEY="sk-" # add your openai key here
 GPT_ENGINE="gpt-3.5-turbo" # use "gpt-4" if you have access
 ​
+# Settings related to Docker
+DOCKERIZED=1  # Deprecated
+
 # Github
 GITHUB_CLIENT_SECRET="" # For fetching release notes
 ​
-# Settings related to Docker
-DOCKERIZED=1
 # set to 1 If using the pre-configured minio setup
 USE_MINIO=1
 ​
