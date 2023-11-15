@@ -25,35 +25,21 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     issue: issueStore,
     issueFilter: issueFilterStore,
     projectIssues: { getIssues, fetchIssues },
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssueFilters: { fetchUserProjectFilters },
   } = useMobxStore();
 
-  // SWR request
   useSWR(
-    workspaceSlug && projectId && issueStore ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null,
+    workspaceSlug && projectId && getIssues ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
     async () => {
-      if (workspaceSlug && projectId && issueStore) {
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-        await projectIssueFiltersStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-        await issueStore.fetchIssues(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          issueStore?.issues ? "mutation" : "initial-load"
-        );
+      if (workspaceSlug && projectId) {
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+        await fetchUserProjectFilters(workspaceSlug, projectId);
+        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
       }
     }
   );
 
-  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
-  const issueCount = issueStore.getIssuesCount;
-
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) await fetchIssues(workspaceSlug, projectId);
-  });
-
-  console.log("---");
-  console.log("getIssues", getIssues);
-  console.log("---");
+  const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
   if (!issueStore.getIssues)
     return (

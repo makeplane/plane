@@ -5,45 +5,32 @@ import { IssueService } from "services/issue/issue.service";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // types
-import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+import { TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, IIssue } from "types/issues";
 import { RootStore } from "store/root";
+// helpers
 import { renderDateFormat } from "helpers/date-time.helper";
-
-export interface IGroupedIssues {
-  [group_id: string]: string[];
-}
-
-export interface ISubGroupedIssues {
-  [sub_grouped_id: string]: {
-    [group_id: string]: string[];
-  };
-}
-
-export type TUnGroupedIssues = string[];
-
-export interface IIssueResponse {
-  [issue_id: string]: IIssue;
-}
 
 export interface IProjectIssueStore {
   // observable
-  loader: "init-loader" | "mutation" | null;
+  loader: TLoader;
   issues:
     | {
         [project_id: string]: IIssueResponse;
       }
     | undefined;
   // computed
-  getIssues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  getIssues: IIssueResponse | undefined;
+  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, projectId: string) => Promise<IIssueResponse>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
 }
 
 export class ProjectIssueStore implements IProjectIssueStore {
-  loader: "init-loader" | "mutation" | null = null;
+  loader: TLoader = undefined;
   issues:
     | {
         [project_id: string]: IIssueResponse;
@@ -61,6 +48,7 @@ export class ProjectIssueStore implements IProjectIssueStore {
       issues: observable.ref,
       // computed
       getIssues: computed,
+      getIssuesIds: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -80,6 +68,13 @@ export class ProjectIssueStore implements IProjectIssueStore {
   }
 
   get getIssues() {
+    const projectId = this.rootStore?.project.projectId;
+    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+
+    return this.issues[projectId];
+  }
+
+  get getIssuesIds() {
     const projectId = this.rootStore?.project.projectId;
 
     const subGroupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.sub_group_by;
@@ -224,8 +219,10 @@ export class ProjectIssueStore implements IProjectIssueStore {
     else return [value || "None"];
   }
 
-  fetchIssues = async (workspaceSlug: string, projectId: string) => {
+  fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
     try {
+      this.loader = loadType;
+
       const response = await this.issueService.getV3Issues(workspaceSlug, projectId);
 
       const _issues = {
@@ -235,10 +232,12 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
       runInAction(() => {
         this.issues = _issues;
+        this.loader = undefined;
       });
 
       return response;
     } catch (error) {
+      this.loader = undefined;
       throw error;
     }
   };

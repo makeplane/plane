@@ -4,11 +4,23 @@ import { observer } from "mobx-react-lite";
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // types
-import { IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
+import {
+  IGroupedIssues,
+  IIssue,
+  IIssueDisplayProperties,
+  IIssueLabels,
+  IIssueResponse,
+  IProject,
+  IState,
+  ISubGroupedIssues,
+  IUserLite,
+  TUnGroupedIssues,
+} from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 
 export interface IGroupByList {
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   issues: any;
   group_by: string | null;
   list: any;
@@ -25,6 +37,7 @@ export interface IGroupByList {
 
 const GroupByList: React.FC<IGroupByList> = observer((props) => {
   const {
+    issueIds,
     issues,
     group_by,
     list,
@@ -103,7 +116,8 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
 });
 
 export interface IList {
-  issues: IIssue[] | null;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  issues: IIssueResponse | undefined;
   group_by: string | null;
   handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
@@ -121,26 +135,30 @@ export interface IList {
 
 export const List: React.FC<IList> = observer((props) => {
   const {
+    issueIds,
     issues,
     group_by,
     handleIssues,
     quickActions,
+
     displayProperties,
     showEmptyGroup,
     enableIssueQuickAdd,
     isReadonly,
+
     states,
+    stateGroups,
+    priorities,
     labels,
     members,
     projects,
-    stateGroups,
-    priorities,
   } = props;
 
   return (
     <div className="relative w-full h-full">
       {group_by === null && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={[{ id: `null`, title: `All Issues` }]}
@@ -158,6 +176,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "project" && projects && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={projects}
@@ -174,6 +193,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "state" && states && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={states}
@@ -190,6 +210,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "state_detail.group" && stateGroups && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={stateGroups}
@@ -206,6 +227,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "priority" && priorities && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={priorities}
@@ -222,6 +244,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "labels" && labels && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={[...labels, { id: "None", name: "None" }]}
@@ -238,6 +261,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "assignees" && members && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={[...members, { id: "None", display_name: "None" }]}
@@ -254,6 +278,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "created_by" && members && (
         <GroupByList
+          issueIds={issueIds}
           issues={issues}
           group_by={group_by}
           list={members}
