@@ -33,7 +33,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.api.serializers import (
     IssueCreateSerializer,
     IssueActivitySerializer,
@@ -84,7 +84,7 @@ from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 
 
-class IssueViewSet(BaseViewSet):
+class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
         return (
             IssueCreateSerializer
@@ -93,6 +93,7 @@ class IssueViewSet(BaseViewSet):
         )
 
     model = Issue
+    webhook_event = "issue"
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -594,9 +595,10 @@ class IssueActivityEndpoint(BaseAPIView):
         return Response(result_list, status=status.HTTP_200_OK)
 
 
-class IssueCommentViewSet(BaseViewSet):
+class IssueCommentViewSet(WebhookMixin, BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
+    webhook_event = "issue-comment"
     permission_classes = [
         ProjectLitePermission,
     ]
@@ -623,6 +625,7 @@ class IssueCommentViewSet(BaseViewSet):
                         workspace__slug=self.kwargs.get("slug"),
                         project_id=self.kwargs.get("project_id"),
                         member_id=self.request.user.id,
+                        is_active=True,
                     )
                 )
             )
@@ -1254,7 +1257,11 @@ class IssueSubscriberViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         members = (
-            ProjectMember.objects.filter(workspace__slug=slug, project_id=project_id)
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                is_active=True,
+            )
             .annotate(
                 is_subscribed=Exists(
                     IssueSubscriber.objects.filter(
@@ -1498,6 +1505,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                                 workspace__slug=self.kwargs.get("slug"),
                                 project_id=self.kwargs.get("project_id"),
                                 member_id=self.request.user.id,
+                                is_active=True,
                             )
                         )
                     )
@@ -1538,6 +1546,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1651,6 +1660,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1744,7 +1754,9 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 project_id=project_id, comment_id=comment_id, actor=request.user
             )
             if not ProjectMember.objects.filter(
-                project_id=project_id, member=request.user
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1829,7 +1841,9 @@ class IssueVotePublicViewSet(BaseViewSet):
         )
         # Add the user for workspace tracking
         if not ProjectMember.objects.filter(
-            project_id=project_id, member=request.user
+            project_id=project_id,
+            member=request.user,
+            is_active=True,
         ).exists():
             _ = ProjectPublicMember.objects.get_or_create(
                 project_id=project_id,
