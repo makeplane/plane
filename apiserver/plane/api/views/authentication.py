@@ -4,7 +4,7 @@ import random
 import string
 import json
 import requests
-
+from requests.exceptions import RequestException
 # Django imports
 from django.utils import timezone
 from django.core.exceptions import ValidationError
@@ -22,8 +22,13 @@ from sentry_sdk import capture_exception, capture_message
 
 # Module imports
 from . import BaseAPIView
-from plane.db.models import User
-from plane.api.serializers import UserSerializer
+from plane.db.models import (
+    User,
+    WorkspaceMemberInvite,
+    WorkspaceMember,
+    ProjectMemberInvite,
+    ProjectMember,
+)
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
 
@@ -86,35 +91,93 @@ class SignUpEndpoint(BaseAPIView):
         user.token_updated_at = timezone.now()
         user.save()
 
+        # Check if user has any accepted invites for workspace and add them to workspace
+        workspace_member_invites = WorkspaceMemberInvite.objects.filter(
+            email=user.email, accepted=True
+        )
+
+        WorkspaceMember.objects.bulk_create(
+            [
+                WorkspaceMember(
+                    workspace_id=workspace_member_invite.workspace_id,
+                    member=user,
+                    role=workspace_member_invite.role,
+                )
+                for workspace_member_invite in workspace_member_invites
+            ],
+            ignore_conflicts=True,
+        )
+
+        # Check if user has any project invites
+        project_member_invites = ProjectMemberInvite.objects.filter(
+            email=user.email, accepted=True
+        )
+
+        # Add user to workspace
+        WorkspaceMember.objects.bulk_create(
+            [
+                WorkspaceMember(
+                    workspace_id=project_member_invite.workspace_id,
+                    role=project_member_invite.role
+                    if project_member_invite.role in [5, 10, 15]
+                    else 15,
+                    member=user,
+                    created_by_id=project_member_invite.created_by_id,
+                )
+                for project_member_invite in project_member_invites
+            ],
+            ignore_conflicts=True,
+        )
+
+        # Now add the users to project
+        ProjectMember.objects.bulk_create(
+            [
+                ProjectMember(
+                    workspace_id=project_member_invite.workspace_id,
+                    role=project_member_invite.role
+                    if project_member_invite.role in [5, 10, 15]
+                    else 15,
+                    member=user,
+                    created_by_id=project_member_invite.created_by_id,
+                ) for project_member_invite in project_member_invites
+            ],
+            ignore_conflicts=True,
+        )
+        # Delete all the invites
+        workspace_member_invites.delete()
+        project_member_invites.delete()
+
+        try:
+            # Send Analytics
+            if settings.ANALYTICS_BASE_API:
+                _ = requests.post(
+                    settings.ANALYTICS_BASE_API,
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                    },
+                    json={
+                        "event_id": uuid.uuid4().hex,
+                        "event_data": {
+                            "medium": "email",
+                        },
+                        "user": {"email": email, "id": str(user.id)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        },
+                        "event_type": "SIGN_UP",
+                    },
+                )
+        except RequestException as e:
+            capture_exception(e)
+
         access_token, refresh_token = get_tokens_for_user(user)
 
         data = {
             "access_token": access_token,
             "refresh_token": refresh_token,
         }
-
-        # Send Analytics
-        if settings.ANALYTICS_BASE_API:
-            _ = requests.post(
-                settings.ANALYTICS_BASE_API,
-                headers={
-                    "Content-Type": "application/json",
-                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                },
-                json={
-                    "event_id": uuid.uuid4().hex,
-                    "event_data": {
-                        "medium": "email",
-                    },
-                    "user": {"email": email, "id": str(user.id)},
-                    "device_ctx": {
-                        "ip": request.META.get("REMOTE_ADDR"),
-                        "user_agent": request.META.get("HTTP_USER_AGENT"),
-                    },
-                    "event_type": "SIGN_UP",
-                },
-            )
-
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -176,33 +239,92 @@ class SignInEndpoint(BaseAPIView):
         user.token_updated_at = timezone.now()
         user.save()
 
-        access_token, refresh_token = get_tokens_for_user(user)
-        # Send Analytics
-        if settings.ANALYTICS_BASE_API:
-            _ = requests.post(
-                settings.ANALYTICS_BASE_API,
-                headers={
-                    "Content-Type": "application/json",
-                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                },
-                json={
-                    "event_id": uuid.uuid4().hex,
-                    "event_data": {
-                        "medium": "email",
+        # Check if user has any accepted invites for workspace and add them to workspace
+        workspace_member_invites = WorkspaceMemberInvite.objects.filter(
+            email=user.email, accepted=True
+        )
+
+        WorkspaceMember.objects.bulk_create(
+            [
+                WorkspaceMember(
+                    workspace_id=workspace_member_invite.workspace_id,
+                    member=user,
+                    role=workspace_member_invite.role,
+                )
+                for workspace_member_invite in workspace_member_invites
+            ],
+            ignore_conflicts=True,
+        )
+
+        # Check if user has any project invites
+        project_member_invites = ProjectMemberInvite.objects.filter(
+            email=user.email, accepted=True
+        )
+
+        # Add user to workspace
+        WorkspaceMember.objects.bulk_create(
+            [
+                WorkspaceMember(
+                    workspace_id=project_member_invite.workspace_id,
+                    role=project_member_invite.role
+                    if project_member_invite.role in [5, 10, 15]
+                    else 15,
+                    member=user,
+                    created_by_id=project_member_invite.created_by_id,
+                )
+                for project_member_invite in project_member_invites
+            ],
+            ignore_conflicts=True,
+        )
+
+        # Now add the users to project
+        ProjectMember.objects.bulk_create(
+            [
+                ProjectMember(
+                    workspace_id=project_member_invite.workspace_id,
+                    role=project_member_invite.role
+                    if project_member_invite.role in [5, 10, 15]
+                    else 15,
+                    member=user,
+                    created_by_id=project_member_invite.created_by_id,
+                ) for project_member_invite in project_member_invites
+            ],
+            ignore_conflicts=True,
+        )
+
+        # Delete all the invites
+        workspace_member_invites.delete()
+        project_member_invites.delete()
+        try:
+            # Send Analytics
+            if settings.ANALYTICS_BASE_API:
+                _ = requests.post(
+                    settings.ANALYTICS_BASE_API,
+                    headers={
+                        "Content-Type": "application/json",
+                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                     },
-                    "user": {"email": email, "id": str(user.id)},
-                    "device_ctx": {
-                        "ip": request.META.get("REMOTE_ADDR"),
-                        "user_agent": request.META.get("HTTP_USER_AGENT"),
+                    json={
+                        "event_id": uuid.uuid4().hex,
+                        "event_data": {
+                            "medium": "email",
+                        },
+                        "user": {"email": email, "id": str(user.id)},
+                        "device_ctx": {
+                            "ip": request.META.get("REMOTE_ADDR"),
+                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        },
+                        "event_type": "SIGN_IN",
                     },
-                    "event_type": "SIGN_IN",
-                },
-            )
+                )
+        except RequestException as e:
+            capture_exception(e)
+
         data = {
             "access_token": access_token,
             "refresh_token": refresh_token,
         }
-
+        access_token, refresh_token = get_tokens_for_user(user)
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -320,27 +442,37 @@ class MagicSignInEndpoint(BaseAPIView):
             if str(token) == str(user_token):
                 if User.objects.filter(email=email).exists():
                     user = User.objects.get(email=email)
-                    # Send event to Jitsu for tracking
-                    if settings.ANALYTICS_BASE_API:
-                        _ = requests.post(
-                            settings.ANALYTICS_BASE_API,
-                            headers={
-                                "Content-Type": "application/json",
-                                "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                    if not user.is_active:
+                        return Response(
+                            {
+                                "error": "Your account has been deactivated. Please contact your site administrator."
                             },
-                            json={
-                                "event_id": uuid.uuid4().hex,
-                                "event_data": {
-                                    "medium": "code",
-                                },
-                                "user": {"email": email, "id": str(user.id)},
-                                "device_ctx": {
-                                    "ip": request.META.get("REMOTE_ADDR"),
-                                    "user_agent": request.META.get("HTTP_USER_AGENT"),
-                                },
-                                "event_type": "SIGN_IN",
-                            },
+                            status=status.HTTP_403_FORBIDDEN,
                         )
+                    try:
+                        # Send event to Jitsu for tracking
+                        if settings.ANALYTICS_BASE_API:
+                            _ = requests.post(
+                                settings.ANALYTICS_BASE_API,
+                                headers={
+                                    "Content-Type": "application/json",
+                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
+                                },
+                                json={
+                                    "event_id": uuid.uuid4().hex,
+                                    "event_data": {
+                                        "medium": "code",
+                                    },
+                                    "user": {"email": email, "id": str(user.id)},
+                                    "device_ctx": {
+                                        "ip": request.META.get("REMOTE_ADDR"),
+                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                    },
+                                    "event_type": "SIGN_IN",
+                                },
+                            )
+                    except RequestException as e:
+                        capture_exception(e)
                 else:
                     user = User.objects.create(
                         email=email,
@@ -348,27 +480,30 @@ class MagicSignInEndpoint(BaseAPIView):
                         password=make_password(uuid.uuid4().hex),
                         is_password_autoset=True,
                     )
-                    # Send event to Jitsu for tracking
-                    if settings.ANALYTICS_BASE_API:
-                        _ = requests.post(
-                            settings.ANALYTICS_BASE_API,
-                            headers={
-                                "Content-Type": "application/json",
-                                "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                            },
-                            json={
-                                "event_id": uuid.uuid4().hex,
-                                "event_data": {
-                                    "medium": "code",
+                    try:
+                        # Send event to Jitsu for tracking
+                        if settings.ANALYTICS_BASE_API:
+                            _ = requests.post(
+                                settings.ANALYTICS_BASE_API,
+                                headers={
+                                    "Content-Type": "application/json",
+                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                                 },
-                                "user": {"email": email, "id": str(user.id)},
-                                "device_ctx": {
-                                    "ip": request.META.get("REMOTE_ADDR"),
-                                    "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                json={
+                                    "event_id": uuid.uuid4().hex,
+                                    "event_data": {
+                                        "medium": "code",
+                                    },
+                                    "user": {"email": email, "id": str(user.id)},
+                                    "device_ctx": {
+                                        "ip": request.META.get("REMOTE_ADDR"),
+                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                    },
+                                    "event_type": "SIGN_UP",
                                 },
-                                "event_type": "SIGN_UP",
-                            },
-                        )
+                            )
+                    except RequestException as e:
+                        capture_exception(e)
 
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
@@ -376,6 +511,63 @@ class MagicSignInEndpoint(BaseAPIView):
                 user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
                 user.token_updated_at = timezone.now()
                 user.save()
+
+                # Check if user has any accepted invites for workspace and add them to workspace
+                workspace_member_invites = WorkspaceMemberInvite.objects.filter(
+                    email=user.email, accepted=True
+                )
+
+                WorkspaceMember.objects.bulk_create(
+                    [
+                        WorkspaceMember(
+                            workspace_id=workspace_member_invite.workspace_id,
+                            member=user,
+                            role=workspace_member_invite.role,
+                        )
+                        for workspace_member_invite in workspace_member_invites
+                    ],
+                    ignore_conflicts=True,
+                )
+
+                # Check if user has any project invites
+                project_member_invites = ProjectMemberInvite.objects.filter(
+                    email=user.email, accepted=True
+                )
+
+                # Add user to workspace
+                WorkspaceMember.objects.bulk_create(
+                    [
+                        WorkspaceMember(
+                            workspace_id=project_member_invite.workspace_id,
+                            role=project_member_invite.role
+                            if project_member_invite.role in [5, 10, 15]
+                            else 15,
+                            member=user,
+                            created_by_id=project_member_invite.created_by_id,
+                        )
+                        for project_member_invite in project_member_invites
+                    ],
+                    ignore_conflicts=True,
+                )
+
+                # Now add the users to project
+                ProjectMember.objects.bulk_create(
+                    [
+                        ProjectMember(
+                            workspace_id=project_member_invite.workspace_id,
+                            role=project_member_invite.role
+                            if project_member_invite.role in [5, 10, 15]
+                            else 15,
+                            member=user,
+                            created_by_id=project_member_invite.created_by_id,
+                        ) for project_member_invite in project_member_invites
+                    ],
+                    ignore_conflicts=True,
+                )
+
+                # Delete all the invites
+                workspace_member_invites.delete()
+                project_member_invites.delete()
 
                 access_token, refresh_token = get_tokens_for_user(user)
                 data = {
