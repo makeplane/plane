@@ -13,17 +13,17 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
+    projectIssueFilters: projectIssueFiltersStore,
     project: projectStore,
     projectState: projectStateStore,
     projectMember: { projectMembers },
   } = useMobxStore();
 
-  const userFilters = issueFilterStore.userFilters;
+  const userFilters = projectIssueFiltersStore.projectFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(userFilters).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -36,7 +36,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         filters: {
           [key]: null,
         },
@@ -45,10 +45,10 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     }
 
     // remove the passed value from the key
-    let newValues = issueFilterStore.userFilters?.[key] ?? [];
+    let newValues = projectIssueFiltersStore.projectFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+    projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
       filters: {
         [key]: newValues,
       },
@@ -59,11 +59,11 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
 
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+    projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
       filters: { ...newFilters },
     });
   };
