@@ -17,7 +17,7 @@ django-filter==23.2
 jsonmodels==2.6.0
 djangorestframework-simplejwt==5.3.0
 sentry-sdk==1.30.0
-django-s3-storage==0.14.0
+django-storages==1.14
 django-crum==0.7.9
 django-guardian==2.4.0
 dj_rest_auth==2.2.5
