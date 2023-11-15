@@ -110,7 +110,12 @@ import {
   InboxStore,
 } from "store/inbox";
 
-import { ProjectIssueStore, IProjectIssueStore } from "store/project-issues/issue.store";
+import {
+  ProjectIssueStore,
+  IProjectIssueStore,
+  IProjectIssueFiltersStore,
+  ProjectIssueFiltersStore,
+} from "store/project-issues";
 
 import { IMentionsStore, MentionsStore } from "store/editor";
 
@@ -184,6 +189,7 @@ export class RootStore {
   mentionsStore: IMentionsStore;
 
   projectIssues: IProjectIssueStore;
+  projectIssueFilters: IProjectIssueFiltersStore;
 
   constructor() {
     this.appConfig = new AppConfigStore(this);
@@ -251,5 +257,6 @@ export class RootStore {
     this.mentionsStore = new MentionsStore(this);
 
     this.projectIssues = new ProjectIssueStore(this);
+    this.projectIssueFilters = new ProjectIssueFiltersStore(this);
   }
 }

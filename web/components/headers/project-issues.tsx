@@ -24,7 +24,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
+    projectIssueFilters: projectIssueFiltersStore,
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
@@ -32,65 +32,66 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
   } = useMobxStore();
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         display_filters: {
           layout,
         },
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
 
-      const newValues = issueFilterStore.userFilters?.[key] ?? [];
+      const newValues = projectIssueFiltersStore.projectFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (issueFilterStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (projectIssueFiltersStore.projectFilters?.filters?.[key]?.includes(value))
+          newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         filters: {
           [key]: newValues,
         },
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         display_filters: {
           ...updatedDisplayFilter,
         },
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleDisplayPropertiesUpdate = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      projectIssueFiltersStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
   const { currentProjectDetails } = projectStore;
 
@@ -173,7 +174,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={issueFilterStore.userFilters}
+              filters={projectIssueFiltersStore.projectFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -185,8 +186,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={issueFilterStore.userDisplayFilters}
-              displayProperties={issueFilterStore.userDisplayProperties}
+              displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
+              displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
               handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={
