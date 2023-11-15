@@ -40,16 +40,22 @@ export const DeleteEstimateModal: React.FC<Props> = observer((props) => {
 
     const estimateId = data?.id!;
 
-    projectEstimatesStore.deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId).catch((err) => {
-      const error = err?.error;
-      const errorString = Array.isArray(error) ? error[0] : error;
+    projectEstimatesStore
+      .deleteEstimate(workspaceSlug.toString(), projectId.toString(), estimateId)
+      .then(() => {
+        setIsDeleteLoading(false);
+        handleClose();
+      })
+      .catch((err) => {
+        const error = err?.error;
+        const errorString = Array.isArray(error) ? error[0] : error;
 
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: errorString ?? "Estimate could not be deleted. Please try again",
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: errorString ?? "Estimate could not be deleted. Please try again",
+        });
       });
-    });
   };
 
   useEffect(() => {
