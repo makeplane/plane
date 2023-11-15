@@ -10,7 +10,7 @@ x-app-env : &app-env
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-""}
     - DOCKERIZED=${DOCKERIZED:-1}  # deprecated
-    - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-http://localhost}
+    - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-""}
     # Gunicorn Workers
     - GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
     #DB SETTINGS
@@ -35,7 +35,7 @@ x-app-env : &app-env
     - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
     - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
     - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
-    # OPENAI SETTINGS
+    # OPENAI SETTINGS - Deprecated can be configured through admin panel
     - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
     - OPENAI_API_KEY=${OPENAI_API_KEY:-"sk-"}
     - GPT_ENGINE=${GPT_ENGINE:-"gpt-3.5-turbo"}

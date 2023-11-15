@@ -113,7 +113,13 @@ CSRF_COOKIE_SECURE = True
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
+cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+# filter out empty strings
+cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
+if cors_allowed_origins:
+    CORS_ALLOWED_ORIGINS = cors_allowed_origins
+else:
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -323,16 +329,6 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 # Analytics
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
-
-# Open AI Settings
-OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
-
-# Scout Settings
-SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
-SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
-SCOUT_NAME = "Plane"
 
 # Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
