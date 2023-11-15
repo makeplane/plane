@@ -52,6 +52,10 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     isReadonly,
   } = props;
 
+  console.log("list", list);
+  console.log("issueIds", issueIds);
+  console.log("listKey", listKey);
+
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = states?.find((state) => state.default);
     if (groupByKey === null) return { state: defaultState?.id };
@@ -73,7 +77,7 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
         list.length > 0 &&
         list.map(
           (_list: any) =>
-            validateEmptyIssueGroups(is_list ? issues : issues?.[getValueFromObject(_list, listKey) as string]) && (
+            validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[getValueFromObject(_list, listKey) as string]) && (
               <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
                 <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90">
                   <ListGroupByHeaderRoot
@@ -82,8 +86,8 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                     group_by={group_by}
                     issues_count={
                       is_list
-                        ? issues?.length || 0
-                        : issues?.[getValueFromObject(_list, listKey) as string]?.length || 0
+                        ? issueIds?.length || 0
+                        : issueIds?.[getValueFromObject(_list, listKey) as string]?.length || 0
                     }
                   />
                 </div>

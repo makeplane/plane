@@ -15,18 +15,26 @@ import {
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
 import { IIssue } from "types";
+import { TUnGroupedIssues } from "store/project-issues";
 
 export const GanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { projectDetails } = useProjectDetails();
 
-  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
+  const {
+    issue: issueStore,
+    projectIssues: projectIssuesStore,
+    projectIssueFilters: projectIssueFiltersStore,
+  } = useMobxStore();
 
-  const appliedDisplayFilters = issueFilterStore.userDisplayFilters;
+  const appliedDisplayFilters = projectIssueFiltersStore.projectFilters?.displayFilters;
 
-  const issues = issueStore.getIssues;
+  const issuesList = projectId ? projectIssuesStore.issues?.[projectId.toString()] : undefined;
+  const issueIds = (projectIssuesStore.getIssues ?? []) as TUnGroupedIssues;
+
+  const issues = issueIds.map((id) => issuesList?.[id]);
 
   const updateIssue = (block: IIssue, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
@@ -50,7 +58,7 @@ export const GanttLayout: React.FC = observer(() => {
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}
-          enableReorder={appliedDisplayFilters.order_by === "sort_order" && isAllowed}
+          enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
         />
       </div>
     </>

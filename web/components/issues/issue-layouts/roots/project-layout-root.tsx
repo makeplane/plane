@@ -24,8 +24,8 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const {
     issue: issueStore,
     issueFilter: issueFilterStore,
+    projectIssueFilters: { projectFilters, fetchUserProjectFilters },
     projectIssues: { getIssues, fetchIssues },
-    projectIssueFilters: { fetchUserProjectFilters },
   } = useMobxStore();
 
   useSWR(
@@ -39,7 +39,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     }
   );
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = projectFilters?.displayFilters?.layout;
 
   if (!issueStore.getIssues)
     return (

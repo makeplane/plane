@@ -76,25 +76,24 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
   get getIssuesIds() {
     const projectId = this.rootStore?.project.projectId;
+    const projectDisplayFilters = this.rootStore?.projectIssueFilters.projectFilters?.displayFilters;
 
-    const subGroupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.sub_group_by;
-    const groupBy: TIssueGroupByOptions | undefined = this.rootStore?.issueFilter.userDisplayFilters.group_by;
-    const orderBy: TIssueOrderByOptions | undefined =
-      this.rootStore?.issueFilter.userDisplayFilters.order_by || undefined;
-    const layout: string | undefined = this.rootStore?.issueFilter.userDisplayFilters.layout || undefined;
+    const subGroupBy = projectDisplayFilters?.sub_group_by;
+    const groupBy = projectDisplayFilters?.group_by;
+    const orderBy = projectDisplayFilters?.order_by || undefined;
+    const layout = projectDisplayFilters?.layout || undefined;
 
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
-    if (layout && layout === "calendar") {
-      issues = this.groupedIssues(
-        "target_date" as TIssueGroupByOptions,
-        "target_date" as TIssueOrderByOptions,
-        this.issues[projectId],
-        true
-      );
-    } else {
+    if (layout === "gantt_chart")
+      issues = this.unGroupedIssues(projectId, orderBy ?? "sort_order", this.issues[projectId]);
+    else if (layout === "spreadsheet")
+      issues = this.unGroupedIssues(projectId, orderBy ?? "-created_at", this.issues[projectId]);
+    else if (layout === "calendar")
+      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[projectId], true);
+    else {
       if (subGroupBy && groupBy && orderBy)
         issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
       else if (groupBy && orderBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
