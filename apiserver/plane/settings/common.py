@@ -26,7 +26,6 @@ DEBUG = False
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
 
-
 # To access webhook
 ENABLE_WEBHOOK = os.environ.get("ENABLE_WEBHOOK", "1") == "1"
 
