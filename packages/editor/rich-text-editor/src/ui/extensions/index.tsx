@@ -18,7 +18,9 @@ export const RichTextEditorExtensions = (
       if (node.type.name === "image" || node.type.name === "table") {
         return "";
       }
-
+      if (node.type.name === "codeBlock") {
+        return "Type in your code here...";
+      }
       return "Press '/' for commands...";
     },
     includeChildren: true,

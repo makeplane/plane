@@ -21,12 +21,9 @@ import { isValidHttpUrl } from "../../lib/utils";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
 import { ValidateImage } from "../../types/validate-image";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { common, createLowlight } from "lowlight";
 
-import ts from "highlight.js/lib/languages/typescript";
-const lowlight = createLowlight(common);
-lowlight.register("ts", ts);
+import { CustomKeymap } from "./keymap";
+import { CustomCodeBlock } from "./code";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -66,6 +63,7 @@ export const CoreEditorExtensions = (
       width: 2,
     },
   }),
+  CustomKeymap,
   TiptapLink.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
@@ -87,11 +85,7 @@ export const CoreEditorExtensions = (
       class: "not-prose pl-2",
     },
   }),
-  CodeBlockLowlight.configure({
-    lowlight,
-    defaultLanguage: "plaintext",
-    exitOnTripleEnter: false,
-  }),
+  CustomCodeBlock,
   TaskItem.configure({
     HTMLAttributes: {
       class: "flex items-start my-4",
