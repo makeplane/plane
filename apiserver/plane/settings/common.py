@@ -5,6 +5,7 @@ import ssl
 import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
+
 # Django imports
 from django.core.management.utils import get_random_secret_key
 
@@ -236,7 +237,6 @@ if AWS_S3_ENDPOINT_URL:
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
 
-
 # JWT Auth Configuration
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10080),
@@ -332,4 +332,3 @@ SCOUT_NAME = "Plane"
 # Set the variable true if running in docker environment
 DOCKERIZED = int(os.environ.get("DOCKERIZED", 1)) == 1
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
-
