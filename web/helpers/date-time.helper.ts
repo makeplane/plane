@@ -1,4 +1,9 @@
-export const renderDateFormat = (date: string | Date | null) => {
+export const addDays = ({ date, days }: { date: Date; days: number }): Date => {
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
+export const renderDateFormat = (date: string | Date | null | undefined, dayFirst: boolean = false) => {
   if (!date) return "N/A";
 
   var d = new Date(date),
@@ -9,7 +14,7 @@ export const renderDateFormat = (date: string | Date | null) => {
   if (month.length < 2) month = "0" + month;
   if (day.length < 2) day = "0" + day;
 
-  return [year, month, day].join("-");
+  return dayFirst ? [day, month, year].join("-") : [year, month, day].join("-");
 };
 
 export const renderShortNumericDateFormat = (date: string | Date) =>
@@ -127,6 +132,39 @@ export const formatDateDistance = (date: string | Date) => {
     return `${Math.floor(days / 30)}m`;
   } else {
     return `${Math.floor(days / 365)}y`;
+  }
+};
+
+export const formatLongDateDistance = (date: string | Date) => {
+  const today = new Date();
+  const eventDate = new Date(date);
+  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
+  const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  if (days < 1) {
+    const hours = Math.ceil(timeDiff / (1000 * 3600));
+    if (hours < 1) {
+      const minutes = Math.ceil(timeDiff / (1000 * 60));
+      if (minutes < 1) {
+        return "Just now";
+      } else {
+        return `${minutes} minutes`;
+      }
+    } else {
+      return `${hours} hours`;
+    }
+  } else if (days < 7) {
+    if (days === 1) return `${days} day`;
+    return `${days} days`;
+  } else if (days < 30) {
+    if (Math.floor(days / 7) === 1) return `${Math.floor(days / 7)} week`;
+    return `${Math.floor(days / 7)} weeks`;
+  } else if (days < 365) {
+    if (Math.floor(days / 30) === 1) return `${Math.floor(days / 30)} month`;
+    return `${Math.floor(days / 30)} months`;
+  } else {
+    if (Math.floor(days / 365) === 1) return `${Math.floor(days / 365)} year`;
+    return `${Math.floor(days / 365)} years`;
   }
 };
 

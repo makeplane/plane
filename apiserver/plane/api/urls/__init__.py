@@ -19,6 +19,12 @@ from .state import urlpatterns as state_urls
 from .user import urlpatterns as user_urls
 from .views import urlpatterns as view_urls
 from .workspace import urlpatterns as workspace_urls
+from .api import urlpatterns as api_urls
+from .webhook import urlpatterns as webhook_urls
+
+
+# Django imports
+from django.conf import settings
 
 
 urlpatterns = [
@@ -44,3 +50,9 @@ urlpatterns = [
     *view_urls,
     *workspace_urls,
 ]
+
+if settings.ENABLE_WEBHOOK:
+    urlpatterns += webhook_urls
+
+if settings.ENABLE_API:
+    urlpatterns += api_urls
