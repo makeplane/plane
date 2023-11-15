@@ -6,7 +6,6 @@ import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
-import Gapcursor from "@tiptap/extension-gapcursor";
 
 import TableHeader from "./table/table-header/table-header";
 import Table from "./table/table";
@@ -22,6 +21,12 @@ import { isValidHttpUrl } from "../../lib/utils";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
 import { ValidateImage } from "../../types/validate-image";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { common, createLowlight } from "lowlight";
+
+import ts from "highlight.js/lib/languages/typescript";
+const lowlight = createLowlight(common);
+lowlight.register("ts", ts);
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -53,22 +58,14 @@ export const CoreEditorExtensions = (
         class: "border-l-4 border-custom-border-300",
       },
     },
-    code: {
-      HTMLAttributes: {
-        class:
-          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-        spellcheck: "false",
-      },
-    },
+    code: false,
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
       width: 2,
     },
-    gapcursor: false,
   }),
-  Gapcursor,
   TiptapLink.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
@@ -90,6 +87,11 @@ export const CoreEditorExtensions = (
       class: "not-prose pl-2",
     },
   }),
+  CodeBlockLowlight.configure({
+    lowlight,
+    defaultLanguage: "plaintext",
+    exitOnTripleEnter: false,
+  }),
   TaskItem.configure({
     HTMLAttributes: {
       class: "flex items-start my-4",
@@ -99,6 +101,7 @@ export const CoreEditorExtensions = (
   Markdown.configure({
     html: true,
     transformCopiedText: true,
+    transformPastedText: true,
   }),
   HorizontalRule,
   Table,
