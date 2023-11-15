@@ -51,7 +51,7 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
         className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-        <RocketIcon size={12} color="#6b7280" />
+        <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
       </a>
     </Tooltip>
   );

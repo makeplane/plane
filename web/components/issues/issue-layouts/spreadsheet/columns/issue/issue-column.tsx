@@ -78,7 +78,7 @@ export const IssueColumn: React.FC<Props> = ({
       <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
         {properties.key && (
           <div
-            className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-[96px]"
+            className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-min"
             style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
