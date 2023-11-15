@@ -4,14 +4,14 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 //icons
 import { Component, X, Pencil, MoreVertical } from "lucide-react";
 import { DraggableProvidedDragHandleProps, DraggableStateSnapshot, DroppableStateSnapshot } from "@hello-pangea/dnd";
 
 type Props = {
-  label: IIssueLabels;
-  editLabel: (label: IIssueLabels) => void;
+  label: IIssueLabel;
+  editLabel: (label: IIssueLabel) => void;
   handleLabelDelete: () => void;
   droppableSnapshot: DroppableStateSnapshot;
   draggableSnapshot: DraggableStateSnapshot;

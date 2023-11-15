@@ -10,14 +10,14 @@ import { CustomMenu } from "@plane/ui";
 // icons
 import { ChevronDown, Component, MoreVertical, Pencil, Trash2, X } from "lucide-react";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 
 type Props = {
-  label: IIssueLabels;
-  labelChildren: IIssueLabels[];
-  handleLabelDelete: (label: IIssueLabels) => void;
-  editLabel: (label: IIssueLabels) => void;
+  label: IIssueLabel;
+  labelChildren: IIssueLabel[];
+  handleLabelDelete: (label: IIssueLabel) => void;
+  editLabel: (label: IIssueLabel) => void;
 };
 
 export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
@@ -30,7 +30,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
   // store
   const { projectLabel: projectLabelStore } = useMobxStore();
 
-  const removeFromGroup = (label: IIssueLabels) => {
+  const removeFromGroup = (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
 
     projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {

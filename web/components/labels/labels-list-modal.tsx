@@ -11,12 +11,12 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { LayerStackIcon } from "@plane/ui";
 import { Search } from "lucide-react";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  parent: IIssueLabels | undefined;
+  parent: IIssueLabel | undefined;
 };
 
 export const LabelsListModal: React.FC<Props> = observer((props) => {
@@ -41,7 +41,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   );
 
   // derived values
-  const filteredLabels: IIssueLabels[] =
+  const filteredLabels: IIssueLabel[] =
     query === ""
       ? projectLabels ?? []
       : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
@@ -51,7 +51,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
     setQuery("");
   };
 
-  const addChildLabel = async (label: IIssueLabels) => {
+  const addChildLabel = async (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
 
     await updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {

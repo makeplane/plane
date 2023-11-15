@@ -74,3 +74,19 @@ export const orderGroupedDataByField = <T>(groupedData: GroupedItems<T>, orderBy
   }
   return groupedData;
 };
+
+export const buildTree = (array: any[], parent = null) => {
+  const tree: any = [];
+
+  array.forEach((item: any) => {
+    if (item.parent === parent) {
+      const children = buildTree(array, item.id);
+      if (children.length) {
+        item.children = children;
+      }
+      tree.push(item);
+    }
+  });
+
+  return tree;
+};

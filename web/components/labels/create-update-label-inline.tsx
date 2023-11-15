@@ -11,7 +11,7 @@ import { Popover, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 // fetch-keys
 import { getRandomLabelColor, LABEL_COLOR_OPTIONS } from "constants/label";
 import useToast from "hooks/use-toast";
@@ -20,11 +20,11 @@ type Props = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
-  labelToUpdate: IIssueLabels | null;
+  labelToUpdate: IIssueLabel | null;
   onClose?: () => void;
 };
 
-const defaultValues: Partial<IIssueLabels> = {
+const defaultValues: Partial<IIssueLabel> = {
   name: "",
   color: "rgb(var(--color-text-200))",
 };
@@ -50,7 +50,7 @@ export const CreateUpdateLabelInline = observer(
       watch,
       setValue,
       setFocus,
-    } = useForm<IIssueLabels>({
+    } = useForm<IIssueLabel>({
       defaultValues,
     });
 
@@ -60,7 +60,7 @@ export const CreateUpdateLabelInline = observer(
       if (onClose) onClose();
     };
 
-    const handleLabelCreate: SubmitHandler<IIssueLabels> = async (formData) => {
+    const handleLabelCreate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
       await projectLabelStore
@@ -79,7 +79,7 @@ export const CreateUpdateLabelInline = observer(
         });
     };
 
-    const handleLabelUpdate: SubmitHandler<IIssueLabels> = async (formData) => {
+    const handleLabelUpdate: SubmitHandler<IIssueLabel> = async (formData) => {
       if (!workspaceSlug || !projectId || isSubmitting) return;
 
       await projectLabelStore

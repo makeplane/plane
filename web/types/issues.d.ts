@@ -159,7 +159,7 @@ export type IssuePriorities = {
   user: string;
 };
 
-export interface IIssueLabels {
+export interface IIssueLabel {
   id: string;
   created_at: Date;
   updated_at: Date;
@@ -173,6 +173,10 @@ export interface IIssueLabels {
   workspace: string;
   workspace_detail: IWorkspaceLite;
   parent: string | null;
+}
+
+export interface IIssueLabelTree extends IIssueLabel {
+  children: IIssueLabel[] | undefined;
 }
 
 export interface IIssueActivity {

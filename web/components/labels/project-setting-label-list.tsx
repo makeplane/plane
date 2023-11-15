@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-
-// store
 import { observer } from "mobx-react-lite";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+// store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
@@ -18,8 +18,9 @@ import { EmptyState } from "components/common";
 // images
 import emptyLabel from "public/empty-state/label.svg";
 // types
-import { IIssueLabels } from "types";
-import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+import { IIssueLabel } from "types";
+// icons
+import { MoreVertical } from "lucide-react";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
@@ -28,16 +29,18 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
   // store
   const {
-    projectLabel: { fetchProjectLabels, projectLabels, updateLabel },
+    projectLabel: { fetchProjectLabels, projectLabels, updateLabel, projectLabelsTree },
   } = useMobxStore();
   // states
   const [labelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [labelToUpdate, setLabelToUpdate] = useState<IIssueLabels | null>(null);
-  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabels | null>(null);
+  const [labelToUpdate, setLabelToUpdate] = useState<IIssueLabel | null>(null);
+  const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
 
   // ref
   const scrollToRef = useRef<HTMLFormElement>(null);
+
+  console.log("projectLabelsRenderContents", projectLabelsTree);
 
   // api call to fetch project details
   useSWR(
@@ -50,7 +53,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     setLabelForm(true);
   };
 
-  const editLabel = (label: IIssueLabels) => {
+  const editLabel = (label: IIssueLabel) => {
     setLabelForm(true);
     setIsUpdating(true);
     setLabelToUpdate(label);
@@ -107,82 +110,87 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           />
         )}
         {/* labels */}
-        <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-          {projectLabels &&
-            projectLabels.map((label, index) => {
-              const children = projectLabels?.filter((l) => l.parent === label.id);
-              if (children && children.length === 0 && label.parent) {
-                return <div key={index} />;
-              }
-
-              if (children && children.length === 0) {
-                return (
-                  <Droppable
-                    key={`child.label.droppable.${label.id}`}
-                    droppableId={`child.label.droppable.${label.id}`}
-                    isCombineEnabled={true}
-                    ignoreContainerClipping={true}
+        <div>
+          {projectLabelsTree && (
+            <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
+              <Droppable droppableId={`labels.root`} isCombineEnabled={true} ignoreContainerClipping={true}>
+                {(droppableProvided, droppableSnapshot) => (
+                  <div
+                    className={`max-h-full mt-3`}
+                    ref={droppableProvided.innerRef}
+                    {...droppableProvided.droppableProps}
                   >
-                    {(droppableProvided, droppableSnapshot) => (
-                      <div
-                        className={`max-h-full mt-3`}
-                        ref={droppableProvided.innerRef}
-                        {...droppableProvided.droppableProps}
-                      >
+                    {projectLabelsTree.map((label, index) => {
+                      if (label.children) {
+                        return (
+                          <Draggable
+                            key={`child.label.draggable.${label.id}`}
+                            draggableId={`child.label.draggable.${label.name}`}
+                            index={index}
+                          >
+                            {(provided, snapshot) => (
+                              <div key={label.id} ref={provided.innerRef} {...provided.draggableProps}>
+                                <button
+                                  type="button"
+                                  className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-1 group-hover:opacity-100 ${
+                                    snapshot.isDragging ? "opacity-100" : "opacity-0"
+                                  }`}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400" />
+                                  <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400 -ml-5" />
+                                </button>
+                                <ProjectSettingLabelGroup
+                                  key={label.id}
+                                  label={label}
+                                  labelChildren={label.children || []}
+                                  editLabel={(label) => {
+                                    editLabel(label);
+                                    scrollToRef.current?.scrollIntoView({
+                                      behavior: "smooth",
+                                    });
+                                  }}
+                                  handleLabelDelete={() => setSelectDeleteLabel(label)}
+                                />
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      }
+                      return (
                         <Draggable
                           key={`child.label.draggable.${label.id}`}
                           draggableId={`child.label.draggable.${label.id}`}
                           index={index}
                         >
-                          {(provided, snapshot) => {
-                            if (children && children.length === 0) {
-                              if (!label.parent)
-                                return (
-                                  <div ref={provided.innerRef} {...provided.draggableProps}>
-                                    <ProjectSettingLabelItem
-                                      dragHandleProps={provided.dragHandleProps!}
-                                      droppableSnapshot={droppableSnapshot}
-                                      draggableSnapshot={snapshot}
-                                      key={label.id}
-                                      label={label}
-                                      editLabel={(label) => {
-                                        editLabel(label);
-                                        scrollToRef.current?.scrollIntoView({
-                                          behavior: "smooth",
-                                        });
-                                      }}
-                                      handleLabelDelete={() => setSelectDeleteLabel(label)}
-                                    />
-                                  </div>
-                                );
-                            }
-                          }}
+                          {(provided, snapshot) => (
+                            <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
+                              <ProjectSettingLabelItem
+                                dragHandleProps={provided.dragHandleProps!}
+                                droppableSnapshot={droppableSnapshot}
+                                draggableSnapshot={snapshot}
+                                key={label.id}
+                                label={label}
+                                editLabel={(label) => {
+                                  editLabel(label);
+                                  scrollToRef.current?.scrollIntoView({
+                                    behavior: "smooth",
+                                  });
+                                }}
+                                handleLabelDelete={() => setSelectDeleteLabel(label)}
+                              />
+                            </div>
+                          )}
                         </Draggable>
-                        {droppableProvided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                );
-              } else {
-                return (
-                  <div key={label.id}>
-                    <ProjectSettingLabelGroup
-                      key={label.id}
-                      label={label}
-                      labelChildren={children}
-                      editLabel={(label) => {
-                        editLabel(label);
-                        scrollToRef.current?.scrollIntoView({
-                          behavior: "smooth",
-                        });
-                      }}
-                      handleLabelDelete={() => setSelectDeleteLabel(label)}
-                    />
+                      );
+                    })}
+                    {droppableProvided.placeholder}
                   </div>
-                );
-              }
-            })}
-        </DragDropContext>
+                )}
+              </Droppable>
+            </DragDropContext>
+          )}
+        </div>
 
         {/* loading state */}
         {!projectLabels && (
