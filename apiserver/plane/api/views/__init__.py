@@ -23,7 +23,7 @@ from .user import (
 
 from .oauth import OauthEndpoint
 
-from .base import BaseAPIView, BaseViewSet
+from .base import BaseAPIView, BaseViewSet, WebhookMixin
 
 from .workspace import (
     WorkSpaceViewSet,
@@ -115,7 +115,7 @@ from .module import (
     ModuleFavoriteViewSet,
 )
 
-from .api_token import ApiTokenEndpoint
+from .api import ApiTokenEndpoint
 
 from .integration import (
     WorkspaceIntegrationViewSet,
@@ -172,3 +172,5 @@ from .notification import (
 from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
+
+from .webhook import WebhookEndpoint, WebhookLogsEndpoint, WebhookSecretRegenerateEndpoint
