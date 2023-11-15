@@ -21,27 +21,33 @@ function absoluteRect(node: Element) {
 function nodeDOMAtCoords(coords: { x: number; y: number }) {
   return document
     .elementsFromPoint(coords.x, coords.y)
-    .find(
-      (elem: Element) =>
+    .find((elem: Element) => {
+      return (
         elem.parentElement?.matches?.(".ProseMirror") ||
         elem.matches(
           [
             "li",
             "p:not(:first-child)",
-            "pre",
             "code",
             "blockquote",
             "h1, h2, h3",
-            "hr",
             "[data-type=horizontalRule]",
             ".tableWrapper",
           ].join(", "),
-        ),
-    );
+        )
+      );
+    });
 }
 
 function nodePosAtDOM(node: Element, view: EditorView) {
   const boundingRect = node.getBoundingClientRect();
+
+  if (node.nodeName === "IMG") {
+    return view.posAtCoords({
+      left: boundingRect.left + 1,
+      top: boundingRect.top + 1,
+    })?.pos;
+  }
 
   return view.posAtCoords({
     left: boundingRect.left + 1,
@@ -56,35 +62,14 @@ function DragHandle(options: DragHandleOptions) {
     if (!event.dataTransfer) return;
 
     const node = nodeDOMAtCoords({
-      x: event.clientX + 50 + options.dragHandleWidth,
+      x: event.clientX + options.dragHandleWidth + 50,
       y: event.clientY,
     });
 
     if (!(node instanceof Element)) return;
 
-    // const nodePos = view.posAtCoords({ left: event.clientX + 50 + options.dragHandleWidth, top: event.clientY })?.inside;
-    let nodePos = view.posAtCoords({
-      left: event.clientX + 50 + options.dragHandleWidth,
-      top: event.clientY,
-    })?.inside;
-
-    if (nodePos === null) {
-      // Try positions to the right of the given coordinates
-      const offsets = [1, 2, 3, 4, 5];
-      for (const offset of offsets) {
-        const pos = view.posAtCoords({
-          left: event.clientX + 50 + options.dragHandleWidth + offset,
-          top: event.clientY,
-        })?.inside;
-        if (pos !== null && view.state.doc.nodeAt(pos as number) !== null) {
-          nodePos = pos;
-          break;
-        }
-      }
-    }
-
-    // const nodePos = nodePosAtDOM(node, view);
-    if (!nodePos || nodePos < 0) return;
+    const nodePos = nodePosAtDOM(node, view);
+    if (nodePos === null || nodePos === undefined || nodePos < 0) return;
 
     view.dispatch(
       view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)),
@@ -115,18 +100,9 @@ function DragHandle(options: DragHandleOptions) {
 
     if (!(node instanceof Element)) return;
 
-    // const nodePos = view.posAtCoords({ left: event.clientX + 50 + options.dragHandleWidth, top: event.clientY })?.inside;
-    // console.log("sadfa", pos)
     const nodePos = nodePosAtDOM(node, view);
-    if (!nodePos || nodePos < 0) return;
-    console.log("nodePos:", nodePos);
-    console.log("content at nodePos:", view.state.doc.nodeAt(nodePos));
 
-    const parentPos = view.state.doc.resolve(nodePos).parentOffset;
-    const parentNode = view.state.doc.nodeAt(parentPos);
-
-    console.log("parentNode:", parentNode);
-    console.log("parentNode content expression:", parentNode?.type);
+    if (nodePos === null || nodePos === undefined || nodePos < 0) return;
 
     view.dispatch(
       view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)),
@@ -153,6 +129,28 @@ function DragHandle(options: DragHandleOptions) {
       dragHandleElement.draggable = true;
       dragHandleElement.dataset.dragHandle = "";
       dragHandleElement.classList.add("drag-handle");
+
+      const dragHandleContainer = document.createElement("div");
+      dragHandleContainer.classList.add("drag-handle-container");
+      dragHandleElement.appendChild(dragHandleContainer);
+
+      const dotsContainer = document.createElement("div");
+      dotsContainer.classList.add("drag-handle-dots");
+
+      for (let i = 0; i < 6; i++) {
+        const spanElement = document.createElement("span");
+        spanElement.classList.add("drag-handle-dot");
+        dotsContainer.appendChild(spanElement);
+      }
+
+      dragHandleContainer.appendChild(dotsContainer);
+      dragHandleElement.addEventListener("dragstart", (e) => {
+        handleDragStart(e, view);
+      });
+      dragHandleElement.addEventListener("click", (e) => {
+        handleClick(e, view);
+      });
+
       dragHandleElement.addEventListener("dragstart", (e) => {
         handleDragStart(e, view);
       });
@@ -214,7 +212,7 @@ function DragHandle(options: DragHandleOptions) {
         mousewheel: () => {
           hideDragHandle();
         },
-        // dragging class is used for CSS
+        // dragging className is used for CSS
         dragstart: (view) => {
           view.dom.classList.add("dragging");
         },
@@ -229,9 +227,7 @@ function DragHandle(options: DragHandleOptions) {
   });
 }
 
-interface DragAndDropOptions {}
-
-const DragAndDrop = Extension.create<DragAndDropOptions>({
+const DragAndDrop = Extension.create({
   name: "dragAndDrop",
 
   addProseMirrorPlugins() {
