@@ -109,7 +109,8 @@ class PageViewSet(BaseViewSet):
 
     def partial_update(self, request, slug, project_id, pk):
         try:
-            page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+            page = Page.objects.get(
+                pk=pk, workspace__slug=slug, project_id=project_id)
 
             if page.is_locked:
                 return Response(
@@ -160,10 +161,17 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def lock(self, request, slug, project_id, pk):
+    def lock(self, request, slug, project_id, page_id):
+
         page = Page.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
+            pk=page_id, workspace__slug=slug, project_id=project_id
         )
+
+        if not page.exists():
+            return Response({"error": "Page not found"}, status=404)
+
+        # Get the first (and only) page from the queryset
+        page = page.first()
 
         # only the owner can lock the page
         if request.user.id != page.owned_by_id:
@@ -175,8 +183,17 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def unlock(self, request, slug, project_id, pk):
-        page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+    def unlock(self, request, slug, project_id, page_id):
+
+        page = Page.objects.filter(
+            pk=page_id, workspace__slug=slug, project_id=project_id
+        )
+
+        if not page.exists():
+            return Response({"error": "Page not found"}, status=404)
+
+        # Get the first (and only) page from the queryset
+        page = page.first()
 
         # only the owner can unlock the page
         if request.user.id != page.owned_by_id:
@@ -202,7 +219,8 @@ class PageViewSet(BaseViewSet):
         # All Pages
         if page_view == "all":
             return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                PageSerializer(
+                    queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         # Recent pages
@@ -232,21 +250,24 @@ class PageViewSet(BaseViewSet):
         if page_view == "favorite":
             queryset = queryset.filter(is_favorite=True)
             return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                PageSerializer(
+                    queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         # My pages
         if page_view == "created_by_me":
             queryset = queryset.filter(owned_by=request.user)
             return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                PageSerializer(
+                    queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         # Created by other Pages
         if page_view == "created_by_other":
             queryset = queryset.filter(~Q(owned_by=request.user), access=0)
             return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                PageSerializer(
+                    queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         return Response(
@@ -300,7 +321,6 @@ class PageViewSet(BaseViewSet):
         )
 
 
-
 class PageFavoriteViewSet(BaseViewSet):
     permission_classes = [
         ProjectEntityPermission,
@@ -335,6 +355,7 @@ class PageFavoriteViewSet(BaseViewSet):
         )
         page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class PageLogEndpoint(BaseAPIView):
     permission_classes = [
@@ -429,4 +450,3 @@ class SubPagesEndpoint(BaseAPIView):
         return Response(
             SubPageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
-
