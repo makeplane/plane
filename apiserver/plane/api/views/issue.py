@@ -33,7 +33,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.api.serializers import (
     IssueCreateSerializer,
     IssueActivitySerializer,
@@ -84,7 +84,7 @@ from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 
 
-class IssueViewSet(BaseViewSet):
+class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
         return (
             IssueCreateSerializer
@@ -93,6 +93,7 @@ class IssueViewSet(BaseViewSet):
         )
 
     model = Issue
+    webhook_event = "issue"
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -594,9 +595,10 @@ class IssueActivityEndpoint(BaseAPIView):
         return Response(result_list, status=status.HTTP_200_OK)
 
 
-class IssueCommentViewSet(BaseViewSet):
+class IssueCommentViewSet(WebhookMixin, BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
+    webhook_event = "issue-comment"
     permission_classes = [
         ProjectLitePermission,
     ]

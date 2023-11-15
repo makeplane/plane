@@ -26,6 +26,13 @@ DEBUG = False
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
 
+
+# To access webhook
+ENABLE_WEBHOOK = os.environ.get("ENABLE_WEBHOOK", "1") == "1"
+
+# To access plane api through api tokens
+ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
+
 # Redirect if / is not present
 APPEND_SLASH = True
 
@@ -42,6 +49,7 @@ INSTALLED_APPS = [
     "plane.utils",
     "plane.web",
     "plane.middleware",
+    "plane.proxy",
     # Third-party things
     "rest_framework",
     "rest_framework.authtoken",
@@ -63,6 +71,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
+    "plane.middleware.api_log_middleware.APITokenLogMiddleware",
 ]
 
 # Rest Framework settings
@@ -73,6 +82,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
+    "DEFAULT_THROTTLE_CLASSES": ("plane.proxy.rate_limit.ApiKeyRateThrottle",),
+    "DEFAULT_THROTTLE_RATES": {
+        "api_key": "60/minute",
+    },
 }
 
 # Django Auth Backend
@@ -284,7 +297,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.exporter_expired_task",
 )
 
-
 # Sentry Settings
 # Enable Sentry Settings
 if bool(os.environ.get("SENTRY_DSN", False)):
@@ -330,3 +342,4 @@ SCOUT_NAME = "Plane"
 # Set the variable true if running in docker environment
 DOCKERIZED = int(os.environ.get("DOCKERIZED", 1)) == 1
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+

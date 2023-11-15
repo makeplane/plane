@@ -112,7 +112,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
             "member__display_name",
             "member__avatar",
         )
-        return project_members
+        return list(project_members)
 
     class Meta:
         model = Project

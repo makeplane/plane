@@ -54,7 +54,7 @@ from .view import GlobalView, IssueView, IssueViewFavorite
 
 from .module import Module, ModuleMember, ModuleIssue, ModuleLink, ModuleFavorite
 
-from .api_token import APIToken
+from .api import APIToken, APIActivityLog
 
 from .integration import (
     WorkspaceIntegration,
@@ -79,3 +79,5 @@ from .analytic import AnalyticView
 from .notification import Notification
 
 from .exporter import ExporterHistory
+
+from .webhook import Webhook, WebhookLog
