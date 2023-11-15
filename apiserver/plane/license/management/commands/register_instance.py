@@ -1,41 +1,35 @@
 # Python imports
-import os, sys
 import json
-import uuid
+import os
 import requests
+import uuid
 
 # Django imports
+from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 
-
-sys.path.append("/code")
-
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
-
-import django
-
-django.setup()
+# Module imports
+from plane.db.models import User
+from plane.license.models import Instance, InstanceAdmin
 
 
-def instance_registration():
-    try:
-        # Module imports
-        from plane.db.models import User
-        from plane.license.models import Instance, InstanceAdmin
+class Command(BaseCommand):
+    help = "Check if instance in registered else register"
 
+    def handle(self, *args, **options):
         # Check if the instance is registered
         instance = Instance.objects.first()
 
         # If instance is None then register this instance
         if instance is None:
-            with open("/code/package.json", "r") as file:
+            with open("package.json", "r") as file:
                 # Load JSON content from the file
                 data = json.load(file)
 
             admin_email = os.environ.get("ADMIN_EMAIL")
             # Raise an exception if the admin email is not provided
             if not admin_email:
-                raise Exception("ADMIN_EMAIL is required")
+                raise CommandError("ADMIN_EMAIL is required")
 
             # Check if the admin email user exists
             user = User.objects.filter(email=admin_email).first()
@@ -49,7 +43,7 @@ def instance_registration():
             license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL")
 
             if not license_engine_base_url:
-                raise Exception("LICENSE_ENGINE_BASE_URL is required")
+                raise CommandError("LICENSE_ENGINE_BASE_URL is required")
 
             headers = {"Content-Type": "application/json"}
 
@@ -84,19 +78,19 @@ def instance_registration():
                     role=20,
                 )
 
-                print(f"Instance succesfully registered with owner: {instance.primary_owner.email}")
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"Instance succesfully registered with owner: {instance.primary_owner.email}"
+                    )
+                )
                 return
 
-            print("Instance could not be registered")
+            self.stdout.write(self.style.WARNING("Instance could not be registered"))
             return
         else:
-            print(
-                f"Instance already registered with instance owner: {instance.primary_owner.email}"
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Instance already registered with instance owner: {instance.primary_owner.email}"
+                )
             )
             return
-    except ImportError:
-        raise ImportError
-
-
-if __name__ == "__main__":
-    instance_registration()
