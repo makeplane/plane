@@ -330,7 +330,7 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 invitation.email,
                 workspace.id,
                 invitation.token,
-                settings.WEB_URL,
+                request.META.get('HTTP_ORIGIN'),
                 request.user.email,
             )
 
