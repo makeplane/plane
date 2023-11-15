@@ -2,10 +2,8 @@ from .project import (
     ProjectViewSet,
     ProjectMemberViewSet,
     UserProjectInvitationsViewset,
-    InviteProjectEndpoint,
+    ProjectInvitationsViewset,
     AddTeamToProjectEndpoint,
-    ProjectMemberInvitationsViewset,
-    ProjectMemberInviteDetailViewSet,
     ProjectIdentifierEndpoint,
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
@@ -14,7 +12,6 @@ from .project import (
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
-    LeaveProjectEndpoint,
     ProjectPublicCoverImagesEndpoint,
 )
 from .user import (
@@ -32,13 +29,11 @@ from .workspace import (
     WorkSpaceViewSet,
     UserWorkSpacesEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
-    InviteWorkspaceEndpoint,
-    JoinWorkspaceEndpoint,
+    WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
     TeamMemberViewSet,
     WorkspaceInvitationsViewset,
-    UserWorkspaceInvitationsEndpoint,
-    UserWorkspaceInvitationEndpoint,
+    UserWorkspaceInvitationsViewSet,
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -51,7 +46,6 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet
 from .view import (

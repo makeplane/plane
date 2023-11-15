@@ -73,6 +73,12 @@ def service_importer(service, importer_id):
                 ]
             )
 
+            # Check if any of the users are already member of workspace
+            _ = WorkspaceMember.objects.filter(
+                member__in=[user for user in workspace_users],
+                workspace_id=importer.workspace_id,
+            ).update(is_active=True)
+
             # Add new users to Workspace and project automatically
             WorkspaceMember.objects.bulk_create(
                 [

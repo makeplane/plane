@@ -9,15 +9,10 @@ from plane.api.views import (
     ChangePasswordEndpoint,
     ## End User
     ## Workspaces
-    UserWorkspaceInvitationsEndpoint,
     UserWorkSpacesEndpoint,
-    JoinWorkspaceEndpoint,
-    UserWorkspaceInvitationsEndpoint,
-    UserWorkspaceInvitationEndpoint,
     UserActivityGraphEndpoint,
     UserIssueCompletedGraphEndpoint,
     UserWorkspaceDashboardEndpoint,
-    UserProjectInvitationsViewset,
     ## End Workspaces
 )
 
@@ -26,7 +21,11 @@ urlpatterns = [
     path(
         "users/me/",
         UserEndpoint.as_view(
-            {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "deactivate",
+            }
         ),
         name="users",
     ),
@@ -65,23 +64,6 @@ urlpatterns = [
         UserWorkSpacesEndpoint.as_view(),
         name="user-workspace",
     ),
-    # user workspace invitations
-    path(
-        "users/me/invitations/workspaces/",
-        UserWorkspaceInvitationsEndpoint.as_view({"get": "list", "post": "create"}),
-        name="user-workspace-invitations",
-    ),
-    # user workspace invitation
-    path(
-        "users/me/invitations/<uuid:pk>/",
-        UserWorkspaceInvitationEndpoint.as_view(
-            {
-                "get": "retrieve",
-            }
-        ),
-        name="user-workspace-invitation",
-    ),
-    # user join workspace
     # User Graphs
     path(
         "users/me/workspaces/<str:slug>/activity-graph/",
@@ -99,15 +81,4 @@ urlpatterns = [
         name="user-workspace-dashboard",
     ),
     ## End User Graph
-    path(
-        "users/me/invitations/workspaces/<str:slug>/<uuid:pk>/join/",
-        JoinWorkspaceEndpoint.as_view(),
-        name="user-join-workspace",
-    ),
-    # user project invitations
-    path(
-        "users/me/invitations/projects/",
-        UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="user-project-invitations",
-    ),
 ]

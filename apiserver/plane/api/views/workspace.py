@@ -2,7 +2,6 @@
 import jwt
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
-from uuid import uuid4
 
 # Django imports
 from django.db import IntegrityError
@@ -26,13 +25,11 @@ from django.db.models import (
 )
 from django.db.models.functions import ExtractWeek, Cast, ExtractDay
 from django.db.models.fields import DateField
-from django.contrib.auth.hashers import make_password
 
 # Third party modules
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # Module imports
 from plane.api.serializers import (
@@ -59,14 +56,6 @@ from plane.db.models import (
     IssueActivity,
     Issue,
     WorkspaceTheme,
-    IssueAssignee,
-    ProjectFavorite,
-    CycleFavorite,
-    ModuleMember,
-    ModuleFavorite,
-    PageFavorite,
-    Page,
-    IssueViewFavorite,
     IssueLink,
     IssueAttachment,
     IssueSubscriber,
@@ -106,7 +95,9 @@ class WorkSpaceViewSet(BaseViewSet):
     def get_queryset(self):
         member_count = (
             WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False
+                workspace=OuterRef("id"),
+                member__is_bot=False,
+                is_active=True,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -181,7 +172,9 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     def get(self, request):
         member_count = (
             WorkspaceMember.objects.filter(
-                workspace=OuterRef("id"), member__is_bot=False
+                workspace=OuterRef("id"),
+                member__is_bot=False,
+                is_active=True,
             )
             .order_by()
             .annotate(count=Func(F("id"), function="Count"))
@@ -227,23 +220,40 @@ class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
         return Response({"status": not workspace}, status=status.HTTP_200_OK)
 
 
-class InviteWorkspaceEndpoint(BaseAPIView):
+class WorkspaceInvitationsViewset(BaseViewSet):
+    """Endpoint for creating, listing and  deleting workspaces"""
+
+    serializer_class = WorkSpaceMemberInviteSerializer
+    model = WorkspaceMemberInvite
+
     permission_classes = [
         WorkSpaceAdminPermission,
     ]
 
-    def post(self, request, slug):
-        emails = request.data.get("emails", False)
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .select_related("workspace", "workspace__owner", "created_by")
+        )
+
+    def create(self, request, slug):
+        emails = request.data.get("emails", [])
         # Check if email is provided
-        if not emails or not len(emails):
+        if not emails:
             return Response(
                 {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        # check for role level
+        # check for role level of the requesting user
         requesting_user = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
+
+        # Check if any invited user has an higher role
         if len(
             [
                 email
@@ -256,15 +266,17 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get the workspace object
         workspace = Workspace.objects.get(slug=slug)
 
         # Check if user is already a member of workspace
         workspace_members = WorkspaceMember.objects.filter(
             workspace_id=workspace.id,
             member__email__in=[email.get("email") for email in emails],
+            is_active=True,
         ).select_related("member", "workspace", "workspace__owner")
 
-        if len(workspace_members):
+        if workspace_members:
             return Response(
                 {
                     "error": "Some users are already member of workspace",
@@ -302,35 +314,20 @@ class InviteWorkspaceEndpoint(BaseAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        WorkspaceMemberInvite.objects.bulk_create(
+        # Create workspace member invite
+        workspace_invitations = WorkspaceMemberInvite.objects.bulk_create(
             workspace_invitations, batch_size=10, ignore_conflicts=True
         )
 
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(
-            email__in=[email.get("email") for email in emails]
-        ).select_related("workspace")
+        current_site = f"{request.scheme}://{request.get_host()}",
 
-        # create the user if signup is disabled
-        if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-            _ = User.objects.bulk_create(
-                [
-                    User(
-                        username=str(uuid4().hex),
-                        email=invitation.email,
-                        password=make_password(uuid4().hex),
-                        is_password_autoset=True,
-                    )
-                    for invitation in workspace_invitations
-                ],
-                batch_size=100,
-            )
-
+        # Send invitations
         for invitation in workspace_invitations:
             workspace_invitation.delay(
                 invitation.email,
                 workspace.id,
                 invitation.token,
-                request.META.get('HTTP_ORIGIN'),
+                current_site,
                 request.user.email,
             )
 
@@ -341,11 +338,19 @@ class InviteWorkspaceEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    def destroy(self, request, slug, pk):
+        workspace_member_invite = WorkspaceMemberInvite.objects.get(
+            pk=pk, workspace__slug=slug
+        )
+        workspace_member_invite.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-class JoinWorkspaceEndpoint(BaseAPIView):
+
+class WorkspaceJoinEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
+    """Invitation response endpoint the user can respond to the invitation"""
 
     def post(self, request, slug, pk):
         workspace_invite = WorkspaceMemberInvite.objects.get(
@@ -354,12 +359,14 @@ class JoinWorkspaceEndpoint(BaseAPIView):
 
         email = request.data.get("email", "")
 
+        # Check the email
         if email == "" or workspace_invite.email != email:
             return Response(
                 {"error": "You do not have permission to join the workspace"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # If already responded then return error
         if workspace_invite.responded_at is None:
             workspace_invite.accepted = request.data.get("accepted", False)
             workspace_invite.responded_at = timezone.now()
@@ -371,12 +378,23 @@ class JoinWorkspaceEndpoint(BaseAPIView):
 
                 # If the user is present then create the workspace member
                 if user is not None:
-                    WorkspaceMember.objects.create(
-                        workspace=workspace_invite.workspace,
-                        member=user,
-                        role=workspace_invite.role,
-                    )
+                    # Check if the user was already a member of workspace then activate the user
+                    workspace_member = WorkspaceMember.objects.filter(
+                        workspace=workspace_invite.workspace, member=user
+                    ).first()
+                    if workspace_member is not None:
+                        workspace_member.is_active = True
+                        workspace_member.role = workspace_invite.role
+                        workspace_member.save()
+                    else:
+                        # Create a Workspace
+                        _ = WorkspaceMember.objects.create(
+                            workspace=workspace_invite.workspace,
+                            member=user,
+                            role=workspace_invite.role,
+                        )
 
+                    # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
                     user.save()
 
@@ -388,6 +406,7 @@ class JoinWorkspaceEndpoint(BaseAPIView):
                     status=status.HTTP_200_OK,
                 )
 
+            # Workspace invitation rejected
             return Response(
                 {"message": "Workspace Invitation was not accepted"},
                 status=status.HTTP_200_OK,
@@ -398,37 +417,13 @@ class JoinWorkspaceEndpoint(BaseAPIView):
             status=status.HTTP_400_BAD_REQUEST,
         )
 
-
-class WorkspaceInvitationsViewset(BaseViewSet):
-    serializer_class = WorkSpaceMemberInviteSerializer
-    model = WorkspaceMemberInvite
-
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner", "created_by")
-        )
-
-    def destroy(self, request, slug, pk):
-        workspace_member_invite = WorkspaceMemberInvite.objects.get(
-            pk=pk, workspace__slug=slug
-        )
-        # delete the user if signup is disabled
-        if settings.DOCKERIZED and not settings.ENABLE_SIGNUP:
-            user = User.objects.filter(email=workspace_member_invite.email).first()
-            if user is not None:
-                user.delete()
-        workspace_member_invite.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def get(self, request, slug, pk):
+        workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
+        serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class UserWorkspaceInvitationsEndpoint(BaseViewSet):
+class UserWorkspaceInvitationsViewSet(BaseViewSet):
     serializer_class = WorkSpaceMemberInviteSerializer
     model = WorkspaceMemberInvite
 
@@ -442,9 +437,19 @@ class UserWorkspaceInvitationsEndpoint(BaseViewSet):
         )
 
     def create(self, request):
-        invitations = request.data.get("invitations")
-        workspace_invitations = WorkspaceMemberInvite.objects.filter(pk__in=invitations)
+        invitations = request.data.get("invitations", [])
+        workspace_invitations = WorkspaceMemberInvite.objects.filter(
+            pk__in=invitations, email=request.user.email
+        ).order_by("-created_at")
 
+        # If the user is already a member of workspace and was deactivated then activate the user
+        for invitation in workspace_invitations:
+            # Update the WorkspaceMember for this specific invitation
+            WorkspaceMember.objects.filter(
+                workspace_id=invitation.workspace_id, member=request.user
+            ).update(is_active=True, role=invitation.role)
+
+        # Bulk create the user for all the workspaces
         WorkspaceMember.objects.bulk_create(
             [
                 WorkspaceMember(
@@ -481,20 +486,24 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return self.filter_queryset(
             super()
             .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"), member__is_bot=False)
+            .filter(
+                workspace__slug=self.kwargs.get("slug"),
+                member__is_bot=False,
+                is_active=True,
+            )
             .select_related("workspace", "workspace__owner")
             .select_related("member")
         )
 
     def list(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
-            member=request.user, workspace__slug=slug
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
         )
 
-        workspace_members = WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            member__is_bot=False,
-        ).select_related("workspace", "member")
+        # Get all active workspace members
+        workspace_members = self.get_queryset()
 
         if workspace_member.role > 10:
             serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
@@ -506,7 +515,12 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, pk):
-        workspace_member = WorkspaceMember.objects.get(pk=pk, workspace__slug=slug)
+        workspace_member = WorkspaceMember.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            member__is_bot=False,
+            is_active=True,
+        )
         if request.user.id == workspace_member.member_id:
             return Response(
                 {"error": "You cannot update your own role"},
@@ -515,7 +529,9 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
         # Get the requested user role
         requested_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
         # Check if role is being updated
         # One cannot update role higher than his own role
@@ -540,68 +556,121 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
-        workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, pk=pk)
+        workspace_member = WorkspaceMember.objects.get(
+            workspace__slug=slug,
+            pk=pk,
+            member__is_bot=False,
+            is_active=True,
+        )
 
         # check requesting user role
         requesting_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
+
+        if str(workspace_member.id) == str(requesting_workspace_member.id):
+            return Response(
+                {
+                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if requesting_workspace_member.role < workspace_member.role:
             return Response(
                 {"error": "You cannot remove a user having role higher than you"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check for the only member in the workspace
         if (
-            workspace_member.role == 20
-            and WorkspaceMember.objects.filter(
-                workspace__slug=slug,
-                role=20,
-                member__is_bot=False,
-            ).count()
-            == 1
+            Project.objects.annotate(
+                total_members=Count("project_projectmember"),
+                member_with_role=Count(
+                    "project_projectmember",
+                    filter=Q(
+                        project_projectmember__member_id=request.user.id,
+                        project_projectmember__role=20,
+                    ),
+                ),
+            )
+            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
+            .exists()
         ):
             return Response(
-                {"error": "Cannot delete the only Admin for the workspace"},
+                {
+                    "error": "User is part of some projects where they are the only admin you should leave that project first"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Delete the user also from all the projects
-        ProjectMember.objects.filter(
-            workspace__slug=slug, member=workspace_member.member
-        ).delete()
-        # Remove all favorites
-        ProjectFavorite.objects.filter(
-            workspace__slug=slug, user=workspace_member.member
-        ).delete()
-        CycleFavorite.objects.filter(
-            workspace__slug=slug, user=workspace_member.member
-        ).delete()
-        ModuleFavorite.objects.filter(
-            workspace__slug=slug, user=workspace_member.member
-        ).delete()
-        PageFavorite.objects.filter(
-            workspace__slug=slug, user=workspace_member.member
-        ).delete()
-        IssueViewFavorite.objects.filter(
-            workspace__slug=slug, user=workspace_member.member
-        ).delete()
-        # Also remove issue from issue assigned
-        IssueAssignee.objects.filter(
-            workspace__slug=slug, assignee=workspace_member.member
-        ).delete()
+        # Deactivate the users from the projects where the user is part of
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member_id=workspace_member.member_id,
+            is_active=True,
+        ).update(is_active=False)
 
-        # Remove if module member
-        ModuleMember.objects.filter(
-            workspace__slug=slug, member=workspace_member.member
-        ).delete()
-        # Delete owned Pages
-        Page.objects.filter(
-            workspace__slug=slug, owned_by=workspace_member.member
-        ).delete()
+        workspace_member.is_active = False
+        workspace_member.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-        workspace_member.delete()
+    def leave(self, request, slug):
+        workspace_member = WorkspaceMember.objects.get(
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
+        )
+
+        # Check if the leaving user is the only admin of the workspace
+        if (
+            workspace_member.role == 20
+            and not WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                role=20,
+                is_active=True,
+            ).count()
+            > 1
+        ):
+            return Response(
+                {
+                    "error": "You cannot leave the workspace as your the only admin of the workspace you will have to either delete the workspace or create an another admin"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if (
+            Project.objects.annotate(
+                total_members=Count("project_projectmember"),
+                member_with_role=Count(
+                    "project_projectmember",
+                    filter=Q(
+                        project_projectmember__member_id=request.user.id,
+                        project_projectmember__role=20,
+                    ),
+                ),
+            )
+            .filter(total_members=1, member_with_role=1, workspace__slug=slug)
+            .exists()
+        ):
+            return Response(
+                {
+                    "error": "User is part of some projects where they are the only admin you should leave that project first"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # # Deactivate the users from the projects where the user is part of
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member_id=workspace_member.member_id,
+            is_active=True,
+        ).update(is_active=False)
+
+        # # Deactivate the user
+        workspace_member.is_active = False
+        workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -629,7 +698,9 @@ class TeamMemberViewSet(BaseViewSet):
     def create(self, request, slug):
         members = list(
             WorkspaceMember.objects.filter(
-                workspace__slug=slug, member__id__in=request.data.get("members", [])
+                workspace__slug=slug,
+                member__id__in=request.data.get("members", []),
+                is_active=True,
             )
             .annotate(member_str_id=Cast("member", output_field=CharField()))
             .distinct()
@@ -656,23 +727,6 @@ class TeamMemberViewSet(BaseViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserWorkspaceInvitationEndpoint(BaseViewSet):
-    model = WorkspaceMemberInvite
-    serializer_class = WorkSpaceMemberInviteSerializer
-
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(pk=self.kwargs.get("pk"))
-            .select_related("workspace")
-        )
 
 
 class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
@@ -711,7 +765,9 @@ class UserLastProjectWithWorkspaceEndpoint(BaseAPIView):
 class WorkspaceMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
-            member=request.user, workspace__slug=slug
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
         )
         serializer = WorkspaceMemberMeSerializer(workspace_member)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -720,7 +776,9 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
 class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
         workspace_member.view_props = request.data.get("view_props", {})
         workspace_member.save()
@@ -1046,7 +1104,9 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
         user_data = User.objects.get(pk=user_id)
 
         requesting_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
         projects = []
         if requesting_workspace_member.role >= 10:
@@ -1250,9 +1310,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        return Response(
-            issues, status=status.HTTP_200_OK
-        )
+        return Response(issues, status=status.HTTP_200_OK)
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
@@ -1266,30 +1324,3 @@ class WorkspaceLabelsEndpoint(BaseAPIView):
             project__project_projectmember__member=request.user,
         ).values("parent", "name", "color", "id", "project_id", "workspace__slug")
         return Response(labels, status=status.HTTP_200_OK)
-
-
-class LeaveWorkspaceEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
-    def delete(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user
-        )
-
-        # Only Admin case
-        if (
-            workspace_member.role == 20
-            and WorkspaceMember.objects.filter(workspace__slug=slug, role=20).count()
-            == 1
-        ):
-            return Response(
-                {
-                    "error": "You cannot leave the workspace since you are the only admin of the workspace you should delete the workspace"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        # Delete the member from workspace
-        workspace_member.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

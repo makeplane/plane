@@ -85,7 +85,10 @@ class NotificationViewSet(BaseViewSet, BasePaginator):
         # Created issues
         if type == "created":
             if WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, role__lt=15
+                workspace__slug=slug,
+                member=request.user,
+                role__lt=15,
+                is_active=True,
             ).exists():
                 notifications = Notification.objects.none()
             else:
@@ -255,7 +258,10 @@ class MarkAllReadNotificationViewSet(BaseViewSet):
         # Created issues
         if type == "created":
             if WorkspaceMember.objects.filter(
-                workspace__slug=slug, member=request.user, role__lt=15
+                workspace__slug=slug,
+                member=request.user,
+                role__lt=15,
+                is_active=True,
             ).exists():
                 notifications = Notification.objects.none()
             else:

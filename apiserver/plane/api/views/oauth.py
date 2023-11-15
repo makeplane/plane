@@ -2,6 +2,7 @@
 import uuid
 import requests
 import os
+from requests.exceptions import RequestException
 
 # Django imports
 from django.utils import timezone
@@ -20,7 +21,14 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_auth_request
 
 # Module imports
-from plane.db.models import SocialLoginConnection, User
+from plane.db.models import (
+    SocialLoginConnection,
+    User,
+    WorkspaceMemberInvite,
+    WorkspaceMember,
+    ProjectMemberInvite,
+    ProjectMember,
+)
 from plane.api.serializers import UserSerializer
 from .base import BaseAPIView
 
@@ -168,7 +176,6 @@ class OauthEndpoint(BaseAPIView):
                 )
 
             ## Login Case
-
             if not user.is_active:
                 return Response(
                     {
@@ -185,12 +192,61 @@ class OauthEndpoint(BaseAPIView):
             user.is_email_verified = email_verified
             user.save()
 
-            access_token, refresh_token = get_tokens_for_user(user)
+            # Check if user has any accepted invites for workspace and add them to workspace
+            workspace_member_invites = WorkspaceMemberInvite.objects.filter(
+                email=user.email, accepted=True
+            )
 
-            data = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }
+            WorkspaceMember.objects.bulk_create(
+                [
+                    WorkspaceMember(
+                        workspace_id=workspace_member_invite.workspace_id,
+                        member=user,
+                        role=workspace_member_invite.role,
+                    )
+                    for workspace_member_invite in workspace_member_invites
+                ],
+                ignore_conflicts=True,
+            )
+
+            # Check if user has any project invites
+            project_member_invites = ProjectMemberInvite.objects.filter(
+                email=user.email, accepted=True
+            )
+
+            # Add user to workspace
+            WorkspaceMember.objects.bulk_create(
+                [
+                    WorkspaceMember(
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
+                        else 15,
+                        member=user,
+                        created_by_id=project_member_invite.created_by_id,
+                    )
+                    for project_member_invite in project_member_invites
+                ],
+                ignore_conflicts=True,
+            )
+
+            # Now add the users to project
+            ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
+                        else 15,
+                        member=user,
+                        created_by_id=project_member_invite.created_by_id,
+                    ) for project_member_invite in project_member_invites
+                ],
+                ignore_conflicts=True,
+            )
+            # Delete all the invites
+            workspace_member_invites.delete()
+            project_member_invites.delete()
 
             SocialLoginConnection.objects.update_or_create(
                 medium=medium,
@@ -201,26 +257,36 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": f"oauth-{medium}",
+            try:
+                if settings.ANALYTICS_BASE_API:
+                    _ = requests.post(
+                        settings.ANALYTICS_BASE_API,
+                        headers={
+                            "Content-Type": "application/json",
+                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                         },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        json={
+                            "event_id": uuid.uuid4().hex,
+                            "event_data": {
+                                "medium": f"oauth-{medium}",
+                            },
+                            "user": {"email": email, "id": str(user.id)},
+                            "device_ctx": {
+                                "ip": request.META.get("REMOTE_ADDR"),
+                                "user_agent": request.META.get("HTTP_USER_AGENT"),
+                            },
+                            "event_type": "SIGN_IN",
                         },
-                        "event_type": "SIGN_IN",
-                    },
-                )
+                    )
+            except RequestException as e:
+                capture_exception(e)
+
+            access_token, refresh_token = get_tokens_for_user(user)
+
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            }
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
@@ -260,31 +326,85 @@ class OauthEndpoint(BaseAPIView):
             user.token_updated_at = timezone.now()
             user.save()
 
-            access_token, refresh_token = get_tokens_for_user(user)
-            data = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-            }
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": f"oauth-{medium}",
+            # Check if user has any accepted invites for workspace and add them to workspace
+            workspace_member_invites = WorkspaceMemberInvite.objects.filter(
+                email=user.email, accepted=True
+            )
+
+            WorkspaceMember.objects.bulk_create(
+                [
+                    WorkspaceMember(
+                        workspace_id=workspace_member_invite.workspace_id,
+                        member=user,
+                        role=workspace_member_invite.role,
+                    )
+                    for workspace_member_invite in workspace_member_invites
+                ],
+                ignore_conflicts=True,
+            )
+
+            # Check if user has any project invites
+            project_member_invites = ProjectMemberInvite.objects.filter(
+                email=user.email, accepted=True
+            )
+
+            # Add user to workspace
+            WorkspaceMember.objects.bulk_create(
+                [
+                    WorkspaceMember(
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
+                        else 15,
+                        member=user,
+                        created_by_id=project_member_invite.created_by_id,
+                    )
+                    for project_member_invite in project_member_invites
+                ],
+                ignore_conflicts=True,
+            )
+
+            # Now add the users to project
+            ProjectMember.objects.bulk_create(
+                [
+                    ProjectMember(
+                        workspace_id=project_member_invite.workspace_id,
+                        role=project_member_invite.role
+                        if project_member_invite.role in [5, 10, 15]
+                        else 15,
+                        member=user,
+                        created_by_id=project_member_invite.created_by_id,
+                    ) for project_member_invite in project_member_invites
+                ],
+                ignore_conflicts=True,
+            )
+            # Delete all the invites
+            workspace_member_invites.delete()
+            project_member_invites.delete()
+
+            try:
+                if settings.ANALYTICS_BASE_API:
+                    _ = requests.post(
+                        settings.ANALYTICS_BASE_API,
+                        headers={
+                            "Content-Type": "application/json",
+                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
                         },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
+                        json={
+                            "event_id": uuid.uuid4().hex,
+                            "event_data": {
+                                "medium": f"oauth-{medium}",
+                            },
+                            "user": {"email": email, "id": str(user.id)},
+                            "device_ctx": {
+                                "ip": request.META.get("REMOTE_ADDR"),
+                                "user_agent": request.META.get("HTTP_USER_AGENT"),
+                            },
+                            "event_type": "SIGN_UP",
                         },
-                        "event_type": "SIGN_UP",
-                    },
-                )
+                    )
+            except RequestException as e:
+                capture_exception(e)
 
             SocialLoginConnection.objects.update_or_create(
                 medium=medium,
@@ -295,4 +415,10 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
+
+            access_token, refresh_token = get_tokens_for_user(user)
+            data = {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            }
             return Response(data, status=status.HTTP_201_CREATED)

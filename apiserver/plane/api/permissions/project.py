@@ -13,14 +13,15 @@ Guest = 5
 
 class ProjectBasePermission(BasePermission):
     def has_permission(self, request, view):
-
         if request.user.is_anonymous:
             return False
 
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return WorkspaceMember.objects.filter(
-                workspace__slug=view.workspace_slug, member=request.user
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+                is_active=True,
             ).exists()
 
         ## Only workspace owners or admins can create the projects
@@ -29,6 +30,7 @@ class ProjectBasePermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 role__in=[Admin, Member],
+                is_active=True,
             ).exists()
 
         ## Only Project Admins can update project attributes
@@ -37,19 +39,21 @@ class ProjectBasePermission(BasePermission):
             member=request.user,
             role=Admin,
             project_id=view.project_id,
+            is_active=True,
         ).exists()
 
 
 class ProjectMemberPermission(BasePermission):
     def has_permission(self, request, view):
-
         if request.user.is_anonymous:
             return False
 
         ## Safe Methods -> Handle the filtering logic in queryset
         if request.method in SAFE_METHODS:
             return ProjectMember.objects.filter(
-                workspace__slug=view.workspace_slug, member=request.user
+                workspace__slug=view.workspace_slug,
+                member=request.user,
+                is_active=True,
             ).exists()
         ## Only workspace owners or admins can create the projects
         if request.method == "POST":
@@ -57,6 +61,7 @@ class ProjectMemberPermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 role__in=[Admin, Member],
+                is_active=True,
             ).exists()
 
         ## Only Project Admins can update project attributes
@@ -65,12 +70,12 @@ class ProjectMemberPermission(BasePermission):
             member=request.user,
             role__in=[Admin, Member],
             project_id=view.project_id,
+            is_active=True,
         ).exists()
 
 
 class ProjectEntityPermission(BasePermission):
     def has_permission(self, request, view):
-
         if request.user.is_anonymous:
             return False
 
@@ -80,6 +85,7 @@ class ProjectEntityPermission(BasePermission):
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 project_id=view.project_id,
+                is_active=True,
             ).exists()
 
         ## Only project members or admins can create and edit the project attributes
@@ -88,17 +94,18 @@ class ProjectEntityPermission(BasePermission):
             member=request.user,
             role__in=[Admin, Member],
             project_id=view.project_id,
+            is_active=True,
         ).exists()
 
 
 class ProjectLitePermission(BasePermission):
-
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
-        
+
         return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
             project_id=view.project_id,
+            is_active=True,
         ).exists()

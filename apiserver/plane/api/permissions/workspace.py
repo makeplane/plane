@@ -32,12 +32,16 @@ class WorkSpaceBasePermission(BasePermission):
                 member=request.user,
                 workspace__slug=view.workspace_slug,
                 role__in=[Owner, Admin],
+                is_active=True,
             ).exists()
 
         # allow only owner to delete the workspace
         if request.method == "DELETE":
             return WorkspaceMember.objects.filter(
-                member=request.user, workspace__slug=view.workspace_slug, role=Owner
+                member=request.user,
+                workspace__slug=view.workspace_slug,
+                role=Owner,
+                is_active=True,
             ).exists()
 
 
@@ -50,6 +54,7 @@ class WorkSpaceAdminPermission(BasePermission):
             member=request.user,
             workspace__slug=view.workspace_slug,
             role__in=[Owner, Admin],
+            is_active=True,
         ).exists()
 
 
@@ -63,12 +68,14 @@ class WorkspaceEntityPermission(BasePermission):
             return WorkspaceMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
+                is_active=True,
             ).exists()
 
         return WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=view.workspace_slug,
             role__in=[Owner, Admin],
+            is_active=True,
         ).exists()
 
 
@@ -78,5 +85,18 @@ class WorkspaceViewerPermission(BasePermission):
             return False
 
         return WorkspaceMember.objects.filter(
-            member=request.user, workspace__slug=view.workspace_slug, role__gte=10
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role__gte=10,
+            is_active=True,
         ).exists()
+
+
+class WorkspaceUserPermission(BasePermission):
+
+    def has_permission(self, request, view):
+        return WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            is_active=True,
+        )
