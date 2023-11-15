@@ -55,9 +55,9 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = selectedModule ? (
-    <div className="flex items-center gap-1 text-custom-text-200">
-      <DiceIcon className="h-3 w-3" />
-      <span className="truncate">{selectedModule.name}</span>
+    <div className="flex items-center w-full gap-1 text-custom-text-200">
+      <DiceIcon className="h-3 w-3 flex-shrink-0" />
+      <span className="truncate max-w-[160px]">{selectedModule.name}</span>
     </div>
   ) : (
     <div className="flex items-center gap-1 text-custom-text-300">
