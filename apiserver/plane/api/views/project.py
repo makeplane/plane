@@ -386,7 +386,7 @@ class InviteProjectEndpoint(BaseAPIView):
                 token=token,
                 role=role,
             )
-            domain = settings.WEB_URL
+            domain = request.META.get('HTTP_ORIGIN')
             project_invitation.delay(email, project_id, token, domain)
 
             return Response(

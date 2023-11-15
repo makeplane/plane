@@ -287,7 +287,8 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-        current_site = settings.WEB_URL
+
+        current_site = request.META.get('HTTP_ORIGIN')
         magic_link.delay(email, key, token, current_site)
 
         return Response({"key": key}, status=status.HTTP_200_OK)
