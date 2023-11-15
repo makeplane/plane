@@ -32,7 +32,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
   } = useMobxStore();
 
-  const activeLayout = projectIssueFiltersStore.currentProjectDisplayFilters?.layout;
+  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
@@ -51,14 +51,14 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
 
-      const newValues = projectIssueFiltersStore.currentProjectFilters?.[key] ?? [];
+      const newValues = projectIssueFiltersStore.projectFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (projectIssueFiltersStore.currentProjectFilters?.[key]?.includes(value))
+        if (projectIssueFiltersStore.projectFilters?.filters?.[key]?.includes(value))
           newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
@@ -168,7 +168,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={projectIssueFiltersStore.currentProjectFilters ?? {}}
+              filters={projectIssueFiltersStore.projectFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -180,8 +180,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={projectIssueFiltersStore.currentProjectDisplayFilters ?? {}}
-              displayProperties={projectIssueFiltersStore.currentProjectDisplayProperties ?? {}}
+              displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
+              displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
               handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={

@@ -44,7 +44,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     }
   );
 
-  const activeLayout = projectIssueFiltersStore.currentProjectDisplayFilters?.layout;
+  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
   const issueCount = issueStore.getIssuesCount;
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {

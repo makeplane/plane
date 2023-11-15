@@ -39,10 +39,14 @@ export interface IProjectIssueFiltersStore {
   ) => Promise<void>;
 
   // computed
-  appliedFilters: TIssueParams[] | null;
-  currentProjectFilters: IIssueFilterOptions | null;
-  currentProjectDisplayFilters: IIssueDisplayFilterOptions | null;
-  currentProjectDisplayProperties: IIssueDisplayProperties | null;
+  appliedFilters: TIssueParams[] | undefined;
+  projectFilters:
+    | {
+        filters: IIssueFilterOptions;
+        displayFilters: IIssueDisplayFilterOptions;
+        displayProperties: IIssueDisplayProperties;
+      }
+    | undefined;
 }
 
 export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
@@ -81,9 +85,7 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
 
       // computed
       appliedFilters: computed,
-      currentProjectFilters: computed,
-      currentProjectDisplayFilters: computed,
-      currentProjectDisplayProperties: computed,
+      projectFilters: computed,
     });
 
     this.rootStore = _rootStore;
@@ -104,14 +106,14 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
     return computedFilters;
   };
 
-  get appliedFilters(): TIssueParams[] | null {
+  get appliedFilters(): TIssueParams[] | undefined {
     const projectId = this.rootStore.project.projectId;
 
-    if (!projectId) return null;
+    if (!projectId) return undefined;
 
     const userFilters = this.userFilters[projectId];
 
-    if (!userFilters) return null;
+    if (!userFilters) return undefined;
 
     let filteredRouteParams: any = {
       priority: userFilters?.filters?.priority || undefined,
@@ -123,9 +125,6 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
       labels: userFilters?.filters?.labels || undefined,
       start_date: userFilters?.filters?.start_date || undefined,
       target_date: userFilters?.filters?.target_date || undefined,
-      group_by: userFilters?.displayFilters?.group_by || undefined,
-      order_by: userFilters?.displayFilters?.order_by || "-created_at",
-      sub_group_by: userFilters?.displayFilters?.sub_group_by || undefined,
       type: userFilters?.displayFilters?.type || undefined,
       sub_issue: userFilters?.displayFilters?.sub_issue || true,
       show_empty_groups: userFilters?.displayFilters?.show_empty_groups || true,
@@ -141,40 +140,26 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
     return filteredRouteParams;
   }
 
-  get currentProjectFilters(): IIssueFilterOptions | null {
+  get projectFilters():
+    | {
+        filters: IIssueFilterOptions;
+        displayFilters: IIssueDisplayFilterOptions;
+        displayProperties: IIssueDisplayProperties;
+      }
+    | undefined {
     const projectId = this.rootStore.project.projectId;
 
-    if (!projectId) return null;
+    if (!projectId) return undefined;
 
     const userFilters = this.userFilters[projectId];
 
-    if (!userFilters) return null;
+    if (!userFilters) return undefined;
 
-    return userFilters.filters ?? null;
-  }
-
-  get currentProjectDisplayFilters(): IIssueDisplayFilterOptions | null {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId) return null;
-
-    const userFilters = this.userFilters[projectId];
-
-    if (!userFilters) return null;
-
-    return userFilters.displayFilters ?? null;
-  }
-
-  get currentProjectDisplayProperties(): IIssueDisplayProperties | null {
-    const projectId = this.rootStore.project.projectId;
-
-    if (!projectId) return null;
-
-    const userFilters = this.userFilters[projectId];
-
-    if (!userFilters) return null;
-
-    return userFilters.displayProperties ?? null;
+    return {
+      filters: userFilters?.filters ?? {},
+      displayFilters: userFilters?.displayFilters ?? {},
+      displayProperties: userFilters?.displayProperties ?? {},
+    };
   }
 
   fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
@@ -219,6 +204,7 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
         ...this.userFilters[projectId].displayFilters,
         ...filterToUpdate.display_filters,
       },
+      displayProperties: this.userFilters[projectId].displayProperties,
     };
 
     // set sub_group_by to null if group_by is set to null
@@ -237,13 +223,7 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
 
     try {
       runInAction(() => {
-        this.userFilters = {
-          ...this.userFilters,
-          [projectId]: {
-            ...this.userFilters[projectId],
-            ...newViewProps,
-          },
-        };
+        this.userFilters[projectId] = newViewProps;
       });
 
       this.projectService.setProjectView(workspaceSlug, projectId, {
@@ -268,23 +248,20 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
     projectId: string,
     properties: Partial<IIssueDisplayProperties>
   ) => {
-    const newProperties = {
+    const newDisplayProperties = {
       ...this.userFilters[projectId]?.displayProperties,
       ...properties,
     };
 
     try {
       runInAction(() => {
-        this.userFilters = {
-          ...this.userFilters,
-          [projectId]: {
-            ...this.userFilters[projectId],
-            displayProperties: newProperties,
-          },
+        this.userFilters[projectId] = {
+          ...this.userFilters[projectId],
+          displayProperties: newDisplayProperties,
         };
       });
 
-      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, newProperties);
+      await this.issueService.updateIssueDisplayProperties(workspaceSlug, projectId, newDisplayProperties);
     } catch (error) {
       this.fetchUserProjectFilters(workspaceSlug, projectId);
 
