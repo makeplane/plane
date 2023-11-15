@@ -144,14 +144,6 @@ services:
     volumes:
       - uploads:/export
 
-  createbuckets:
-    <<: *app-env
-    image: minio/mc
-    entrypoint: >
-      /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
-    depends_on:
-      - plane-minio
-
   # Comment this if you already have a reverse proxy running
   proxy:
     <<: *app-env
