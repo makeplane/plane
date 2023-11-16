@@ -1,9 +1,10 @@
 import { Editor } from "@tiptap/react"
-import { AlertCircle, FileLineChart, Lock, ArchiveIcon, MenuSquare, MoreVertical } from "lucide-react"
+import { Lock, ArchiveIcon, MenuSquare} from "lucide-react"
 import { useRef, useState } from "react"
 import { usePopper } from "react-popper"
 import { IMarking, UploadImage } from ".."
 import { FixedMenu } from "../menu"
+import { DocumentDetails } from "../types/editor-types"
 import { AlertLabel } from "./alert-label"
 import { ContentBrowser } from "./content-browser"
 import { IVerticalDropdownItemProps, VerticalDropdownMenu } from "./vertical-dropdown-menu"
@@ -16,12 +17,14 @@ interface IEditorHeader {
   markings: IMarking[],
   isLocked: boolean,
   isArchived: boolean,
+	archivedAt?: Date,
   readonly: boolean,
   uploadFile?: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+	documentDetails: DocumentDetails
 }
 
-export const EditorHeader = ({ editor, sidePeakVisible, readonly, setSidePeakVisible, markings, uploadFile, setIsSubmitting, KanbanMenuOptions, isArchived, isLocked }: IEditorHeader) => {
+export const EditorHeader = ({ documentDetails, archivedAt ,editor, sidePeakVisible, readonly, setSidePeakVisible, markings, uploadFile, setIsSubmitting, KanbanMenuOptions, isArchived, isLocked }: IEditorHeader) => {
 
   const summaryMenuRef = useRef(null);
   const summaryButtonRef = useRef(null);
@@ -60,12 +63,13 @@ export const EditorHeader = ({ editor, sidePeakVisible, readonly, setSidePeakVis
             }
           </div>
           {isLocked && <AlertLabel Icon={Lock} backgroundColor={"bg-red-200"} label={"Locked"} />}
-          {isArchived && <AlertLabel Icon={ArchiveIcon} backgroundColor={"bg-blue-200"} label={"Archived"} />}
+          {(isArchived && archivedAt) && <AlertLabel Icon={ArchiveIcon} backgroundColor={"bg-blue-200"} label={`Archived at ${new Date(archivedAt).toLocaleString()}`} />}
         </div>
 
         {(!readonly && uploadFile) && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
         <div className="self-center flex items-start gap-3 my-auto max-md:justify-center"
         >
+					{ !isArchived && <p className="text-sm text-custom-text-300">{ `Last updated at ${new Date(documentDetails.last_updated_at).toLocaleString()}`}</p>}
           <VerticalDropdownMenu items={KanbanMenuOptions} />
         </div>
       </div>
