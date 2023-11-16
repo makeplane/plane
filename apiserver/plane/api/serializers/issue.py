@@ -505,7 +505,7 @@ class IssueStateFlatSerializer(BaseSerializer):
 
 
 # Issue Serializer with state details
-class IssueStateSerializer(BaseSerializer):
+class IssueStateSerializer(DynamicBaseSerializer):
     label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
     state_detail = StateLiteSerializer(read_only=True, source="state")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
