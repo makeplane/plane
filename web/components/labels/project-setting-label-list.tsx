@@ -2,7 +2,14 @@ import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  DraggableProvided,
+  DraggableStateSnapshot,
+  DropResult,
+  Droppable,
+} from "@hello-pangea/dnd";
 
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -17,6 +24,7 @@ import emptyLabel from "public/empty-state/label.svg";
 import { IIssueLabel } from "types";
 //component
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
+import useDraggableInPortal from "hooks/use-draggable-portal";
 
 const LABELS_ROOT = "labels.root";
 
@@ -24,6 +32,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+
+  const renderDraggable = useDraggableInPortal();
 
   // store
   const {
@@ -33,7 +43,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
-
+  const [isDraggingGroup, setIsDraggingGroup] = useState(false);
   // ref
   const scrollToRef = useRef<HTMLFormElement>(null);
 
@@ -92,7 +102,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           Add label
         </Button>
       </div>
-      <div className="space-y-3 py-6 overflow-auto w-full">
+      <div className="w-full">
         {showLabelForm && (
           <div className="w-full rounded border border-custom-border-200 px-3.5 py-2">
             <CreateUpdateLabelInline
@@ -108,24 +118,25 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
           </div>
         )}
         {/* labels */}
-        <div>
+        <>
           {projectLabelsTree && (
             <DragDropContext
               onDragEnd={(result) => onDragEnd(result)}
-              autoScrollerOptions={{ startFromPercentage: 25, disabled: false }}
+              autoScrollerOptions={{
+                startFromPercentage: 1,
+                disabled: false,
+                maxScrollAtPercentage: 0,
+                maxPixelScroll: 2,
+              }}
             >
               <Droppable
                 droppableId={LABELS_ROOT}
-                isCombineEnabled={true}
+                isCombineEnabled={!isDraggingGroup}
                 ignoreContainerClipping={true}
                 isDropDisabled={isUpdating}
               >
                 {(droppableProvided, droppableSnapshot) => (
-                  <div
-                    className={`max-h-full mt-3`}
-                    ref={droppableProvided.innerRef}
-                    {...droppableProvided.droppableProps}
-                  >
+                  <div className={`mt-3`} ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
                     {projectLabelsTree.map((label, index) => {
                       if (label.children && label.children.length) {
                         return (
@@ -135,8 +146,9 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                             index={index}
                             isDragDisabled={isUpdating}
                           >
-                            {(provided, snapshot) => {
+                            {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
                               const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[4] === "group";
+                              setIsDraggingGroup(isGroup);
                               return (
                                 <div
                                   key={label.id}
@@ -168,7 +180,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                           index={index}
                           isDragDisabled={isUpdating}
                         >
-                          {(provided, snapshot) => (
+                          {renderDraggable((provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                             <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
                               <ProjectSettingLabelItem
                                 dragHandleProps={provided.dragHandleProps!}
@@ -180,7 +192,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                                 handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
                               />
                             </div>
-                          )}
+                          ))}
                         </Draggable>
                       );
                     })}
@@ -190,7 +202,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
               </Droppable>
             </DragDropContext>
           )}
-        </div>
+        </>
 
         {/* loading state */}
         {!projectLabels && (

@@ -7,10 +7,17 @@ import { observer } from "mobx-react-lite";
 import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 // types
 import { IIssueLabel } from "types";
-import { Draggable, DraggableProvidedDragHandleProps, DraggableStateSnapshot, Droppable } from "@hello-pangea/dnd";
+import {
+  Draggable,
+  DraggableProvided,
+  DraggableProvidedDragHandleProps,
+  DraggableStateSnapshot,
+  Droppable,
+} from "@hello-pangea/dnd";
 import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
 import { CreateUpdateLabelInline } from "./create-update-label-inline";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
+import useDraggableInPortal from "hooks/use-draggable-portal";
 
 type Props = {
   label: IIssueLabel;
@@ -36,6 +43,8 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
   } = props;
 
   const [isEditLabelForm, setEditLabelForm] = useState(false);
+
+  const renderDraggable = useDraggableInPortal();
 
   const customMenuItems: ICustomMenuItem[] = [
     {
@@ -66,11 +75,12 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
           >
             {(droppableProvided, droppableSnapshot) => (
               <div
-                className={`max-h-full overflow-y-auto p-3 ${
+                className={`p-3 ${
                   droppableSnapshot.isDraggingOver
                     ? "border rounded border-custom-primary-100"
                     : "border-custom-border-200"
-                }`}
+                }
+                ${!isUpdating && "max-h-full overflow-y-hidden"}`}
                 ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}
               >
@@ -125,7 +135,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                               index={index}
                               isDragDisabled={groupDragSnapshot.isDragging || isUpdating}
                             >
-                              {(provided, snapshot) => (
+                              {renderDraggable((provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                                 <div
                                   className="w-full py-1"
                                   ref={provided.innerRef}
@@ -141,7 +151,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                                     setIsUpdating={setIsUpdating}
                                   />
                                 </div>
-                              )}
+                              ))}
                             </Draggable>
                           </div>
                         ))}
