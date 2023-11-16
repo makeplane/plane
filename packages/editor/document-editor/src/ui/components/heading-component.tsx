@@ -22,7 +22,7 @@ export const SubheadingComp = ({
 }) => (
   <p
     onClick={onClick}
-    className="ml-4 mt-2 text-xs cursor-pointer font-medium leading-[150%] tracking-tight text-gray-400 hover:text-custom-primary"
+    className="ml-6 mt-2 text-xs cursor-pointer font-medium tracking-tight text-gray-400 hover:text-custom-primary"
   >
     {subHeading}
   </p>
