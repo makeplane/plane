@@ -9,6 +9,8 @@ import { scrollSummary } from './utils/editor-summary-utils';
 import { SummarySideBar } from './components/summary-side-bar';
 import { DocumentDetails } from './types/editor-types';
 import { PageRenderer } from './components/page-renderer';
+import { getMenuOptions } from './utils/menu-options';
+import { useRouter } from 'next/router';
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
@@ -65,6 +67,7 @@ const DocumentEditor = ({
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings()
   const [sidePeakVisible, setSidePeakVisible] = useState(false)
+  const router = useRouter()
 
   const editor = useEditor({
     onChange(json, html) {
@@ -88,24 +91,35 @@ const DocumentEditor = ({
     return null
   }
 
+  const KanbanMenuOptions = getMenuOptions(
+    {
+      editor: editor,
+      router: router,
+      duplicationConfig: duplicationConfig,
+      pageLockConfig: pageLockConfig,
+      pageArchiveConfig: pageArchiveConfig,
+    }
+  )
   const editorClassNames = getEditorClassNames({ noBorder: true, borderOnFocus: false, customClassName });
 
   if (!editor) return null;
 
   return (
-    <div className="flex flex-col h-full">
-      <EditorHeader
-        editor={editor}
-        duplicationConfig={duplicationConfig}
-        pageLockConfig={pageLockConfig}
-        pageArchiveConfig={pageArchiveConfig}
-        sidePeakVisible={sidePeakVisible}
-        setSidePeakVisible={setSidePeakVisible}
-        markings={markings}
-        scrollSummary={scrollSummary}
-        uploadFile={uploadFile}
-        setIsSubmitting={setIsSubmitting}
-      />
+    <div className="flex flex-col">
+      <div className="top-0 sticky z-10 bg-custom-background-100">
+        <EditorHeader
+          readonly={false}
+          KanbanMenuOptions={KanbanMenuOptions}
+          editor={editor}
+          sidePeakVisible={sidePeakVisible}
+          setSidePeakVisible={setSidePeakVisible}
+          markings={markings}
+          uploadFile={uploadFile}
+          setIsSubmitting={setIsSubmitting}
+          isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
+          isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
+        />
+      </div>
       <div className="self-center items-stretch w-full max-md:max-w-full h-full">
         <div className={cn("gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0 h-full", { "justify-center": !sidePeakVisible })}>
           <SummarySideBar
