@@ -2,7 +2,8 @@ version: "3.8"
 
 x-app-env : &app-env
   environment:
-    - NGINX_PORT=${NGINX_PORT:-84}
+    - NGINX_PORT=${NGINX_PORT:-80}
+    - WEB_URL=${WEB_URL:-http://localhost}
     - DEBUG=${DEBUG:-0}
     - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.selfhosted}
     - NEXT_PUBLIC_ENABLE_OAUTH=${NEXT_PUBLIC_ENABLE_OAUTH:-0}
