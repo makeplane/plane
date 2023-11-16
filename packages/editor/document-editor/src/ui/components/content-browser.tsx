@@ -12,7 +12,7 @@ export const ContentBrowser = ({
   editor,
   markings,
 }: ContentBrowserProps) => (
-  <div className="mt-4 flex h-full w-[250px] flex-col">
+  <div className="mt-4 flex w-[250px] flex-col h-full">
     <h2 className="ml-4 border-b border-solid border-custom-border py-5 font-medium leading-[85.714%] tracking-tight max-md:ml-2.5">
       Table of Contents
     </h2>
@@ -26,7 +26,7 @@ export const ContentBrowser = ({
           />
         ) : (
           <SubheadingComp
-            onClick={() => scrollSummary(editor,marking)}
+            onClick={() => scrollSummary(editor, marking)}
             subHeading={marking.text}
           />
         )
