@@ -1,8 +1,9 @@
 import { EditorState, Plugin, PluginKey, Transaction } from "@tiptap/pm/state";
 import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { DeleteImage } from "../../types/delete-image";
+import { validateKey } from "./validate-image";
 
-const deleteKey = new PluginKey("delete-image");
+// const deleteKey = new PluginKey("delete-image");
 const IMAGE_NODE_TYPE = "image";
 
 interface ImageNode extends ProseMirrorNode {
@@ -14,12 +15,20 @@ interface ImageNode extends ProseMirrorNode {
 
 const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
   new Plugin({
-    key: deleteKey,
+    key: new PluginKey("track-image-deletion"),
+    view() {
+      return {
+        update: (view) => {
+          console.log("view", view, "ran");
+        },
+      };
+    },
     appendTransaction: (
       transactions: readonly Transaction[],
       oldState: EditorState,
       newState: EditorState,
     ) => {
+      // const { view } = this.editor;
       const newImageSources = new Set<string>();
       newState.doc.descendants((node) => {
         if (node.type.name === IMAGE_NODE_TYPE) {
@@ -61,7 +70,15 @@ const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
 
         removedImages.forEach(async (node) => {
           const src = node.attrs.src;
-          await onNodeDeleted(src, deleteImage);
+          // await onNodeDeleted(src, deleteImage);
+          const imageValidationState = validateKey.getState(newState);
+          console.log("imageValidationState", imageValidationState.images);
+          const plugin = validateKey.get(newState);
+          // transaction.setMeta(validateKey, "deleteTheImage");
+          // const tr = newState.tr.setMeta(validateKey, "deleteTheImage");
+          console.log("plugin", plugin);
+          // view.dispatch(tr);
+          // images.delete(src);
         });
       });
 

@@ -21,23 +21,6 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
   return document
     .elementsFromPoint(coords.x, coords.y)
     .find((elem: Element) => {
-      // console.log(
-      //   "elem",
-      //   elem,
-      //   elem.parentElement?.matches?.(".ProseMirror") ||
-      //     elem.matches(
-      //       [
-      //         "li",
-      //         "p:not(:first-child)",
-      //         "pre",
-      //         "blockquote",
-      //         "h1, h2, h3",
-      //         "[data-type=horizontalRule]",
-      //         ".tableWrapper",
-      //       ].join(", "),
-      //     ),
-      // );
-
       return (
         elem.parentElement?.matches?.(".ProseMirror") ||
         elem.matches(
@@ -74,14 +57,6 @@ function nodePosAtDOM(node: Element, view: EditorView) {
     );
   }
 
-  console.log(
-    "second",
-    node.nodeName,
-    view.posAtCoords({
-      left: boundingRect.left + 1,
-      top: boundingRect.top + 1,
-    }),
-  );
   return view.posAtCoords({
     left: boundingRect.left + 1,
     top: boundingRect.top + 1,
