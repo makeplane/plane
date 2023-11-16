@@ -55,7 +55,7 @@ const DocumentReadOnlyEditor = ({
     if (editor) {
       updateMarkings(editor.getJSON())
     }
-  }, [])
+  }, [editor?.getJSON()])
 
   if (!editor) {
     return null
