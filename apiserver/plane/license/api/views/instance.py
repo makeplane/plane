@@ -40,11 +40,8 @@ class InstanceEndpoint(BaseAPIView):
             return Response({"activated": False}, status=status.HTTP_400_BAD_REQUEST)
         # Return instance
         serializer = InstanceSerializer(instance)
-        data = {
-            "data": serializer.data,
-            "activated": True,
-        }
-        return Response(data, status=status.HTTP_200_OK)
+        serializer.data["activated"] = True
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
         # Get the instance

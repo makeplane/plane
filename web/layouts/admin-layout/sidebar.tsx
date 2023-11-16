@@ -1,13 +1,13 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { WorkspaceHelpSection } from "components/workspace";
+import { InstanceAdminSidebarMenu, InstanceHelpSection } from "components/instance";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
-export interface IAppSidebar {}
+export interface IInstanceAdminSidebar {}
 
-export const InstanceAdminSidebar: FC<IAppSidebar> = observer(() => {
+export const InstanceAdminSidebar: FC<IInstanceAdminSidebar> = observer(() => {
   // store
   const { theme: themStore } = useMobxStore();
 
@@ -19,7 +19,8 @@ export const InstanceAdminSidebar: FC<IAppSidebar> = observer(() => {
       } ${themStore?.sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
       <div className="flex h-full w-full flex-1 flex-col">
-        <WorkspaceHelpSection />
+        <InstanceAdminSidebarMenu />
+        <InstanceHelpSection />
       </div>
     </div>
   );
