@@ -53,6 +53,7 @@ class InstanceAdmin(BaseModel):
     role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=15)
 
     class Meta:
+        unique_together = ["instance", "user"]
         verbose_name = "Instance Admin"
         verbose_name_plural = "Instance Admins"
         db_table = "instance_admins"
