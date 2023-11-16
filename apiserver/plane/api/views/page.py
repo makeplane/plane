@@ -87,7 +87,7 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-            .order_by("name", "-is_favorite")
+            .order_by("-is_favorite","-created_at")
             .distinct()
         )
 
@@ -134,18 +134,6 @@ class PageViewSet(BaseViewSet):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            # # only update lock if the page owner is the requesting user
-            # if (
-            #     page.is_locked != request.data.get("is_locked", page.is_locked)
-            #     and page.owned_by_id != request.user.id
-            # ):
-            #     return Response(
-            #         {
-            #             "error": "Lock cannot be updated since this page is owned by someone else"
-            #         },
-            #         status=status.HTTP_400_BAD_REQUEST,
-            #     )
 
             serializer = PageSerializer(page, data=request.data, partial=True)
             if serializer.is_valid():
