@@ -1,5 +1,4 @@
 import { Extension } from "@tiptap/core";
-
 import { NodeSelection, Plugin } from "@tiptap/pm/state";
 // @ts-ignore
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
@@ -22,13 +21,30 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
   return document
     .elementsFromPoint(coords.x, coords.y)
     .find((elem: Element) => {
+      // console.log(
+      //   "elem",
+      //   elem,
+      //   elem.parentElement?.matches?.(".ProseMirror") ||
+      //     elem.matches(
+      //       [
+      //         "li",
+      //         "p:not(:first-child)",
+      //         "pre",
+      //         "blockquote",
+      //         "h1, h2, h3",
+      //         "[data-type=horizontalRule]",
+      //         ".tableWrapper",
+      //       ].join(", "),
+      //     ),
+      // );
+
       return (
         elem.parentElement?.matches?.(".ProseMirror") ||
         elem.matches(
           [
             "li",
             "p:not(:first-child)",
-            "code",
+            "pre",
             "blockquote",
             "h1, h2, h3",
             "[data-type=horizontalRule]",
@@ -49,6 +65,23 @@ function nodePosAtDOM(node: Element, view: EditorView) {
     })?.pos;
   }
 
+  if (node.nodeName === "PRE") {
+    return (
+      view.posAtCoords({
+        left: boundingRect.left + 1,
+        top: boundingRect.top + 1,
+      })?.pos! - 1
+    );
+  }
+
+  console.log(
+    "second",
+    node.nodeName,
+    view.posAtCoords({
+      left: boundingRect.left + 1,
+      top: boundingRect.top + 1,
+    }),
+  );
   return view.posAtCoords({
     left: boundingRect.left + 1,
     top: boundingRect.top + 1,
@@ -102,6 +135,14 @@ function DragHandle(options: DragHandleOptions) {
 
     const nodePos = nodePosAtDOM(node, view);
 
+    console.log("nodePos:", nodePos);
+    console.log("content at nodePos:", view.state.doc.nodeAt(nodePos));
+
+    const parentPos = view.state.doc.resolve(nodePos).parentOffset;
+    const parentNode = view.state.doc.nodeAt(parentPos);
+
+    console.log("parentNode:", parentNode);
+    console.log("parentNode content expression:", parentNode?.type);
     if (nodePos === null || nodePos === undefined || nodePos < 0) return;
 
     view.dispatch(
