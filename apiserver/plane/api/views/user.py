@@ -13,13 +13,7 @@ from plane.api.serializers import (
 )
 
 from plane.api.views.base import BaseViewSet, BaseAPIView
-from plane.db.models import (
-    User,
-    Workspace,
-    WorkspaceMemberInvite,
-    Issue,
-    IssueActivity,
-)
+from plane.db.models import User, IssueActivity, WorkspaceMember
 from plane.utils.paginator import BasePaginator
 
 
@@ -41,10 +35,28 @@ class UserEndpoint(BaseViewSet):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
+    def deactivate(self, request):
+        # Check all workspace user is active
+        user = self.get_object()
+        if WorkspaceMember.objects.filter(
+            member=request.user, is_active=True
+        ).exists():
+            return Response(
+                {
+                    "error": "User cannot deactivate account as user is active in some workspaces"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Deactivate the user
+        user.is_active = False
+        user.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class UpdateUserOnBoardedEndpoint(BaseAPIView):
     def patch(self, request):
-        user = User.objects.get(pk=request.user.id)
+        user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_onboarded = request.data.get("is_onboarded", False)
         user.save()
         return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)
@@ -52,7 +64,7 @@ class UpdateUserOnBoardedEndpoint(BaseAPIView):
 
 class UpdateUserTourCompletedEndpoint(BaseAPIView):
     def patch(self, request):
-        user = User.objects.get(pk=request.user.id)
+        user = User.objects.get(pk=request.user.id, is_active=True)
         user.is_tour_completed = request.data.get("is_tour_completed", False)
         user.save()
         return Response({"message": "Updated successfully"}, status=status.HTTP_200_OK)

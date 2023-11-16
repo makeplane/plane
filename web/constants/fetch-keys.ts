@@ -300,3 +300,8 @@ export const ISSUE_REACTION_LIST = (workspaceSlug: string, projectId: string, is
   `ISSUE_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${issueId.toUpperCase()}`;
 export const COMMENT_REACTION_LIST = (workspaceSlug: string, projectId: string, commendId: string) =>
   `COMMENT_REACTION_LIST_${workspaceSlug.toUpperCase()}_${projectId.toUpperCase()}_${commendId.toUpperCase()}`;
+
+// api-tokens
+export const API_TOKENS_LIST = (workspaceSlug: string) => `API_TOKENS_LIST_${workspaceSlug.toUpperCase()}`;
+export const API_TOKEN_DETAILS = (workspaceSlug: string, tokenId: string) =>
+  `API_TOKEN_DETAILS_${workspaceSlug.toUpperCase()}_${tokenId.toUpperCase()}`;
