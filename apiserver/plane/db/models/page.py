@@ -1,3 +1,5 @@
+import uuid
+
 # Django imports
 from django.db import models
 from django.conf import settings
@@ -27,7 +29,7 @@ class Page(ProjectBaseModel):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name="parent_page",
+        related_name="child_page",
     )
     archived_at = models.DateField(null=True)
     is_locked = models.BooleanField(default=False)
@@ -57,7 +59,7 @@ class PageLog(ProjectBaseModel):
         ("forward_link", "Forward Link"),
         ("mention", "Mention"),
     )
-    transaction = models.UUIDField(null=True)
+    transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(
         Page, related_name="page_log", on_delete=models.CASCADE
     )
@@ -66,7 +68,6 @@ class PageLog(ProjectBaseModel):
         max_length=30,
         choices=TYPE_CHOICES,
         verbose_name="Transaction Type",
-        default="to_do",
     )
 
     class Meta:

@@ -98,7 +98,7 @@ class SubPageSerializer(BaseSerializer):
             try:
                 page = Page.objects.get(pk=obj.entity_identifier)
                 return PageSerializer(page).data
-            except Page.name:
+            except Page.DoesNotExist:
                 return None
         return None
 

@@ -2,10 +2,8 @@ from .project import (
     ProjectViewSet,
     ProjectMemberViewSet,
     UserProjectInvitationsViewset,
-    InviteProjectEndpoint,
+    ProjectInvitationsViewset,
     AddTeamToProjectEndpoint,
-    ProjectMemberInvitationsViewset,
-    ProjectMemberInviteDetailViewSet,
     ProjectIdentifierEndpoint,
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
@@ -14,7 +12,6 @@ from .project import (
     ProjectDeployBoardViewSet,
     ProjectDeployBoardPublicSettingsEndpoint,
     WorkspaceProjectDeployBoardEndpoint,
-    LeaveProjectEndpoint,
     ProjectPublicCoverImagesEndpoint,
 )
 from .user import (
@@ -26,19 +23,17 @@ from .user import (
 
 from .oauth import OauthEndpoint
 
-from .base import BaseAPIView, BaseViewSet
+from .base import BaseAPIView, BaseViewSet, WebhookMixin
 
 from .workspace import (
     WorkSpaceViewSet,
     UserWorkSpacesEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
-    InviteWorkspaceEndpoint,
-    JoinWorkspaceEndpoint,
+    WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
     TeamMemberViewSet,
     WorkspaceInvitationsViewset,
-    UserWorkspaceInvitationsEndpoint,
-    UserWorkspaceInvitationEndpoint,
+    UserWorkspaceInvitationsViewSet,
     UserLastProjectWithWorkspaceEndpoint,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -51,7 +46,6 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    LeaveWorkspaceEndpoint,
 )
 from .state import StateViewSet
 from .view import (
@@ -121,7 +115,7 @@ from .module import (
     ModuleFavoriteViewSet,
 )
 
-from .api_token import ApiTokenEndpoint
+from .api import ApiTokenEndpoint
 
 from .integration import (
     WorkspaceIntegrationViewSet,
@@ -179,3 +173,5 @@ from .notification import (
 from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
+
+from .webhook import WebhookEndpoint, WebhookLogsEndpoint, WebhookSecretRegenerateEndpoint
