@@ -213,51 +213,52 @@ const PageDetailsPage: NextPageWithLayout = () => {
         <div className="flex h-full flex-col justify-between pl-5 pr-5">
           <div className="h-full w-full">
             {
-              pageDetails.is_locked ?
-              <DocumentReadOnlyEditorWithRef
-                    ref={editorRef}
-                    value={pageDetails.description_html}
-                    customClassName={"tracking-tight self-center w-full max-w-full px-0"}
-                    borderOnFocus={false}
-                    noBorder={true}
-                    documentDetails={
-                      {
-                        title: pageDetails.name
+              pageDetails.is_locked || pageDetails.archived_at ?
+                <DocumentReadOnlyEditorWithRef
+                  ref={editorRef}
+                  value={pageDetails.description_html}
+                  customClassName={"tracking-tight self-center w-full max-w-full px-0"}
+                  borderOnFocus={false}
+                  noBorder={true}
+                  documentDetails={
+                    {
+                      title: pageDetails.name
+                    }
+                  }
+                  pageLockConfig={ !pageDetails.archived_at ? { action: unlockPage, is_locked: pageDetails.is_locked } : undefined}
+									pageArchiveConfig={{ action: pageDetails.archived_at ? unArchivePage : archivePage, is_archived: pageDetails.archived_at ? true : false }}
+                /> :
+                <Controller
+                  name="description_html"
+                  control={control}
+                  render={({ field: { value, onChange } }) =>
+                  (
+                    <DocumentEditorWithRef
+                      documentDetails={
+                        {
+                          title: pageDetails.name
+                        }
                       }
-                    }
-                    pageLockConfig={{ action: unlockPage, is_locked: true }}
-                  />:
-            <Controller
-              name="description_html"
-              control={control}
-              render={({ field: { value, onChange } }) =>
-               (
-                  <DocumentEditorWithRef
-                    documentDetails={
-                      {
-                        title: pageDetails.name
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      deleteFile={fileService.deleteImage}
+                      ref={editorRef}
+                      debouncedUpdatesEnabled={false}
+                      setIsSubmitting={setIsSubmitting}
+                      value={
+                        !value || value === "" ? "<p></p>" : value
                       }
-                    }
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    ref={editorRef}
-                    debouncedUpdatesEnabled={false}
-                    setIsSubmitting={setIsSubmitting}
-                    value={
-                      !value || value === "" ?"<p></p>":  value
-                    }
-                    customClassName="tracking-tight self-center w-full max-w-full px-0"
-                    onChange={(_description_json: Object, description_html: string) => {
-                      onChange(description_html);
-                      setIsSubmitting("submitting");
-                      debouncedFormSave();
-                    }}
-                    duplicationConfig={{ action: duplicate_page }}
-                    pageArchiveConfig={{ is_archived: pageDetails.archived_at ? true : false, action: pageDetails.archived_at ? unArchivePage : archivePage}}
-                    pageLockConfig={{ is_locked: false, action: lockPage }}
-                  />)
-              }
-            />
+                      customClassName="tracking-tight self-center w-full max-w-full px-0"
+                      onChange={(_description_json: Object, description_html: string) => {
+                        onChange(description_html);
+                        setIsSubmitting("submitting");
+                        debouncedFormSave();
+                      }}
+                      duplicationConfig={{ action: duplicate_page }}
+                      pageArchiveConfig={{ is_archived: pageDetails.archived_at ? true : false, action: pageDetails.archived_at ? unArchivePage : archivePage }}
+                      pageLockConfig={{ is_locked: false, action: lockPage }}
+                    />)
+                  }
+                />
             }
           </div>
         </div>
