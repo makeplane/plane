@@ -64,7 +64,7 @@ def update_pages(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("db", "0047_issuemention_pagelog_page_archived_at_page_is_locked_and_more"),
+        ("db", "0048_auto_20231116_0713"),
     ]
 
     operations = [

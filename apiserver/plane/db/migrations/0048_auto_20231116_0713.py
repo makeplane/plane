@@ -9,7 +9,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('db', '0046_alter_analyticview_created_by_and_more'),
+        ('db', '0047_webhook_apitoken_description_apitoken_expired_at_and_more'),
     ]
 
     operations = [
