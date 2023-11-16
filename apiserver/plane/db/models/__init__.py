@@ -68,7 +68,7 @@ from .integration import (
 
 from .importer import Importer
 
-from .page import Page, PageBlock, PageFavorite, PageLabel
+from .page import Page, PageLog, PageFavorite, PageLabel
 
 from .estimate import Estimate, EstimatePoint
 
