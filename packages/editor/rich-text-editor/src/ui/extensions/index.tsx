@@ -2,6 +2,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 
 import SlashCommand from "./slash-command";
 import { UploadImage } from "../";
+import DragAndDrop from "./drag-drop";
 
 export const RichTextEditorExtensions = (
   uploadFile: UploadImage,
@@ -10,6 +11,7 @@ export const RichTextEditorExtensions = (
   ) => void,
 ) => [
   SlashCommand(uploadFile, setIsSubmitting),
+  DragAndDrop,
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === "heading") {

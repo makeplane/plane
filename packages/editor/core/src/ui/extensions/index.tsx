@@ -107,5 +107,4 @@ export const CoreEditorExtensions = (
     mentionConfig.mentionHighlights,
     false,
   ),
-  DragDrop,
 ];
