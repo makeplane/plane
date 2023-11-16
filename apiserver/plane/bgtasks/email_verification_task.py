@@ -42,7 +42,6 @@ def email_verification(first_name, email, token, current_site):
             username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
             password=get_configuration_value(instance_configuration, "EMAIL_HOST_PASSWORD"),
             use_tls=bool(get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")),
-            use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
         )
 
         # Initiate email alternatives

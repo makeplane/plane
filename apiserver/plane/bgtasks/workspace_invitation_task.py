@@ -69,9 +69,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             use_tls=bool(
                 get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")
             ),
-            use_ssl=bool(
-                get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")
-            ),
         )
         # Initiate email alternatives
         msg = EmailMultiAlternatives(

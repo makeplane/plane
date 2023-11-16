@@ -39,7 +39,6 @@ def forgot_password(first_name, email, uidb64, token, current_site):
             username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
             password=get_configuration_value(instance_configuration, "EMAIL_HOST_PASSWORD"),
             use_tls=bool(get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")),
-            use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
         )
         # Initiate email alternatives
         msg = EmailMultiAlternatives(subject=subject, body=text_content, from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"), to=[email], connection=connection)
