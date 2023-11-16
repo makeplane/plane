@@ -20,7 +20,7 @@ type Props = {
   labelForm: boolean;
   setLabelForm: React.Dispatch<React.SetStateAction<boolean>>;
   isUpdating: boolean;
-  labelToUpdate: IIssueLabel | null;
+  labelToUpdate?: IIssueLabel;
   onClose?: () => void;
 };
 
@@ -128,9 +128,7 @@ export const CreateUpdateLabelInline = observer(
           e.preventDefault();
           handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
         }}
-        className={`flex scroll-m-8 items-center gap-2 rounded border border-custom-border-200 bg-custom-background-100 px-3.5 py-2 ${
-          labelForm ? "" : "hidden"
-        }`}
+        className={`flex scroll-m-8 items-center gap-2 bg-custom-background-100 w-full ${labelForm ? "" : "hidden"}`}
       >
         <div className="flex-shrink-0">
           <Popover className="relative z-10 flex h-full w-full items-center justify-center">

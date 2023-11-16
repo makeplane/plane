@@ -3,15 +3,11 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
+
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import {
-  CreateUpdateLabelInline,
-  DeleteLabelModal,
-  ProjectSettingLabelItem,
-  ProjectSettingLabelGroup,
-} from "components/labels";
+import { CreateUpdateLabelInline, DeleteLabelModal, ProjectSettingLabelGroup } from "components/labels";
 // ui
 import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
@@ -19,8 +15,10 @@ import { EmptyState } from "components/common";
 import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabel } from "types";
-// icons
-import { MoreVertical } from "lucide-react";
+//component
+import { ProjectSettingLabelItem } from "./project-setting-label-item";
+
+const LABELS_ROOT = "labels.root";
 
 export const ProjectSettingsLabelList: React.FC = observer(() => {
   // router
@@ -29,18 +27,15 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
 
   // store
   const {
-    projectLabel: { fetchProjectLabels, projectLabels, updateLabel, projectLabelsTree },
+    projectLabel: { fetchProjectLabels, projectLabels, updateLabelPosition, projectLabelsTree },
   } = useMobxStore();
   // states
-  const [labelForm, setLabelForm] = useState(false);
+  const [showLabelForm, setLabelForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [labelToUpdate, setLabelToUpdate] = useState<IIssueLabel | null>(null);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<IIssueLabel | null>(null);
 
   // ref
   const scrollToRef = useRef<HTMLFormElement>(null);
-
-  console.log("projectLabelsRenderContents", projectLabelsTree);
 
   // api call to fetch project details
   useSWR(
@@ -53,29 +48,32 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
     setLabelForm(true);
   };
 
-  const editLabel = (label: IIssueLabel) => {
-    setLabelForm(true);
-    setIsUpdating(true);
-    setLabelToUpdate(label);
-  };
-
   const onDragEnd = (result: DropResult) => {
     const childLabel = result.draggableId.split(".")[3];
-    const parentLabel = (result.destination || result.combine)?.droppableId?.split(".")[3];
+    let parentLabel: string | undefined | null = result.destination?.droppableId?.split(".")[3];
+    let index = result.destination?.index || 0;
 
-    // single -> single || single -> group || group -> group
-    if (childLabel && parentLabel && result.reason == "DROP" && childLabel != parentLabel) {
-      updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
-        parent: parentLabel,
-      });
-      return;
+    const prevParentLabel: string | undefined | null = result.source?.droppableId?.split(".")[3];
+    const prevIndex = result.source?.index;
+
+    if (result.combine && result.combine.draggableId) {
+      parentLabel = result.combine?.draggableId?.split(".")[3];
     }
 
-    // Parent -> NULL
-    if (result.reason == "DROP" && !result.combine && !result.destination) {
-      updateLabel(workspaceSlug?.toString()!, projectId?.toString()!, childLabel, {
-        parent: null,
-      });
+    if (result.destination?.droppableId === LABELS_ROOT) {
+      parentLabel = null;
+    }
+
+    if (result.reason == "DROP" && childLabel != parentLabel) {
+      updateLabelPosition(
+        workspaceSlug?.toString()!,
+        projectId?.toString()!,
+        childLabel,
+        parentLabel,
+        index,
+        prevParentLabel == parentLabel,
+        prevIndex
+      );
       return;
     }
   };
@@ -95,25 +93,33 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         </Button>
       </div>
       <div className="space-y-3 py-6 overflow-auto w-full">
-        {labelForm && (
-          <CreateUpdateLabelInline
-            labelForm={labelForm}
-            setLabelForm={setLabelForm}
-            isUpdating={isUpdating}
-            labelToUpdate={labelToUpdate}
-            ref={scrollToRef}
-            onClose={() => {
-              setLabelForm(false);
-              setIsUpdating(false);
-              setLabelToUpdate(null);
-            }}
-          />
+        {showLabelForm && (
+          <div className="w-full rounded border border-custom-border-200 px-3.5 py-2">
+            <CreateUpdateLabelInline
+              labelForm={showLabelForm}
+              setLabelForm={setLabelForm}
+              isUpdating={isUpdating}
+              ref={scrollToRef}
+              onClose={() => {
+                setLabelForm(false);
+                setIsUpdating(false);
+              }}
+            />
+          </div>
         )}
         {/* labels */}
         <div>
           {projectLabelsTree && (
-            <DragDropContext onDragEnd={(result) => onDragEnd(result)}>
-              <Droppable droppableId={`labels.root`} isCombineEnabled={true} ignoreContainerClipping={true}>
+            <DragDropContext
+              onDragEnd={(result) => onDragEnd(result)}
+              autoScrollerOptions={{ startFromPercentage: 25, disabled: false }}
+            >
+              <Droppable
+                droppableId={LABELS_ROOT}
+                isCombineEnabled={true}
+                ignoreContainerClipping={true}
+                isDropDisabled={isUpdating}
+              >
                 {(droppableProvided, droppableSnapshot) => (
                   <div
                     className={`max-h-full mt-3`}
@@ -121,36 +127,25 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                     {...droppableProvided.droppableProps}
                   >
                     {projectLabelsTree.map((label, index) => {
-                      if (label.children) {
+                      if (label.children && label.children.length) {
                         return (
                           <Draggable
                             key={`child.label.draggable.${label.id}`}
-                            draggableId={`child.label.draggable.${label.name}`}
+                            draggableId={`child.label.draggable.${label.id}`}
                             index={index}
+                            isDragDisabled={isUpdating}
                           >
                             {(provided, snapshot) => (
-                              <div key={label.id} ref={provided.innerRef} {...provided.draggableProps}>
-                                <button
-                                  type="button"
-                                  className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-1 group-hover:opacity-100 ${
-                                    snapshot.isDragging ? "opacity-100" : "opacity-0"
-                                  }`}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400" />
-                                  <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400 -ml-5" />
-                                </button>
+                              <div key={label.id} ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
                                 <ProjectSettingLabelGroup
                                   key={label.id}
                                   label={label}
                                   labelChildren={label.children || []}
-                                  editLabel={(label) => {
-                                    editLabel(label);
-                                    scrollToRef.current?.scrollIntoView({
-                                      behavior: "smooth",
-                                    });
-                                  }}
-                                  handleLabelDelete={() => setSelectDeleteLabel(label)}
+                                  dragHandleProps={provided.dragHandleProps!}
+                                  handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                                  draggableSnapshot={snapshot}
+                                  isUpdating={isUpdating}
+                                  setIsUpdating={setIsUpdating}
                                 />
                               </div>
                             )}
@@ -162,6 +157,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                           key={`child.label.draggable.${label.id}`}
                           draggableId={`child.label.draggable.${label.id}`}
                           index={index}
+                          isDragDisabled={isUpdating}
                         >
                           {(provided, snapshot) => (
                             <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
@@ -171,13 +167,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                                 draggableSnapshot={snapshot}
                                 key={label.id}
                                 label={label}
-                                editLabel={(label) => {
-                                  editLabel(label);
-                                  scrollToRef.current?.scrollIntoView({
-                                    behavior: "smooth",
-                                  });
-                                }}
-                                handleLabelDelete={() => setSelectDeleteLabel(label)}
+                                setIsUpdating={setIsUpdating}
+                                handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
                               />
                             </div>
                           )}

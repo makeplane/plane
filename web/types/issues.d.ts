@@ -173,6 +173,7 @@ export interface IIssueLabel {
   workspace: string;
   workspace_detail: IWorkspaceLite;
   parent: string | null;
+  sort_order: number;
 }
 
 export interface IIssueLabelTree extends IIssueLabel {

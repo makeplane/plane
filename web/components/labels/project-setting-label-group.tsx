@@ -1,48 +1,67 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Disclosure, Transition } from "@headlessui/react";
 
 // store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
-import { CustomMenu } from "@plane/ui";
 // icons
-import { ChevronDown, Component, MoreVertical, Pencil, Trash2, X } from "lucide-react";
+import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 // types
 import { IIssueLabel } from "types";
-import { Draggable, Droppable } from "@hello-pangea/dnd";
+import { Draggable, DraggableProvidedDragHandleProps, DraggableStateSnapshot, Droppable } from "@hello-pangea/dnd";
+import { ICustomMenuItem, LabelItemBlock } from "./label-block/label-item-block";
+import { CreateUpdateLabelInline } from "./create-update-label-inline";
+import { ProjectSettingLabelItem } from "./project-setting-label-item";
 
 type Props = {
   label: IIssueLabel;
   labelChildren: IIssueLabel[];
   handleLabelDelete: (label: IIssueLabel) => void;
-  editLabel: (label: IIssueLabel) => void;
+  dragHandleProps: DraggableProvidedDragHandleProps;
+  draggableSnapshot: DraggableStateSnapshot;
+  isUpdating: boolean;
+  setIsUpdating: Dispatch<SetStateAction<boolean>>;
 };
 
 export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
-  const { label, labelChildren, editLabel, handleLabelDelete } = props;
+  const {
+    label,
+    labelChildren,
+    handleLabelDelete,
+    draggableSnapshot: groupDragSnapshot,
+    dragHandleProps,
+    isUpdating,
+    setIsUpdating,
+  } = props;
 
-  // router
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const [isEditLabelForm, setEditLabelForm] = useState(false);
 
-  // store
-  const { projectLabel: projectLabelStore } = useMobxStore();
-
-  const removeFromGroup = (label: IIssueLabel) => {
-    if (!workspaceSlug || !projectId) return;
-
-    projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
-      parent: null,
-    });
-  };
+  const customMenuItems: ICustomMenuItem[] = [
+    {
+      CustomIcon: Pencil,
+      onClick: () => {
+        setEditLabelForm(true);
+        setIsUpdating(true);
+      },
+      isVisible: true,
+      text: "Edit label",
+    },
+    {
+      CustomIcon: Trash2,
+      onClick: handleLabelDelete,
+      isVisible: true,
+      text: "Delete label",
+    },
+  ];
 
   return (
     <Disclosure as="div" className="rounded border-[0.5px] bg-custom-background-100 text-custom-text-100" defaultOpen>
       {({ open }) => (
         <>
-          <Droppable key={`label.group.droppable.${label.id}`} droppableId={`label.group.droppable.${label.id}`}>
+          <Droppable
+            key={`label.group.droppable.${label.id}`}
+            droppableId={`label.group.droppable.${label.id}`}
+            isDropDisabled={groupDragSnapshot.isDragging || isUpdating}
+          >
             {(droppableProvided, droppableSnapshot) => (
               <div
                 className={`max-h-full overflow-y-auto p-3 ${
@@ -54,34 +73,36 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                 {...droppableProvided.droppableProps}
               >
                 <>
-                  <div className="flex cursor-pointer items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <Component className="h-4 w-4 text-custom-text-100 flex-shrink-0" />
-                      <h6>{label.name}</h6>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CustomMenu ellipsis buttonClassName="!text-custom-sidebar-text-400">
-                        <CustomMenu.MenuItem onClick={() => editLabel(label)}>
-                          <span className="flex items-center justify-start gap-2">
-                            <Pencil className="h-4 w-4" />
-                            <span>Edit label</span>
-                          </span>
-                        </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={handleLabelDelete}>
-                          <span className="flex items-center justify-start gap-2">
-                            <Trash2 className="h-4 w-4" />
-                            <span>Delete label</span>
-                          </span>
-                        </CustomMenu.MenuItem>
-                      </CustomMenu>
-                      <Disclosure.Button>
-                        <span>
-                          <ChevronDown
-                            className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
-                          />
-                        </span>
-                      </Disclosure.Button>
-                    </div>
+                  <div className="relative flex cursor-pointer items-center justify-between gap-2">
+                    {isEditLabelForm ? (
+                      <CreateUpdateLabelInline
+                        labelForm={isEditLabelForm}
+                        setLabelForm={setEditLabelForm}
+                        isUpdating={true}
+                        labelToUpdate={label}
+                        onClose={() => {
+                          setEditLabelForm(false);
+                          setIsUpdating(false);
+                        }}
+                      />
+                    ) : (
+                      <LabelItemBlock
+                        label={label}
+                        isDragging={groupDragSnapshot.isDragging}
+                        customMenuItems={customMenuItems}
+                        dragHandleProps={dragHandleProps}
+                        handleLabelDelete={handleLabelDelete}
+                        isLabelGroup={true}
+                      />
+                    )}
+
+                    <Disclosure.Button>
+                      <span>
+                        <ChevronDown
+                          className={`h-4 w-4 text-custom-sidebar-text-400 ${!open ? "rotate-90 transform" : ""}`}
+                        />
+                      </span>
+                    </Disclosure.Button>
                   </div>
                   <Transition
                     show={open}
@@ -100,72 +121,23 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                               key={`child.label.draggable.${child.id}`}
                               draggableId={`child.label.draggable.${child.id}`}
                               index={index}
+                              isDragDisabled={groupDragSnapshot.isDragging || isUpdating}
                             >
                               {(provided, snapshot) => (
                                 <div
+                                  className="w-full py-1"
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   key={child.id}
-                                  className={`flex w-full items-center px-4 py-2.5 border-custom-border-200 ${
-                                    snapshot.isDragging
-                                      ? "border rounded shadow-custom-shadow-xs"
-                                      : labelChildren.length - 1 == index
-                                      ? ""
-                                      : "border-b-[0.5px]"
-                                  }`}
                                 >
-                                  <button
-                                    type="button"
-                                    className={`rounded text-custom-sidebar-text-200 flex flex-shrink-0 mr-2 group-hover:opacity-100  ${
-                                      snapshot.isDragging ? "opacity-100" : "opacity-0"
-                                    }`}
-                                    {...provided.dragHandleProps}
-                                  >
-                                    <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400" />
-                                    <MoreVertical className="h-3.5 w-3.5 stroke-custom-text-400 -ml-5" />
-                                  </button>
-                                  <h5 className="flex items-center gap-3 mr-auto">
-                                    <span
-                                      className="h-3.5 w-3.5 flex-shrink-0 rounded-full"
-                                      style={{
-                                        backgroundColor: child.color && child.color !== "" ? child.color : "#000000",
-                                      }}
-                                    />
-                                    {child.name}
-                                  </h5>
-                                  <div className="flex items-center gap-3.5 pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100">
-                                    <div className="h-4 w-4">
-                                      <CustomMenu
-                                        customButton={
-                                          <div className="h-4 w-4">
-                                            <Component className="h-4 w-4 leading-4 text-custom-sidebar-text-400 flex-shrink-0" />
-                                          </div>
-                                        }
-                                      >
-                                        <CustomMenu.MenuItem onClick={() => removeFromGroup(child)}>
-                                          <span className="flex items-center justify-start gap-2">
-                                            <X className="h-4 w-4" />
-                                            <span>Remove from group</span>
-                                          </span>
-                                        </CustomMenu.MenuItem>
-                                        <CustomMenu.MenuItem onClick={() => editLabel(child)}>
-                                          <span className="flex items-center justify-start gap-2">
-                                            <Pencil className="h-4 w-4" />
-                                            <span>Edit label</span>
-                                          </span>
-                                        </CustomMenu.MenuItem>
-                                      </CustomMenu>
-                                    </div>
-
-                                    <div className="flex items-center">
-                                      <button
-                                        className="flex items-center justify-start gap-2"
-                                        onClick={() => handleLabelDelete(label)}
-                                      >
-                                        <X className="h-[18px] w-[18px] text-custom-sidebar-text-400 flex-shrink-0" />
-                                      </button>
-                                    </div>
-                                  </div>
+                                  <ProjectSettingLabelItem
+                                    label={child}
+                                    handleLabelDelete={() => handleLabelDelete(child)}
+                                    droppableSnapshot={droppableSnapshot}
+                                    draggableSnapshot={snapshot}
+                                    dragHandleProps={provided.dragHandleProps!}
+                                    setIsUpdating={setIsUpdating}
+                                  />
                                 </div>
                               )}
                             </Draggable>

@@ -1,3 +1,5 @@
+import { IIssueLabelTree } from "types";
+
 export const groupBy = (array: any[], key: string) => {
   const innerKey = key.split("."); // split the key by dot
   return array.reduce((result, currentValue) => {
@@ -76,14 +78,12 @@ export const orderGroupedDataByField = <T>(groupedData: GroupedItems<T>, orderBy
 };
 
 export const buildTree = (array: any[], parent = null) => {
-  const tree: any = [];
+  const tree: IIssueLabelTree[] = [];
 
   array.forEach((item: any) => {
     if (item.parent === parent) {
       const children = buildTree(array, item.id);
-      if (children.length) {
-        item.children = children;
-      }
+      item.children = children;
       tree.push(item);
     }
   });

@@ -26,6 +26,15 @@ export interface IProjectLabelStore {
     labelId: string,
     data: Partial<IIssueLabel>
   ) => Promise<IIssueLabel>;
+  updateLabelPosition: (
+    workspaceSlug: string,
+    projectId: string,
+    labelId: string,
+    parentId: string | null | undefined,
+    index: number,
+    isSameParent: boolean,
+    prevIndex: number | undefined
+  ) => Promise<IIssueLabel>;
   deleteLabel: (workspaceSlug: string, projectId: string, labelId: string) => Promise<void>;
 }
 
@@ -55,6 +64,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
       fetchProjectLabels: action,
       createLabel: action,
       updateLabel: action,
+      updateLabelPosition: action,
       deleteLabel: action,
     });
 
@@ -72,6 +82,10 @@ export class ProjectLabelStore implements IProjectLabelStore {
     if (!this.rootStore.project.projectId) return null;
     const currentProjectLabels = this.labels?.[this.rootStore.project.projectId];
     if (!currentProjectLabels) return null;
+
+    currentProjectLabels.sort((labelA: IIssueLabel, labelB: IIssueLabel) => {
+      return labelB.sort_order - labelA.sort_order;
+    });
     return buildTree(currentProjectLabels);
   }
 
@@ -126,6 +140,66 @@ export class ProjectLabelStore implements IProjectLabelStore {
       console.log("Failed to create label from project store");
       throw error;
     }
+  };
+
+  updateLabelPosition = async (
+    workspaceSlug: string,
+    projectId: string,
+    labelId: string,
+    parentId: string | null | undefined,
+    index: number,
+    isSameParent: boolean,
+    prevIndex: number | undefined
+  ) => {
+    const labels = this.labels;
+    let currLabel = labels?.[projectId]?.find((label) => label.id === labelId);
+    const labelTree = this.projectLabelsTree;
+
+    let currentArray: IIssueLabel[];
+
+    if (!currLabel || !labelTree) return;
+
+    const data: Partial<IIssueLabel> = { parent: parentId };
+    //find array in which the label is to be added
+    if (!parentId) {
+      currentArray = labelTree;
+    } else {
+      currentArray = labelTree?.find((label) => label.id === parentId)?.children || [];
+    }
+
+    //Add the array at the destination
+    if (isSameParent && prevIndex !== undefined) {
+      currentArray.splice(prevIndex, 1);
+    }
+    currentArray.splice(index, 0, currLabel);
+
+    //if currently adding to a new array, then let backend assign a sort order
+    if (currentArray.length > 1) {
+      let prevSortOrder, nextSortOrder;
+
+      if (typeof currentArray[index - 1] !== "undefined") {
+        prevSortOrder = currentArray[index - 1].sort_order;
+      }
+
+      if (typeof currentArray[index + 1] !== "undefined") {
+        nextSortOrder = currentArray[index + 1].sort_order;
+      }
+
+      let sortOrder: number;
+
+      //based on the next and previous labels calculate current sort order
+      if (prevSortOrder && nextSortOrder) {
+        sortOrder = (prevSortOrder + nextSortOrder) / 2;
+      } else if (nextSortOrder) {
+        sortOrder = nextSortOrder + 10000;
+      } else {
+        sortOrder = prevSortOrder! / 2;
+      }
+
+      data.sort_order = sortOrder;
+    }
+
+    return this.updateLabel(workspaceSlug, projectId, labelId, data);
   };
 
   updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) => {
