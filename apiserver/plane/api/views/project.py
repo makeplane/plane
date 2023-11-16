@@ -427,7 +427,7 @@ class ProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.bulk_create(
             project_invitations, batch_size=10, ignore_conflicts=True
         )
-        current_site = f"{request.scheme}://{request.get_host()}",
+        current_site = request.META.get('HTTP_ORIGIN')
 
         # Send invitations
         for invitation in project_invitations:
