@@ -55,8 +55,8 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
         } ${isLabelGroup && "-top-0.5"}`}
       >
         <CustomMenu ellipsis buttonClassName="h-4 w-4 leading-4 text-custom-sidebar-text-400">
-          {customMenuItems.map(({ isVisible, onClick, CustomIcon, text }) => {
-            return (
+          {customMenuItems.map(
+            ({ isVisible, onClick, CustomIcon, text }) =>
               isVisible && (
                 <CustomMenu.MenuItem onClick={() => onClick(label)}>
                   <span className="flex items-center justify-start gap-2">
@@ -65,8 +65,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
                   </span>
                 </CustomMenu.MenuItem>
               )
-            );
-          })}
+          )}
         </CustomMenu>
         {!isLabelGroup && (
           <div className="py-0.5">

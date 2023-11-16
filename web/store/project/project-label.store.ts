@@ -175,7 +175,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
     //if currently adding to a new array, then let backend assign a sort order
     if (currentArray.length > 1) {
-      let prevSortOrder, nextSortOrder;
+      let prevSortOrder: number | undefined, nextSortOrder: number | undefined;
 
       if (typeof currentArray[index - 1] !== "undefined") {
         prevSortOrder = currentArray[index - 1].sort_order;

@@ -51,7 +51,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   const onDragEnd = (result: DropResult) => {
     const childLabel = result.draggableId.split(".")[3];
     let parentLabel: string | undefined | null = result.destination?.droppableId?.split(".")[3];
-    let index = result.destination?.index || 0;
+    const index = result.destination?.index || 0;
 
     const prevParentLabel: string | undefined | null = result.source?.droppableId?.split(".")[3];
     const prevIndex = result.source?.index;
