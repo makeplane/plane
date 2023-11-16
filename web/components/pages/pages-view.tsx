@@ -25,6 +25,7 @@ import {
   MY_PAGES_LIST,
   PROJECT_MEMBERS,
   RECENT_PAGES_LIST,
+	ARCHIVED_PAGES_LIST,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -181,6 +182,12 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
       (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
+
+		mutate<IPage[]>(
+      ARCHIVED_PAGES_LIST(projectId.toString()),
+			(prevData) => ( prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {})})),
+			false
+		)
 
     pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user).then(() => {
       mutate(RECENT_PAGES_LIST(projectId.toString()));
