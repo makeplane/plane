@@ -1,5 +1,6 @@
 import { Extension } from "@tiptap/core";
-import { NodeSelection, Plugin } from "@tiptap/pm/state";
+
+import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
 // @ts-ignore
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 
@@ -110,14 +111,6 @@ function DragHandle(options: DragHandleOptions) {
 
     const nodePos = nodePosAtDOM(node, view);
 
-    console.log("nodePos:", nodePos);
-    console.log("content at nodePos:", view.state.doc.nodeAt(nodePos));
-
-    const parentPos = view.state.doc.resolve(nodePos).parentOffset;
-    const parentNode = view.state.doc.nodeAt(parentPos);
-
-    console.log("parentNode:", parentNode);
-    console.log("parentNode content expression:", parentNode?.type);
     if (nodePos === null || nodePos === undefined || nodePos < 0) return;
 
     view.dispatch(
@@ -140,6 +133,7 @@ function DragHandle(options: DragHandleOptions) {
   }
 
   return new Plugin({
+    key: new PluginKey("dragHandle"),
     view: (view) => {
       dragHandleElement = document.createElement("div");
       dragHandleElement.draggable = true;
@@ -225,7 +219,7 @@ function DragHandle(options: DragHandleOptions) {
         keydown: () => {
           hideDragHandle();
         },
-        mousewheel: () => {
+        wheel: () => {
           hideDragHandle();
         },
         // dragging className is used for CSS

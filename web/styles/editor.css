@@ -275,8 +275,20 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     opacity: 0;
     pointer-events: none;
   }
+}
 
-  @media screen and (max-width: 600px) {
+.drag-handle:hover {
+  background-color: #0d0d0d 10;
+  transition: background-color 0.2s;
+}
+
+.drag-handle.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media screen and (max-width: 600px) {
+  .drag-handle {
     display: none;
     pointer-events: none;
   }

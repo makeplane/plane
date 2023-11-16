@@ -9,9 +9,10 @@ export const RichTextEditorExtensions = (
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void,
+  dragDropEnabled?: boolean,
 ) => [
   SlashCommand(uploadFile, setIsSubmitting),
-  DragAndDrop,
+  dragDropEnabled === true && DragAndDrop,
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === "heading") {

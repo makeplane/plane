@@ -26,6 +26,7 @@ export type IMentionHighlight = string;
 
 interface IRichTextEditor {
   value: string;
+  dragDropEnabled?: boolean;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   validateFile?: ValidateImage;
@@ -56,6 +57,7 @@ interface EditorHandle {
 
 const RichTextEditor = ({
   onChange,
+  dragDropEnabled,
   debouncedUpdatesEnabled,
   setIsSubmitting,
   setShouldShowAlert,
@@ -83,7 +85,11 @@ const RichTextEditor = ({
     validateFile,
     deleteFile,
     forwardedRef,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting),
+    extensions: RichTextEditorExtensions(
+      uploadFile,
+      setIsSubmitting,
+      dragDropEnabled,
+    ),
     mentionHighlights,
     mentionSuggestions,
   });
