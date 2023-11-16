@@ -14,8 +14,8 @@ interface IEditorHeader {
   sidePeakVisible: boolean,
   setSidePeakVisible: (currentState: boolean) => void,
   markings: IMarking[],
-	isLocked: boolean,
-	isArchived: boolean,
+  isLocked: boolean,
+  isArchived: boolean,
   readonly: boolean,
   uploadFile?: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
@@ -59,27 +59,13 @@ export const EditorHeader = ({ editor, sidePeakVisible, readonly, setSidePeakVis
               </div>
             }
           </div>
-          { isLocked && <AlertLabel Icon={Lock} backgroundColor={"bg-red-200"} label={"Locked"} /> }
-          { isArchived && <AlertLabel Icon={ArchiveIcon} backgroundColor={"bg-blue-200"} label={"Archived"} /> } 
+          {isLocked && <AlertLabel Icon={Lock} backgroundColor={"bg-red-200"} label={"Locked"} />}
+          {isArchived && <AlertLabel Icon={ArchiveIcon} backgroundColor={"bg-blue-200"} label={"Archived"} />}
         </div>
 
         {(!readonly && uploadFile) && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
         <div className="self-center flex items-start gap-3 my-auto max-md:justify-center"
         >
-          <button
-            className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
-          >
-            <FileLineChart
-              size={20}
-            />
-          </button>
-          <button
-            className={"p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors"}
-          >
-            <AlertCircle
-              size={20}
-            />
-          </button>
           <VerticalDropdownMenu items={KanbanMenuOptions} />
         </div>
       </div>
