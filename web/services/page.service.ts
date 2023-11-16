@@ -234,7 +234,7 @@ export class PageService extends APIService {
     pageId: string,
   ): Promise<void> {
     this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/unarchive/${pageId}`)
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unarchive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -260,7 +260,7 @@ export class PageService extends APIService {
     pageId: string,
   ): Promise<any> {
     this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock`)
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -273,7 +273,7 @@ export class PageService extends APIService {
     pageId: string,
 	): Promise<any> {
     this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock`)
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

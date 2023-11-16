@@ -13,6 +13,7 @@ export interface IPage {
   id: string;
   is_favorite: boolean;
 	is_locked: boolean;
+	archived_at?: Date,
   label_details: IIssueLabels[];
   labels: string[];
   name: string;
