@@ -5,7 +5,6 @@ import { DocumentEditorExtensions } from './extensions';
 import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from './types/menu-actions';
 import { EditorHeader } from './components/editor-header';
 import { useEditorMarkings } from './hooks/use-editor-markings';
-import { scrollSummary } from './utils/editor-summary-utils';
 import { SummarySideBar } from './components/summary-side-bar';
 import { DocumentDetails } from './types/editor-types';
 import { PageRenderer } from './components/page-renderer';
@@ -66,7 +65,7 @@ const DocumentEditor = ({
 
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings()
-  const [sidePeakVisible, setSidePeakVisible] = useState(false)
+  const [sidePeakVisible, setSidePeakVisible] = useState(true)
   const router = useRouter()
 
   const editor = useEditor({
