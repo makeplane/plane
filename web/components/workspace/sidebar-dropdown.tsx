@@ -90,35 +90,39 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex items-center gap-x-8 gap-y-2 px-4 pt-4">
+    <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
       <Menu as="div" className="relative col-span-4 text-left flex-grow h-full truncate">
         {({ open }) => (
           <>
             <Menu.Button className="text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
               <div
-                className={`flex items-center gap-x-2 rounded p-1 truncate ${sidebarCollapsed ? "justify-center" : ""}`}
+                className={`flex items-center justify-between gap-x-2 rounded p-1 truncate ${
+                  sidebarCollapsed ? "justify-center" : ""
+                }`}
               >
-                <div
-                  className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
-                    !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
-                  }`}
-                >
-                  {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                    <img
-                      src={activeWorkspace.logo}
-                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                      alt="Workspace Logo"
-                    />
-                  ) : (
-                    activeWorkspace?.name?.charAt(0) ?? "..."
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
+                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
+                    }`}
+                  >
+                    {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                      <img
+                        src={activeWorkspace.logo}
+                        className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                        alt="Workspace Logo"
+                      />
+                    ) : (
+                      activeWorkspace?.name?.charAt(0) ?? "..."
+                    )}
+                  </div>
+
+                  {!sidebarCollapsed && (
+                    <h4 className="text-custom-text-100 font-medium text-base truncate">
+                      {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
+                    </h4>
                   )}
                 </div>
-
-                {!sidebarCollapsed && (
-                  <h4 className="text-custom-text-100 font-medium text-base truncate">
-                    {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
-                  </h4>
-                )}
 
                 {!sidebarCollapsed && (
                   <ChevronDown
