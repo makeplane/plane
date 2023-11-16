@@ -9,7 +9,11 @@ from rest_framework.permissions import AllowAny
 # Module imports
 from plane.api.views import BaseAPIView
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
-from plane.license.api.serializers import InstanceSerializer, InstanceAdminSerializer, InstanceConfigurationSerializer
+from plane.license.api.serializers import (
+    InstanceSerializer,
+    InstanceAdminSerializer,
+    InstanceConfigurationSerializer,
+)
 from plane.license.api.permissions import (
     InstanceOwnerPermission,
     InstanceAdminPermission,
@@ -75,7 +79,7 @@ class TransferPrimaryOwnerEndpoint(BaseAPIView):
         instance.primary_owner = user
         instance.primary_email = user.email
         instance.save(update_fields=["owner", "email"])
-        
+
         # Add the user to admin
         _ = InstanceAdmin.objects.get_or_create(
             instance=instance,
@@ -90,11 +94,7 @@ class TransferPrimaryOwnerEndpoint(BaseAPIView):
 
 class InstanceAdminEndpoint(BaseAPIView):
     def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = [
-                AllowAny,
-            ]
-        elif self.request.method in ["POST", "DELETE"]:
+        if self.request.method in ["POST", "DELETE"]:
             self.permission_classes = [
                 InstanceOwnerPermission,
             ]
@@ -150,21 +150,23 @@ class InstanceAdminEndpoint(BaseAPIView):
 
 
 class InstanceConfigurationEndpoint(BaseAPIView):
-
-    permission_classes = [InstanceAdminEndpoint,]
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
 
     def get(self, request):
         instance_configurations = InstanceConfiguration.objects.all()
         serializer = InstanceConfigurationSerializer(instance_configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def patch(self, request):
         key = request.data.get("key", False)
         if not key:
-            return Response({"error": "Key is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Key is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
         configuration = InstanceConfiguration.objects.get(key=key)
         configuration.value = request.data.get("value")
         configuration.save()
         serializer = InstanceConfigurationSerializer(configuration)
         return Response(serializer.data, status=status.HTTP_200_OK)
-

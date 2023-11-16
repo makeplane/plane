@@ -61,7 +61,7 @@ def send_export_email(email, slug, csv_buffer):
         use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
     )
 
-    msg = EmailMultiAlternatives(subject=subject, text_content=text_content, from_email=settings.EMAIL_FROM, to=[email], connection=connection)
+    msg = EmailMultiAlternatives(subject=subject, body=text_content, from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"), to=[email], connection=connection)
     msg.attach(f"{slug}-analytics.csv", csv_buffer.getvalue())
     msg.send(fail_silently=False)
 
