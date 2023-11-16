@@ -229,18 +229,16 @@ class PageViewSet(BaseViewSet):
                 PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
 
-        # My pages
-        if page_view == "created_by_me":
-            queryset = queryset.filter(owned_by=request.user)
+        if page_view == "shared":
+            queryset = queryset.filter(~Q(owned_by=request.user), access=0)
             return Response(
                 PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
 
-        # Created by other Pages
-        if page_view == "created_by_other":
-            queryset = queryset.filter(~Q(owned_by=request.user), access=0)
+        if page_view == "private":
+            queryset = queryset.filter(~Q(owned_by=request.user), access=1)
             return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                    PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         return Response(
