@@ -277,6 +277,45 @@ class PageViewSet(BaseViewSet):
             PageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
 
+        unarchive_archive_page_and_descendants(page_id, datetime.now())
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def unarchive(self, request, slug, project_id, page_id):
+        page = Page.objects.get(
+            project_id=project_id,
+            owned_by_id=request.user.id,
+            workspace__slug=slug,
+            pk=page_id,
+        )
+
+        page.parent = None
+        page.save()
+
+        unarchive_archive_page_and_descendants(page_id, None)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def archive_list(self, request, slug, project_id):
+        pages = (
+            Page.objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+            )
+            .filter(archived_at__isnull=False)
+            .filter(parent_id__isnull=True)
+        )
+
+        if not pages:
+            return Response(
+                {"error": "No pages found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        return Response(
+            PageSerializer(pages, many=True).data, status=status.HTTP_200_OK
+        )
+
+
 
 class PageFavoriteViewSet(BaseViewSet):
     permission_classes = [
@@ -312,7 +351,6 @@ class PageFavoriteViewSet(BaseViewSet):
         )
         page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class PageLogEndpoint(BaseAPIView):
     permission_classes = [
