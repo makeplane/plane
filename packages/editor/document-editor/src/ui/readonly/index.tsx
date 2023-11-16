@@ -42,7 +42,7 @@ const DocumentReadOnlyEditor = ({
 }: DocumentReadOnlyEditorProps) => {
 
   const router = useRouter()
-  const [sidePeakVisible, setSidePeakVisible] = useState(false)
+  const [sidePeakVisible, setSidePeakVisible] = useState(true)
   const { markings, updateMarkings } = useEditorMarkings()
 
   const editor = useReadOnlyEditor({
@@ -87,6 +87,8 @@ const DocumentReadOnlyEditor = ({
           setSidePeakVisible={setSidePeakVisible}
           KanbanMenuOptions={KanbanMenuOptions}
           markings={markings}
+          documentDetails={documentDetails}
+					archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
         />
       </div>
       <div className="self-center items-stretch w-full max-md:max-w-full overflow-y-hidden">

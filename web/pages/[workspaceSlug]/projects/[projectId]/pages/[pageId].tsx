@@ -222,11 +222,15 @@ const PageDetailsPage: NextPageWithLayout = () => {
                   noBorder={true}
                   documentDetails={
                     {
-                      title: pageDetails.name
+                      title: pageDetails.name,
+                      created_by: pageDetails.created_by,
+                      created_on: pageDetails.created_at,
+                      last_updated_at: pageDetails.updated_at,
+                      last_updated_by: pageDetails.updated_by
                     }
                   }
-                  pageLockConfig={ !pageDetails.archived_at ? { action: unlockPage, is_locked: pageDetails.is_locked } : undefined}
-									pageArchiveConfig={{ action: pageDetails.archived_at ? unArchivePage : archivePage, is_archived: pageDetails.archived_at ? true : false }}
+                  pageLockConfig={!pageDetails.archived_at ? { action: unlockPage, is_locked: pageDetails.is_locked } : undefined}
+                  pageArchiveConfig={{ action: pageDetails.archived_at ? unArchivePage : archivePage, is_archived: pageDetails.archived_at ? true : false, archived_at: pageDetails.archived_at }}
                 /> :
                 <Controller
                   name="description_html"
@@ -236,7 +240,11 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     <DocumentEditorWithRef
                       documentDetails={
                         {
-                          title: pageDetails.name
+                          title: pageDetails.name,
+                          created_by: pageDetails.created_by,
+                          created_on: pageDetails.created_at,
+                          last_updated_at: pageDetails.updated_at,
+                          last_updated_by: pageDetails.updated_by
                         }
                       }
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}

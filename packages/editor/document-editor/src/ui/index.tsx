@@ -117,6 +117,8 @@ const DocumentEditor = ({
           setIsSubmitting={setIsSubmitting}
           isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
           isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
+					archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
+					documentDetails={documentDetails}
         />
       </div>
       <div className="self-center items-stretch w-full max-md:max-w-full h-full">
@@ -139,7 +141,6 @@ const DocumentEditor = ({
     </div>
   );
 }
-
 
 const DocumentEditorWithRef = React.forwardRef<EditorHandle, IDocumentEditor>((props, ref) => (
   <DocumentEditor {...props} forwardedRef={ref} />
