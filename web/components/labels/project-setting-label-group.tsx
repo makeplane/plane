@@ -20,6 +20,7 @@ type Props = {
   draggableSnapshot: DraggableStateSnapshot;
   isUpdating: boolean;
   setIsUpdating: Dispatch<SetStateAction<boolean>>;
+  isDropDisabled: boolean;
 };
 
 export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
@@ -31,6 +32,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
     dragHandleProps,
     isUpdating,
     setIsUpdating,
+    isDropDisabled,
   } = props;
 
   const [isEditLabelForm, setEditLabelForm] = useState(false);
@@ -60,7 +62,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
           <Droppable
             key={`label.group.droppable.${label.id}`}
             droppableId={`label.group.droppable.${label.id}`}
-            isDropDisabled={groupDragSnapshot.isDragging || isUpdating}
+            isDropDisabled={groupDragSnapshot.isDragging || isUpdating || isDropDisabled}
           >
             {(droppableProvided, droppableSnapshot) => (
               <div

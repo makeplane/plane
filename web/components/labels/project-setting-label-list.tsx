@@ -131,24 +131,33 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                         return (
                           <Draggable
                             key={`child.label.draggable.${label.id}`}
-                            draggableId={`child.label.draggable.${label.id}`}
+                            draggableId={`child.label.draggable.${label.id}.group`}
                             index={index}
                             isDragDisabled={isUpdating}
                           >
-                            {(provided, snapshot) => (
-                              <div key={label.id} ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
-                                <ProjectSettingLabelGroup
+                            {(provided, snapshot) => {
+                              const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[4] === "group";
+                              return (
+                                <div
                                   key={label.id}
-                                  label={label}
-                                  labelChildren={label.children || []}
-                                  dragHandleProps={provided.dragHandleProps!}
-                                  handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
-                                  draggableSnapshot={snapshot}
-                                  isUpdating={isUpdating}
-                                  setIsUpdating={setIsUpdating}
-                                />
-                              </div>
-                            )}
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  className="mt-3"
+                                >
+                                  <ProjectSettingLabelGroup
+                                    key={label.id}
+                                    label={label}
+                                    labelChildren={label.children || []}
+                                    isDropDisabled={isGroup}
+                                    dragHandleProps={provided.dragHandleProps!}
+                                    handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                                    draggableSnapshot={snapshot}
+                                    isUpdating={isUpdating}
+                                    setIsUpdating={setIsUpdating}
+                                  />
+                                </div>
+                              );
+                            }}
                           </Draggable>
                         );
                       }
