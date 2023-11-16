@@ -13,23 +13,24 @@ from plane.db.models import Project, User, ProjectMemberInvite
 
 
 @shared_task
-def project_invitation(email, project_id, token, current_site):
+def project_invitation(email, project_id, token, current_site, invitor):
     try:
+        user = User.objects.get(email=invitor)
         project = Project.objects.get(pk=project_id)
         project_member_invite = ProjectMemberInvite.objects.get(
             token=token, email=email
         )
 
-        relativelink = f"/project-member-invitation/{project_member_invite.id}"
+        relativelink = f"/project-invitations/?invitation_id={project_member_invite.id}&email={email}&slug={project.workspace.slug}&project_id={str(project_id)}"
         abs_url = current_site + relativelink
 
         from_email_string = settings.EMAIL_FROM
 
-        subject = f"{project.created_by.first_name or project.created_by.email} invited you to join {project.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on Plane"
 
         context = {
             "email": email,
-            "first_name": project.created_by.first_name,
+            "first_name": user.first_name,
             "project_name": project.name,
             "invitation_url": abs_url,
         }

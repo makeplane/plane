@@ -20,6 +20,7 @@ export * from "./waitlist";
 export * from "./reaction";
 export * from "./view-props";
 export * from "./workspace-views";
+export * from "./webhook";
 
 export type NestedKeyOf<ObjectType extends object> = {
   [Key in keyof ObjectType & (string | number)]: ObjectType[Key] extends object

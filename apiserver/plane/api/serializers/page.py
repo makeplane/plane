@@ -6,28 +6,7 @@ from .base import BaseSerializer
 from .issue import IssueFlatSerializer, LabelLiteSerializer
 from .workspace import WorkspaceLiteSerializer
 from .project import ProjectLiteSerializer
-from plane.db.models import Page, PageBlock, PageFavorite, PageLabel, Label
-
-
-class PageBlockSerializer(BaseSerializer):
-    issue_detail = IssueFlatSerializer(source="issue", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
-
-    class Meta:
-        model = PageBlock
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "page",
-        ]
-
-class PageBlockLiteSerializer(BaseSerializer):
-
-    class Meta:
-        model = PageBlock
-        fields = "__all__"
+from plane.db.models import Page, PageLog, PageFavorite, PageLabel, Label, Issue, Module
 
 
 class PageSerializer(BaseSerializer):
@@ -38,7 +17,6 @@ class PageSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    blocks = PageBlockLiteSerializer(read_only=True, many=True)
     project_detail = ProjectLiteSerializer(source="project", read_only=True)
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
@@ -100,6 +78,41 @@ class PageSerializer(BaseSerializer):
             )
 
         return super().update(instance, validated_data)
+
+
+class SubPageSerializer(BaseSerializer):
+    entity_details = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PageLog
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "page",
+        ]
+
+    def get_entity_details(self, obj):
+        entity_name = obj.entity_name
+        if entity_name == 'forward_link' or entity_name == 'back_link':
+            try:
+                page = Page.objects.get(pk=obj.entity_identifier)
+                return PageSerializer(page).data
+            except Page.DoesNotExist:
+                return None
+        return None
+
+
+class PageLogSerializer(BaseSerializer):
+
+    class Meta:
+        model = PageLog
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "page",
+        ]
 
 
 class PageFavoriteSerializer(BaseSerializer):
