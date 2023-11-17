@@ -79,3 +79,4 @@ pnpm-workspace.yaml
 tmp/
 ## packages
 dist
+.temp/
