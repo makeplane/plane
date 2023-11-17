@@ -14,12 +14,11 @@ import {
 } from "components/gantt-chart";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
-import { IIssue } from "types";
-import { TUnGroupedIssues } from "store/project-issues";
+import { IIssue, TUnGroupedIssues } from "types";
 
 export const GanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { projectDetails } = useProjectDetails();
 
@@ -31,10 +30,10 @@ export const GanttLayout: React.FC = observer(() => {
 
   const appliedDisplayFilters = projectIssueFiltersStore.projectFilters?.displayFilters;
 
-  const issuesList = projectId ? projectIssuesStore.issues?.[projectId.toString()] : undefined;
-  const issueIds = (projectIssuesStore.getIssues ?? []) as TUnGroupedIssues;
+  const issuesResponse = projectIssuesStore.getIssues;
+  const issueIds = (projectIssuesStore.getIssuesIds ?? []) as TUnGroupedIssues;
 
-  const issues = issueIds.map((id) => issuesList?.[id]);
+  const issues = issueIds.map((id) => issuesResponse?.[id]);
 
   const updateIssue = (block: IIssue, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;

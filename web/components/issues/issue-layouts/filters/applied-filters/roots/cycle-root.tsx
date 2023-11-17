@@ -14,15 +14,15 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const {
     project: projectStore,
     projectMember: { projectMembers },
-    cycleIssueFilter: cycleIssueFilterStore,
+    cycleIssueFilters: cycleIssueFiltersStore,
     projectState: projectStateStore,
   } = useMobxStore();
 
-  const userFilters = cycleIssueFilterStore.cycleFilters;
+  const userFilters = cycleIssueFiltersStore.cycleFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(userFilters).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -35,17 +35,17 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
+      cycleIssueFiltersStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
         [key]: null,
       });
       return;
     }
 
     // remove the passed value from the key
-    let newValues = cycleIssueFilterStore.cycleFilters?.[key] ?? [];
+    let newValues = cycleIssueFiltersStore.cycleFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
+    cycleIssueFiltersStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
       [key]: newValues,
     });
   };
@@ -54,11 +54,11 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId?.toString(), {
+    cycleIssueFiltersStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId?.toString(), {
       ...newFilters,
     });
   };

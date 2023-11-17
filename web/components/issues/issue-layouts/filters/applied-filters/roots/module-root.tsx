@@ -14,16 +14,16 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
 
   const {
     project: projectStore,
-    moduleFilter: moduleFilterStore,
+    moduleIssueFilters: moduleIssueFiltersStore,
     projectState: projectStateStore,
     projectMember: { projectMembers },
   } = useMobxStore();
 
-  const userFilters = moduleFilterStore.moduleFilters;
+  const userFilters = moduleIssueFiltersStore.moduleFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(userFilters).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -36,17 +36,17 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+      moduleIssueFiltersStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
         [key]: null,
       });
       return;
     }
 
     // remove the passed value from the key
-    let newValues = moduleFilterStore.moduleFilters?.[key] ?? [];
+    let newValues = moduleIssueFiltersStore.moduleFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+    moduleIssueFiltersStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
       [key]: newValues,
     });
   };
@@ -55,11 +55,11 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId || !moduleId) return;
 
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
+    moduleIssueFiltersStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
       ...newFilters,
     });
   };

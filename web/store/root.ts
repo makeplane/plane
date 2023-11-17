@@ -117,6 +117,9 @@ import {
   ProjectIssueFiltersStore,
 } from "store/project-issues";
 
+import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
+import { ModuleIssueFiltersStore, IModuleIssueFiltersStore } from "store/module-issues";
+
 import { IMentionsStore, MentionsStore } from "store/editor";
 
 enableStaticRendering(typeof window === "undefined");
@@ -191,6 +194,9 @@ export class RootStore {
   projectIssues: IProjectIssueStore;
   projectIssueFilters: IProjectIssueFiltersStore;
 
+  cycleIssueFilters: ICycleIssueFiltersStore;
+  moduleIssueFilters: IModuleIssueFiltersStore;
+
   constructor() {
     this.appConfig = new AppConfigStore(this);
     this.commandPalette = new CommandPaletteStore(this);
@@ -258,5 +264,9 @@ export class RootStore {
 
     this.projectIssues = new ProjectIssueStore(this);
     this.projectIssueFilters = new ProjectIssueFiltersStore(this);
+
+    this.cycleIssueFilters = new CycleIssueFiltersStore(this);
+
+    this.moduleIssueFilters = new ModuleIssueFiltersStore(this);
   }
 }

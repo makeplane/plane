@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SpreadsheetView } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions } from "types";
+import { IIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
 // constants
 import { IIssueUnGroupedStructure } from "store/issue";
 
@@ -16,8 +16,8 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    issue: issueStore,
-    issueFilter: issueFilterStore,
+    projectIssues: projectIssuesStore,
+    projectIssueFilters: projectIssueFiltersStore,
     issueDetail: issueDetailStore,
     project: projectStore,
     projectMember: { projectMembers },
@@ -26,19 +26,23 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
   } = useMobxStore();
 
   const user = userStore.currentUser;
-  const issues = issueStore.getIssues;
+
+  const issuesResponse = projectIssuesStore.getIssues;
+  const issueIds = (projectIssuesStore.getIssuesIds ?? []) as TUnGroupedIssues;
+
+  const issues = issueIds?.map((id) => issuesResponse?.[id]);
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         display_filters: {
           ...updatedDisplayFilter,
         },
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleUpdateIssue = useCallback(
@@ -50,16 +54,17 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
         ...data,
       };
 
-      issueStore.updateIssueStructure(null, null, payload);
+      // TODO: add update logic from the new store
+      // issueStore.updateIssueStructure(null, null, payload);
       issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+    [issueDetailStore, projectId, user, workspaceSlug]
   );
 
   return (
     <SpreadsheetView
-      displayProperties={issueFilterStore.userDisplayProperties}
-      displayFilters={issueFilterStore.userDisplayFilters}
+      displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
+      displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
       members={projectMembers?.map((m) => m.member)}
