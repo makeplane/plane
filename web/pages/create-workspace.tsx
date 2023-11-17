@@ -18,23 +18,23 @@ import { IWorkspace } from "types";
 import { NextPageWithLayout } from "types/app";
 
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
+  // router
+  const router = useRouter();
+  // store
+  const {
+    user: { currentUser, updateCurrentUser },
+  } = useMobxStore();
+  // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",
     slug: "",
     organization_size: "",
   });
-
-  const router = useRouter();
-
-  const { user: userStore } = useMobxStore();
-  const user = userStore.currentUser;
-
+  // hooks
   const { theme } = useTheme();
 
   const onSubmit = async (workspace: IWorkspace) => {
-    await userStore
-      .updateCurrentUser({ last_workspace_id: workspace.id })
-      .then(() => router.push(`/${workspace.slug}`));
+    await updateCurrentUser({ last_workspace_id: workspace.id }).then(() => router.push(`/${workspace.slug}`));
   };
 
   return (
@@ -54,7 +54,7 @@ const CreateWorkspacePage: NextPageWithLayout = observer(() => {
           </div>
         </button>
         <div className="absolute sm:fixed text-custom-text-100 text-sm right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
-          {user?.email}
+          {currentUser?.email}
         </div>
       </div>
       <div className="relative flex justify-center sm:justify-start sm:items-center h-full px-8 pb-8 sm:p-0 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5">

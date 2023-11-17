@@ -56,6 +56,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 ref={ref}
                 placeholder="XXXXXXXX"
                 className="w-full"
+                autoComplete="off"
               />
             )}
           />
@@ -94,7 +95,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-custom-text-200">Enter the Gmail account that you use in Jira account</p>
+          <p className="text-sm text-custom-text-200">Enter the Email account that you use in Jira account</p>
         </div>
         <div className="col-span-1">
           <Controller

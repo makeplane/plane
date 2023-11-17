@@ -62,6 +62,11 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Project deleted successfully.",
+        });
       })
       .catch(() => {
         setToastAlert({
@@ -84,7 +89,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -98,7 +103,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="place-items-center rounded-full bg-red-500/20 p-4">
@@ -134,6 +139,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           hasError={Boolean(errors.projectName)}
                           placeholder="Project name"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />
@@ -157,15 +163,16 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           hasError={Boolean(errors.confirmDelete)}
                           placeholder="Enter 'delete my project'"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="danger" type="submit" disabled={!canDelete} loading={isSubmitting}>
+                    <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
                       {isSubmitting ? "Deleting..." : "Delete Project"}
                     </Button>
                   </div>

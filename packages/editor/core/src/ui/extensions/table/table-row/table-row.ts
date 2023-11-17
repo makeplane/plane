@@ -1,31 +1,31 @@
-import { mergeAttributes, Node } from "@tiptap/core"
+import { mergeAttributes, Node } from "@tiptap/core";
 
 export interface TableRowOptions {
-    HTMLAttributes: Record<string, any>
+  HTMLAttributes: Record<string, any>;
 }
 
 export default Node.create<TableRowOptions>({
-    name: "tableRow",
+  name: "tableRow",
 
-    addOptions() {
-        return {
-            HTMLAttributes: {}
-        }
-    },
+  addOptions() {
+    return {
+      HTMLAttributes: {},
+    };
+  },
 
-    content: "(tableCell | tableHeader)*",
+  content: "(tableCell | tableHeader)*",
 
-    tableRole: "row",
+  tableRole: "row",
 
-    parseHTML() {
-        return [{ tag: "tr" }]
-    },
+  parseHTML() {
+    return [{ tag: "tr" }];
+  },
 
-    renderHTML({ HTMLAttributes }) {
-        return [
-            "tr",
-            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
-            0
-        ]
-    }
-})
+  renderHTML({ HTMLAttributes }) {
+    return [
+      "tr",
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      0,
+    ];
+  },
+});

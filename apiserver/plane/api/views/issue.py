@@ -33,7 +33,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.api.serializers import (
     IssueCreateSerializer,
     IssueActivitySerializer,
@@ -84,7 +84,7 @@ from plane.utils.grouper import group_results
 from plane.utils.issue_filters import issue_filters
 
 
-class IssueViewSet(BaseViewSet):
+class IssueViewSet(WebhookMixin, BaseViewSet):
     def get_serializer_class(self):
         return (
             IssueCreateSerializer
@@ -93,6 +93,7 @@ class IssueViewSet(BaseViewSet):
         )
 
     model = Issue
+    webhook_event = "issue"
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -312,6 +313,104 @@ class IssueViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class IssueListEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        filters = issue_filters(request.query_params, "GET")
+
+        issue_queryset = (
+            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .distinct()
+        )
+
+        serializer = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IssueListGroupedEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id):
+        filters = issue_filters(request.query_params, "GET")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+
+        issue_queryset = (
+            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .filter(**filters)
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .distinct()
+        )
+
+        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(
+            issue_dict,
+            status=status.HTTP_200_OK,
+        )
+
+
 class UserWorkSpaceIssues(BaseAPIView):
     @method_decorator(gzip_page)
     def get(self, request, slug):
@@ -496,9 +595,10 @@ class IssueActivityEndpoint(BaseAPIView):
         return Response(result_list, status=status.HTTP_200_OK)
 
 
-class IssueCommentViewSet(BaseViewSet):
+class IssueCommentViewSet(WebhookMixin, BaseViewSet):
     serializer_class = IssueCommentSerializer
     model = IssueComment
+    webhook_event = "issue-comment"
     permission_classes = [
         ProjectLitePermission,
     ]
@@ -525,6 +625,7 @@ class IssueCommentViewSet(BaseViewSet):
                         workspace__slug=self.kwargs.get("slug"),
                         project_id=self.kwargs.get("project_id"),
                         member_id=self.request.user.id,
+                        is_active=True,
                     )
                 )
             )
@@ -655,8 +756,8 @@ class LabelViewSet(BaseViewSet):
             .select_related("project")
             .select_related("workspace")
             .select_related("parent")
-            .order_by("name")
             .distinct()
+            .order_by("sort_order")
         )
 
 
@@ -1156,7 +1257,11 @@ class IssueSubscriberViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id, issue_id):
         members = (
-            ProjectMember.objects.filter(workspace__slug=slug, project_id=project_id)
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                is_active=True,
+            )
             .annotate(
                 is_subscribed=Exists(
                     IssueSubscriber.objects.filter(
@@ -1400,6 +1505,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                                 workspace__slug=self.kwargs.get("slug"),
                                 project_id=self.kwargs.get("project_id"),
                                 member_id=self.request.user.id,
+                                is_active=True,
                             )
                         )
                     )
@@ -1440,6 +1546,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1553,6 +1660,7 @@ class IssueReactionPublicViewSet(BaseViewSet):
             if not ProjectMember.objects.filter(
                 project_id=project_id,
                 member=request.user,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1646,7 +1754,9 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 project_id=project_id, comment_id=comment_id, actor=request.user
             )
             if not ProjectMember.objects.filter(
-                project_id=project_id, member=request.user
+                project_id=project_id,
+                member=request.user,
+                is_active=True,
             ).exists():
                 # Add the user for workspace tracking
                 _ = ProjectPublicMember.objects.get_or_create(
@@ -1731,7 +1841,9 @@ class IssueVotePublicViewSet(BaseViewSet):
         )
         # Add the user for workspace tracking
         if not ProjectMember.objects.filter(
-            project_id=project_id, member=request.user
+            project_id=project_id,
+            member=request.user,
+            is_active=True,
         ).exists():
             _ = ProjectPublicMember.objects.get_or_create(
                 project_id=project_id,

@@ -30,9 +30,12 @@ const workspaceService = new WorkspaceService();
 const OnboardingPage: NextPageWithLayout = observer(() => {
   const [step, setStep] = useState<number | null>(null);
 
-  const { user: userStore, workspace: workspaceStore } = useMobxStore();
+  const {
+    user: { currentUser, updateCurrentUser, updateUserOnBoard },
+    workspace: workspaceStore,
+  } = useMobxStore();
 
-  const user = userStore.currentUser ?? undefined;
+  const user = currentUser ?? undefined;
   const workspaces = workspaceStore.workspaces;
   const userWorkspaces = workspaceStore.workspacesCreateByCurrentUser;
 
@@ -48,7 +51,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const updateLastWorkspace = async () => {
     if (!workspaces) return;
 
-    await userStore.updateCurrentUser({
+    await updateCurrentUser({
       last_workspace_id: workspaces[0]?.id,
     });
   };
@@ -64,14 +67,14 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
       },
     };
 
-    await userStore.updateCurrentUser(payload);
+    await updateCurrentUser(payload);
   };
 
   // complete onboarding
   const finishOnboarding = async () => {
     if (!user) return;
 
-    await userStore.updateUserOnBoard();
+    await updateUserOnBoard();
   };
 
   useEffect(() => {

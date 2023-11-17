@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -29,7 +29,7 @@ const defaultValues: Partial<IWorkspace> = {
 // services
 const fileService = new FileService();
 
-export const WorkspaceDetails: React.FC = observer(() => {
+export const WorkspaceDetails: FC = observer(() => {
   // states
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,9 +37,10 @@ export const WorkspaceDetails: React.FC = observer(() => {
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store
-  const { workspace: workspaceStore, user: userStore } = useMobxStore();
-  const activeWorkspace = workspaceStore.currentWorkspace;
-  const { currentWorkspaceRole } = userStore;
+  const {
+    workspace: { currentWorkspace, updateWorkspace },
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
   const isAdmin = currentWorkspaceRole === 20;
   // hooks
   const { setToastAlert } = useToast();
@@ -52,11 +53,11 @@ export const WorkspaceDetails: React.FC = observer(() => {
     setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
-    defaultValues: { ...defaultValues, ...activeWorkspace },
+    defaultValues: { ...defaultValues, ...currentWorkspace },
   });
 
   const onSubmit = async (formData: IWorkspace) => {
-    if (!activeWorkspace) return;
+    if (!currentWorkspace) return;
 
     const payload: Partial<IWorkspace> = {
       logo: formData.logo,
@@ -64,8 +65,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
       organization_size: formData.organization_size,
     };
 
-    await workspaceStore
-      .updateWorkspace(activeWorkspace.slug, payload)
+    await updateWorkspace(currentWorkspace.slug, payload)
       .then(() =>
         setToastAlert({
           title: "Success",
@@ -77,13 +77,12 @@ export const WorkspaceDetails: React.FC = observer(() => {
   };
 
   const handleDelete = (url: string | null | undefined) => {
-    if (!activeWorkspace || !url) return;
+    if (!currentWorkspace || !url) return;
 
     setIsImageRemoving(true);
 
-    fileService.deleteFile(activeWorkspace.id, url).then(() => {
-      workspaceStore
-        .updateWorkspace(activeWorkspace.slug, { logo: "" })
+    fileService.deleteFile(currentWorkspace.id, url).then(() => {
+      updateWorkspace(currentWorkspace.slug, { logo: "" })
         .then(() => {
           setToastAlert({
             type: "success",
@@ -104,10 +103,10 @@ export const WorkspaceDetails: React.FC = observer(() => {
   };
 
   useEffect(() => {
-    if (activeWorkspace) reset({ ...activeWorkspace });
-  }, [activeWorkspace, reset]);
+    if (currentWorkspace) reset({ ...currentWorkspace });
+  }, [currentWorkspace, reset]);
 
-  if (!activeWorkspace)
+  if (!currentWorkspace)
     return (
       <div className="grid place-items-center h-full w-full px-4 sm:px-0">
         <Spinner />
@@ -119,13 +118,13 @@ export const WorkspaceDetails: React.FC = observer(() => {
       <DeleteWorkspaceModal
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
-        data={activeWorkspace}
+        data={currentWorkspace}
       />
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
         isRemoving={isImageRemoving}
-        handleDelete={() => handleDelete(activeWorkspace?.logo)}
+        handleDelete={() => handleDelete(currentWorkspace?.logo)}
         onSuccess={(imageUrl) => {
           setIsImageUploading(true);
           setValue("logo", imageUrl);
@@ -148,7 +147,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
                 </div>
               ) : (
                 <div className="relative flex h-14 w-14 items-center justify-center rounded bg-gray-700 p-4 uppercase text-white">
-                  {activeWorkspace?.name?.charAt(0) ?? "N"}
+                  {currentWorkspace?.name?.charAt(0) ?? "N"}
                 </div>
               )}
             </button>
@@ -157,7 +156,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
             <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
             <span className="text-sm tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-            }/${activeWorkspace.slug}`}</span>
+            }/${currentWorkspace.slug}`}</span>
             <div className="flex item-center gap-2.5">
               <button
                 className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
@@ -246,7 +245,7 @@ export const WorkspaceDetails: React.FC = observer(() => {
                     value={`${
                       typeof window !== "undefined" &&
                       window.location.origin.replace("http://", "").replace("https://", "")
-                    }/${activeWorkspace.slug}`}
+                    }/${currentWorkspace.slug}`}
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}

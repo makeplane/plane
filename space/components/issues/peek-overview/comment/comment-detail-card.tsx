@@ -103,6 +103,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 render={({ field: { onChange, value } }) => (
                   <LiteTextEditorWithRef
                     onEnterKeyPress={handleSubmit(handleCommentUpdate)}
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}

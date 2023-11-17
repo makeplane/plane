@@ -272,9 +272,13 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               <Controller
                 control={control}
                 name="project"
-                render={({ field: { value, onChange } }) => (
+                rules={{
+                  required: true,
+                }}
+                render={({ field: { value, onChange }, fieldState: { error } }) => (
                   <IssueProjectSelect
                     value={value}
+                    error={error}
                     onChange={(val: string) => {
                       onChange(val);
                       setActiveProject(val);
@@ -335,8 +339,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         onChange={onChange}
                         ref={ref}
                         hasError={Boolean(errors.name)}
-                        placeholder="Title"
-                        className="resize-none text-xl w-full"
+                        placeholder="Issue Title"
+                        className="resize-none text-xl w-full focus:border-blue-400"
                       />
                     )}
                   />
@@ -344,7 +348,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
                 <div className="relative">
-                  <div className="flex justify-end">
+                  <div className="absolute bottom-3.5 right-3.5 z-10 border-0.5 flex rounded bg-custom-background-80">
                     {issueName && issueName !== "" && (
                       <button
                         type="button"
@@ -377,6 +381,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditorWithRef
+                        cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
                         ref={editorRef}
@@ -386,7 +391,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                             ? watch("description_html")
                             : value
                         }
-                        customClassName="min-h-[150px]"
+                        customClassName="min-h-[7rem] border-custom-border-100"
                         onChange={(description: Object, description_html: string) => {
                           onChange(description_html);
                           setValue("description", description);
@@ -537,47 +542,45 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <>
-                    <CustomMenu
-                      customButton={
-                        <button
-                          type="button"
-                          className="flex cursor-pointer items-center rounded-md border border-custom-border-200 text-xs shadow-sm duration-200"
-                        >
-                          <span className="flex items-center justify-center gap-2 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80">
-                            {watch("parent") ? (
-                              <>
-                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
-                                <span className="whitespace-nowrap text-custom-text-100">
-                                  {selectedParentIssue &&
-                                    `${selectedParentIssue.project__identifier}-
+                    {watch("parent") ? (
+                      <CustomMenu
+                        customButton={
+                          <button
+                            type="button"
+                            className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                          >
+                            <div className="flex items-center gap-1 text-custom-text-200">
+                              <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                              <span className="whitespace-nowrap">
+                                {selectedParentIssue &&
+                                  `${selectedParentIssue.project__identifier}-
                                   ${selectedParentIssue.sequence_id}`}
-                                </span>
-                              </>
-                            ) : (
-                              <>
-                                <LayoutPanelTop className="h-3.5 w-3.5 flex-shrink-0" />
-                                <span className="whitespace-nowrap">Add Parent</span>
-                              </>
-                            )}
-                          </span>
-                        </button>
-                      }
-                    >
-                      {watch("parent") ? (
-                        <>
-                          <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                            Change parent issue
-                          </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
-                            Remove parent issue
-                          </CustomMenu.MenuItem>
-                        </>
-                      ) : (
+                              </span>
+                            </div>
+                          </button>
+                        }
+                        placement="bottom-start"
+                      >
                         <CustomMenu.MenuItem className="!p-1" onClick={() => setParentIssueListModalOpen(true)}>
-                          Select Parent Issue
+                          Change parent issue
                         </CustomMenu.MenuItem>
-                      )}
-                    </CustomMenu>
+                        <CustomMenu.MenuItem className="!p-1" onClick={() => setValue("parent", null)}>
+                          Remove parent issue
+                        </CustomMenu.MenuItem>
+                      </CustomMenu>
+                    ) : (
+                      <button
+                        type="button"
+                        className="flex items-center justify-between gap-1 w-min cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                        onClick={() => setParentIssueListModalOpen(true)}
+                      >
+                        <div className="flex items-center gap-1 text-custom-text-300">
+                          <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
+                          <span className="whitespace-nowrap">Add Parent</span>
+                        </div>
+                      </button>
+                    )}
+
                     <Controller
                       control={control}
                       name="parent"
@@ -599,24 +602,27 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
             </div>
           </div>
         </div>
-        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-200 px-5 pt-5">
+        <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
           <div
-            className="flex cursor-pointer items-center gap-1"
+            className="flex cursor-default items-center gap-1.5"
             onClick={() => setCreateMore((prevData) => !prevData)}
           >
+            <div className="flex cursor-pointer items-center justify-center">
+              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+            </div>
             <span className="text-xs">Create more</span>
-            <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="neutral-primary"
+              size="sm"
               onClick={() => {
                 handleDiscardClose();
               }}
             >
               Discard
             </Button>
-            <Button variant="primary" type="submit" loading={isSubmitting}>
+            <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
               {status
                 ? isSubmitting
                   ? "Updating Issue..."

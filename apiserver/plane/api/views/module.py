@@ -15,7 +15,7 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, WebhookMixin
 from plane.api.serializers import (
     ModuleWriteSerializer,
     ModuleSerializer,
@@ -41,11 +41,12 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.analytics_plot import burndown_plot
 
 
-class ModuleViewSet(BaseViewSet):
+class ModuleViewSet(WebhookMixin, BaseViewSet):
     model = Module
     permission_classes = [
         ProjectEntityPermission,
     ]
+    webhook_event = "module"
 
     def get_serializer_class(self):
         return (
@@ -55,7 +56,6 @@ class ModuleViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        order_by = self.request.GET.get("order_by", "sort_order")
 
         subquery = ModuleFavorite.objects.filter(
             user=self.request.user,
@@ -138,7 +138,7 @@ class ModuleViewSet(BaseViewSet):
                     ),
                 )
             )
-            .order_by(order_by, "name")
+            .order_by("-is_favorite","-created_at")
         )
 
     def create(self, request, slug, project_id):

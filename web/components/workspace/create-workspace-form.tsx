@@ -161,7 +161,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="Enter workspace name..."
+                  placeholder="Enter workspace url..."
                   className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
                 />
               )}
@@ -212,9 +212,11 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
-        <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
-          Go back
-        </Button>
+        {!secondaryButton && (
+          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+            Go back
+          </Button>
+        )}
       </div>
     </form>
   );

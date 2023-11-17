@@ -13,7 +13,7 @@ type GanttChartRootProps = {
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blockToRender: (data: any) => React.ReactNode;
-  sidebarBlockToRender: (block: any) => React.ReactNode;
+  sidebarToRender: (props: any) => React.ReactNode;
   enableBlockLeftResize?: boolean;
   enableBlockRightResize?: boolean;
   enableBlockMove?: boolean;
@@ -27,7 +27,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
   blocks,
   loaderTitle = "blocks",
   blockUpdateHandler,
-  sidebarBlockToRender,
+  sidebarToRender,
   blockToRender,
   enableBlockLeftResize = true,
   enableBlockRightResize = true,
@@ -42,7 +42,7 @@ export const GanttChartRoot: FC<GanttChartRootProps> = ({
       blocks={blocks}
       loaderTitle={loaderTitle}
       blockUpdateHandler={blockUpdateHandler}
-      sidebarBlockToRender={sidebarBlockToRender}
+      sidebarToRender={sidebarToRender}
       blockToRender={blockToRender}
       enableBlockLeftResize={enableBlockLeftResize}
       enableBlockRightResize={enableBlockRightResize}

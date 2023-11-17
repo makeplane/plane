@@ -4,8 +4,6 @@ import Link from "next/link";
 import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { ProjectInvitationService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -16,10 +14,8 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 import { ChevronDown, XCircle } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
+// types
 import { TUserProjectRole } from "types";
-
-// services
-const projectInvitationService = new ProjectInvitationService();
 
 type Props = {
   member: any;
@@ -34,21 +30,27 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const [selectedRemoveMember, setSelectedRemoveMember] = useState<any | null>(null);
   const [selectedInviteRemoveMember, setSelectedInviteRemoveMember] = useState<any | null>(null);
   // store
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const {
+    user: userStore,
+    projectMember: {
+      projectMembers,
+      fetchProjectMembers,
+      removeMemberFromProject,
+      updateMember,
+      deleteProjectInvitation,
+    },
+  } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
   // fetching project members
   useSWR(
     workspaceSlug && projectId ? `PROJECT_MEMBERS_${projectId.toString().toUpperCase()}` : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectMembers(workspaceSlug.toString(), projectId.toString()) : null
   );
   // derived values
   const user = userStore.currentUser;
   const { currentProjectMemberInfo, currentProjectRole } = userStore;
   const isAdmin = currentProjectRole === 20;
-  const projectMembers = projectStore.members?.[projectId?.toString()!];
   const currentUser = projectMembers?.find((item) => item.member.id === user?.id);
 
   return (
@@ -65,15 +67,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
 
           // if the user is a member
           if (selectedRemoveMember) {
-            await projectStore.removeMemberFromProject(
-              workspaceSlug.toString(),
-              projectId.toString(),
-              selectedRemoveMember.id
-            );
+            await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), selectedRemoveMember.id);
           }
           // if the user is an invite
           if (selectedInviteRemoveMember) {
-            await projectInvitationService.deleteProjectInvitation(
+            await deleteProjectInvitation(
               workspaceSlug.toString(),
               projectId.toString(),
               selectedInviteRemoveMember.id
@@ -150,20 +148,18 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             onChange={(value: TUserProjectRole | undefined) => {
               if (!workspaceSlug || !projectId) return;
 
-              projectStore
-                .updateMember(workspaceSlug.toString(), projectId.toString(), member.id, {
-                  role: value,
-                })
-                .catch((err) => {
-                  const error = err.error;
-                  const errorString = Array.isArray(error) ? error[0] : error;
+              updateMember(workspaceSlug.toString(), projectId.toString(), member.id, {
+                role: value,
+              }).catch((err) => {
+                const error = err.error;
+                const errorString = Array.isArray(error) ? error[0] : error;
 
-                  setToastAlert({
-                    type: "error",
-                    title: "Error!",
-                    message: errorString ?? "An error occurred while updating member role. Please try again.",
-                  });
+                setToastAlert({
+                  type: "error",
+                  title: "Error!",
+                  message: errorString ?? "An error occurred while updating member role. Please try again.",
                 });
+              });
             }}
             disabled={
               member.memberId === user?.id ||

@@ -9,7 +9,6 @@ import { ProjectStateService } from "services/project";
 // ui
 import { CustomSearchSelect, StateGroupIcon } from "@plane/ui";
 // helpers
-import { getStatesList } from "helpers/state.helper";
 import { addSpaceIfCamelCase } from "helpers/string.helper";
 // constants
 import { STATES_LIST } from "constants/fetch-keys";
@@ -27,11 +26,10 @@ export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled 
   const router = useRouter();
   const { workspaceSlug, projectId, inboxIssueId } = router.query;
 
-  const { data: stateGroups } = useSWR(
+  const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,
     workspaceSlug && projectId ? () => stateService.getStates(workspaceSlug as string, projectId as string) : null
   );
-  const states = getStatesList(stateGroups);
 
   const selectedOption = states?.find((s) => s.id === value);
 
