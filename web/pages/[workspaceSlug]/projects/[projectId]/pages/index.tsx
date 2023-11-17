@@ -82,7 +82,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
       <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
         <div className="flex gap-4 justify-between">
           <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
-          <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+          {/* <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
             {PAGE_VIEW_LAYOUTS.map((layout) => (
               <Tooltip key={layout.key} tooltipContent={layout.title}>
                 <button
@@ -99,7 +99,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
                 </button>
               </Tooltip>
             ))}
-          </div>
+          </div> */}
         </div>
         <Tab.Group
           as={Fragment}
