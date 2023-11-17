@@ -53,11 +53,12 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   background-color: rgb(var(--color-background-100));
   margin: 0;
   cursor: pointer;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 0.8rem;
+  height: 0.8rem;
   position: relative;
-  border: 2px solid rgb(var(--color-text-100));
-  margin-right: 0.3rem;
+  border: 1.5px solid rgb(var(--color-text-100));
+  margin-right: 0.2rem;
+  margin-top: 0.15rem;
   display: grid;
   place-content: center;
 
@@ -71,8 +72,8 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 
   &::before {
     content: "";
-    width: 0.65em;
-    height: 0.65em;
+    width: 0.5em;
+    height: 0.5em;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em;
