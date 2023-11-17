@@ -27,11 +27,11 @@ export interface IProjectIssueStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 }
 
 export class ProjectIssueStore implements IProjectIssueStore {
-  loader: TLoader = undefined;
+  loader: TLoader = "init-loader";
   issues:
     | {
         [project_id: string]: IIssueResponse;
@@ -64,11 +64,9 @@ export class ProjectIssueStore implements IProjectIssueStore {
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
-
       if (!workspaceSlug || !projectId) return;
 
       const userFilters = this.rootStore.projectIssueFilters.userFilters[projectId].filters;
-
       if (userFilters) this.fetchIssues(workspaceSlug, projectId);
     });
   }
@@ -271,8 +269,15 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
   updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
     try {
-      if (this.issues?.[projectId]?.[issueId])
-        this.issues[projectId][issueId] = { ...this.issues[projectId][issueId], ...data };
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[projectId]) _issues[projectId] = {};
+
+      _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...data };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
 
       const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data, user);
@@ -286,7 +291,14 @@ export class ProjectIssueStore implements IProjectIssueStore {
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      delete this.issues?.[projectId]?.[issueId];
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[projectId]) _issues[projectId] = {};
+      delete _issues?.[projectId]?.[issueId];
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
 
       const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
@@ -298,18 +310,33 @@ export class ProjectIssueStore implements IProjectIssueStore {
     }
   };
 
-  quickAddIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue) => {
     try {
-      let _issues = this.issues;
+      let _issues = { ...this.issues };
       if (!_issues) _issues = {};
       if (!_issues[projectId]) _issues[projectId] = {};
+      _issues[projectId] = { ..._issues[projectId], ...{ [data.id as keyof IIssue]: data } };
 
-      _issues[projectId] = { ..._issues[projectId], ...{ [response.id]: response } };
+      runInAction(() => {
+        this.issues = _issues;
+      });
 
       const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
 
-      console.log("response", response);
+      if (this.issues) {
+        delete this.issues[projectId][data.id as keyof IIssue];
+
+        let _issues = { ...this.issues };
+        if (!_issues) _issues = {};
+        if (!_issues[projectId]) _issues[projectId] = {};
+        _issues[projectId] = { ..._issues[projectId], ...{ [response.id as keyof IIssue]: response } };
+
+        runInAction(() => {
+          this.issues = _issues;
+        });
+      }
+
       return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId);

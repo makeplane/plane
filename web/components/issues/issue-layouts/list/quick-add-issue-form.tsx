@@ -44,8 +44,6 @@ const Inputs: FC<IInputProps> = (props) => {
 };
 
 interface IListQuickAddIssueForm {
-  formKey: keyof IIssue;
-  groupId?: string;
   prePopulatedData?: Partial<IIssue>;
 }
 
@@ -54,7 +52,7 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props) => {
-  const { formKey, groupId, prePopulatedData } = props;
+  const { prePopulatedData } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
@@ -91,7 +89,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   }, [isOpen, reset]);
 
   const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+    if (isSubmitting || !workspaceDetail || !projectDetail) return;
 
     reset({ ...defaultValues });
 
@@ -101,16 +99,13 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     });
 
     try {
-      await quickAddIssue(workspaceSlug, projectId, {
-        ...payload,
-      });
+      await quickAddIssue(workspaceSlug, projectId, { ...payload });
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
-      console.error(err);
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -122,7 +117,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   return (
     <div
       className={`bg-custom-background-100 border-t border-b border-custom-border-200 ${
-        errors && errors?.[formKey] && errors?.[formKey]?.message ? `border-red-500 bg-red-500/10` : ``
+        errors && errors?.name && errors?.name?.message ? `border-red-500 bg-red-500/10` : ``
       }`}
     >
       {isOpen ? (
@@ -132,7 +127,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex items-center gap-x-3 border-[0.5px] w-full border-t-0 border-custom-border-100 px-3 bg-custom-background-100"
           >
-            <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetail={projectDetail} />
+            <Inputs formKey={"name"} register={register} setFocus={setFocus} projectDetail={projectDetail} />
           </form>
           <div className="text-xs italic text-custom-text-200 px-3 py-2">{`Press 'Enter' to add another issue`}</div>
         </div>

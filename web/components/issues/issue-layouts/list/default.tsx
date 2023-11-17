@@ -101,8 +101,6 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                 {enableIssueQuickAdd && (
                   <div className="flex-shrink-0 w-full sticky bottom-0 z-[1]">
                     <ListQuickAddIssueForm
-                      formKey="name"
-                      groupId={getValueFromObject(_list, listKey) as string}
                       prePopulatedData={prePopulateQuickAddData(group_by, getValueFromObject(_list, listKey))}
                     />
                   </div>

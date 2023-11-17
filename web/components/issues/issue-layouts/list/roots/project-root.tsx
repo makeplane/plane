@@ -39,8 +39,14 @@ export const ListLayout: FC = observer(() => {
     async (issue: IIssue, action: "update" | "delete") => {
       if (!workspaceSlug || !projectId) return;
 
-      if (action === "update") updateIssue(workspaceSlug, projectId, issue.id, issue);
-      if (action === "delete") removeIssue(workspaceSlug, projectId, issue.id);
+      if (action === "update") {
+        console.log("coming here and calling update");
+        updateIssue(workspaceSlug, projectId, issue.id, issue);
+      }
+      if (action === "delete") {
+        console.log("coming here and calling delete");
+        removeIssue(workspaceSlug, projectId, issue.id);
+      }
     },
     [workspaceSlug, projectId, updateIssue, removeIssue]
   );

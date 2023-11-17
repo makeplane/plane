@@ -22,10 +22,9 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    issue: issueStore,
     issueFilter: issueFilterStore,
     projectIssueFilters: { projectFilters, fetchUserProjectFilters },
-    projectIssues: { getIssues, fetchIssues },
+    projectIssues: { loader, getIssues, fetchIssues },
   } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
@@ -39,19 +38,12 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const activeLayout = projectFilters?.displayFilters?.layout;
 
-  if (!issueStore.getIssues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
-
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
 
-      {issueStore?.loader === "initial-load" ? (
-        <div className="w-full h-full">
+      {loader === "init-loader" ? (
+        <div className="w-full h-full flex justify-center items-center">
           <Spinner />
         </div>
       ) : (
