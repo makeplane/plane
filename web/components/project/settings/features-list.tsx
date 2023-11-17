@@ -72,9 +72,10 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
-  const { project: projectStore, user: userStore } = useMobxStore();
-  const { currentUser, currentProjectRole } = userStore;
-  const { currentProjectDetails } = projectStore;
+  const {
+    project: { currentProjectDetails, updateProject },
+    user: { currentUser, currentProjectRole },
+  } = useMobxStore();
   const isAdmin = currentProjectRole === 20;
   // hooks
   const { setToastAlert } = useToast();
@@ -86,7 +87,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       title: "Success!",
       message: "Project feature updated successfully.",
     });
-    projectStore.updateProject(workspaceSlug.toString(), projectId.toString(), formData);
+    updateProject(workspaceSlug.toString(), projectId.toString(), formData);
   };
 
   if (!currentUser) return <></>;

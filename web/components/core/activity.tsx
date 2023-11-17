@@ -42,13 +42,16 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   return (
     <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
       <a
-        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        aria-disabled={activity.issue === null}
+        href={`${
+          activity.issue_detail ? `/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}` : "#"
+        }`}
+        target={activity.issue === null ? "_self" : "_blank"}
+        rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-        <RocketIcon size={12} color="#6b7280" />
+        <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
       </a>
     </Tooltip>
   );
@@ -268,10 +271,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -283,10 +286,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -298,10 +301,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
-              {activity.old_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.old_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -479,10 +482,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -494,10 +497,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -509,10 +512,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
             >
-              {activity.old_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.old_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );

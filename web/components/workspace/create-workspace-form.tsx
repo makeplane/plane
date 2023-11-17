@@ -161,7 +161,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="Enter workspace name..."
+                  placeholder="Enter workspace url..."
                   className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
                 />
               )}

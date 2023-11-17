@@ -1,7 +1,7 @@
 // mobx
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // services
-import { ProjectService } from "services/project";
+import { ProjectMemberService, ProjectService } from "services/project";
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
 // interfaces
@@ -81,6 +81,7 @@ class UserStore implements IUserStore {
   userService;
   workspaceService;
   projectService;
+  projectMemberService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -115,6 +116,7 @@ class UserStore implements IUserStore {
     this.userService = new UserService();
     this.workspaceService = new WorkspaceService();
     this.projectService = new ProjectService();
+    this.projectMemberService = new ProjectMemberService();
   }
 
   get currentWorkspaceMemberInfo() {
@@ -219,7 +221,7 @@ class UserStore implements IUserStore {
 
   fetchUserProjectInfo = async (workspaceSlug: string, projectId: string) => {
     try {
-      const response = await this.projectService.projectMemberMe(workspaceSlug, projectId);
+      const response = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
 
       runInAction(() => {
         this.projectMemberInfo = {

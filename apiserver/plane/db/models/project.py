@@ -166,6 +166,7 @@ class ProjectMember(ProjectBaseModel):
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding:

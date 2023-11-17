@@ -15,30 +15,35 @@ export interface IWorkspaceAuthWrapper {
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
-  const { user: userStore, project: projectStore, workspace: workspaceStore } = useMobxStore();
-  const { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace } = userStore;
+  const {
+    user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
+    project: { fetchProjects },
+    workspace: { fetchWorkspaceLabels },
+    workspaceMember: { fetchWorkspaceMembers },
+  } = useMobxStore();
+
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // fetching user workspace information
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_ME_${workspaceSlug}` : null,
-    workspaceSlug ? () => userStore.fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchUserWorkspaceInfo(workspaceSlug.toString()) : null
   );
   // fetching workspace projects
   useSWR(
     workspaceSlug ? `WORKSPACE_PROJECTS_${workspaceSlug}` : null,
-    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchProjects(workspaceSlug.toString()) : null
   );
   // fetch workspace members
   useSWR(
     workspaceSlug ? `WORKSPACE_MEMBERS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceMembers(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceMembers(workspaceSlug.toString()) : null
   );
   // fetch workspace labels
   useSWR(
     workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
-    workspaceSlug ? () => workspaceStore.fetchWorkspaceLabels(workspaceSlug.toString()) : null
+    workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
   );
 
   // while data is being loaded

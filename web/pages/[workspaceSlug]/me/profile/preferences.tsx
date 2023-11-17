@@ -18,11 +18,13 @@ import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 import { NextPageWithLayout } from "types/app";
 
 const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
-  const { user: userStore } = useMobxStore();
+  const {
+    user: { currentUser, updateCurrentUserTheme },
+  } = useMobxStore();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
   // computed
-  const userTheme = userStore.currentUser?.theme;
+  const userTheme = currentUser?.theme;
   // hooks
   const { setTheme } = useTheme();
   const { setToastAlert } = useToast();
@@ -38,7 +40,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     setTheme(themeOption.value);
-    userStore.updateCurrentUserTheme(themeOption.value).catch(() => {
+    updateCurrentUserTheme(themeOption.value).catch(() => {
       setToastAlert({
         title: "Failed to Update the theme",
         type: "error",
@@ -48,7 +50,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      {userStore.currentUser ? (
+      {currentUser ? (
         <div className="pr-9 py-8 w-full overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-100">
             <h3 className="text-xl font-medium">Preferences</h3>

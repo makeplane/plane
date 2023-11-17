@@ -22,13 +22,13 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectMember: { projectMembers },
     projectState: projectStateStore,
     moduleIssue: moduleIssueStore,
     issueFilter: issueFilterStore,
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
 
   const issues = moduleIssueStore?.getIssues;
 
@@ -48,9 +48,9 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
 
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
 
-  const onDragStart = () => {
-    setIsDragStarted(true);
-  };
+  // const onDragStart = () => {
+  //   setIsDragStarted(true);
+  // };
 
   const onDragEnd = (result: any) => {
     setIsDragStarted(false);
@@ -98,13 +98,12 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
-  const estimates =
-    currentProjectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
-      : null;
+  // const estimates =
+  //   currentProjectDetails?.estimate !== null
+  //     ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
+  //     : null;
 
   return (
     <>
@@ -113,7 +112,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+        <div className={`relative min-w-full min-h-full h-max bg-custom-background-90 px-3 horizontal-scroll-enable`}>
           <DragDropContext onDragEnd={onDragEnd}>
             {currentKanBanView === "default" ? (
               <KanBan
@@ -137,7 +136,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}
@@ -164,7 +163,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
                 stateGroups={stateGroups}
                 priorities={priorities}
                 labels={labels}
-                members={members?.map((m) => m.member) ?? null}
+                members={projectMembers?.map((m) => m.member) ?? null}
                 projects={projects}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
                 isDragStarted={isDragStarted}

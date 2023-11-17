@@ -76,10 +76,10 @@ export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, statu
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Page..."

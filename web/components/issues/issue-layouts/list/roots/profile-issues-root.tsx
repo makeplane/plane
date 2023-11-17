@@ -18,6 +18,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     workspace: workspaceStore,
     projectState: projectStateStore,
     project: projectStore,
+    projectMember: { projectMembers },
     profileIssueFilters: profileIssueFiltersStore,
     profileIssues: profileIssuesStore,
     issueDetail: issueDetailStore,
@@ -48,7 +49,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
   const labels = workspaceStore.workspaceLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStore?.workspaceProjects || null;
 
@@ -70,7 +70,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
         stateGroups={stateGroups}
         priorities={priorities}
         labels={labels}
-        members={members?.map((m) => m.member) ?? null}
+        members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={null}
       />

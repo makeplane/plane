@@ -89,4 +89,4 @@ class UnsplashEndpoint(BaseAPIView):
         }
 
         resp = requests.get(url=url, headers=headers)
-        return Response(resp.json(), status=status.HTTP_200_OK)
+        return Response(resp.json(), status=resp.status_code)
