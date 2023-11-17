@@ -213,7 +213,7 @@ function DragHandle(options: DragHandleOptions) {
           if (!dragHandleElement) return;
 
           dragHandleElement.style.left = `${rect.left - rect.width}px`;
-          dragHandleElement.style.top = `${rect.top}px`;
+          dragHandleElement.style.top = `${rect.top + 3}px`;
           showDragHandle();
         },
         keydown: () => {

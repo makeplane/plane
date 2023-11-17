@@ -260,26 +260,18 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   position: fixed;
   opacity: 1;
   transition: opacity ease-in 0.2s;
+  height: 18px;
+  width: 15px;
   display: grid;
   place-items: center;
-  height: 20px;
-  width: 15px;
   z-index: 10;
   cursor: grab;
   border-radius: 2px;
   background-color: rgb(var(--color-background-90));
-  &:hover {
-    background-color: rgb(var(--color-background-80));
-  }
-
-  &.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
 }
 
 .drag-handle:hover {
-  background-color: #0d0d0d 10;
+  background-color: rgb(var(--color-background-80));
   transition: background-color 0.2s;
 }
 
@@ -296,7 +288,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .drag-handle-container {
-  height: 20px;
+  height: 15px;
   width: 15px;
   cursor: grab;
   display: grid;
@@ -314,7 +306,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .drag-handle-dot {
   height: 2.75px;
   width: 3px;
-  background-color: rgba(var(--color-text-100));
+  background-color: rgba(var(--color-text-200));
   border-radius: 50%;
 }
 
