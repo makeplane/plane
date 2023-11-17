@@ -2,28 +2,29 @@ import { FC } from "react";
 // components
 import { IssueBlock } from "components/issues";
 // types
-import { IIssue, IIssueDisplayProperties } from "types";
+import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueResponse, TUnGroupedIssues } from "types";
 
 interface Props {
   columnId: string;
-  issues: IIssue[];
+  issueIds: IGroupedIssues | TUnGroupedIssues | any;
+  issues: IIssueResponse;
   isReadonly?: boolean;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issues, handleIssues, quickActions, displayProperties, isReadonly } = props;
+  const { columnId, issueIds, issues, handleIssues, quickActions, displayProperties, isReadonly } = props;
 
   return (
     <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
-      {issues && issues.length > 0 ? (
-        issues.map((issue) => (
+      {issueIds && issueIds.length > 0 ? (
+        issueIds.map((issueId: string) => (
           <IssueBlock
-            key={issue.id}
+            key={issues[issueId].id}
             columnId={columnId}
-            issue={issue}
+            issue={issues[issueId]}
             handleIssues={handleIssues}
             quickActions={quickActions}
             isReadonly={isReadonly}

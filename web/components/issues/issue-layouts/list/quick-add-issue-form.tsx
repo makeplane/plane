@@ -62,8 +62,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
   const {
     workspace: workspaceStore,
     project: projectStore,
-    issue: issueStore,
-    quickAddIssue: quickAddIssueStore,
+    projectIssues: { quickAddIssue },
   } = useMobxStore();
 
   const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
@@ -102,8 +101,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     });
 
     try {
-      issueStore.updateIssueStructure(groupId, null, payload);
-      await quickAddIssueStore.updateQuickAddIssueStructure(workspaceSlug, groupId, null, {
+      await quickAddIssue(workspaceSlug, projectId, {
         ...payload,
       });
       setToastAlert({

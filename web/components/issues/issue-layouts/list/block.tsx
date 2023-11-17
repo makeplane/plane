@@ -9,7 +9,7 @@ import { IIssue, IIssueDisplayProperties } from "types";
 interface IssueBlockProps {
   columnId: string;
   issue: IIssue;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   isReadonly?: boolean;
@@ -19,7 +19,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
   const { columnId, issue, handleIssues, quickActions, displayProperties, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    handleIssues(group_by, issueToUpdate, "update");
+    handleIssues(issueToUpdate, "update");
   };
 
   return (
@@ -41,7 +41,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           issueId={issue?.id}
           isArchived={issue?.archived_at !== null}
           handleIssue={(issueToUpdate) => {
-            handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
+            handleIssues(issueToUpdate as IIssue, "update");
           }}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>

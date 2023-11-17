@@ -8,7 +8,7 @@ import { List } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
 import { Spinner } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IGroupedIssues, TUnGroupedIssues } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 
@@ -24,7 +24,7 @@ export const ListLayout: FC = observer(() => {
     projectState: { projectStates },
     projectMember: { projectMembers },
     issueFilter: { userDisplayFilters, userDisplayProperties },
-    projectIssues: { loader, getIssues, getIssuesIds },
+    projectIssues: { loader, getIssues, getIssuesIds, updateIssue, removeIssue },
   } = useMobxStore();
 
   const states = projectStates;
@@ -36,18 +36,13 @@ export const ListLayout: FC = observer(() => {
   const group_by: string | null = userDisplayFilters?.group_by || null;
 
   const handleIssues = useCallback(
-    async (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
-      if (!workspaceSlug) return;
-      if (action === "update") {
-        // issueStore.updateIssueStructure(group_by, null, issue);
-        // await issueDetailStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
-      }
-      if (action === "delete") {
-        // issueStore.removeIssueFromStructure(group_by, null, issue);
-        // await issueDetailStore.deleteIssue(workspaceSlug, issue.project, issue.id);
-      }
+    async (issue: IIssue, action: "update" | "delete") => {
+      if (!workspaceSlug || !projectId) return;
+
+      if (action === "update") updateIssue(workspaceSlug, projectId, issue.id, issue);
+      if (action === "delete") removeIssue(workspaceSlug, projectId, issue.id);
     },
-    [workspaceSlug]
+    [workspaceSlug, projectId, updateIssue, removeIssue]
   );
 
   return (
@@ -60,15 +55,15 @@ export const ListLayout: FC = observer(() => {
 
       <div className="relative w-full h-full bg-custom-background-90">
         <List
-          issueIds={getIssuesIds}
+          issueIds={getIssuesIds as IGroupedIssues | TUnGroupedIssues}
           issues={getIssues}
           group_by={group_by}
           handleIssues={handleIssues}
           quickActions={(group_by, issue) => (
             <ProjectIssueQuickActions
               issue={issue}
-              handleDelete={async () => handleIssues(group_by, issue, "delete")}
-              handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+              handleDelete={async () => handleIssues(issue, "delete")}
+              handleUpdate={async (data) => handleIssues(data, "update")}
             />
           )}
           displayProperties={userDisplayProperties}

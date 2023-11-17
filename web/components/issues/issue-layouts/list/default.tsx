@@ -1,18 +1,16 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
 // components
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // types
 import {
-  IGroupedIssues,
   IIssue,
   IIssueDisplayProperties,
   IIssueLabels,
   IIssueResponse,
   IProject,
   IState,
-  ISubGroupedIssues,
+  IGroupedIssues,
   IUserLite,
   TUnGroupedIssues,
 } from "types";
@@ -20,14 +18,14 @@ import {
 import { getValueFromObject } from "constants/issue";
 
 export interface IGroupByList {
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  issueIds: IGroupedIssues | TUnGroupedIssues | any;
   issues: any;
   group_by: string | null;
   list: any;
   listKey: string;
   states: IState[] | null;
   is_list?: boolean;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   enableIssueQuickAdd: boolean;
@@ -35,7 +33,7 @@ export interface IGroupByList {
   isReadonly: boolean;
 }
 
-const GroupByList: React.FC<IGroupByList> = observer((props) => {
+const GroupByList: React.FC<IGroupByList> = (props) => {
   const {
     issueIds,
     issues,
@@ -51,10 +49,6 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
     showEmptyGroup,
     isReadonly,
   } = props;
-
-  console.log("list", list);
-  console.log("issueIds", issueIds);
-  console.log("listKey", listKey);
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = states?.find((state) => state.default);
@@ -95,7 +89,8 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
                 {issues && (
                   <IssueBlocksList
                     columnId={getValueFromObject(_list, listKey) as string}
-                    issues={is_list ? issues : issues[getValueFromObject(_list, listKey) as string]}
+                    issueIds={is_list ? issueIds || 0 : issueIds?.[getValueFromObject(_list, listKey) as string] || 0}
+                    issues={issues}
                     handleIssues={handleIssues}
                     quickActions={quickActions}
                     displayProperties={displayProperties}
@@ -117,13 +112,13 @@ const GroupByList: React.FC<IGroupByList> = observer((props) => {
         )}
     </div>
   );
-});
+};
 
 export interface IList {
-  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  issueIds: IGroupedIssues | TUnGroupedIssues;
   issues: IIssueResponse | undefined;
   group_by: string | null;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   showEmptyGroup: boolean;
@@ -137,7 +132,7 @@ export interface IList {
   priorities: any;
 }
 
-export const List: React.FC<IList> = observer((props) => {
+export const List: React.FC<IList> = (props) => {
   const {
     issueIds,
     issues,
@@ -162,7 +157,7 @@ export const List: React.FC<IList> = observer((props) => {
     <div className="relative w-full h-full">
       {group_by === null && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as TUnGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={[{ id: `null`, title: `All Issues` }]}
@@ -180,7 +175,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "project" && projects && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={projects}
@@ -197,7 +192,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "state" && states && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={states}
@@ -214,7 +209,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "state_detail.group" && stateGroups && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={stateGroups}
@@ -231,7 +226,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "priority" && priorities && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={priorities}
@@ -248,7 +243,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "labels" && labels && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={[...labels, { id: "None", name: "None" }]}
@@ -265,7 +260,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "assignees" && members && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={[...members, { id: "None", display_name: "None" }]}
@@ -282,7 +277,7 @@ export const List: React.FC<IList> = observer((props) => {
 
       {group_by && group_by === "created_by" && members && (
         <GroupByList
-          issueIds={issueIds}
+          issueIds={issueIds as IGroupedIssues}
           issues={issues}
           group_by={group_by}
           list={members}
@@ -298,4 +293,4 @@ export const List: React.FC<IList> = observer((props) => {
       )}
     </div>
   );
-});
+};
