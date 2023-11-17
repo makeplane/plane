@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/react"
-import { Lock, ArchiveIcon, MenuSquare} from "lucide-react"
+import { Lock, ArchiveIcon, MenuSquare } from "lucide-react"
 import { useRef, useState } from "react"
 import { usePopper } from "react-popper"
 import { IMarking, UploadImage } from ".."
@@ -17,14 +17,14 @@ interface IEditorHeader {
   markings: IMarking[],
   isLocked: boolean,
   isArchived: boolean,
-	archivedAt?: Date,
+  archivedAt?: Date,
   readonly: boolean,
   uploadFile?: UploadImage,
   setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
-	documentDetails: DocumentDetails
+  documentDetails: DocumentDetails
 }
 
-export const EditorHeader = ({ documentDetails, archivedAt ,editor, sidePeakVisible, readonly, setSidePeakVisible, markings, uploadFile, setIsSubmitting, KanbanMenuOptions, isArchived, isLocked }: IEditorHeader) => {
+export const EditorHeader = ({ documentDetails, archivedAt, editor, sidePeakVisible, readonly, setSidePeakVisible, markings, uploadFile, setIsSubmitting, KanbanMenuOptions, isArchived, isLocked }: IEditorHeader) => {
 
   const summaryMenuRef = useRef(null);
   const summaryButtonRef = useRef(null);
@@ -69,7 +69,7 @@ export const EditorHeader = ({ documentDetails, archivedAt ,editor, sidePeakVisi
         {(!readonly && uploadFile) && <FixedMenu editor={editor} uploadFile={uploadFile} setIsSubmitting={setIsSubmitting} />}
         <div className="self-center flex items-start gap-3 my-auto max-md:justify-center"
         >
-					{ !isArchived && <p className="text-sm text-custom-text-300">{ `Last updated at ${new Date(documentDetails.last_updated_at).toLocaleString()}`}</p>}
+          {!isArchived && <p className="text-sm text-custom-text-300">{`Last updated at ${new Date(documentDetails.last_updated_at).toLocaleString()}`}</p>}
           <VerticalDropdownMenu items={KanbanMenuOptions} />
         </div>
       </div>
