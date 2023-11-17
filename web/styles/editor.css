@@ -6,6 +6,12 @@
   height: 0;
 }
 
+/* block quotes */
+.ProseMirror blockquote p::before,
+.ProseMirror blockquote p::after {
+  display: none;
+}
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
