@@ -65,22 +65,28 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
   ];
 
   return (
-    <Disclosure as="div" className="rounded border-[0.5px] bg-custom-background-100 text-custom-text-100" defaultOpen>
+    <Disclosure
+      as="div"
+      className={`rounded border-[0.5px] border-custom-border-200 text-custom-text-100 ${
+        groupDragSnapshot.combineTargetFor ? "bg-custom-background-80" : "bg-custom-background-100"
+      }`}
+      defaultOpen
+    >
       {({ open }) => (
         <>
           <Droppable
             key={`label.group.droppable.${label.id}`}
             droppableId={`label.group.droppable.${label.id}`}
-            isDropDisabled={groupDragSnapshot.isDragging || isUpdating || isDropDisabled}
+            isCombineEnabled={!groupDragSnapshot.isDragging && !isUpdating}
+            isDropDisabled
           >
             {(droppableProvided, droppableSnapshot) => (
               <div
-                className={`p-3 ${
+                className={`py-3 pl-1 pr-3 ${
                   droppableSnapshot.isDraggingOver
                     ? "border rounded border-custom-primary-100"
                     : "border-custom-border-200"
-                }
-                ${!isUpdating && "max-h-full overflow-y-hidden"}`}
+                } ${!isUpdating && "max-h-full overflow-y-hidden"}`}
                 ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}
               >
@@ -130,22 +136,15 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                         {labelChildren.map((child, index) => (
                           <div key={child.id} className={`group w-full flex items-center text-sm`}>
                             <Draggable
-                              key={`child.label.draggable.${child.id}`}
-                              draggableId={`child.label.draggable.${child.id}`}
+                              draggableId={`label.draggable.${child.id}`}
                               index={index}
                               isDragDisabled={groupDragSnapshot.isDragging || isUpdating}
                             >
                               {renderDraggable((provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
-                                <div
-                                  className="w-full py-1"
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  key={child.id}
-                                >
+                                <div className="w-full py-1" ref={provided.innerRef} {...provided.draggableProps}>
                                   <ProjectSettingLabelItem
                                     label={child}
                                     handleLabelDelete={() => handleLabelDelete(child)}
-                                    droppableSnapshot={droppableSnapshot}
                                     draggableSnapshot={snapshot}
                                     dragHandleProps={provided.dragHandleProps!}
                                     setIsUpdating={setIsUpdating}

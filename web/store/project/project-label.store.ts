@@ -83,9 +83,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
     const currentProjectLabels = this.labels?.[this.rootStore.project.projectId];
     if (!currentProjectLabels) return null;
 
-    currentProjectLabels.sort((labelA: IIssueLabel, labelB: IIssueLabel) => {
-      return labelB.sort_order - labelA.sort_order;
-    });
+    currentProjectLabels.sort((labelA: IIssueLabel, labelB: IIssueLabel) => labelB.sort_order - labelA.sort_order);
     return buildTree(currentProjectLabels);
   }
 
@@ -152,7 +150,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
     prevIndex: number | undefined
   ) => {
     const labels = this.labels;
-    let currLabel = labels?.[projectId]?.find((label) => label.id === labelId);
+    const currLabel = labels?.[projectId]?.find((label) => label.id === labelId);
     const labelTree = this.projectLabelsTree;
 
     let currentArray: IIssueLabel[];
@@ -161,16 +159,12 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
     const data: Partial<IIssueLabel> = { parent: parentId };
     //find array in which the label is to be added
-    if (!parentId) {
-      currentArray = labelTree;
-    } else {
-      currentArray = labelTree?.find((label) => label.id === parentId)?.children || [];
-    }
+    if (!parentId) currentArray = labelTree;
+    else currentArray = labelTree?.find((label) => label.id === parentId)?.children || [];
 
     //Add the array at the destination
-    if (isSameParent && prevIndex !== undefined) {
-      currentArray.splice(prevIndex, 1);
-    }
+    if (isSameParent && prevIndex !== undefined) currentArray.splice(prevIndex, 1);
+
     currentArray.splice(index, 0, currLabel);
 
     //if currently adding to a new array, then let backend assign a sort order

@@ -196,10 +196,10 @@ export const CreateUpdateLabelInline = observer(
             )}
           />
         </div>
-        <Button variant="neutral-primary" onClick={() => handleClose()}>
+        <Button variant="neutral-primary" onClick={() => handleClose()} size="sm">
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
+        <Button variant="primary" type="submit" size="sm" loading={isSubmitting}>
           {isUpdating ? (isSubmitting ? "Updating" : "Update") : isSubmitting ? "Adding" : "Add"}
         </Button>
       </form>

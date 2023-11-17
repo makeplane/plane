@@ -59,20 +59,21 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
   };
 
   const onDragEnd = (result: DropResult) => {
-    const childLabel = result.draggableId.split(".")[3];
-    let parentLabel: string | undefined | null = result.destination?.droppableId?.split(".")[3];
-    const index = result.destination?.index || 0;
+    const { combine, draggableId, destination, source } = result;
 
-    const prevParentLabel: string | undefined | null = result.source?.droppableId?.split(".")[3];
-    const prevIndex = result.source?.index;
+    // return if dropped outside the DragDropContext
+    if (!combine && !destination) return;
 
-    if (result.combine && result.combine.draggableId) {
-      parentLabel = result.combine?.draggableId?.split(".")[3];
-    }
+    const childLabel = draggableId.split(".")[2];
+    let parentLabel: string | undefined | null = destination?.droppableId?.split(".")[3];
+    const index = destination?.index || 0;
 
-    if (result.destination?.droppableId === LABELS_ROOT) {
-      parentLabel = null;
-    }
+    const prevParentLabel: string | undefined | null = source?.droppableId?.split(".")[3];
+    const prevIndex = source?.index;
+
+    if (combine && combine.draggableId) parentLabel = combine?.draggableId?.split(".")[2];
+
+    if (destination?.droppableId === LABELS_ROOT) parentLabel = null;
 
     if (result.reason == "DROP" && childLabel != parentLabel) {
       updateLabelPosition(
@@ -121,7 +122,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         <>
           {projectLabelsTree && (
             <DragDropContext
-              onDragEnd={(result) => onDragEnd(result)}
+              onDragEnd={onDragEnd}
               autoScrollerOptions={{
                 startFromPercentage: 1,
                 disabled: false,
@@ -141,21 +142,17 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                       if (label.children && label.children.length) {
                         return (
                           <Draggable
-                            key={`child.label.draggable.${label.id}`}
-                            draggableId={`child.label.draggable.${label.id}.group`}
+                            key={`label.draggable.${label.id}`}
+                            draggableId={`label.draggable.${label.id}.group`}
                             index={index}
                             isDragDisabled={isUpdating}
                           >
                             {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => {
-                              const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[4] === "group";
+                              const isGroup = droppableSnapshot.draggingFromThisWith?.split(".")[3] === "group";
                               setIsDraggingGroup(isGroup);
+
                               return (
-                                <div
-                                  key={label.id}
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  className="mt-3"
-                                >
+                                <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
                                   <ProjectSettingLabelGroup
                                     key={label.id}
                                     label={label}
@@ -175,8 +172,8 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                       }
                       return (
                         <Draggable
-                          key={`child.label.draggable.${label.id}`}
-                          draggableId={`child.label.draggable.${label.id}`}
+                          key={`label.draggable.${label.id}`}
+                          draggableId={`label.draggable.${label.id}`}
                           index={index}
                           isDragDisabled={isUpdating}
                         >
@@ -184,7 +181,6 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                             <div ref={provided.innerRef} {...provided.draggableProps} className="mt-3">
                               <ProjectSettingLabelItem
                                 dragHandleProps={provided.dragHandleProps!}
-                                droppableSnapshot={droppableSnapshot}
                                 draggableSnapshot={snapshot}
                                 key={label.id}
                                 label={label}

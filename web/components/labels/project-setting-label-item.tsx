@@ -13,17 +13,15 @@ import { CreateUpdateLabelInline } from "./create-update-label-inline";
 type Props = {
   label: IIssueLabel;
   handleLabelDelete: (label: IIssueLabel) => void;
-  droppableSnapshot: DroppableStateSnapshot;
   draggableSnapshot: DraggableStateSnapshot;
   dragHandleProps: DraggableProvidedDragHandleProps;
   setIsUpdating: Dispatch<SetStateAction<boolean>>;
 };
 
 export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
-  const { label, setIsUpdating, handleLabelDelete, droppableSnapshot, draggableSnapshot, dragHandleProps } = props;
+  const { label, setIsUpdating, handleLabelDelete, draggableSnapshot, dragHandleProps } = props;
 
-  const { isDraggingOver } = droppableSnapshot;
-  const { isDragging } = draggableSnapshot;
+  const { combineTargetFor, isDragging } = draggableSnapshot;
 
   // router
   const router = useRouter();
@@ -63,9 +61,9 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={`relative group flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] ${
-        isDraggingOver && !isDragging ? "border-custom-primary-100" : "border-custom-border-200"
-      } ${isDragging ? "shadow-custom-shadow-xs" : ""} bg-custom-background-100 px-1 py-2.5`}
+      className={`relative group flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] border-custom-border-200 ${
+        combineTargetFor ? "bg-custom-background-80" : ""
+      } ${isDragging ? "shadow-custom-shadow-xs bg-custom-background-80" : ""} bg-custom-background-100 px-1 py-2.5`}
     >
       {isEditLabelForm ? (
         <CreateUpdateLabelInline
