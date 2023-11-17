@@ -13,7 +13,7 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.api.serializers import ImporterSerializer
+from plane.app.serializers import ImporterSerializer
 from plane.db.models import (
     Importer,
     WorkspaceMember,

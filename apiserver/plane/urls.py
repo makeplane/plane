@@ -10,7 +10,8 @@ from django.conf import settings
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html")),
-    path("api/", include("plane.api.urls")),
+    path("api/", include("plane.app.urls")),
+    path("api/public/", include("plane.space.urls")),
     path("", include("plane.web.urls")),
 ]
 
