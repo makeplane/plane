@@ -11,7 +11,7 @@ import { ProjectMemberService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
+import { CreateUpdatePageModal, ArchivePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
 import { EmptyState } from "components/common";
 // ui
 import { Loader } from "@plane/ui";
@@ -41,8 +41,8 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
-  const [deletePageModal, setDeletePageModal] = useState(false);
-  const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
+  const [archivePageModal, setArchivePageModal] = useState(false);
+  const [selectedPageToArchive, setSelectedPageToArchive] = useState<IPage | null>(null);
 
   const { user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
   const user = userStore.currentUser ?? undefined;
@@ -65,9 +65,9 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
     setCreateUpdatePageModal(true);
   };
 
-  const handleDeletePage = (page: IPage) => {
-    setSelectedPageToDelete(page);
-    setDeletePageModal(true);
+  const handleArchivePage = (page: IPage) => {
+    setSelectedPageToArchive(page);
+    setArchivePageModal(true);
   };
 
   const handleAddToFavorites = (page: IPage) => {
@@ -206,10 +206,10 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
             workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
-          <DeletePageModal
-            isOpen={deletePageModal}
-            setIsOpen={setDeletePageModal}
-            data={selectedPageToDelete}
+          <ArchivePageModal
+            isOpen={archivePageModal}
+            setIsOpen={setArchivePageModal}
+            data={selectedPageToArchive}
             user={user}
           />
         </>
@@ -226,7 +226,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
                     page={page}
                     people={people}
                     handleEditPage={() => handleEditPage(page)}
-                    handleDeletePage={() => handleDeletePage(page)}
+                    handleArchivePage={() => handleArchivePage(page)}
                     handleAddToFavorites={() => handleAddToFavorites(page)}
                     handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
                     partialUpdatePage={partialUpdatePage}
@@ -241,7 +241,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
                     page={page}
                     people={people}
                     handleEditPage={() => handleEditPage(page)}
-                    handleDeletePage={() => handleDeletePage(page)}
+                    handleDeletePage={() => handleArchivePage(page)}
                     handleAddToFavorites={() => handleAddToFavorites(page)}
                     handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
                     partialUpdatePage={partialUpdatePage}
@@ -256,7 +256,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
                     page={page}
                     people={people}
                     handleEditPage={() => handleEditPage(page)}
-                    handleDeletePage={() => handleDeletePage(page)}
+                    handleDeletePage={() => handleArchivePage(page)}
                     handleAddToFavorites={() => handleAddToFavorites(page)}
                     handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
                     partialUpdatePage={partialUpdatePage}

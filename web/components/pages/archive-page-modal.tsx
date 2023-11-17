@@ -17,7 +17,7 @@ import { AlertTriangle } from "lucide-react";
 // types
 import type { IUser, IPage } from "types";
 // fetch-keys
-import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, PRIVATE_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
 
 type TConfirmPageDeletionProps = {
   isOpen: boolean;
@@ -29,8 +29,8 @@ type TConfirmPageDeletionProps = {
 // services
 const pageService = new PageService();
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+export const ArchivePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data }) => {
+  const [isArchiveLoading, setIsArchiveLoading] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -39,19 +39,19 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
 
   const handleClose = () => {
     setIsOpen(false);
-    setIsDeleteLoading(false);
+    setIsArchiveLoading(false);
   };
 
-  const handleDeletion = async () => {
-    setIsDeleteLoading(true);
+  const handleArchive = async () => {
+    setIsArchiveLoading(true);
     if (!data || !workspaceSlug || !projectId) return;
 
     await pageService
-      .deletePage(workspaceSlug as string, data.project, data.id, user)
+      .archivePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
-          MY_PAGES_LIST(projectId as string),
+          PRIVATE_PAGES_LIST(projectId as string),
           (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
           false
         );
@@ -69,18 +69,18 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Page deleted successfully.",
+          message: "Page archived successfully.",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Page could not be deleted. Please try again.",
+          message: "Page could not be archived. Please try again.",
         });
       })
       .finally(() => {
-        setIsDeleteLoading(false);
+        setIsArchiveLoading(false);
       });
   };
 
@@ -122,9 +122,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete Page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
-                          data related to the page will be permanently removed. This action cannot be undone.
+                          Are you sure you want to Archive Page-{" "}
+                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? The Page will be moved to the archive section, which can be restored if needed.
                         </p>
                       </div>
                     </div>
@@ -134,8 +133,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleArchive} loading={isArchiveLoading}>
+                    {isArchiveLoading ? "Archiving..." : "Archive"}
                   </Button>
                 </div>
               </Dialog.Panel>

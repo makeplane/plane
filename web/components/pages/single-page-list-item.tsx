@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
-import { AlertCircle, FileText, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
+import { AlertCircle, FileLock, FileLock2, FileText, Globe, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, render24HourFormatTime } from "helpers/date-time.helper";
@@ -20,7 +20,7 @@ type TSingleStatProps = {
   page: IPage;
   people: IProjectMember[] | undefined;
   handleEditPage: () => void;
-  handleDeletePage: () => void;
+  handleArchivePage: () => void;
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
   partialUpdatePage: (page: IPage, formData: Partial<IPage>) => void;
@@ -30,7 +30,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   page,
   people,
   handleEditPage,
-  handleDeletePage,
+  handleArchivePage,
   handleAddToFavorites,
   handleRemoveFromFavorites,
   partialUpdatePage,
@@ -130,9 +130,9 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         }}
                       >
                         {page.access ? (
-                          <Lock className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                          <FileLock2 className="h-4 w-4" color="rgb(var(--color-text-200))" />
                         ) : (
-                          <Unlock className="h-4 w-4" color="rgb(var(--color-text-200))" />
+                          <Globe className="h-4 w-4" color="rgb(var(--color-text-200))" />
                         )}
                       </button>
                     </Tooltip>
@@ -165,12 +165,12 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       onClick={(e: any) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleDeletePage();
+                        handleArchivePage();
                       }}
                     >
                       <span className="flex items-center justify-start gap-2">
                         <Trash2 className="h-3.5 w-3.5" />
-                        <span>Delete Page</span>
+                        <span>Archive Page</span>
                       </span>
                     </CustomMenu.MenuItem>
                     <CustomMenu.MenuItem
