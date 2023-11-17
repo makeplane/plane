@@ -43,7 +43,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
     <div className="flex items-center group">
       <div className="flex items-center">
         <DragHandle isDragging={isDragging} dragHandleProps={dragHandleProps} />
-        <LabelName color={label.color} name={label.name} />
+        <LabelName color={label.color} name={label.name} isGroup={!Boolean(label.parent)} />
       </div>
 
       <div
