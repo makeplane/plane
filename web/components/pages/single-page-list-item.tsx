@@ -21,7 +21,7 @@ type TSingleStatProps = {
   people: IProjectMember[] | undefined;
   handleEditPage: () => void;
   handleArchivePage: () => void;
-	handleArchiveRestore: () => void;
+  handleArchiveRestore: () => void;
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
   partialUpdatePage: (page: IPage, formData: Partial<IPage>) => void;
@@ -35,7 +35,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   handleAddToFavorites,
   handleRemoveFromFavorites,
   partialUpdatePage,
-	handleArchiveRestore
+  handleArchiveRestore
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -156,30 +156,35 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   </Tooltip>
 
                   {!page.archived_at && <CustomMenu width="auto" verticalEllipsis>
-                    <CustomMenu.MenuItem
-                      onClick={(e: any) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleEditPage();
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <Pencil className="h-3.5 w-3.5" />
-                        <span>Edit Page</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={(e: any) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleArchivePage();
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <Trash2 className="h-3.5 w-3.5" />
-                        <span>Archive Page</span>
-                      </span>
-                    </CustomMenu.MenuItem>
+
+                    {user && user.id == page.owned_by &&
+                      <CustomMenu.MenuItem
+                        onClick={(e: any) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEditPage();
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <Pencil className="h-3.5 w-3.5" />
+                          <span>Edit Page</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    }
+                    {user && user.id == page.owned_by &&
+                      <CustomMenu.MenuItem
+                        onClick={(e: any) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleArchivePage();
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Archive Page</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    }
                     <CustomMenu.MenuItem
                       onClick={(e) => {
                         e.preventDefault();
@@ -195,13 +200,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   </CustomMenu>
                   }
 
-                  {page.archived_at && (
+                  {page.archived_at && user && user.id === page.owned_by && (
                     <CustomMenu verticalEllipsis>
                       <CustomMenu.MenuItem
                         onClick={(e: any) => {
                           e.preventDefault();
                           e.stopPropagation();
-													handleArchiveRestore();
+                          handleArchiveRestore();
                         }}
                       >
                         <span className="flex items-center justify-start gap-2">

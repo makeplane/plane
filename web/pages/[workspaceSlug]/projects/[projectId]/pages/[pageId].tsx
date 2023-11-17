@@ -229,8 +229,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
                       last_updated_by: pageDetails.updated_by
                     }
                   }
-                  pageLockConfig={!pageDetails.archived_at ? { action: unlockPage, is_locked: pageDetails.is_locked } : undefined}
-                  pageArchiveConfig={{ action: pageDetails.archived_at ? unArchivePage : archivePage, is_archived: pageDetails.archived_at ? true : false, archived_at: pageDetails.archived_at }}
+                  pageLockConfig={!pageDetails.archived_at && user && pageDetails.owned_by === user.id ? { action: unlockPage, is_locked: pageDetails.is_locked } : undefined}
+                  pageArchiveConfig={user && pageDetails.owned_by === user.id ? { action: pageDetails.archived_at ? unArchivePage : archivePage, is_archived: pageDetails.archived_at ? true : false, archived_at: pageDetails.archived_at } : undefined}
                 /> :
                 <Controller
                   name="description_html"
@@ -262,8 +262,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
                         debouncedFormSave();
                       }}
                       duplicationConfig={{ action: duplicate_page }}
-                      pageArchiveConfig={{ is_archived: pageDetails.archived_at ? true : false, action: pageDetails.archived_at ? unArchivePage : archivePage }}
-                      pageLockConfig={{ is_locked: false, action: lockPage }}
+                      pageArchiveConfig={user && pageDetails.owned_by === user.id ? { is_archived: pageDetails.archived_at ? true : false, action: pageDetails.archived_at ? unArchivePage : archivePage } : undefined}
+                      pageLockConfig={user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined}
                     />)
                   }
                 />

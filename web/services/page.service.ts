@@ -250,7 +250,7 @@ export class PageService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         console.log(error)
-        throw error?.response?.data;
+				return []
       });
   }
   // ==================== Pages Locking Services ==========================
