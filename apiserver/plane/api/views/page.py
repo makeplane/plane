@@ -245,7 +245,7 @@ class PageViewSet(BaseViewSet):
 
         unarchive_archive_page_and_descendants(page_id, datetime.now())
 
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unarchive(self, request, slug, project_id, page_id):
         page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
@@ -255,9 +255,11 @@ class PageViewSet(BaseViewSet):
                 {"error": "Only the owner of the page can unarchive a page"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        page.parent = None
-        page.save()
+        
+        # if parent page is archived then the page will be un archived breaking the hierarchy
+        if page.parent_id and page.parent.archived_at:
+            page.parent = None
+            page.save(update_fields=['parent'])
 
         unarchive_archive_page_and_descendants(page_id, None)
 
@@ -270,7 +272,6 @@ class PageViewSet(BaseViewSet):
                 workspace__slug=slug,
             )
             .filter(archived_at__isnull=False)
-            .filter(parent_id__isnull=True)
         )
 
         return Response(
@@ -399,7 +400,6 @@ class SubPagesEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 entity_name__in=["forward_link", "back_link"],
             )
-            .filter(archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
         )
