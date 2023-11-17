@@ -34,6 +34,7 @@ export class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
+    // this.validateFile = this.validateFile.bind(this);
     this.deleteImage = this.deleteImage.bind(this);
     this.cancelUpload = this.cancelUpload.bind(this);
   }
@@ -52,6 +53,7 @@ export class FileService extends APIService {
         if (axios.isCancel(error)) {
           console.log(error.message);
         } else {
+          console.log(error);
           throw error?.response?.data;
         }
       });
@@ -61,6 +63,14 @@ export class FileService extends APIService {
     this.cancelSource.cancel("Upload cancelled");
   }
 
+  // async validateFile(assetUrlWithWorkspaceId: string): Promise<any> {
+  //   console.log("bruh", assetUrlWithWorkspaceId);
+  //   const res = await this.get(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`);
+  //   const data = res?.data;
+  //   console.log("data inside fucntion");
+  //   return data.status;
+  // }
+  //
   getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
     return async (file: File) => {
       const formData = new FormData();
