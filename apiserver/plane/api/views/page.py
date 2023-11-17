@@ -230,15 +230,15 @@ class PageViewSet(BaseViewSet):
             )
 
         if page_view == "shared":
-            queryset = queryset.filter(~Q(owned_by=request.user), access=0)
+            queryset = queryset.filter(owned_by=request.user, access=0)
             return Response(
                 PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         if page_view == "private":
-            queryset = queryset.filter(~Q(owned_by=request.user), access=1)
+            queryset = queryset.filter(owned_by=request.user, access=1)
             return Response(
-                    PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
             )
 
         return Response(
