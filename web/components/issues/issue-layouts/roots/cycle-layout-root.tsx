@@ -28,17 +28,23 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   const {
     issueFilter: issueFilterStore,
+    projectIssueFilters: projectIssueFiltersStore,
     cycle: cycleStore,
     cycleIssue: cycleIssueStore,
-    cycleIssueFilter: cycleIssueFilterStore,
+    cycleIssueFilters: cycleIssueFiltersStore,
   } = useMobxStore();
 
   useSWR(workspaceSlug && projectId && cycleId ? `CYCLE_FILTERS_AND_ISSUES_${cycleId.toString()}` : null, async () => {
     if (workspaceSlug && projectId && cycleId) {
-      // fetching the project display filters and display properties
+      // TODO: remove the old store fetch functions
       await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+      await projectIssueFiltersStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
       // fetching the cycle filters
-      await cycleIssueFilterStore.fetchCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+      await cycleIssueFiltersStore.fetchCycleFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        cycleId.toString()
+      );
 
       // fetching the cycle issues
       await cycleIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString(), cycleId.toString());

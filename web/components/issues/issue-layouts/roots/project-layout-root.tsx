@@ -28,16 +28,14 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     projectIssues: { getIssues, fetchIssues },
   } = useMobxStore();
 
-  useSWR(
-    workspaceSlug && projectId && getIssues ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
-    async () => {
-      if (workspaceSlug && projectId) {
-        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-        await fetchUserProjectFilters(workspaceSlug, projectId);
-        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
-      }
+  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
+    if (workspaceSlug && projectId) {
+      // TODO: remove the old store fetch function
+      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+      await fetchUserProjectFilters(workspaceSlug, projectId);
+      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
     }
-  );
+  });
 
   const activeLayout = projectFilters?.displayFilters?.layout;
 

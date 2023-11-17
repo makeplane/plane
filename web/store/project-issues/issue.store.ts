@@ -64,8 +64,12 @@ export class ProjectIssueStore implements IProjectIssueStore {
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
-      const userFilters = this.rootStore.issueFilter.userFilters;
-      if (workspaceSlug && projectId && userFilters) this.fetchIssues(workspaceSlug, projectId);
+
+      if (!workspaceSlug || !projectId) return;
+
+      const userFilters = this.rootStore.projectIssueFilters.userFilters[projectId].filters;
+
+      if (userFilters) this.fetchIssues(workspaceSlug, projectId);
     });
   }
 
