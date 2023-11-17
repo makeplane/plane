@@ -10,7 +10,6 @@ export const handleBackspace = (
   name: string,
   parentListTypes: string[],
 ) => {
-  console.log("handleBackspace hit");
   // this is required to still handle the undo handling
   if (editor.commands.undoInputRule()) {
     return true;
@@ -84,13 +83,11 @@ export const handleBackspace = (
 
   // // if the previous item is a list item and doesn't have a sublist, join the list items
   // if (hasListItemBefore(name, editor.state) && !previousListItemHasSubList) {
-  //   console.log("previousListItemHasSubList hit");
   //   return editor.commands.joinItemBackward();
   // }
 
   // otherwise in the end, a backspace should
   // always just lift the list item if
   // joining / merging is not possible
-  console.log("liftListItem hit");
   return editor.chain().liftListItem(name).run();
 };

@@ -34,6 +34,7 @@ export class FileService extends APIService {
   constructor() {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
+    this.deleteImage = this.deleteImage.bind(this);
     this.cancelUpload = this.cancelUpload.bind(this);
   }
 
