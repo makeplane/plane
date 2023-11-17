@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BRANCH=${BRANCH:-master}
+BRANCH=master
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
 mkdir -p $PLANE_INSTALL_DIR/archive
