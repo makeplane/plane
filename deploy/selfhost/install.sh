@@ -122,7 +122,7 @@ function askForAction(){
 
 if [ "$BRANCH" != "master" ];
 then
-    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|.)@-@g')
+    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
 fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
