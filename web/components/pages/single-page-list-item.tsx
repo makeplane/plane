@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
-import { AlertCircle, FileLock, FileLock2, FileText, Globe, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
+import { AlertCircle, ArchiveRestoreIcon, FileLock, FileLock2, FileText, Globe, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, render24HourFormatTime } from "helpers/date-time.helper";
@@ -21,6 +21,7 @@ type TSingleStatProps = {
   people: IProjectMember[] | undefined;
   handleEditPage: () => void;
   handleArchivePage: () => void;
+	handleArchiveRestore: () => void;
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
   partialUpdatePage: (page: IPage, formData: Partial<IPage>) => void;
@@ -34,6 +35,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   handleAddToFavorites,
   handleRemoveFromFavorites,
   partialUpdatePage,
+	handleArchiveRestore
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -83,14 +85,21 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
-                  <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
+                  {page.archived_at ?
+                    <Tooltip tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderShortDate(
+                      page.archived_at
+                    )}`}
+                    >
+                      <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.archived_at)}</p>
+                    </Tooltip> :
+                    <Tooltip tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
                       page.updated_at
                     )}`}
-                  >
-                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
-                  </Tooltip>
-                  {page.is_favorite ? (
+                    >
+                      <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
+                    </Tooltip>
+                  }
+                  {!page.archived_at && (page.is_favorite ? (
                     <button
                       type="button"
                       onClick={(e) => {
@@ -112,14 +121,13 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                     >
                       <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
                     </button>
-                  )}
-                  {page.created_by === user?.id && (
+                  ))}
+                  {(page.created_by === user?.id && !page.archived_at) && (
                     <Tooltip
-                      tooltipContent={`${
-                        page.access
-                          ? "This page is only visible to you."
-                          : "This page can be viewed by anyone in the project."
-                      }`}
+                      tooltipContent={`${page.access
+                        ? "This page is only visible to you."
+                        : "This page can be viewed by anyone in the project."
+                        }`}
                     >
                       <button
                         type="button"
@@ -139,16 +147,15 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   )}
                   <Tooltip
                     position="top-right"
-                    tooltipContent={`Created by ${
-                      people?.find((person) => person.member.id === page.created_by)?.member.display_name ?? ""
-                    } on ${renderLongDateFormat(`${page.created_at}`)}`}
+                    tooltipContent={`Created by ${people?.find((person) => person.member.id === page.created_by)?.member.display_name ?? ""
+                      } on ${renderLongDateFormat(`${page.created_at}`)}`}
                   >
                     <span>
                       <AlertCircle className="h-4 w-4 text-custom-text-200" />
                     </span>
                   </Tooltip>
 
-                  <CustomMenu width="auto" verticalEllipsis>
+                  {!page.archived_at && <CustomMenu width="auto" verticalEllipsis>
                     <CustomMenu.MenuItem
                       onClick={(e: any) => {
                         e.preventDefault();
@@ -186,6 +193,25 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                       </div>
                     </CustomMenu.MenuItem>
                   </CustomMenu>
+                  }
+
+                  {page.archived_at && (
+                    <CustomMenu verticalEllipsis>
+                      <CustomMenu.MenuItem
+                        onClick={(e: any) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+													handleArchiveRestore();
+                        }}
+                      >
+                        <span className="flex items-center justify-start gap-2">
+                          <ArchiveRestoreIcon className="h-3.5 w-3.5" />
+                          <span>Restore Page</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    </CustomMenu>
+                  )
+                  }
                 </div>
               </div>
             </div>

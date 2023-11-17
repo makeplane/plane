@@ -70,6 +70,55 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
     setArchivePageModal(true);
   };
 
+	const handleRestorePage = (page: IPage) => {
+    if (!workspaceSlug || !projectId) return;
+
+    mutate<IPage[]>(
+      ALL_PAGES_LIST(projectId.toString()),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === page.id) p.archived_at = undefined;
+
+          return p;
+        }),
+      false
+    );
+    mutate<IPage[]>(
+      PRIVATE_PAGES_LIST(projectId.toString()),
+      (prevData) =>
+        (prevData ?? []).map((p) => {
+          if (p.id === page.id) p.archived_at = undefined;
+
+          return p;
+        }),
+      false
+    );
+
+    mutate<IPage[]>(
+      ARCHIVED_PAGES_LIST(projectId.toString()),
+      (prevData) => (prevData ?? []).filter((p) => p.id !== page.id),
+      false
+    );
+
+    pageService
+      .removePageFromArchives(workspaceSlug.toString(), projectId.toString(), page.id)
+      .then(() => {
+        mutate(RECENT_PAGES_LIST(projectId.toString()));
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Successfully restored page.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Couldn't restore the page. Please try again.",
+        });
+      });
+	}
+
   const handleAddToFavorites = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
@@ -229,6 +278,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
                     handleArchivePage={() => handleArchivePage(page)}
                     handleAddToFavorites={() => handleAddToFavorites(page)}
                     handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
+										handleArchiveRestore={() => handleRestorePage(page)}
                     partialUpdatePage={partialUpdatePage}
                   />
                 ))}
