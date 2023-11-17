@@ -3,7 +3,6 @@
 BRANCH=master
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
-mkdir -p $PLANE_INSTALL_DIR/archive
 
 function install(){
     echo 
@@ -41,7 +40,6 @@ function download(){
 
         rm $PLANE_INSTALL_DIR/temp.yaml
     fi
-
     
     echo ""
     echo "Latest version is now available for you to use"
@@ -121,5 +119,11 @@ function askForAction(){
         echo "INVALID ACTION SUPPLIED"
     fi
 }
+
+if [ "$BRANCH" != "master" ];
+then
+    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|.)@-@g')
+fi
+mkdir -p $PLANE_INSTALL_DIR/archive
 
 askForAction
