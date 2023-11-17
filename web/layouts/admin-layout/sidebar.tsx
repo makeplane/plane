@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { InstanceAdminSidebarMenu, InstanceHelpSection } from "components/instance";
+import { InstanceAdminSidebarMenu, InstanceHelpSection, InstanceSidebarDropdown } from "components/instance";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -19,6 +19,7 @@ export const InstanceAdminSidebar: FC<IInstanceAdminSidebar> = observer(() => {
       } ${themStore?.sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
       <div className="flex h-full w-full flex-1 flex-col">
+        <InstanceSidebarDropdown />
         <InstanceAdminSidebarMenu />
         <InstanceHelpSection />
       </div>

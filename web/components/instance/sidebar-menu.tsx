@@ -37,7 +37,7 @@ export const InstanceAdminSidebarMenu = () => {
   const router = useRouter();
 
   return (
-    <div>
+    <div className="h-full overflow-y-auto w-full cursor-pointer space-y-2 p-4">
       {INSTANCE_ADMIN_LINKS.map((item, index) => {
         const isActive = item.name === "Settings" ? router.asPath.includes(item.href) : router.asPath === item.href;
 
