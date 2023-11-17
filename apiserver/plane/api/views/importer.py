@@ -39,6 +39,7 @@ from plane.utils.integrations.github import get_github_repo_details
 from plane.utils.importers.jira import jira_project_issue_summary
 from plane.bgtasks.importer_task import service_importer
 from plane.utils.html_processor import strip_tags
+from plane.api.permissions import WorkSpaceAdminPermission
 
 
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
@@ -119,6 +120,9 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
 
 
 class ImportServiceEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkSpaceAdminPermission,
+    ]
     def post(self, request, slug, service):
         project_id = request.data.get("project_id", False)
 

@@ -10,6 +10,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -20,6 +21,7 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    project_id?: string;
   };
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
@@ -36,6 +38,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
 
   const { setShowAlert } = useReloadConfirmations();
 
+  const editorSuggestion = useEditorSuggestions();
+
   const {
     handleSubmit,
     watch,
@@ -48,6 +52,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       description_html: "",
     },
   });
+
+  const [localTitleValue, setLocalTitleValue] = useState("");
+  const issueTitleCurrentValue = watch("name");
+  useEffect(() => {
+    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
+      setLocalTitleValue(issueTitleCurrentValue);
+    }
+  }, [issueTitleCurrentValue, localTitleValue]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -81,7 +93,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     });
   }, [issue, reset]);
 
-  const debouncedTitleSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = useDebouncedCallback(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 
@@ -92,20 +104,21 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           <Controller
             name="name"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { onChange } }) => (
               <TextArea
+                value={localTitleValue}
                 id="name"
                 name="name"
-                value={value}
                 placeholder="Enter issue name"
                 onFocus={() => setCharacterLimit(true)}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
                   setCharacterLimit(false);
                   setIsSubmitting("submitting");
-                  debouncedTitleSave();
+                  setLocalTitleValue(e.target.value);
                   onChange(e.target.value);
+                  debouncedFormSave();
                 }}
-                required={true}
+                required
                 className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent px-3 py-2 text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.description)}
                 role="textbox"
@@ -132,10 +145,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           control={control}
           render={({ field: { value, onChange } }) => (
             <RichTextEditor
+              cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               value={value}
-              debouncedUpdatesEnabled={true}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
@@ -144,8 +157,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
                 setShowAlert(true);
                 setIsSubmitting("submitting");
                 onChange(description_html);
-                handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+                debouncedFormSave();
               }}
+              mentionSuggestions={editorSuggestion.mentionSuggestions}
+              mentionHighlights={editorSuggestion.mentionHighlights}
             />
           )}
         />

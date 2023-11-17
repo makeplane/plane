@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 // mobx store
@@ -9,68 +9,37 @@ import useLocalStorage from "hooks/use-local-storage";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { CycleIssuesHeader } from "components/headers";
-import { ExistingIssuesListModal } from "components/core";
-import { CycleDetailsSidebar, TransferIssues, TransferIssuesModal } from "components/cycles";
+import { CycleDetailsSidebar } from "components/cycles";
 import { CycleLayoutRoot } from "components/issues/issue-layouts";
 // ui
 import { EmptyState } from "components/common";
 // assets
 import emptyCycle from "public/empty-state/cycle.svg";
-// helpers
-import { getDateRangeStatus } from "helpers/date-time.helper";
+// types
+import { NextPageWithLayout } from "types/app";
 
-const SingleCycle: React.FC = () => {
-  const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
-  const [transferIssuesModal, setTransferIssuesModal] = useState(false);
-
+const CycleDetailPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const { cycle: cycleStore } = useMobxStore();
 
-  const { storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
+  const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
   const isSidebarCollapsed = storedValue ? (storedValue === "true" ? true : false) : false;
 
-  const { data: cycleDetails, error } = useSWR(
+  const { error } = useSWR(
     workspaceSlug && projectId && cycleId ? `CURRENT_CYCLE_DETAILS_${cycleId.toString()}` : null,
     workspaceSlug && projectId && cycleId
       ? () => cycleStore.fetchCycleWithId(workspaceSlug.toString(), projectId.toString(), cycleId.toString())
       : null
   );
 
-  const cycleStatus =
-    cycleDetails?.start_date && cycleDetails?.end_date
-      ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
-      : "draft";
-
-  // TODO: add this function to bulk add issues to cycle
-  // const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
-  //   if (!workspaceSlug || !projectId) return;
-
-  //   const payload = {
-  //     issues: data.map((i) => i.id),
-  //   };
-
-  //   await issueService
-  //     .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
-  //     .catch(() => {
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: "Selected issues could not be added to the cycle. Please try again.",
-  //       });
-  //     });
-  // };
+  const toggleSidebar = () => {
+    setValue(`${!isSidebarCollapsed}`);
+  };
 
   return (
-    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
-      {/* TODO: Update logic to bulk add issues to a cycle */}
-      <ExistingIssuesListModal
-        isOpen={cycleIssuesListModal}
-        handleClose={() => setCycleIssuesListModal(false)}
-        searchParams={{ cycle: true }}
-        handleOnSubmit={async () => {}}
-      />
+    <>
       {error ? (
         <EmptyState
           image={emptyCycle}
@@ -83,20 +52,34 @@ const SingleCycle: React.FC = () => {
         />
       ) : (
         <>
-          <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
-          <div className="relative w-full h-full flex overflow-auto">
-            <div className={`flex flex-col h-full w-full ${isSidebarCollapsed ? "" : "mr-[24rem]"} duration-300`}>
-              {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
-              <div className="h-full w-full">
-                <CycleLayoutRoot />
-              </div>
+          <div className="flex h-full w-full">
+            <div className="h-full w-full overflow-hidden">
+              <CycleLayoutRoot />
             </div>
-            {cycleId && <CycleDetailsSidebar isOpen={!isSidebarCollapsed} cycleId={cycleId.toString()} />}
+            {cycleId && !isSidebarCollapsed && (
+              <div
+                className="flex flex-col gap-3.5 h-full w-[24rem] overflow-y-auto border-l border-custom-border-100 bg-custom-sidebar-background-100 px-6 py-3.5 duration-300 flex-shrink-0"
+                style={{
+                  boxShadow:
+                    "0px 1px 4px 0px rgba(0, 0, 0, 0.06), 0px 2px 4px 0px rgba(16, 24, 40, 0.06), 0px 1px 8px -1px rgba(16, 24, 40, 0.06)",
+                }}
+              >
+                <CycleDetailsSidebar cycleId={cycleId.toString()} handleClose={toggleSidebar} />
+              </div>
+            )}
           </div>
         </>
       )}
+    </>
+  );
+};
+
+CycleDetailPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<CycleIssuesHeader />} withProjectWrapper>
+      {page}
     </AppLayout>
   );
 };
 
-export default SingleCycle;
+export default CycleDetailPage;

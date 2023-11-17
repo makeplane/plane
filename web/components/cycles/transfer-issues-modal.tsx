@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
 // fetch-key
-import { CYCLE_ISSUES_WITH_PARAMS, INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
+import { INCOMPLETE_CYCLES_LIST } from "constants/fetch-keys";
 // types
 import { ICycle } from "types";
 //helper
@@ -30,15 +29,12 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { params } = useIssuesView();
-
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
     await cycleService
       .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then(() => {
-        mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
         setToastAlert({
           type: "success",
           title: "Issues transfered successfully",
@@ -86,7 +82,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10">
@@ -100,7 +96,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-90 py-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 py-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between px-5">
                     <div className="flex items-center gap-3">

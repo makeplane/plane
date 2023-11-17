@@ -1,32 +1,24 @@
 import React, { useEffect } from "react";
-import { mutate } from "swr";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // icons
 import { Plus, X } from "lucide-react";
 // types
-import { IUser } from "types";
+import { IWorkspaceBulkInviteFormData, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
-import { WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  workspace_slug: string;
-  user: IUser | undefined;
-  onSuccess: () => void;
+  onClose: () => void;
+  onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
 };
 
 type EmailRole = {
   email: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
 };
 
 type FormValues = {
@@ -42,10 +34,10 @@ const defaultValues: FormValues = {
   ],
 };
 
-const workspaceService = new WorkspaceService();
+export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
+  const { isOpen, onClose, onSubmit } = props;
 
-const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
-  const { isOpen, setIsOpen, workspace_slug, user, onSuccess } = props;
+  // form info
   const {
     control,
     reset,
@@ -58,55 +50,45 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     name: "emails",
   });
 
-  const { setToastAlert } = useToast();
-
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
+
     const timeout = setTimeout(() => {
       reset(defaultValues);
       clearTimeout(timeout);
-    }, 500);
+    }, 350);
   };
 
-  const onSubmit = async (formData: FormValues) => {
-    if (!workspace_slug) return;
+  // const onSubmit = async (formData: FormValues) => {
+  //   if (!workspaceSlug) return;
 
-    const payload = { ...formData };
+  //   return workspaceService
+  //     .inviteWorkspace(workspaceSlug, formData, user)
 
-    await workspaceService
-      .inviteWorkspace(workspace_slug, payload, user)
-      .then(async () => {
-        setIsOpen(false);
-        handleClose();
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Invitations sent successfully.",
-        });
-        onSuccess();
-      })
-      .catch((err) => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: `${err.error}`,
-        });
-        console.log(err);
-      })
-      .finally(() => {
-        reset(defaultValues);
-        mutate(WORKSPACE_INVITATIONS);
-      });
-  };
+  //     .then(async () => {
+  //       if (onSuccess) await onSuccess();
+  //       handleClose();
+  //       setToastAlert({
+  //         type: "success",
+  //         title: "Success!",
+  //         message: "Invitations sent successfully.",
+  //       });
+  //     })
+  //     .catch((err) =>
+  //       setToastAlert({
+  //         type: "error",
+  //         title: "Error!",
+  //         message: `${err.error ?? "Something went wrong. Please try again."}`,
+  //       })
+  //     );
+  // };
 
   const appendField = () => {
     append({ email: "", role: 15 });
   };
 
   useEffect(() => {
-    if (fields.length === 0) {
-      append([{ email: "", role: 15 }]);
-    }
+    if (fields.length === 0) append([{ email: "", role: 15 }]);
   }, [fields, append]);
 
   return (
@@ -121,7 +103,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -135,7 +117,7 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-100 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl opacity-100 translate-y-0 sm:scale-100">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl opacity-100 translate-y-0 sm:scale-100">
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   onKeyDown={(e) => {
@@ -232,10 +214,10 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                       Add more
                     </button>
                     <div className="flex items-center gap-2">
-                      <Button variant="neutral-primary" onClick={handleClose}>
+                      <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                         Cancel
                       </Button>
-                      <Button variant="primary" type="submit" loading={isSubmitting}>
+                      <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {isSubmitting ? "Sending Invitation..." : "Send Invitation"}
                       </Button>
                     </div>
@@ -249,5 +231,3 @@ const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
     </Transition.Root>
   );
 };
-
-export default SendWorkspaceInvitationModal;

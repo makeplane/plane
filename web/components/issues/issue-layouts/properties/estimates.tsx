@@ -1,217 +1,172 @@
-import React from "react";
-// headless ui
-import { Combobox } from "@headlessui/react";
-// lucide icons
-import { ChevronDown, Search, X, Check, Triangle } from "lucide-react";
-// mobx
+import { Fragment, useState } from "react";
+import { usePopper } from "react-popper";
 import { observer } from "mobx-react-lite";
-// components
+import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, Triangle } from "lucide-react";
+// ui
 import { Tooltip } from "@plane/ui";
-// hooks
-import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
-// mobx
+// types
+import { Placement } from "@popperjs/core";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
-
-interface IFiltersOption {
-  id: string;
-  title: string;
-  key: string;
-}
 
 export interface IIssuePropertyEstimates {
-  value?: any;
-  onChange?: (id: any) => void;
+  view?: "profile" | "workspace" | "project";
+  projectId: string | null;
+  value: number | null;
+  onChange: (value: number | null) => void;
   disabled?: boolean;
-
-  workspaceSlug?: string;
-  projectId?: string;
-
+  hideDropdownArrow?: boolean;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
-  dropdownArrow?: boolean;
+  placement?: Placement;
 }
 
-export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observer(
-  ({
+export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observer((props) => {
+  const {
+    projectId,
     value,
     onChange,
     disabled,
+    hideDropdownArrow = false,
+    className = "",
+    buttonClassName = "",
+    optionsClassName = "",
+    placement,
+  } = props;
 
-    workspaceSlug,
-    projectId,
+  const [query, setQuery] = useState("");
 
-    className,
-    buttonClassName,
-    optionsClassName,
-    dropdownArrow = true,
-  }) => {
-    const { project: projectStore }: RootStore = useMobxStore();
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
-    const dropdownBtn = React.useRef<any>(null);
-    const dropdownOptions = React.useRef<any>(null);
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
 
-    const [isOpen, setIsOpen] = React.useState<boolean>(false);
-    const [search, setSearch] = React.useState<string>("");
+  const { project: projectStore } = useMobxStore();
 
-    const projectDetail =
-      (workspaceSlug && projectId && projectStore?.getProjectById(workspaceSlug, projectId)) || null;
-    const projectEstimateId = (projectDetail && projectDetail?.estimate) || null;
-    const estimates = (projectEstimateId && projectStore?.getProjectEstimateById(projectEstimateId)) || null;
+  const projectDetails = projectId ? projectStore.project_details[projectId] : null;
+  const isEstimateEnabled = projectDetails?.estimate !== null;
+  const estimates = projectId ? projectStore.estimates?.[projectId] : null;
+  const estimatePoints =
+    projectDetails && isEstimateEnabled ? estimates?.find((e) => e.id === projectDetails.estimate)?.points : null;
 
-    const options: IFiltersOption[] | [] =
-      (estimates &&
-        estimates.points &&
-        estimates.points.length > 0 &&
-        estimates.points.map((_estimate) => ({
-          id: _estimate?.id,
-          title: _estimate?.value,
-          key: _estimate?.key.toString(),
-        }))) ||
-      [];
+  const options: { value: number | null; query: string; content: any }[] | undefined = (estimatePoints ?? []).map(
+    (estimate) => ({
+      value: estimate.key,
+      query: estimate.value,
+      content: (
+        <div className="flex items-center gap-2">
+          <Triangle className="h-3 w-3" strokeWidth={2} />
+          {estimate.value}
+        </div>
+      ),
+    })
+  );
+  options?.unshift({
+    value: null,
+    query: "none",
+    content: (
+      <div className="flex items-center gap-2">
+        <Triangle className="h-3 w-3" strokeWidth={2} />
+        None
+      </div>
+    ),
+  });
 
-    useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
+  const filteredOptions =
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
-    const selectedOption: IFiltersOption | null | undefined =
-      (value && options.find((_estimate: IFiltersOption) => _estimate.key === value)) || null;
+  const selectedEstimate = estimatePoints?.find((e) => e.key === value);
+  const label = (
+    <Tooltip tooltipHeading="Estimate" tooltipContent={selectedEstimate?.value ?? "None"} position="top">
+      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+        <Triangle className="h-3 w-3" strokeWidth={2} />
+        <span className="truncate">{selectedEstimate?.value ?? "None"}</span>
+      </div>
+    </Tooltip>
+  );
 
-    const filteredOptions: IFiltersOption[] =
-      search === ""
-        ? options && options.length > 0
-          ? options
-          : []
-        : options && options.length > 0
-        ? options.filter((_estimate: IFiltersOption) =>
-            _estimate.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
-          )
-        : [];
+  if (!isEstimateEnabled) return null;
 
-    return (
-      <Combobox
-        as="div"
-        className={`${className}`}
-        value={selectedOption && selectedOption.key}
-        onChange={(data: string) => {
-          if (onChange) onChange(data);
-        }}
-        disabled={disabled}
-      >
-        {({ open }: { open: boolean }) => {
-          if (open) {
-            if (!isOpen) setIsOpen(true);
-          } else if (isOpen) setIsOpen(false);
-
-          return (
-            <>
-              <Combobox.Button
-                ref={dropdownBtn}
-                type="button"
-                className={`flex items-center justify-between gap-1 px-1 py-0.5 rounded-sm shadow-sm border border-custom-border-300 duration-300 outline-none ${
-                  disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-                } ${buttonClassName}`}
-              >
-                {selectedOption ? (
-                  <Tooltip tooltipHeading={`Estimates`} tooltipContent={selectedOption?.title}>
-                    <div className="flex-shrink-0 flex justify-center items-center gap-1">
-                      <div className="flex-shrink-0 w-[12px] h-[12px] flex justify-center items-center">
-                        <Triangle width={14} strokeWidth={2} />
-                      </div>
-                      <div className="pl-0.5 pr-1 text-xs">{selectedOption?.title}</div>
-                    </div>
-                  </Tooltip>
-                ) : (
-                  <Tooltip tooltipHeading={`Estimates`} tooltipContent={``}>
-                    <div className="text-xs">Select Estimates</div>
-                  </Tooltip>
-                )}
-
-                {dropdownArrow && !disabled && (
-                  <div className="flex-shrink-0 w-[14px] h-[14px] flex justify-center items-center">
-                    <ChevronDown width={14} strokeWidth={2} />
-                  </div>
-                )}
-              </Combobox.Button>
-
-              <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
-                <Combobox.Options
-                  ref={dropdownOptions}
-                  className={`absolute z-10 border border-custom-border-300 p-2 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none whitespace-nowrap mt-1 space-y-1 ${optionsClassName}`}
-                >
-                  {options && options.length > 0 ? (
-                    <>
-                      <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-1">
-                        <div className="flex-shrink-0 flex justify-center items-center w-[16px] h-[16px] rounded-sm">
-                          <Search width={12} strokeWidth={2} />
-                        </div>
-
-                        <div>
-                          <Combobox.Input
-                            className="w-full bg-transparent p-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search"
-                            displayValue={(assigned: any) => assigned?.name}
-                          />
-                        </div>
-
-                        {search && search.length > 0 && (
-                          <div
-                            onClick={() => setSearch("")}
-                            className="flex-shrink-0 flex justify-center items-center w-[16px] h-[16px] rounded-sm cursor-pointer hover:bg-custom-background-80"
-                          >
-                            <X width={12} strokeWidth={2} />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={`space-y-0.5 max-h-48 overflow-y-scroll`}>
-                        {filteredOptions ? (
-                          filteredOptions.length > 0 ? (
-                            filteredOptions.map((option) => (
-                              <Combobox.Option
-                                key={option.key}
-                                value={option.key}
-                                className={({ active, selected }) =>
-                                  `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                    active || selected ? "bg-custom-background-80" : ""
-                                  } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                                }
-                              >
-                                {({ selected }) => (
-                                  <div className="flex items-center gap-1 w-full px-1">
-                                    <div className="flex-shrink-0 w-[13px] h-[13px] flex justify-center items-center">
-                                      <Triangle width={14} strokeWidth={2} />
-                                    </div>
-                                    <div className="line-clamp-1">{option.title}</div>
-                                    {selected && (
-                                      <div className="flex-shrink-0 ml-auto w-[13px] h-[13px] flex justify-center items-center">
-                                        <Check width={13} strokeWidth={2} />
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-                              </Combobox.Option>
-                            ))
-                          ) : (
-                            <span className="flex items-center gap-2 p-1">
-                              <p className="text-left text-custom-text-200 ">No matching results</p>
-                            </span>
-                          )
-                        ) : (
-                          <p className="text-center text-custom-text-200">Loading...</p>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-center text-custom-text-200">No options available.</p>
-                  )}
-                </Combobox.Options>
-              </div>
-            </>
-          );
-        }}
-      </Combobox>
-    );
-  }
-);
+  return (
+    <Combobox
+      as="div"
+      className={`flex-shrink-0 text-left ${className}`}
+      value={value}
+      onChange={(val) => onChange(val as number | null)}
+      disabled={disabled}
+    >
+      <Combobox.Button as={Fragment}>
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={`flex items-center justify-between gap-1 h-5 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
+            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+          } ${buttonClassName}`}
+        >
+          {label}
+          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+        </button>
+      </Combobox.Button>
+      <Combobox.Options className="fixed z-10">
+        <div
+          className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+            <Search className="h-3.5 w-3.5 text-custom-text-300" />
+            <Combobox.Input
+              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              displayValue={(assigned: any) => assigned?.name}
+            />
+          </div>
+          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+            {filteredOptions ? (
+              filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <Combobox.Option
+                    key={option.value}
+                    value={option.value}
+                    className={({ active, selected }) =>
+                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                        active ? "bg-custom-background-80" : ""
+                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    }
+                  >
+                    {({ selected }) => (
+                      <>
+                        {option.content}
+                        {selected && <Check className="h-3.5 w-3.5" />}
+                      </>
+                    )}
+                  </Combobox.Option>
+                ))
+              ) : (
+                <span className="flex items-center gap-2 p-1">
+                  <p className="text-left text-custom-text-200 ">No matching results</p>
+                </span>
+              )
+            ) : (
+              <p className="text-center text-custom-text-200">Loading...</p>
+            )}
+          </div>
+        </div>
+      </Combobox.Options>
+    </Combobox>
+  );
+});

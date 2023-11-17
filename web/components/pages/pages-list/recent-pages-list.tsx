@@ -1,19 +1,18 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-
+import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { PageService } from "services/page.service";
 // components
 import { PagesView } from "components/pages";
-// ui
 import { EmptyState } from "components/common";
+// ui
 import { Loader } from "@plane/ui";
-// icons
-import { Plus } from "lucide-react";
-// images
+// assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
@@ -26,7 +25,11 @@ import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 // services
 const pageService = new PageService();
 
-export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
+export const RecentPagesList: React.FC<TPagesListProps> = observer((props) => {
+  const { viewType } = props;
+
+  const { commandPalette: commandPaletteStore } = useMobxStore();
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
@@ -59,12 +62,7 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
               text: "New Page",
-              onClick: () => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "d",
-                });
-                document.dispatchEvent(e);
-              },
+              onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
           />
         )
@@ -77,4 +75,4 @@ export const RecentPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
       )}
     </>
   );
-};
+});

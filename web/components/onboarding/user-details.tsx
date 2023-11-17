@@ -1,16 +1,12 @@
 import { useEffect } from "react";
-import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
-// hooks
-import useToast from "hooks/use-toast";
-// services
-import { UserService } from "services/user.service";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
 // types
 import { IUser } from "types";
-// fetch-keys
-import { CURRENT_USER } from "constants/fetch-keys";
 // helpers
 import { getUserTimeZoneFromWindow } from "helpers/date-time.helper";
 // constants
@@ -33,10 +29,10 @@ const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
   content: timeZone.label,
 }));
 
-const userService = new UserService();
+export const UserDetails: React.FC<Props> = observer((props) => {
+  const { user } = props;
 
-export const UserDetails: React.FC<Props> = ({ user }) => {
-  const { setToastAlert } = useToast();
+  const { user: userStore } = useMobxStore();
 
   const {
     handleSubmit,
@@ -58,31 +54,7 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
       },
     };
 
-    await userService
-      .updateUser(payload)
-      .then(() => {
-        mutate<IUser>(
-          CURRENT_USER,
-          (prevData) => {
-            if (!prevData) return prevData;
-
-            return {
-              ...prevData,
-              ...payload,
-            };
-          },
-          false
-        );
-
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Details updated successfully.",
-        });
-      })
-      .catch(() => {
-        mutate(CURRENT_USER);
-      });
+    await userStore.updateCurrentUser(payload);
   };
 
   useEffect(() => {
@@ -217,4 +189,4 @@ export const UserDetails: React.FC<Props> = ({ user }) => {
       </Button>
     </form>
   );
-};
+});

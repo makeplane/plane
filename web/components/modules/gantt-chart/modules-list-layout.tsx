@@ -1,65 +1,26 @@
-import { FC } from "react";
-
 import { useRouter } from "next/router";
-
-import { KeyedMutator } from "swr";
-
-// services
-import { ModuleService } from "services/module.service";
-// hooks
-import useUser from "hooks/use-user";
-import useProjectDetails from "hooks/use-project-details";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { GanttChartRoot, IBlockUpdateData } from "components/gantt-chart";
-import { ModuleGanttBlock, ModuleGanttSidebarBlock } from "components/modules";
+import { GanttChartRoot, IBlockUpdateData, ModuleGanttSidebar } from "components/gantt-chart";
+import { ModuleGanttBlock } from "components/modules";
 // types
 import { IModule } from "types";
 
-type Props = {
-  modules: IModule[];
-  mutateModules: KeyedMutator<IModule[]>;
-};
-
-// services
-const moduleService = new ModuleService();
-
-export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules }) => {
+export const ModulesListGanttChartView: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user } = useUser();
-  const { projectDetails } = useProjectDetails();
+  // store
+  const { project: projectStore, module: moduleStore } = useMobxStore();
+  const { currentProjectDetails } = projectStore;
+  const modules = moduleStore.projectModules;
 
   const handleModuleUpdate = (module: IModule, payload: IBlockUpdateData) => {
-    if (!workspaceSlug || !user) return;
+    if (!workspaceSlug) return;
 
-    mutateModules((prevData: any) => {
-      if (!prevData) return prevData;
-
-      const newList = prevData.map((p: any) => ({
-        ...p,
-        ...(p.id === module.id
-          ? {
-              start_date: payload.start_date ? payload.start_date : p.start_date,
-              target_date: payload.target_date ? payload.target_date : p.target_date,
-              sort_order: payload.sort_order ? payload.sort_order.newSortOrder : p.sort_order,
-            }
-          : {}),
-      }));
-
-      if (payload.sort_order) {
-        const removedElement = newList.splice(payload.sort_order.sourceIndex, 1)[0];
-        newList.splice(payload.sort_order.destinationIndex, 0, removedElement);
-      }
-
-      return newList;
-    }, false);
-
-    const newPayload: any = { ...payload };
-
-    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
-
-    moduleService.patchModule(workspaceSlug.toString(), module.project, module.id, newPayload, user);
+    moduleStore.updateModuleGanttStructure(workspaceSlug.toString(), module.project, module, payload);
   };
 
   const blockFormat = (blocks: IModule[]) =>
@@ -75,7 +36,7 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
           }))
       : [];
 
-  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+  const isAllowed = currentProjectDetails?.member_role === 20 || currentProjectDetails?.member_role === 15;
 
   return (
     <div className="w-full h-full overflow-y-auto">
@@ -83,9 +44,9 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
         title="Modules"
         loaderTitle="Modules"
         blocks={modules ? blockFormat(modules) : null}
+        sidebarToRender={(props) => <ModuleGanttSidebar {...props} />}
         blockUpdateHandler={(block, payload) => handleModuleUpdate(block, payload)}
-        SidebarBlockRender={ModuleGanttSidebarBlock}
-        BlockRender={ModuleGanttBlock}
+        blockToRender={(data: IModule) => <ModuleGanttBlock data={data} />}
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
@@ -93,4 +54,4 @@ export const ModulesListGanttChartView: FC<Props> = ({ modules, mutateModules })
       />
     </div>
   );
-};
+});

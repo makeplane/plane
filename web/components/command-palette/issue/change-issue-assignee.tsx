@@ -1,19 +1,19 @@
 import { Dispatch, SetStateAction, useCallback, FC } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Command } from "cmdk";
+import { Check } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService } from "services/issue";
-// hooks
-import useProjectMembers from "hooks/use-project-members";
-// constants
-import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 // ui
-import { Avatar } from "components/ui";
-// icons
-import { Check } from "lucide-react";
+import { Avatar } from "@plane/ui";
 // types
 import { IUser, IIssue } from "types";
+// constants
+import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
 type Props = {
   setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
@@ -24,20 +24,24 @@ type Props = {
 // services
 const issueService = new IssueService();
 
-export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
+export const ChangeIssueAssignee: FC<Props> = observer((props) => {
+  const { setIsPaletteOpen, issue, user } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
-  const { members } = useProjectMembers(workspaceSlug as string, projectId as string);
+  // store
+  const {
+    projectMember: { projectMembers },
+  } = useMobxStore();
 
   const options =
-    members?.map(({ member }: any) => ({
+    projectMembers?.map(({ member }) => ({
       value: member.id,
       query: member.display_name,
       content: (
         <>
           <div className="flex items-center gap-2">
-            <Avatar user={member} />
+            <Avatar name={member.display_name} src={member.avatar} showTooltip={false} />
             {member.display_name}
           </div>
           {issue.assignees.includes(member.id) && (
@@ -79,7 +83,7 @@ export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }
   );
 
   const handleIssueAssignees = (assignee: string) => {
-    const updatedAssignees = issue.assignees_list ?? [];
+    const updatedAssignees = issue.assignees ?? [];
 
     if (updatedAssignees.includes(assignee)) {
       updatedAssignees.splice(updatedAssignees.indexOf(assignee), 1);
@@ -87,7 +91,7 @@ export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }
       updatedAssignees.push(assignee);
     }
 
-    updateIssue({ assignees_list: updatedAssignees });
+    updateIssue({ assignees: updatedAssignees });
     setIsPaletteOpen(false);
   };
 
@@ -104,4 +108,4 @@ export const ChangeIssueAssignee: FC<Props> = ({ setIsPaletteOpen, issue, user }
       ))}
     </>
   );
-};
+});

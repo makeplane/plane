@@ -1,20 +1,28 @@
+import { ReactElement } from "react";
+// layout
+import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
+import { WorkspaceSettingHeader } from "components/headers";
 import ExportGuide from "components/exporter/guide";
 // types
-import type { NextPage } from "next";
-// helper
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
-import { WorkspaceSettingHeader } from "components/headers";
+import { NextPageWithLayout } from "types/app";
 
-const ImportExport: NextPage = () => (
-  <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
-    <div className="pr-9 py-8 w-full overflow-y-auto">
-      <div className="flex items-center py-3.5 border-b border-custom-border-200">
-        <h3 className="text-xl font-medium">Exports</h3>
-      </div>
-      <ExportGuide />
+const ExportsPage: NextPageWithLayout = () => (
+  <div className="pr-9 py-8 w-full overflow-y-auto">
+    <div className="flex items-center py-3.5 border-b border-custom-border-100">
+      <h3 className="text-xl font-medium">Exports</h3>
     </div>
-  </WorkspaceSettingLayout>
+    <ExportGuide />
+  </div>
 );
 
-export default ImportExport;
+ExportsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="Export Settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default ExportsPage;

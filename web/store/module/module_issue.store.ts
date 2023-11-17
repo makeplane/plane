@@ -1,21 +1,19 @@
 import { observable, action, computed, makeObservable, runInAction, autorun } from "mobx";
 // store
 import { RootStore } from "../root";
-// types
-import { IIssue } from "types";
 // services
 import { ModuleService } from "services/module.service";
 // helpers
 import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
-
-export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
-export type IIssueGroupedStructure = { [group_id: string]: IIssue[] };
-export type IIssueGroupWithSubGroupsStructure = {
-  [group_id: string]: {
-    [sub_group_id: string]: IIssue[];
-  };
-};
-export type IIssueUnGroupedStructure = IIssue[];
+// types
+import { IIssue } from "types";
+import { IBlockUpdateData } from "components/gantt-chart";
+import {
+  IIssueGroupWithSubGroupsStructure,
+  IIssueGroupedStructure,
+  IIssueType,
+  IIssueUnGroupedStructure,
+} from "store/issue";
 
 export interface IModuleIssueStore {
   loader: boolean;
@@ -31,11 +29,18 @@ export interface IModuleIssueStore {
   // computed
   getIssueType: IIssueType | null;
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
+  getIssuesCount: number;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
+  updateGanttIssueStructure: (
+    workspaceSlug: string,
+    moduleId: string,
+    issue: IIssue,
+    payload: IBlockUpdateData
+  ) => void;
   deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<any>;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromModule: (workspaceSlug: string, projectId: string, moduleId: string, bridgeId: string) => Promise<any>;
 }
 
@@ -69,9 +74,11 @@ export class ModuleIssueStore implements IModuleIssueStore {
       // computed
       getIssueType: computed,
       getIssues: computed,
+      getIssuesCount: computed,
       // actions
       fetchIssues: action,
       updateIssueStructure: action,
+      updateGanttIssueStructure: action,
       deleteIssue: action,
       addIssueToModule: action,
       removeIssueFromModule: action,
@@ -124,6 +131,44 @@ export class ModuleIssueStore implements IModuleIssueStore {
     return this.issues?.[moduleId]?.[issueType] || null;
   }
 
+  get getIssuesCount() {
+    const issueType = this.getIssueType;
+
+    let issuesCount = 0;
+
+    if (issueType === "grouped") {
+      const issues = this.getIssues as IIssueGroupedStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((group_id) => {
+        issuesCount += issues[group_id].length;
+      });
+    }
+
+    if (issueType === "groupWithSubGroups") {
+      const issues = this.getIssues as IIssueGroupWithSubGroupsStructure;
+
+      if (!issues) return 0;
+
+      Object.keys(issues).map((sub_group_id) => {
+        Object.keys(issues[sub_group_id]).map((group_id) => {
+          issuesCount += issues[sub_group_id][group_id].length;
+        });
+      });
+    }
+
+    if (issueType === "ungrouped") {
+      const issues = this.getIssues as IIssueUnGroupedStructure;
+
+      if (!issues) return 0;
+
+      issuesCount = issues.length;
+    }
+
+    return issuesCount;
+  }
+
   updateIssueStructure = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
     const moduleId: string | null = this.rootStore?.module?.moduleId;
     const issueType = this.getIssueType;
@@ -172,6 +217,50 @@ export class ModuleIssueStore implements IModuleIssueStore {
     runInAction(() => {
       this.issues = { ...this.issues, [moduleId]: { ...this.issues[moduleId], [issueType]: issues } };
     });
+  };
+
+  updateGanttIssueStructure = async (
+    workspaceSlug: string,
+    moduleId: string,
+    issue: IIssue,
+    payload: IBlockUpdateData
+  ) => {
+    if (!issue || !workspaceSlug) return;
+
+    const issues = this.getIssues as IIssueUnGroupedStructure;
+
+    const newIssues = issues.map((i) => ({
+      ...i,
+      ...(i.id === issue.id
+        ? {
+            sort_order: payload.sort_order?.newSortOrder ?? i.sort_order,
+            start_date: payload.start_date,
+            target_date: payload.target_date,
+          }
+        : {}),
+    }));
+
+    if (payload.sort_order) {
+      const removedElement = newIssues.splice(payload.sort_order.sourceIndex, 1)[0];
+      removedElement.sort_order = payload.sort_order.newSortOrder;
+      newIssues.splice(payload.sort_order.destinationIndex, 0, removedElement);
+    }
+
+    runInAction(() => {
+      this.issues = {
+        ...this.issues,
+        [moduleId]: {
+          ...this.issues[moduleId],
+          ungrouped: newIssues,
+        },
+      };
+    });
+
+    const newPayload: any = { ...payload };
+
+    if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
+
+    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
@@ -248,7 +337,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
     }
   };
 
-  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
+  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
       const user = this.rootStore.user.currentUser ?? undefined;
 
@@ -257,7 +346,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
         projectId,
         moduleId,
         {
-          issues: [issueId],
+          issues: issueIds,
         },
         user
       );

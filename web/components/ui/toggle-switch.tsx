@@ -30,11 +30,7 @@ export const ToggleSwitch: React.FC<Props> = (props) => {
           size === "sm" ? "h-2 w-2" : size === "md" ? "h-3 w-3" : "h-4 w-4"
         } transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
           value
-            ? (size === "sm"
-                ? "translate-x-3"
-                : size === "md"
-                ? "translate-x-4"
-                : "translate-x-5") + " bg-white"
+            ? (size === "sm" ? "translate-x-3" : size === "md" ? "translate-x-4" : "translate-x-5") + " bg-white"
             : "translate-x-0.5 bg-custom-background-90"
         } ${disabled ? "cursor-not-allowed" : ""}`}
       />

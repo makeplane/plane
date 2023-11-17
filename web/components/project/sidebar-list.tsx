@@ -1,19 +1,17 @@
 import React, { useState, FC, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-import { DragDropContext, Draggable, DropResult, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
 
 // icons
 import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // helpers
-import { copyTextToClipboard } from "helpers/string.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
@@ -21,23 +19,18 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectSidebarList: FC = observer(() => {
-  const { theme: themeStore, project: projectStore } = useMobxStore();
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-  // swr
-  useSWR(
-    workspaceSlug ? "PROJECTS_LIST" : null,
-    workspaceSlug ? () => projectStore.fetchProjects(workspaceSlug?.toString()) : null
-  );
   // states
   const [isFavoriteProjectCreate, setIsFavoriteProjectCreate] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-  // user
-  const { user } = useUserAuth();
+
+  const { theme: themeStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   // toast
   const { setToastAlert } = useToast();
 
@@ -53,8 +46,7 @@ export const ProjectSidebarList: FC = observer(() => {
     : undefined;
 
   const handleCopyText = (projectId: string) => {
-    const originURL = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
-    copyTextToClipboard(`${originURL}/${workspaceSlug}/projects/${projectId}/issues`).then(() => {
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
       setToastAlert({
         type: "success",
         title: "Link Copied!",
@@ -129,7 +121,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedFavProjects && orderedFavProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
@@ -157,29 +149,38 @@ export const ProjectSidebarList: FC = observer(() => {
                             </button>
                           </div>
                         )}
-                        <Disclosure.Panel as="div" className="space-y-2">
-                          {orderedFavProjects.map((project, index) => (
-                            <Draggable
-                              key={project.id}
-                              draggableId={project.id}
-                              index={index}
-                              isDragDisabled={!project.is_member}
-                            >
-                              {(provided, snapshot) => (
-                                <div ref={provided.innerRef} {...provided.draggableProps}>
-                                  <ProjectSidebarListItem
-                                    key={project.id}
-                                    project={project}
-                                    provided={provided}
-                                    snapshot={snapshot}
-                                    handleCopyText={() => handleCopyText(project.id)}
-                                    shortContextMenu
-                                  />
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        </Disclosure.Panel>
+                        <Transition
+                          enter="transition duration-100 ease-out"
+                          enterFrom="transform scale-95 opacity-0"
+                          enterTo="transform scale-100 opacity-100"
+                          leave="transition duration-75 ease-out"
+                          leaveFrom="transform scale-100 opacity-100"
+                          leaveTo="transform scale-95 opacity-0"
+                        >
+                          <Disclosure.Panel as="div" className="space-y-2">
+                            {orderedFavProjects.map((project, index) => (
+                              <Draggable
+                                key={project.id}
+                                draggableId={project.id}
+                                index={index}
+                                isDragDisabled={!project.is_member}
+                              >
+                                {(provided, snapshot) => (
+                                  <div ref={provided.innerRef} {...provided.draggableProps}>
+                                    <ProjectSidebarListItem
+                                      key={project.id}
+                                      project={project}
+                                      provided={provided}
+                                      snapshot={snapshot}
+                                      handleCopyText={() => handleCopyText(project.id)}
+                                      shortContextMenu
+                                    />
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                          </Disclosure.Panel>
+                        </Transition>
                         {provided.placeholder}
                       </>
                     )}
@@ -194,7 +195,7 @@ export const ProjectSidebarList: FC = observer(() => {
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {orderedJoinedProjects && orderedJoinedProjects.length > 0 && (
-                  <Disclosure as="div" className="flex flex-col" defaultOpen={true}>
+                  <Disclosure as="div" className="flex flex-col" defaultOpen>
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
@@ -262,12 +263,7 @@ export const ProjectSidebarList: FC = observer(() => {
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            }}
+            onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
           >
             <Plus className="h-5 w-5" />
             {!isCollapsed && "Add Project"}

@@ -18,6 +18,7 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   handleClose: () => void;
@@ -54,6 +55,8 @@ export const CreateUpdateBlockInline: FC<Props> = ({
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
+
+  const editorSuggestion = useEditorSuggestions();
 
   const { setToastAlert } = useToast();
 
@@ -292,6 +295,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
                 if (!data)
                   return (
                     <RichTextEditorWithRef
+                      cancelUploadImage={fileService.cancelUpload}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
                       ref={editorRef}
@@ -304,6 +308,8 @@ export const CreateUpdateBlockInline: FC<Props> = ({
                         onChange(description_html);
                         setValue("description", description);
                       }}
+                      mentionHighlights={editorSuggestion.mentionHighlights}
+                      mentionSuggestions={editorSuggestion.mentionSuggestions}
                     />
                   );
                 else if (!value || !watch("description_html"))
@@ -311,6 +317,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({
 
                 return (
                   <RichTextEditorWithRef
+                    cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
                     ref={editorRef}

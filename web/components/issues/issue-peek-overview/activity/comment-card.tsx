@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
 // services
 import { FileService } from "services/file.service";
@@ -23,6 +24,7 @@ type IIssueCommentCard = {
   showAccessSpecifier?: boolean;
   workspaceSlug: string;
   projectId: string;
+  issueId: string;
   user: any;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
@@ -36,6 +38,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
     showAccessSpecifier = false,
     workspaceSlug,
     projectId,
+    issueId,
     user,
     issueCommentReactionCreate,
     issueCommentReactionRemove,
@@ -45,6 +48,8 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
   const showEditorRef = React.useRef<any>(null);
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     formState: { isSubmitting },
@@ -109,6 +114,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
             <div>
               <LiteTextEditorWithRef
                 onEnterKeyPress={handleSubmit(formSubmit)}
+                cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 ref={editorRef}
@@ -119,6 +125,8 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
                   setValue("comment_json", comment_json);
                   setValue("comment_html", comment_html);
                 }}
+                mentionSuggestions={editorSuggestions.mentionSuggestions}
+                mentionHighlights={editorSuggestions.mentionHighlights}
               />
             </div>
             <div className="flex gap-1 self-end">
@@ -151,12 +159,14 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
               ref={showEditorRef}
               value={comment.comment_html}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+              mentionHighlights={editorSuggestions.mentionHighlights}
             />
 
             <div className="mt-1">
               <IssueCommentReaction
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
+                issueId={issueId}
                 user={user}
                 comment={comment}
                 issueCommentReactionCreate={issueCommentReactionCreate}

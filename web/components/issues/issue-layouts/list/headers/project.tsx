@@ -21,7 +21,12 @@ export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
   return (
     <>
       {project && (
-        <HeaderGroupByCard icon={<Icon emoji={project?.emoji} />} title={project?.name || ""} count={issues_count} />
+        <HeaderGroupByCard
+          icon={<Icon emoji={project?.emoji} />}
+          title={project?.name || ""}
+          count={issues_count}
+          issuePayload={{ project: project?.id ?? "" }}
+        />
       )}
     </>
   );

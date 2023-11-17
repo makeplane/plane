@@ -6,14 +6,20 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useProjectDetails from "hooks/use-project-details";
 // components
-import { GanttChartRoot, renderIssueBlocksStructure } from "components/gantt-chart";
-import { IssueGanttBlock, IssueGanttSidebarBlock, IssuePeekOverview } from "components/issues";
+import { IssueGanttBlock } from "components/issues";
+import {
+  GanttChartRoot,
+  IBlockUpdateData,
+  renderIssueBlocksStructure,
+  ProjectViewGanttSidebar,
+} from "components/gantt-chart";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssue } from "types";
 
 export const ProjectViewGanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, viewId } = router.query;
 
   const { projectDetails } = useProjectDetails();
 
@@ -23,28 +29,25 @@ export const ProjectViewGanttLayout: React.FC = observer(() => {
 
   const issues = projectViewIssuesStore.getIssues;
 
+  const updateIssue = (block: any, payload: IBlockUpdateData) => {
+    if (!workspaceSlug || !viewId) return;
+
+    projectViewIssuesStore.updateGanttIssueStructure(workspaceSlug.toString(), viewId.toString(), block, payload);
+  };
+
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
   return (
     <>
-      <IssuePeekOverview
-        projectId={projectId?.toString() ?? ""}
-        workspaceSlug={workspaceSlug?.toString() ?? ""}
-        readOnly={!isAllowed}
-      />
       <div className="w-full h-full">
         <GanttChartRoot
           border={false}
           title="Issues"
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          blockUpdateHandler={(block, payload) => {
-            // TODO: update mutation logic
-            // updateGanttIssue(block, payload, mutateGanttIssues, user, workspaceSlug?.toString())
-          }}
-          BlockRender={IssueGanttBlock}
-          SidebarBlockRender={IssueGanttSidebarBlock}
+          blockUpdateHandler={updateIssue}
+          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
+          sidebarToRender={(props) => <ProjectViewGanttSidebar {...props} />}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}

@@ -11,23 +11,22 @@ from django.db.models import (
     Q,
     Exists,
     OuterRef,
-    Func,
     F,
     Func,
     Subquery,
 )
 from django.core.validators import validate_email
 from django.conf import settings
+from django.utils import timezone
 
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import serializers
 from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView
+from .base import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.api.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
@@ -35,12 +34,12 @@ from plane.api.serializers import (
     ProjectDetailSerializer,
     ProjectMemberInviteSerializer,
     ProjectFavoriteSerializer,
-    IssueLiteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
 )
 
 from plane.api.permissions import (
+    WorkspaceUserPermission,
     ProjectBasePermission,
     ProjectEntityPermission,
     ProjectMemberPermission,
@@ -60,30 +59,25 @@ from plane.db.models import (
     ProjectIdentifier,
     Module,
     Cycle,
-    CycleFavorite,
-    ModuleFavorite,
-    PageFavorite,
-    IssueViewFavorite,
-    Page,
-    IssueAssignee,
-    ModuleMember,
     Inbox,
     ProjectDeployBoard,
+    IssueProperty,
 )
 
 from plane.bgtasks.project_invitation_task import project_invitation
 
 
-class ProjectViewSet(BaseViewSet):
+class ProjectViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ProjectSerializer
     model = Project
+    webhook_event = "project"
 
     permission_classes = [
         ProjectBasePermission,
     ]
 
     def get_serializer_class(self, *args, **kwargs):
-        if self.action == "update" or self.action == "partial_update":
+        if self.action in ["update", "partial_update"]:
             return ProjectSerializer
         return ProjectDetailSerializer
 
@@ -111,12 +105,15 @@ class ProjectViewSet(BaseViewSet):
                         member=self.request.user,
                         project_id=OuterRef("pk"),
                         workspace__slug=self.kwargs.get("slug"),
+                        is_active=True,
                     )
                 )
             )
             .annotate(
                 total_members=ProjectMember.objects.filter(
-                    project_id=OuterRef("id"), member__is_bot=False
+                    project_id=OuterRef("id"),
+                    member__is_bot=False,
+                    is_active=True,
                 )
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
@@ -138,6 +135,7 @@ class ProjectViewSet(BaseViewSet):
                 member_role=ProjectMember.objects.filter(
                     project_id=OuterRef("pk"),
                     member_id=self.request.user.id,
+                    is_active=True,
                 ).values("role")
             )
             .annotate(
@@ -158,6 +156,7 @@ class ProjectViewSet(BaseViewSet):
             member=request.user,
             project_id=OuterRef("pk"),
             workspace__slug=self.kwargs.get("slug"),
+            is_active=True,
         ).values("sort_order")
         projects = (
             self.get_queryset()
@@ -167,6 +166,7 @@ class ProjectViewSet(BaseViewSet):
                     "project_projectmember",
                     queryset=ProjectMember.objects.filter(
                         workspace__slug=slug,
+                        is_active=True,
                     ).select_related("member"),
                 )
             )
@@ -201,6 +201,11 @@ class ProjectViewSet(BaseViewSet):
                 project_member = ProjectMember.objects.create(
                     project_id=serializer.data["id"], member=request.user, role=20
                 )
+                # Also create the issue property for the user
+                _ = IssueProperty.objects.create(
+                    project_id=serializer.data["id"],
+                    user=request.user,
+                )
 
                 if serializer.data["project_lead"] is not None and str(
                     serializer.data["project_lead"]
@@ -209,6 +214,11 @@ class ProjectViewSet(BaseViewSet):
                         project_id=serializer.data["id"],
                         member_id=serializer.data["project_lead"],
                         role=20,
+                    )
+                    # Also create the issue property for the user
+                    IssueProperty.objects.create(
+                        project_id=serializer.data["id"],
+                        user_id=serializer.data["project_lead"],
                     )
 
                 # Default states
@@ -262,12 +272,9 @@ class ProjectViewSet(BaseViewSet):
                     ]
                 )
 
-                data = serializer.data
-                # Additional fields of the member
-                data["sort_order"] = project_member.sort_order
-                data["member_role"] = project_member.role
-                data["is_member"] = True
-                return Response(data, status=status.HTTP_201_CREATED)
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                serializer = ProjectListSerializer(project)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(
                 serializer.errors,
                 status=status.HTTP_400_BAD_REQUEST,
@@ -317,6 +324,8 @@ class ProjectViewSet(BaseViewSet):
                         color="#ff7700",
                     )
 
+                project = self.get_queryset().filter(pk=serializer.data["id"]).first()
+                serializer = ProjectListSerializer(project)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -326,7 +335,7 @@ class ProjectViewSet(BaseViewSet):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_410_GONE,
                 )
-        except Project.DoesNotExist or Workspace.DoesNotExist as e:
+        except (Project.DoesNotExist, Workspace.DoesNotExist):
             return Response(
                 {"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND
             )
@@ -337,64 +346,104 @@ class ProjectViewSet(BaseViewSet):
             )
 
 
-class InviteProjectEndpoint(BaseAPIView):
+class ProjectInvitationsViewset(BaseViewSet):
+    serializer_class = ProjectMemberInviteSerializer
+    model = ProjectMemberInvite
+
+    search_fields = []
+
     permission_classes = [
         ProjectBasePermission,
     ]
 
-    def post(self, request, slug, project_id):
-        email = request.data.get("email", False)
-        role = request.data.get("role", False)
-
-        # Check if email is provided
-        if not email:
-            return Response(
-                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        validate_email(email)
-        # Check if user is already a member of workspace
-        if ProjectMember.objects.filter(
-            project_id=project_id,
-            member__email=email,
-            member__is_bot=False,
-        ).exists():
-            return Response(
-                {"error": "User is already member of workspace"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user = User.objects.filter(email=email).first()
-
-        if user is None:
-            token = jwt.encode(
-                {"email": email, "timestamp": datetime.now().timestamp()},
-                settings.SECRET_KEY,
-                algorithm="HS256",
-            )
-            project_invitation_obj = ProjectMemberInvite.objects.create(
-                email=email.strip().lower(),
-                project_id=project_id,
-                token=token,
-                role=role,
-            )
-            domain = settings.WEB_URL
-            project_invitation.delay(email, project_id, token, domain)
-
-            return Response(
-                {
-                    "message": "Email sent successfully",
-                    "id": project_invitation_obj.id,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        project_member = ProjectMember.objects.create(
-            member=user, project_id=project_id, role=role
+    def get_queryset(self):
+        return self.filter_queryset(
+            super()
+            .get_queryset()
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .select_related("project")
+            .select_related("workspace", "workspace__owner")
         )
 
+    def create(self, request, slug, project_id):
+        emails = request.data.get("emails", [])
+
+        # Check if email is provided
+        if not emails:
+            return Response(
+                {"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        requesting_user = ProjectMember.objects.get(
+            workspace__slug=slug, project_id=project_id, member_id=request.user.id
+        )
+
+        # Check if any invited user has an higher role
+        if len(
+            [
+                email
+                for email in emails
+                if int(email.get("role", 10)) > requesting_user.role
+            ]
+        ):
+            return Response(
+                {"error": "You cannot invite a user with higher role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        workspace = Workspace.objects.get(slug=slug)
+
+        project_invitations = []
+        for email in emails:
+            try:
+                validate_email(email.get("email"))
+                project_invitations.append(
+                    ProjectMemberInvite(
+                        email=email.get("email").strip().lower(),
+                        project_id=project_id,
+                        workspace_id=workspace.id,
+                        token=jwt.encode(
+                            {
+                                "email": email,
+                                "timestamp": datetime.now().timestamp(),
+                            },
+                            settings.SECRET_KEY,
+                            algorithm="HS256",
+                        ),
+                        role=email.get("role", 10),
+                        created_by=request.user,
+                    )
+                )
+            except ValidationError:
+                return Response(
+                    {
+                        "error": f"Invalid email - {email} provided a valid email address is required to send the invite"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Create workspace member invite
+        project_invitations = ProjectMemberInvite.objects.bulk_create(
+            project_invitations, batch_size=10, ignore_conflicts=True
+        )
+        current_site = f"{request.scheme}://{request.get_host()}",
+
+        # Send invitations
+        for invitation in project_invitations:
+            project_invitations.delay(
+                invitation.email,
+                project_id,
+                invitation.token,
+                current_site,
+                request.user.email,
+            )
+
         return Response(
-            ProjectMemberSerializer(project_member).data, status=status.HTTP_200_OK
+            {
+                "message": "Email sent successfully",
+            },
+            status=status.HTTP_200_OK,
         )
 
 
@@ -410,28 +459,134 @@ class UserProjectInvitationsViewset(BaseViewSet):
             .select_related("workspace", "workspace__owner", "project")
         )
 
-    def create(self, request):
-        invitations = request.data.get("invitations")
-        project_invitations = ProjectMemberInvite.objects.filter(
-            pk__in=invitations, accepted=True
+    def create(self, request, slug):
+        project_ids = request.data.get("project_ids", [])
+
+        # Get the workspace user role
+        workspace_member = WorkspaceMember.objects.get(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
         )
+
+        workspace_role = workspace_member.role
+        workspace = workspace_member.workspace
+
         ProjectMember.objects.bulk_create(
             [
                 ProjectMember(
-                    project=invitation.project,
-                    workspace=invitation.project.workspace,
+                    project_id=project_id,
                     member=request.user,
-                    role=invitation.role,
+                    role=15 if workspace_role >= 15 else 10,
+                    workspace=workspace,
                     created_by=request.user,
                 )
-                for invitation in project_invitations
-            ]
+                for project_id in project_ids
+            ],
+            ignore_conflicts=True,
         )
 
-        # Delete joined project invites
-        project_invitations.delete()
+        IssueProperty.objects.bulk_create(
+            [
+                IssueProperty(
+                    project_id=project_id,
+                    user=request.user,
+                    workspace=workspace,
+                    created_by=request.user,
+                )
+                for project_id in project_ids
+            ],
+            ignore_conflicts=True,
+        )
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"message": "Projects joined successfully"},
+            status=status.HTTP_201_CREATED,
+        )
+
+
+class ProjectJoinEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request, slug, project_id, pk):
+        project_invite = ProjectMemberInvite.objects.get(
+            pk=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        )
+
+        email = request.data.get("email", "")
+
+        if email == "" or project_invite.email != email:
+            return Response(
+                {"error": "You do not have permission to join the project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if project_invite.responded_at is None:
+            project_invite.accepted = request.data.get("accepted", False)
+            project_invite.responded_at = timezone.now()
+            project_invite.save()
+
+            if project_invite.accepted:
+                # Check if the user account exists
+                user = User.objects.filter(email=email).first()
+
+                # Check if user is a part of workspace
+                workspace_member = WorkspaceMember.objects.filter(
+                    workspace__slug=slug, member=user
+                ).first()
+                # Add him to workspace
+                if workspace_member is None:
+                    _ = WorkspaceMember.objects.create(
+                        workspace_id=project_invite.workspace_id,
+                        member=user,
+                        role=15 if project_invite.role >= 15 else project_invite.role,
+                    )
+                else:
+                    # Else make him active
+                    workspace_member.is_active = True
+                    workspace_member.save()
+
+                # Check if the user was already a member of project then activate the user
+                project_member = ProjectMember.objects.filter(
+                    workspace_id=project_invite.workspace_id, member=user
+                ).first()
+                if project_member is None:
+                    # Create a Project Member
+                    _ = ProjectMember.objects.create(
+                        workspace_id=project_invite.workspace_id,
+                        member=user,
+                        role=project_invite.role,
+                    )
+                else:
+                    project_member.is_active = True
+                    project_member.role = project_member.role
+                    project_member.save()
+
+                return Response(
+                    {"message": "Project Invitation Accepted"},
+                    status=status.HTTP_200_OK,
+                )
+
+            return Response(
+                {"message": "Project Invitation was not accepted"},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(
+            {"error": "You have already responded to the invitation request"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def get(self, request, slug, project_id, pk):
+        project_invitation = ProjectMemberInvite.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=pk
+        )
+        serializer = ProjectMemberInviteSerializer(project_invitation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ProjectMemberViewSet(BaseViewSet):
@@ -453,102 +608,13 @@ class ProjectMemberViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(member__is_bot=False)
+            .filter()
             .select_related("project")
             .select_related("member")
             .select_related("workspace", "workspace__owner")
         )
 
-    def partial_update(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
-        if request.user.id == project_member.member_id:
-            return Response(
-                {"error": "You cannot update your own role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        # Check while updating user roles
-        requested_project_member = ProjectMember.objects.get(
-            project_id=project_id, workspace__slug=slug, member=request.user
-        )
-        if (
-            "role" in request.data
-            and int(request.data.get("role", project_member.role))
-            > requested_project_member.role
-        ):
-            return Response(
-                {"error": "You cannot update a role that is higher than your own role"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        serializer = ProjectMemberSerializer(
-            project_member, data=request.data, partial=True
-        )
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def destroy(self, request, slug, project_id, pk):
-        project_member = ProjectMember.objects.get(
-            workspace__slug=slug, project_id=project_id, pk=pk
-        )
-        # check requesting user role
-        requesting_project_member = ProjectMember.objects.get(
-            workspace__slug=slug, member=request.user, project_id=project_id
-        )
-        if requesting_project_member.role < project_member.role:
-            return Response(
-                {"error": "You cannot remove a user having role higher than yourself"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Remove all favorites
-        ProjectFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        CycleFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        ModuleFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        PageFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        IssueViewFavorite.objects.filter(
-            workspace__slug=slug, project_id=project_id, user=project_member.member
-        ).delete()
-        # Also remove issue from issue assigned
-        IssueAssignee.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            assignee=project_member.member,
-        ).delete()
-
-        # Remove if module member
-        ModuleMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=project_member.member,
-        ).delete()
-        # Delete owned Pages
-        Page.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            owned_by=project_member.member,
-        ).delete()
-        project_member.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class AddMemberToProjectEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
-    def post(self, request, slug, project_id):
+    def create(self, request, slug, project_id):
         members = request.data.get("members", [])
 
         # get the project
@@ -560,6 +626,7 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         bulk_project_members = []
+        bulk_issue_props = []
 
         project_members = (
             ProjectMember.objects.filter(
@@ -585,6 +652,13 @@ class AddMemberToProjectEndpoint(BaseAPIView):
                     sort_order=sort_order[0] - 10000 if len(sort_order) else 65535,
                 )
             )
+            bulk_issue_props.append(
+                IssueProperty(
+                    user_id=member.get("member_id"),
+                    project_id=project_id,
+                    workspace_id=project.workspace_id,
+                )
+            )
 
         project_members = ProjectMember.objects.bulk_create(
             bulk_project_members,
@@ -592,8 +666,136 @@ class AddMemberToProjectEndpoint(BaseAPIView):
             ignore_conflicts=True,
         )
 
+        _ = IssueProperty.objects.bulk_create(
+            bulk_issue_props, batch_size=10, ignore_conflicts=True
+        )
+
         serializer = ProjectMemberSerializer(project_members, many=True)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def list(self, request, slug, project_id):
+        project_member = ProjectMember.objects.get(
+            member=request.user,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_active=True,
+        )
+
+        project_members = ProjectMember.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            member__is_bot=False,
+            is_active=True,
+        ).select_related("project", "member", "workspace")
+
+        if project_member.role > 10:
+            serializer = ProjectMemberAdminSerializer(project_members, many=True)
+        else:
+            serializer = ProjectMemberSerializer(project_members, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def partial_update(self, request, slug, project_id, pk):
+        project_member = ProjectMember.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            is_active=True,
+        )
+        if request.user.id == project_member.member_id:
+            return Response(
+                {"error": "You cannot update your own role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Check while updating user roles
+        requested_project_member = ProjectMember.objects.get(
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
+        )
+        if (
+            "role" in request.data
+            and int(request.data.get("role", project_member.role))
+            > requested_project_member.role
+        ):
+            return Response(
+                {"error": "You cannot update a role that is higher than your own role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = ProjectMemberSerializer(
+            project_member, data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, slug, project_id, pk):
+        project_member = ProjectMember.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            pk=pk,
+            member__is_bot=False,
+            is_active=True,
+        )
+        # check requesting user role
+        requesting_project_member = ProjectMember.objects.get(
+            workspace__slug=slug,
+            member=request.user,
+            project_id=project_id,
+            is_active=True,
+        )
+        # User cannot remove himself
+        if str(project_member.id) == str(requesting_project_member.id):
+            return Response(
+                {
+                    "error": "You cannot remove yourself from the workspace. Please use leave workspace"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # User cannot deactivate higher role
+        if requesting_project_member.role < project_member.role:
+            return Response(
+                {"error": "You cannot remove a user having role higher than you"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        project_member.is_active = False
+        project_member.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def leave(self, request, slug, project_id):
+        project_member = ProjectMember.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            is_active=True,
+        )
+
+        # Check if the leaving user is the only admin of the project
+        if (
+            project_member.role == 20
+            and not ProjectMember.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                role=20,
+                is_active=True,
+            ).count()
+            > 1
+        ):
+            return Response(
+                {
+                    "error": "You cannot leave the project as your the only admin of the project you will have to either delete the project or create an another admin",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        # Deactivate the user
+        project_member.is_active = False
+        project_member.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AddTeamToProjectEndpoint(BaseAPIView):
@@ -614,6 +816,7 @@ class AddTeamToProjectEndpoint(BaseAPIView):
         workspace = Workspace.objects.get(slug=slug)
 
         project_members = []
+        issue_props = []
         for member in team_members:
             project_members.append(
                 ProjectMember(
@@ -623,53 +826,25 @@ class AddTeamToProjectEndpoint(BaseAPIView):
                     created_by=request.user,
                 )
             )
+            issue_props.append(
+                IssueProperty(
+                    project_id=project_id,
+                    user_id=member,
+                    workspace=workspace,
+                    created_by=request.user,
+                )
+            )
 
         ProjectMember.objects.bulk_create(
             project_members, batch_size=10, ignore_conflicts=True
         )
 
+        _ = IssueProperty.objects.bulk_create(
+            issue_props, batch_size=10, ignore_conflicts=True
+        )
+
         serializer = ProjectMemberSerializer(project_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class ProjectMemberInvitationsViewset(BaseViewSet):
-    serializer_class = ProjectMemberInviteSerializer
-    model = ProjectMemberInvite
-
-    search_fields = []
-
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .select_related("project")
-            .select_related("workspace", "workspace__owner")
-        )
-
-
-class ProjectMemberInviteDetailViewSet(BaseViewSet):
-    serializer_class = ProjectMemberInviteSerializer
-    model = ProjectMemberInvite
-
-    search_fields = []
-
-    permission_classes = [
-        ProjectBasePermission,
-    ]
-
-    def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .select_related("project")
-            .select_related("workspace", "workspace__owner")
-        )
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
@@ -715,46 +890,14 @@ class ProjectIdentifierEndpoint(BaseAPIView):
         )
 
 
-class ProjectJoinEndpoint(BaseAPIView):
-    def post(self, request, slug):
-        project_ids = request.data.get("project_ids", [])
-
-        # Get the workspace user role
-        workspace_member = WorkspaceMember.objects.get(
-            member=request.user, workspace__slug=slug
-        )
-
-        workspace_role = workspace_member.role
-        workspace = workspace_member.workspace
-
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    project_id=project_id,
-                    member=request.user,
-                    role=20
-                    if workspace_role >= 15
-                    else (15 if workspace_role == 10 else workspace_role),
-                    workspace=workspace,
-                    created_by=request.user,
-                )
-                for project_id in project_ids
-            ],
-            ignore_conflicts=True,
-        )
-
-        return Response(
-            {"message": "Projects joined successfully"},
-            status=status.HTTP_201_CREATED,
-        )
-
-
 class ProjectUserViewsEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         project_member = ProjectMember.objects.filter(
-            member=request.user, project=project
+            member=request.user,
+            project=project,
+            is_active=True,
         ).first()
 
         if project_member is None:
@@ -778,7 +921,10 @@ class ProjectUserViewsEndpoint(BaseAPIView):
 class ProjectMemberUserEndpoint(BaseAPIView):
     def get(self, request, slug, project_id):
         project_member = ProjectMember.objects.get(
-            project_id=project_id, workspace__slug=slug, member=request.user
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            is_active=True,
         )
         serializer = ProjectMemberSerializer(project_member)
 
@@ -869,21 +1015,6 @@ class ProjectDeployBoardViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ProjectMemberEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        project_members = ProjectMember.objects.filter(
-            project_id=project_id,
-            workspace__slug=slug,
-            member__is_bot=False,
-        ).select_related("project", "member", "workspace")
-        serializer = ProjectMemberSerializer(project_members, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
@@ -924,39 +1055,6 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
         )
 
         return Response(projects, status=status.HTTP_200_OK)
-
-
-class LeaveProjectEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectLitePermission,
-    ]
-
-    def delete(self, request, slug, project_id):
-        project_member = ProjectMember.objects.get(
-            workspace__slug=slug,
-            member=request.user,
-            project_id=project_id,
-        )
-
-        # Only Admin case
-        if (
-            project_member.role == 20
-            and ProjectMember.objects.filter(
-                workspace__slug=slug,
-                role=20,
-                project_id=project_id,
-            ).count()
-            == 1
-        ):
-            return Response(
-                {
-                    "error": "You cannot leave the project since you are the only admin of the project you should delete the project"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        # Delete the member from workspace
-        project_member.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectPublicCoverImagesEndpoint(BaseAPIView):

@@ -8,15 +8,20 @@ import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
 import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { CustomTableCell } from "../extensions/table/table-cell";
-import { Table } from "../extensions/table";
-import { TableHeader } from "../extensions/table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
+import TableHeader from "../extensions/table/table-header/table-header";
+import Table from "../extensions/table/table";
+import TableCell from "../extensions/table/table-cell/table-cell";
+import TableRow from "../extensions/table/table-row/table-row";
 
 import ReadOnlyImageExtension from "../extensions/image/read-only-image";
 import { isValidHttpUrl } from "../../lib/utils";
+import { Mentions } from "../mentions";
+import { IMentionSuggestion } from "../../types/mention-suggestion";
 
-export const CoreReadOnlyEditorExtensions  = [
+export const CoreReadOnlyEditorExtensions = (mentionConfig: {
+  mentionSuggestions: IMentionSuggestion[];
+  mentionHighlights: string[];
+}) => [
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -53,40 +58,45 @@ export const CoreReadOnlyEditorExtensions  = [
     },
     gapcursor: false,
   }),
-    Gapcursor,
-    TiptapLink.configure({
-      protocols: ["http", "https"],
-      validate: (url) => isValidHttpUrl(url),
-      HTMLAttributes: {
-        class:
-          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
-      },
-    }),
-    ReadOnlyImageExtension.configure({
-      HTMLAttributes: {
-        class: "rounded-lg border border-custom-border-300",
-      },
-    }),
-    TiptapUnderline,
-    TextStyle,
-    Color,
-    TaskList.configure({
-      HTMLAttributes: {
-        class: "not-prose pl-2",
-      },
-    }),
-    TaskItem.configure({
-      HTMLAttributes: {
-        class: "flex items-start my-4",
-      },
-      nested: true,
-    }),
-    Markdown.configure({
-      html: true,
-      transformCopiedText: true,
-    }),
-    Table,
-    TableHeader,
-    CustomTableCell,
-    TableRow,
-  ];
+  Gapcursor,
+  TiptapLink.configure({
+    protocols: ["http", "https"],
+    validate: (url) => isValidHttpUrl(url),
+    HTMLAttributes: {
+      class:
+        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+    },
+  }),
+  ReadOnlyImageExtension.configure({
+    HTMLAttributes: {
+      class: "rounded-lg border border-custom-border-300",
+    },
+  }),
+  TiptapUnderline,
+  TextStyle,
+  Color,
+  TaskList.configure({
+    HTMLAttributes: {
+      class: "not-prose pl-2",
+    },
+  }),
+  TaskItem.configure({
+    HTMLAttributes: {
+      class: "flex items-start my-4",
+    },
+    nested: true,
+  }),
+  Markdown.configure({
+    html: true,
+    transformCopiedText: true,
+  }),
+  Table,
+  TableHeader,
+  TableCell,
+  TableRow,
+  Mentions(
+    mentionConfig.mentionSuggestions,
+    mentionConfig.mentionHighlights,
+    true,
+  ),
+];

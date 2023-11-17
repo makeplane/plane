@@ -10,12 +10,11 @@ import { DATE_FILTER_OPTIONS } from "constants/filters";
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (val: string | string[]) => void;
-  itemsToRender: number;
   searchQuery: string;
 };
 
 export const FilterTargetDate: React.FC<Props> = observer((props) => {
-  const { appliedFilters, handleUpdate, itemsToRender, searchQuery } = props;
+  const { appliedFilters, handleUpdate, searchQuery } = props;
 
   const [previewEnabled, setPreviewEnabled] = useState(true);
   const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
@@ -43,7 +42,7 @@ export const FilterTargetDate: React.FC<Props> = observer((props) => {
         <div>
           {filteredOptions.length > 0 ? (
             <>
-              {filteredOptions.slice(0, itemsToRender).map((option) => (
+              {filteredOptions.map((option) => (
                 <FilterOption
                   key={option.value}
                   isChecked={appliedFilters?.includes(option.value) ? true : false}

@@ -10,8 +10,16 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 export const ProfileIssuesFilter = observer(() => {
   const { workspace: workspaceStore, profileIssueFilters: profileIssueFiltersStore }: RootStore = useMobxStore();
 
-  const handleLayoutChange = (_layout: string) =>
-    profileIssueFiltersStore.handleIssueFilters("userDisplayFilters", { layout: _layout });
+  const handleLayoutChange = (_layout: string) => {
+    const payload = {
+      layout: _layout,
+      group_by: profileIssueFiltersStore.userDisplayFilters.group_by
+        ? profileIssueFiltersStore.userDisplayFilters.group_by
+        : "state_detail.group",
+    };
+
+    profileIssueFiltersStore.handleIssueFilters("userDisplayFilters", payload);
+  };
 
   const handleFilters = (key: any, value: any) => {
     let updatesFilters: any = profileIssueFiltersStore?.userFilters;
@@ -41,7 +49,7 @@ export const ProfileIssuesFilter = observer(() => {
         selectedLayout={activeLayout}
       />
 
-      <FiltersDropdown title="Filters">
+      <FiltersDropdown title="Filters" placement="bottom-end">
         <FilterSelection
           filters={profileIssueFiltersStore.userFilters}
           handleFiltersUpdate={handleFilters}
@@ -54,7 +62,7 @@ export const ProfileIssuesFilter = observer(() => {
         />
       </FiltersDropdown>
 
-      <FiltersDropdown title="Display">
+      <FiltersDropdown title="Display" placement="bottom-end">
         <DisplayFiltersSelection
           displayFilters={profileIssueFiltersStore.userDisplayFilters}
           displayProperties={profileIssueFiltersStore.userDisplayProperties}

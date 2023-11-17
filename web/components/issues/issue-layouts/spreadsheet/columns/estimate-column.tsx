@@ -1,5 +1,5 @@
 // components
-import { ViewEstimateSelect } from "components/issues";
+import { IssuePropertyEstimates } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
@@ -21,7 +21,15 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <ViewEstimateSelect issue={issue} onChange={(data) => onChange({ estimate_point: data })} disabled={disabled} />
+      <IssuePropertyEstimates
+        projectId={issue.project_detail.id ?? null}
+        value={issue.estimate_point}
+        onChange={(data) => onChange({ estimate_point: data })}
+        className="h-full w-full"
+        buttonClassName="h-full w-full px-2.5 py-1 !shadow-none !border-0"
+        hideDropdownArrow
+        disabled={disabled}
+      />
 
       {isExpanded &&
         !isLoading &&

@@ -2,9 +2,8 @@ import React, { FC, useState, Fragment } from "react";
 // popper js
 import { usePopper } from "react-popper";
 // ui
-import { Input, Tooltip } from "@plane/ui";
+import { Avatar, Input } from "@plane/ui";
 import { Listbox } from "@headlessui/react";
-import { Avatar } from "components/ui";
 // icons
 import { Check, Search, User2 } from "lucide-react";
 // types
@@ -49,32 +48,19 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
       : options?.filter((option) => option.member.display_name.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <Tooltip
-      tooltipHeading="Assignee"
-      tooltipContent={
-        options && options.length > 0
-          ? options.map((assignee) => assignee?.member.display_name).join(", ")
-          : "No Assignee"
-      }
-      position="top"
-    >
-      <div
-        className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded-md border border-custom-border-300 duration-300 focus:outline-none
-            "
-      >
-        {value ? (
-          <>
-            <Avatar height="18px" width="18px" user={value?.member} />
-            <span className="text-xs leading-4"> {value?.member.display_name}</span>
-          </>
-        ) : (
-          <>
-            <User2 className="h-[18px] w-[18px]" />
-            <span className="text-xs leading-4">{placeholder}</span>
-          </>
-        )}
-      </div>
-    </Tooltip>
+    <div className="flex items-center justify-between gap-2 w-full text-xs px-2.5 py-1.5 rounded border-[0.5px] border-custom-border-300">
+      {value ? (
+        <>
+          <Avatar name={value?.member.display_name} src={value?.member.avatar} />
+          <span className="text-xs leading-4"> {value?.member.display_name}</span>
+        </>
+      ) : (
+        <>
+          <User2 className="h-[18px] w-[18px]" />
+          <span className="text-xs leading-4">{placeholder}</span>
+        </>
+      )}
+    </div>
   );
 
   return (
@@ -85,14 +71,14 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           type="button"
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-          } `}
+          }`}
         >
           {label}
         </button>
       </Listbox.Button>
       <Listbox.Options>
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1`}
+          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs  focus:outline-none w-48 whitespace-nowrap my-1`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -109,27 +95,37 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
           <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
-                filteredOptions.map((workspaceMember: IWorkspaceMember) => (
+                <>
+                  {filteredOptions.map((workspaceMember: IWorkspaceMember) => (
+                    <Listbox.Option
+                      key={workspaceMember.id}
+                      value={workspaceMember}
+                      className={({ active, selected }) =>
+                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                          active && !selected ? "bg-custom-background-80" : ""
+                        } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
+                            {workspaceMember.member.display_name}
+                          </div>
+                          {selected && <Check className="h-3.5 w-3.5" />}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
                   <Listbox.Option
-                    key={workspaceMember.id}
-                    value={workspaceMember}
-                    className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
-                      } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
-                    }
+                    value=""
+                    className="flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
-                    {({ selected }) => (
-                      <>
-                        <div className="flex items-center gap-2">
-                          <Avatar user={workspaceMember.member} />
-                          {workspaceMember.member.display_name}
-                        </div>
-                        {selected && <Check className="h-3.5 w-3.5" />}
-                      </>
-                    )}
+                    <span className="flex items-center justify-start gap-1 text-custom-text-200">
+                      <span>No Lead</span>
+                    </span>
                   </Listbox.Option>
-                ))
+                </>
               ) : (
                 <span className="flex items-center gap-2 p-1">
                   <p className="text-left text-custom-text-200 ">No matching results</p>

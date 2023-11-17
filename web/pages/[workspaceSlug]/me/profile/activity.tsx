@@ -1,10 +1,12 @@
+import { ReactElement } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 import Link from "next/link";
 // services
 import { UserService } from "services/user.service";
 // layouts
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
@@ -17,10 +19,12 @@ import { ExternalLinkIcon, Loader } from "@plane/ui";
 import { USER_ACTIVITY } from "constants/fetch-keys";
 // helper
 import { timeAgo } from "helpers/date-time.helper";
+// type
+import { NextPageWithLayout } from "types/app";
 
 const userService = new UserService();
 
-const ProfileActivity = () => {
+const ProfileActivityPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -30,10 +34,10 @@ const ProfileActivity = () => {
   );
 
   return (
-    <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="My Profile Activity" />}>
+    <>
       {userActivity ? (
         <section className="pr-9 py-8 w-full overflow-y-auto">
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+          <div className="flex items-center py-3.5 border-b border-custom-border-100">
             <h3 className="text-xl font-medium">Activity</h3>
           </div>
           <div className={`flex flex-col gap-2 py-4 w-full`}>
@@ -149,7 +153,7 @@ const ProfileActivity = () => {
                                 </div>
                               </div>
                             </div>
-                            <div className="min-w-0 flex-1 py-4 border-b border-custom-border-200">
+                            <div className="min-w-0 flex-1 py-4 border-b border-custom-border-100">
                               <div className="text-sm text-custom-text-200 break-words">
                                 {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                   <span className="text-gray font-medium">Plane</span>
@@ -183,8 +187,16 @@ const ProfileActivity = () => {
           <Loader.Item height="40px" />
         </Loader>
       )}
-    </WorkspaceSettingLayout>
+    </>
   );
 };
 
-export default ProfileActivity;
+ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="My Profile Activity" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default ProfileActivityPage;

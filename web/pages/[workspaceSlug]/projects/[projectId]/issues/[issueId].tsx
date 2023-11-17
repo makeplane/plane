@@ -1,41 +1,33 @@
-import React, { useCallback, useEffect } from "react";
-
+import React, { useCallback, useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
-
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
 import { useForm } from "react-hook-form";
 // services
 import { IssueService } from "services/issue";
 // hooks
 import useUserAuth from "hooks/use-user-auth";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
+import { ProjectIssueDetailsHeader } from "components/headers";
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
 // ui
 import { EmptyState } from "components/common";
-import { Breadcrumbs, Loader } from "@plane/ui";
+import { Loader } from "@plane/ui";
 // images
 import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { IIssue } from "types";
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, ISSUE_DETAILS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
 
 const defaultValues: Partial<IIssue> = {
-  assignees_list: [],
   description: "",
   description_html: "",
   estimate_point: null,
   issue_cycle: null,
   issue_module: null,
-  labels_list: [],
   name: "",
   priority: "low",
   start_date: null,
@@ -46,10 +38,10 @@ const defaultValues: Partial<IIssue> = {
 // services
 const issueService = new IssueService();
 
-const IssueDetailsPage: NextPage = () => {
+const IssueDetailsPage: NextPageWithLayout = () => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-  // console.log(workspaceSlug, "workspaceSlug")
 
   const { user } = useUserAuth();
 
@@ -111,37 +103,12 @@ const IssueDetailsPage: NextPage = () => {
     mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
     reset({
       ...issueDetails,
-      assignees_list: issueDetails.assignees_list ?? issueDetails.assignee_details?.map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
-      labels: issueDetails.labels_list ?? issueDetails.labels,
     });
   }, [issueDetails, reset, issueId]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <Breadcrumbs.BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects/${projectId as string}/issues`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p className="truncate">{`${truncateText(
-                    issueDetails?.project_detail.name ?? "Project",
-                    32
-                  )} Issues`}</p>
-                </a>
-              </Link>
-            }
-          />
-          <Breadcrumbs.BreadcrumbItem
-            title={`Issue ${issueDetails?.project_detail.identifier ?? "Project"}-${
-              issueDetails?.sequence_id ?? "..."
-            } Details`}
-            unshrinkTitle
-          />
-        </Breadcrumbs>
-      }
-    >
+    <>
+      {" "}
       {error ? (
         <EmptyState
           image={emptyIssue}
@@ -182,7 +149,15 @@ const IssueDetailsPage: NextPage = () => {
           </div>
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </>
+  );
+};
+
+IssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<ProjectIssueDetailsHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
   );
 };
 

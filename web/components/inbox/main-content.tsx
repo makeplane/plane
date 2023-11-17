@@ -7,8 +7,6 @@ import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle 
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// contexts
-import { useProjectMyMembership } from "contexts/project-member.context";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
@@ -22,10 +20,10 @@ import { IInboxIssue, IIssue } from "types";
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
   description_html: "",
-  assignees_list: [],
+  assignees: [],
   priority: "low",
   target_date: new Date().toString(),
-  labels_list: [],
+  labels: [],
 };
 
 export const InboxMainContent: React.FC = observer(() => {
@@ -35,8 +33,7 @@ export const InboxMainContent: React.FC = observer(() => {
   const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
 
   const user = userStore.currentUser;
-
-  const { memberRole } = useProjectMyMembership();
+  const userRole = userStore.currentProjectRole;
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -122,8 +119,8 @@ export const InboxMainContent: React.FC = observer(() => {
 
     reset({
       ...issueDetails,
-      assignees_list: issueDetails.assignees_list ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
-      labels_list: issueDetails.labels_list ?? issueDetails.labels,
+      assignees: issueDetails.assignees ?? (issueDetails.assignee_details ?? []).map((user) => user.id),
+      labels: issueDetails.labels ?? issueDetails.labels,
     });
   }, [issueDetails, reset, inboxIssueId]);
 
@@ -225,7 +222,7 @@ export const InboxMainContent: React.FC = observer(() => {
                   description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
-                isAllowed={memberRole.isMember || memberRole.isOwner || user?.id === issueDetails.created_by}
+                isAllowed={userRole === 15 || userRole === 20 || user?.id === issueDetails.created_by}
               />
             </div>
 

@@ -1,30 +1,16 @@
 import React, { useEffect, useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { Rocket, Search, X } from "lucide-react";
 // services
 import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
-import useIssuesView from "hooks/use-issues-view";
 import useDebounce from "hooks/use-debounce";
 // ui
 import { Button, LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
-// icons
-import { Rocket, Search, X } from "lucide-react";
 // types
 import { ISearchIssueResponse, TProjectIssuesSearchParams } from "types";
-// fetch-keys
-import {
-  CYCLE_DETAILS,
-  CYCLE_ISSUES_WITH_PARAMS,
-  MODULE_DETAILS,
-  MODULE_ISSUES_WITH_PARAMS,
-} from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
@@ -53,11 +39,9 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
   const debouncedSearchTerm: string = useDebounce(searchTerm, 500);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
-
-  const { params } = useIssuesView();
 
   const handleClose = () => {
     onClose();
@@ -80,16 +64,6 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
     setIsSubmitting(true);
 
     await handleOnSubmit(selectedIssues).finally(() => setIsSubmitting(false));
-
-    if (cycleId) {
-      mutate(CYCLE_ISSUES_WITH_PARAMS(cycleId as string, params));
-      mutate(CYCLE_DETAILS(cycleId as string));
-    }
-
-    if (moduleId) {
-      mutate(MODULE_ISSUES_WITH_PARAMS(moduleId as string, params));
-      mutate(MODULE_DETAILS(moduleId as string));
-    }
 
     handleClose();
 
@@ -128,7 +102,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -141,7 +115,7 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+              <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <Combobox
                   as="div"
                   onChange={(val: ISearchIssueResponse) => {
@@ -288,10 +262,10 @@ export const ExistingIssuesListModal: React.FC<Props> = ({
                 </Combobox>
                 {selectedIssues.length > 0 && (
                   <div className="flex items-center justify-end gap-2 p-3">
-                    <Button variant="neutral-primary" onClick={handleClose}>
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={onSubmit} loading={isSubmitting}>
+                    <Button variant="primary" size="sm" onClick={onSubmit} loading={isSubmitting}>
                       {isSubmitting ? "Adding..." : "Add selected issues"}
                     </Button>
                   </div>

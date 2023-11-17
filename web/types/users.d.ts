@@ -56,6 +56,7 @@ export interface IUserLite {
   avatar: string;
   created_at: Date;
   display_name: string;
+  email?: string;
   first_name: string;
   readonly id: string;
   is_bot: boolean;
@@ -63,7 +64,7 @@ export interface IUserLite {
 }
 
 export interface IUserMemberLite extends IUserLite {
-  email: string;
+  email?: string;
 }
 
 export interface IUserActivity {

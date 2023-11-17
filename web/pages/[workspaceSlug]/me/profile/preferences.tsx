@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // layouts
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
+import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
@@ -13,13 +14,17 @@ import { WorkspaceSettingHeader } from "components/headers";
 import { Spinner } from "@plane/ui";
 // constants
 import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
+// type
+import { NextPageWithLayout } from "types/app";
 
-const ProfilePreferencesPage = observer(() => {
-  const { user: userStore } = useMobxStore();
+const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
+  const {
+    user: { currentUser, updateCurrentUserTheme },
+  } = useMobxStore();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
   // computed
-  const userTheme = userStore.currentUser?.theme;
+  const userTheme = currentUser?.theme;
   // hooks
   const { setTheme } = useTheme();
   const { setToastAlert } = useToast();
@@ -35,7 +40,7 @@ const ProfilePreferencesPage = observer(() => {
 
   const handleThemeChange = (themeOption: I_THEME_OPTION) => {
     setTheme(themeOption.value);
-    userStore.updateCurrentUserTheme(themeOption.value).catch(() => {
+    updateCurrentUserTheme(themeOption.value).catch(() => {
       setToastAlert({
         title: "Failed to Update the theme",
         type: "error",
@@ -44,10 +49,10 @@ const ProfilePreferencesPage = observer(() => {
   };
 
   return (
-    <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="My Profile Preferences" />}>
-      {userStore.currentUser ? (
+    <>
+      {currentUser ? (
         <div className="pr-9 py-8 w-full overflow-y-auto">
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
+          <div className="flex items-center py-3.5 border-b border-custom-border-100">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
@@ -66,8 +71,16 @@ const ProfilePreferencesPage = observer(() => {
           <Spinner />
         </div>
       )}
-    </WorkspaceSettingLayout>
+    </>
   );
 });
+
+ProfilePreferencesPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="My Profile Preferences" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
 
 export default ProfilePreferencesPage;

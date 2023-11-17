@@ -1,36 +1,24 @@
-import { useRouter } from "next/router";
-import useSWR from "swr";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
+import { ReactElement } from "react";
 // components
 import { ProjectLayoutRoot } from "components/issues";
 import { ProjectIssuesHeader } from "components/headers";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 
-const ProjectIssues: NextPage = () => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+const ProjectIssuesPage: NextPageWithLayout = () => (
+  <div className="h-full w-full">
+    <ProjectLayoutRoot />
+  </div>
+);
 
-  const { issueFilter: issueFilterStore } = useMobxStore();
-
-  // TODO: update the fetch keys
-  useSWR(
-    workspaceSlug && projectId ? "REVALIDATE_USER_PROJECT_FILTERS" : null,
-    workspaceSlug && projectId
-      ? () => issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
-
+ProjectIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
     <AppLayout header={<ProjectIssuesHeader />} withProjectWrapper>
-      <div className="h-full w-full flex flex-col">
-        <ProjectLayoutRoot />
-      </div>
+      {page}
     </AppLayout>
   );
 };
 
-export default ProjectIssues;
+export default ProjectIssuesPage;

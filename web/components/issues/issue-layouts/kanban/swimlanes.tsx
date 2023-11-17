@@ -1,15 +1,13 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
 // constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES, getValueFromObject } from "constants/issue";
+import { getValueFromObject } from "constants/issue";
 
 interface ISubGroupSwimlaneHeader {
   issues: any;
@@ -60,6 +58,14 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 };
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
+  order_by: string | null;
+  showEmptyGroup: boolean;
+  states: IState[] | null;
+  stateGroups: any;
+  priorities: any;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
   issues: any;
   handleIssues: (
     sub_group_by: string | null,
@@ -68,36 +74,32 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
     action: "update" | "delete"
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  states: any;
-  stateGroups: any;
-  priorities: any;
-  labels: any;
-  members: any;
-  projects: any;
-  estimates: any;
+  isDragStarted?: boolean;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
     issues,
     sub_group_by,
     group_by,
+    order_by,
     list,
     listKey,
     handleIssues,
     quickActions,
-    display_properties,
+    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
+    showEmptyGroup,
     states,
     stateGroups,
     priorities,
     labels,
     members,
     projects,
-    estimates,
+    isDragStarted,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -135,19 +137,22 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   issues={issues?.[getValueFromObject(_list, listKey) as string]}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
+                  order_by={order_by}
                   sub_group_id={getValueFromObject(_list, listKey) as string}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
-                  display_properties={display_properties}
+                  displayProperties={displayProperties}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
+                  showEmptyGroup={showEmptyGroup}
                   states={states}
                   stateGroups={stateGroups}
                   priorities={priorities}
                   labels={labels}
                   members={members}
                   projects={projects}
-                  estimates={estimates}
+                  enableQuickIssueCreate
+                  isDragStarted={isDragStarted}
                 />
               </div>
             )}
@@ -161,6 +166,7 @@ export interface IKanBanSwimLanes {
   issues: any;
   sub_group_by: string | null;
   group_by: string | null;
+  order_by: string | null;
   handleIssues: (
     sub_group_by: string | null,
     group_by: string | null,
@@ -168,16 +174,17 @@ export interface IKanBanSwimLanes {
     action: "update" | "delete"
   ) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  display_properties: any;
+  displayProperties: IIssueDisplayProperties;
   kanBanToggle: any;
   handleKanBanToggle: any;
-  states: any;
+  showEmptyGroup: boolean;
+  states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: any;
-  members: any;
-  projects: any;
-  estimates: any;
+  labels: IIssueLabels[] | null;
+  members: IUserLite[] | null;
+  projects: IProject[] | null;
+  isDragStarted?: boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -185,31 +192,43 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     issues,
     sub_group_by,
     group_by,
+    order_by,
     handleIssues,
     quickActions,
-    display_properties,
+    displayProperties,
     kanBanToggle,
     handleKanBanToggle,
+    showEmptyGroup,
     states,
     stateGroups,
     priorities,
     labels,
     members,
     projects,
-    estimates,
+    isDragStarted,
   } = props;
-
-  const { project: projectStore } = useMobxStore();
 
   return (
     <div className="relative">
       <div className="sticky top-0 z-[2] bg-custom-background-90 h-[50px]">
+        {group_by && group_by === "project" && (
+          <SubGroupSwimlaneHeader
+            issues={issues}
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            list={projects}
+            listKey={`id`}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
+          />
+        )}
+
         {group_by && group_by === "state" && (
           <SubGroupSwimlaneHeader
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
-            list={projectStore?.projectStates}
+            list={states}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -221,7 +240,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
-            list={ISSUE_STATE_GROUPS}
+            list={stateGroups}
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -233,7 +252,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
-            list={ISSUE_PRIORITIES}
+            list={priorities}
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -245,7 +264,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
-            list={projectStore?.projectLabels}
+            list={labels ? [...labels, { id: "None", name: "None" }] : labels}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -257,8 +276,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
-            list={projectStore?.projectMembers}
-            listKey={`member.id`}
+            list={members ? [...members, { id: "None", display_name: "None" }] : members}
+            listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
           />
@@ -269,33 +288,83 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             issues={issues}
             sub_group_by={sub_group_by}
             group_by={group_by}
-            list={projectStore?.projectMembers}
-            listKey={`member.id`}
+            list={members}
+            listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
           />
         )}
       </div>
 
-      {sub_group_by && sub_group_by === "state" && (
+      {sub_group_by && sub_group_by === "project" && (
         <SubGroupSwimlane
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
-          list={projectStore?.projectStates}
+          order_by={order_by}
+          list={projects}
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
           states={states}
           stateGroups={stateGroups}
           priorities={priorities}
           labels={labels}
           members={members}
           projects={projects}
-          estimates={estimates}
+          isDragStarted={isDragStarted}
+        />
+      )}
+
+      {sub_group_by && sub_group_by === "state" && (
+        <SubGroupSwimlane
+          issues={issues}
+          sub_group_by={sub_group_by}
+          group_by={group_by}
+          order_by={order_by}
+          list={states}
+          listKey={`id`}
+          handleIssues={handleIssues}
+          quickActions={quickActions}
+          displayProperties={displayProperties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
+          states={states}
+          stateGroups={stateGroups}
+          priorities={priorities}
+          labels={labels}
+          members={members}
+          projects={projects}
+          isDragStarted={isDragStarted}
+        />
+      )}
+
+      {sub_group_by && sub_group_by === "state" && (
+        <SubGroupSwimlane
+          issues={issues}
+          sub_group_by={sub_group_by}
+          group_by={group_by}
+          order_by={order_by}
+          list={states}
+          listKey={`id`}
+          handleIssues={handleIssues}
+          quickActions={quickActions}
+          displayProperties={displayProperties}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
+          states={states}
+          stateGroups={stateGroups}
+          priorities={priorities}
+          labels={labels}
+          members={members}
+          projects={projects}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -304,20 +373,22 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
-          list={ISSUE_STATE_GROUPS}
+          order_by={order_by}
+          list={stateGroups}
           listKey={`key`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
           states={states}
           stateGroups={stateGroups}
           priorities={priorities}
           labels={labels}
           members={members}
           projects={projects}
-          estimates={estimates}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -326,20 +397,22 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
-          list={ISSUE_PRIORITIES}
+          order_by={order_by}
+          list={priorities}
           listKey={`key`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
           states={states}
           stateGroups={stateGroups}
           priorities={priorities}
           labels={labels}
           members={members}
           projects={projects}
-          estimates={estimates}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -348,20 +421,22 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
-          list={projectStore?.projectLabels}
+          order_by={order_by}
+          list={labels ? [...labels, { id: "None", name: "None" }] : labels}
           listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
           states={states}
           stateGroups={stateGroups}
           priorities={priorities}
           labels={labels}
           members={members}
           projects={projects}
-          estimates={estimates}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -370,20 +445,22 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
+          order_by={order_by}
+          list={members ? [...members, { id: "None", display_name: "None" }] : members}
+          listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
           states={states}
           stateGroups={stateGroups}
           priorities={priorities}
           labels={labels}
           members={members}
           projects={projects}
-          estimates={estimates}
+          isDragStarted={isDragStarted}
         />
       )}
 
@@ -392,20 +469,22 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issues={issues}
           sub_group_by={sub_group_by}
           group_by={group_by}
-          list={projectStore?.projectMembers}
-          listKey={`member.id`}
+          order_by={order_by}
+          list={members}
+          listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
-          display_properties={display_properties}
+          displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
+          showEmptyGroup={showEmptyGroup}
           states={states}
           stateGroups={stateGroups}
           priorities={priorities}
           labels={labels}
           members={members}
           projects={projects}
-          estimates={estimates}
+          isDragStarted={isDragStarted}
         />
       )}
     </div>

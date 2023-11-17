@@ -58,8 +58,8 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
       <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
         <a className="block p-4">
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <p className="mr-2 truncate text-sm">{truncateText(page.name, 75)}</p>
+            <div className="flex items-center overflow-hidden gap-2">
+              <p className="mr-2 truncate text-sm">{page.name}</p>
               {page.label_details.length > 0 &&
                 page.label_details.map((label) => (
                   <div
@@ -188,9 +188,13 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
               </CustomMenu>
             </div>
           </div>
-          <div className="relative mt-2 space-y-2 text-sm text-custom-text-200">
-            {page.blocks.length > 0 ? page.blocks.slice(0, 3).map((block) => <h4>{block.name}</h4>) : null}
-          </div>
+          {page.blocks.length > 0 && (
+            <div className="relative mt-2 space-y-2 text-sm text-custom-text-200">
+              {page.blocks.slice(0, 3).map((block) => (
+                <h4 className="truncate">{block.name}</h4>
+              ))}
+            </div>
+          )}
         </a>
       </Link>
     </div>

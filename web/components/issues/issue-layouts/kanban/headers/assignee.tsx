@@ -3,7 +3,8 @@ import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
-import { Avatar } from "components/ui";
+// ui
+import { Avatar } from "@plane/ui";
 
 export interface IAssigneesHeader {
   column_id: string;
@@ -16,7 +17,7 @@ export interface IAssigneesHeader {
   handleKanBanToggle: any;
 }
 
-export const Icon = ({ user }: any) => <Avatar user={user} height="22px" width="22px" fontSize="12px" />;
+export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="base" />;
 
 export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
   const {
@@ -38,8 +39,8 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
         (sub_group_by && header_type === "sub_group_by" ? (
           <HeaderSubGroupByCard
             column_id={column_id}
-            icon={<Icon user={assignee?.member} />}
-            title={assignee?.member?.display_name || ""}
+            icon={<Icon user={assignee} />}
+            title={assignee?.display_name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
@@ -49,11 +50,12 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
             sub_group_by={sub_group_by}
             group_by={group_by}
             column_id={column_id}
-            icon={<Icon user={assignee?.member} />}
-            title={assignee?.member?.display_name || ""}
+            icon={<Icon user={assignee} />}
+            title={assignee?.display_name || ""}
             count={issues_count}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            issuePayload={{ assignees: [assignee?.id] }}
           />
         ))}
     </>

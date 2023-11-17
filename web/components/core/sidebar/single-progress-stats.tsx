@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ProgressBar } from "@plane/ui";
+import { CircularProgressIndicator } from "@plane/ui";
 
 type TSingleProgressStatsProps = {
   title: any;
@@ -27,7 +27,7 @@ export const SingleProgressStats: React.FC<TSingleProgressStatsProps> = ({
     <div className="flex w-1/2 items-center justify-end gap-1 px-2">
       <div className="flex h-5 items-center justify-center gap-1">
         <span className="h-4 w-4">
-          <ProgressBar value={completed} maxValue={total} />
+          <CircularProgressIndicator percentage={(completed / total) * 100} size={14} strokeWidth={2} />
         </span>
         <span className="w-8 text-right">
           {isNaN(Math.floor((completed / total) * 100)) ? "0" : Math.floor((completed / total) * 100)}%

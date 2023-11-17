@@ -57,7 +57,7 @@ class IssueViewSerializer(BaseSerializer):
         if bool(query_params):
             validated_data["query"] = issue_filters(query_params, "POST")
         else:
-            validated_data["query"] = dict()
+            validated_data["query"] = {}
         return IssueView.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -65,7 +65,7 @@ class IssueViewSerializer(BaseSerializer):
         if bool(query_params):
             validated_data["query"] = issue_filters(query_params, "POST")
         else:
-            validated_data["query"] = dict()
+            validated_data["query"] = {}
         validated_data["query"] = issue_filters(query_params, "PATCH")
         return super().update(instance, validated_data)
 

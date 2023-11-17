@@ -2,22 +2,21 @@
 
 """
 
-# from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
 from django.conf import settings
 
-# from django.conf.urls.static import static
 
 urlpatterns = [
-    # path("admin/", admin.site.urls),
     path("", TemplateView.as_view(template_name="index.html")),
     path("api/", include("plane.api.urls")),
     path("analytics/", include("plane.analytics.urls")),
     path("", include("plane.web.urls")),
 ]
 
+if settings.ENABLE_API:
+    urlpatterns += path("api/v1/", include("plane.proxy.urls")),
 
 if settings.DEBUG:
     import debug_toolbar

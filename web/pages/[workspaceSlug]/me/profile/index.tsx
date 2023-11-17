@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
@@ -9,7 +9,8 @@ import { UserService } from "services/user.service";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { WorkspaceSettingLayout } from "layouts/setting-layout/workspace-setting-layout";
+import { AppLayout } from "layouts/app-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
@@ -18,8 +19,8 @@ import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane
 // icons
 import { User2, UserCircle2 } from "lucide-react";
 // types
-import type { NextPage } from "next";
 import type { IUser } from "types";
+import type { NextPageWithLayout } from "types/app";
 // constants
 import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
@@ -37,7 +38,7 @@ const defaultValues: Partial<IUser> = {
 const fileService = new FileService();
 const userService = new UserService();
 
-const Profile: NextPage = () => {
+const ProfilePage: NextPageWithLayout = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // router
@@ -143,7 +144,7 @@ const Profile: NextPage = () => {
   }));
 
   return (
-    <WorkspaceSettingLayout header={<WorkspaceSettingHeader title="My Profile" />}>
+    <>
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
@@ -158,7 +159,7 @@ const Profile: NextPage = () => {
         userImage
       />
       {myProfile ? (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="h-full w-full">
           <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
             <div className="relative h-44 w-full mt-6">
               <img
@@ -388,8 +389,16 @@ const Profile: NextPage = () => {
           <Spinner />
         </div>
       )}
-    </WorkspaceSettingLayout>
+    </>
   );
 };
 
-export default Profile;
+ProfilePage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="My Profile" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default ProfilePage;

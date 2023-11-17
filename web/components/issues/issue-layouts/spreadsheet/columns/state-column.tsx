@@ -1,16 +1,16 @@
 import React from "react";
 
 // components
-import { StateSelect } from "components/states";
+import { IssuePropertyState } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, IStateResponse } from "types";
+import { IIssue, IState } from "types";
 
 type Props = {
   issue: IIssue;
   onChange: (data: Partial<IIssue>) => void;
-  states: IStateResponse | undefined;
+  states: IState[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -24,11 +24,12 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <StateSelect
+      <IssuePropertyState
+        projectId={issue.project_detail.id ?? null}
         value={issue.state_detail}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
-        stateGroups={states}
-        buttonClassName="!shadow-none !border-0"
+        className="h-full w-full"
+        buttonClassName="!shadow-none !border-0 h-full w-full"
         hideDropdownArrow
         disabled={disabled}
       />

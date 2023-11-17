@@ -23,15 +23,11 @@ export const IssueReactionSelector: FC<IIssueReactionSelector> = (props) => {
           <>
             <Popover.Button
               className={`${
-                open ? "" : "bg-custom-background-90"
-              } group inline-flex items-center rounded-md bg-custom-background-90 focus:outline-none transition-all hover:bg-custom-background-100`}
+                open ? "" : "bg-custom-background-80"
+              } group inline-flex items-center rounded-md bg-custom-background-80 focus:outline-none transition-all hover:bg-custom-background-90`}
             >
-              <span
-                className={`flex justify-center items-center rounded-md px-2 ${
-                  size === "sm" ? "w-6 h-6" : size === "md" ? "w-7 h-7" : "w-8 h-8"
-                }`}
-              >
-                <SmilePlus className="text-custom-text-100 h-3.5 w-3.5" />
+              <span className={`flex justify-center items-center rounded px-2 py-1.5`}>
+                <SmilePlus className={`${size === "sm" ? "w-3 h-3" : size === "md" ? "w-3.5 h-3.5" : "w-4 h-4"}`} />
               </span>
             </Popover.Button>
             <Transition

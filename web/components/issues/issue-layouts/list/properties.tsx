@@ -11,163 +11,153 @@ import { IssuePropertyDate } from "../properties/date";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 
 export interface IKanBanProperties {
   columnId: string;
-  issue: any;
-  handleIssues?: (group_by: string | null, issue: IIssue) => void;
-  display_properties: any;
-  states: any;
-  labels: any;
-  members: any;
-  priorities: any;
+  issue: IIssue;
+  handleIssues: (group_by: string | null, issue: IIssue) => void;
+  displayProperties: IIssueDisplayProperties;
+  isReadonly?: boolean;
+  showEmptyGroup?: boolean;
 }
 
 export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, display_properties, states, labels, members, priorities } = props;
+  const { columnId: group_id, issue, handleIssues, displayProperties, isReadonly, showEmptyGroup } = props;
 
-  const handleState = (id: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: id });
+  const handleState = (state: IState) => {
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
   };
 
-  const handlePriority = (id: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, priority: id });
+  const handlePriority = (value: TIssuePriorities) => {
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, priority: value });
   };
 
   const handleLabel = (ids: string[]) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, labels: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, assignees: ids });
   };
 
   const handleStartDate = (date: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, start_date: date });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, start_date: date });
   };
 
   const handleTargetDate = (date: string) => {
-    if (handleIssues) handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, target_date: date });
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, target_date: date });
   };
 
-  const handleEstimate = (id: string) => {
-    if (handleIssues)
-      handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, estimate_point: id });
+  const handleEstimate = (value: number | null) => {
+    handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, estimate_point: value });
   };
 
   return (
-    <div className="relative flex gap-2 overflow-x-auto whitespace-nowrap">
+    <div className="relative flex items-center gap-2 overflow-x-auto whitespace-nowrap">
       {/* basic properties */}
       {/* state */}
-      {display_properties && display_properties?.state && states && (
+      {displayProperties && displayProperties?.state && (
         <IssuePropertyState
-          value={issue?.state || null}
-          dropdownArrow={false}
-          onChange={(id: string) => handleState(id)}
-          disabled={false}
-          list={states}
+          projectId={issue?.project_detail?.id || null}
+          value={issue?.state_detail || null}
+          hideDropdownArrow
+          onChange={handleState}
+          disabled={isReadonly}
         />
       )}
 
       {/* priority */}
-      {display_properties && display_properties?.priority && priorities && (
+      {displayProperties && displayProperties?.priority && (
         <IssuePropertyPriority
           value={issue?.priority || null}
-          dropdownArrow={false}
-          onChange={(id: string) => handlePriority(id)}
-          disabled={false}
-          list={priorities}
+          onChange={handlePriority}
+          disabled={isReadonly}
+          hideDropdownArrow
         />
       )}
 
       {/* label */}
-      {display_properties && display_properties?.labels && labels && (
+      {displayProperties && displayProperties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
         <IssuePropertyLabels
+          projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
-          dropdownArrow={false}
-          onChange={(ids: string[]) => handleLabel(ids)}
-          disabled={false}
-          list={labels}
+          onChange={handleLabel}
+          disabled={isReadonly}
+          hideDropdownArrow
         />
       )}
 
       {/* assignee */}
-      {display_properties && display_properties?.assignee && members && (
+      {displayProperties && displayProperties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
         <IssuePropertyAssignee
+          projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
-          dropdownArrow={false}
-          onChange={(ids: string[]) => handleAssignee(ids)}
-          disabled={false}
-          list={members}
+          hideDropdownArrow
+          onChange={handleAssignee}
+          disabled={isReadonly}
+          multiple
         />
       )}
 
       {/* start date */}
-      {display_properties && display_properties?.start_date && (
+      {displayProperties && displayProperties?.start_date && (showEmptyGroup || issue?.start_date) && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
-          disabled={false}
-          placeHolder={`Start date`}
+          disabled={isReadonly}
+          placeHolder="Start date"
         />
       )}
 
       {/* target/due date */}
-      {display_properties && display_properties?.due_date && (
+      {displayProperties && displayProperties?.due_date && (showEmptyGroup || issue?.target_date) && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
-          disabled={false}
-          placeHolder={`Target date`}
+          disabled={isReadonly}
+          placeHolder="Target date"
         />
       )}
 
       {/* estimates */}
-      {display_properties && display_properties?.estimate && (
+      {displayProperties && displayProperties?.estimate && (
         <IssuePropertyEstimates
-          value={issue?.estimate_point?.toString() || null}
-          dropdownArrow={false}
-          onChange={(id: string) => handleEstimate(id)}
-          disabled={false}
-          workspaceSlug={issue?.workspace_detail?.slug || null}
           projectId={issue?.project_detail?.id || null}
+          value={issue?.estimate_point || null}
+          hideDropdownArrow
+          onChange={handleEstimate}
+          disabled={isReadonly}
         />
       )}
 
       {/* extra render properties */}
       {/* sub-issues */}
-      {display_properties && display_properties?.sub_issue_count && (
-        <Tooltip tooltipHeading="Sub-issue" tooltipContent={`${issue.sub_issues_count}`}>
-          <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
-            <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
-              <Layers width={10} strokeWidth={2} />
-            </div>
-            <div className="pl-0.5 pr-1 text-xs">{issue.sub_issues_count}</div>
+      {displayProperties && displayProperties?.sub_issue_count && (
+        <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
+          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+            <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-xs">{issue.sub_issues_count}</div>
           </div>
         </Tooltip>
       )}
 
       {/* attachments */}
-      {display_properties && display_properties?.attachment_count && (
+      {displayProperties && displayProperties?.attachment_count && (
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-          <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
-            <div className="flex-shrink-0 w-[16px] h-[16px] flex justify-center items-center">
-              <Paperclip width={10} strokeWidth={2} />
-            </div>
-            <div className="pl-0.5 pr-1 text-xs">{issue.attachment_count}</div>
+          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+            <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-xs">{issue.attachment_count}</div>
           </div>
         </Tooltip>
       )}
 
       {/* link */}
-      {display_properties && display_properties?.link && (
+      {displayProperties && displayProperties?.link && (
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-          <div className="flex-shrink-0 border border-custom-border-300 min-w-[22px] h-[22px] overflow-hidden rounded-sm flex justify-center items-center cursor-pointer">
-            <div className="flex-shrink-0  w-[16px] h-[16px] flex justify-center items-center">
-              <Link width={10} strokeWidth={2} />
-            </div>
-            <div className="pl-0.5 pr-1 text-xs">{issue.link_count}</div>
+          <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
+            <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
+            <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
       )}

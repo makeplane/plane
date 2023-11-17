@@ -23,7 +23,7 @@ const defaultValues: Partial<IModule> = {
   description: "",
   status: "backlog",
   lead: null,
-  members_list: [],
+  members: [],
 };
 
 export const ModuleForm: React.FC<Props> = ({
@@ -47,7 +47,7 @@ export const ModuleForm: React.FC<Props> = ({
       description: data?.description || "",
       status: data?.status || "backlog",
       lead: data?.lead || null,
-      members_list: data?.members_list || [],
+      members: data?.members || [],
     },
   });
 
@@ -183,10 +183,10 @@ export const ModuleForm: React.FC<Props> = ({
         </div>
       </div>
       <div className="flex items-center justify-end gap-2 pt-5 mt-5 border-t-[0.5px] border-custom-border-200">
-        <Button variant="neutral-primary" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
           {status
             ? isSubmitting
               ? "Updating Module..."

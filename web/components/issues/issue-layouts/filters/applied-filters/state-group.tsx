@@ -14,7 +14,7 @@ export const AppliedStateGroupFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((stateGroup) => (
         <div key={stateGroup} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
           <StateGroupIcon stateGroup={stateGroup as TStateGroups} height="12px" width="12px" />
@@ -28,6 +28,6 @@ export const AppliedStateGroupFilters: React.FC<Props> = observer((props) => {
           </button>
         </div>
       ))}
-    </div>
+    </>
   );
 });

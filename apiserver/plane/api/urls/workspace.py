@@ -2,10 +2,10 @@ from django.urls import path
 
 
 from plane.api.views import (
+    UserWorkspaceInvitationsViewSet,
     WorkSpaceViewSet,
-    InviteWorkspaceEndpoint,
+    WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
-    WorkspaceMembersEndpoint,
     WorkspaceInvitationsViewset,
     WorkspaceMemberUserEndpoint,
     WorkspaceMemberUserViewsEndpoint,
@@ -18,7 +18,6 @@ from plane.api.views import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    LeaveWorkspaceEndpoint,
 )
 
 
@@ -51,13 +50,13 @@ urlpatterns = [
         name="workspace",
     ),
     path(
-        "workspaces/<str:slug>/invite/",
-        InviteWorkspaceEndpoint.as_view(),
-        name="invite-workspace",
-    ),
-    path(
         "workspaces/<str:slug>/invitations/",
-        WorkspaceInvitationsViewset.as_view({"get": "list"}),
+        WorkspaceInvitationsViewset.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            },
+        ),
         name="workspace-invitations",
     ),
     path(
@@ -70,6 +69,23 @@ urlpatterns = [
         ),
         name="workspace-invitations",
     ),
+    # user workspace invitations
+    path(
+        "users/me/workspaces/invitations/",
+        UserWorkspaceInvitationsViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            },
+        ),
+        name="user-workspace-invitations",
+    ),
+    path(
+        "workspaces/<str:slug>/invitations/<uuid:pk>/join/",
+        WorkspaceJoinEndpoint.as_view(),
+        name="workspace-join",
+    ),
+    # user join workspace
     path(
         "workspaces/<str:slug>/members/",
         WorkSpaceMemberViewSet.as_view({"get": "list"}),
@@ -87,9 +103,13 @@ urlpatterns = [
         name="workspace-member",
     ),
     path(
-        "workspaces/<str:slug>/workspace-members/",
-        WorkspaceMembersEndpoint.as_view(),
-        name="workspace-members",
+        "workspaces/<str:slug>/members/leave/",
+        WorkSpaceMemberViewSet.as_view(
+            {
+                "post": "leave",
+            },
+        ),
+        name="leave-workspace-members",
     ),
     path(
         "workspaces/<str:slug>/teams/",
@@ -173,10 +193,5 @@ urlpatterns = [
         "workspaces/<str:slug>/labels/",
         WorkspaceLabelsEndpoint.as_view(),
         name="workspace-labels",
-    ),
-    path(
-        "workspaces/<str:slug>/members/leave/",
-        LeaveWorkspaceEndpoint.as_view(),
-        name="leave-workspace-members",
     ),
 ]

@@ -9,11 +9,14 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import {
   ModuleAppliedFiltersRoot,
   ModuleCalendarLayout,
+  ModuleEmptyState,
   ModuleGanttLayout,
   ModuleKanBanLayout,
   ModuleListLayout,
   ModuleSpreadsheetLayout,
 } from "components/issues";
+// ui
+import { Spinner } from "@plane/ui";
 
 export const ModuleLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -24,47 +27,61 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   };
 
   const {
-    project: projectStore,
     issueFilter: issueFilterStore,
     moduleIssue: moduleIssueStore,
     moduleFilter: moduleIssueFilterStore,
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId && moduleId ? `MODULE_INFORMATION_${moduleId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId && moduleId) {
-      // fetching the project display filters and display properties
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-      // fetching the module filters
-      await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
+  useSWR(
+    workspaceSlug && projectId && moduleId ? `MODULE_FILTERS_AND_ISSUES_${moduleId.toString()}` : null,
+    async () => {
+      if (workspaceSlug && projectId && moduleId) {
+        // fetching the project display filters and display properties
+        await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+        // fetching the module filters
+        await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
 
-      // fetching the project state, labels and members
-      await projectStore.fetchProjectStates(workspaceSlug, projectId);
-      await projectStore.fetchProjectLabels(workspaceSlug, projectId);
-      await projectStore.fetchProjectMembers(workspaceSlug, projectId);
-
-      // fetching the module issues
-      await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
+        // fetching the module issues
+        await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
+      }
     }
-  });
+  );
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
+
+  const issueCount = moduleIssueStore.getIssuesCount;
+
+  if (!moduleIssueStore.getIssues)
+    return (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
-      <div className="h-full w-full overflow-auto">
-        {activeLayout === "list" ? (
-          <ModuleListLayout />
-        ) : activeLayout === "kanban" ? (
-          <ModuleKanBanLayout />
-        ) : activeLayout === "calendar" ? (
-          <ModuleCalendarLayout />
-        ) : activeLayout === "gantt_chart" ? (
-          <ModuleGanttLayout />
-        ) : activeLayout === "spreadsheet" ? (
-          <ModuleSpreadsheetLayout />
-        ) : null}
-      </div>
+      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
+        <ModuleEmptyState
+          workspaceSlug={workspaceSlug?.toString()}
+          projectId={projectId?.toString()}
+          moduleId={moduleId?.toString()}
+        />
+      ) : (
+        <div className="h-full w-full overflow-auto">
+          {activeLayout === "list" ? (
+            <ModuleListLayout />
+          ) : activeLayout === "kanban" ? (
+            <ModuleKanBanLayout />
+          ) : activeLayout === "calendar" ? (
+            <ModuleCalendarLayout />
+          ) : activeLayout === "gantt_chart" ? (
+            <ModuleGanttLayout />
+          ) : activeLayout === "spreadsheet" ? (
+            <ModuleSpreadsheetLayout />
+          ) : null}
+        </div>
+      )}
     </div>
   );
 });

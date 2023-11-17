@@ -5,11 +5,10 @@ import Link from "next/link";
 
 // components
 import { ProfileIssuesFilter } from "components/profile";
-// types
-import { UserAuth } from "types";
 
 type Props = {
-  memberRole: UserAuth;
+  isAuthorized: boolean;
+  showProfileIssuesFilter?: boolean;
 };
 
 const viewerTabs = [
@@ -38,15 +37,16 @@ const adminTabs = [
   },
 ];
 
-export const ProfileNavbar: React.FC<Props> = ({ memberRole }) => {
+export const ProfileNavbar: React.FC<Props> = (props) => {
+  const { isAuthorized, showProfileIssuesFilter } = props;
+
   const router = useRouter();
   const { workspaceSlug, userId } = router.query;
 
-  const tabsList =
-    memberRole.isOwner || memberRole.isMember || memberRole.isViewer ? [...viewerTabs, ...adminTabs] : viewerTabs;
+  const tabsList = isAuthorized ? [...viewerTabs, ...adminTabs] : viewerTabs;
 
   return (
-    <div className="sticky -top-0.5 z-[1] md:static px-4 sm:px-5 flex items-center justify-between gap-4 bg-custom-background-100 border-b border-custom-border-300">
+    <div className="sticky -top-0.5 z-10 md:static px-4 sm:px-5 flex items-center justify-between gap-4 bg-custom-background-100 border-b border-custom-border-300">
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
@@ -62,7 +62,7 @@ export const ProfileNavbar: React.FC<Props> = ({ memberRole }) => {
           </Link>
         ))}
       </div>
-      <ProfileIssuesFilter />
+      {showProfileIssuesFilter && <ProfileIssuesFilter />}
     </div>
   );
 };

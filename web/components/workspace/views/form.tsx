@@ -31,7 +31,11 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    workspaceMember: { workspaceMembers },
+  } = useMobxStore();
 
   const {
     formState: { errors, isSubmitting },
@@ -110,7 +114,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   value={value}
                   placeholder="Description"
                   onChange={onChange}
-                  className="h-32 resize-none text-sm"
+                  className="h-24 w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
                 />
               )}
@@ -143,6 +147,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.my_issues.spreadsheet}
                     labels={workspaceStore.workspaceLabels ?? undefined}
+                    members={workspaceMembers?.map((m) => m.member) ?? undefined}
                     projects={workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined}
                   />
                 </FiltersDropdown>
@@ -156,7 +161,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                 handleClearAllFilters={clearAllFilters}
                 handleRemoveFilter={() => {}}
                 labels={workspaceStore.workspaceLabels ?? undefined}
-                members={workspaceStore.workspaceMembers?.map((m) => m.member) ?? undefined}
+                members={workspaceMembers?.map((m) => m.member) ?? undefined}
                 states={undefined}
               />
             </div>
@@ -164,10 +169,10 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <Button variant="neutral-primary" onClick={handleClose}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit" loading={isSubmitting}>
+        <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
           {data
             ? isSubmitting
               ? "Updating View..."

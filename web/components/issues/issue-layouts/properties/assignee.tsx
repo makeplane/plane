@@ -1,252 +1,209 @@
-import { FC, useRef, useState } from "react";
-import { Combobox } from "@headlessui/react";
-import { ChevronDown, Search, X, Check } from "lucide-react";
+import { Fragment, useState } from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { Tooltip } from "@plane/ui";
-// hooks
-import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
-
-interface IFiltersOption {
-  id: string;
-  title: string;
-  avatar: string;
-}
+import { useMobxStore } from "lib/mobx/store-provider";
+import { usePopper } from "react-popper";
+import { Combobox } from "@headlessui/react";
+import { Check, ChevronDown, Search, User2 } from "lucide-react";
+// ui
+import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
+// types
+import { Placement } from "@popperjs/core";
 
 export interface IIssuePropertyAssignee {
-  value?: any;
-  onChange?: (id: any, data: any) => void;
+  view?: "profile" | "workspace" | "project";
+  projectId: string | null;
+  value: string[] | string;
+  onChange: (data: string[]) => void;
   disabled?: boolean;
-  list?: any;
-
+  hideDropdownArrow?: boolean;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
-  dropdownArrow?: boolean;
+  placement?: Placement;
+  multiple?: true;
+  noLabelBorder?: boolean;
 }
 
-export const IssuePropertyAssignee: FC<IIssuePropertyAssignee> = observer((props) => {
-  const { value, onChange, disabled, list, className, buttonClassName, optionsClassName, dropdownArrow = true } = props;
+export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer((props) => {
+  const {
+    view,
+    projectId,
+    value,
+    onChange,
+    disabled = false,
+    hideDropdownArrow = false,
+    className,
+    buttonClassName,
+    optionsClassName,
+    placement,
+    multiple = false,
+    noLabelBorder = false,
+  } = props;
+  // store
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    workspaceMember: { workspaceMembers, fetchWorkspaceMembers },
+  } = useMobxStore();
+  const workspaceSlug = workspaceStore?.workspaceSlug;
+  // states
+  const [query, setQuery] = useState("");
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const dropdownBtn = useRef<any>(null);
-  const dropdownOptions = useRef<any>(null);
+  // const fetchProjectMembers = () => {
+  //   setIsLoading(true);
+  //   if (workspaceSlug && projectId)
+  //     workspaceSlug &&
+  //       projectId &&
+  //       projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
+  // };
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>("");
+  const getWorkspaceMembers = () => {
+    setIsLoading(true);
+    if (workspaceSlug) workspaceSlug && fetchWorkspaceMembers(workspaceSlug).then(() => setIsLoading(false));
+  };
 
-  const options: IFiltersOption[] | [] =
-    (list &&
-      list?.length > 0 &&
-      list.map((_member: any) => ({
-        id: _member?.member?.id,
-        title: _member?.member?.display_name,
-        avatar: _member?.member?.avatar && _member?.member?.avatar !== "" ? _member?.member?.avatar : null,
-      }))) ||
-    [];
+  const options = (workspaceMembers ?? [])?.map((member) => ({
+    value: member.member.id,
+    query: member.member.display_name,
+    content: (
+      <div className="flex items-center gap-2">
+        <Avatar name={member.member.display_name} src={member.member.avatar} showTooltip={false} />
+        {member.member.display_name}
+      </div>
+    ),
+  }));
 
-  useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
+  const filteredOptions =
+    query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
-  const selectedOption: IFiltersOption[] =
-    (value && value?.length > 0 && options.filter((_member: IFiltersOption) => value.includes(_member.id))) || [];
+  const getTooltipContent = (): string => {
+    if (!value || value.length === 0) return "No Assignee";
 
-  const filteredOptions: IFiltersOption[] =
-    search === ""
-      ? options && options.length > 0
-        ? options
-        : []
-      : options && options.length > 0
-      ? options.filter((_member: IFiltersOption) =>
-          _member.title.toLowerCase().replace(/\s+/g, "").includes(search.toLowerCase().replace(/\s+/g, ""))
-        )
-      : [];
+    // if multiple assignees
+    if (Array.isArray(value)) {
+      const assignees = workspaceMembers?.filter((m) => value.includes(m.member.id));
 
-  const assigneeRenderLength = 5;
+      if (!assignees || assignees.length === 0) return "No Assignee";
+
+      // if only one assignee in list
+      if (assignees.length === 1) {
+        return "1 assignee";
+      } else return `${assignees.length} assignees`;
+    }
+
+    // if single assignee
+    const assignee = workspaceMembers?.find((m) => m.member.id === value)?.member;
+
+    if (!assignee) return "No Assignee";
+
+    // if assignee not null & not list
+    return "1 assignee";
+  };
+
+  const label = (
+    <Tooltip tooltipHeading="Assignee" tooltipContent={getTooltipContent()} position="top">
+      <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
+        {value && value.length > 0 && Array.isArray(value) ? (
+          <AvatarGroup showTooltip={false}>
+            {value.map((assigneeId) => {
+              const member = workspaceMembers?.find((m) => m.member.id === assigneeId)?.member;
+              if (!member) return null;
+              return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+            })}
+          </AvatarGroup>
+        ) : (
+          <span
+            className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded duration-300 focus:outline-none ${
+              noLabelBorder ? "" : " px-2.5 py-1 border-[0.5px] border-custom-border-300"
+            }`}
+          >
+            <User2 className="h-3 w-3" />
+          </span>
+        )}
+      </div>
+    </Tooltip>
+  );
+
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: placement ?? "bottom-start",
+    modifiers: [
+      {
+        name: "preventOverflow",
+        options: {
+          padding: 12,
+        },
+      },
+    ],
+  });
+
+  const comboboxProps: any = { value, onChange, disabled };
+  if (multiple) comboboxProps.multiple = true;
 
   return (
-    <Combobox
-      multiple={true}
-      as="div"
-      className={`${className}`}
-      value={selectedOption.map((_member: IFiltersOption) => _member.id) as string[]}
-      onChange={(data: string[]) => {
-        if (onChange && selectedOption) onChange(data, selectedOption);
-      }}
-      disabled={disabled}
-    >
-      {({ open }: { open: boolean }) => {
-        if (open) {
-          if (!isOpen) setIsOpen(true);
-        } else if (isOpen) setIsOpen(false);
-
-        return (
-          <>
-            <Combobox.Button
-              ref={dropdownBtn}
-              type="button"
-              className={`flex items-center justify-between gap-1 px-1 py-0.5 rounded-sm shadow-sm border border-custom-border-300 duration-300 outline-none ${
-                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
-              } ${buttonClassName}`}
-            >
-              {selectedOption && selectedOption?.length > 0 ? (
-                <>
-                  {selectedOption?.length > 1 ? (
-                    <Tooltip
-                      tooltipHeading={`Assignees`}
-                      tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
-                    >
-                      <div className="flex-shrink-0 flex justify-center items-center gap-1 pr-[8px]">
-                        {selectedOption.slice(0, assigneeRenderLength).map((_assignee) => (
-                          <div
-                            key={_assignee?.id}
-                            className="flex-shrink-0 w-[16px] h-[16px] rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-300"
-                          >
-                            {_assignee && _assignee.avatar ? (
-                              <img
-                                src={_assignee.avatar}
-                                className="absolute top-0 left-0 h-full w-full object-cover"
-                                alt={_assignee.title}
-                              />
-                            ) : (
-                              _assignee.title[0]
-                            )}
-                          </div>
-                        ))}
-                        {selectedOption.length > assigneeRenderLength && (
-                          <div className="flex-shrink-0 h-[16px] px-0.5 rounded-sm bg-gray-700 flex justify-center items-center text-white capitalize relative -mr-[8px] text-xs overflow-hidden border border-custom-border-300">
-                            +{selectedOption?.length - assigneeRenderLength}
-                          </div>
-                        )}
-                      </div>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip
-                      tooltipHeading={`Assignees`}
-                      tooltipContent={(selectedOption.map((_label: IFiltersOption) => _label.title) || []).join(", ")}
-                    >
-                      <div className="flex-shrink-0 flex justify-center items-center gap-1 text-xs">
-                        <div className="flex-shrink-0 w-4 h-4 rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden text-xs">
-                          {selectedOption[0] && selectedOption[0].avatar ? (
-                            <img
-                              src={selectedOption[0].avatar}
-                              className="absolute top-0 left-0 h-full w-full object-cover"
-                              alt={selectedOption[0].title}
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-gray-700 flex justify-center items-center">
-                              {selectedOption[0].title[0]}
-                            </div>
-                          )}
-                        </div>
-                        <div className="line-clamp-1">{selectedOption[0].title}</div>
-                      </div>
-                    </Tooltip>
+    <Combobox as="div" className={`flex-shrink-0 text-left ${className}`} {...comboboxProps}>
+      <Combobox.Button as={Fragment}>
+        <button
+          ref={setReferenceElement}
+          type="button"
+          className={`flex items-center justify-between gap-1 w-full text-xs ${
+            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+          } ${buttonClassName}`}
+          onClick={() => !workspaceMembers && getWorkspaceMembers()}
+        >
+          {label}
+          {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
+        </button>
+      </Combobox.Button>
+      <Combobox.Options className="fixed z-10">
+        <div
+          className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          ref={setPopperElement}
+          style={styles.popper}
+          {...attributes.popper}
+        >
+          <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
+            <Search className="h-3.5 w-3.5 text-custom-text-300" />
+            <Combobox.Input
+              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search"
+              displayValue={(assigned: any) => assigned?.name}
+            />
+          </div>
+          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+            {isLoading ? (
+              <p className="text-center text-custom-text-200">Loading...</p>
+            ) : filteredOptions.length > 0 ? (
+              filteredOptions.map((option) => (
+                <Combobox.Option
+                  key={option.value}
+                  value={option.value}
+                  className={({ active, selected }) =>
+                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                      active && !selected ? "bg-custom-background-80" : ""
+                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                  }
+                >
+                  {({ selected }) => (
+                    <>
+                      {option.content}
+                      {selected && <Check className={`h-3.5 w-3.5`} />}
+                    </>
                   )}
-                </>
-              ) : (
-                <Tooltip tooltipHeading={`Assignees`} tooltipContent={``}>
-                  <div className="text-xs">Select Assignees</div>
-                </Tooltip>
-              )}
-
-              {dropdownArrow && !disabled && (
-                <div className="flex-shrink-0 w-[14px] h-[14px] flex justify-center items-center">
-                  <ChevronDown width={14} strokeWidth={2} />
-                </div>
-              )}
-            </Combobox.Button>
-
-            <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
-              <Combobox.Options
-                ref={dropdownOptions}
-                className={`absolute z-10 border border-custom-border-300 p-2 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none whitespace-nowrap mt-1 space-y-1 ${optionsClassName}`}
-              >
-                {options && options.length > 0 ? (
-                  <>
-                    <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-1">
-                      <div className="flex-shrink-0 flex justify-center items-center w-[16px] h-[16px] rounded-sm">
-                        <Search width={12} strokeWidth={2} />
-                      </div>
-
-                      <div>
-                        <Combobox.Input
-                          className="w-full bg-transparent p-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          placeholder="Search"
-                          displayValue={(assigned: any) => assigned?.name}
-                        />
-                      </div>
-
-                      {search && search.length > 0 && (
-                        <div
-                          onClick={() => setSearch("")}
-                          className="flex-shrink-0 flex justify-center items-center w-[16px] h-[16px] rounded-sm cursor-pointer hover:bg-custom-background-80"
-                        >
-                          <X width={12} strokeWidth={2} />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className={`space-y-0.5 max-h-48 overflow-y-scroll`}>
-                      {filteredOptions ? (
-                        filteredOptions.length > 0 ? (
-                          filteredOptions.map((option) => (
-                            <Combobox.Option
-                              key={option.id}
-                              value={option.id}
-                              className={({ active }) =>
-                                `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                                  active || (value && value.length > 0 && value.includes(option?.id))
-                                    ? "bg-custom-background-80"
-                                    : ""
-                                } ${
-                                  value && value.length > 0 && value.includes(option?.id)
-                                    ? "text-custom-text-100"
-                                    : "text-custom-text-200"
-                                }`
-                              }
-                            >
-                              <div className="flex items-center gap-1 w-full px-1">
-                                <div className="flex-shrink-0 w-[18px] h-[18px] rounded-sm flex justify-center items-center text-white capitalize relative overflow-hidden">
-                                  {option && option.avatar ? (
-                                    <img
-                                      src={option.avatar}
-                                      className="absolute top-0 left-0 h-full w-full object-cover"
-                                      alt={option.title}
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full bg-gray-700 flex justify-center items-center">
-                                      {option.title[0]}
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="line-clamp-1">{option.title}</div>
-                                {value && value.length > 0 && value.includes(option?.id) && (
-                                  <div className="flex-shrink-0 ml-auto w-[13px] h-[13px] flex justify-center items-center">
-                                    <Check width={13} strokeWidth={2} />
-                                  </div>
-                                )}
-                              </div>
-                            </Combobox.Option>
-                          ))
-                        ) : (
-                          <span className="flex items-center gap-2 p-1">
-                            <p className="text-left text-custom-text-200 ">No matching results</p>
-                          </span>
-                        )
-                      ) : (
-                        <p className="text-center text-custom-text-200">Loading...</p>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-center text-custom-text-200">No options available.</p>
-                )}
-              </Combobox.Options>
-            </div>
-          </>
-        );
-      }}
+                </Combobox.Option>
+              ))
+            ) : (
+              <span className="flex items-center gap-2 p-1">
+                <p className="text-left text-custom-text-200 ">No matching results</p>
+              </span>
+            )}
+          </div>
+        </div>
+      </Combobox.Options>
     </Combobox>
   );
 });

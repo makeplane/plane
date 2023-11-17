@@ -7,9 +7,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components/issues";
 // ui
-import { Input, PrimaryButton, SecondaryButton, TextArea } from "components/ui";
+import { Button, Input, TextArea } from "@plane/ui";
 // types
-import { IProjectView } from "types";
+import { IProjectView, IIssueFilterOptions } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -26,13 +26,16 @@ const defaultValues: Partial<IProjectView> = {
 };
 
 export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: projectStore,
+    projectState: projectStateStore,
+    projectMember: { projectMembers },
+  } = useMobxStore();
 
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
-    register,
     reset,
     setValue,
     watch,
@@ -40,7 +43,34 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
     defaultValues,
   });
 
-  const selectedFilters = watch("query_data");
+  const selectedFilters: IIssueFilterOptions = {};
+  Object.entries(watch("query_data") ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value) && value.length === 0) return;
+
+    selectedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
+  // for removing filters from a key
+  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
+    if (!value) return;
+
+    const newValues = selectedFilters?.[key] ?? [];
+
+    if (Array.isArray(value)) {
+      value.forEach((val) => {
+        if (newValues.includes(val)) newValues.splice(newValues.indexOf(val), 1);
+      });
+    } else {
+      if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+    }
+
+    setValue("query_data", {
+      ...selectedFilters,
+      [key]: newValues,
+    });
+  };
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
     await handleFormSubmit(formData);
@@ -70,32 +100,45 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
         <h3 className="text-lg font-medium leading-6 text-custom-text-100">{data ? "Update" : "Create"} View</h3>
         <div className="space-y-3">
           <div>
-            <Input
-              id="name"
+            <Controller
+              control={control}
               name="name"
-              type="name"
-              placeholder="Title"
-              autoComplete="off"
-              className="resize-none text-xl"
-              error={errors.name}
-              register={register}
-              validations={{
+              rules={{
                 required: "Title is required",
                 maxLength: {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
               }}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  id="name"
+                  type="name"
+                  name="name"
+                  value={value}
+                  onChange={onChange}
+                  hasError={Boolean(errors.name)}
+                  placeholder="Title"
+                  className="resize-none w-full text-xl focus:border-blue-400"
+                />
+              )}
             />
           </div>
           <div>
-            <TextArea
-              id="description"
+            <Controller
               name="description"
-              placeholder="Description"
-              className="h-32 resize-none text-sm"
-              error={errors.description}
-              register={register}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextArea
+                  id="description"
+                  name="description"
+                  placeholder="Description"
+                  className="h-24 w-full resize-none text-sm"
+                  hasError={Boolean(errors?.description)}
+                  value={value}
+                  onChange={onChange}
+                />
+              )}
             />
           </div>
           <div>
@@ -125,8 +168,8 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
                     labels={projectStore.projectLabels ?? undefined}
-                    members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
-                    states={projectStore.projectStatesByGroups ?? undefined}
+                    members={projectMembers?.map((m) => m.member) ?? undefined}
+                    states={projectStateStore.projectStates ?? undefined}
                   />
                 </FiltersDropdown>
               )}
@@ -137,18 +180,20 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
               <AppliedFiltersList
                 appliedFilters={selectedFilters}
                 handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={() => {}}
-                labels={projectStore.projectLabels ?? undefined}
-                members={projectStore.projectMembers?.map((m) => m.member) ?? undefined}
-                states={projectStore.projectStatesByGroups ?? undefined}
+                handleRemoveFilter={handleRemoveFilter}
+                labels={projectStore.projectLabels ?? []}
+                members={projectMembers?.map((m) => m.member) ?? []}
+                states={projectStateStore.projectStates ?? []}
               />
             </div>
           )}
         </div>
       </div>
       <div className="mt-5 flex justify-end gap-2">
-        <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-        <PrimaryButton type="submit" loading={isSubmitting}>
+        <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" size="sm" type="submit">
           {data
             ? isSubmitting
               ? "Updating View..."
@@ -156,7 +201,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
             : isSubmitting
             ? "Creating View..."
             : "Create View"}
-        </PrimaryButton>
+        </Button>
       </div>
     </form>
   );

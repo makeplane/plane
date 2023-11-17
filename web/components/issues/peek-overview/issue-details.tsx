@@ -10,12 +10,7 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const PeekOverviewIssueDetails: React.FC<Props> = ({
-  handleUpdateIssue,
-  issue,
-  readOnly,
-  workspaceSlug,
-}) => (
+export const PeekOverviewIssueDetails: React.FC<Props> = ({ handleUpdateIssue, issue, readOnly, workspaceSlug }) => (
   <div className="space-y-2">
     <h6 className="font-medium text-custom-text-200">
       {issue.project_detail.identifier}-{issue.sequence_id}
@@ -26,6 +21,7 @@ export const PeekOverviewIssueDetails: React.FC<Props> = ({
       issue={{
         name: issue.name,
         description_html: issue.description_html,
+        project_id: issue.project_detail.id,
       }}
       workspaceSlug={workspaceSlug}
     />

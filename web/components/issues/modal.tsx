@@ -6,8 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { ModuleService } from "services/module.service";
-import { IssueService, IssueDraftService } from "services/issue";
+import { IssueDraftService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useLocalStorage from "hooks/use-local-storage";
@@ -36,12 +35,12 @@ export interface IssuesModalProps {
     | "estimate"
     | "parent"
     | "all"
+    | "module"
+    | "cycle"
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
 
-const moduleService = new ModuleService();
-const issueService = new IssueService();
 const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
@@ -170,35 +169,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   }, [activeProject, data, projectId, projects, isOpen]);
 
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
-    if (!workspaceSlug || !activeProject || !user) return;
+    if (!workspaceSlug || !activeProject) return;
 
-    await issueService
-      .addIssueToCycle(
-        workspaceSlug.toString(),
-        activeProject,
-        cycleId,
-        {
-          issues: [issueId],
-        },
-        user
-      )
-      .then(() => cycleIssueStore.fetchIssues(workspaceSlug.toString(), activeProject, cycleId));
+    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), activeProject, cycleId, [issueId]);
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
-    if (!workspaceSlug || !activeProject || !user) return;
+    if (!workspaceSlug || !activeProject) return;
 
-    await moduleService
-      .addIssuesToModule(
-        workspaceSlug.toString(),
-        activeProject,
-        moduleId,
-        {
-          issues: [issueId],
-        },
-        user
-      )
-      .then(() => moduleIssueStore.fetchIssues(workspaceSlug.toString(), activeProject, moduleId));
+    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), activeProject, moduleId, [issueId]);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
@@ -252,8 +231,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         setFormDirtyState(null);
         setShowConfirmDiscard(false);
 
-        if (payload.assignees_list?.some((assignee) => assignee === user?.id))
-          mutate(USER_ISSUE(workspaceSlug as string));
+        if (payload.assignees?.some((assignee) => assignee === user?.id)) mutate(USER_ISSUE(workspaceSlug as string));
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
@@ -267,10 +245,10 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {
-    if (!user) return;
+    if (!workspaceSlug || !activeProject || !data) return;
 
-    await issueService
-      .patchIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload, user)
+    await issueDetailStore
+      .updateIssue(workspaceSlug.toString(), activeProject, data.id, payload)
       .then(() => {
         if (!createMore) onFormSubmitClose();
 
@@ -294,8 +272,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     const payload: Partial<IIssue> = {
       ...formData,
-      assignees_list: formData.assignees ?? [],
-      labels_list: formData.labels ?? [],
       description: formData.description ?? "",
       description_html: formData.description_html ?? "<p></p>",
     };
@@ -334,7 +310,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -348,7 +324,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-3xl">
+                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full mx-4 sm:max-w-4xl">
                   <IssueForm
                     handleFormSubmit={handleFormSubmit}
                     initialData={data ?? prePopulateData}

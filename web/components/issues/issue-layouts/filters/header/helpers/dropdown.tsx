@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { usePopper } from "react-popper";
 import { Popover, Transition } from "@headlessui/react";
-
+import { Placement } from "@popperjs/core";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -10,16 +10,17 @@ import { ChevronUp } from "lucide-react";
 type Props = {
   children: React.ReactNode;
   title?: string;
+  placement?: Placement;
 };
 
 export const FiltersDropdown: React.FC<Props> = (props) => {
-  const { children, title = "Dropdown" } = props;
+  const { children, title = "Dropdown", placement } = props;
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "auto",
+    placement: placement ?? "auto",
   });
 
   return (

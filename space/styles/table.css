@@ -1,0 +1,210 @@
+.tableWrapper {
+  overflow-x: auto;
+  padding: 2px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tableWrapper table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 0;
+  margin-bottom: 3rem;
+  border: 1px solid rgba(var(--color-border-200));
+  width: 100%;
+}
+
+.tableWrapper table td,
+.tableWrapper table th {
+  min-width: 1em;
+  border: 1px solid rgba(var(--color-border-200));
+  padding: 10px 15px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+  transition: background-color 0.3s ease;
+
+  > * {
+    margin-bottom: 0;
+  }
+}
+
+.tableWrapper table td > *,
+.tableWrapper table th > * {
+  margin: 0 !important;
+  padding: 0.25rem 0 !important;
+}
+
+.tableWrapper table td.has-focus,
+.tableWrapper table th.has-focus {
+  box-shadow: rgba(var(--color-primary-300), 0.1) 0px 0px 0px 2px inset !important;
+}
+
+.tableWrapper table th {
+  font-weight: bold;
+  text-align: left;
+  background-color: rgba(var(--color-primary-100));
+}
+
+.tableWrapper table th * {
+  font-weight: 600;
+}
+
+.tableWrapper table .selectedCell:after {
+  z-index: 2;
+  position: absolute;
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(var(--color-primary-300), 0.1);
+  pointer-events: none;
+}
+
+.tableWrapper table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  z-index: 99;
+  background-color: rgba(var(--color-primary-400));
+  pointer-events: none;
+}
+
+.tableWrapper .tableControls {
+  position: absolute;
+}
+
+.tableWrapper .tableControls .columnsControl,
+.tableWrapper .tableControls .rowsControl {
+  transition: opacity ease-in 100ms;
+  position: absolute;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tableWrapper .tableControls .columnsControl {
+  height: 20px;
+  transform: translateY(-50%);
+}
+
+.tableWrapper .tableControls .columnsControl .columnsControlDiv {
+  color: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath fill='%238F95B2' d='M4.5 10.5c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5S6 12.825 6 12s-.675-1.5-1.5-1.5zm15 0c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5S21 12.825 21 12s-.675-1.5-1.5-1.5zm-7.5 0c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5 1.5-.675 1.5-1.5-.675-1.5-1.5-1.5z'/%3E%3C/svg%3E");
+  width: 30px;
+  height: 15px;
+}
+
+.tableWrapper .tableControls .rowsControl {
+  width: 20px;
+  transform: translateX(-50%);
+}
+
+.tableWrapper .tableControls .rowsControl .rowsControlDiv {
+  color: white;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath fill='%238F95B2' d='M12 3c-.825 0-1.5.675-1.5 1.5S11.175 6 12 6s1.5-.675 1.5-1.5S12.825 3 12 3zm0 15c-.825 0-1.5.675-1.5 1.5S11.175 21 12 21s1.5-.675 1.5-1.5S12.825 18 12 18zm0-7.5c-.825 0-1.5.675-1.5 1.5s.675 1.5 1.5 1.5 1.5-.675 1.5-1.5-.675-1.5-1.5-1.5z'/%3E%3C/svg%3E");
+  height: 30px;
+  width: 15px;
+}
+
+.tableWrapper .tableControls .rowsControlDiv {
+  background-color: rgba(var(--color-primary-100));
+  border: 1px solid rgba(var(--color-border-200));
+  border-radius: 2px;
+  background-size: 1.25rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition:
+    transform ease-out 100ms,
+    background-color ease-out 100ms;
+  outline: none;
+  box-shadow: #000 0px 2px 4px;
+  cursor: pointer;
+}
+
+.tableWrapper .tableControls .columnsControlDiv {
+  background-color: rgba(var(--color-primary-100));
+  border: 1px solid rgba(var(--color-border-200));
+  border-radius: 2px;
+  background-size: 1.25rem;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition:
+    transform ease-out 100ms,
+    background-color ease-out 100ms;
+  outline: none;
+  box-shadow: #000 0px 2px 4px;
+  cursor: pointer;
+}
+.tableWrapper .tableControls .tableToolbox,
+.tableWrapper .tableControls .tableColorPickerToolbox {
+  border: 1px solid rgba(var(--color-border-300));
+  background-color: rgba(var(--color-background-100));
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  gap: 0.25rem;
+}
+
+.tableWrapper .tableControls .tableToolbox .toolboxItem,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem {
+  background-color: rgba(var(--color-background-100));
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  padding: 0.1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tableWrapper .tableControls .tableToolbox .toolboxItem:hover,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem:hover {
+  background-color: rgba(var(--color-background-100), 0.5);
+}
+
+.tableWrapper .tableControls .tableToolbox .toolboxItem .iconContainer,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer,
+.tableWrapper .tableControls .tableToolbox .toolboxItem .colorContainer,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer {
+  border: 1px solid rgba(var(--color-border-300));
+  border-radius: 3px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.tableWrapper .tableControls .tableToolbox .toolboxItem .iconContainer svg,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .iconContainer svg,
+.tableWrapper .tableControls .tableToolbox .toolboxItem .colorContainer svg,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .colorContainer svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+.tableToolbox {
+  background-color: rgba(var(--color-background-100));
+}
+
+.tableWrapper .tableControls .tableToolbox .toolboxItem .label,
+.tableWrapper .tableControls .tableColorPickerToolbox .toolboxItem .label {
+  font-size: 0.85rem;
+  color: rgba(var(--color-text-300));
+}
+
+.resize-cursor .tableWrapper .tableControls .rowsControl,
+.tableWrapper.controls--disabled .tableControls .rowsControl,
+.resize-cursor .tableWrapper .tableControls .columnsControl,
+.tableWrapper.controls--disabled .tableControls .columnsControl {
+  opacity: 0;
+  pointer-events: none;
+}

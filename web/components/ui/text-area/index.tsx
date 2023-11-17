@@ -74,9 +74,7 @@ export const TextArea: React.FC<Props> = ({
             : mode === "transparent"
             ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
             : ""
-        } ${error ? "border-red-500" : ""} ${
-          error && mode === "primary" ? "bg-red-100" : ""
-        } ${className}`}
+        } ${error ? "border-red-500" : ""} ${error && mode === "primary" ? "bg-red-100" : ""} ${className}`}
         {...rest}
       />
       {error?.message && <div className="text-sm text-red-500">{error.message}</div>}

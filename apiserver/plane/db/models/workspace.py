@@ -99,6 +99,7 @@ class WorkspaceMember(BaseModel):
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     issue_props = models.JSONField(default=get_issue_props)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         unique_together = ["workspace", "member"]

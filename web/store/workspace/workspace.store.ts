@@ -14,22 +14,25 @@ export interface IWorkspaceStore {
 
   // observables
   workspaceSlug: string | null;
-  workspaces: IWorkspace[];
+  workspaces: IWorkspace[] | undefined;
   labels: { [workspaceSlug: string]: IIssueLabels[] }; // workspaceSlug: labels[]
-  members: { [workspaceSlug: string]: IWorkspaceMember[] }; // workspaceSlug: members[]
 
   // actions
   setWorkspaceSlug: (workspaceSlug: string) => void;
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceLabelById: (workspaceSlug: string, labelId: string) => IIssueLabels | null;
-  fetchWorkspaces: () => Promise<void>;
+  fetchWorkspaces: () => Promise<IWorkspace[]>;
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<void>;
-  fetchWorkspaceMembers: (workspaceSlug: string) => Promise<void>;
+
+  // workspace write operations
+  createWorkspace: (data: Partial<IWorkspace>) => Promise<IWorkspace>;
+  updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
+  deleteWorkspace: (workspaceSlug: string) => Promise<void>;
 
   // computed
   currentWorkspace: IWorkspace | null;
+  workspacesCreateByCurrentUser: IWorkspace[] | null;
   workspaceLabels: IIssueLabels[] | null;
-  workspaceMembers: IWorkspaceMember[] | null;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -39,8 +42,8 @@ export class WorkspaceStore implements IWorkspaceStore {
 
   // observables
   workspaceSlug: string | null = null;
-  workspaces: IWorkspace[] = [];
-  projects: { [workspaceSlug: string]: IProject[] } = {}; // workspace_id: project[]
+  workspaces: IWorkspace[] | undefined = [];
+  projects: { [workspaceSlug: string]: IProject[] } = {}; // workspaceSlug: project[]
   labels: { [workspaceSlug: string]: IIssueLabels[] } = {};
   members: { [workspaceSlug: string]: IWorkspaceMember[] } = {};
 
@@ -62,7 +65,6 @@ export class WorkspaceStore implements IWorkspaceStore {
       workspaceSlug: observable.ref,
       workspaces: observable.ref,
       labels: observable.ref,
-      members: observable.ref,
 
       // actions
       setWorkspaceSlug: action,
@@ -70,12 +72,15 @@ export class WorkspaceStore implements IWorkspaceStore {
       getWorkspaceLabelById: action,
       fetchWorkspaces: action,
       fetchWorkspaceLabels: action,
-      fetchWorkspaceMembers: action,
+
+      // workspace write operations
+      createWorkspace: action,
+      updateWorkspace: action,
+      deleteWorkspace: action,
 
       // computed
       currentWorkspace: computed,
       workspaceLabels: computed,
-      workspaceMembers: computed,
     });
 
     this.rootStore = _rootStore;
@@ -95,21 +100,25 @@ export class WorkspaceStore implements IWorkspaceStore {
   }
 
   /**
+   * computed value of all the workspaces created by the current logged in user
+   */
+  get workspacesCreateByCurrentUser() {
+    if (!this.workspaces) return null;
+
+    const user = this.rootStore.user.currentUser;
+
+    if (!user) return null;
+
+    return this.workspaces.filter((w) => w.created_by === user?.id);
+  }
+
+  /**
    * computed value of workspace labels using the workspace slug from the store
    */
   get workspaceLabels() {
     if (!this.workspaceSlug) return [];
     const _labels = this.labels?.[this.workspaceSlug];
     return _labels && Object.keys(_labels).length > 0 ? _labels : [];
-  }
-
-  /**
-   * computed value of workspace members using the workspace slug from the store
-   */
-  get workspaceMembers() {
-    if (!this.workspaceSlug) return [];
-    const _members = this.members?.[this.workspaceSlug];
-    return _members && Object.keys(_members).length > 0 ? _members : [];
   }
 
   /**
@@ -123,7 +132,7 @@ export class WorkspaceStore implements IWorkspaceStore {
    * fetch workspace info from the array of workspaces in the store.
    * @param workspaceSlug
    */
-  getWorkspaceBySlug = (workspaceSlug: string) => this.workspaces.find((w) => w.slug == workspaceSlug) || null;
+  getWorkspaceBySlug = (workspaceSlug: string) => this.workspaces?.find((w) => w.slug == workspaceSlug) || null;
 
   /**
    * get workspace label information from the workspace labels
@@ -148,11 +157,18 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.loader = false;
         this.error = null;
       });
+
+      return workspaceResponse;
     } catch (error) {
       console.log("Failed to fetch user workspaces in workspace store", error);
-      this.loader = false;
-      this.error = error;
-      this.workspaces = [];
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+        this.workspaces = [];
+      });
+
+      throw error;
     }
   };
 
@@ -186,32 +202,101 @@ export class WorkspaceStore implements IWorkspaceStore {
   };
 
   /**
-   * fetch workspace members using workspace slug
-   * @param workspaceSlug
+   * create workspace using the workspace data
+   * @param data
    */
-
-  fetchWorkspaceMembers = async (workspaceSlug: string) => {
+  createWorkspace = async (data: Partial<IWorkspace>) => {
     try {
       runInAction(() => {
         this.loader = true;
         this.error = null;
       });
 
-      const membersResponse = await this.workspaceService.workspaceMembers(workspaceSlug);
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      const response = await this.workspaceService.createWorkspace(data, user);
 
       runInAction(() => {
-        this.members = {
-          ...this.members,
-          [workspaceSlug]: membersResponse,
-        };
         this.loader = false;
         this.error = null;
+        this.workspaces = [...(this.workspaces ?? []), response];
+      });
+
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  /**
+   * update workspace using the workspace slug and new workspace data
+   * @param workspaceSlug
+   * @param data
+   */
+  updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) => {
+    const newWorkspaces = this.workspaces?.map((w) => (w.slug === workspaceSlug ? { ...w, ...data } : w));
+
+    try {
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
+
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      const response = await this.workspaceService.updateWorkspace(workspaceSlug, data, user);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+        this.workspaces = newWorkspaces;
+      });
+
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  /**
+   * delete workspace using the workspace slug
+   * @param workspaceSlug
+   */
+  deleteWorkspace = async (workspaceSlug: string) => {
+    const newWorkspaces = this.workspaces?.filter((w) => w.slug !== workspaceSlug);
+
+    try {
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
+
+      const user = this.rootStore.user.currentUser ?? undefined;
+
+      await this.workspaceService.deleteWorkspace(workspaceSlug, user);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+        this.workspaces = newWorkspaces;
       });
     } catch (error) {
       runInAction(() => {
         this.loader = false;
         this.error = error;
       });
+
+      throw error;
     }
   };
 }

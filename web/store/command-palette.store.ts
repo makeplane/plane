@@ -56,8 +56,9 @@ class CommandPaletteStore implements ICommandPaletteStore {
       isCreateModuleModalOpen: observable.ref,
       isCreateViewModalOpen: observable.ref,
       isCreatePageModalOpen: observable.ref,
-      isDeleteIssueModalOpen: observable.ref,
       isCreateIssueModalOpen: observable.ref,
+      isDeleteIssueModalOpen: observable.ref,
+      isBulkDeleteIssueModalOpen: observable.ref,
       // computed
       // projectPages: computed,
       // action
@@ -69,6 +70,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
       toggleCreatePageModal: action,
       toggleCreateIssueModal: action,
       toggleCreateModuleModal: action,
+      toggleDeleteIssueModal: action,
       toggleBulkDeleteIssueModal: action,
     });
 

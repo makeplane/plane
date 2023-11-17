@@ -1,10 +1,8 @@
 import { FC, useEffect, useState } from "react";
-// next
-import { useRouter } from "next/router";
 // icons
 // components
 import { GanttChartBlocks } from "components/gantt-chart";
-import { GanttSidebar } from "../sidebar";
+// import { GanttSidebar } from "../sidebar";
 // import { HourChartView } from "./hours";
 // import { DayChartView } from "./day";
 // import { WeekChartView } from "./week";
@@ -13,7 +11,7 @@ import { MonthChartView } from "./month";
 // import { QuarterChartView } from "./quarter";
 // import { YearChartView } from "./year";
 // icons
-import { Expand, PlusIcon, Shrink } from "lucide-react";
+import { Expand, Shrink } from "lucide-react";
 // views
 import {
   // generateHourChart,
@@ -28,7 +26,6 @@ import {
   // getNumberOfDaysBetweenTwoDatesInYear,
   getMonthChartItemPositionWidthInMonth,
 } from "../views";
-// import { GanttInlineCreateIssueForm } from "components/core/views/gantt-chart-view/inline-create-issue-form";
 // types
 import { ChartDataType, IBlockUpdateData, IGanttBlock, TGanttViews } from "../types";
 // data
@@ -42,8 +39,8 @@ type ChartViewRootProps = {
   loaderTitle: string;
   blocks: IGanttBlock[] | null;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
-  SidebarBlockRender: React.FC<any>;
-  BlockRender: React.FC<any>;
+  blockToRender: (data: any) => React.ReactNode;
+  sidebarToRender: (props: any) => React.ReactNode;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
@@ -57,23 +54,17 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   blocks = null,
   loaderTitle,
   blockUpdateHandler,
-  SidebarBlockRender,
-  BlockRender,
+  sidebarToRender,
+  blockToRender,
   enableBlockLeftResize,
   enableBlockRightResize,
   enableBlockMove,
   enableReorder,
   bottomSpacing,
 }) => {
-  // router
-  const router = useRouter();
-  const { cycleId, moduleId } = router.query;
-  const isCyclePage = router.pathname.split("/")[4] === "cycles" && !cycleId;
-  const isModulePage = router.pathname.split("/")[4] === "modules" && !moduleId;
   // states
   const [itemsContainerWidth, setItemsContainerWidth] = useState<number>(0);
   const [fullScreenMode, setFullScreenMode] = useState<boolean>(false);
-  const [isCreateIssueFormOpen, setIsCreateIssueFormOpen] = useState(false);
   const [chartBlocks, setChartBlocks] = useState<IGanttBlock[] | null>(null); // blocks state management starts
   // hooks
   const { currentView, currentViewData, renderView, dispatch, allViews, updateScrollLeft } = useChart();
@@ -174,6 +165,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   const handleScrollToCurrentSelectedDate = (currentState: ChartDataType, date: Date) => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
 
+    if (!scrollContainer) return;
+
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
     let scrollWidth: number = 0;
     let daysDifference: number = 0;
@@ -201,6 +194,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   // handling scroll functionality
   const onScroll = () => {
     const scrollContainer = document.getElementById("scroll-container") as HTMLElement;
+
+    if (!scrollContainer) return;
 
     const scrollWidth: number = scrollContainer?.scrollWidth;
     const clientVisibleWidth: number = scrollContainer?.clientWidth;
@@ -290,51 +285,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             <h6>{title}</h6>
             <h6>Duration</h6>
           </div>
-          <GanttSidebar
-            title={title}
-            blockUpdateHandler={blockUpdateHandler}
-            blocks={chartBlocks}
-            SidebarBlockRender={SidebarBlockRender}
-            enableReorder={enableReorder}
-          />
-          {chartBlocks && !(isCyclePage || isModulePage) && (
-            <div className="pl-2.5 py-3">
-              {/* <GanttInlineCreateIssueForm
-                isOpen={isCreateIssueFormOpen}
-                handleClose={() => setIsCreateIssueFormOpen(false)}
-                onSuccess={() => {
-                  const ganttSidebar = document.getElementById(`gantt-sidebar-${cycleId}`);
 
-                  const timeoutId = setTimeout(() => {
-                    if (ganttSidebar)
-                      ganttSidebar.scrollBy({
-                        top: ganttSidebar.scrollHeight,
-                        left: 0,
-                        behavior: "smooth",
-                      });
-                    clearTimeout(timeoutId);
-                  }, 10);
-                }}
-                prePopulatedData={{
-                  start_date: new Date(Date.now()).toISOString().split("T")[0],
-                  target_date: new Date(Date.now() + 86400000).toISOString().split("T")[0],
-                  ...(cycleId && { cycle: cycleId.toString() }),
-                  ...(moduleId && { module: moduleId.toString() }),
-                }}
-              /> */}
-
-              {!isCreateIssueFormOpen && (
-                <button
-                  type="button"
-                  onClick={() => setIsCreateIssueFormOpen(true)}
-                  className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pl-[1.875rem] py-1 rounded-md"
-                >
-                  <PlusIcon className="h-4 w-4" />
-                  <span className="text-sm font-medium text-custom-primary-100">New Issue</span>
-                </button>
-              )}
-            </div>
-          )}
+          {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
         </div>
         <div
           className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
@@ -354,7 +306,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
             <GanttChartBlocks
               itemsContainerWidth={itemsContainerWidth}
               blocks={chartBlocks}
-              BlockRender={BlockRender}
+              blockToRender={blockToRender}
               blockUpdateHandler={blockUpdateHandler}
               enableBlockLeftResize={enableBlockLeftResize}
               enableBlockRightResize={enableBlockRightResize}

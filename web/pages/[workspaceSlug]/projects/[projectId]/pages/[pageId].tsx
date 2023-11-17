@@ -1,45 +1,38 @@
-import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-
+import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
-// react-color
 import { TwitterPicker } from "react-color";
-// react-beautiful-dnd
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { PageService } from "services/page.service";
 import { IssueLabelService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // layouts
-import { ProjectAuthorizationWrapper } from "layouts/auth-layout-legacy";
+import { AppLayout } from "layouts/app-layout";
 // components
+import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 import { CreateUpdateBlockInline, SinglePageBlock } from "components/pages";
 import { CreateLabelModal } from "components/labels";
 import { CreateBlock } from "components/pages/create-block";
+import { PageDetailsHeader } from "components/headers/page-details";
 // ui
 import { EmptyState } from "components/common";
-import { BreadcrumbItem, Breadcrumbs, CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
+import { CustomSearchSelect, TextArea, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // icons
 import { ArrowLeft, Lock, LinkIcon, Palette, Plus, Star, Unlock, X, ChevronDown } from "lucide-react";
 // helpers
 import { render24HourFormatTime, renderShortDate } from "helpers/date-time.helper";
-import { copyTextToClipboard, truncateText } from "helpers/string.helper";
+import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
-import type { NextPage } from "next";
+import { NextPageWithLayout } from "types/app";
 import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
@@ -52,10 +45,11 @@ import {
 
 // services
 const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 const pageService = new PageService();
 const issueLabelService = new IssueLabelService();
 
-const SinglePage: NextPage = () => {
+const PageDetailsPage: NextPageWithLayout = () => {
   const [createBlockForm, setCreateBlockForm] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [showBlock, setShowBlock] = useState(false);
@@ -102,7 +96,7 @@ const SinglePage: NextPage = () => {
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -133,7 +127,6 @@ const SinglePage: NextPage = () => {
       (prevData) => ({
         ...(prevData as IPage),
         ...formData,
-        labels: formData.labels_list ? formData.labels_list : (prevData as IPage).labels,
       }),
       false
     );
@@ -303,22 +296,7 @@ const SinglePage: NextPage = () => {
   }, [memberDetails]);
 
   return (
-    <ProjectAuthorizationWrapper
-      breadcrumbs={
-        <Breadcrumbs onBack={() => router.back()}>
-          <BreadcrumbItem
-            link={
-              <Link href={`/${workspaceSlug}/projects`}>
-                <a className={`border-r-2 border-custom-sidebar-border-200 px-3 text-sm `}>
-                  <p>Projects</p>
-                </a>
-              </Link>
-            }
-          />
-          <BreadcrumbItem title={`${truncateText(projectDetails?.name ?? "Project", 32)} Pages`} />
-        </Breadcrumbs>
-      }
-    >
+    <>
       {error ? (
         <EmptyState
           image={emptyPage}
@@ -346,7 +324,7 @@ const SinglePage: NextPage = () => {
                   <Controller
                     name="name"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={() => (
                       <TextArea
                         id="name"
                         name="name"
@@ -354,7 +332,7 @@ const SinglePage: NextPage = () => {
                         placeholder="Page Title"
                         onBlur={handleSubmit(updatePage)}
                         onChange={(e) => setValue("name", e.target.value)}
-                        required={true}
+                        required
                         className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent !px-3 !py-2 text-xl font-semibold outline-none ring-0"
                         role="textbox"
                       />
@@ -376,7 +354,7 @@ const SinglePage: NextPage = () => {
                             className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs hover:border-red-500 hover:bg-red-50"
                             onClick={() => {
                               const updatedLabels = pageDetails.labels.filter((l) => l !== labelId);
-                              partialUpdatePage({ labels_list: updatedLabels });
+                              partialUpdatePage({ labels: updatedLabels });
                             }}
                             style={{
                               backgroundColor: `${label?.color && label.color !== "" ? label.color : "#000000"}20`,
@@ -417,7 +395,7 @@ const SinglePage: NextPage = () => {
                         </span>
                       </button>
                     }
-                    onChange={(val: string[]) => partialUpdatePage({ labels_list: val })}
+                    onChange={(val: string[]) => partialUpdatePage({ labels: val })}
                     options={options}
                     multiple
                     noChevron
@@ -618,10 +596,9 @@ const SinglePage: NextPage = () => {
                       isOpen={labelModal}
                       handleClose={() => setLabelModal(false)}
                       projectId={projectId}
-                      user={user}
                       onSuccess={(response) => {
                         partialUpdatePage({
-                          labels_list: [...(pageDetails.labels ?? []), response.id],
+                          labels: [...(pageDetails.labels ?? []), response.id],
                         });
                       }}
                     />
@@ -644,8 +621,16 @@ const SinglePage: NextPage = () => {
           <Loader.Item height="200px" />
         </Loader>
       )}
-    </ProjectAuthorizationWrapper>
+    </>
   );
 };
 
-export default SinglePage;
+PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <AppLayout header={<PageDetailsHeader />} withProjectWrapper>
+      {page}
+    </AppLayout>
+  );
+};
+
+export default PageDetailsPage;
