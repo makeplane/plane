@@ -27,9 +27,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
     cycle: cycleStore,
-    cycleIssueFilter: cycleIssueFilterStore,
+    cycleIssueFilters: cycleIssueFiltersStore,
+    projectIssueFilters: projectIssueFiltersStore,
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
@@ -37,7 +37,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -50,57 +50,58 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         display_filters: {
           layout,
         },
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId || !cycleId) return;
 
-      const newValues = cycleIssueFilterStore.cycleFilters?.[key] ?? [];
+      const newValues = cycleIssueFiltersStore.cycleFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (cycleIssueFilterStore.cycleFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (cycleIssueFiltersStore.cycleFilters?.filters?.[key]?.includes(value))
+          newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
+      cycleIssueFiltersStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
         [key]: newValues,
       });
     },
-    [cycleId, cycleIssueFilterStore, projectId, workspaceSlug]
+    [cycleId, cycleIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
         display_filters: {
           ...updatedDisplayFilter,
         },
       });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const handleDisplayPropertiesUpdate = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      projectIssueFiltersStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
   const cyclesList = cycleStore.projectCycles;
@@ -173,7 +174,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={cycleIssueFilterStore.cycleFilters}
+              filters={cycleIssueFiltersStore.cycleFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -185,8 +186,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={issueFilterStore.userDisplayFilters}
-              displayProperties={issueFilterStore.userDisplayProperties}
+              displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
+              displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
               handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={

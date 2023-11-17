@@ -171,7 +171,6 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
         this.userFilters = {
           ...this.userFilters,
           [projectId]: {
-            ...this.userFilters[projectId],
             filters: memberResponse?.view_props?.filters,
             displayFilters: {
               ...memberResponse?.view_props?.display_filters,
@@ -197,14 +196,14 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
   updateUserFilters = async (workspaceSlug: string, projectId: string, filterToUpdate: Partial<IProjectViewProps>) => {
     const newViewProps = {
       filters: {
-        ...this.userFilters[projectId].filters,
+        ...this.userFilters[projectId]?.filters,
         ...filterToUpdate.filters,
       },
       displayFilters: {
-        ...this.userFilters[projectId].displayFilters,
+        ...this.userFilters[projectId]?.displayFilters,
         ...filterToUpdate.display_filters,
       },
-      displayProperties: this.userFilters[projectId].displayProperties,
+      displayProperties: this.userFilters[projectId]?.displayProperties,
     };
 
     // set sub_group_by to null if group_by is set to null
@@ -221,9 +220,15 @@ export class ProjectIssueFiltersStore implements IProjectIssueFiltersStore {
     if (newViewProps.displayFilters.layout === "kanban" && newViewProps.displayFilters.group_by === null)
       newViewProps.displayFilters.group_by = "state";
 
+    let updatedUserFilters = this.userFilters;
+    if (!updatedUserFilters) updatedUserFilters = {};
+    if (!updatedUserFilters[projectId]) updatedUserFilters[projectId] = {};
+
+    updatedUserFilters[projectId] = newViewProps;
+
     try {
       runInAction(() => {
-        this.userFilters[projectId] = newViewProps;
+        this.userFilters = { ...updatedUserFilters };
       });
 
       this.projectService.setProjectView(workspaceSlug, projectId, {

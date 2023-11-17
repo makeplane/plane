@@ -28,8 +28,9 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
 
   const {
     issueFilter: issueFilterStore,
+    projectIssueFilters: projectIssueFiltersStore,
     moduleIssue: moduleIssueStore,
-    moduleFilter: moduleIssueFilterStore,
+    moduleIssueFilters: moduleIssueFiltersStore,
   } = useMobxStore();
 
   useSWR(
@@ -38,9 +39,9 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
       if (workspaceSlug && projectId && moduleId) {
         // fetching the project display filters and display properties
         await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
+        await projectIssueFiltersStore.fetchUserProjectFilters(workspaceSlug, projectId);
         // fetching the module filters
-        await moduleIssueFilterStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
-
+        await moduleIssueFiltersStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
         // fetching the module issues
         await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
       }
