@@ -22,7 +22,7 @@ import { Mentions } from "../mentions";
 
 import { CustomKeymap } from "./keymap";
 import { CustomCodeBlock } from "./code";
-import ListKeymap from "./custom-list-keymap";
+import { ListKeymap } from "./custom-list-keymap";
 
 export const CoreEditorExtensions = (
   mentionConfig: {

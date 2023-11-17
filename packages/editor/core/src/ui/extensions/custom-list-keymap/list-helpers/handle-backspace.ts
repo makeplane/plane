@@ -1,8 +1,8 @@
 import { Editor, isAtStartOfNode, isNodeActive } from "@tiptap/core";
 import { Node } from "@tiptap/pm/model";
 
-import { findListItemPos } from "./findListItemPos";
-import { hasListBefore } from "./hasListBefore";
+import { findListItemPos } from "./find-list-item-pos";
+import { hasListBefore } from "./has-list-before";
 
 export const handleBackspace = (
   editor: Editor,

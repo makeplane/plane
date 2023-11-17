@@ -1,6 +1,6 @@
 import { Extension } from "@tiptap/core";
 
-import { handleBackspace, handleDelete } from "./listHelpers";
+import { handleBackspace, handleDelete } from "./list-helpers";
 
 export type ListKeymapOptions = {
   listTypes: Array<{

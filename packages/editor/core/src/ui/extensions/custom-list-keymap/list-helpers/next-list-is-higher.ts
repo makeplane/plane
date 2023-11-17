@@ -1,9 +1,9 @@
 import { EditorState } from "@tiptap/pm/state";
 
-import { findListItemPos } from "./findListItemPos";
-import { getNextListDepth } from "./getNextListDepth";
+import { findListItemPos } from "./find-list-item-pos";
+import { getNextListDepth } from "./get-next-list-depth";
 
-export const nextListIsDeeper = (typeOrName: string, state: EditorState) => {
+export const nextListIsHigher = (typeOrName: string, state: EditorState) => {
   const listDepth = getNextListDepth(typeOrName, state);
   const listItemPos = findListItemPos(typeOrName, state);
 
@@ -11,7 +11,7 @@ export const nextListIsDeeper = (typeOrName: string, state: EditorState) => {
     return false;
   }
 
-  if (listDepth > listItemPos.depth) {
+  if (listDepth < listItemPos.depth) {
     return true;
   }
 

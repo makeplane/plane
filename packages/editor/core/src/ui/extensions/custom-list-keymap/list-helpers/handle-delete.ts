@@ -1,7 +1,7 @@
 import { Editor, isAtEndOfNode, isNodeActive } from "@tiptap/core";
 
-import { nextListIsDeeper } from "./nextListIsDeeper";
-import { nextListIsHigher } from "./nextListIsHigher";
+import { nextListIsDeeper } from "./next-list-is-deeper";
+import { nextListIsHigher } from "./next-list-is-higher";
 
 export const handleDelete = (editor: Editor, name: string) => {
   // if the cursor is not inside the current node type
