@@ -1,4 +1,6 @@
+// react
 import { useEffect, useState, FC } from "react";
+// next
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -41,7 +43,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
       <Link
         href={`https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
-        <button className="flex w-full items-center justify-center gap-2 rounded border border-custom-border-300 p-2 text-sm font-medium text-custom-text-100 duration-300 hover:bg-custom-background-80 h-[46px]">
+        <button className="flex w-full items-center justify-center gap-2 rounded border border-custom-primary-20 p-2 text-sm font-medium text-custom-text-100 duration-300 hover:bg-custom-background-80 h-[46px]">
           <Image
             src={theme === "dark" ? githubWhiteImage : githubBlackImage}
             height={20}

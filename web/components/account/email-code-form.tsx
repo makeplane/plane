@@ -7,6 +7,8 @@ import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
+// icons
+import { XCircle } from "lucide-react";
 
 // types
 type EmailCodeFormValues = {
@@ -23,6 +25,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
   const [isCodeResending, setIsCodeResending] = useState(false);
   const [errorResendingCode, setErrorResendingCode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [sentEmail, setSentEmail] = useState<string>("");
 
   const { setToastAlert } = useToast();
   const { timer: resendCodeTimer, setTimer: setResendCodeTimer } = useTimer();
@@ -52,6 +55,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     await authService
       .emailCode({ email })
       .then((res) => {
+        console.log(res);
+        setSentEmail(email);
         setValue("key", res.key);
         setCodeSent(true);
       })
@@ -99,29 +104,54 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
         handleSubmit(onSubmit)().then(() => {
           setResendCodeTimer(30);
         });
+      } else if (
+        codeSent &&
+        sentEmail != getValues("email") &&
+        getValues("email").length > 0 &&
+        (e.key === "Enter" || e.key === "Tab")
+      ) {
+        e.preventDefault();
+        console.log("resend");
+        onSubmit({ email: getValues("email") }).then(() => {
+          setCodeResent(true);
+        });
       }
     };
 
-    if (!codeSent) {
-      window.addEventListener("keydown", submitForm);
-    }
+    window.addEventListener("keydown", submitForm);
 
     return () => {
       window.removeEventListener("keydown", submitForm);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleSubmit, codeSent]);
+  }, [handleSubmit, codeSent, sentEmail]);
 
   return (
     <>
-      {(codeSent || codeResent) && (
-        <p className="text-center mt-4">
-          We have sent the sign in code.
-          <br />
-          Please check your inbox at <span className="font-medium">{watch("email")}</span>
-        </p>
+      {codeSent || codeResent ? (
+        <>
+          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+            Moving to the runway
+          </h1>
+          <div className="text-center text-sm text-custom-text-100 mt-3">
+            <p>Paste the code you got at </p>
+            <span className="text-center text-sm text-custom-primary-80 mt-1 font-semibold ">{sentEmail} </span>
+            <span>below.</span>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+            Let’s get you prepped!
+          </h1>
+          <p className="text-center text-sm text-custom-text-100 mt-3">
+            This whole thing will take less than two minutes.
+          </p>
+          <p className="text-center text-sm text-custom-text-100 mt-1">Promise!</p>
+        </>
       )}
-      <form className="space-y-4 mt-10 sm:w-[360px] mx-auto">
+
+      <form className="mt-5 sm:w-96 mx-auto">
         <div className="space-y-1">
           <Controller
             control={control}
@@ -134,23 +164,46 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                 ) || "Email address is not valid",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.email)}
-                placeholder="Enter your email address..."
-                className="border-custom-border-300 h-[46px] w-full"
-              />
+              <div className="flex items-center relative rounded-md bg-white">
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.email)}
+                  placeholder="orville.wright@firstflight.com"
+                  className="w-full h-[46px] placeholder:text-custom-text-400/50 border-custom-border-200 pr-12"
+                ></Input>
+                {value.length > 0 && (
+                  <XCircle
+                    className="h-5 w-5 absolute stroke-custom-text-400 hover:cursor-pointer right-3"
+                    onClick={() => setValue("email", "")}
+                  />
+                )}
+              </div>
             )}
           />
         </div>
 
         {codeSent && (
           <>
+            <div>
+              {codeResent && sentEmail === getValues("email") ? (
+                <div className="text-sm my-2.5 text-custom-text-400 m-0">
+                  You got a new code at <span className="font-semibold text-custom-primary-80">{sentEmail}</span>.
+                </div>
+              ) : sentEmail != getValues("email") && getValues("email").length > 0 ? (
+                <div className="text-sm my-2.5 text-custom-text-400 m-0">
+                  Hit enter
+                  <span> ↵ </span>or <span className="italic">Tab</span> to get a new code
+                </div>
+              ) : (
+                <div className="my-4" />
+              )}
+            </div>
+
             <Controller
               control={control}
               name="token"
@@ -166,54 +219,45 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                   onChange={onChange}
                   ref={ref}
                   hasError={Boolean(errors.token)}
-                  placeholder="Enter code..."
-                  className="border-custom-border-300 h-[46px] w-full"
+                  placeholder="get-set-fly"
+                  className="border-custom-border-300 bg-white h-[46px] w-full"
                 />
               )}
             />
-            <button
-              type="button"
-              className={`flex w-full justify-end text-xs outline-none ${
-                isResendDisabled ? "cursor-default text-custom-text-200" : "cursor-pointer text-custom-primary-100"
-              } `}
-              onClick={() => {
-                setIsCodeResending(true);
-                onSubmit({ email: getValues("email") }).then(() => {
-                  setCodeResent(true);
-                  setIsCodeResending(false);
-                  setResendCodeTimer(30);
-                });
-              }}
-              disabled={isResendDisabled}
-            >
-              {resendCodeTimer > 0 ? (
-                <span className="text-right">Request new code in {resendCodeTimer} seconds</span>
-              ) : isCodeResending ? (
-                "Sending new code..."
-              ) : errorResendingCode ? (
-                "Please try again later"
-              ) : (
-                <span className="font-medium">Resend code</span>
-              )}
-            </button>
           </>
         )}
         {codeSent ? (
-          <Button
-            variant="primary"
-            type="submit"
-            className="w-full"
-            size="xl"
-            onClick={handleSubmit(handleSignin)}
-            disabled={!isValid && isDirty}
-            loading={isLoading}
-          >
-            {isLoading ? "Signing in..." : "Sign in"}
-          </Button>
+          <div className="my-4">
+            {" "}
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full"
+              size="xl"
+              onClick={handleSubmit(handleSignin)}
+              disabled={!isValid && isDirty}
+              loading={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Next step"}
+            </Button>
+            <div className="w-[70%] my-4 mx-auto">
+              <p className="text-xs text-custom-text-200">
+                When you click the button above, you agree with our{" "}
+                <a
+                  href="https://plane.so/terms-and-conditions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium underline"
+                >
+                  terms and conditions of service.
+                </a>{" "}
+              </p>
+            </div>
+          </div>
         ) : (
           <Button
             variant="primary"
-            className="w-full"
+            className="w-full mt-4"
             size="xl"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {
@@ -223,7 +267,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             disabled={!isValid && isDirty}
             loading={isSubmitting}
           >
-            {isSubmitting ? "Sending code..." : "Send sign in code"}
+            {isSubmitting ? "Sending code..." : "Send unique code"}
           </Button>
         )}
       </form>
