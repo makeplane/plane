@@ -230,8 +230,8 @@ export const RECENT_PAGES_LIST = (projectId: string) => `RECENT_PAGES_LIST_${pro
 export const ALL_PAGES_LIST = (projectId: string) => `ALL_PAGES_LIST_${projectId.toUpperCase()}`;
 export const ARCHIVED_PAGES_LIST = (projectId: string) => `ARCHIVED_PAGES_LIST_${projectId.toUpperCase}`;
 export const FAVORITE_PAGES_LIST = (projectId: string) => `FAVORITE_PAGES_LIST_${projectId.toUpperCase()}`;
-export const MY_PAGES_LIST = (projectId: string) => `MY_PAGES_LIST_${projectId.toUpperCase()}`;
-export const OTHER_PAGES_LIST = (projectId: string) => `OTHER_PAGES_LIST_${projectId.toUpperCase()}`;
+export const PRIVATE_PAGES_LIST = (projectId: string) => `PRIVATE_PAGES_LIST_${projectId.toUpperCase()}`;
+export const SHARED_PAGES_LIST = (projectId: string) => `SHARED_PAGES_LIST_${projectId.toUpperCase()}`;
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId.toUpperCase()}`;
 export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId.toUpperCase()}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId.toUpperCase()}`;

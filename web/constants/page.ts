@@ -27,15 +27,15 @@ export const PAGE_TABS_LIST: { key: string; title: string }[] = [
     title: "Favorites",
   },
   {
-    key: "created-by-me",
-    title: "Created by me",
+    key: "private",
+    title: "Private",
   },
   {
-    key: "created-by-others",
-    title: "Created by others",
+    key: "shared",
+    title: "Shared",
   },
 	{
 		key: "archived-pages",
-		title: "Archived Pages"
+		title: "Archived"
 	}
 ];

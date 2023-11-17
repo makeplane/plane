@@ -26,7 +26,7 @@ const FavoritePagesList = dynamic<TPagesListProps>(() => import("components/page
   ssr: false,
 });
 
-const MyPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.MyPagesList), {
+const PrivatePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.PrivatePagesList), {
   ssr: false,
 });
 
@@ -34,7 +34,7 @@ const ArchivedPagesList = dynamic<TPagesListProps>(() => import("components/page
   ssr: false,
 })
 
-const OtherPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.OtherPagesList), {
+const SharedPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.SharedPagesList), {
   ssr: false,
 });
 
@@ -57,11 +57,11 @@ const ProjectPagesPage: NextPageWithLayout = () => {
         return 1;
       case "Favorites":
         return 2;
-      case "Created by me":
+      case "Private":
         return 3;
-      case "Created by others":
+      case "Shared":
         return 4;
-      case "Archived Pages":
+      case "Archived":
 			  return 5;
       default:
         return 0;
@@ -113,11 +113,11 @@ const ProjectPagesPage: NextPageWithLayout = () => {
               case 2:
                 return setPageTab("Favorites");
               case 3:
-                return setPageTab("Created by me");
+                return setPageTab("Private");
               case 4:
-                return setPageTab("Created by others");
+                return setPageTab("Shared");
               case 5:
-                return setPageTab("Archived Pages")
+                return setPageTab("Archived")
               default:
                 return setPageTab("Recent");
             }
@@ -151,10 +151,10 @@ const ProjectPagesPage: NextPageWithLayout = () => {
               <FavoritePagesList viewType={viewType} />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <MyPagesList viewType={viewType} />
+              <PrivatePagesList viewType={viewType} />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <OtherPagesList viewType={viewType} />
+              <SharedPagesList viewType={viewType} />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
               <ArchivedPagesList viewType={viewType} />

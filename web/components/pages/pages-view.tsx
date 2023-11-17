@@ -22,7 +22,7 @@ import { IPage, TPageViewProps } from "types";
 import {
   ALL_PAGES_LIST,
   FAVORITE_PAGES_LIST,
-  MY_PAGES_LIST,
+  PRIVATE_PAGES_LIST,
   PROJECT_MEMBERS,
   RECENT_PAGES_LIST,
 	ARCHIVED_PAGES_LIST,
@@ -84,7 +84,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      MY_PAGES_LIST(projectId.toString()),
+      PRIVATE_PAGES_LIST(projectId.toString()),
       (prevData) =>
         (prevData ?? []).map((p) => {
           if (p.id === page.id) p.is_favorite = true;
@@ -130,7 +130,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      MY_PAGES_LIST(projectId.toString()),
+      PRIVATE_PAGES_LIST(projectId.toString()),
       (prevData) =>
         (prevData ?? []).map((p) => {
           if (p.id === page.id) p.is_favorite = false;
@@ -173,7 +173,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
       false
     );
     mutate<IPage[]>(
-      MY_PAGES_LIST(projectId.toString()),
+      PRIVATE_PAGES_LIST(projectId.toString()),
       (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
       false
     );
