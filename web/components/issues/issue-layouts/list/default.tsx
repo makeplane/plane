@@ -73,7 +73,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
           (_list: any) =>
             validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[getValueFromObject(_list, listKey) as string]) && (
               <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
-                <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90">
+                <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90 border-b border-custom-border-200">
                   <ListGroupByHeaderRoot
                     column_id={getValueFromObject(_list, listKey) as string}
                     column_value={_list}

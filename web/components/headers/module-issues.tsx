@@ -28,7 +28,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const {
     module: moduleStore,
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
     moduleIssueFilters: moduleIssueFiltersStore,
     project: projectStore,
     projectMember: { projectMembers },

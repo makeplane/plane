@@ -28,7 +28,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
 
   const {
     issueFilter: issueFilterStore,
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
     moduleIssue: moduleIssueStore,
     moduleIssueFilters: moduleIssueFiltersStore,
   } = useMobxStore();

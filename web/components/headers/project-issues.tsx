@@ -24,7 +24,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
@@ -32,7 +32,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
   } = useMobxStore();
 
-  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
+  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
@@ -51,14 +51,14 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
 
-      const newValues = projectIssueFiltersStore.projectFilters?.filters?.[key] ?? [];
+      const newValues = projectIssueFiltersStore.issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (projectIssueFiltersStore.projectFilters?.filters?.[key]?.includes(value))
+        if (projectIssueFiltersStore.issueFilters?.filters?.[key]?.includes(value))
           newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
@@ -174,7 +174,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={projectIssueFiltersStore.projectFilters?.filters ?? {}}
+              filters={projectIssueFiltersStore.issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -186,8 +186,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
-              displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
+              displayFilters={projectIssueFiltersStore.issueFilters?.displayFilters ?? {}}
+              displayProperties={projectIssueFiltersStore.issueFilters?.displayProperties ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
               handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={

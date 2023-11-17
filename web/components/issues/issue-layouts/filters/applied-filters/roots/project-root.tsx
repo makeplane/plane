@@ -13,13 +13,13 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
     project: projectStore,
     projectState: projectStateStore,
     projectMember: { projectMembers },
   } = useMobxStore();
 
-  const userFilters = projectIssueFiltersStore.projectFilters?.filters;
+  const userFilters = projectIssueFiltersStore.issueFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
@@ -45,7 +45,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     }
 
     // remove the passed value from the key
-    let newValues = projectIssueFiltersStore.projectFilters?.filters?.[key] ?? [];
+    let newValues = projectIssueFiltersStore.issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
     projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {

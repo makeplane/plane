@@ -17,7 +17,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
 
   const {
     projectIssues: projectIssuesStore,
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
     issueDetail: issueDetailStore,
     project: projectStore,
     projectMember: { projectMembers },

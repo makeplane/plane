@@ -28,7 +28,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
 
   const {
     issueFilter: issueFilterStore,
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
     cycle: cycleStore,
     cycleIssue: cycleIssueStore,
     cycleIssueFilters: cycleIssueFiltersStore,

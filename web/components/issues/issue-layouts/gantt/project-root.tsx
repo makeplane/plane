@@ -25,7 +25,7 @@ export const GanttLayout: React.FC = observer(() => {
   const {
     issue: issueStore,
     projectIssues: projectIssuesStore,
-    projectIssueFilters: projectIssueFiltersStore,
+    projectIssuesFilter: projectIssueFiltersStore,
   } = useMobxStore();
 
   const appliedDisplayFilters = projectIssueFiltersStore.projectFilters?.displayFilters;

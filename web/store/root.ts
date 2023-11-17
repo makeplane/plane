@@ -112,11 +112,15 @@ import {
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 import {
-  ProjectIssueStore,
-  IProjectIssueStore,
-  IProjectIssueFiltersStore,
-  ProjectIssueFiltersStore,
-} from "store/project-issues";
+  IProjectIssuesStore,
+  ProjectIssuesStore,
+  IProjectIssuesFilterStore,
+  ProjectIssuesFilterStore,
+  // IModuleIssuesStore,
+  // ModuleIssuesStore,
+  // IModuleIssuesFilterStore,
+  // ModuleIssuesFilterStore,
+} from "store/issues";
 
 import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
 import { ModuleIssueFiltersStore, IModuleIssueFiltersStore } from "store/module-issues";
@@ -194,8 +198,14 @@ export class RootStore {
 
   mentionsStore: IMentionsStore;
 
-  projectIssues: IProjectIssueStore;
-  projectIssueFilters: IProjectIssueFiltersStore;
+  // issue and filters starts
+  projectIssues: IProjectIssuesStore;
+  projectIssuesFilter: IProjectIssuesFilterStore;
+
+  // moduleIssues: IModuleIssuesStore;
+  // moduleIssuesFilter: IModuleIssuesFilterStore;
+
+  // issue and filters ends
 
   cycleIssueFilters: ICycleIssueFiltersStore;
   moduleIssueFilters: IModuleIssueFiltersStore;
@@ -267,8 +277,11 @@ export class RootStore {
 
     this.mentionsStore = new MentionsStore(this);
 
-    this.projectIssues = new ProjectIssueStore(this);
-    this.projectIssueFilters = new ProjectIssueFiltersStore(this);
+    this.projectIssues = new ProjectIssuesStore(this);
+    this.projectIssuesFilter = new ProjectIssuesFilterStore(this);
+
+    // this.moduleIssues = new ModuleIssuesStore(this);
+    // this.moduleIssuesFilter = new ModuleIssuesFilterStore(this);
 
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
 
