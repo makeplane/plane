@@ -19,7 +19,6 @@ import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
-import { ValidateImage } from "../../types/validate-image";
 
 import { CustomKeymap } from "./keymap";
 import { CustomCodeBlock } from "./code";
@@ -31,7 +30,6 @@ export const CoreEditorExtensions = (
     mentionHighlights: string[];
   },
   deleteFile: DeleteImage,
-  validateFile?: ValidateImage,
   cancelUploadImage?: () => any,
 ) => [
   StarterKit.configure({
@@ -73,7 +71,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtension(deleteFile, validateFile, cancelUploadImage).configure({
+  ImageExtension(deleteFile, cancelUploadImage).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },

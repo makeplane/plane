@@ -1,7 +1,6 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { DeleteImage } from "../../types/delete-image";
-import { ValidateImage } from "../../types/validate-image";
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from "@tiptap/pm/view";
@@ -12,7 +11,6 @@ import { IMentionSuggestion } from "../../types/mention-suggestion";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
-  validateFile?: ValidateImage;
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
@@ -32,7 +30,6 @@ interface CustomEditorProps {
 export const useEditor = ({
   uploadFile,
   deleteFile,
-  validateFile,
   cancelUploadImage,
   editorProps = {},
   value,
@@ -57,7 +54,6 @@ export const useEditor = ({
             mentionHighlights: mentionHighlights ?? [],
           },
           deleteFile,
-          validateFile,
           cancelUploadImage,
         ),
         ...extensions,
