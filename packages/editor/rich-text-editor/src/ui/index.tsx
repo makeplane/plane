@@ -11,7 +11,6 @@ import { RichTextEditorExtensions } from "./extensions";
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
-export type ValidateImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
 export type IMentionSuggestion = {
   id: string;
