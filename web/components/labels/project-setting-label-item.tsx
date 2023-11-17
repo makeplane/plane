@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/router";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { DraggableProvidedDragHandleProps, DraggableStateSnapshot, DroppableStateSnapshot } from "@hello-pangea/dnd";
+import { DraggableProvidedDragHandleProps, DraggableStateSnapshot } from "@hello-pangea/dnd";
 // types
 import { IIssueLabel } from "types";
 //icons
@@ -16,10 +16,11 @@ type Props = {
   draggableSnapshot: DraggableStateSnapshot;
   dragHandleProps: DraggableProvidedDragHandleProps;
   setIsUpdating: Dispatch<SetStateAction<boolean>>;
+  isChild: boolean;
 };
 
 export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
-  const { label, setIsUpdating, handleLabelDelete, draggableSnapshot, dragHandleProps } = props;
+  const { label, setIsUpdating, handleLabelDelete, draggableSnapshot, dragHandleProps, isChild } = props;
 
   const { combineTargetFor, isDragging } = draggableSnapshot;
 
@@ -50,7 +51,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
     },
     {
       CustomIcon: Pencil,
-      onClick: (label) => {
+      onClick: () => {
         setEditLabelForm(true);
         setIsUpdating(true);
       },
@@ -62,7 +63,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
   return (
     <div
       className={`relative group flex items-center justify-between gap-2 space-y-3 rounded border-[0.5px] border-custom-border-200 ${
-        combineTargetFor ? "bg-custom-background-80" : ""
+        !isChild && combineTargetFor ? "bg-custom-background-80" : ""
       } ${isDragging ? "shadow-custom-shadow-xs bg-custom-background-80" : ""} bg-custom-background-100 px-1 py-2.5`}
     >
       {isEditLabelForm ? (

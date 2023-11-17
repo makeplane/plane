@@ -78,15 +78,11 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
             key={`label.group.droppable.${label.id}`}
             droppableId={`label.group.droppable.${label.id}`}
             isCombineEnabled={!groupDragSnapshot.isDragging && !isUpdating}
-            isDropDisabled
+            isDropDisabled={groupDragSnapshot.isDragging || isUpdating || isDropDisabled}
           >
-            {(droppableProvided, droppableSnapshot) => (
+            {(droppableProvided) => (
               <div
-                className={`py-3 pl-1 pr-3 ${
-                  droppableSnapshot.isDraggingOver
-                    ? "border rounded border-custom-primary-100"
-                    : "border-custom-border-200"
-                } ${!isUpdating && "max-h-full overflow-y-hidden"}`}
+                className={`py-3 pl-1 pr-3 ${!isUpdating && "max-h-full overflow-y-hidden"}`}
                 ref={droppableProvided.innerRef}
                 {...droppableProvided.droppableProps}
               >
@@ -148,6 +144,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                                     draggableSnapshot={snapshot}
                                     dragHandleProps={provided.dragHandleProps!}
                                     setIsUpdating={setIsUpdating}
+                                    isChild
                                   />
                                 </div>
                               ))}

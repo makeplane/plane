@@ -182,10 +182,10 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                               <ProjectSettingLabelItem
                                 dragHandleProps={provided.dragHandleProps!}
                                 draggableSnapshot={snapshot}
-                                key={label.id}
                                 label={label}
                                 setIsUpdating={setIsUpdating}
-                                handleLabelDelete={(label: IIssueLabel) => setSelectDeleteLabel(label)}
+                                handleLabelDelete={(label) => setSelectDeleteLabel(label)}
+                                isChild={false}
                               />
                             </div>
                           ))}
