@@ -17,7 +17,6 @@ import { IMentionSuggestion } from "../../types/mention-suggestion";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
-  validateFile?: ValidateImage;
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
@@ -37,7 +36,6 @@ interface CustomEditorProps {
 export const useEditor = ({
   uploadFile,
   deleteFile,
-  validateFile,
   cancelUploadImage,
   editorProps = {},
   value,
@@ -62,7 +60,6 @@ export const useEditor = ({
             mentionHighlights: mentionHighlights ?? [],
           },
           deleteFile,
-          validateFile,
           cancelUploadImage,
         ),
         ...extensions,
