@@ -50,10 +50,11 @@ export const toggleUnderline = (editor: Editor, range?: Range) => {
   else editor.chain().focus().toggleUnderline().run();
 };
 
-export const toggleCode = (editor: Editor, range?: Range) => {
-  if (range) editor.chain().focus().deleteRange(range).toggleCode().run();
-  else editor.chain().focus().toggleCode().run();
+export const toggleCodeBlock = (editor: Editor, range?: Range) => {
+  if (range) editor.chain().focus().deleteRange(range).toggleCodeBlock().run();
+  else editor.chain().focus().toggleCodeBlock().run();
 };
+
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
   if (range)
     editor.chain().focus().deleteRange(range).toggleOrderedList().run();

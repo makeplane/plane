@@ -11,6 +11,7 @@ import { RichTextEditorExtensions } from "./extensions";
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
+export type ValidateImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
 
 export type IMentionSuggestion = {
   id: string;
@@ -25,8 +26,10 @@ export type IMentionHighlight = string;
 
 interface IRichTextEditor {
   value: string;
+  dragDropEnabled?: boolean;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
+  validateFile?: ValidateImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
   cancelUploadImage?: () => any;
@@ -54,6 +57,7 @@ interface EditorHandle {
 
 const RichTextEditor = ({
   onChange,
+  dragDropEnabled,
   debouncedUpdatesEnabled,
   setIsSubmitting,
   setShouldShowAlert,
@@ -61,6 +65,7 @@ const RichTextEditor = ({
   value,
   uploadFile,
   deleteFile,
+  validateFile,
   noBorder,
   cancelUploadImage,
   borderOnFocus,
@@ -77,9 +82,14 @@ const RichTextEditor = ({
     value,
     uploadFile,
     cancelUploadImage,
+    validateFile,
     deleteFile,
     forwardedRef,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting),
+    extensions: RichTextEditorExtensions(
+      uploadFile,
+      setIsSubmitting,
+      dragDropEnabled,
+    ),
     mentionHighlights,
     mentionSuggestions,
   });

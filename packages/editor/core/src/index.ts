@@ -1,6 +1,7 @@
 // styles
 // import "./styles/tailwind.css";
 // import "./styles/editor.css";
+import "./styles/github-dark.css";
 
 export { isCellSelection } from "./ui/extensions/table/table/utilities/is-cell-selection";
 
