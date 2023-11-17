@@ -1,6 +1,6 @@
 import { FC } from "react";
 // components
-import { IssueBlock } from "components/issues";
+import { EIssueActions, IssueBlock } from "components/issues";
 // types
 import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueResponse, TUnGroupedIssues } from "types";
 
@@ -9,7 +9,7 @@ interface Props {
   issueIds: IGroupedIssues | TUnGroupedIssues | any;
   issues: IIssueResponse;
   isReadonly?: boolean;
-  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
 }

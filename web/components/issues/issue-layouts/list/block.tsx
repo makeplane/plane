@@ -6,10 +6,15 @@ import { Spinner, Tooltip } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
+export enum EIssueActions {
+  UPDATE = "update",
+  DELETE = "delete",
+  REMOVE = "remove",
+}
 interface IssueBlockProps {
   columnId: string;
   issue: IIssue;
-  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   isReadonly?: boolean;
@@ -19,7 +24,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
   const { columnId, issue, handleIssues, quickActions, displayProperties, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    handleIssues(issueToUpdate, "update");
+    handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
   return (
@@ -41,7 +46,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
           issueId={issue?.id}
           isArchived={issue?.archived_at !== null}
           handleIssue={(issueToUpdate) => {
-            handleIssues(issueToUpdate as IIssue, "update");
+            handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE);
           }}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>

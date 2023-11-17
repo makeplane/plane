@@ -1,7 +1,7 @@
 import React from "react";
 // components
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
-import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+import { EIssueActions, IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // types
 import {
   IIssue,
@@ -25,7 +25,7 @@ export interface IGroupByList {
   listKey: string;
   states: IState[] | null;
   is_list?: boolean;
-  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
+  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   enableIssueQuickAdd: boolean;
@@ -116,7 +116,7 @@ export interface IList {
   issueIds: IGroupedIssues | TUnGroupedIssues;
   issues: IIssueResponse | undefined;
   group_by: string | null;
-  handleIssues: (issue: IIssue, action: "update" | "delete") => Promise<void>;
+  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   showEmptyGroup: boolean;
