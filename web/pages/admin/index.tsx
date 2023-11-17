@@ -18,7 +18,7 @@ const InstanceAdminPage: NextPageWithLayout = observer(() => {
 
   useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
 
-  return <div>{instance && <InstanceGeneralForm data={instance} />}</div>;
+  return <div>{instance && <InstanceGeneralForm instance={instance} />}</div>;
 });
 
 InstanceAdminPage.getLayout = function getLayout(page: ReactElement) {
