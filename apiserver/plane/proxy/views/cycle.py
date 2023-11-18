@@ -11,14 +11,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from .base import BaseAPIView
+from .base import BaseAPIView, WebhookMixin
 from plane.db.models import Cycle, Issue, CycleIssue, IssueLink, IssueAttachment
 from plane.api.permissions import ProjectEntityPermission
 from plane.proxy.serializers import CycleSerializer, CycleIssueSerializer, IssueSerializer
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
-class CycleAPIEndpoint(BaseAPIView):
+class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to cycle.
@@ -257,7 +257,7 @@ class CycleAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleIssueAPIEndpoint(BaseAPIView):
+class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to cycle issues.

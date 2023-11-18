@@ -22,10 +22,10 @@ from plane.db.models import (
 )
 from plane.api.permissions import ProjectBasePermission
 from plane.proxy.serializers import ProjectSerializer
-from .base import BaseAPIView
+from .base import BaseAPIView, WebhookMixin
 
 
-class ProjectAPIEndpoint(BaseAPIView):
+class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
     """Project Endpoints to create, update, list, retrieve and delete endpoint"""
 
     serializer_class = ProjectSerializer

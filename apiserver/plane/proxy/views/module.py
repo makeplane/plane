@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseAPIView
+from .base import BaseAPIView, WebhookMixin
 from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import (
     Project,
@@ -30,7 +30,7 @@ from plane.proxy.serializers import (
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
-class ModuleAPIEndpoint(BaseAPIView):
+class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to module.
@@ -169,7 +169,7 @@ class ModuleAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueAPIEndpoint(BaseAPIView):
+class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to module issues.
@@ -178,11 +178,7 @@ class ModuleIssueAPIEndpoint(BaseAPIView):
 
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
-
-    filterset_fields = [
-        "issue__labels__id",
-        "issue__assignees__id",
-    ]
+    webhook_event = "module"
 
     permission_classes = [
         ProjectEntityPermission,

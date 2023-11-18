@@ -25,7 +25,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
-from .base import BaseAPIView
+from .base import BaseAPIView, WebhookMixin
 from plane.api.permissions import (
     ProjectEntityPermission,
     ProjectMemberPermission,
@@ -53,7 +53,7 @@ from plane.proxy.serializers import (
 )
 
 
-class IssueAPIEndpoint(BaseAPIView):
+class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue.
@@ -425,7 +425,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueCommentAPIEndpoint(BaseAPIView):
+class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to comments of the particular issue.
