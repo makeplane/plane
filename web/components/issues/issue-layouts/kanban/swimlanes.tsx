@@ -5,7 +5,7 @@ import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
 // types
-import { IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 
@@ -63,7 +63,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: IIssueLabels[] | null;
+  labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
   issues: any;
@@ -181,7 +181,7 @@ export interface IKanBanSwimLanes {
   states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: IIssueLabels[] | null;
+  labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
   isDragStarted?: boolean;

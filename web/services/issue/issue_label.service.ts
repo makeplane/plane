@@ -3,7 +3,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "services/api.service";
 import { TrackEventService } from "services/track_event.service";
 // types
-import { IIssueLabels, IUser } from "types";
+import { IIssueLabel, IUser } from "types";
 
 const trackEventServices = new TrackEventService();
 
@@ -12,7 +12,7 @@ export class IssueLabelService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getWorkspaceIssueLabels(workspaceSlug: string): Promise<IIssueLabels[]> {
+  async getWorkspaceIssueLabels(workspaceSlug: string): Promise<IIssueLabel[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -20,7 +20,7 @@ export class IssueLabelService extends APIService {
       });
   }
 
-  async getProjectIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
+  async getProjectIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabel[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -33,9 +33,9 @@ export class IssueLabelService extends APIService {
     projectId: string,
     data: any,
     user: IUser | undefined
-  ): Promise<IIssueLabels> {
+  ): Promise<IIssueLabel> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
-      .then((response: { data: IIssueLabels; [key: string]: any }) => {
+      .then((response: { data: IIssueLabel; [key: string]: any }) => {
         trackEventServices.trackIssueLabelEvent(
           {
             workSpaceId: response?.data?.workspace_detail?.id,

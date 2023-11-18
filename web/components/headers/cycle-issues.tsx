@@ -30,12 +30,12 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     cycle: cycleStore,
     cycleIssueFilter: cycleIssueFilterStore,
-    project: projectStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     commandPalette: commandPaletteStore,
   } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
@@ -178,7 +178,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
               states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />

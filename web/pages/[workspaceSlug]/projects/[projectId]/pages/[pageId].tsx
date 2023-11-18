@@ -33,7 +33,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { NextPageWithLayout } from "types/app";
-import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
+import { IIssueLabel, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
@@ -86,7 +86,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-  const { data: labels } = useSWR<IIssueLabels[]>(
+  const { data: labels } = useSWR<IIssueLabel[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)

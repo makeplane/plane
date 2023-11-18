@@ -3,11 +3,11 @@ import { observer } from "mobx-react-lite";
 // icons
 import { X } from "lucide-react";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type Props = {
   handleRemove: (val: string) => void;
-  labels: IIssueLabels[] | undefined;
+  labels: IIssueLabel[] | undefined;
   values: string[];
 };
 

@@ -29,7 +29,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   const {
-    project: { labels, fetchProjectLabels },
+    projectLabel: { labels, fetchProjectLabels },
   } = useMobxStore();
 
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);

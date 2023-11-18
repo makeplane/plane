@@ -12,7 +12,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, cycleId } = router.query;
 
   const {
-    project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     cycleIssueFilter: cycleIssueFilterStore,
     projectState: projectStateStore,
@@ -72,7 +72,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
+        labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />

@@ -1,8 +1,6 @@
 import { Fragment, useState } from "react";
-
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // hooks
 import { usePopper } from "react-popper";
 // components
@@ -44,7 +42,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    projectLabel: { fetchProjectLabels, projectLabels },
+  }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -53,12 +54,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectLabels = projectId && projectStore?.labels?.[projectId];
-
-  const fetchProjectLabels = () => {
+  const fetchLabels = () => {
     setIsLoading(true);
-    if (workspaceSlug && projectId)
-      projectStore.fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const options = (projectLabels ? projectLabels : []).map((label) => ({
@@ -169,7 +167,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => !projectLabels && fetchProjectLabels()}
+          onClick={() => !projectLabels && fetchLabels()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

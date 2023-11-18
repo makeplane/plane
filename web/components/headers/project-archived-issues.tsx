@@ -21,13 +21,12 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    project: projectStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     archivedIssueFilters: archivedIssueFiltersStore,
     projectState: projectStateStore,
   } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
 
   // for archived issues list layout is the only option
   const activeLayout = "list";
@@ -119,7 +118,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.archived_issues[activeLayout] : undefined
             }
-            labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+            labels={projectLabels ?? undefined}
             members={projectMembers?.map((m) => m.member)}
             states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
           />

@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
@@ -13,7 +13,7 @@ type Props = {
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   issues: IIssue[] | undefined;
   members?: IUserLite[] | undefined;
-  labels?: IIssueLabels[] | undefined;
+  labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
 

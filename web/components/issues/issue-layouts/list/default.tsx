@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlocksList, ListInlineCreateIssueForm } from "components/issues";
 // types
-import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IEstimatePoint, IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 
@@ -88,7 +88,7 @@ export interface IList {
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties;
   states: IState[] | null;
-  labels: IIssueLabels[] | null;
+  labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
   stateGroups: any;

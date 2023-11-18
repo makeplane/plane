@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -19,7 +18,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     projectViewIssues: projectViewIssueStore,
     issueDetail: issueDetailStore,
-    project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
   } = useMobxStore();
@@ -61,7 +60,7 @@ export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
       members={projectMembers?.map((m) => m.member)}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
+      labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssueAction={() => {}}
       handleUpdateIssue={handleUpdateIssue}
