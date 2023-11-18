@@ -64,17 +64,16 @@ class BaseSerializer(serializers.ModelSerializer):
         if self.expand:
             for expand in self.expand:
                 if expand in self.fields:
+                    # Import all the expandable serializers
                     from . import (
                         WorkspaceLiteSerializer,
                         ProjectLiteSerializer,
                         UserLiteSerializer,
                         StateLiteSerializer,
                         IssueSerializer,
-                        LabelSerializer,
                     )
 
-                    # print(response[expand])
-
+                    # Expansion mapper
                     expansion = {
                         "user": UserLiteSerializer,
                         "workspace": WorkspaceLiteSerializer,
@@ -87,11 +86,10 @@ class BaseSerializer(serializers.ModelSerializer):
                         "actor": UserLiteSerializer,
                         "owned_by": UserLiteSerializer,
                         "members": UserLiteSerializer,
-                        "assignees": UserLiteSerializer,
-                        "labels": LabelSerializer,
                     }
+                    # Check if field in expansion  then expand the field
                     if expand in expansion:
-                        if isinstance(response[expand], list):
+                        if isinstance(response.get(expand), list):
                             exp_serializer = expansion[expand](
                                 getattr(instance, expand), many=True
                             )
@@ -104,5 +102,4 @@ class BaseSerializer(serializers.ModelSerializer):
                         # You might need to handle this case differently
                         response[expand] = getattr(instance, f"{expand}_id", None)
 
-        # Apply similar logic for other expandable fields
         return response

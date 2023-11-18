@@ -162,8 +162,18 @@ class IssueSerializer(BaseSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["assignees"] = [str(assignee.id) for assignee in instance.assignees.all()]
-        data["labels"] = [str(label.id) for label in instance.labels.all()]
+        if "assignees" in self.fields:
+            if "assignees" in self.expand:
+                from .user import UserLiteSerializer
+                data["assignees"] = UserLiteSerializer(instance.assignees.all(), many=True).data
+            else:
+                data["assignees"] = [str(assignee.id) for assignee in instance.assignees.all()]
+        if "labels" in self.fields:
+            if "labels" in self.expand:
+                data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
+            else:
+                data["labels"] = [str(label.id) for label in instance.labels.all()]
+
         return data
 
 

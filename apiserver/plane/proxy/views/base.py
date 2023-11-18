@@ -134,6 +134,21 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             response = self.handle_exception(exc)
             return exc
 
+    def finalize_response(self, request, response, *args, **kwargs):
+        # Call super to get the default response
+        response = super().finalize_response(request, response, *args, **kwargs)
+
+        # Add custom headers if they exist in the request META
+        ratelimit_remaining = request.META.get('X-RateLimit-Remaining')
+        if ratelimit_remaining is not None:
+            response['X-RateLimit-Remaining'] = ratelimit_remaining
+
+        ratelimit_reset = request.META.get('X-RateLimit-Reset')
+        if ratelimit_reset is not None:
+            response['X-RateLimit-Reset'] = ratelimit_reset
+
+        return response
+
     @property
     def workspace_slug(self):
         return self.kwargs.get("slug", None)
