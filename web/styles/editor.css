@@ -6,6 +6,12 @@
   height: 0;
 }
 
+/* block quotes */
+.ProseMirror blockquote p::before,
+.ProseMirror blockquote p::after {
+  display: none;
+}
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
@@ -53,11 +59,12 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   background-color: rgb(var(--color-background-100));
   margin: 0;
   cursor: pointer;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 0.8rem;
+  height: 0.8rem;
   position: relative;
-  border: 2px solid rgb(var(--color-text-100));
-  margin-right: 0.3rem;
+  border: 1.5px solid rgb(var(--color-text-100));
+  margin-right: 0.2rem;
+  margin-top: 0.15rem;
   display: grid;
   place-content: center;
 
@@ -71,8 +78,8 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
 
   &::before {
     content: "";
-    width: 0.65em;
-    height: 0.65em;
+    width: 0.5em;
+    height: 0.5em;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
     box-shadow: inset 1em 1em;
@@ -259,26 +266,18 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   position: fixed;
   opacity: 1;
   transition: opacity ease-in 0.2s;
+  height: 18px;
+  width: 15px;
   display: grid;
   place-items: center;
-  height: 20px;
-  width: 15px;
   z-index: 10;
   cursor: grab;
   border-radius: 2px;
   background-color: rgb(var(--color-background-90));
-  &:hover {
-    background-color: rgb(var(--color-background-80));
-  }
-
-  &.hide {
-    opacity: 0;
-    pointer-events: none;
-  }
 }
 
 .drag-handle:hover {
-  background-color: #0d0d0d 10;
+  background-color: rgb(var(--color-background-80));
   transition: background-color 0.2s;
 }
 
@@ -295,7 +294,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 }
 
 .drag-handle-container {
-  height: 20px;
+  height: 15px;
   width: 15px;
   cursor: grab;
   display: grid;
@@ -313,7 +312,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 .drag-handle-dot {
   height: 2.75px;
   width: 3px;
-  background-color: rgba(var(--color-text-100));
+  background-color: rgba(var(--color-text-200));
   border-radius: 50%;
 }
 
