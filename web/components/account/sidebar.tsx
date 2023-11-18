@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // react-hook-form
-import { Control, Controller, UseFormSetValue } from "react-hook-form";
+import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 // types
 import { IWorkspace } from "types";
 // icons
@@ -80,13 +80,13 @@ type Props = {
   showProject: boolean;
   control?: Control<IWorkspace, any>;
   setValue?: UseFormSetValue<IWorkspace>;
+  watch?: UseFormWatch<IWorkspace>;
 };
 var timer: number = 0;
 var lastWorkspaceName: string = "";
 const DummySidebar: React.FC<Props> = (props) => {
-  const { workspaceName, showProject, control, setValue } = props;
+  const { workspaceName, showProject, control, setValue, watch } = props;
   const { workspace: workspaceStore, user: userStore } = useMobxStore();
-
   const workspace = workspaceStore.workspaces ? workspaceStore.workspaces[0] : null;
 
   const handleZoomWorkspace = (value: string) => {
@@ -104,14 +104,20 @@ const DummySidebar: React.FC<Props> = (props) => {
           setValue!("name", lastWorkspaceName);
           clearInterval(interval);
         }
+        console.log("timer", timer);
         timer--;
       }, 1000);
     }
   };
 
-  console.log("CALLED");
+  useEffect(() => {
+    if (watch) {
+      watch();
+    }
+  });
+
   return (
-    <div className="border-r relative ">
+    <div className="border-r h-full border-onboarding-border-100 relative ">
       <div>
         {control && setValue ? (
           <Controller
@@ -122,8 +128,8 @@ const DummySidebar: React.FC<Props> = (props) => {
                 handleZoomWorkspace(value);
               }
               return timer > 0 ? (
-                <div className="py-6 pl-4 top-3 mt-4 transition-all bg-custom-background-100 w-full max-w-screen-sm flex items-center ml-6 border-8 border-custom-primary-20 rounded-md">
-                  <div className="bg-slate-200 w-full p-1 flex items-center">
+                <div className="py-6 pl-4 top-3 mt-4 transition-all bg-onboarding-background-200 w-full max-w-screen-sm flex items-center ml-6 border-8 border-onboarding-background-100 rounded-md">
+                  <div className="bg-onboarding-background-100 w-full p-1 flex items-center">
                     <div className="flex flex-shrink-0">
                       <Avatar
                         name={value.length > 0 ? value[0].toLocaleUpperCase() : "N"}
@@ -135,11 +141,11 @@ const DummySidebar: React.FC<Props> = (props) => {
                       />
                     </div>
 
-                    <span className="text-xl font-medium text-custom-text-300 ml-2 truncate">{value}</span>
+                    <span className="text-xl font-medium text-onboarding-text-100 ml-2 truncate">{value}</span>
                   </div>
                 </div>
               ) : (
-                <div className="flex transition-all w-full items-center gap-y-2 px-4 pt-6 truncate">
+                <div className="flex transition-all w-full border border-transparent items-center gap-y-2 px-4 pt-6 truncate">
                   <div className="flex flex-shrink-0">
                     <Avatar
                       name={value.length > 0 ? value : workspace ? workspace.name[0].toLocaleUpperCase() : "N"}
@@ -211,26 +217,24 @@ const DummySidebar: React.FC<Props> = (props) => {
 
           <div
             className={`flex items-center justify-center rounded flex-shrink-0 p-2 outline-none
-             "shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
+             shadow-custom-sidebar-shadow-2xs border-[0.5px] border-onboarding-border-200
             `}
           >
-            <Search className="h-4 w-4 text-custom-sidebar-text-300" />
+            <Search className="h-4 w-4 text-onboarding-text-200" />
           </div>
         </div>
-        {workspaceLinks.map((link) => {
-          return (
-            <a className="block w-full">
-              <div
-                className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium outline-none 
-                    text-custom-sidebar-text-200  focus:bg-custom-sidebar-background-80
+        {workspaceLinks.map((link) => (
+          <a className="block w-full">
+            <div
+              className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium outline-none 
+                text-onboarding-text-200  focus:bg-custom-sidebar-background-80
                 `}
-              >
-                {<link.Icon className="h-4 w-4" />}
-                {link.name}
-              </div>
-            </a>
-          );
-        })}
+            >
+              {<link.Icon className="h-4 w-4" />}
+              {link.name}
+            </div>
+          </a>
+        ))}
       </div>
 
       {showProject && (
@@ -243,20 +247,18 @@ const DummySidebar: React.FC<Props> = (props) => {
               <span> Plane web</span>
               <ChevronDown className="h-4 w-4" />
             </div>
-            {projectLinks.map((link) => {
-              return (
-                <a className="block w-full">
-                  <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium outline-none 
+            {projectLinks.map((link) => (
+              <a className="block w-full">
+                <div
+                  className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium outline-none 
                     text-custom-sidebar-text-200  focus:bg-custom-sidebar-background-80
                 `}
-                  >
-                    {<link.Icon className="h-4 w-4" />}
-                    {link.name}
-                  </div>
-                </a>
-              );
-            })}
+                >
+                  {<link.Icon className="h-4 w-4" />}
+                  {link.name}
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       )}

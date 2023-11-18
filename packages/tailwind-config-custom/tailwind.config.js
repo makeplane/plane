@@ -176,6 +176,24 @@ module.exports = {
           },
           backdrop: "rgba(0, 0, 0, 0.25)",
         },
+        onboarding: {
+          background: {
+            100: convertToRGB("--color-onboarding-background-100"),
+            200: convertToRGB("--color-onboarding-background-200"),
+            300: convertToRGB("--color-onboarding-background-300"),
+            400: convertToRGB("--color-onboarding-background-400"),
+          },
+          text:{
+            100: convertToRGB("--color-onboarding-text-100"),
+            200: convertToRGB("--color-onboarding-text-200"),
+            300: convertToRGB("--color-onboarding-text-300"),
+            400: convertToRGB("--color-onboarding-text-400"),
+          },
+          border: {
+            100: convertToRGB("--color-onboarding-border-100"),
+            200: convertToRGB("--color-onboarding-border-200"),
+          },
+        },
       },
       keyframes: {
         leftToaster: {

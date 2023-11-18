@@ -19,11 +19,12 @@ import {
 import { Loader, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import signInIssues from "public/onboarding/sign-in.svg";
+import signInIssues from "public/onboarding/onboarding-issues.svg";
 // types
 import { IUser, IUserSettings } from "types";
 // icons
 import { Lightbulb } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const authService = new AuthService();
 
@@ -39,7 +40,9 @@ export const SignInView = observer(() => {
   const [isLoading, setLoading] = useState(false);
   // toast
   const { setToastAlert } = useToast();
-  // computed
+  const { resolvedTheme } = useTheme();
+
+  // computed.
   const enableEmailPassword =
     envConfig &&
     (envConfig?.email_password_login ||
@@ -69,7 +72,7 @@ export const SignInView = observer(() => {
           const workspaceSlug =
             userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
           if (workspaceSlug) router.push(`/${workspaceSlug}`);
-          else if (userSettings.workspace.invites > 0) router.push("/invitations");
+          // else if (userSettings.workspace.invites > 0) router.push("/invitations");
           else router.push("/create-workspace");
         })
         .catch(() => {
@@ -183,7 +186,13 @@ export const SignInView = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className="bg-gradient-to-r from-custom-primary-10/80 to-custom-primary-20/80 h-full overflow-y-auto">
+        <div
+          className={`${
+            resolvedTheme === "dark"
+              ? "bg-[#18191B]"
+              : "bg-gradient-to-r from-custom-primary-10/80 to-custom-primary-20/80"
+          } h-full overflow-y-auto`}
+        >
           <div className="sm:py-5 pl-8 pb-4 sm:pl-16 lg:pl-28 ">
             <div className="flex text-3xl items-center mt-16 font-semibold">
               <div className="h-[30px] w-[30px] mr-2">
@@ -194,19 +203,29 @@ export const SignInView = observer(() => {
           </div>
 
           <div className="md:w-2/3 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
-            <div className=" bg-gradient-to-r from-custom-primary-10/80 to-custom-primary-20/30 p-4">
-              <div className="bg-gradient-to-br px-7 sm:px-0 from-white/40 to-white/80 h-full pt-32 pb-20 rounded-md">
+            <div
+              className={`${resolvedTheme === "dark" ? "" : "from-custom-primary-10/10 to-custom-primary-20/30"} p-4`}
+            >
+              <div
+                className={`px-7 sm:px-0 ${
+                  resolvedTheme === "dark"
+                    ? "bg-gradient-to-br from-[#2f3035cc] to-[#212225cc]"
+                    : "bg-gradient-to-br from-white/40 to-white/80"
+                } h-full pt-32 pb-20 rounded-md`}
+              >
                 {!envConfig ? (
-                  <div className="pt-10 w-ful">
-                    <Loader className="space-y-4 w-full pb-4">
-                      <Loader.Item height="46px" width="360px" />
-                      <Loader.Item height="46px" width="360px" />
-                    </Loader>
+                  <div className="pt-10 mx-auto flex justify-center">
+                    <div>
+                      <Loader className="space-y-4 w-full pb-4 mx-auto">
+                        <Loader.Item height="46px" width="360px" />
+                        <Loader.Item height="46px" width="360px" />
+                      </Loader>
 
-                    <Loader className="space-y-4 w-full pt-4">
-                      <Loader.Item height="46px" width="360px" />
-                      <Loader.Item height="46px" width="360px" />
-                    </Loader>
+                      <Loader className="space-y-4 w-full pt-4 mx-auto">
+                        <Loader.Item height="46px" width="360px" />
+                        <Loader.Item height="46px" width="360px" />
+                      </Loader>
+                    </div>
                   </div>
                 ) : (
                   <>
@@ -219,10 +238,12 @@ export const SignInView = observer(() => {
                           </div>
                         </div>
                       )}
-                      <div className="flex sm:w-[360px] items-center mt-4 mx-auto">
-                        <hr className="border-custom-border-200 w-full" />
-                        <p className="text-center text-sm text-custom-text-400 mx-3  flex-shrink-0">Or continue with</p>
-                        <hr className="border-custom-border-200 w-full" />
+                      <div className="flex sm:w-96 items-center mt-4 mx-auto">
+                        <hr className={`border-onboarding-border-100 w-full`} />
+                        <p className="text-center text-sm text-onboarding-text-400 mx-3 flex-shrink-0">
+                          Or continue with
+                        </p>
+                        <hr className={`border-onboarding-border-100 w-full`} />
                       </div>
                       <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-96 mx-auto overflow-hidden">
                         {envConfig?.google_client_id && (
@@ -233,17 +254,21 @@ export const SignInView = observer(() => {
                         )}
                       </div>
                     </>
-                    <div className="flex py-2 bg-custom-primary-10 mx-auto rounded-sm border border-custom-primary-20 sm:w-96 mt-16">
+                    <div className={`flex py-2 bg-onboarding-background-100 mx-auto rounded-sm sm:w-96 mt-16`}>
                       <Lightbulb className="h-7 w-7 mr-2 mx-3" />
-                      <p className=" text-sm text-left">
+                      <p className={`text-sm text-left text-onboarding-text-200`}>
                         Try the latest features, like Tiptap editor, to write compelling responses.{" "}
                         <span className="font-medium underline hover:cursor-pointer" onClick={() => {}}>
                           See new features
                         </span>
                       </p>
                     </div>
-                    <div className="flex justify-center sm:w-96 sm:h-64 object-cover mt-6 mx-auto rounded-md ">
-                      <Image src={signInIssues} alt="Plane Logo" className="sm:w-96 sm:h-64" />
+                    <div className="flex justify-center sm:w-96 sm:h-64 object-cover mt-8 mx-auto rounded-md ">
+                      <Image
+                        src={signInIssues}
+                        alt="Plane Logo"
+                        className={`flex object-cover rounded-md bg-onboarding-background-100`}
+                      />
                     </div>
                   </>
                 )}

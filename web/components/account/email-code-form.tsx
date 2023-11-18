@@ -9,6 +9,7 @@ import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
 // icons
 import { XCircle } from "lucide-react";
+import { useTheme } from "next-themes";
 
 // types
 type EmailCodeFormValues = {
@@ -94,10 +95,6 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
   const emailOld = getValues("email");
 
   useEffect(() => {
-    setErrorResendingCode(false);
-  }, [emailOld]);
-
-  useEffect(() => {
     const submitForm = (e: KeyboardEvent) => {
       if (!codeSent && e.key === "Enter") {
         e.preventDefault();
@@ -133,21 +130,21 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
             Moving to the runway
           </h1>
-          <div className="text-center text-sm text-custom-text-100 mt-3">
+          <div className="text-center text-sm text-onboarding-text-200 mt-3">
             <p>Paste the code you got at </p>
             <span className="text-center text-sm text-custom-primary-80 mt-1 font-semibold ">{sentEmail} </span>
-            <span>below.</span>
+            <span className="text-onboarding-text-200">below.</span>
           </div>
         </>
       ) : (
         <>
-          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-custom-text-100">
+          <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
             Let’s get you prepped!
           </h1>
-          <p className="text-center text-sm text-custom-text-100 mt-3">
+          <p className="text-center text-sm text-onboarding-text-200 mt-3">
             This whole thing will take less than two minutes.
           </p>
-          <p className="text-center text-sm text-custom-text-100 mt-1">Promise!</p>
+          <p className="text-center text-sm text-onboarding-text-200 mt-1">Promise!</p>
         </>
       )}
 
@@ -164,7 +161,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                 ) || "Email address is not valid",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <div className="flex items-center relative rounded-md bg-white">
+              <div className={`flex items-center relative rounded-md bg-onboarding-background-200`}>
                 <Input
                   id="email"
                   name="email"
@@ -174,8 +171,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                   ref={ref}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@firstflight.com"
-                  className="w-full h-[46px] placeholder:text-custom-text-400/50 border-custom-border-200 pr-12"
-                ></Input>
+                  className={`w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12`}
+                />
                 {value.length > 0 && (
                   <XCircle
                     className="h-5 w-5 absolute stroke-custom-text-400 hover:cursor-pointer right-3"
@@ -191,11 +188,11 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           <>
             <div>
               {codeResent && sentEmail === getValues("email") ? (
-                <div className="text-sm my-2.5 text-custom-text-400 m-0">
+                <div className="text-sm my-2.5 text-onboarding-text-300 m-0">
                   You got a new code at <span className="font-semibold text-custom-primary-80">{sentEmail}</span>.
                 </div>
               ) : sentEmail != getValues("email") && getValues("email").length > 0 ? (
-                <div className="text-sm my-2.5 text-custom-text-400 m-0">
+                <div className="text-sm my-2.5 text-onboarding-text-300 m-0">
                   Hit enter
                   <span> ↵ </span>or <span className="italic">Tab</span> to get a new code
                 </div>
@@ -203,27 +200,28 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                 <div className="my-4" />
               )}
             </div>
-
-            <Controller
-              control={control}
-              name="token"
-              rules={{
-                required: "Code is required",
-              }}
-              render={({ field: { value, onChange, ref } }) => (
-                <Input
-                  id="token"
-                  name="token"
-                  type="token"
-                  value={value ?? ""}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.token)}
-                  placeholder="get-set-fly"
-                  className="border-custom-border-300 bg-white h-[46px] w-full"
-                />
-              )}
-            />
+            <div className={`flex items-center relative rounded-md bg-onboarding-background-200`}>
+              <Controller
+                control={control}
+                name="token"
+                rules={{
+                  required: "Code is required",
+                }}
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="token"
+                    name="token"
+                    type="token"
+                    value={value ?? ""}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.token)}
+                    placeholder="get-set-fly"
+                    className="border-onboarding-border-100 h-[46px] w-full"
+                  />
+                )}
+              />
+            </div>
           </>
         )}
         {codeSent ? (
@@ -241,7 +239,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
               {isLoading ? "Signing in..." : "Next step"}
             </Button>
             <div className="w-[70%] my-4 mx-auto">
-              <p className="text-xs text-custom-text-200">
+              <p className="text-xs text-onboarding-text-300">
                 When you click the button above, you agree with our{" "}
                 <a
                   href="https://plane.so/terms-and-conditions"

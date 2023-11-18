@@ -12,12 +12,16 @@ import { Button, Input } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
-import { Check, ChevronDown, Plus, X, XCircle } from "lucide-react";
+import { Check, ChevronDown, Plus, User2, X, XCircle } from "lucide-react";
 // types
 import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 import OnboardingStepIndicator from "components/account/step-indicator";
+import { useTheme } from "next-themes";
+import user1 from "public/users/user-1.png";
+import user2 from "public/users/user-2.png";
+import Image from "next/image";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -59,7 +63,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 
   return (
     <div className="group relative grid grid-cols-11 gap-4">
-      <div className="col-span-7">
+      <div className="col-span-7 bg-onboarding-background-200 rounded-md">
         <Controller
           control={control}
           name={`emails.${index}.email`}
@@ -80,12 +84,12 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
               ref={ref}
               hasError={Boolean(errors.emails?.[index]?.email)}
               placeholder="Enter their email..."
-              className="text-xs sm:text-sm w-full h-11 placeholder:text-custom-text-400/50"
+              className="text-xs sm:text-sm w-full h-12 placeholder:text-onboarding-text-400 border-onboarding-border-100"
             />
           )}
         />
       </div>
-      <div className="col-span-3">
+      <div className="col-span-3 bg-onboarding-background-200 rounded-md border items-center flex border-onboarding-border-100">
         <Controller
           control={control}
           name={`emails.${index}.role`}
@@ -104,11 +108,11 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                 type="button"
                 ref={buttonRef}
                 onClick={() => setIsDropdownOpen((prev) => !prev)}
-                className="flex items-center px-2.5 h-11 py-2 text-xs justify-between gap-1 w-full rounded-md border border-custom-border-200 duration-300"
+                className="flex items-center px-2.5 h-11 py-2 text-xs justify-between gap-1 w-full rounded-md duration-300"
               >
-                <span className="text-xs sm:text-sm">{ROLE[value]}</span>
+                <span className="text-xs text-onboarding-text-400 sm:text-sm">{ROLE[value]}</span>
 
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-4 w-4 stroke-onboarding-text-400" />
               </Listbox.Button>
 
               <Transition
@@ -123,7 +127,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
               >
                 <Listbox.Options
                   ref={dropdownRef}
-                  className="fixed w-36 z-10 border border-custom-border-200 mt-1 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none max-h-48"
+                  className="fixed w-36 z-10 border border-onboarding-border-100 mt-1 overflow-y-auto rounded-md bg-onboarding-background-200 text-xs shadow-lg focus:outline-none max-h-48"
                 >
                   <div className="space-y-1 p-2">
                     {Object.entries(ROLE).map(([key, value]) => (
@@ -132,8 +136,8 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                         value={parseInt(key)}
                         className={({ active, selected }) =>
                           `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                            active || selected ? "bg-custom-background-80" : ""
-                          } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                            active || selected ? "bg-onboarding-background-400/40" : ""
+                          } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
                         }
                       >
                         {({ selected }) => (
@@ -168,6 +172,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const { finishOnboarding, stepChange, user, workspace } = props;
 
   const { setToastAlert } = useToast();
+  const { resolvedTheme } = useTheme();
 
   const {
     control,
@@ -224,33 +229,43 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   return (
     <div className="flex py-14">
-      <div className="hidden lg:block w-1/4 p-3 ml-auto rounded bg-gradient-to-b from-white to-custom-primary-10/30 border border-custom-border-100">
-        <p className="text-base text-custom-text-400 font-semibold">Members</p>
+      <div
+        className={`hidden lg:block w-1/4 p-3 ml-auto rounded bg-gradient-to-b ${
+          resolvedTheme === "light" ? "from-white to-custom-primary-10/30" : " bg-onboarding-background-100/10"
+        } border border-onboarding-border-100 border-opacity-10`}
+      >
+        <p className="text-base text-onboarding-text-400 font-semibold">Members</p>
 
         {Array.from({ length: 4 }).map(() => (
           <div className="flex items-center gap-2 mt-4">
-            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10"></div>
+            <div className="w-8 h-8 flex justify-center items-center flex-shrink-0 rounded-full bg-onboarding-background-400">
+              <User2 className="h-4 w-4 stroke-onboarding-background-300 fill-onboarding-background-400" />
+            </div>
             <div className="w-full">
-              <div className="rounded-md h-2.5 my-2 bg-custom-primary-30 w-2/3" />
-              <div className="rounded-md h-2 bg-custom-primary-20 w-1/2" />
+              <div className="rounded-md h-2.5 my-2 bg-onboarding-background-100 w-2/3" />
+              <div className="rounded-md h-2 bg-onboarding-background-400 w-1/2" />
             </div>
           </div>
         ))}
 
         <div className="relative mt-20 h-32">
-          <div className="flex absolute bg-custom-background-100 p-2 rounded-full gap-x-2 border border-custom-border-200 w-full mt-1 -left-1/2">
-            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10"></div>
+          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 w-full mt-1 -left-1/2">
+            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10">
+              <Image src={user2} alt="user" />
+            </div>
             <div>
               <p className="text-sm font-medium">Murphy cooper</p>
-              <p className="text-custom-text-400 text-sm">murphy@plane.so</p>
+              <p className="text-onboarding-text-400 text-sm">murphy@plane.so</p>
             </div>
           </div>
 
-          <div className="flex absolute bg-custom-background-100 p-2 rounded-full gap-x-2 border border-custom-border-200 -left-1/3 mt-14 w-full">
-            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10"></div>
+          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 -left-1/3 mt-14 w-full">
+            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10">
+              <Image src={user1} alt="user" />
+            </div>
             <div>
               <p className="text-sm font-medium">Else Thompson</p>
-              <p className="text-custom-text-400 text-sm">Elsa@plane.so</p>
+              <p className="text-onboarding-text-400 text-sm">Elsa@plane.so</p>
             </div>
           </div>
         </div>
@@ -298,7 +313,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
             Copy invite link
           </Button> */}
 
-          <span className="text-sm text-custom-text-400/50 hover:cursor-pointer" onClick={nextStep}>
+          <span className="text-sm text-onboarding-text-400 hover:cursor-pointer" onClick={nextStep}>
             Do this later
           </span>
         </div>
