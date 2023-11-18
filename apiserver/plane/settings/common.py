@@ -27,9 +27,6 @@ DEBUG = False
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
 
-# Redirect if / is not present
-APPEND_SLASH = True
-
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -301,7 +298,7 @@ if bool(os.environ.get("SENTRY_DSN", False)):
         ],
         traces_sample_rate=1,
         send_default_pii=True,
-        environment=os.environ.get("ENVIRONMENT", "development"),
+        environment=os.environ.get("SENTRY_ENVIRONMENT", "development"),
         profiles_sample_rate=1.0,
     )
 
