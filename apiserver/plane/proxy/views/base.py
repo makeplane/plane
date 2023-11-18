@@ -17,7 +17,7 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.authentication.api_authentication import APIKeyAuthentication
+from plane.proxy.middleware.api_authentication import APIKeyAuthentication
 from plane.proxy.rate_limit import ApiKeyRateThrottle
 from plane.utils.paginator import BasePaginator
 from plane.bgtasks.webhook_task import send_webhook
