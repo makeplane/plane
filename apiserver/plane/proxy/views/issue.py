@@ -83,6 +83,7 @@ class IssueAPIEndpoint(BaseAPIView):
             .select_related("parent")
             .prefetch_related("assignees")
             .prefetch_related("labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
         ).distinct()
 
     def get(self, request, slug, project_id, pk=None):
@@ -277,7 +278,7 @@ class LabelAPIEndpoint(BaseAPIView):
             .select_related("workspace")
             .select_related("parent")
             .distinct()
-            .order_by("sort_order")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
     def post(self, request, slug, project_id):
@@ -340,7 +341,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
             .filter(project__project_projectmember__member=self.request.user)
-            .order_by("-created_at")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
 
@@ -458,6 +459,7 @@ class IssueCommentAPIEndpoint(BaseAPIView):
                     )
                 )
             )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
 
@@ -622,7 +624,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
 
         result_list = sorted(
             chain(issue_activities, issue_comments),
-            key=lambda instance: instance["created_at"],
+            key=lambda instance: instance[request.GET.get("order_by", "created_at")],
         )
 
         return Response(result_list, status=status.HTTP_200_OK)

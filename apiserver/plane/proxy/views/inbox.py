@@ -45,6 +45,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 inbox_id=self.kwargs.get("inbox_id"),
             )
             .select_related("issue", "workspace", "project")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
     def get(self, request, slug, project_id, inbox_id, pk=None):

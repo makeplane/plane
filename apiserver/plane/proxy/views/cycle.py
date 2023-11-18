@@ -119,7 +119,7 @@ class CycleAPIEndpoint(BaseAPIView):
                         issue_cycle__issue__is_draft=False,
                     ),
                 )
-            )
+            ).order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
 
@@ -271,11 +271,6 @@ class CycleIssueAPIEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
-    filterset_fields = [
-        "issue__labels__id",
-        "issue__assignees__id",
-    ]
-
     def get_queryset(self):
         return (
             CycleIssue.objects.annotate(
@@ -293,6 +288,7 @@ class CycleIssueAPIEndpoint(BaseAPIView):
             .select_related("cycle")
             .select_related("issue", "issue__state", "issue__project")
             .prefetch_related("issue__assignees", "issue__labels")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
 
