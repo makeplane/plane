@@ -94,7 +94,7 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             ).get(workspace__slug=slug, project_id=project_id, pk=pk)
-            return Response(IssueSerializer(issue).data, status=status.HTTP_200_OK)
+            return Response(IssueSerializer(issue, fields=self.fields, expand=self.expand,).data, status=status.HTTP_200_OK)
 
         filters = issue_filters(request.query_params, "GET")
         # Custom ordering for priority and state
@@ -297,7 +297,7 @@ class LabelAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         if pk:
             label = self.get_queryset().get(pk=pk)
-            serializer = LabelSerializer(label)
+            serializer = LabelSerializer(label, fields=self.fields, expand=self.expand,)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
@@ -348,7 +348,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         if pk:
             label = self.get_queryset().get(pk=pk)
-            serializer = IssueLinkSerializer(label)
+            serializer = IssueLinkSerializer(label, fields=self.fields, expand=self.expand,)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
@@ -466,7 +466,7 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk:
             issue_comment = self.get_queryset().get(pk=pk)
-            serializer = IssueCommentSerializer(issue_comment)
+            serializer = IssueCommentSerializer(issue_comment, fields=self.fields, expand=self.expand,)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
@@ -589,12 +589,30 @@ class IssueAttachmentAPIEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def get(self, request, slug, project_id, issue_id):
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
+            issue_attachments = IssueAttachment.objects.get(
+                issue_id=issue_id, workspace__slug=slug, project_id=project_id, pk=pk
+            )
+            serializer = IssueAttachmentSerializer(issue_attachments, many=True, fields=self.fields, expand=self.expand,)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Issue Attachments paginated
         issue_attachments = IssueAttachment.objects.filter(
-            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            issue_id=issue_id,
+            workspace__slug=slug,
+            project_id=project_id,
         )
-        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=(issue_attachments),
+            on_results=lambda issue_attachments: IssueAttachmentSerializer(
+                issue_attachments,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
 
 
 class IssueActivityAPIEndpoint(BaseAPIView):

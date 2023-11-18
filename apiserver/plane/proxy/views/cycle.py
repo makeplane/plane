@@ -14,7 +14,11 @@ from rest_framework import status
 from .base import BaseAPIView, WebhookMixin
 from plane.db.models import Cycle, Issue, CycleIssue, IssueLink, IssueAttachment
 from plane.api.permissions import ProjectEntityPermission
-from plane.proxy.serializers import CycleSerializer, CycleIssueSerializer, IssueSerializer
+from plane.proxy.serializers import (
+    CycleSerializer,
+    CycleIssueSerializer,
+    IssueSerializer,
+)
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -119,14 +123,19 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                         issue_cycle__issue__is_draft=False,
                     ),
                 )
-            ).order_by(self.kwargs.get("order_by", "-created_at"))
+            )
+            .order_by(self.kwargs.get("order_by", "-created_at"))
             .distinct()
         )
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
             queryset = self.get_queryset().get(pk=pk)
-            data = CycleSerializer(queryset).data
+            data = CycleSerializer(
+                queryset,
+                fields=self.fields,
+                expand=self.expand,
+            ).data
             return Response(
                 data,
                 status=status.HTTP_200_OK,
@@ -141,21 +150,37 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 start_date__lte=timezone.now(),
                 end_date__gte=timezone.now(),
             )
-            data = CycleSerializer(queryset, many=True).data
+            data = CycleSerializer(
+                queryset, many=True, fields=self.fields, expand=self.expand
+            ).data
             return Response(data, status=status.HTTP_200_OK)
 
         # Upcoming Cycles
         if cycle_view == "upcoming":
             queryset = queryset.filter(start_date__gt=timezone.now())
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+            return self.paginate(
+                request=request,
+                queryset=(queryset),
+                on_results=lambda cycles: CycleSerializer(
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
             )
 
         # Completed Cycles
         if cycle_view == "completed":
             queryset = queryset.filter(end_date__lt=timezone.now())
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+            return self.paginate(
+                request=request,
+                queryset=(queryset),
+                on_results=lambda cycles: CycleSerializer(
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
             )
 
         # Draft Cycles
@@ -164,20 +189,41 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 end_date=None,
                 start_date=None,
             )
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+            return self.paginate(
+                request=request,
+                queryset=(queryset),
+                on_results=lambda cycles: CycleSerializer(
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
             )
+
         # Incomplete Cycles
         if cycle_view == "incomplete":
             queryset = queryset.filter(
                 Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
             )
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+            return self.paginate(
+                request=request,
+                queryset=(queryset),
+                on_results=lambda cycles: CycleSerializer(
+                    cycles,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
             )
-        # If no matching view is found return all cycles
-        return Response(
-            CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
+        return self.paginate(
+            request=request,
+            queryset=(queryset),
+            on_results=lambda cycles: CycleSerializer(
+                cycles,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
         )
 
     def post(self, request, slug, project_id):
@@ -326,8 +372,16 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             )
         )
 
-        issues_data = IssueSerializer(issues, many=True).data
-        return Response(issues_data, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=(issues),
+            on_results=lambda issues: CycleSerializer(
+                issues,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
 
     def post(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
@@ -448,6 +502,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
     This viewset provides `create` actions for transfering the issues into a particular cycle.
 
     """
+
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -493,5 +548,3 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
         )
 
         return Response({"message": "Success"}, status=status.HTTP_200_OK)
-
-

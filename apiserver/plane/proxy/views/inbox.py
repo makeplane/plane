@@ -17,12 +17,14 @@ from plane.proxy.serializers import InboxIssueSerializer, IssueSerializer
 from plane.db.models import InboxIssue, Issue, State, ProjectMember
 from plane.bgtasks.issue_activites_task import issue_activity
 
+
 class InboxIssueAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to inbox issues.
 
     """
+
     permission_classes = [
         ProjectLitePermission,
     ]
@@ -51,16 +53,25 @@ class InboxIssueAPIEndpoint(BaseAPIView):
     def get(self, request, slug, project_id, inbox_id, pk=None):
         if pk:
             issue_queryset = self.get_queryset().get(pk=pk)
-            issues_data = InboxIssueSerializer(issue_queryset).data
+            issues_data = InboxIssueSerializer(
+                issue_queryset,
+                fields=self.fields,
+                expand=self.expand,
+            ).data
             return Response(
                 issues_data,
                 status=status.HTTP_200_OK,
             )
         issue_queryset = self.get_queryset()
-        issues_data = InboxIssueSerializer(issue_queryset, many=True).data
-        return Response(
-            issues_data,
-            status=status.HTTP_200_OK,
+        return self.paginate(
+            request=request,
+            queryset=(issue_queryset),
+            on_results=lambda inbox_issues: InboxIssueSerializer(
+                inbox_issues,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
         )
 
     def post(self, request, slug, project_id, inbox_id):
@@ -161,9 +172,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                     "description": issue_data.get("description", issue.description),
                 }
 
-            issue_serializer = IssueSerializer(
-                issue, data=issue_data, partial=True
-            )
+            issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
 
             if issue_serializer.is_valid():
                 current_instance = issue

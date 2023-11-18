@@ -133,16 +133,20 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         if pk:
             queryset = self.get_queryset().get(pk=pk)
-            data = ModuleSerializer(queryset).data
+            data = ModuleSerializer(queryset, fields=self.fields, expand=self.expand,).data
             return Response(
                 data,
                 status=status.HTTP_200_OK,
             )
-        queryset = self.get_queryset()
-        data = ModuleSerializer(queryset, many=True).data
-        return Response(
-            data,
-            status=status.HTTP_200_OK,
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda modules: ModuleSerializer(
+                modules,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
         )
 
     def delete(self, request, slug, project_id, pk):
@@ -239,9 +243,17 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 .values("count")
             )
         )
-        issues_data = IssueSerializer(issues, many=True).data
+        return self.paginate(
+            request=request,
+            queryset=(issues),
+            on_results=lambda issues: IssueSerializer(
+                issues,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
 
-        return Response(issues_data, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
