@@ -3,6 +3,7 @@ import { Extension } from "@tiptap/core";
 import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
 // @ts-ignore
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
+import { createDragHandleElement } from "../../lib/utils/DragHandleElement";
 
 export interface DragHandleOptions {
   dragHandleWidth: number;
@@ -135,25 +136,7 @@ function DragHandle(options: DragHandleOptions) {
   return new Plugin({
     key: new PluginKey("dragHandle"),
     view: (view) => {
-      dragHandleElement = document.createElement("div");
-      dragHandleElement.draggable = true;
-      dragHandleElement.dataset.dragHandle = "";
-      dragHandleElement.classList.add("drag-handle");
-
-      const dragHandleContainer = document.createElement("div");
-      dragHandleContainer.classList.add("drag-handle-container");
-      dragHandleElement.appendChild(dragHandleContainer);
-
-      const dotsContainer = document.createElement("div");
-      dotsContainer.classList.add("drag-handle-dots");
-
-      for (let i = 0; i < 6; i++) {
-        const spanElement = document.createElement("span");
-        spanElement.classList.add("drag-handle-dot");
-        dotsContainer.appendChild(spanElement);
-      }
-
-      dragHandleContainer.appendChild(dotsContainer);
+      dragHandleElement = createDragHandleElement();
       dragHandleElement.addEventListener("dragstart", (e) => {
         handleDragStart(e, view);
       });
@@ -213,7 +196,7 @@ function DragHandle(options: DragHandleOptions) {
           if (!dragHandleElement) return;
 
           dragHandleElement.style.left = `${rect.left - rect.width}px`;
-          dragHandleElement.style.top = `${rect.top}px`;
+          dragHandleElement.style.top = `${rect.top + 3}px`;
           showDragHandle();
         },
         keydown: () => {

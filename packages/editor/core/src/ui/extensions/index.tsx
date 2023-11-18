@@ -11,7 +11,6 @@ import TableHeader from "./table/table-header/table-header";
 import Table from "./table/table";
 import TableCell from "./table/table-cell/table-cell";
 import TableRow from "./table/table-row/table-row";
-import DragDrop from "./drag-drop";
 import HorizontalRule from "./horizontal-rule";
 
 import ImageExtension from "./image";
@@ -20,10 +19,10 @@ import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
-import { ValidateImage } from "../../types/validate-image";
 
 import { CustomKeymap } from "./keymap";
 import { CustomCodeBlock } from "./code";
+import { ListKeymap } from "./custom-list-keymap";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -31,7 +30,6 @@ export const CoreEditorExtensions = (
     mentionHighlights: string[];
   },
   deleteFile: DeleteImage,
-  validateFile?: ValidateImage,
   cancelUploadImage?: () => any,
 ) => [
   StarterKit.configure({
@@ -64,6 +62,7 @@ export const CoreEditorExtensions = (
     },
   }),
   CustomKeymap,
+  ListKeymap,
   TiptapLink.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
@@ -72,7 +71,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtension(deleteFile, validateFile, cancelUploadImage).configure({
+  ImageExtension(deleteFile, cancelUploadImage).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },
