@@ -27,7 +27,7 @@ import {
 // ui
 import { CustomMenu } from "@plane/ui";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueLabels, IState, IUserLite, TIssueOrderByOptions } from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueLabel, IState, IUserLite, TIssueOrderByOptions } from "types";
 // constants
 import { SPREADSHEET_PROPERTY_DETAILS } from "constants/spreadsheet";
 
@@ -40,7 +40,7 @@ type Props = {
   issues: IIssue[] | undefined;
   property: string;
   members?: IUserLite[] | undefined;
-  labels?: IIssueLabels[] | undefined;
+  labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
 

@@ -30,13 +30,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     module: moduleStore,
     moduleFilter: moduleFilterStore,
-    project: projectStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     commandPalette: commandPaletteStore,
   } = useMobxStore();
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
-  const { currentProjectDetails } = projectStore;
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
 
@@ -177,7 +177,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
               states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
