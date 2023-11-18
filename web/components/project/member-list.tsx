@@ -24,7 +24,6 @@ export const ProjectMemberList: React.FC = observer(() => {
 
   // store
   const {
-    project: projectStore,
     projectMember: { projectMembers, fetchProjectMembers },
   } = useMobxStore();
 

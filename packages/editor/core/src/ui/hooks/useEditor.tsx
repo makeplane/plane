@@ -1,10 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import {
-  useImperativeHandle,
-  useRef,
-  MutableRefObject,
-  useEffect,
-} from "react";
+import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { DeleteImage } from "../../types/delete-image";
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";

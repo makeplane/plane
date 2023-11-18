@@ -15,6 +15,7 @@ export interface IInstanceStore {
   // computed
   // action
   fetchInstanceInfo: () => Promise<IInstance>;
+  updateInstanceInfo: (data: Partial<IInstance>) => Promise<IInstance>;
   fetchInstanceConfigurations: () => Promise<any>;
 }
 
@@ -38,6 +39,7 @@ export class InstanceStore implements IInstanceStore {
       //   getIssueType: computed,
       // actions
       fetchInstanceInfo: action,
+      updateInstanceInfo: action,
       fetchInstanceConfigurations: action,
     });
 
@@ -45,6 +47,9 @@ export class InstanceStore implements IInstanceStore {
     this.instanceService = new InstanceService();
   }
 
+  /**
+   * fetch instace info from API
+   */
   fetchInstanceInfo = async () => {
     try {
       const instance = await this.instanceService.getInstanceInfo();
@@ -58,6 +63,39 @@ export class InstanceStore implements IInstanceStore {
     }
   };
 
+  /**
+   * update instance info
+   * @param data
+   */
+  updateInstanceInfo = async (data: Partial<IInstance>) => {
+    try {
+      runInAction(() => {
+        this.loader = true;
+        this.error = null;
+      });
+
+      const response = await this.instanceService.updateInstanceInfo(data);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+        this.instance = response;
+      });
+
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  /**
+   * fetch instace configurations from API
+   */
   fetchInstanceConfigurations = async () => {
     try {
       const configurations = await this.instanceService.getInstanceConfigurations();

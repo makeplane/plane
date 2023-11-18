@@ -22,7 +22,7 @@ import {
   toggleBlockquote,
   toggleBold,
   toggleBulletList,
-  toggleCode,
+  toggleCodeBlock,
   toggleHeadingOne,
   toggleHeadingThree,
   toggleHeadingTwo,
@@ -89,13 +89,6 @@ export const StrikeThroughItem = (editor: Editor): EditorMenuItem => ({
   icon: StrikethroughIcon,
 });
 
-export const CodeItem = (editor: Editor): EditorMenuItem => ({
-  name: "code",
-  isActive: () => editor?.isActive("code"),
-  command: () => toggleCode(editor),
-  icon: CodeIcon,
-});
-
 export const BulletListItem = (editor: Editor): EditorMenuItem => ({
   name: "bullet-list",
   isActive: () => editor?.isActive("bulletList"),
@@ -108,6 +101,13 @@ export const TodoListItem = (editor: Editor): EditorMenuItem => ({
   isActive: () => editor.isActive("taskItem"),
   command: () => toggleTaskList(editor),
   icon: CheckSquare,
+});
+
+export const CodeItem = (editor: Editor): EditorMenuItem => ({
+  name: "code",
+  isActive: () => editor?.isActive("code"),
+  command: () => toggleCodeBlock(editor),
+  icon: CodeIcon,
 });
 
 export const NumberedListItem = (editor: Editor): EditorMenuItem => ({

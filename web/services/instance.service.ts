@@ -17,6 +17,16 @@ export class InstanceService extends APIService {
       });
   }
 
+  async updateInstanceInfo(
+    data: Partial<IInstance>
+  ): Promise<IInstance> {
+    return this.patch("/api/licenses/instances/", data)
+    .then((response) => response?.data)
+    .catch((error) => {
+      throw error?.response?.data;
+    })
+  }
+
   async getInstanceConfigurations() {
     return this.get("/api/licenses/instances/configurations/")
       .then((response) => response.data)
