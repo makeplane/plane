@@ -1,5 +1,5 @@
 // types
-import { IIssue, IIssueLabels, IWorkspaceLite, IProjectLite } from "types";
+import { IIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "types";
 
 export interface IPage {
   access: number;
@@ -12,9 +12,9 @@ export interface IPage {
   description_stripped: string | null;
   id: string;
   is_favorite: boolean;
-	is_locked: boolean;
-	archived_at?: Date,
-  label_details: IIssueLabels[];
+  is_locked: boolean;
+  archived_at?: Date;
+  label_details: IIssueLabel[];
   labels: string[];
   name: string;
   owned_by: string;

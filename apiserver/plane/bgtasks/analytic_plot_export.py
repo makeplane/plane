@@ -3,7 +3,7 @@ import csv
 import io
 
 # Django imports
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -16,6 +16,8 @@ from sentry_sdk import capture_exception
 from plane.db.models import Issue
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
+from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
 
 row_mapping = {
     "state__name": "State",
@@ -47,7 +49,19 @@ def send_export_email(email, slug, csv_buffer):
     text_content = strip_tags(html_content)
 
     csv_buffer.seek(0)
-    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_FROM, [email])
+
+    # Configure email connection from the database
+    instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values("key", "value")
+    connection = get_connection(
+        host=get_configuration_value(instance_configuration, "EMAIL_HOST"),
+        port=int(get_configuration_value(instance_configuration, "EMAIL_PORT", "587")),
+        username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
+        password=get_configuration_value(instance_configuration, "EMAIL_HOST_PASSWORD"),
+        use_tls=bool(get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")),
+        use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
+    )
+
+    msg = EmailMultiAlternatives(subject=subject, body=text_content, from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"), to=[email], connection=connection)
     msg.attach(f"{slug}-analytics.csv", csv_buffer.getvalue())
     msg.send(fail_silently=False)
 
