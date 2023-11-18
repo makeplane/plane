@@ -27,8 +27,6 @@ DEBUG = False
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
 
-# Redirect if / is not present
-APPEND_SLASH = True
 
 # Application definition
 INSTALLED_APPS = [
