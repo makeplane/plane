@@ -7,6 +7,7 @@ from plane.api.views import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleIssueGroupedEndpoint,
 )
 
 
@@ -41,6 +42,11 @@ urlpatterns = [
                 "post": "create",
             }
         ),
+        name="project-issue-cycle",
+    ),
+    path(
+        "v3/workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/",
+        CycleIssueGroupedEndpoint.as_view(),
         name="project-issue-cycle",
     ),
     path(
