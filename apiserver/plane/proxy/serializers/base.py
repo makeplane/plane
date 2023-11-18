@@ -3,24 +3,22 @@ from rest_framework import serializers
 
 
 class BaseSerializer(serializers.ModelSerializer):
-
     id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         # If 'fields' is provided in the arguments, remove it and store it separately.
         # This is done so as not to pass this custom argument up to the superclass.
-        fields = kwargs.pop("fields",[])
-        expand = kwargs.pop("expand", [])
+        fields = kwargs.pop("fields", [])
+        self.expand = kwargs.pop("expand", []) or []
 
         # Call the initialization of the superclass.
         super().__init__(*args, **kwargs)
 
         # If 'fields' was provided, filter the fields of the serializer accordingly.
         if fields:
-            self.fields = self._filter_fields(fields=fields, expand=expand)
+            self.fields = self._filter_fields(fields=fields)
 
-
-    def _filter_fields(self, fields, expand):
+    def _filter_fields(self, fields):
         """
         Adjust the serializer's fields based on the provided 'fields' list.
 
@@ -33,7 +31,7 @@ class BaseSerializer(serializers.ModelSerializer):
             # loop through its keys and values.
             if isinstance(field_name, dict):
                 for key, value in field_name.items():
-                    # If the value of this nested field is a list, 
+                    # If the value of this nested field is a list,
                     # perform a recursive filter on it.
                     if isinstance(value, list):
                         self._filter_fields(self.fields[key], value)
@@ -54,10 +52,48 @@ class BaseSerializer(serializers.ModelSerializer):
         allowed = set(allowed)
 
         # Remove fields from the serializer that aren't in the 'allowed' list.
-        for field_name in (existing - allowed):
+        for field_name in existing - allowed:
             self.fields.pop(field_name)
 
         return self.fields
 
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
 
+        # Ensure 'expand' is iterable before processing
+        if self.expand:
+            for expand in self.expand:
+                if expand in self.fields:
+                    from . import (
+                        WorkspaceLiteSerializer,
+                        ProjectLiteSerializer,
+                        UserLiteSerializer,
+                        StateLiteSerializer,
+                    )
+                    # print(response[expand])
 
+                    expansion = {
+                        "user": UserLiteSerializer,
+                        "workspace": WorkspaceLiteSerializer,
+                        "project": ProjectLiteSerializer,
+                        "default_assignee": UserLiteSerializer,
+                        "project_lead": UserLiteSerializer,
+                        "state": StateLiteSerializer,
+                        "created_by": UserLiteSerializer,
+                    }
+                    if expand in expansion:
+                        if isinstance(response[expand], list):
+                            exp_serializer = expansion[expand](
+                                getattr(instance, expand), many=True
+                            )
+                        else:
+                            exp_serializer = expansion[expand](
+                                getattr(instance, expand)
+                            )
+                            response[expand] = exp_serializer.data
+                    else:
+                        # You might need to handle this case differently
+                        response[expand] = getattr(instance, f"{expand}_id", None)
+
+        # Apply similar logic for other expandable fields
+        return response

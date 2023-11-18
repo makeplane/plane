@@ -5,15 +5,9 @@ from rest_framework import serializers
 # Module imports
 from plane.db.models import Project, ProjectIdentifier
 from .base import BaseSerializer
-from .user import UserLiteSerializer
-from .workspace import WorkspaceLiteSerializer
-
 
 class ProjectSerializer(BaseSerializer):
 
-    workspace_detail = WorkspaceLiteSerializer(read_only=True)
-    default_assignee_detail = UserLiteSerializer(read_only=True)
-    project_lead_detail = UserLiteSerializer(read_only=True)
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
@@ -48,3 +42,18 @@ class ProjectSerializer(BaseSerializer):
             workspace_id=self.context["workspace_id"],
         )
         return project
+
+
+class ProjectLiteSerializer(BaseSerializer):
+    class Meta:
+        model = Project
+        fields = [
+            "id",
+            "identifier",
+            "name",
+            "cover_image",
+            "icon_prop",
+            "emoji",
+            "description",
+        ]
+        read_only_fields = fields
