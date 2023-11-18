@@ -72,7 +72,7 @@ class Workspace(BaseModel):
         related_name="owner_workspace",
     )
     slug = models.SlugField(max_length=48, db_index=True, unique=True)
-    organization_size = models.CharField(max_length=20)
+    organization_size = models.CharField(max_length=20, blank=True, null=True)
 
     def __str__(self):
         """Return name of the Workspace"""
