@@ -53,7 +53,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed },
     workspace: { workspaces, currentWorkspace: activeWorkspace },
-    user: { currentUser, updateCurrentUser },
+    user: { currentUser, updateCurrentUser, isUserInstanceAdmin },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
@@ -286,7 +286,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   </Menu.Item>
                 ))}
               </div>
-              <div className="pt-2">
+              <div className="py-2">
                 <Menu.Item
                   as="button"
                   type="button"
@@ -297,6 +297,17 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   Sign out
                 </Menu.Item>
               </div>
+              {isUserInstanceAdmin && (
+                <div className="p-2 pb-0">
+                  <Menu.Item as="button" type="button" className="w-full">
+                    <Link href="/admin">
+                      <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-10 hover:bg-custom-primary-20">
+                        God Mode
+                      </a>
+                    </Link>
+                  </Menu.Item>
+                </div>
+              )}
             </Menu.Items>
           </Transition>
         </Menu>

@@ -3,8 +3,10 @@ set -e
 python manage.py wait_for_db
 python manage.py migrate
 
-# Create a Default User
-python bin/user_script.py
+# Register instance
+python manage.py register_instance
+# Load the configuration variable
+python manage.py configure_instance
 # Create the default bucket
 python bin/bucket_script.py
 

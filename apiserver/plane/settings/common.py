@@ -5,6 +5,7 @@ import ssl
 import certifi
 from datetime import timedelta
 from urllib.parse import urlparse
+
 # Django imports
 from django.core.management.utils import get_random_secret_key
 
@@ -26,12 +27,6 @@ DEBUG = False
 # Allowed Hosts
 ALLOWED_HOSTS = ["*"]
 
-# To access webhook
-ENABLE_WEBHOOK = os.environ.get("ENABLE_WEBHOOK", "1") == "1"
-
-# To access plane api through api tokens
-ENABLE_API = os.environ.get("ENABLE_API", "1") == "1"
-
 # Redirect if / is not present
 APPEND_SLASH = True
 
@@ -48,6 +43,7 @@ INSTALLED_APPS = [
     "plane.utils",
     "plane.web",
     "plane.middleware",
+    "plane.license",
     "plane.proxy",
     # Third-party things
     "rest_framework",
@@ -118,7 +114,13 @@ CSRF_COOKIE_SECURE = True
 
 # CORS Settings
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
+cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
+# filter out empty strings
+cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
+if cors_allowed_origins:
+    CORS_ALLOWED_ORIGINS = cors_allowed_origins
+else:
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # Application Settings
 WSGI_APPLICATION = "plane.wsgi.application"
@@ -212,16 +214,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# Host for sending e-mail.
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-# Port for sending e-mail.
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
-# Optional SMTP authentication information for EMAIL_HOST.
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1") == "1"
-EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "0") == "1"
-EMAIL_FROM = os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>")
 
 # Storage Settings
 STORAGES = {
@@ -229,7 +221,9 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
+STORAGES["default"] = {
+    "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+}
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
@@ -243,7 +237,6 @@ if AWS_S3_ENDPOINT_URL:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
     AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
-
 
 
 # JWT Auth Configuration
@@ -328,17 +321,5 @@ GITHUB_ACCESS_TOKEN = os.environ.get("GITHUB_ACCESS_TOKEN", False)
 ANALYTICS_SECRET_KEY = os.environ.get("ANALYTICS_SECRET_KEY", False)
 ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
-# Open AI Settings
-OPENAI_API_BASE = os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1")
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", False)
-GPT_ENGINE = os.environ.get("GPT_ENGINE", "gpt-3.5-turbo")
-
-# Scout Settings
-SCOUT_MONITOR = os.environ.get("SCOUT_MONITOR", False)
-SCOUT_KEY = os.environ.get("SCOUT_KEY", "")
-SCOUT_NAME = "Plane"
-
-# Set the variable true if running in docker environment
-DOCKERIZED = int(os.environ.get("DOCKERIZED", 1)) == 1
+# Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
-

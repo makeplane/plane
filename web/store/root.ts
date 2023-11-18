@@ -1,5 +1,6 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
+import { InstanceStore, IInstanceStore } from "./instance";
 import AppConfigStore, { IAppConfigStore } from "./app-config.store";
 import CommandPaletteStore, { ICommandPaletteStore } from "./command-palette.store";
 import UserStore, { IUserStore } from "store/user.store";
@@ -116,6 +117,8 @@ import { IMentionsStore, MentionsStore } from "store/editor";
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
+  instance: IInstanceStore;
+
   user: IUserStore;
   theme: IThemeStore;
   appConfig: IAppConfigStore;
@@ -184,6 +187,8 @@ export class RootStore {
   mentionsStore: IMentionsStore;
 
   constructor() {
+    this.instance = new InstanceStore(this);
+
     this.appConfig = new AppConfigStore(this);
     this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);

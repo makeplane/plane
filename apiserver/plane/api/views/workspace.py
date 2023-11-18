@@ -319,7 +319,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             workspace_invitations, batch_size=10, ignore_conflicts=True
         )
 
-        current_site = f"{request.scheme}://{request.get_host()}",
+        current_site = request.META.get('HTTP_ORIGIN')
 
         # Send invitations
         for invitation in workspace_invitations:

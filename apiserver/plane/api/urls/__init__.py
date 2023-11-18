@@ -49,10 +49,6 @@ urlpatterns = [
     *user_urls,
     *view_urls,
     *workspace_urls,
+    *api_urls,
+    *webhook_urls,
 ]
-
-if settings.ENABLE_WEBHOOK:
-    urlpatterns += webhook_urls
-
-if settings.ENABLE_API:
-    urlpatterns += api_urls

@@ -320,11 +320,11 @@ class SignInEndpoint(BaseAPIView):
         except RequestException as e:
             capture_exception(e)
 
+        access_token, refresh_token = get_tokens_for_user(user)
         data = {
             "access_token": access_token,
             "refresh_token": refresh_token,
         }
-        access_token, refresh_token = get_tokens_for_user(user)
         return Response(data, status=status.HTTP_200_OK)
 
 

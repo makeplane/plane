@@ -29,6 +29,10 @@ export interface IUser {
   theme: IUserTheme;
 }
 
+export interface IInstanceAdminStatus {
+  is_instance_admin: boolean;
+}
+
 export interface IUserSettings {
   id: string;
   email: string;

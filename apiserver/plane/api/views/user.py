@@ -14,6 +14,7 @@ from plane.api.serializers import (
 
 from plane.api.views.base import BaseViewSet, BaseAPIView
 from plane.db.models import User, IssueActivity, WorkspaceMember
+from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 
 
@@ -35,12 +36,17 @@ class UserEndpoint(BaseViewSet):
         serialized_data = UserMeSettingsSerializer(request.user).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
+    def retrieve_instance_admin(self, request):
+        instance = Instance.objects.first()
+        is_admin = InstanceAdmin.objects.filter(
+            instance=instance, user=request.user
+        ).exists()
+        return Response({"is_instance_admin": is_admin}, status=status.HTTP_200_OK)
+
     def deactivate(self, request):
         # Check all workspace user is active
         user = self.get_object()
-        if WorkspaceMember.objects.filter(
-            member=request.user, is_active=True
-        ).exists():
+        if WorkspaceMember.objects.filter(member=request.user, is_active=True).exists():
             return Response(
                 {
                     "error": "User cannot deactivate account as user is active in some workspaces"

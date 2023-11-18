@@ -1,5 +1,5 @@
 # Django imports
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -11,13 +11,14 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 # Module imports
-from plane.db.models import User, Workspace, WorkspaceMemberInvite
+from plane.db.models import Workspace, WorkspaceMemberInvite, User
+from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
 
 
 @shared_task
 def workspace_invitation(email, workspace_id, token, current_site, invitor):
     try:
-
         user = User.objects.get(email=invitor)
 
         workspace = Workspace.objects.get(pk=workspace_id)
@@ -26,9 +27,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         )
 
         # Relative link
-        relative_link = (
-            f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"
-        )
+        relative_link = f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"
 
         # The complete url including the domain
         abs_url = current_site + relative_link
@@ -55,7 +54,30 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         workspace_member_invite.message = text_content
         workspace_member_invite.save()
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email_string, [email])
+        instance_configuration = InstanceConfiguration.objects.filter(
+            key__startswith="EMAIL_"
+        ).values("key", "value")
+        connection = get_connection(
+            host=get_configuration_value(instance_configuration, "EMAIL_HOST"),
+            port=int(
+                get_configuration_value(instance_configuration, "EMAIL_PORT", "587")
+            ),
+            username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
+            password=get_configuration_value(
+                instance_configuration, "EMAIL_HOST_PASSWORD"
+            ),
+            use_tls=bool(
+                get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")
+            ),
+        )
+        # Initiate email alternatives
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"),
+            to=[email],
+            connection=connection,
+        )
         msg.attach_alternative(html_content, "text/html")
         msg.send()
 
