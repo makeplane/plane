@@ -18,7 +18,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = router.query;
 
   const {
-    project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     projectViews: projectViewsStore,
@@ -99,7 +99,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
+        labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />

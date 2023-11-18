@@ -21,6 +21,7 @@ export const ModuleListLayout: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     issueFilter: issueFilterStore,
@@ -59,7 +60,6 @@ export const ModuleListLayout: React.FC = observer(() => {
 
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
@@ -85,7 +85,7 @@ export const ModuleListLayout: React.FC = observer(() => {
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}
-        labels={labels}
+        labels={projectLabels}
         members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}

@@ -1,30 +1,49 @@
-import { observable, action, makeObservable, runInAction } from "mobx";
+import { observable, action, makeObservable, runInAction, computed } from "mobx";
 // types
 import { RootStore } from "../root";
-import { IIssueLabels } from "types";
+import { IIssueLabel, IIssueLabelTree } from "types";
 // services
 import { IssueLabelService } from "services/issue";
 import { ProjectService } from "services/project";
+import { buildTree } from "helpers/array.helper";
 
 export interface IProjectLabelStore {
   loader: boolean;
   error: any | null;
-
-  // labels
-  createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabels>) => Promise<IIssueLabels>;
+  labels: {
+    [projectId: string]: IIssueLabel[] | null; // project_id: labels
+  } | null;
+  // computed
+  projectLabels: IIssueLabel[] | null;
+  projectLabelsTree: IIssueLabelTree[] | null;
+  // actions
+  getProjectLabelById: (labelId: string) => IIssueLabel | null;
+  fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
+  createLabel: (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => Promise<IIssueLabel>;
   updateLabel: (
     workspaceSlug: string,
     projectId: string,
     labelId: string,
-    data: Partial<IIssueLabels>
-  ) => Promise<IIssueLabels>;
+    data: Partial<IIssueLabel>
+  ) => Promise<IIssueLabel>;
+  updateLabelPosition: (
+    workspaceSlug: string,
+    projectId: string,
+    labelId: string,
+    parentId: string | null | undefined,
+    index: number,
+    isSameParent: boolean,
+    prevIndex: number | undefined
+  ) => Promise<IIssueLabel>;
   deleteLabel: (workspaceSlug: string, projectId: string, labelId: string) => Promise<void>;
 }
 
 export class ProjectLabelStore implements IProjectLabelStore {
   loader: boolean = false;
   error: any | null = null;
-
+  labels: {
+    [projectId: string]: IIssueLabel[]; // projectId: labels
+  } | null = {};
   // root store
   rootStore;
   // service
@@ -34,12 +53,18 @@ export class ProjectLabelStore implements IProjectLabelStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observable
-      loader: observable,
-      error: observable,
-
-      // labels
+      loader: observable.ref,
+      error: observable.ref,
+      labels: observable.ref,
+      // computed
+      projectLabels: computed,
+      projectLabelsTree: computed,
+      // actions
+      getProjectLabelById: action,
+      fetchProjectLabels: action,
       createLabel: action,
       updateLabel: action,
+      updateLabelPosition: action,
       deleteLabel: action,
     });
 
@@ -48,7 +73,51 @@ export class ProjectLabelStore implements IProjectLabelStore {
     this.issueLabelService = new IssueLabelService();
   }
 
-  createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabels>) => {
+  get projectLabels() {
+    if (!this.rootStore.project.projectId) return null;
+    return this.labels?.[this.rootStore.project.projectId]?.sort((a, b) => a.name.localeCompare(b.name)) || null;
+  }
+
+  get projectLabelsTree() {
+    if (!this.rootStore.project.projectId) return null;
+    const currentProjectLabels = this.labels?.[this.rootStore.project.projectId];
+    if (!currentProjectLabels) return null;
+
+    currentProjectLabels.sort((labelA: IIssueLabel, labelB: IIssueLabel) => labelB.sort_order - labelA.sort_order);
+    return buildTree(currentProjectLabels);
+  }
+
+  getProjectLabelById = (labelId: string) => {
+    if (!this.rootStore.project.projectId) return null;
+    const labels = this.projectLabels;
+    if (!labels) return null;
+    const labelInfo: IIssueLabel | null = labels.find((label) => label.id === labelId) || null;
+    return labelInfo;
+  };
+
+  fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {
+    try {
+      this.loader = true;
+      this.error = null;
+
+      const labelResponse = await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.labels = {
+          ...this.labels,
+          [projectId]: labelResponse,
+        };
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      console.error(error);
+      this.loader = false;
+      this.error = error;
+    }
+  };
+
+  createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
     try {
       const response = await this.issueLabelService.createIssueLabel(
         workspaceSlug,
@@ -58,9 +127,9 @@ export class ProjectLabelStore implements IProjectLabelStore {
       );
 
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
-          [projectId]: [response, ...(this.rootStore.project.labels?.[projectId] || [])],
+        this.labels = {
+          ...this.labels,
+          [projectId]: [response, ...(this.labels?.[projectId] || [])],
         };
       });
 
@@ -71,16 +140,70 @@ export class ProjectLabelStore implements IProjectLabelStore {
     }
   };
 
-  updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabels>) => {
-    const originalLabel = this.rootStore.project.getProjectLabelById(labelId);
+  updateLabelPosition = async (
+    workspaceSlug: string,
+    projectId: string,
+    labelId: string,
+    parentId: string | null | undefined,
+    index: number,
+    isSameParent: boolean,
+    prevIndex: number | undefined
+  ) => {
+    const labels = this.labels;
+    const currLabel = labels?.[projectId]?.find((label) => label.id === labelId);
+    const labelTree = this.projectLabelsTree;
+
+    let currentArray: IIssueLabel[];
+
+    if (!currLabel || !labelTree) return;
+
+    const data: Partial<IIssueLabel> = { parent: parentId };
+    //find array in which the label is to be added
+    if (!parentId) currentArray = labelTree;
+    else currentArray = labelTree?.find((label) => label.id === parentId)?.children || [];
+
+    //Add the array at the destination
+    if (isSameParent && prevIndex !== undefined) currentArray.splice(prevIndex, 1);
+
+    currentArray.splice(index, 0, currLabel);
+
+    //if currently adding to a new array, then let backend assign a sort order
+    if (currentArray.length > 1) {
+      let prevSortOrder: number | undefined, nextSortOrder: number | undefined;
+
+      if (typeof currentArray[index - 1] !== "undefined") {
+        prevSortOrder = currentArray[index - 1].sort_order;
+      }
+
+      if (typeof currentArray[index + 1] !== "undefined") {
+        nextSortOrder = currentArray[index + 1].sort_order;
+      }
+
+      let sortOrder: number;
+
+      //based on the next and previous labels calculate current sort order
+      if (prevSortOrder && nextSortOrder) {
+        sortOrder = (prevSortOrder + nextSortOrder) / 2;
+      } else if (nextSortOrder) {
+        sortOrder = nextSortOrder + 10000;
+      } else {
+        sortOrder = prevSortOrder! / 2;
+      }
+
+      data.sort_order = sortOrder;
+    }
+
+    return this.updateLabel(workspaceSlug, projectId, labelId, data);
+  };
+
+  updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) => {
+    const originalLabel = this.getProjectLabelById(labelId);
 
     runInAction(() => {
-      this.rootStore.project.labels = {
-        ...this.rootStore.project.labels,
+      this.labels = {
+        ...this.labels,
         [projectId]:
-          this.rootStore.project.labels?.[projectId]?.map((label) =>
-            label.id === labelId ? { ...label, ...data } : label
-          ) || [],
+          this.labels?.[projectId]?.map((label) => (label.id === labelId ? { ...label, ...data } : label)) || [],
       };
     });
 
@@ -97,9 +220,9 @@ export class ProjectLabelStore implements IProjectLabelStore {
     } catch (error) {
       console.log("Failed to update label from project store");
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
-          [projectId]: (this.rootStore.project.labels?.[projectId] || [])?.map((label) =>
+        this.labels = {
+          ...this.labels,
+          [projectId]: (this.labels?.[projectId] || [])?.map((label) =>
             label.id === labelId ? { ...label, ...originalLabel } : label
           ),
         };
@@ -109,12 +232,12 @@ export class ProjectLabelStore implements IProjectLabelStore {
   };
 
   deleteLabel = async (workspaceSlug: string, projectId: string, labelId: string) => {
-    const originalLabelList = this.rootStore.project.projectLabels;
+    const originalLabelList = this.projectLabels;
 
     runInAction(() => {
-      this.rootStore.project.labels = {
-        ...this.rootStore.project.labels,
-        [projectId]: (this.rootStore.project.labels?.[projectId] || [])?.filter((label) => label.id !== labelId),
+      this.labels = {
+        ...this.labels,
+        [projectId]: (this.labels?.[projectId] || [])?.filter((label) => label.id !== labelId),
       };
     });
 
@@ -130,8 +253,8 @@ export class ProjectLabelStore implements IProjectLabelStore {
       console.log("Failed to delete label from project store");
       // reverting back to original label list
       runInAction(() => {
-        this.rootStore.project.labels = {
-          ...this.rootStore.project.labels,
+        this.labels = {
+          ...this.labels,
           [projectId]: originalLabelList || [],
         };
       });
