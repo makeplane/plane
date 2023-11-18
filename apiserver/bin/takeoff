@@ -3,10 +3,17 @@ set -e
 python manage.py wait_for_db
 python manage.py migrate
 
-# Register instance
-python manage.py register_instance
-# Load the configuration variable
-python manage.py configure_instance
+# Set default value for ENABLE_REGISTRATION
+ENABLE_REGISTRATION=${ENABLE_REGISTRATION:-1}
+
+# Check if ENABLE_REGISTRATION is not set to '0'
+if [ "$ENABLE_REGISTRATION" != "0" ]; then
+    # Register instance
+    python manage.py register_instance
+    # Load the configuration variable
+    python manage.py configure_instance
+fi
+
 # Create the default bucket
 python bin/bucket_script.py
 
