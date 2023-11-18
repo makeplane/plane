@@ -14,6 +14,7 @@ export interface IUserStore {
 
   isUserLoggedIn: boolean | null;
   currentUser: IUser | null;
+  isUserInstanceAdmin: boolean | null;
   currentUserSettings: IUserSettings | null;
 
   dashboardInfo: any;
@@ -41,6 +42,7 @@ export interface IUserStore {
   hasPermissionToCurrentProject: boolean | undefined;
 
   fetchCurrentUser: () => Promise<IUser>;
+  fetchCurrentUserInstanceAdminStatus: () => Promise<boolean>;
   fetchCurrentUserSettings: () => Promise<IUserSettings>;
 
   fetchUserWorkspaceInfo: (workspaceSlug: string) => Promise<IWorkspaceMemberMe>;
@@ -58,6 +60,7 @@ class UserStore implements IUserStore {
 
   isUserLoggedIn: boolean | null = null;
   currentUser: IUser | null = null;
+  isUserInstanceAdmin: boolean | null = null;
   currentUserSettings: IUserSettings | null = null;
 
   dashboardInfo: any = null;
@@ -87,7 +90,9 @@ class UserStore implements IUserStore {
     makeObservable(this, {
       // observable
       loader: observable.ref,
+      isUserLoggedIn: observable.ref,
       currentUser: observable.ref,
+      isUserInstanceAdmin: observable.ref,
       currentUserSettings: observable.ref,
       dashboardInfo: observable.ref,
       workspaceMemberInfo: observable.ref,
@@ -96,6 +101,7 @@ class UserStore implements IUserStore {
       hasPermissionToProject: observable.ref,
       // action
       fetchCurrentUser: action,
+      fetchCurrentUserInstanceAdminStatus: action,
       fetchCurrentUserSettings: action,
       fetchUserDashboardInfo: action,
       fetchUserWorkspaceInfo: action,
@@ -162,6 +168,23 @@ class UserStore implements IUserStore {
     } catch (error) {
       runInAction(() => {
         this.isUserLoggedIn = false;
+      });
+      throw error;
+    }
+  };
+
+  fetchCurrentUserInstanceAdminStatus = async () => {
+    try {
+      const response = await this.userService.currentUserInstanceAdminStatus();
+      if (response) {
+        runInAction(() => {
+          this.isUserInstanceAdmin = response.is_instance_admin;
+        })
+      }
+      return response.is_instance_admin;
+    } catch (error) {
+      runInAction(() => {
+        this.isUserInstanceAdmin = false;
       });
       throw error;
     }

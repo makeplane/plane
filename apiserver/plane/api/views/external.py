@@ -2,7 +2,7 @@
 import requests
 
 # Third party imports
-import openai
+from openai import OpenAI
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -17,7 +17,8 @@ from plane.api.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project
 from plane.api.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
 from plane.utils.integrations.github import get_release_notes
-
+from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
 
 class GPTIntegrationEndpoint(BaseAPIView):
     permission_classes = [
@@ -25,7 +26,14 @@ class GPTIntegrationEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug, project_id):
-        if not settings.OPENAI_API_KEY or not settings.GPT_ENGINE:
+
+        # Get the configuration value
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        api_key = get_configuration_value(instance_configuration, "OPENAI_API_KEY")
+        gpt_engine = get_configuration_value(instance_configuration, "GPT_ENGINE")
+
+        # Check the keys
+        if not api_key or not gpt_engine:
             return Response(
                 {"error": "OpenAI API key and engine is required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -41,12 +49,17 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         final_text = task + "\n" + prompt
 
-        openai.api_key = settings.OPENAI_API_KEY
-        response = openai.ChatCompletion.create(
-            model=settings.GPT_ENGINE,
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        
+        gpt_engine = get_configuration_value(instance_configuration, "GPT_ENGINE")
+
+        client = OpenAI(
+            api_key=api_key,
+        )
+
+        response = client.chat.completions.create(
+            model=gpt_engine,
             messages=[{"role": "user", "content": final_text}],
-            temperature=0.7,
-            max_tokens=1024,
         )
 
         workspace = Workspace.objects.get(slug=slug)

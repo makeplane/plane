@@ -52,6 +52,7 @@ export class FileService extends APIService {
         if (axios.isCancel(error)) {
           console.log(error.message);
         } else {
+          console.log(error);
           throw error?.response?.data;
         }
       });
