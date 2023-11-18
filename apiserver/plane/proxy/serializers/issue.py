@@ -12,7 +12,9 @@ from plane.db.models import (
     Label,
     IssueLabel,
     IssueLink,
+    IssueComment,
     IssueAttachment,
+    IssueActivity,
 )
 from .base import BaseSerializer
 
@@ -213,3 +215,43 @@ class IssueAttachmentSerializer(BaseSerializer):
             "project",
             "issue",
         ]
+
+
+class IssueCommentSerializer(BaseSerializer):
+    is_member = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = IssueComment
+        fields = "__all__"
+        read_only_fields = [
+            "workspace",
+            "project",
+            "issue",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+        ]
+
+
+class IssueAttachmentSerializer(BaseSerializer):
+    class Meta:
+        model = IssueAttachment
+        fields = "__all__"
+        read_only_fields = [
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
+            "workspace",
+            "project",
+            "issue",
+        ]
+
+
+class IssueActivitySerializer(BaseSerializer):
+
+    class Meta:
+        model = IssueActivity
+        fields = "__all__"
+

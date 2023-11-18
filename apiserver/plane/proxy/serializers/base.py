@@ -69,7 +69,10 @@ class BaseSerializer(serializers.ModelSerializer):
                         ProjectLiteSerializer,
                         UserLiteSerializer,
                         StateLiteSerializer,
+                        IssueSerializer,
+                        LabelSerializer,
                     )
+
                     # print(response[expand])
 
                     expansion = {
@@ -80,6 +83,12 @@ class BaseSerializer(serializers.ModelSerializer):
                         "project_lead": UserLiteSerializer,
                         "state": StateLiteSerializer,
                         "created_by": UserLiteSerializer,
+                        "issue": IssueSerializer,
+                        "actor": UserLiteSerializer,
+                        "owned_by": UserLiteSerializer,
+                        "members": UserLiteSerializer,
+                        "assignees": UserLiteSerializer,
+                        "labels": LabelSerializer,
                     }
                     if expand in expansion:
                         if isinstance(response[expand], list):

@@ -1,23 +1,56 @@
 # Python imports
 import json
+from itertools import chain
 
 # Django imports
 from django.db import IntegrityError
-from django.db.models import OuterRef, Func, F, Case, When, Value, CharField, Max
+from django.db.models import (
+    OuterRef,
+    Func,
+    Q,
+    F,
+    Case,
+    When,
+    Value,
+    CharField,
+    Max,
+    Exists,
+)
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.permissions import ProjectEntityPermission, ProjectMemberPermission
-from plane.db.models import Issue, IssueAttachment, IssueLink, Project, Label
+from plane.api.permissions import (
+    ProjectEntityPermission,
+    ProjectMemberPermission,
+    ProjectLitePermission,
+)
+from plane.db.models import (
+    Issue,
+    IssueAttachment,
+    IssueLink,
+    Project,
+    Label,
+    ProjectMember,
+    IssueComment,
+    IssueActivity,
+)
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.proxy.serializers import IssueSerializer, LabelSerializer, IssueLinkSerializer
+from plane.proxy.serializers import (
+    IssueSerializer,
+    LabelSerializer,
+    IssueLinkSerializer,
+    IssueCommentSerializer,
+    IssueAttachmentSerializer,
+    IssueActivitySerializer,
+)
 
 
 class IssueAPIEndpoint(BaseAPIView):
@@ -222,7 +255,6 @@ class IssueAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
 class LabelAPIEndpoint(BaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
@@ -276,7 +308,7 @@ class LabelAPIEndpoint(BaseAPIView):
                 expand=self.expand,
             ).data,
         )
-    
+
     def patch(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
@@ -294,6 +326,7 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     `update` and `destroy` actions related to the links of the particular issue.
 
     """
+
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -302,8 +335,8 @@ class IssueLinkAPIEndpoint(BaseAPIView):
     serializer_class = IssueLinkSerializer
 
     def get_queryset(self):
-        return (IssueLink.objects
-            .filter(workspace__slug=self.kwargs.get("slug"))
+        return (
+            IssueLink.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(issue_id=self.kwargs.get("issue_id"))
             .filter(project__project_projectmember__member=self.request.user)
@@ -398,9 +431,198 @@ class IssueCommentAPIEndpoint(BaseAPIView):
 
     """
 
-    pass
+    serializer_class = IssueCommentSerializer
+    model = IssueComment
+    webhook_event = "issue-comment"
+    permission_classes = [
+        ProjectLitePermission,
+    ]
+
+    def get_queryset(self):
+        return (
+            IssueComment.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project_id=self.kwargs.get("project_id"))
+            .filter(issue_id=self.kwargs.get("issue_id"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("issue")
+            .select_related("actor")
+            .annotate(
+                is_member=Exists(
+                    ProjectMember.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        project_id=self.kwargs.get("project_id"),
+                        member_id=self.request.user.id,
+                        is_active=True,
+                    )
+                )
+            )
+            .distinct()
+        )
+
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk:
+            issue_comment = self.get_queryset().get(pk=pk)
+            serializer = IssueCommentSerializer(issue_comment)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.paginate(
+            request=request,
+            queryset=(self.get_queryset()),
+            on_results=lambda issue_comment: IssueCommentSerializer(
+                issue_comment,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
+        )
+
+    def post(self, request, slug, project_id, issue_id):
+        serializer = IssueCommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(
+                project_id=project_id,
+                issue_id=issue_id,
+                actor=request.user,
+            )
+            issue_activity.delay(
+                type="comment.activity.created",
+                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id")),
+                project_id=str(self.kwargs.get("project_id")),
+                current_instance=None,
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, slug, project_id, issue_id, pk):
+        issue_comment = IssueComment.objects.get(
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+        )
+        requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+        current_instance = json.dumps(
+            IssueCommentSerializer(issue_comment).data,
+            cls=DjangoJSONEncoder,
+        )
+        serializer = IssueCommentSerializer(
+            issue_comment, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            issue_activity.delay(
+                type="comment.activity.updated",
+                requested_data=requested_data,
+                actor_id=str(request.user.id),
+                issue_id=str(issue_id),
+                project_id=str(project_id),
+                current_instance=current_instance,
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_comment = IssueComment.objects.get(
+            workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk
+        )
+        current_instance = json.dumps(
+            IssueCommentSerializer(issue_comment).data,
+            cls=DjangoJSONEncoder,
+        )
+        issue_comment.delete()
+        issue_activity.delay(
+            type="comment.activity.deleted",
+            requested_data=json.dumps({"comment_id": str(pk)}),
+            actor_id=str(request.user.id),
+            issue_id=str(issue_id),
+            project_id=str(project_id),
+            current_instance=current_instance,
+            epoch=int(timezone.now().timestamp()),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IssueAttachmentAPIEndpoint(BaseAPIView):
+    serializer_class = IssueAttachmentSerializer
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+    model = IssueAttachment
+    parser_classes = (MultiPartParser, FormParser)
 
-    pass
+    def post(self, request, slug, project_id, issue_id):
+        serializer = IssueAttachmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(project_id=project_id, issue_id=issue_id)
+            issue_activity.delay(
+                type="attachment.activity.created",
+                requested_data=None,
+                actor_id=str(self.request.user.id),
+                issue_id=str(self.kwargs.get("issue_id", None)),
+                project_id=str(self.kwargs.get("project_id", None)),
+                current_instance=json.dumps(
+                    serializer.data,
+                    cls=DjangoJSONEncoder,
+                ),
+                epoch=int(timezone.now().timestamp()),
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, slug, project_id, issue_id, pk):
+        issue_attachment = IssueAttachment.objects.get(pk=pk)
+        issue_attachment.asset.delete(save=False)
+        issue_attachment.delete()
+        issue_activity.delay(
+            type="attachment.activity.deleted",
+            requested_data=None,
+            actor_id=str(self.request.user.id),
+            issue_id=str(self.kwargs.get("issue_id", None)),
+            project_id=str(self.kwargs.get("project_id", None)),
+            current_instance=None,
+            epoch=int(timezone.now().timestamp()),
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, slug, project_id, issue_id):
+        issue_attachments = IssueAttachment.objects.filter(
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id
+        )
+        serializer = IssueAttachmentSerializer(issue_attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class IssueActivityAPIEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id, issue_id):
+        issue_activities = (
+            IssueActivity.objects.filter(
+                issue_id=issue_id, workspace__slug=slug, project_id=project_id
+            )
+            .filter(
+                ~Q(field__in=["comment", "vote", "reaction", "draft"]),
+                project__project_projectmember__member=self.request.user,
+            )
+            .select_related("actor", "workspace", "issue", "project")
+        ).order_by("created_at")
+        issue_comments = (
+            IssueComment.objects.filter(issue_id=issue_id)
+            .filter(project__project_projectmember__member=self.request.user)
+            .order_by("created_at")
+            .select_related("actor", "issue", "project", "workspace")
+        )
+        issue_activities = IssueActivitySerializer(issue_activities, many=True).data
+        issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+
+        result_list = sorted(
+            chain(issue_activities, issue_comments),
+            key=lambda instance: instance["created_at"],
+        )
+
+        return Response(result_list, status=status.HTTP_200_OK)
