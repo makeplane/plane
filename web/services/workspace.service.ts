@@ -96,7 +96,7 @@ export class WorkspaceService extends APIService {
   }
 
   async joinWorkspace(workspaceSlug: string, invitationId: string, data: any, user: IUser | undefined): Promise<any> {
-    return this.post(`/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`, data, {
+    return this.post(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, data, {
       headers: {},
     })
       .then((response) => {
@@ -109,7 +109,7 @@ export class WorkspaceService extends APIService {
   }
 
   async joinWorkspaces(data: any): Promise<any> {
-    return this.post("/api/users/me/invitations/workspaces/", data)
+    return this.post("/api/users/me/workspaces/invitations/", data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -125,7 +125,7 @@ export class WorkspaceService extends APIService {
   }
 
   async userWorkspaceInvitations(): Promise<IWorkspaceMemberInvitation[]> {
-    return this.get("/api/users/me/invitations/workspaces/")
+    return this.get("/api/users/me/workspaces/invitations/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

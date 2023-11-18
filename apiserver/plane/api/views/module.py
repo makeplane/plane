@@ -15,7 +15,7 @@ from rest_framework import status
 from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet, WebhookMixin
+from . import BaseViewSet, BaseAPIView, WebhookMixin
 from plane.api.serializers import (
     ModuleWriteSerializer,
     ModuleSerializer,
@@ -480,6 +480,55 @@ class ModuleIssueViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class ModuleIssueGroupedEndpoint(BaseAPIView):
+
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id, module_id):
+        filters = issue_filters(request.query_params, "GET")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+
+        issues = (
+            Issue.issue_objects.filter(issue_module__module_id=module_id)
+            .annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(bridge_id=F("issue_module__id"))
+            .filter(project_id=project_id)
+            .filter(workspace__slug=slug)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .filter(**filters)
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+
+        issues = IssueStateSerializer(issues, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(
+            issue_dict,
+            status=status.HTTP_200_OK,
+        )
 
 class ModuleLinkViewSet(BaseViewSet):
     permission_classes = [

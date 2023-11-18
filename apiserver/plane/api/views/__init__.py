@@ -60,6 +60,7 @@ from .cycle import (
     CycleDateCheckEndpoint,
     CycleFavoriteViewSet,
     TransferCycleIssueEndpoint,
+    CycleIssueGroupedEndpoint,
 )
 from .asset import FileAssetEndpoint, UserAssetsEndpoint
 from .issue import (
@@ -113,6 +114,7 @@ from .module import (
     ModuleIssueViewSet,
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
+    ModuleIssueGroupedEndpoint,
 )
 
 from .api import ApiTokenEndpoint
@@ -138,9 +140,10 @@ from .importer import (
 
 from .page import (
     PageViewSet,
-    PageBlockViewSet,
     PageFavoriteViewSet,
-    CreateIssueFromPageBlockEndpoint,
+    PageLogEndpoint,
+    SubPagesEndpoint,
+    CreateIssueFromBlockEndpoint,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint

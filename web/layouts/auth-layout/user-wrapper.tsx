@@ -14,13 +14,17 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
   const { children } = props;
   // store
   const {
-    user: { fetchCurrentUser, fetchCurrentUserSettings },
+    user: { fetchCurrentUser, fetchCurrentUserInstanceAdminStatus, fetchCurrentUserSettings },
     workspace: { fetchWorkspaces },
   } = useMobxStore();
   // router
   const router = useRouter();
   // fetching user information
   const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+    shouldRetryOnError: false,
+  });
+  // fetching current user instance admin status
+  useSWR("CURRENT_USER_INSTANCE_ADMIN_STATUS", () => fetchCurrentUserInstanceAdminStatus(), {
     shouldRetryOnError: false,
   });
   // fetching user settings
