@@ -1,3 +1,4 @@
+# Module imports
 from .analytic import urlpatterns as analytic_urls
 from .asset import urlpatterns as asset_urls
 from .authentication import urlpatterns as authentication_urls
@@ -22,9 +23,6 @@ from .workspace import urlpatterns as workspace_urls
 from .api import urlpatterns as api_urls
 from .webhook import urlpatterns as webhook_urls
 
-
-# Django imports
-from django.conf import settings
 
 
 urlpatterns = [
