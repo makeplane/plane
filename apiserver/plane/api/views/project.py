@@ -21,7 +21,7 @@ from plane.db.models import (
     Inbox,
 )
 from plane.app.permissions import ProjectBasePermission
-from plane.proxy.serializers import ProjectSerializer
+from plane.api.serializers import ProjectSerializer
 from .base import BaseAPIView, WebhookMixin
 
 

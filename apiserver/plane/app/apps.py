@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class ApiConfig(AppConfig):
-    name = "plane.api"
+class AppApiConfig(AppConfig):
+    name = "plane.app"

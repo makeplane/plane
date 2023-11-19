@@ -1,6 +1,6 @@
 from django.urls import path
 
-from plane.proxy.views import (
+from plane.api.views import (
     IssueAPIEndpoint,
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,

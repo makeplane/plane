@@ -22,7 +22,7 @@ from plane.db.models import (
     IssueAttachment,
     IssueLink,
 )
-from plane.proxy.serializers import (
+from plane.api.serializers import (
     ModuleSerializer,
     ModuleIssueSerializer,
     IssueSerializer,

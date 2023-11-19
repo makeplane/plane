@@ -14,7 +14,7 @@ from rest_framework import status
 from .base import BaseAPIView, WebhookMixin
 from plane.db.models import Cycle, Issue, CycleIssue, IssueLink, IssueAttachment
 from plane.app.permissions import ProjectEntityPermission
-from plane.proxy.serializers import (
+from plane.api.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
     IssueSerializer,

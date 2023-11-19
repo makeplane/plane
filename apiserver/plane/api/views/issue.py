@@ -43,7 +43,7 @@ from plane.db.models import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
-from plane.proxy.serializers import (
+from plane.api.serializers import (
     IssueSerializer,
     LabelSerializer,
     IssueLinkSerializer,

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     # Inhouse apps
     "plane.analytics",
+    "plane.app",
     "plane.api",
     "plane.bgtasks",
     "plane.db",
@@ -41,7 +42,6 @@ INSTALLED_APPS = [
     "plane.web",
     "plane.middleware",
     "plane.license",
-    "plane.proxy",
     # Third-party things
     "rest_framework",
     "rest_framework.authtoken",
