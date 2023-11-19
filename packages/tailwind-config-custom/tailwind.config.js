@@ -183,7 +183,7 @@ module.exports = {
             300: convertToRGB("--color-onboarding-background-300"),
             400: convertToRGB("--color-onboarding-background-400"),
           },
-          text:{
+          text: {
             100: convertToRGB("--color-onboarding-text-100"),
             200: convertToRGB("--color-onboarding-text-200"),
             300: convertToRGB("--color-onboarding-text-300"),
@@ -370,6 +370,10 @@ module.exports = {
         72: "16.2rem",
         80: "18rem",
         96: "21.6rem",
+      },
+      backgroundImage: {
+        "gradient-primary": "var( --gradient-onboarding-primary)",
+        "gradient-secondary": "var( --gradient-onboarding-secondary)",
       },
     },
     fontFamily: {

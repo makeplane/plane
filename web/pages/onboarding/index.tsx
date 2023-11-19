@@ -42,7 +42,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const user = currentUser ?? undefined;
   const workspaces = workspaceStore.workspaces;
 
-  const { setTheme, resolvedTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   const {} = useUserAuth("onboarding");
 
@@ -108,13 +108,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         }}
       />
       {user && step !== null ? (
-        <div
-          className={` ${
-            resolvedTheme === "dark"
-              ? "bg-[#18191B]"
-              : "bg-gradient-to-r from-custom-primary-10/80 to-custom-primary-20/80"
-          } h-full overflow-y-auto`}
-        >
+        <div className={` bg-gradient-primary h-full overflow-y-auto`}>
           <div className="sm:py-14 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
             <div className="w-full flex items-center justify-between font-semibold ">
               <div className="text-3xl flex items-center gap-x-1">
@@ -171,16 +165,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
             </div>
           </div>
           <div className="w-full lg:w-4/5 xl:w-3/4 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
-            <div
-              className={`${resolvedTheme === "dark" ? "" : "from-custom-primary-10/10 to-custom-primary-20/30"} p-4`}
-            >
-              <div
-                className={`${
-                  resolvedTheme === "dark"
-                    ? "bg-gradient-to-r from-[#2f3035cc] to-[#212225cc]"
-                    : "bg-gradient-to-br from-white/40 to-white/80"
-                } h-full rounded-md`}
-              >
+            <div className={`bg-gradient-primary p-4`}>
+              <div className={`bg-gradient-secondary h-full rounded-md`}>
                 {step === 1 ? (
                   <JoinWorkspaces
                     setTryDiffAccount={() => {

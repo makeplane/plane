@@ -127,6 +127,9 @@
     --color-border-400: 185, 185, 185; /* strong border- 2 */
 
     /* onboarding colors */
+    --gradient-onboarding-primary: linear-gradient(106deg, #F2F6FF 29.8%, #E1EAFF 99.34%);
+    --gradient-onboarding-secondary: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
+
     --color-onboarding-text-100: 23, 23, 23;
     --color-onboarding-text-200: 58, 58, 58;
     --color-onboarding-text-300: 82, 82, 82;
@@ -191,6 +194,8 @@
 
 
     /* onboarding colors */
+    --gradient-onboarding-primary: linear-gradient(106deg, #18191B 25.17%, #18191B 99.34%);
+    --gradient-onboarding-secondary: linear-gradient(129deg, rgba(47, 49, 53, 0.80) -22.23%, rgba(33, 34, 37, 0.80) 62.98%);
 
     --color-onboarding-text-100: 237, 238, 240;
     --color-onboarding-text-200: 176, 180, 187;

@@ -24,7 +24,6 @@ import signInIssues from "public/onboarding/onboarding-issues.svg";
 import { IUser, IUserSettings } from "types";
 // icons
 import { Lightbulb } from "lucide-react";
-import { useTheme } from "next-themes";
 
 const authService = new AuthService();
 
@@ -40,7 +39,6 @@ export const SignInView = observer(() => {
   const [isLoading, setLoading] = useState(false);
   // toast
   const { setToastAlert } = useToast();
-  const { resolvedTheme } = useTheme();
 
   // computed.
   const enableEmailPassword =
@@ -186,13 +184,7 @@ export const SignInView = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div
-          className={`${
-            resolvedTheme === "dark"
-              ? "bg-[#18191B]"
-              : "bg-gradient-to-r from-custom-primary-10/80 to-custom-primary-20/80"
-          } h-full overflow-y-auto`}
-        >
+        <div className={`bg-gradient-primary h-full overflow-y-auto`}>
           <div className="sm:py-5 pl-8 pb-4 sm:pl-16 lg:pl-28 ">
             <div className="flex text-3xl items-center mt-16 font-semibold">
               <div className="h-[30px] w-[30px] mr-2">
@@ -203,16 +195,8 @@ export const SignInView = observer(() => {
           </div>
 
           <div className="md:w-2/3 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
-            <div
-              className={`${resolvedTheme === "dark" ? "" : "from-custom-primary-10/10 to-custom-primary-20/30"} p-4`}
-            >
-              <div
-                className={`px-7 sm:px-0 ${
-                  resolvedTheme === "dark"
-                    ? "bg-gradient-to-br from-[#2f3035cc] to-[#212225cc]"
-                    : "bg-gradient-to-br from-white/40 to-white/80"
-                } h-full pt-32 pb-20 rounded-md`}
-              >
+            <div className={`p-4`}>
+              <div className={`px-7 sm:px-0 bg-gradient-secondary h-full pt-32 pb-20 rounded-md`}>
                 {!envConfig ? (
                   <div className="pt-10 mx-auto flex justify-center">
                     <div>
