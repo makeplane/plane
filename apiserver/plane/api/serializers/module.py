@@ -3,12 +3,21 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from plane.db.models import User, Module, ModuleLink, ModuleMember, ModuleIssue
+from plane.db.models import (
+    User,
+    Module,
+    ModuleLink,
+    ModuleMember,
+    ModuleIssue,
+    ProjectMember,
+)
 
 
 class ModuleSerializer(BaseSerializer):
     members = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.values_list("id", flat=True)
+        ),
         write_only=True,
         required=False,
     )
@@ -44,6 +53,14 @@ class ModuleSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+
+        if data.get("members", []):
+            print(data.get("members"))
+            data["members"] = ProjectMember.objects.filter(
+                project_id=self.context.get("project_id"),
+                member_id__in=data["members"],
+            ).values_list("member_id", flat=True)
+
         return data
 
     def create(self, validated_data):

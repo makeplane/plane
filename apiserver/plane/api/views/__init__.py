@@ -5,6 +5,8 @@ from .issue import (
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,
     IssueCommentAPIEndpoint,
+    IssueAttachmentAPIEndpoint,
+    IssueActivityAPIEndpoint,
 )
 
 from .cycle import (

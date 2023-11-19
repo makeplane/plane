@@ -8,6 +8,7 @@ from rest_framework import serializers
 from plane.db.models import (
     User,
     Issue,
+    State,
     IssueAssignee,
     Label,
     IssueLabel,
@@ -15,19 +16,24 @@ from plane.db.models import (
     IssueComment,
     IssueAttachment,
     IssueActivity,
+    ProjectMember,
 )
 from .base import BaseSerializer
 
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.values_list("id", flat=True)
+        ),
         write_only=True,
         required=False,
     )
 
     labels = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=Label.objects.values_list("id", flat=True)
+        ),
         write_only=True,
         required=False,
     )
@@ -51,6 +57,44 @@ class IssueSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+
+        # Validate assignees are from project
+        if data.get("assignees", []):
+            print(data.get("assignees"))
+            data["assignees"] = ProjectMember.objects.filter(
+                project_id=self.context.get("project_id"),
+                member_id__in=data["assignees"],
+            ).values_list("member_id", flat=True)
+
+        # Validate labels are from project
+        if data.get("labels", []):
+            data["labels"] = Label.objects.filter(
+                project_id=self.context.get("project_id"),
+                id__in=data["labels"],
+            ).values_list("id", flat=True)
+
+        # Check state is from the project only else raise validation error
+        if (
+            data.get("state")
+            and not State.objects.filter(
+                project_id=self.context.get("project_id"), pk=data.get("state")
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "State is not valid please pass a valid state_id"
+            )
+
+        # Check parent issue is from workspace as it can be cross workspace
+        if (
+            data.get("parent")
+            and not Issue.objects.filter(
+                workspce_id=self.context.get("workspace_id"), pk=data.get("parent")
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
         return data
 
     def create(self, validated_data):
@@ -71,14 +115,14 @@ class IssueSerializer(BaseSerializer):
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
-                        assignee=user,
+                        assignee_id=assignee_id,
                         issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for user in assignees
+                    for assignee_id in assignees
                 ],
                 batch_size=10,
             )
@@ -98,14 +142,14 @@ class IssueSerializer(BaseSerializer):
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
-                        label=label,
+                        label_id=label_id,
                         issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for label in labels
+                    for label_id in labels
                 ],
                 batch_size=10,
             )
@@ -127,14 +171,14 @@ class IssueSerializer(BaseSerializer):
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
-                        assignee=user,
+                        assignee_id=assignee_id,
                         issue=instance,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for user in assignees
+                    for assignee_id in assignees
                 ],
                 batch_size=10,
             )
@@ -144,14 +188,14 @@ class IssueSerializer(BaseSerializer):
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
-                        label=label,
+                        label_id=label_id,
                         issue=instance,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for label in labels
+                    for label_id in labels
                 ],
                 batch_size=10,
             )
@@ -165,9 +209,14 @@ class IssueSerializer(BaseSerializer):
         if "assignees" in self.fields:
             if "assignees" in self.expand:
                 from .user import UserLiteSerializer
-                data["assignees"] = UserLiteSerializer(instance.assignees.all(), many=True).data
+
+                data["assignees"] = UserLiteSerializer(
+                    instance.assignees.all(), many=True
+                ).data
             else:
-                data["assignees"] = [str(assignee.id) for assignee in instance.assignees.all()]
+                data["assignees"] = [
+                    str(assignee.id) for assignee in instance.assignees.all()
+                ]
         if "labels" in self.fields:
             if "labels" in self.expand:
                 data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
@@ -260,8 +309,6 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueActivitySerializer(BaseSerializer):
-
     class Meta:
         model = IssueActivity
         fields = "__all__"
-

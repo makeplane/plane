@@ -133,7 +133,11 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
     def get(self, request, slug, project_id, pk=None):
         if pk:
             queryset = self.get_queryset().get(pk=pk)
-            data = ModuleSerializer(queryset, fields=self.fields, expand=self.expand,).data
+            data = ModuleSerializer(
+                queryset,
+                fields=self.fields,
+                expand=self.expand,
+            ).data
             return Response(
                 data,
                 status=status.HTTP_200_OK,
@@ -254,7 +258,6 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             ).data,
         )
 
-
     def post(self, request, slug, project_id, module_id):
         issues = request.data.get("issues", [])
         if not len(issues):
@@ -264,6 +267,10 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         module = Module.objects.get(
             workspace__slug=slug, project_id=project_id, pk=module_id
         )
+
+        issues = Issue.objects.filter(
+            workspace__slug=slug, project_id=project_id, pk__in=issues
+        ).values_list("id", flat=True)
 
         module_issues = list(ModuleIssue.objects.filter(issue_id__in=issues))
 

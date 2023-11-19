@@ -1,13 +1,12 @@
-
 # Third party imports
 from rest_framework import serializers
 
 # Module imports
-from plane.db.models import Project, ProjectIdentifier
+from plane.db.models import Project, ProjectIdentifier, WorkspaceMember, State, Estimate
 from .base import BaseSerializer
 
-class ProjectSerializer(BaseSerializer):
 
+class ProjectSerializer(BaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
@@ -24,6 +23,33 @@ class ProjectSerializer(BaseSerializer):
             "workspace",
         ]
 
+    def validate(self, data):
+        # Check project lead should be a member of the workspace
+        if (
+            data.get("project_lead", None) is not None
+            and not WorkspaceMember.objects.filter(
+                workspace_id=self.context["workspace_id"],
+                member_id=data.get("project_lead"),
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Project lead should be a user in the workspace"
+            )
+
+        # Check default assignee should be a member of the workspace
+        if (
+            data.get("default_assignee", None) is not None
+            and not WorkspaceMember.objects.filter(
+                workspace_id=self.context["workspace_id"],
+                member_id=data.get("default_assignee"),
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Default assignee should be a user in the workspace"
+            )
+
+        return data
+
     def create(self, validated_data):
         identifier = validated_data.get("identifier", "").strip().upper()
         if identifier == "":
@@ -33,6 +59,7 @@ class ProjectSerializer(BaseSerializer):
             name=identifier, workspace_id=self.context["workspace_id"]
         ).exists():
             raise serializers.ValidationError(detail="Project Identifier is taken")
+
         project = Project.objects.create(
             **validated_data, workspace_id=self.context["workspace_id"]
         )

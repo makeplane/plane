@@ -386,7 +386,7 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     def post(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
 
-        if not len(issues):
+        if not issues:
             return Response(
                 {"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -402,6 +402,10 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        issues = Issue.objects.filter(
+            pk__in=issues, workspace__slug=slug, project_id=project_id
+        ).values_list("id", flat=True)
 
         # Get all CycleIssues already created
         cycle_issues = list(CycleIssue.objects.filter(issue_id__in=issues))
