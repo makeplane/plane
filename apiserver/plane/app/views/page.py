@@ -79,13 +79,8 @@ class PageViewSet(BaseViewSet):
             .annotate(is_favorite=Exists(subquery))
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-            .order_by("-is_favorite","-created_at")
+            .order_by("-is_favorite", "-created_at")
             .distinct()
-        )
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"), owned_by=self.request.user
         )
 
     def create(self, request, slug, project_id):
@@ -140,10 +135,8 @@ class PageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    def lock(self, request, slug, project_id, pk):
-        page = Page.objects.filter(
-            pk=pk, workspace__slug=slug, project_id=project_id
-        )
+    def lock(self, request, slug, project_id, page_id):
+        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
 
         # only the owner can lock the page
         if request.user.id != page.owned_by_id:
@@ -155,8 +148,8 @@ class PageViewSet(BaseViewSet):
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def unlock(self, request, slug, project_id, pk):
-        page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+    def unlock(self, request, slug, project_id, page_id):
+        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
 
         # only the owner can unlock the page
         if request.user.id != page.owned_by_id:
@@ -234,27 +227,31 @@ class PageViewSet(BaseViewSet):
         )
 
     def archive(self, request, slug, project_id, page_id):
-        _ = Page.objects.get(
-            project_id=project_id,
-            owned_by_id=request.user.id,
-            workspace__slug=slug,
-            pk=page_id,
-        )
+        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
+
+        if page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Only the owner of the page can archive a page"},
+                status=status.HTTP_204_NO_CONTENT,
+            )
 
         unarchive_archive_page_and_descendants(page_id, datetime.now())
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unarchive(self, request, slug, project_id, page_id):
-        page = Page.objects.get(
-            project_id=project_id,
-            owned_by_id=request.user.id,
-            workspace__slug=slug,
-            pk=page_id,
-        )
+        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
 
-        page.parent = None
-        page.save()
+        if page.owned_by_id != request.user.id:
+            return Response(
+                {"error": "Only the owner of the page can unarchive a page"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        # if parent page is archived then the page will be un archived breaking the hierarchy
+        if page.parent_id and page.parent.archived_at:
+            page.parent = None
+            page.save(update_fields=['parent'])
 
         unarchive_archive_page_and_descendants(page_id, None)
 
@@ -267,18 +264,11 @@ class PageViewSet(BaseViewSet):
                 workspace__slug=slug,
             )
             .filter(archived_at__isnull=False)
-            .filter(parent_id__isnull=True)
         )
-
-        if not pages:
-            return Response(
-                {"error": "No pages found"}, status=status.HTTP_400_BAD_REQUEST
-            )
 
         return Response(
             PageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
-
 
 
 class PageFavoriteViewSet(BaseViewSet):
@@ -402,11 +392,9 @@ class SubPagesEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 entity_name__in=["forward_link", "back_link"],
             )
-            .filter(archived_at__isnull=True)
             .select_related("project")
             .select_related("workspace")
         )
         return Response(
             SubPageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
-
