@@ -1,7 +1,7 @@
 # Module imports
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
-from plane.api.serializers import BaseSerializer
-from plane.api.serializers import UserAdminLiteSerializer
+from plane.app.serializers import BaseSerializer
+from plane.app.serializers import UserAdminLiteSerializer
 
 
 class InstanceSerializer(BaseSerializer):
