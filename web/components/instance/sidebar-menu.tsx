@@ -1,31 +1,32 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+// icons
+import { Cog, Lock, Mail } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Tooltip, OpenAIIcon } from "@plane/ui";
 
 const INSTANCE_ADMIN_LINKS = [
   {
-    Icon: LayoutGrid,
+    Icon: Cog,
     name: "General",
     href: `/admin`,
   },
   {
-    Icon: BarChart2,
-    name: "OAuth",
-    href: `/admin/oauth`,
+    Icon: Mail,
+    name: "Mail",
+    href: `/admin/mail`,
   },
   {
-    Icon: Briefcase,
-    name: "Email",
-    href: `/admin/email`,
+    Icon: Lock,
+    name: "Authorization",
+    href: `/admin/authorization`,
   },
   {
-    Icon: CheckCircle,
-    name: "AI",
-    href: `/admin/ai`,
+    Icon: OpenAIIcon,
+    name: "Open AI",
+    href: `/admin/openai`,
   },
 ];
 
