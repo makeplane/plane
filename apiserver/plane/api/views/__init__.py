@@ -1,5 +1,7 @@
 from .project import ProjectAPIEndpoint
 
+from .state import StateAPIEndpoint
+
 from .issue import (
     IssueAPIEndpoint,
     LabelAPIEndpoint,

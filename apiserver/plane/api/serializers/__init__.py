@@ -10,7 +10,7 @@ from .issue import (
     IssueAttachmentSerializer,
     IssueActivitySerializer,
 )
-from .state import StateLiteSerializer
+from .state import StateLiteSerializer, StateSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer
 from .module import ModuleSerializer, ModuleIssueSerializer
 from .inbox import InboxIssueSerializer
