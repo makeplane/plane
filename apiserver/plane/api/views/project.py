@@ -44,15 +44,6 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 "workspace", "workspace__owner", "default_assignee", "project_lead"
             )
             .annotate(
-                is_favorite=Exists(
-                    ProjectFavorite.objects.filter(
-                        user=self.request.user,
-                        project_id=OuterRef("pk"),
-                        workspace__slug=self.kwargs.get("slug"),
-                    )
-                )
-            )
-            .annotate(
                 is_member=Exists(
                     ProjectMember.objects.filter(
                         member=self.request.user,

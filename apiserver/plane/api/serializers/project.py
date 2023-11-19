@@ -7,7 +7,7 @@ from .base import BaseSerializer
 
 
 class ProjectSerializer(BaseSerializer):
-    is_favorite = serializers.BooleanField(read_only=True)
+
     total_members = serializers.IntegerField(read_only=True)
     total_cycles = serializers.IntegerField(read_only=True)
     total_modules = serializers.IntegerField(read_only=True)
@@ -21,6 +21,7 @@ class ProjectSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
+            "id",
         ]
 
     def validate(self, data):
