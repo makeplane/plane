@@ -4,6 +4,7 @@ from rest_framework import serializers
 # Module import
 from .base import BaseSerializer
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
+from plane.license.models import InstanceAdmin, Instance
 
 
 class UserSerializer(BaseSerializer):
@@ -86,7 +87,9 @@ class UserMeSettingsSerializer(BaseSerializer):
                 "last_workspace_id": obj.last_workspace_id,
                 "last_workspace_slug": workspace.slug if workspace is not None else "",
                 "fallback_workspace_id": obj.last_workspace_id,
-                "fallback_workspace_slug": workspace.slug if workspace is not None else "",
+                "fallback_workspace_slug": workspace.slug
+                if workspace is not None
+                else "",
                 "invites": workspace_invites,
             }
         else:

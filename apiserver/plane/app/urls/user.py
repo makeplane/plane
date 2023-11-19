@@ -39,6 +39,15 @@ urlpatterns = [
         name="users",
     ),
     path(
+        "users/me/instance-admin/",
+        UserEndpoint.as_view(
+            {
+                "get": "retrieve_instance_admin",
+            }
+        ),
+        name="users",
+    ),
+    path(
         "users/me/change-password/",
         ChangePasswordEndpoint.as_view(),
         name="change-password",

@@ -19,7 +19,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueDetail: issueDetailStore,
-    project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     user: userStore,
@@ -63,7 +63,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
       members={projectMembers?.map((m) => m.member)}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
+      labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssueAction={() => {}}
       handleUpdateIssue={handleUpdateIssue}

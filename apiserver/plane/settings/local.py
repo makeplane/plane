@@ -3,10 +3,6 @@ from .common import *  # noqa
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "*",
-]
-
 # Debug Toolbar settings
 INSTALLED_APPS += ("debug_toolbar",)
 MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)
@@ -24,13 +20,9 @@ CACHES = {
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 MEDIA_URL = "/uploads/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
 
-# For local settings
-CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
