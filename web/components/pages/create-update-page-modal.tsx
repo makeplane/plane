@@ -1,21 +1,14 @@
-import React from "react";
-
+import React, { FC } from "react";
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
 import { IUser, IPage } from "types";
-// fetch-keys
-import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   isOpen: boolean;
@@ -26,13 +19,14 @@ type Props = {
   projectId: string;
 };
 
-// services
-const pageService = new PageService();
-
-export const CreateUpdatePageModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+export const CreateUpdatePageModal: FC<Props> = (props) => {
+  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
+  // store
+  const {
+    page: { createPage, updatePage },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -40,33 +34,11 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  const createPage = async (payload: IPage) => {
-    await pageService
-      .createPage(workspaceSlug as string, projectId as string, payload, user)
+  const createProjectPage = async (payload: IPage) =>
+    createPage(workspaceSlug, projectId, payload)
       .then((res) => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
-        mutate<IPage[]>(
-          MY_PAGES_LIST(projectId as string),
-          (prevData) => {
-            if (!prevData) return undefined;
-
-            return [res, ...(prevData as IPage[])];
-          },
-          false
-        );
-        mutate<IPage[]>(
-          ALL_PAGES_LIST(projectId as string),
-          (prevData) => {
-            if (!prevData) return undefined;
-
-            return [res, ...(prevData as IPage[])];
-          },
-          false
-        );
-        onClose();
-
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-
+        onClose();
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -80,45 +52,12 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           message: "Page could not be created. Please try again.",
         });
       });
-  };
 
-  const updatePage = async (payload: IPage) => {
-    await pageService
-      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
-      .then((res) => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
-        mutate<IPage[]>(
-          FAVORITE_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
-          false
-        );
-        mutate<IPage[]>(
-          MY_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
-          false
-        );
-        mutate<IPage[]>(
-          ALL_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
-          false
-        );
+  const updateProjectPage = async (payload: IPage) => {
+    if (!data) return;
+    return updatePage(workspaceSlug, projectId, data.id, payload)
+      .then(() => {
         onClose();
-
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -136,9 +75,8 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
-
-    if (!data) await createPage(formData);
-    else await updatePage(formData);
+    if (!data) await createProjectPage(formData);
+    else await updateProjectPage(formData);
   };
 
   return (

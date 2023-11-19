@@ -235,7 +235,7 @@ export const SHARED_PAGES_LIST = (projectId: string) => `SHARED_PAGES_LIST_${pro
 export const PAGE_DETAILS = (pageId: string) => `PAGE_DETAILS_${pageId.toUpperCase()}`;
 export const PAGE_BLOCKS_LIST = (pageId: string) => `PAGE_BLOCK_LIST_${pageId.toUpperCase()}`;
 export const PAGE_BLOCK_DETAILS = (pageId: string) => `PAGE_BLOCK_DETAILS_${pageId.toUpperCase()}`;
-
+export const MY_PAGES_LIST = (pageId: string) => `MY_PAGE_LIST_${pageId}`;
 // estimates
 export const ESTIMATES_LIST = (projectId: string) => `ESTIMATES_LIST_${projectId.toUpperCase()}`;
 export const ESTIMATE_DETAILS = (estimateId: string) => `ESTIMATE_DETAILS_${estimateId.toUpperCase()}`;

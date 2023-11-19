@@ -2,52 +2,65 @@ import { useState, Fragment, ReactElement } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import { Tab } from "@headlessui/react";
+import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
-import { RecentPagesList, CreateUpdatePageModal, TPagesListProps } from "components/pages";
+import { RecentPagesList, CreateUpdatePageModal } from "components/pages";
 import { PagesHeader } from "components/headers";
-// ui
-import { Tooltip } from "@plane/ui";
 // types
-import { TPageViewProps } from "types";
 import { NextPageWithLayout } from "types/app";
 // constants
-import { PAGE_TABS_LIST, PAGE_VIEW_LAYOUTS } from "constants/page";
+import { PAGE_TABS_LIST } from "constants/page";
 
-const AllPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.AllPagesList), {
+const AllPagesList = dynamic(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
 });
 
-const FavoritePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.FavoritePagesList), {
+const FavoritePagesList = dynamic(() => import("components/pages").then((a) => a.FavoritePagesList), {
   ssr: false,
 });
 
-const PrivatePagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.PrivatePagesList), {
+const PrivatePagesList = dynamic(() => import("components/pages").then((a) => a.PrivatePagesList), {
   ssr: false,
 });
 
-const ArchivedPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.ArchivedPagesList), {
-  ssr: false,
-})
-
-const SharedPagesList = dynamic<TPagesListProps>(() => import("components/pages").then((a) => a.SharedPagesList), {
+const ArchivedPagesList = dynamic(() => import("components/pages").then((a) => a.ArchivedPagesList), {
   ssr: false,
 });
 
-const ProjectPagesPage: NextPageWithLayout = () => {
+const SharedPagesList = dynamic(() => import("components/pages").then((a) => a.SharedPagesList), {
+  ssr: false,
+});
+
+const ProjectPagesPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  const [viewType, setViewType] = useState<TPageViewProps>("list");
-
+  // store
+  const {
+    page: { fetchPages, fetchArchivedPages },
+  } = useMobxStore();
+  // hooks
   const { user } = useUserAuth();
-
+  // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
+  // fetching pages from API
+  useSWR(
+    workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchPages(workspaceSlug.toString(), projectId.toString()) : null
+  );
+  // fetching archived pages from API
+  useSWR(
+    workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
+    workspaceSlug && projectId ? () => fetchArchivedPages(workspaceSlug.toString(), projectId.toString()) : null
+  );
 
   const currentTabValue = (tab: string | null) => {
     switch (tab) {
@@ -62,7 +75,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
       case "Shared":
         return 4;
       case "Archived":
-			  return 5;
+        return 5;
       default:
         return 0;
     }
@@ -82,24 +95,6 @@ const ProjectPagesPage: NextPageWithLayout = () => {
       <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
         <div className="flex gap-4 justify-between">
           <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
-          {/* <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
-            {PAGE_VIEW_LAYOUTS.map((layout) => (
-              <Tooltip key={layout.key} tooltipContent={layout.title}>
-                <button
-                  type="button"
-                  className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${viewType == layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
-                    }`}
-                  onClick={() => setViewType(layout.key as TPageViewProps)}
-                >
-                  <layout.icon
-                    strokeWidth={2}
-                    className={`h-3.5 w-3.5 ${viewType == layout.key ? "text-custom-text-100" : "text-custom-text-200"
-                      }`}
-                  />
-                </button>
-              </Tooltip>
-            ))}
-          </div> */}
         </div>
         <Tab.Group
           as={Fragment}
@@ -117,7 +112,7 @@ const ProjectPagesPage: NextPageWithLayout = () => {
               case 4:
                 return setPageTab("Shared");
               case 5:
-                return setPageTab("Archived")
+                return setPageTab("Archived");
               default:
                 return setPageTab("Recent");
             }
@@ -129,9 +124,10 @@ const ProjectPagesPage: NextPageWithLayout = () => {
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `rounded-full border px-5 py-1.5 text-sm outline-none ${selected
-                      ? "border-custom-primary bg-custom-primary text-white"
-                      : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                    `rounded-full border px-5 py-1.5 text-sm outline-none ${
+                      selected
+                        ? "border-custom-primary bg-custom-primary text-white"
+                        : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
                     }`
                   }
                 >
@@ -142,29 +138,29 @@ const ProjectPagesPage: NextPageWithLayout = () => {
           </Tab.List>
           <Tab.Panels as={Fragment}>
             <Tab.Panel as="div" className="h-full overflow-y-auto space-y-5">
-              <RecentPagesList viewType={viewType} />
+              <RecentPagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <AllPagesList viewType={viewType} />
+              <AllPagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <FavoritePagesList viewType={viewType} />
+              <FavoritePagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <PrivatePagesList viewType={viewType} />
+              <PrivatePagesList viewType={"list"} />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <SharedPagesList viewType={viewType} />
+              <SharedPagesList viewType={"list"} />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <ArchivedPagesList viewType={viewType} />
+              <ArchivedPagesList viewType={"list"} />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       </div>
     </>
   );
-};
+});
 
 ProjectPagesPage.getLayout = function getLayout(page: ReactElement) {
   return (

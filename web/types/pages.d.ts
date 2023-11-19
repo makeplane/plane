@@ -26,6 +26,13 @@ export interface IPage {
   workspace_detail: IWorkspaceLite;
 }
 
+export interface IRecentPages {
+  today: IPage[];
+  yesterday: IPage[];
+  this_week: IPage[];
+  [key: string]: IPage[];
+}
+
 export interface RecentPagesResponse {
   [key: string]: IPage[];
 }

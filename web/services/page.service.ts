@@ -56,14 +56,8 @@ export class PageService extends APIService {
       });
   }
 
-  async addPageToFavorites(
-    workspaceSlug: string,
-    projectId: string,
-    data: {
-      page: string;
-    }
-  ): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/`, data)
+  async addPageToFavorites(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/user-favorite-pages/`, { page: pageId })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -214,66 +208,40 @@ export class PageService extends APIService {
   }
 
   // =============== Archiving & Unarchiving Pages =================
-  async archivePage(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-  ): Promise<void> {
-    this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`
-    ).then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-
-  async removePageFromArchives(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-  ): Promise<void> {
-    this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unarchive/`)
+  async archivePage(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getArchivedPages(
-    workspaceSlug: string,
-    projectId: string,
-  ): Promise<IPage[]> {
-    return this.get(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-pages/`)
+  async removePageFromArchives(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unarchive/`)
       .then((response) => response?.data)
       .catch((error) => {
-        console.log(error)
-				return []
+        throw error?.response?.data;
+      });
+  }
+
+  async getArchivedPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error;
       });
   }
   // ==================== Pages Locking Services ==========================
-  async lockPage(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-  ): Promise<any> {
-    this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
+  async lockPage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async unlockPage(
-    workspaceSlug: string,
-    projectId: string,
-    pageId: string,
-	): Promise<any> {
-    this.post(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock/`)
+  async unlockPage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
+    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -25,7 +25,7 @@ import {
   PRIVATE_PAGES_LIST,
   PROJECT_MEMBERS,
   RECENT_PAGES_LIST,
-	ARCHIVED_PAGES_LIST,
+  ARCHIVED_PAGES_LIST,
 } from "constants/fetch-keys";
 
 type Props = {
@@ -70,7 +70,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
     setArchivePageModal(true);
   };
 
-	const handleRestorePage = (page: IPage) => {
+  const handleRestorePage = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
     mutate<IPage[]>(
@@ -117,7 +117,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
           message: "Couldn't restore the page. Please try again.",
         });
       });
-	}
+  };
 
   const handleAddToFavorites = (page: IPage) => {
     if (!workspaceSlug || !projectId) return;
@@ -145,9 +145,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
     mutate<IPage[]>(FAVORITE_PAGES_LIST(projectId.toString()), (prevData) => [page, ...(prevData ?? [])], false);
 
     pageService
-      .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), {
-        page: page.id,
-      })
+      .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), page.id)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
         setToastAlert({
@@ -232,11 +230,11 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
       false
     );
 
-		mutate<IPage[]>(
+    mutate<IPage[]>(
       ARCHIVED_PAGES_LIST(projectId.toString()),
-			(prevData) => ( prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {})})),
-			false
-		)
+      (prevData) => (prevData ?? []).map((p) => ({ ...p, ...(p.id === page.id ? formData : {}) })),
+      false
+    );
 
     pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user).then(() => {
       mutate(RECENT_PAGES_LIST(projectId.toString()));
@@ -278,7 +276,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
                     handleArchivePage={() => handleArchivePage(page)}
                     handleAddToFavorites={() => handleAddToFavorites(page)}
                     handleRemoveFromFavorites={() => handleRemoveFromFavorites(page)}
-										handleArchiveRestore={() => handleRestorePage(page)}
+                    handleArchiveRestore={() => handleRestorePage(page)}
                     partialUpdatePage={partialUpdatePage}
                   />
                 ))}

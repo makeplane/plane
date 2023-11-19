@@ -8,4 +8,3 @@ export * from "./single-page-block";
 export * from "./single-page-detailed-item";
 export * from "./single-page-list-item";
 export * from "./create-block";
-
