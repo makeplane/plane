@@ -13,7 +13,7 @@ from rest_framework import status
 # Module imports
 from .base import BaseAPIView, WebhookMixin
 from plane.db.models import Cycle, Issue, CycleIssue, IssueLink, IssueAttachment
-from plane.api.permissions import ProjectEntityPermission
+from plane.app.permissions import ProjectEntityPermission
 from plane.proxy.serializers import (
     CycleSerializer,
     CycleIssueSerializer,

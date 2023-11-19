@@ -20,7 +20,7 @@ from plane.db.models import (
     IssueProperty,
     Inbox,
 )
-from plane.api.permissions import ProjectBasePermission
+from plane.app.permissions import ProjectBasePermission
 from plane.proxy.serializers import ProjectSerializer
 from .base import BaseAPIView, WebhookMixin
 

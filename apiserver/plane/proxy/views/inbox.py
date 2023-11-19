@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.api.permissions import ProjectLitePermission
+from plane.app.permissions import ProjectLitePermission
 from plane.proxy.serializers import InboxIssueSerializer, IssueSerializer
 from plane.db.models import InboxIssue, Issue, State, ProjectMember
 from plane.bgtasks.issue_activites_task import issue_activity

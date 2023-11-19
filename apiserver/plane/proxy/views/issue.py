@@ -26,7 +26,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from .base import BaseAPIView, WebhookMixin
-from plane.api.permissions import (
+from plane.app.permissions import (
     ProjectEntityPermission,
     ProjectMemberPermission,
     ProjectLitePermission,

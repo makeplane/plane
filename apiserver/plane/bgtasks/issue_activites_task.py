@@ -28,7 +28,7 @@ from plane.db.models import (
     CommentReaction,
     IssueComment,
 )
-from plane.api.serializers import IssueActivitySerializer
+from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
 
 
