@@ -24,6 +24,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-every-day-to-delete-file-asset": {
+        "task": "plane.bgtasks.file_asset_task.delete_file_asset",
+        "schedule": crontab(hour=0, minute=0),
+    },
 }
 
 # Load task modules from all registered Django app configs.
