@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     # Inhouse apps
     "plane.analytics",
-    "plane.api",
+    "plane.app",
+    "plane.space",
     "plane.bgtasks",
     "plane.db",
     "plane.utils",
