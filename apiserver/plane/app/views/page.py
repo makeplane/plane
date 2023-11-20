@@ -213,6 +213,24 @@ class PageViewSet(BaseViewSet):
             PageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
 
+    def destroy(self, request, slug, project_id, pk):
+        page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+
+        if page.archived_at is None:
+            return Response(
+                {"error": "The page should be archived before deleting"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # remove parent from all the children
+        _ = Page.objects.filter(
+            parent_id=pk, project_id=project_id, workspace__slug=slug
+        ).update(parent=None)
+
+
+        page.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class PageFavoriteViewSet(BaseViewSet):
     permission_classes = [
