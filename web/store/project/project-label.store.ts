@@ -16,6 +16,7 @@ export interface IProjectLabelStore {
   // computed
   projectLabels: IIssueLabel[] | null;
   projectLabelsTree: IIssueLabelTree[] | null;
+  projectLabelIds: (isLayoutRender?: boolean) => string[];
   // actions
   getProjectLabelById: (labelId: string) => IIssueLabel | null;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -93,6 +94,13 @@ export class ProjectLabelStore implements IProjectLabelStore {
     if (!labels) return null;
     const labelInfo: IIssueLabel | null = labels.find((label) => label.id === labelId) || null;
     return labelInfo;
+  };
+
+  projectLabelIds = (isLayoutRender: boolean = false) => {
+    if (!this.projectLabels) return [];
+    let labelIds = (this.projectLabels ?? []).map((label) => label.id);
+    labelIds = isLayoutRender ? [...labelIds, "None"] : labelIds;
+    return labelIds;
   };
 
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {

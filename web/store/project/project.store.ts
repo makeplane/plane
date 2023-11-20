@@ -28,7 +28,6 @@ export interface IProjectStore {
   favoriteProjects: IProject[];
   currentProjectDetails: IProject | undefined;
 
-  projectLabelIds: (isLayoutRender?: boolean) => string[];
   workspaceProjectIds: () => string[];
 
   // actions
@@ -179,13 +178,6 @@ export class ProjectStore implements IProjectStore {
 
   setSearchQuery = (query: string) => {
     this.searchQuery = query;
-  };
-
-  projectLabelIds = (isLayoutRender: boolean = false) => {
-    if (!this.rootStore.projectLabel.projectLabels) return [];
-    let labelIds = (this.rootStore.projectLabel.projectLabels ?? []).map((label) => label.id);
-    labelIds = isLayoutRender ? [...labelIds, "None"] : labelIds;
-    return labelIds;
   };
 
   workspaceProjectIds = () => {

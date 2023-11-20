@@ -24,10 +24,10 @@ export const ListLayout: FC = observer(() => {
   const issueActions = {
     [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
-
       projectIssuesStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
     },
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !projectId) return;
       projectIssuesStore.removeIssue(workspaceSlug, projectId, issue.id);
     },
   };

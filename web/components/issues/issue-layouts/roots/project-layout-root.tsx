@@ -23,22 +23,23 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   const {
     projectIssues: { loader, getIssues, fetchIssues },
-    projectIssuesFilter: { filters, issueFilters, fetchUserProjectFilters },
+    projectIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await fetchUserProjectFilters(workspaceSlug, projectId);
+      await fetchFilters(workspaceSlug, projectId);
       await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
     }
   });
 
-  console.log("---");
-  console.log("filters", filters);
-  console.log("issueFilters", issueFilters);
-  console.log("---");
-
   const activeLayout = issueFilters?.displayFilters?.layout;
+
+  // getIssues && console.log("--- Project issues ---", `workspaceSlug: ${workspaceSlug}, projectId: ${projectId}`);
+  // getIssues && console.log("activeLayout", activeLayout);
+  // getIssues && console.log("issueFilters", issueFilters);
+  // getIssues && console.log("getIssues", getIssues);
+  // getIssues && console.log("---------------------------------");
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">

@@ -1,6 +1,8 @@
+// types
 import { RootStore } from "store/root";
 
 export interface IIssueFilterBaseStore {
+  // helper methods
   computedFilter(filters: any, filteredParams: any): any;
 }
 
@@ -9,10 +11,11 @@ export class IssueFilterBaseStore implements IIssueFilterBaseStore {
   rootStore;
 
   constructor(_rootStore: RootStore) {
+    // root store
     this.rootStore = _rootStore;
   }
 
-  // issue filter helpers
+  // helper methods
   computedFilter = (filters: any, filteredParams: any) => {
     const computedFilters: any = {};
     Object.keys(filters).map((key) => {

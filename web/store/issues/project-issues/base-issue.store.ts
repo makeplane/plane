@@ -1,7 +1,8 @@
 import _ from "lodash";
 // types
-import { IIssue, IIssueResponse, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
+import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 import { RootStore } from "store/root";
+import { IIssueResponse } from "../types";
 // constants
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 // helpers
@@ -108,7 +109,7 @@ export class IssueBaseStore implements IIssueBaseStore {
       case "priority":
         return ISSUE_PRIORITIES.map((i) => i.key);
       case "labels":
-        return this.rootStore?.project?.projectLabelIds(true);
+        return this.rootStore?.projectLabel?.projectLabelIds(true);
       case "created_by":
         return this.rootStore?.projectMember?.projectMemberIds(true);
       case "assignees":

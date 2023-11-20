@@ -4,10 +4,11 @@ import { IssueFilterBaseStore } from "store/issues";
 // services
 import { ProjectService, ProjectMemberService } from "services/project";
 import { IssueService } from "services/issue";
+import { ModuleService } from "services/module.service";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 // types
-import { RootStore } from "../../root";
+import { RootStore } from "../../../root";
 import {
   IIssueDisplayFilterOptions,
   IIssueDisplayProperties,
@@ -16,55 +17,46 @@ import {
   TIssueParams,
 } from "types";
 
-export interface IProjectIssuesFilterOptions {
+interface IModuleIssuesFilterOptions {
   filters?: IIssueFilterOptions;
   displayFilters?: IIssueDisplayFilterOptions;
   displayProperties?: IIssueDisplayProperties;
 }
 
-export interface IProjectIssuesFilterStore {
+export interface IModuleIssuesFilterStore {
   // observable
   loader: boolean;
-  filters:
-    | {
-        [projectId: string]: IProjectIssuesFilterOptions;
-      }
-    | undefined;
+  filters: { [projectId: string]: IModuleIssuesFilterOptions } | undefined;
   // computed
-  issueFilters: IProjectIssuesFilterOptions | undefined;
+  issueFilters: IModuleIssuesFilterOptions | undefined;
   appliedFilters: TIssueParams[] | undefined;
   // actions
-  fetchUserProjectFilters: (workspaceSlug: string, projectId: string) => Promise<void>;
-  updateUserFilters: (
+  fetchUserProjectFilters: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
+  updateFilters: (
     workspaceSlug: string,
     projectId: string,
+    moduleId: string,
     filterToUpdate: Partial<IProjectViewProps>
   ) => Promise<void>;
   updateDisplayProperties: (
     workspaceSlug: string,
     projectId: string,
+    moduleId: string,
     properties: Partial<IIssueDisplayProperties>
   ) => Promise<void>;
 }
 
-export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IProjectIssuesFilterStore {
+export class ModuleIssuesFilterStore extends IssueFilterBaseStore implements IModuleIssuesFilterStore {
   // observables
   loader: boolean = false;
-  filters:
-    | {
-        [projectId: string]: {
-          filters?: IIssueFilterOptions;
-          displayFilters?: IIssueDisplayFilterOptions;
-          displayProperties?: IIssueDisplayProperties;
-        };
-      }
-    | undefined = undefined;
+  filters: { [projectId: string]: IModuleIssuesFilterOptions } | undefined = undefined;
   // root store
   rootStore;
   // services
   projectService;
   projectMemberService;
   issueService;
+  moduleService;
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -78,7 +70,7 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
       appliedFilters: computed,
       // actions
       fetchUserProjectFilters: action,
-      updateUserFilters: action,
+      updateFilters: action,
       updateDisplayProperties: action,
     });
 
@@ -87,14 +79,11 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
     this.projectService = new ProjectService();
     this.projectMemberService = new ProjectMemberService();
     this.issueService = new IssueService();
+    this.moduleService = new ModuleService();
   }
 
   get issueFilters() {
     const projectId = this.rootStore.project.projectId;
-
-    console.log("projectId", projectId);
-    console.log("this.filters", this.filters);
-
     if (!projectId || !this.filters) return undefined;
 
     return this.filters[projectId];
@@ -129,10 +118,11 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
     return filteredRouteParams;
   }
 
-  fetchUserProjectFilters = async (workspaceSlug: string, projectId: string) => {
+  fetchUserProjectFilters = async (workspaceSlug: string, projectId: string, moduleId: string) => {
     try {
       const memberResponse = await this.projectMemberService.projectMemberMe(workspaceSlug, projectId);
       const issueProperties = await this.issueService.getIssueDisplayProperties(workspaceSlug, projectId);
+      const moduleFilters = await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId);
 
       const _issueFilters = {
         filters: memberResponse?.view_props?.filters,
@@ -146,23 +136,26 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
         displayProperties: issueProperties?.properties,
       };
 
-      let _filters = this.filters;
+      let _filters = { ...this.filters };
       if (!_filters) _filters = {};
-      if (!_filters[projectId]) _filters[projectId] = {};
-      _filters[projectId] = _issueFilters;
-
-      console.log("..._filters", _filters);
+      if (!_filters[moduleId]) _filters[moduleId] = {};
+      _filters[moduleId] = _issueFilters;
 
       runInAction(() => {
         this.filters = _filters;
       });
     } catch (error) {
-      this.fetchUserProjectFilters(workspaceSlug, projectId);
+      this.fetchUserProjectFilters(workspaceSlug, projectId, moduleId);
       throw error;
     }
   };
 
-  updateUserFilters = async (workspaceSlug: string, projectId: string, filterToUpdate: Partial<IProjectViewProps>) => {
+  updateFilters = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    filterToUpdate: Partial<IProjectViewProps>
+  ) => {
     try {
       let _filters = this.filters;
       if (!_filters) _filters = {};
@@ -212,7 +205,7 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
 
       return response;
     } catch (error) {
-      this.fetchUserProjectFilters(workspaceSlug, projectId);
+      this.fetchUserProjectFilters(workspaceSlug, projectId, moduleId);
       throw error;
     }
   };
@@ -220,6 +213,7 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
   updateDisplayProperties = async (
     workspaceSlug: string,
     projectId: string,
+    moduleId: string,
     properties: Partial<IIssueDisplayProperties>
   ) => {
     try {
@@ -246,7 +240,7 @@ export class ProjectIssuesFilterStore extends IssueFilterBaseStore implements IP
 
       return response;
     } catch (error) {
-      this.fetchUserProjectFilters(workspaceSlug, projectId);
+      this.fetchUserProjectFilters(workspaceSlug, projectId, moduleId);
       throw error;
     }
   };

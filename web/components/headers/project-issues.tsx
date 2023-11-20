@@ -33,19 +33,23 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     projectState: projectStateStore,
     inbox: inboxStore,
     commandPalette: commandPaletteStore,
+    // issue filters
+    projectIssuesDisplayFilter: { updateDisplayFilters, updateDisplayProperties },
+    projectIssuesFilter: { issueFilters },
+    projectIssues: {},
   } = useMobxStore();
 
-  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
 
-      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          layout,
-        },
-      });
+      // projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      //   display_filters: {
+      //     layout,
+      //   },
+      // });
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );
@@ -66,35 +70,36 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: newValues,
-        },
-      });
+      // projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      //   filters: {
+      //     [key]: newValues,
+      //   },
+      // });
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      console.log("updatedDisplayFilter", updatedDisplayFilter);
+
+      // projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
+      //   display_filters: {
+      //     ...updatedDisplayFilter,
+      //   },
+      // });
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-
-      projectIssueFiltersStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
     },
-    [projectIssueFiltersStore, projectId, workspaceSlug]
+    [updateDisplayProperties, projectId, workspaceSlug]
   );
 
   const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
@@ -188,13 +193,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={projectIssueFiltersStore.issueFilters?.displayFilters ?? {}}
-              displayProperties={projectIssueFiltersStore.issueFilters?.displayProperties ?? {}}
-              handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-              handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
           {projectId && inboxStore.isInboxEnabled && inboxDetails && (

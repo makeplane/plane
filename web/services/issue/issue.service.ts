@@ -2,7 +2,8 @@
 import { APIService } from "services/api.service";
 import { TrackEventService } from "services/track_event.service";
 // type
-import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties, IIssueResponse } from "types";
+import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
+import { IIssueResponse } from "store/issues/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 

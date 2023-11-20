@@ -5,17 +5,14 @@ import { IssueBaseStore } from "store/issues";
 import { IssueService } from "services/issue/issue.service";
 // types
 import { TIssueGroupByOptions } from "types";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, IIssue } from "types/issues";
+import { IIssue } from "types/issues";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IProjectIssuesStore {
   // observable
   loader: TLoader;
-  issues:
-    | {
-        [project_id: string]: IIssueResponse;
-      }
-    | undefined;
+  issues: { [project_id: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
@@ -29,11 +26,7 @@ export interface IProjectIssuesStore {
 
 export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssuesStore {
   loader: TLoader = "init-loader";
-  issues:
-    | {
-        [project_id: string]: IIssueResponse;
-      }
-    | undefined = undefined;
+  issues: { [project_id: string]: IIssueResponse } | undefined = undefined;
   // root store
   rootStore;
   // service
@@ -66,7 +59,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       if (!workspaceSlug || !projectId) return;
 
       const userFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, projectId);
+      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
     });
   }
 
@@ -79,7 +72,9 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
   get getIssuesIds() {
     const projectId = this.rootStore?.project.projectId;
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    // const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters: any = undefined;
+    if (!displayFilters) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
@@ -111,10 +106,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       const params = this.rootStore?.projectIssuesFilter?.appliedFilters;
       const response = await this.issueService.getV3Issues(workspaceSlug, projectId, params);
 
-      const _issues = {
-        ...this.issues,
-        [projectId]: { ...response },
-      };
+      const _issues = { ...this.issues, [projectId]: { ...response } };
 
       runInAction(() => {
         this.issues = _issues;
@@ -123,6 +115,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId);
       this.loader = undefined;
       throw error;
     }
@@ -136,7 +129,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       let _issues = this.issues;
       if (!_issues) _issues = {};
       if (!_issues[projectId]) _issues[projectId] = {};
-
       _issues[projectId] = { ..._issues[projectId], ...{ [response.id]: response } };
 
       runInAction(() => {
@@ -145,7 +137,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
@@ -155,7 +147,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
       if (!_issues[projectId]) _issues[projectId] = {};
-
       _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...data };
 
       runInAction(() => {
@@ -167,7 +158,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
@@ -188,7 +179,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
@@ -222,7 +213,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
