@@ -975,7 +975,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
         params = {
-            "Bucket": settings.AWS_S3_BUCKET_NAME,
+            "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",
         }
 
