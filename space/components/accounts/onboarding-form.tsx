@@ -1,14 +1,11 @@
 import { useEffect, Fragment } from "react";
 import { useRouter } from "next/router";
-// react-hook-form
-import { Controller, useForm } from "react-hook-form";
-// mobx
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-// headless ui
+import { Controller, useForm } from "react-hook-form";
 import { Listbox, Transition } from "@headlessui/react";
-// icons
-import { ChevronDownIcon, CheckIcon } from "@heroicons/react/20/solid";
+import { Check, ChevronDown } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { USER_ROLES } from "constants/workspace";
 // hooks
@@ -57,18 +54,15 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
 
     const userService = new UserService();
 
-    await userService
-      .updateMe(payload)
-      .then((response) => {
-        userStore.setCurrentUser(response);
-        router.push(next_path?.toString() || "/");
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Details updated successfully.",
-        });
-      })
-      .catch((err) => {});
+    await userService.updateMe(payload).then((response) => {
+      userStore.setCurrentUser(response);
+      router.push(next_path?.toString() || "/");
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Details updated successfully.",
+      });
+    });
   };
 
   useEffect(() => {
@@ -132,7 +126,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none px-3 py-2 text-sm`}
                   >
                     <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
-                    <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                    <ChevronDown className="h-3 w-3" aria-hidden="true" strokeWidth={2} />
                   </Listbox.Button>
 
                   <Transition
@@ -163,7 +157,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                                 <div className="flex items-center gap-2">
                                   <span>{role.label}</span>
                                 </div>
-                                {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+                                {selected && <Check className="h-3 w-3 flex-shrink-0" strokeWidth={2} />}
                               </div>
                             )}
                           </Listbox.Option>

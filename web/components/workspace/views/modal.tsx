@@ -1,116 +1,103 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import workspaceService from "services/workspace.service";
+
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { WorkspaceViewForm } from "components/workspace/views/form";
+import { WorkspaceViewForm } from "components/workspace";
 // types
 import { IWorkspaceView } from "types/workspace-views";
-// fetch-keys
-import { WORKSPACE_VIEWS_LIST } from "constants/fetch-keys";
 
 type Props = {
+  data?: IWorkspaceView;
   isOpen: boolean;
-  handleClose: () => void;
-  data?: IWorkspaceView | null;
-  preLoadedData?: Partial<IWorkspaceView> | null;
+  onClose: () => void;
+  preLoadedData?: Partial<IWorkspaceView>;
 };
 
-export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  data,
-  preLoadedData,
-}) => {
+export const CreateUpdateWorkspaceViewModal: React.FC<Props> = observer((props) => {
+  const { isOpen, onClose, data, preLoadedData } = props;
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
+  const { globalViews: globalViewsStore } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
-  const onClose = () => {
-    handleClose();
+  const handleClose = () => {
+    onClose();
   };
 
-  const createView = async (payload: any) => {
-    const payloadData = {
+  const createView = async (payload: Partial<IWorkspaceView>) => {
+    if (!workspaceSlug) return;
+
+    const payloadData: Partial<IWorkspaceView> = {
       ...payload,
-      query_data: {
-        filters: payload.query,
+      query: {
+        ...payload.query_data?.filters,
       },
     };
-    await workspaceService
-      .createView(workspaceSlug as string, payloadData)
+
+    await globalViewsStore
+      .createGlobalView(workspaceSlug.toString(), payloadData)
       .then((res) => {
-        mutate(WORKSPACE_VIEWS_LIST(workspaceSlug as string));
-        handleClose();
-
-        router.replace(`/${workspaceSlug}/workspace-views/issues?globalViewId=${res.id}`);
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "View created successfully.",
         });
+
+        router.push(`/${workspaceSlug}/workspace-views/${res.id}`);
       })
-      .catch(() => {
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "View could not be created. Please try again.",
-        });
-      });
+        })
+      );
   };
 
-  const updateView = async (payload: any) => {
-    const payloadData = {
+  const updateView = async (payload: Partial<IWorkspaceView>) => {
+    if (!workspaceSlug || !data) return;
+
+    const payloadData: Partial<IWorkspaceView> = {
       ...payload,
-      query_data: {
-        filters: payload.query,
+      query: {
+        ...payload.query_data?.filters,
       },
     };
-    await workspaceService
-      .updateView(workspaceSlug as string, data?.id ?? "", payloadData)
-      .then((res) => {
-        mutate<IWorkspaceView[]>(
-          WORKSPACE_VIEWS_LIST(workspaceSlug as string),
-          (prevData) =>
-            prevData?.map((p) => {
-              if (p.id === res.id) return { ...p, ...payloadData };
 
-              return p;
-            }),
-          false
-        );
-        onClose();
-
+    await globalViewsStore
+      .updateGlobalView(workspaceSlug.toString(), data.id, payloadData)
+      .then(() =>
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "View updated successfully.",
-        });
-      })
-      .catch(() => {
+        })
+      )
+      .catch(() =>
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "View could not be updated. Please try again.",
-        });
-      });
+        })
+      );
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: Partial<IWorkspaceView>) => {
     if (!workspaceSlug) return;
 
     if (!data) await createView(formData);
     else await updateView(formData);
+
+    handleClose();
   };
 
   return (
@@ -125,7 +112,7 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -139,11 +126,10 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 px-5 py-8 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <WorkspaceViewForm
                   handleFormSubmit={handleFormSubmit}
                   handleClose={handleClose}
-                  status={data ? true : false}
                   data={data}
                   preLoadedData={preLoadedData}
                 />
@@ -154,4 +140,4 @@ export const CreateUpdateWorkspaceViewModal: React.FC<Props> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+});

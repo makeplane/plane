@@ -1,20 +1,20 @@
 // services
-import APIService from "services/api.service";
-import trackEventServices from "services/track-event.service";
-
+import { APIService } from "services/api.service";
+// types
 import type {
-  ICurrentUserResponse,
   IIssue,
   IUser,
   IUserActivityResponse,
+  IInstanceAdminStatus,
   IUserProfileData,
   IUserProfileProjectSegregation,
+  IUserSettings,
   IUserWorkspaceDashboard,
 } from "types";
-
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 
-class UserService extends APIService {
+export class UserService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -44,8 +44,24 @@ class UserService extends APIService {
       });
   }
 
-  async currentUser(): Promise<ICurrentUserResponse> {
+  async currentUser(): Promise<IUser> {
     return this.get("/api/users/me/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
+    return this.get("/api/users/me/instance-admin/")
+      .then((respone) => respone?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserSettings(): Promise<IUserSettings> {
+    return this.get("/api/users/me/settings/")
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
@@ -60,32 +76,21 @@ class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any, user: ICurrentUserResponse | undefined): Promise<any> {
+  async updateUserOnBoard(): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
-      .then((response) => {
-        trackEventServices.trackUserOnboardingCompleteEvent(
-          {
-            user_role: userRole ?? "None",
-          },
-          user
-        );
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateUserTourCompleted(user: ICurrentUserResponse): Promise<any> {
+  async updateUserTourCompleted(): Promise<any> {
     return this.patch("/api/users/me/tour-completed/", {
       is_tour_completed: true,
     })
-      .then((response) => {
-        trackEventServices.trackUserTourCompleteEvent({ user_role: user.role ?? "None" }, user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -99,10 +104,7 @@ class UserService extends APIService {
       });
   }
 
-  async userWorkspaceDashboard(
-    workspaceSlug: string,
-    month: number
-  ): Promise<IUserWorkspaceDashboard> {
+  async userWorkspaceDashboard(workspaceSlug: string, month: number): Promise<IUserWorkspaceDashboard> {
     return this.get(`/api/users/me/workspaces/${workspaceSlug}/dashboard/`, {
       params: {
         month: month,
@@ -156,10 +158,7 @@ class UserService extends APIService {
       });
   }
 
-  async getUserProfileActivity(
-    workspaceSlug: string,
-    userId: string
-  ): Promise<IUserActivityResponse> {
+  async getUserProfileActivity(workspaceSlug: string, userId: string): Promise<IUserActivityResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-activity/${userId}/?per_page=15`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -186,5 +185,3 @@ class UserService extends APIService {
       });
   }
 }
-
-export default new UserService();

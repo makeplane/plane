@@ -3,13 +3,13 @@ import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useUser from "hooks/use-user";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
-import { CheckCircleIcon } from "@heroicons/react/24/outline";
+import { CheckCircle } from "lucide-react";
 // helpers
 import { truncateText } from "helpers/string.helper";
 // types
@@ -18,6 +18,7 @@ import { IWorkspaceMemberInvitation, TOnboardingSteps } from "types";
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -25,11 +26,10 @@ type Props = {
   updateLastWorkspace: () => Promise<void>;
 };
 
-export const JoinWorkspaces: React.FC<Props> = ({
-  finishOnboarding,
-  stepChange,
-  updateLastWorkspace,
-}) => {
+// services
+const workspaceService = new WorkspaceService();
+
+export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange, updateLastWorkspace }) => {
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
 
@@ -39,16 +39,11 @@ export const JoinWorkspaces: React.FC<Props> = ({
     workspaceService.userWorkspaceInvitations()
   );
 
-  const handleInvitation = (
-    workspace_invitation: IWorkspaceMemberInvitation,
-    action: "accepted" | "withdraw"
-  ) => {
+  const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
       setInvitationsRespond((prevData) => [...prevData, workspace_invitation.id]);
     } else if (action === "withdraw") {
-      setInvitationsRespond((prevData) =>
-        prevData.filter((item: string) => item !== workspace_invitation.id)
-      );
+      setInvitationsRespond((prevData) => prevData.filter((item: string) => item !== workspace_invitation.id));
     }
   };
 
@@ -57,8 +52,7 @@ export const JoinWorkspaces: React.FC<Props> = ({
 
     await stepChange({ workspace_join: true });
 
-    if (user.onboarding_step.workspace_create && user.onboarding_step.workspace_invite)
-      await finishOnboarding();
+    if (user.onboarding_step.workspace_create && user.onboarding_step.workspace_invite) await finishOnboarding();
   };
 
   const submitInvitations = async () => {
@@ -68,7 +62,11 @@ export const JoinWorkspaces: React.FC<Props> = ({
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async () => {
+      .then(async (res) => {
+        trackEvent(
+          'WORKSPACE_USER_INVITE_ACCEPT',
+          res
+        )
         await mutateInvitations();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -90,11 +88,8 @@ export const JoinWorkspaces: React.FC<Props> = ({
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                  isSelected
-                    ? "border-custom-primary-100"
-                    : "border-custom-border-200 hover:bg-custom-background-80"
-                }`}
+                className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${isSelected ? "border-custom-primary-100" : "border-custom-border-200 hover:bg-custom-background-80"
+                  }`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -115,24 +110,19 @@ export const JoinWorkspaces: React.FC<Props> = ({
                   </div>
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium">
-                    {truncateText(invitation.workspace.name, 30)}
-                  </div>
+                  <div className="text-sm font-medium">{truncateText(invitation.workspace.name, 30)}</div>
                   <p className="text-xs text-custom-text-200">{ROLE[invitation.role]}</p>
                 </div>
-                <span
-                  className={`flex-shrink-0 ${
-                    isSelected ? "text-custom-primary-100" : "text-custom-text-200"
-                  }`}
-                >
-                  <CheckCircleIcon className="h-5 w-5" />
+                <span className={`flex-shrink-0 ${isSelected ? "text-custom-primary-100" : "text-custom-text-200"}`}>
+                  <CheckCircle className="h-5 w-5" />
                 </span>
               </div>
             );
           })}
       </div>
       <div className="flex items-center gap-3">
-        <PrimaryButton
+        <Button
+          variant="primary"
           type="submit"
           size="md"
           onClick={submitInvitations}
@@ -140,14 +130,10 @@ export const JoinWorkspaces: React.FC<Props> = ({
           loading={isJoiningWorkspaces}
         >
           Accept & Join
-        </PrimaryButton>
-        <SecondaryButton
-          className="border border-none bg-transparent"
-          size="md"
-          onClick={handleNextStep}
-        >
+        </Button>
+        <Button variant="neutral-primary" size="md" onClick={handleNextStep}>
           Skip for now
-        </SecondaryButton>
+        </Button>
       </div>
     </div>
   );

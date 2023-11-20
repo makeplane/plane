@@ -1,5 +1,5 @@
 // types
-import { IIssue, IIssueLabels, IWorkspaceLite, IProjectLite } from "types";
+import { IIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "types";
 
 export interface IPage {
   access: number;
@@ -12,9 +12,8 @@ export interface IPage {
   description_stripped: string | null;
   id: string;
   is_favorite: boolean;
-  label_details: IIssueLabels[];
+  label_details: IIssueLabel[];
   labels: string[];
-  labels_list: string[];
   name: string;
   owned_by: string;
   project: string;

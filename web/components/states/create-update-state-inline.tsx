@@ -1,58 +1,55 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// react-hook-form
 import { useForm, Controller } from "react-hook-form";
-// react-color
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
-// services
-import stateService from "services/state.service";
+
+// store
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { CustomSelect, Input, PrimaryButton, SecondaryButton, Tooltip } from "components/ui";
+import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
 // types
-import type { ICurrentUserResponse, IState, IStateResponse } from "types";
+import type { IState } from "types";
 // fetch-keys
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   data: IState | null;
   onClose: () => void;
-  selectedGroup: StateGroup | null;
-  user: ICurrentUserResponse | undefined;
   groupLength: number;
+  selectedGroup: StateGroup | null;
 };
 
 export type StateGroup = "backlog" | "unstarted" | "started" | "completed" | "cancelled" | null;
 
 const defaultValues: Partial<IState> = {
   name: "",
+  description: "",
   color: "rgb(var(--color-text-200))",
   group: "backlog",
 };
 
-export const CreateUpdateStateInline: React.FC<Props> = ({
-  data,
-  onClose,
-  selectedGroup,
-  user,
-  groupLength,
-}) => {
+export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
+  const { data, onClose, selectedGroup, groupLength } = props;
+
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  // store
+  const { projectState: projectStateStore } = useMobxStore();
+
+  // hooks
   const { setToastAlert } = useToast();
 
   const {
-    register,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
@@ -62,15 +59,19 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     defaultValues,
   });
 
+  /**
+   * @description pre-populate form with data if data is present
+   */
   useEffect(() => {
     if (!data) return;
-
     reset(data);
   }, [data, reset]);
 
+  /**
+   * @description pre-populate form with default values if data is not present
+   */
   useEffect(() => {
     if (data) return;
-
     reset({
       ...defaultValues,
       group: selectedGroup ?? "backlog",
@@ -82,88 +83,80 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
     reset({ name: "", color: "#000000", group: "backlog" });
   };
 
-  const onSubmit = async (formData: IState) => {
+  const handleCreate = async (formData: IState) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
+    await projectStateStore
+      .createState(workspaceSlug.toString(), projectId.toString(), formData)
+      .then((res) => {
+        handleClose();
+        trackEvent(
+          'STATE_CREATE',
+          res
+        )
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "State created successfully.",
+        });
+      })
+      .catch((error) => {
+        if (error.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "State with that name already exists. Please try again with another name.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "State could not be created. Please try again.",
+          });
+      });
+  };
+
+  const handleUpdate = async (formData: IState) => {
+    if (!workspaceSlug || !projectId || !data || isSubmitting) return;
+
+    await projectStateStore
+      .updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
+      .then((res) => {
+        mutate(STATES_LIST(projectId.toString()));
+        handleClose();
+        trackEvent(
+          'STATE_UPDATE',
+          res
+        )
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "State updated successfully.",
+        });
+      })
+      .catch((error) => {
+        if (error.status === 400)
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "Another state exists with the same name. Please try again with another name.",
+          });
+        else
+          setToastAlert({
+            type: "error",
+            title: "Error!",
+            message: "State could not be updated. Please try again.",
+          });
+      });
+  };
+
+  const onSubmit = async (formData: IState) => {
     const payload: IState = {
       ...formData,
     };
 
-    if (!data) {
-      await stateService
-        .createState(workspaceSlug.toString(), projectId.toString(), { ...payload }, user)
-        .then((res) => {
-          mutate<IStateResponse>(
-            STATES_LIST(projectId.toString()),
-            (prevData) => {
-              if (!prevData) return prevData;
-
-              return {
-                ...prevData,
-                [res.group]: [...prevData[res.group], res],
-              };
-            },
-            false
-          );
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "State created successfully.",
-          });
-        })
-        .catch((err) => {
-          if (err.status === 400)
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "State with that name already exists. Please try again with another name.",
-            });
-          else
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "State could not be created. Please try again.",
-            });
-        });
-    } else {
-      await stateService
-        .updateState(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          data.id,
-          {
-            ...payload,
-          },
-          user
-        )
-        .then(() => {
-          mutate(STATES_LIST(projectId.toString()));
-          handleClose();
-
-          setToastAlert({
-            type: "success",
-            title: "Success!",
-            message: "State updated successfully.",
-          });
-        })
-        .catch((err) => {
-          if (err.status === 400)
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message:
-                "Another state exists with the same name. Please try again with another name.",
-            });
-          else
-            setToastAlert({
-              type: "error",
-              title: "Error!",
-              message: "State could not be updated. Please try again.",
-            });
-        });
-    }
+    if (data) await handleUpdate(payload);
+    else await handleCreate(payload);
   };
 
   return (
@@ -176,9 +169,8 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${open ? "text-custom-text-100" : "text-custom-text-200"
+                  }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span
@@ -213,26 +205,32 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           )}
         </Popover>
       </div>
-      <Input
-        id="name"
+      <Controller
+        control={control}
         name="name"
-        register={register}
-        autoFocus
-        placeholder="Name"
-        validations={{
+        rules={{
           required: true,
         }}
-        error={errors.name}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(errors.name)}
+            placeholder="Name"
+            className="w-full"
+          />
+        )}
       />
       {data && (
         <Controller
           name="group"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <Tooltip
-              tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}
-            >
+            <Tooltip tooltipContent={groupLength === 1 ? "Cannot have an empty group." : "Choose State"}>
               <div>
                 <CustomSelect
                   disabled={groupLength === 1}
@@ -256,18 +254,29 @@ export const CreateUpdateStateInline: React.FC<Props> = ({
           )}
         />
       )}
-      <Input
-        id="description"
+      <Controller
+        control={control}
         name="description"
-        register={register}
-        placeholder="Description"
-        error={errors.description}
-        autoComplete="off"
+        render={({ field: { value, onChange, ref } }) => (
+          <Input
+            id="description"
+            name="description"
+            type="text"
+            value={value}
+            onChange={onChange}
+            ref={ref}
+            hasError={Boolean(errors.description)}
+            placeholder="Description"
+            className="w-full"
+          />
+        )}
       />
-      <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-      <PrimaryButton type="submit" loading={isSubmitting}>
+      <Button variant="neutral-primary" onClick={handleClose}>
+        Cancel
+      </Button>
+      <Button variant="primary" type="submit" loading={isSubmitting}>
         {isSubmitting ? (data ? "Updating..." : "Creating...") : data ? "Update" : "Create"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
-};
+});

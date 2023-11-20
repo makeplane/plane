@@ -3,40 +3,32 @@ import React, { useEffect, useRef, useState } from "react";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react-hook-form
-import {
-  Control,
-  Controller,
-  FieldArrayWithId,
-  UseFieldArrayRemove,
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { Control, Controller, FieldArrayWithId, UseFieldArrayRemove, useFieldArray, useForm } from "react-hook-form";
 // services
-import workspaceService from "services/workspace.service";
+import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { Input, PrimaryButton, SecondaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { PlusIcon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { Check, ChevronDown, Plus, X } from "lucide-react";
 // types
-import { ICurrentUserResponse, IWorkspace, TOnboardingSteps } from "types";
+import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   workspace: IWorkspace | undefined;
 };
 
 type EmailRole = {
   email: string;
-  role: 5 | 10 | 15 | 20;
+  role: TUserWorkspaceRole;
 };
 
 type FormValues = {
@@ -52,6 +44,9 @@ type InviteMemberFormProps = {
   errors: any;
 };
 
+// services
+const workspaceService = new WorkspaceService();
+
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   const { control, index, fields, remove, errors } = props;
 
@@ -60,12 +55,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  useDynamicDropdownPosition(
-    isDropdownOpen,
-    () => setIsDropdownOpen(false),
-    buttonRef,
-    dropdownRef
-  );
+  useDynamicDropdownPosition(isDropdownOpen, () => setIsDropdownOpen(false), buttonRef, dropdownRef);
 
   return (
     <div className="group relative grid grid-cols-11 gap-4">
@@ -80,15 +70,18 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
               message: "Invalid Email ID",
             },
           }}
-          render={({ field }) => (
-            <>
-              <Input {...field} className="text-xs sm:text-sm" placeholder="Enter their email..." />
-              {errors.emails?.[index]?.email && (
-                <span className="text-red-500 text-xs">
-                  {errors.emails?.[index]?.email?.message}
-                </span>
-              )}
-            </>
+          render={({ field: { value, onChange, ref } }) => (
+            <Input
+              id={`emails.${index}.email`}
+              name={`emails.${index}.email`}
+              type="text"
+              value={value}
+              onChange={onChange}
+              ref={ref}
+              hasError={Boolean(errors.emails?.[index]?.email)}
+              placeholder="Enter their email..."
+              className="text-xs sm:text-sm w-full"
+            />
           )}
         />
       </div>
@@ -114,7 +107,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                 className="flex items-center px-2.5 py-2 text-xs justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none"
               >
                 <span className="text-xs sm:text-sm">{ROLE[value]}</span>
-                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
+                <ChevronDown className="h-3 w-3" aria-hidden="true" />
               </Listbox.Button>
 
               <Transition
@@ -145,7 +138,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                         {({ selected }) => (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">{value}</div>
-                            {selected && <CheckIcon className="h-4 w-4 flex-shrink-0" />}
+                            {selected && <Check className="h-4 w-4 flex-shrink-0" />}
                           </div>
                         )}
                       </Listbox.Option>
@@ -163,7 +156,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
           className="hidden group-hover:grid self-center place-items-center rounded -ml-3"
           onClick={() => remove(index)}
         >
-          <XMarkIcon className="h-3.5 w-3.5 text-custom-text-200" />
+          <X className="h-3.5 w-3.5 text-custom-text-200" />
         </button>
       )}
     </div>
@@ -171,7 +164,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 };
 
 export const InviteMembers: React.FC<Props> = (props) => {
-  const { finishOnboarding, stepChange, user, workspace } = props;
+  const { finishOnboarding, stepChange, workspace } = props;
 
   const { setToastAlert } = useToast();
 
@@ -202,7 +195,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
     const payload = { ...formData };
 
     await workspaceService
-      .inviteWorkspace(workspace.slug, payload, user)
+      .inviteWorkspace(workspace.slug, payload)
       .then(async () => {
         setToastAlert({
           type: "success",
@@ -261,17 +254,17 @@ export const InviteMembers: React.FC<Props> = (props) => {
           className="flex items-center gap-2 outline-custom-primary-100 bg-transparent text-custom-primary-100 text-xs font-medium py-2 pr-3"
           onClick={appendField}
         >
-          <PlusIcon className="h-3 w-3" />
+          <Plus className="h-3 w-3" />
           Add another
         </button>
       </div>
       <div className="flex items-center gap-4">
-        <PrimaryButton type="submit" disabled={!isValid} loading={isSubmitting} size="md">
+        <Button variant="primary" type="submit" disabled={!isValid} loading={isSubmitting} size="md">
           {isSubmitting ? "Sending..." : "Send Invite"}
-        </PrimaryButton>
-        <SecondaryButton className="border border-none bg-transparent" size="md" onClick={nextStep}>
+        </Button>
+        <Button variant="neutral-primary" size="md" onClick={nextStep}>
           Skip this step
-        </SecondaryButton>
+        </Button>
       </div>
     </form>
   );

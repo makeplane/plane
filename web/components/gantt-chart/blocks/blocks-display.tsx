@@ -11,7 +11,7 @@ import { IBlockUpdateData, IGanttBlock } from "../types";
 export const GanttChartBlocks: FC<{
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  BlockRender: React.FC<any>;
+  blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
@@ -19,7 +19,7 @@ export const GanttChartBlocks: FC<{
 }> = ({
   itemsContainerWidth,
   blocks,
-  BlockRender,
+  blockToRender,
   blockUpdateHandler,
   enableBlockLeftResize,
   enableBlockRightResize,
@@ -49,11 +49,9 @@ export const GanttChartBlocks: FC<{
     const updatedTargetDate = new Date(originalTargetDate);
 
     // update the start date on left resize
-    if (dragDirection === "left")
-      updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
+    if (dragDirection === "left") updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
     // update the target date on right resize
-    else if (dragDirection === "right")
-      updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
+    else if (dragDirection === "right") updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
     // update both the dates on x-axis move
     else if (dragDirection === "move") {
       updatedStartDate.setDate(originalStartDate.getDate() + totalBlockShifts);
@@ -86,7 +84,7 @@ export const GanttChartBlocks: FC<{
               >
                 <ChartDraggable
                   block={block}
-                  BlockRender={BlockRender}
+                  blockToRender={blockToRender}
                   handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
                   enableBlockLeftResize={enableBlockLeftResize}
                   enableBlockRightResize={enableBlockRightResize}

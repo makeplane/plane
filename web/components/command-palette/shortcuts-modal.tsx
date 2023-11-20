@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-// headless ui
+import { FC, useEffect, useState, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { XMarkIcon } from "@heroicons/react/20/solid";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { CommandIcon } from "components/icons";
+import { Command, Search, X } from "lucide-react";
 // ui
-import { Input } from "components/ui";
+import { Input } from "@plane/ui";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
 };
 
 const shortcuts = [
@@ -45,12 +42,13 @@ const shortcuts = [
 
 const allShortcuts = shortcuts.map((i) => i.shortcuts).flat(1);
 
-export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
+export const ShortcutsModal: FC<Props> = (props) => {
+  const { isOpen, onClose } = props;
+  // states
   const [query, setQuery] = useState("");
+  // computed
   const filteredShortcuts = allShortcuts.filter((shortcut) =>
-    shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === ""
-      ? true
-      : false
+    shortcut.description.toLowerCase().includes(query.trim().toLowerCase()) || query === "" ? true : false
   );
 
   useEffect(() => {
@@ -58,10 +56,10 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
   }, [isOpen]);
 
   return (
-    <Transition.Root show={isOpen} as={React.Fragment}>
-      <Dialog as="div" className="relative z-20" onClose={setIsOpen}>
+    <Transition.Root show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-20" onClose={onClose}>
         <Transition.Child
-          as={React.Fragment}
+          as={Fragment}
           enter="ease-out duration-300"
           enterFrom="opacity-0"
           enterTo="opacity-100"
@@ -69,13 +67,13 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-[#131313] bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
-              as={React.Fragment}
+              as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               enterTo="opacity-100 translate-y-0 sm:scale-100"
@@ -83,8 +81,8 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-80 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-custom-background-80 p-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div className="bg-custom-background-100 p-5">
                   <div className="sm:flex sm:items-start">
                     <div className="flex w-full flex-col gap-y-4 text-center sm:text-left">
                       <Dialog.Title
@@ -93,24 +91,22 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                       >
                         <span>Keyboard Shortcuts</span>
                         <span>
-                          <button type="button" onClick={() => setIsOpen(false)}>
-                            <XMarkIcon
-                              className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100"
-                              aria-hidden="true"
-                            />
+                          <button type="button" onClick={onClose}>
+                            <X className="h-6 w-6 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                           </button>
                         </span>
                       </Dialog.Title>
                       <div>
                         <div className="flex w-full items-center justify-start gap-1 rounded border-[0.6px] border-custom-border-200 bg-custom-background-90 px-3 py-2">
-                          <MagnifyingGlassIcon className="h-3.5 w-3.5 text-custom-text-200" />
+                          <Search className="h-3.5 w-3.5 text-custom-text-200" />
                           <Input
-                            className="w-full  border-none bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
                             id="search"
                             name="search"
                             type="text"
-                            placeholder="Search for shortcuts"
+                            value={query}
                             onChange={(e) => setQuery(e.target.value)}
+                            placeholder="Search for shortcuts"
+                            className="w-full border-none bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -121,19 +117,17 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                               <div key={shortcut.keys} className="flex w-full flex-col">
                                 <div className="flex flex-col gap-y-3">
                                   <div className="flex items-center justify-between">
-                                    <p className="text-sm text-custom-text-200">
-                                      {shortcut.description}
-                                    </p>
+                                    <p className="text-sm text-custom-text-200">{shortcut.description}</p>
                                     <div className="flex items-center gap-x-2.5">
                                       {shortcut.keys.split(",").map((key, index) => (
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
                                             <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5">
-                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
-                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </kbd>
                                           ) : (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">
@@ -172,11 +166,11 @@ export const ShortcutsModal: React.FC<Props> = ({ isOpen, setIsOpen }) => {
                                         <span key={index} className="flex items-center gap-1">
                                           {key === "Ctrl" ? (
                                             <span className="flex h-full items-center rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-custom-text-200">
-                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </span>
                                           ) : key === "Ctrl" ? (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 p-1.5 text-sm font-medium text-custom-text-200">
-                                              <CommandIcon className="h-4 w-4 fill-current text-custom-text-200" />
+                                              <Command className="h-4 w-4 text-custom-text-200" />
                                             </kbd>
                                           ) : (
                                             <kbd className="rounded-sm border border-custom-border-200 bg-custom-background-90 px-2 py-1 text-sm font-medium text-custom-text-200">

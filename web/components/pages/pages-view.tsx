@@ -1,25 +1,20 @@
 import { useState } from "react";
-
-import useSWR, { mutate } from "swr";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
+import useSWR, { mutate } from "swr";
+import { Plus } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import pagesService from "services/pages.service";
-import projectService from "services/project.service";
+import { PageService } from "services/page.service";
+import { ProjectMemberService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 // components
-import {
-  CreateUpdatePageModal,
-  DeletePageModal,
-  SinglePageDetailedItem,
-  SinglePageListItem,
-} from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal, SinglePageDetailedItem, SinglePageListItem } from "components/pages";
+import { EmptyState } from "components/common";
 // ui
-import { EmptyState, Loader } from "components/ui";
-// icons
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { Loader } from "@plane/ui";
 // images
 import emptyPage from "public/empty-state/page.svg";
 // types
@@ -37,24 +32,30 @@ type Props = {
   viewType: TPageViewProps;
 };
 
-export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
+// services
+const pageService = new PageService();
+const projectMemberService = new ProjectMemberService();
+
+export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
+  // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [selectedPageToUpdate, setSelectedPageToUpdate] = useState<IPage | null>(null);
-
   const [deletePageModal, setDeletePageModal] = useState(false);
   const [selectedPageToDelete, setSelectedPageToDelete] = useState<IPage | null>(null);
 
+  const { user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const user = userStore.currentUser ?? undefined;
+
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { user } = useUserAuth();
 
   const { setToastAlert } = useToast();
 
   const { data: people } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -91,13 +92,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
         }),
       false
     );
-    mutate<IPage[]>(
-      FAVORITE_PAGES_LIST(projectId.toString()),
-      (prevData) => [page, ...(prevData ?? [])],
-      false
-    );
+    mutate<IPage[]>(FAVORITE_PAGES_LIST(projectId.toString()), (prevData) => [page, ...(prevData ?? [])], false);
 
-    pagesService
+    pageService
       .addPageToFavorites(workspaceSlug.toString(), projectId.toString(), {
         page: page.id,
       })
@@ -147,7 +144,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
+    pageService
       .removePageFromFavorites(workspaceSlug.toString(), projectId.toString(), page.id)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId.toString()));
@@ -167,7 +164,7 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
   };
 
   const partialUpdatePage = (page: IPage, formData: Partial<IPage>) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !user) return;
 
     mutate<IPage[]>(
       ALL_PAGES_LIST(projectId.toString()),
@@ -185,27 +182,32 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       false
     );
 
-    pagesService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user)
-      .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId.toString()));
-      });
+    pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData).then(() => {
+      mutate(RECENT_PAGES_LIST(projectId.toString()));
+    });
   };
 
   return (
     <>
-      <CreateUpdatePageModal
-        isOpen={createUpdatePageModal}
-        handleClose={() => setCreateUpdatePageModal(false)}
-        data={selectedPageToUpdate}
-        user={user}
-      />
-      <DeletePageModal
-        isOpen={deletePageModal}
-        setIsOpen={setDeletePageModal}
-        data={selectedPageToDelete}
-        user={user}
-      />
+      {workspaceSlug && projectId && (
+        <>
+          <CreateUpdatePageModal
+            isOpen={createUpdatePageModal}
+            handleClose={() => setCreateUpdatePageModal(false)}
+            data={selectedPageToUpdate}
+            user={user}
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+          />
+          <DeletePageModal
+            isOpen={deletePageModal}
+            setIsOpen={setDeletePageModal}
+            data={selectedPageToDelete}
+            user={user}
+          />
+        </>
+      )}
+
       {pages ? (
         <div className="space-y-4 h-full overflow-y-auto">
           {pages.length > 0 ? (
@@ -261,14 +263,9 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
               description="You can think of Pages as an AI-powered notepad."
               image={emptyPage}
               primaryButton={{
-                icon: <PlusIcon className="h-4 w-4" />,
+                icon: <Plus className="h-4 w-4" />,
                 text: "New Page",
-                onClick: () => {
-                  const e = new KeyboardEvent("keydown", {
-                    key: "d",
-                  });
-                  document.dispatchEvent(e);
-                },
+                onClick: () => commandPaletteStore.toggleCreatePageModal(true),
               }}
             />
           )}
@@ -293,4 +290,4 @@ export const PagesView: React.FC<Props> = ({ pages, viewType }) => {
       )}
     </>
   );
-};
+});
