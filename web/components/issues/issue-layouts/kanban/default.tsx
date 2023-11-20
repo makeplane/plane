@@ -7,13 +7,23 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from "components/issues";
 // types
-import { IIssueDisplayProperties, IIssue, IState } from "types";
+import {
+  IIssueDisplayProperties,
+  IIssue,
+  IState,
+  IIssueResponse,
+  IGroupedIssues,
+  ISubGroupedIssues,
+  TUnGroupedIssues,
+} from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { EIssueActions } from "../types";
 
 export interface IGroupByKanBan {
-  issues: any;
+  issues: IIssueResponse;
+  issueIds: any;
   sub_group_by: string | null;
   group_by: string | null;
   order_by: string | null;
@@ -22,15 +32,10 @@ export interface IGroupByKanBan {
   listKey: string;
   states: IState[] | null;
   isDragDisabled: boolean;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   showEmptyGroup: boolean;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   enableQuickIssueCreate?: boolean;
@@ -40,6 +45,7 @@ export interface IGroupByKanBan {
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const {
     issues,
+    issueIds,
     sub_group_by,
     group_by,
     order_by,
@@ -88,7 +94,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   column_value={_list}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
-                  issues_count={issues?.[getValueFromObject(_list, listKey) as string]?.length || 0}
+                  issues_count={issueIds?.[getValueFromObject(_list, listKey) as string]?.length || 0}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
                 />
@@ -116,7 +122,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                       <KanbanIssueBlocksList
                         sub_group_id={sub_group_id}
                         columnId={getValueFromObject(_list, listKey) as string}
-                        issues={issues[getValueFromObject(_list, listKey) as string]}
+                        issues={issues}
+                        issueIds={issueIds?.[getValueFromObject(_list, listKey) as string] || []}
                         isDragDisabled={isDragDisabled}
                         showEmptyGroup={showEmptyGroup}
                         handleIssues={handleIssues}
@@ -167,19 +174,15 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 });
 
 export interface IKanBan {
-  issues: any;
+  issues: IIssueResponse;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
   sub_group_by: string | null;
   group_by: string | null;
   order_by: string | null;
   sub_group_id?: string;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
@@ -196,6 +199,7 @@ export interface IKanBan {
 export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
     issues,
+    issueIds,
     sub_group_by,
     group_by,
     order_by,
@@ -223,6 +227,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "project" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
@@ -245,6 +250,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "state" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
@@ -267,6 +273,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "state_detail.group" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
@@ -289,6 +296,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "priority" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
@@ -311,6 +319,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "labels" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
@@ -333,6 +342,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "assignees" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
@@ -355,6 +365,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "created_by" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}

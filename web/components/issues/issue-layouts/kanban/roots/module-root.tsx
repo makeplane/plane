@@ -13,6 +13,7 @@ import { Spinner } from "@plane/ui";
 import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
+import { EIssueActions } from "../../types";
 
 export interface IModuleKanBanLayout {}
 
@@ -71,7 +72,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   };
 
   const handleIssues = useCallback(
-    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
+    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => {
       if (!workspaceSlug || !moduleId) return;
 
       if (action === "update") {
@@ -115,7 +116,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
           <DragDropContext onDragEnd={onDragEnd}>
             {currentKanBanView === "default" ? (
               <KanBan
-                issues={issues}
+                issues={{}}
+                issueIds={[]}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
                 order_by={order_by}
@@ -123,9 +125,9 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
                 quickActions={(sub_group_by, group_by, issue) => (
                   <ModuleIssueQuickActions
                     issue={issue}
-                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
-                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-                    handleRemoveFromView={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
+                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
+                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)}
+                    handleRemoveFromView={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)}
                   />
                 )}
                 displayProperties={displayProperties}
@@ -142,7 +144,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
               />
             ) : (
               <KanBanSwimLanes
-                issues={issues}
+                issues={{}}
+                issueIds={[]}
                 sub_group_by={sub_group_by}
                 group_by={group_by}
                 order_by={order_by}
@@ -150,9 +153,9 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
                 quickActions={(sub_group_by, group_by, issue) => (
                   <ModuleIssueQuickActions
                     issue={issue}
-                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, "delete")}
-                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, "update")}
-                    handleRemoveFromView={async () => handleIssues(sub_group_by, group_by, issue, "remove")}
+                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
+                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)}
+                    handleRemoveFromView={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)}
                   />
                 )}
                 displayProperties={displayProperties}

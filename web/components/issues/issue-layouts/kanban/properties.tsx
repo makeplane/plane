@@ -17,7 +17,7 @@ export interface IKanBanProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   showEmptyGroup: boolean;
 }
 
