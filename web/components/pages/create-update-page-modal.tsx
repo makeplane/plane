@@ -12,6 +12,7 @@ import { PageForm } from "./page-form";
 import { IUser, IPage } from "types";
 // fetch-keys
 import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -60,14 +61,19 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           false
         );
         onClose();
-
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page created successfully.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            ...res,
+            caase: "SUCCES"
+          }
+        )
       })
       .catch(() => {
         setToastAlert({
@@ -75,6 +81,12 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            case: "FAILED"
+          }
+        )
       });
   };
 
@@ -120,6 +132,13 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Page updated successfully.",
         });
+          trackEvent(
+            'PAGE_UPDATE',
+            {
+              ...res,
+              case: "SUCCESS"
+            }
+          )
       })
       .catch(() => {
         setToastAlert({
@@ -127,6 +146,12 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be updated. Please try again.",
         });
+        trackEvent(
+          'PAGE_UPDATE',
+          {
+            case: "FAILED"
+          }
+        )
       });
   };
 
