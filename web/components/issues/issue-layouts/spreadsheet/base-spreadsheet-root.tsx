@@ -19,9 +19,9 @@ export const BaseSpreadsheetRoot = (props: IBaseSpreadsheetRoot) => {
 
   const {
     issueDetail: issueDetailStore,
-    project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectLabel: { projectLabels },
     user: userStore,
   } = useMobxStore();
 
@@ -31,6 +31,18 @@ export const BaseSpreadsheetRoot = (props: IBaseSpreadsheetRoot) => {
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
 
   const issues = issueIds?.map((id) => issuesResponse?.[id]);
+
+  const handleIssueAction = async (issue: IIssue, action: "copy" | "delete" | "edit") => {
+    if (!workspaceSlug || !projectId || !user) return;
+
+    if (action === "delete") {
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
+      // issueStore.removeIssueFromStructure(null, null, issue);
+    } else if (action === "edit") {
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue);
+      // issueStore.updateIssueStructure(null, null, issue);
+    }
+  };
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -68,9 +80,9 @@ export const BaseSpreadsheetRoot = (props: IBaseSpreadsheetRoot) => {
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
       members={projectMembers?.map((m) => m.member)}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
+      labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
-      handleIssueAction={() => {}}
+      handleIssueAction={handleIssueAction}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
       enableQuickCreateIssue

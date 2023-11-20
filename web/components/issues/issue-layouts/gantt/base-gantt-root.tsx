@@ -16,6 +16,7 @@ import {
 import { IIssueUnGroupedStructure } from "store/issue";
 import { IIssue, TUnGroupedIssues } from "types";
 import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
+import { EUserWorkspaceRoles } from "layouts/settings-layout/workspace/sidebar";
 
 interface IBaseGanttRoot {
   issueFiltersStore: IProjectIssuesFilterStore;
@@ -45,7 +46,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     issueStore.updateGanttIssueStructure(workspaceSlug.toString(), block, payload);
   };
 
-  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+  const isAllowed = (projectDetails?.member_role || 0) >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
