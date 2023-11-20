@@ -29,7 +29,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
           theme: "outline",
           size: "large",
           logo_alignment: "center",
-          width: 360,
+          width: 384,
           text: "signin_with",
         } as GsiButtonConfiguration // customization attributes
       );
