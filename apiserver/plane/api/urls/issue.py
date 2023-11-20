@@ -21,22 +21,22 @@ urlpatterns = [
         name="issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/",
         LabelAPIEndpoint.as_view(),
         name="labels",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/<uuid:pk>/",
         LabelAPIEndpoint.as_view(),
         name="labels",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/",
         IssueLinkAPIEndpoint.as_view(),
         name="issue-links",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/<uuid:pk>/",
         IssueLinkAPIEndpoint.as_view(),
         name="issue-links",
     ),
@@ -46,12 +46,12 @@ urlpatterns = [
         name="project-issue-comment",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/",
         IssueAttachmentAPIEndpoint.as_view(),
         name="project-issue-attachments",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/attachments/<uuid:pk>/",
         IssueAttachmentAPIEndpoint.as_view(),
         name="project-issue-attachments",
     ),
