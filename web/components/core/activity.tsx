@@ -84,7 +84,7 @@ const LabelPill = ({ labelId }: { labelId: string }) => {
 
   return (
     <span
-      className="h-1.5 w-1.5 rounded-full"
+      className="h-1.5 w-1.5 rounded-full flex-shrink-0"
       style={{
         backgroundColor: labels?.find((l) => l.id === labelId)?.color ?? "#000000",
       }}
@@ -266,12 +266,12 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            added this issue to the cycle{" "}
+            <span className="flex-shrink-0">added this issue to the cycle</span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -281,12 +281,12 @@ const activityDetails: {
       else if (activity.verb === "updated")
         return (
           <>
-            set the cycle to{" "}
+            <span className="flex-shrink-0">set the cycle to </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -301,7 +301,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -370,15 +370,15 @@ const activityDetails: {
         return (
           <>
             added a new label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} />
-              <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+              <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.new_value}</span>
             </span>
             {showIssue && (
-              <>
+              <span>
                 {" "}
                 to <IssueLink activity={activity} />
-              </>
+              </span>
             )}
           </>
         );
@@ -386,15 +386,15 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} />
-              <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+              <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.old_value}</span>
             </span>
             {showIssue && (
-              <>
+              <span>
                 {" "}
                 from <IssueLink activity={activity} />
-              </>
+              </span>
             )}
           </>
         );
@@ -482,7 +482,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -497,7 +497,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -512,7 +512,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -525,7 +525,7 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        set the name to {activity.new_value}
+        <span className="truncate">set the name to {activity.new_value}</span>
         {showIssue && (
           <>
             {" "}

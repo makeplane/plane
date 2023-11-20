@@ -55,7 +55,7 @@ export interface ICreateProjectForm {
   description: string;
   emoji_and_icon: string;
   network: number;
-  project_lead_member: IWorkspaceMember;
+  project_lead_member: string;
   project_lead: string;
   cover_image: string;
   icon_prop: any;
@@ -126,7 +126,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
     else payload.emoji = formData.emoji_and_icon;
 
-    payload.project_lead = formData.project_lead_member?.member.id;
+    payload.project_lead = formData.project_lead_member;
 
     return projectStore
       .createProject(workspaceSlug.toString(), payload)
@@ -380,7 +380,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <WorkspaceMemberSelect
-                              value={value}
+                              value={workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id ===value)[0]}
                               onChange={onChange}
                               options={workspaceMembers || []}
                               placeholder="Select Lead"
