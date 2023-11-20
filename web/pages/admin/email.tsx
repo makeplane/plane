@@ -10,9 +10,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceMailForm } from "components/instance/mail-form";
+import { InstanceEmailForm } from "components/instance/email-form";
 
-const InstanceAdminMailPage: NextPageWithLayout = observer(() => {
+const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   // store
   const {
     instance: { fetchInstanceConfigurations, formattedConfig },
@@ -23,7 +23,7 @@ const InstanceAdminMailPage: NextPageWithLayout = observer(() => {
   return (
     <div>
       {formattedConfig ? (
-        <InstanceMailForm config={formattedConfig} />
+        <InstanceEmailForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4 m-8">
         <Loader.Item height="50px" />
@@ -37,8 +37,8 @@ const InstanceAdminMailPage: NextPageWithLayout = observer(() => {
   )
 });
 
-InstanceAdminMailPage.getLayout = function getLayout(page: ReactElement) {
-  return <InstanceAdminLayout header={<InstanceAdminHeader title="Mail" />}>{page}</InstanceAdminLayout>;
+InstanceAdminEmailPage.getLayout = function getLayout(page: ReactElement) {
+  return <InstanceAdminLayout header={<InstanceAdminHeader title="Email" />}>{page}</InstanceAdminLayout>;
 };
 
-export default InstanceAdminMailPage;
+export default InstanceAdminEmailPage;

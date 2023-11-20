@@ -36,7 +36,7 @@ const InstanceAdminOpenAIPage: NextPageWithLayout = observer(() => {
 });
 
 InstanceAdminOpenAIPage.getLayout = function getLayout(page: ReactElement) {
-  return <InstanceAdminLayout header={<InstanceAdminHeader title="Open AI" />}>{page}</InstanceAdminLayout>;
+  return <InstanceAdminLayout header={<InstanceAdminHeader title="OpenAI" />}>{page}</InstanceAdminLayout>;
 };
 
 export default InstanceAdminOpenAIPage;

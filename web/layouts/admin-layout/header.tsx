@@ -21,6 +21,11 @@ export const InstanceAdminHeader: FC<IInstanceAdminHeader> = observer((props) =>
             <Breadcrumbs.BreadcrumbItem
               type="text"
               icon={<Settings className="h-4 w-4 text-custom-text-300" />}
+              label="Settings"
+              link="/admin"
+            />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
               label={title}
             />
           </Breadcrumbs>

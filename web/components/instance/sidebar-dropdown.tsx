@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { LogIn, LogOut, Settings, Shield, UserCircle2 } from "lucide-react";
+import { Cog, LogIn, LogOut, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -63,26 +63,26 @@ export const InstanceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex items-center gap-x-1 gap-y-2 px-3 py-4">
+    <div className="flex items-center gap-x-3 gap-y-2 px-4 py-4">
       <div className="w-full h-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-1 rounded p-1 truncate ${
+          className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <div className={`flex-shrink-0 `}>
-            <Shield className="h-6 w-6 text-custom-text-200" />
+          <div className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}>
+            <Cog className="h-5 w-5 text-custom-text-200" />
           </div>
 
           {!sidebarCollapsed && (
-            <h4 className="text-custom-text-100 font-medium text-base truncate">Instance Admin Settings</h4>
+            <h4 className="text-custom-text-200 font-medium text-base truncate">Instance Admin</h4>
           )}
         </div>
       </div>
 
       {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="flex gap-2 place-items-center outline-none">
+          <Menu.Button className="flex gap-4 place-items-center outline-none">
             {!sidebarCollapsed && (
               <Tooltip position="bottom-left" tooltipContent="Go back to your workspace">
                 <div className="flex-shrink-0">

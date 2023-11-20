@@ -65,6 +65,13 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
     <div>
       {formattedConfig ? (
         <div className="flex flex-col gap-8 m-8 w-4/5">
+          <div className="pb-2 mb-2 border-b border-custom-border-100">
+            <div className="text-custom-text-100 font-medium text-lg">Authorization</div>
+            <div className="text-custom-text-300 font-normal text-sm">
+              Make your teams life easy by letting them sign-up with their Google and GitHub accounts, and below are the
+              settings.
+            </div>
+          </div>
           <div className="flex items-center gap-8 pb-4 border-b border-custom-border-100">
             <div>
               <div className="text-custom-text-100 font-medium text-sm">Enable sign-up</div>

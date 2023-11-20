@@ -55,6 +55,12 @@ export const InstanceOpenAIForm: FC<IInstanceOpenAIForm> = (props) => {
 
   return (
     <div className="flex flex-col gap-8 m-8 w-4/5">
+      <div className="pb-2 mb-2 border-b border-custom-border-100">
+        <div className="text-custom-text-100 font-medium text-lg">OpenAI</div>
+        <div className="text-custom-text-300 font-normal text-sm">
+          AI is everywhere make use it as much as you can! <a href="#" className="text-custom-primary-100">Learn more.</a>
+        </div>
+      </div>
       <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">OpenAI API Base</h4>

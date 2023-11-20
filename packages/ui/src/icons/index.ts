@@ -25,4 +25,3 @@ export * from "./transfer-icon";
 export * from "./running-icon";
 export * from "./calendar-before-icon";
 export * from "./calendar-after-icon";
-export * from "./openai-icon";
