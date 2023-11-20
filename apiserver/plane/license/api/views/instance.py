@@ -11,7 +11,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.api.views import BaseAPIView
+from plane.app.views import BaseAPIView
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 from plane.license.api.serializers import (
     InstanceSerializer,

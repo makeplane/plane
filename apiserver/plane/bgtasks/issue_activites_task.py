@@ -21,14 +21,11 @@ from plane.db.models import (
     State,
     Cycle,
     Module,
-    IssueSubscriber,
-    Notification,
-    IssueAssignee,
     IssueReaction,
     CommentReaction,
     IssueComment,
 )
-from plane.api.serializers import IssueActivitySerializer
+from plane.app.serializers import IssueActivitySerializer
 from plane.bgtasks.notification_task import notifications
 
 
