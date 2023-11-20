@@ -61,7 +61,7 @@ class Command(BaseCommand):
             }
 
             response = requests.post(
-                f"{license_engine_base_url}/api/instances",
+                f"{license_engine_base_url}/api/instances/",
                 headers=headers,
                 data=json.dumps(payload),
             )
