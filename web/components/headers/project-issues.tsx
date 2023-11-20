@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Circle, ExternalLink, Plus } from "lucide-react";
+import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -23,7 +23,15 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore, project: projectStore, inbox: inboxStore } = useMobxStore();
+  const {
+    issueFilter: issueFilterStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
+    inbox: inboxStore,
+    commandPalette: commandPaletteStore,
+  } = useMobxStore();
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
 
@@ -85,7 +93,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     },
     [issueFilterStore, projectId, workspaceSlug]
   );
-  const { currentProjectDetails } = projectStore;
 
   const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
 
@@ -98,7 +105,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="relative flex w-full flex-shrink-0 flex-row z-10 items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
           <div className="block md:hidden">
             <button
@@ -114,17 +121,23 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
+                  currentProjectDetails ? (
+                    currentProjectDetails?.emoji ? (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                        {renderEmoji(currentProjectDetails.emoji)}
+                      </span>
+                    ) : currentProjectDetails?.icon_prop ? (
+                      <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                        {renderEmoji(currentProjectDetails.icon_prop)}
+                      </div>
+                    ) : (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        {currentProjectDetails?.name.charAt(0)}
+                      </span>
+                    )
                   ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      <Briefcase className="h-4 w-4" />
                     </span>
                   )
                 }
@@ -165,9 +178,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
-              members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-              states={projectStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
+              members={projectMembers?.map((m) => m.member)}
+              states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
@@ -198,16 +211,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button
-            onClick={() => {
-              const e = new KeyboardEvent("keydown", {
-                key: "c",
-              });
-              document.dispatchEvent(e);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
+          <Button onClick={() => commandPaletteStore.toggleCreateIssueModal(true)} size="sm" prependIcon={<Plus />}>
             Add Issue
           </Button>
         </div>

@@ -87,7 +87,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.addCycleToFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -100,7 +100,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     if (!workspaceSlug || !projectId) return;
 
-    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle.id).catch(() => {
+    cycleStore.removeCycleFromFavorites(workspaceSlug?.toString(), projectId.toString(), cycle).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -155,9 +155,11 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               <span className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {isCompleted ? (
-                    <span className="text-sm text-custom-primary-100">{`!`}</span>
-                  ) : progress === 100 ? (
-                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    progress === 100 ? (
+                      <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    ) : (
+                      <span className="text-sm text-custom-primary-100">{`!`}</span>
+                    )
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
@@ -229,7 +231,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </button>
             )}
 
-            <CustomMenu width="auto" ellipsis className="z-10">
+            <CustomMenu width="auto" ellipsis>
               {!isCompleted && (
                 <>
                   <CustomMenu.MenuItem onClick={handleEditCycle}>
@@ -241,7 +243,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                     <span className="flex items-center justify-start gap-2">
                       <Trash2 className="h-3 w-3" />
-                      <span>Delete module</span>
+                      <span>Delete cycle</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </>

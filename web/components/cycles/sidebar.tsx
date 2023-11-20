@@ -52,9 +52,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
 
-  const { user: userStore, cycle: cycleDetailsStore } = useMobxStore();
+  const { cycle: cycleDetailsStore } = useMobxStore();
 
-  const user = userStore.currentUser ?? undefined;
   const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
 
   const { setToastAlert } = useToast();
@@ -74,7 +73,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     mutate<ICycle>(CYCLE_DETAILS(cycleId as string), (prevData) => ({ ...(prevData as ICycle), ...data }), false);
 
     cycleService
-      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
+      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
       .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
       .catch((e) => console.log(e));
   };
@@ -317,11 +316,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <LinkIcon className="h-3 w-3 text-custom-text-300" />
               </button>
               {!isCompleted && (
-                <CustomMenu width="lg" ellipsis>
+                <CustomMenu width="lg" placement="bottom-end" ellipsis>
                   <CustomMenu.MenuItem onClick={() => setCycleDeleteModal(true)}>
                     <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete</span>
+                      <Trash2 className="h-3 w-3" />
+                      <span>Delete cycle</span>
                     </span>
                   </CustomMenu.MenuItem>
                 </CustomMenu>
@@ -502,7 +501,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                               </div>
                               <div className="relative h-40 w-80">
                                 <ProgressChart
-                                  distribution={cycleDetails.distribution.completion_chart}
+                                  distribution={cycleDetails.distribution?.completion_chart ?? {}}
                                   startDate={cycleDetails.start_date ?? ""}
                                   endDate={cycleDetails.end_date ?? ""}
                                   totalIssues={cycleDetails.total_issues}
@@ -512,7 +511,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ) : (
                             ""
                           )}
-                          {cycleDetails.total_issues > 0 && (
+                          {cycleDetails.total_issues > 0 && cycleDetails.distribution && (
                             <div className="h-full w-full pt-5 border-t border-custom-border-200">
                               <SidebarProgressStats
                                 distribution={cycleDetails.distribution}

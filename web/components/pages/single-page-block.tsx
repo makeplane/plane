@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { mutate } from "swr";
 import { useForm } from "react-hook-form";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 // services
 import { PageService } from "services/page.service";
 import { IssueService } from "services/issue/issue.service";
@@ -64,7 +64,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     },
   });
 
-  const editorSuggestion = useEditorSuggestions(workspaceSlug as string | undefined, projectId as string | undefined)
+  const editorSuggestion = useEditorSuggestions();
 
   const updatePageBlock = async (formData: Partial<IPageBlock>) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -85,33 +85,20 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     );
 
     await pageService
-      .patchPageBlock(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        block.id,
-        {
-          name: formData.name,
-          description: formData.description,
-          description_html: formData.description_html,
-        },
-        user
-      )
+      .patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, {
+        name: formData.name,
+        description: formData.description,
+        description_html: formData.description_html,
+      })
       .then((res) => {
         mutate(PAGE_BLOCKS_LIST(pageId as string));
         if (block.issue && block.sync)
           issueService
-            .patchIssue(
-              workspaceSlug as string,
-              projectId as string,
-              block.issue,
-              {
-                name: res.name,
-                description: res.description,
-                description_html: res.description_html,
-              },
-              user
-            )
+            .patchIssue(workspaceSlug as string, projectId as string, block.issue, {
+              name: res.name,
+              description: res.description,
+              description_html: res.description_html,
+            })
             .finally(() => setIsSyncing(false));
       });
   };
@@ -120,7 +107,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     if (!workspaceSlug || !projectId || !pageId) return;
 
     await pageService
-      .convertPageBlockToIssue(workspaceSlug as string, projectId as string, pageId as string, block.id, user)
+      .convertPageBlockToIssue(workspaceSlug as string, projectId as string, pageId as string, block.id)
       .then((res: IIssue) => {
         mutate<IPageBlock[]>(
           PAGE_BLOCKS_LIST(pageId as string),
@@ -158,7 +145,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     );
 
     await pageService
-      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, user)
+      .deletePageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id)
       .catch(() => {
         setToastAlert({
           type: "error",
@@ -174,15 +161,10 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: block.name,
-          task: "Generate a proper description for this issue.",
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: block.name,
+        task: "Generate a proper description for this issue.",
+      })
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -246,16 +228,9 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
       false
     );
 
-    pageService.patchPageBlock(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string,
-      block.id,
-      {
-        sync: !block.sync,
-      },
-      user
-    );
+    pageService.patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, block.id, {
+      sync: !block.sync,
+    });
   };
 
   const handleCopyText = () => {
@@ -420,6 +395,7 @@ export const SinglePageBlock: React.FC<Props> = ({ block, projectDetails, showBl
                   {showBlockDetails
                     ? block.description_html.length > 7 && (
                         <RichTextEditor
+                          cancelUploadImage={fileService.cancelUpload}
                           uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                           deleteFile={fileService.deleteImage}
                           value={block.description_html}

@@ -4,7 +4,7 @@ import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { ProjectInvitationService } from "services/project";
+import { ProjectMemberService } from "services/project";
 // hooks
 import useUser from "hooks/use-user";
 // components
@@ -15,7 +15,7 @@ import { Button, Loader } from "@plane/ui";
 import { Search } from "lucide-react";
 
 // services
-const projectInvitationService = new ProjectInvitationService();
+const projectInvitationService = new ProjectMemberService();
 
 export const ProjectMemberList: React.FC = observer(() => {
   // router
@@ -23,7 +23,9 @@ export const ProjectMemberList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    projectMember: { projectMembers, fetchProjectMembers },
+  } = useMobxStore();
 
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -39,7 +41,6 @@ export const ProjectMemberList: React.FC = observer(() => {
   );
 
   // derived values
-  const projectMembers = projectStore.projectMembers;
 
   const members = [
     ...(projectMembers?.map((item) => ({
@@ -83,11 +84,11 @@ export const ProjectMemberList: React.FC = observer(() => {
         user={user}
         onSuccess={() => {
           mutate(`PROJECT_INVITATIONS_${projectId?.toString()}`);
-          projectStore.fetchProjectMembers(workspaceSlug?.toString()!, projectId?.toString()!);
+          fetchProjectMembers(workspaceSlug?.toString()!, projectId?.toString()!);
         }}
       />
 
-      <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
+      <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-100">
         <h4 className="text-xl font-medium">Members</h4>
         <div className="flex gap-1 items-center justify-start ml-auto text-custom-text-400 rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
           <Search className="h-3.5 w-3.5" />
@@ -111,7 +112,7 @@ export const ProjectMemberList: React.FC = observer(() => {
           <Loader.Item height="40px" />
         </Loader>
       ) : (
-        <div className="divide-y divide-custom-border-200">
+        <div className="divide-y divide-custom-border-100">
           {members.length > 0
             ? searchedMembers.map((member) => <ProjectMemberListItem key={member.id} member={member} />)
             : null}

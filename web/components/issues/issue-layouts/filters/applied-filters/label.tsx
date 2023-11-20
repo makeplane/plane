@@ -3,11 +3,11 @@ import { observer } from "mobx-react-lite";
 // icons
 import { X } from "lucide-react";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type Props = {
   handleRemove: (val: string) => void;
-  labels: IIssueLabels[] | undefined;
+  labels: IIssueLabel[] | undefined;
   values: string[];
 };
 
@@ -15,7 +15,7 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
   const { handleRemove, labels, values } = props;
 
   return (
-    <div className="flex items-center gap-1 flex-wrap">
+    <>
       {values.map((labelId) => {
         const labelDetails = labels?.find((l) => l.id === labelId);
 
@@ -40,6 +40,6 @@ export const AppliedLabelsFilters: React.FC<Props> = observer((props) => {
           </div>
         );
       })}
-    </div>
+    </>
   );
 });

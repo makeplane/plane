@@ -122,7 +122,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
 
   const { setToastAlert } = useToast();
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug as string | undefined, projectId)
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     formState: { errors, isSubmitting },
@@ -231,15 +231,10 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: issueName,
-          task: "Generate a proper description for this issue.",
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: issueName,
+        task: "Generate a proper description for this issue.",
+      })
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -425,6 +420,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                     control={control}
                     render={({ field: { value, onChange } }) => (
                       <RichTextEditorWithRef
+                        cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
                         ref={editorRef}
@@ -599,11 +595,12 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="neutral-primary" onClick={handleDiscard}>
+            <Button variant="neutral-primary" size="sm" onClick={handleDiscard}>
               Discard
             </Button>
             <Button
               variant="neutral-primary"
+              size="sm"
               loading={isSubmitting}
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data?.id ? "updateDraft" : "createDraft")
@@ -614,6 +611,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
             <Button
               loading={isSubmitting}
               variant="primary"
+              size="sm"
               onClick={handleSubmit((formData) =>
                 handleCreateUpdateIssue(formData, data ? "convertToNewIssue" : "createNewIssue")
               )}

@@ -1,8 +1,7 @@
 import { Fragment, useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-import { Tab } from "@headlessui/react";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+import { Tab } from "@headlessui/react";
 import { Plus } from "lucide-react";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -23,6 +22,7 @@ import { NextPageWithLayout } from "types/app";
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
+// TODO: use-local-storage  hook instead of lib file.
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
@@ -31,16 +31,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const { projectCycles } = cycleStore
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, peekCycle } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    peekCycle: string;
-  };
-  // fetching project details
-  useSWR(
-    workspaceSlug && projectId ? `PROJECT_DETAILS_${projectId}` : null,
-    workspaceSlug && projectId ? () => projectStore.fetchProjectDetails(workspaceSlug, projectId) : null
-  );
+  const { workspaceSlug, projectId, peekCycle } = router.query;
 
   const handleCurrentLayout = useCallback(
     (_layout: TCycleLayout) => {
@@ -84,11 +75,13 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const cycleLayout = cycleStore?.cycleLayout;
   const totalCycles = projectCycles?.length ?? 0
 
+  if (!workspaceSlug || !projectId) return null;
+
   return (
     <>
       <CycleCreateUpdateModal
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId.toString()}
         isOpen={createModal}
         handleClose={() => setCreateModal(false)}
       />
@@ -164,29 +157,29 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
           <Tab.Panels as={Fragment}>
             <Tab.Panel as="div" className="h-full overflow-y-auto">
-              {cycleView && cycleLayout && workspaceSlug && projectId && (
+              {cycleView && cycleLayout && (
                 <CyclesView
                   filter={"all"}
                   layout={cycleLayout as TCycleLayout}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  peekCycle={peekCycle}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
                 />
               )}
             </Tab.Panel>
 
             <Tab.Panel as="div" className="p-4 sm:p-5 space-y-5 h-full overflow-y-auto">
-              <ActiveCycleDetails workspaceSlug={workspaceSlug} projectId={projectId} />
+              <ActiveCycleDetails workspaceSlug={workspaceSlug.toString()} projectId={projectId.toString()} />
             </Tab.Panel>
 
             <Tab.Panel as="div" className="h-full overflow-y-auto">
-              {cycleView && cycleLayout && workspaceSlug && projectId && (
+              {cycleView && cycleLayout && (
                 <CyclesView
                   filter={"upcoming"}
                   layout={cycleLayout as TCycleLayout}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  peekCycle={peekCycle}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
                 />
               )}
             </Tab.Panel>
@@ -196,9 +189,9 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <CyclesView
                   filter={"completed"}
                   layout={cycleLayout as TCycleLayout}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  peekCycle={peekCycle}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
                 />
               )}
             </Tab.Panel>
@@ -208,9 +201,9 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
                 <CyclesView
                   filter={"draft"}
                   layout={cycleLayout as TCycleLayout}
-                  workspaceSlug={workspaceSlug}
-                  projectId={projectId}
-                  peekCycle={peekCycle}
+                  workspaceSlug={workspaceSlug.toString()}
+                  projectId={projectId.toString()}
+                  peekCycle={peekCycle?.toString()}
                 />
               )}
             </Tab.Panel>

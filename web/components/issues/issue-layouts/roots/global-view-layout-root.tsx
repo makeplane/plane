@@ -27,12 +27,16 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     globalViewFilters: globalViewFiltersStore,
     workspaceFilter: workspaceFilterStore,
     workspace: workspaceStore,
+    workspaceMember: { workspaceMembers },
     issueDetail: issueDetailStore,
+    project: projectStore,
   } = useMobxStore();
 
   const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
 
   const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
   useSWR(
     workspaceSlug && globalViewId && viewDetails ? `GLOBAL_VIEW_ISSUES_${globalViewId.toString()}` : null,
@@ -65,14 +69,14 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
 
   const handleUpdateIssue = useCallback(
     (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug || !globalViewId) return;
+      if (!workspaceSlug) return;
 
       const payload = {
         ...issue,
         ...data,
       };
 
-      globalViewIssuesStore.updateIssueStructure(globalViewId.toString(), payload);
+      globalViewIssuesStore.updateIssueStructure(type ?? globalViewId!.toString(), payload);
       issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
     },
     [globalViewId, globalViewIssuesStore, workspaceSlug, issueDetailStore]
@@ -94,7 +98,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <GlobalViewsAppliedFiltersRoot />
-      {issues?.length === 0 ? (
+      {issues?.length === 0 || !projects || projects?.length === 0 ? (
         <GlobalViewEmptyState />
       ) : (
         <div className="h-full w-full overflow-auto">
@@ -103,7 +107,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
             displayFilters={workspaceFilterStore.workspaceDisplayFilters}
             handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
             issues={issues}
-            members={workspaceStore.workspaceMembers ? workspaceStore.workspaceMembers.map((m) => m.member) : undefined}
+            members={workspaceMembers?.map((m) => m.member)}
             labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
             handleIssueAction={() => {}}
             handleUpdateIssue={handleUpdateIssue}

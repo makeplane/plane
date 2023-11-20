@@ -6,14 +6,7 @@ import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetInlineCreat
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner } from "@plane/ui";
 // types
-import {
-  IIssue,
-  IIssueDisplayFilterOptions,
-  IIssueDisplayProperties,
-  IIssueLabels,
-  IStateResponse,
-  IUserLite,
-} from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -21,8 +14,8 @@ type Props = {
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   issues: IIssue[] | undefined;
   members?: IUserLite[] | undefined;
-  labels?: IIssueLabels[] | undefined;
-  states?: IStateResponse | undefined;
+  labels?: IIssueLabel[] | undefined;
+  states?: IState[] | undefined;
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
@@ -52,8 +45,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     projectId: string;
     issueId: string;
   } | null>(null);
-
-  const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -86,7 +77,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
       <div className="h-full w-full flex flex-col">
         <div
           ref={containerRef}
-          className="flex max-h-full h-full overflow-y-auto divide-x-[0.5px] divide-custom-border-200"
+          className="flex max-h-full h-full overflow-y-auto divide-x-[0.5px] divide-custom-border-200 horizontal-scroll-enable"
         >
           {issues && issues.length > 0 ? (
             <>
@@ -101,7 +92,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     {displayProperties.key && (
                       <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">ID</span>
                     )}
-                    <span className="flex items-center px-4 py-2.5 h-full w-full flex-grow">Issue</span>
+                    <span className="flex items-center justify-center px-4 py-2.5 h-full w-full flex-grow">Issue</span>
                   </div>
 
                   {issues.map((issue, index) => (

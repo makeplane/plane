@@ -1,4 +1,9 @@
-export const renderDateFormat = (date: string | Date | null) => {
+export const addDays = ({ date, days }: { date: Date; days: number }): Date => {
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
+export const renderDateFormat = (date: string | Date | null | undefined, dayFirst: boolean = false) => {
   if (!date) return "N/A";
 
   var d = new Date(date),
@@ -9,7 +14,7 @@ export const renderDateFormat = (date: string | Date | null) => {
   if (month.length < 2) month = "0" + month;
   if (day.length < 2) day = "0" + day;
 
-  return [year, month, day].join("-");
+  return dayFirst ? [day, month, year].join("-") : [year, month, day].join("-");
 };
 
 export const renderShortNumericDateFormat = (date: string | Date) =>
@@ -130,21 +135,49 @@ export const formatDateDistance = (date: string | Date) => {
   }
 };
 
+export const formatLongDateDistance = (date: string | Date) => {
+  const today = new Date();
+  const eventDate = new Date(date);
+  const timeDiff = Math.abs(eventDate.getTime() - today.getTime());
+  const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  if (days < 1) {
+    const hours = Math.ceil(timeDiff / (1000 * 3600));
+    if (hours < 1) {
+      const minutes = Math.ceil(timeDiff / (1000 * 60));
+      if (minutes < 1) {
+        return "Just now";
+      } else {
+        return `${minutes} minutes`;
+      }
+    } else {
+      return `${hours} hours`;
+    }
+  } else if (days < 7) {
+    if (days === 1) return `${days} day`;
+    return `${days} days`;
+  } else if (days < 30) {
+    if (Math.floor(days / 7) === 1) return `${Math.floor(days / 7)} week`;
+    return `${Math.floor(days / 7)} weeks`;
+  } else if (days < 365) {
+    if (Math.floor(days / 30) === 1) return `${Math.floor(days / 30)} month`;
+    return `${Math.floor(days / 30)} months`;
+  } else {
+    if (Math.floor(days / 365) === 1) return `${Math.floor(days / 365)} year`;
+    return `${Math.floor(days / 365)} years`;
+  }
+};
+
 export const getDateRangeStatus = (startDate: string | null | undefined, endDate: string | null | undefined) => {
   if (!startDate || !endDate) return "draft";
 
-  const today = renderDateFormat(new Date());
-  const now = new Date(today);
+  const now = new Date();
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  if (start <= now && end >= now) {
-    return "current";
-  } else if (start > now) {
-    return "upcoming";
-  } else {
-    return "completed";
-  }
+  if (start <= now && end >= now) return "current";
+  else if (start > now) return "upcoming";
+  else return "completed";
 };
 
 export const renderShortDateWithYearFormat = (date: string | Date, placeholder?: string) => {
@@ -373,7 +406,7 @@ export const findTotalDaysInRange = (startDate: Date | string, endDate: Date | s
 
   // find number of days between startDate and endDate
   const diffInTime = endDate.getTime() - startDate.getTime();
-  const diffInDays = diffInTime / (1000 * 3600 * 24);
+  const diffInDays = Math.floor(diffInTime / (1000 * 3600 * 24));
 
   // if inclusive is true, add 1 to diffInDays
   if (inclusive) return diffInDays + 1;

@@ -6,12 +6,12 @@ import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
-import Gapcursor from "@tiptap/extension-gapcursor";
 
-import { CustomTableCell } from "./table/table-cell";
-import { Table } from "./table";
-import { TableHeader } from "./table/table-header";
-import { TableRow } from "@tiptap/extension-table-row";
+import TableHeader from "./table/table-header/table-header";
+import Table from "./table/table";
+import TableCell from "./table/table-cell/table-cell";
+import TableRow from "./table/table-row/table-row";
+import HorizontalRule from "./horizontal-rule";
 
 import ImageExtension from "./image";
 
@@ -20,82 +20,90 @@ import { isValidHttpUrl } from "../../lib/utils";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
 
+import { CustomKeymap } from "./keymap";
+import { CustomCodeBlock } from "./code";
+import { ListKeymap } from "./custom-list-keymap";
 
 export const CoreEditorExtensions = (
-  mentionConfig: { mentionSuggestions: IMentionSuggestion[], mentionHighlights: string[] },
+  mentionConfig: {
+    mentionSuggestions: IMentionSuggestion[];
+    mentionHighlights: string[];
+  },
   deleteFile: DeleteImage,
+  cancelUploadImage?: () => any,
 ) => [
-    StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc list-outside leading-3 -mt-2",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal list-outside leading-3 -mt-2",
-        },
-      },
-      listItem: {
-        HTMLAttributes: {
-          class: "leading-normal -mb-2",
-        },
-      },
-      blockquote: {
-        HTMLAttributes: {
-          class: "border-l-4 border-custom-border-300",
-        },
-      },
-      code: {
-        HTMLAttributes: {
-          class:
-            "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-          spellcheck: "false",
-        },
-      },
-      codeBlock: false,
-      horizontalRule: false,
-      dropcursor: {
-        color: "rgba(var(--color-text-100))",
-        width: 2,
-      },
-      gapcursor: false,
-    }),
-    Gapcursor,
-    TiptapLink.configure({
-      protocols: ["http", "https"],
-      validate: (url) => isValidHttpUrl(url),
+  StarterKit.configure({
+    bulletList: {
       HTMLAttributes: {
-        class:
-          "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+        class: "list-disc list-outside leading-3 -mt-2",
       },
-    }),
-    ImageExtension(deleteFile).configure({
+    },
+    orderedList: {
       HTMLAttributes: {
-        class: "rounded-lg border border-custom-border-300",
+        class: "list-decimal list-outside leading-3 -mt-2",
       },
-    }),
-    TiptapUnderline,
-    TextStyle,
-    Color,
-    TaskList.configure({
+    },
+    listItem: {
       HTMLAttributes: {
-        class: "not-prose pl-2",
+        class: "leading-normal -mb-2",
       },
-    }),
-    TaskItem.configure({
+    },
+    blockquote: {
       HTMLAttributes: {
-        class: "flex items-start my-4",
+        class: "border-l-4 border-custom-border-300",
       },
-      nested: true,
-    }),
-    Markdown.configure({
-      html: true,
-      transformCopiedText: true,
-    }),
-    Table,
-    TableHeader,
-    CustomTableCell,
-    TableRow,
-    Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
-  ];
+    },
+    code: false,
+    codeBlock: false,
+    horizontalRule: false,
+    dropcursor: {
+      color: "rgba(var(--color-text-100))",
+      width: 2,
+    },
+  }),
+  CustomKeymap,
+  ListKeymap,
+  TiptapLink.configure({
+    protocols: ["http", "https"],
+    validate: (url) => isValidHttpUrl(url),
+    HTMLAttributes: {
+      class:
+        "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
+    },
+  }),
+  ImageExtension(deleteFile, cancelUploadImage).configure({
+    HTMLAttributes: {
+      class: "rounded-lg border border-custom-border-300",
+    },
+  }),
+  TiptapUnderline,
+  TextStyle,
+  Color,
+  TaskList.configure({
+    HTMLAttributes: {
+      class: "not-prose pl-2",
+    },
+  }),
+  CustomCodeBlock,
+  TaskItem.configure({
+    HTMLAttributes: {
+      class: "flex items-start my-4",
+    },
+    nested: true,
+  }),
+  Markdown.configure({
+    html: true,
+    transformCopiedText: true,
+    transformPastedText: true,
+  }),
+  HorizontalRule,
+  Table,
+  TableHeader,
+  TableCell,
+  TableRow,
+  Mentions(
+    mentionConfig.mentionSuggestions,
+    mentionConfig.mentionHighlights,
+    false,
+  ),
+];

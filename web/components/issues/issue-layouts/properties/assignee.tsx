@@ -39,27 +39,33 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     multiple = false,
     noLabelBorder = false,
   } = props;
-
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
+  // store
+  const {
+    workspace: workspaceStore,
+    project: projectStore,
+    workspaceMember: { workspaceMembers, fetchWorkspaceMembers },
+  } = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectMembers = projectId ? projectStore?.members?.[projectId] : undefined;
+  // const fetchProjectMembers = () => {
+  //   setIsLoading(true);
+  //   if (workspaceSlug && projectId)
+  //     workspaceSlug &&
+  //       projectId &&
+  //       projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
+  // };
 
-  const fetchProjectMembers = () => {
+  const getWorkspaceMembers = () => {
     setIsLoading(true);
-    if (workspaceSlug && projectId)
-      workspaceSlug &&
-        projectId &&
-        projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
+    if (workspaceSlug) workspaceSlug && fetchWorkspaceMembers(workspaceSlug).then(() => setIsLoading(false));
   };
 
-  const options = (projectMembers ?? [])?.map((member) => ({
+  const options = (workspaceMembers ?? [])?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -73,35 +79,46 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
+  const getTooltipContent = (): string => {
+    if (!value || value.length === 0) return "No Assignee";
+
+    // if multiple assignees
+    if (Array.isArray(value)) {
+      const assignees = workspaceMembers?.filter((m) => value.includes(m.member.id));
+
+      if (!assignees || assignees.length === 0) return "No Assignee";
+
+      // if only one assignee in list
+      if (assignees.length === 1) {
+        return "1 assignee";
+      } else return `${assignees.length} assignees`;
+    }
+
+    // if single assignee
+    const assignee = workspaceMembers?.find((m) => m.member.id === value)?.member;
+
+    if (!assignee) return "No Assignee";
+
+    // if assignee not null & not list
+    return "1 assignee";
+  };
+
   const label = (
-    <Tooltip
-      tooltipHeading="Assignee"
-      tooltipContent={
-        value && value.length > 0
-          ? (projectMembers ? projectMembers : [])
-              ?.filter((m) => value.includes(m.member.display_name))
-              .map((m) => m.member.display_name)
-              .join(", ")
-          : "No Assignee"
-      }
-      position="top"
-    >
+    <Tooltip tooltipHeading="Assignee" tooltipContent={getTooltipContent()} position="top">
       <div className="flex items-center cursor-pointer h-full w-full gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
-              const member = projectMembers?.find((m) => m.member.id === assigneeId)?.member;
-
+              const member = workspaceMembers?.find((m) => m.member.id === assigneeId)?.member;
               if (!member) return null;
-
               return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
             })}
           </AvatarGroup>
         ) : (
           <span
             className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded duration-300 focus:outline-none ${
-              noLabelBorder ? "" : " px-2.5 py-1 border border-custom-border-300"
-            }}`}
+              noLabelBorder ? "" : " px-2.5 py-1 border-[0.5px] border-custom-border-300"
+            }`}
           >
             <User2 className="h-3 w-3" />
           </span>
@@ -134,7 +151,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
-          onClick={() => !projectMembers && fetchProjectMembers()}
+          onClick={() => !workspaceMembers && getWorkspaceMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

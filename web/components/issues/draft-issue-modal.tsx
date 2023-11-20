@@ -226,36 +226,24 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await issueService.addIssueToCycle(
-      workspaceSlug as string,
-      activeProject ?? "",
-      cycleId,
-      {
-        issues: [issueId],
-      },
-      user
-    );
+    await issueService.addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
+      issues: [issueId],
+    });
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await moduleService.addIssuesToModule(
-      workspaceSlug as string,
-      activeProject ?? "",
-      moduleId as string,
-      {
-        issues: [issueId],
-      },
-      user
-    );
+    await moduleService.addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
+      issues: [issueId],
+    });
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
     await issueService
-      .createIssue(workspaceSlug.toString(), activeProject, payload, user)
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
         if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
@@ -317,7 +305,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -331,7 +319,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 p-5 text-left shadow-xl transition-all sm:w-full sm:max-w-2xl">
+                <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                   <DraftIssueForm
                     isOpen={isOpen}
                     handleFormSubmit={handleFormSubmit}

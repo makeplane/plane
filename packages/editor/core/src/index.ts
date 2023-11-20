@@ -1,9 +1,13 @@
 // styles
 // import "./styles/tailwind.css";
 // import "./styles/editor.css";
+import "./styles/github-dark.css";
+
+export { isCellSelection } from "./ui/extensions/table/table/utilities/is-cell-selection";
 
 // utils
 export * from "./lib/utils";
+export * from "./ui/extensions/table/table";
 export { startImageUpload } from "./ui/plugins/upload-image";
 
 // components

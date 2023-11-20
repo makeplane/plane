@@ -49,7 +49,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const editorSuggestions = useEditorSuggestions(workspaceSlug, projectId);
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     formState: { isSubmitting },
@@ -114,6 +114,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
             <div>
               <LiteTextEditorWithRef
                 onEnterKeyPress={handleSubmit(formSubmit)}
+                cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
                 ref={editorRef}

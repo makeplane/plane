@@ -1,8 +1,6 @@
 import { Fragment, useState } from "react";
-
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // hooks
 import { usePopper } from "react-popper";
 // components
@@ -37,14 +35,17 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     disabled,
     hideDropdownArrow = false,
     className,
-    buttonClassName,
-    optionsClassName,
+    buttonClassName = "",
+    optionsClassName = "",
     placement,
     maxRender = 2,
     noLabelBorder = false,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    projectLabel: { fetchProjectLabels, projectLabels },
+  }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -53,26 +54,23 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectLabels = projectId && projectStore?.labels?.[projectId];
-
-  const fetchProjectLabels = () => {
+  const fetchLabels = () => {
     setIsLoading(true);
-    if (workspaceSlug && projectId)
-      projectStore.fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const options = (projectLabels ? projectLabels : []).map((label) => ({
     value: label.id,
     query: label.name,
     content: (
-      <div className="flex items-center justify-start gap-2">
+      <div className="flex items-center justify-start gap-2 overflow-hidden">
         <span
           className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
           style={{
             backgroundColor: label.color,
           }}
         />
-        <span>{label.name}</span>
+        <div className="truncate inline-block line-clamp-1">{label.name}</div>
       </div>
     ),
   }));
@@ -93,31 +91,35 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   });
 
   const label = (
-    <div className="flex items-center gap-2 text-custom-text-200 h-full">
+    <div className="overflow-hidden flex flex-wrap items-center h-5 gap-2 text-custom-text-200 w-full">
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
             {(projectLabels ? projectLabels : [])
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
-                <div
-                  key={label.id}
-                  className="flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
-                >
-                  <div className="flex items-center gap-1.5 text-custom-text-200">
-                    <span
-                      className="h-2 w-2 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor: label?.color ?? "#000000",
-                      }}
-                    />
-                    {label.name}
+                <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
+                  <div
+                    key={label.id}
+                    className={`overflow-hidden flex hover:bg-custom-background-80 ${
+                      !disabled && "cursor-pointer"
+                    } items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full max-w-full`}
+                  >
+                    <div className="overflow-hidden flex items-center gap-1.5 text-custom-text-200 max-w-full">
+                      <span
+                        className="h-2 w-2 flex-shrink-0 rounded-full"
+                        style={{
+                          backgroundColor: label?.color ?? "#000000",
+                        }}
+                      />
+                      <div className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">{label.name}</div>
+                    </div>
                   </div>
-                </div>
+                </Tooltip>
               ))}
           </>
         ) : (
-          <div className="h-full flex cursor-default items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
+          <div className="h-full flex cursor-pointer items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs">
             <Tooltip
               position="top"
               tooltipHeading="Labels"
@@ -148,7 +150,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   return (
     <Combobox
       as="div"
-      className={`flex-shrink-0 text-left ${className}`}
+      className={`flex-shrink-0 text-left w-auto max-w-full ${className}`}
       value={value}
       onChange={onChange}
       disabled={disabled}
@@ -165,7 +167,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => !projectLabels && fetchProjectLabels()}
+          onClick={() => !projectLabels && fetchLabels()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -206,7 +208,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   {({ selected }) => (
                     <>
                       {option.content}
-                      {selected && <Check className={`h-3.5 w-3.5`} />}
+                      {selected && (
+                        <div className="flex-shrink-0">
+                          <Check className={`h-3.5 w-3.5`} />
+                        </div>
+                      )}
                     </>
                   )}
                 </Combobox.Option>

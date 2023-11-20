@@ -14,6 +14,8 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+// events
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -71,6 +73,16 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await workspaceStore
             .createWorkspace(formData)
             .then(async (res) => {
+              const payload = {
+                name: formData.name,
+                slug: formData.slug,
+                workspace_url: formData.url,
+                organization_size: formData.organization_size
+              };
+              trackEvent(
+                "CREATE_WORKSPACE",
+                payload
+              )
               setToastAlert({
                 type: "success",
                 title: "Success!",
@@ -161,7 +173,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="Enter workspace name..."
+                  placeholder="Enter workspace url..."
                   className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
                 />
               )}
@@ -212,9 +224,11 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
         <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? primaryButtonText.loading : primaryButtonText.default}
         </Button>
-        <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
-          Go back
-        </Button>
+        {!secondaryButton && (
+          <Button variant="neutral-primary" type="button" size="md" onClick={() => router.back()}>
+            Go back
+          </Button>
+        )}
       </div>
     </form>
   );

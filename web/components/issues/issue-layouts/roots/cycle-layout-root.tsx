@@ -20,11 +20,7 @@ import { Spinner } from "@plane/ui";
 // helpers
 import { getDateRangeStatus } from "helpers/date-time.helper";
 
-type Props = {
-  openIssuesListModal: () => void;
-};
-
-export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal }) => {
+export const CycleLayoutRoot: React.FC = observer(() => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
@@ -73,7 +69,11 @@ export const CycleLayoutRoot: React.FC<Props> = observer(({ openIssuesListModal 
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
         {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-          <CycleEmptyState openIssuesListModal={openIssuesListModal} />
+          <CycleEmptyState
+            workspaceSlug={workspaceSlug?.toString()}
+            projectId={projectId?.toString()}
+            cycleId={cycleId?.toString()}
+          />
         ) : (
           <div className="w-full h-full overflow-auto">
             {activeLayout === "list" ? (

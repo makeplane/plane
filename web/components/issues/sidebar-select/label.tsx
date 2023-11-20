@@ -7,17 +7,16 @@ import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 // services
 import { IssueLabelService } from "services/issue";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
 // icons
 import { Plus, X } from "lucide-react";
 // types
-import { IIssue, IIssueLabels } from "types";
+import { IIssue, IIssueLabel } from "types";
 // fetch-keys
 import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
+import useToast from "hooks/use-toast";
 
 type Props = {
   issueDetails: IIssue | undefined;
@@ -27,7 +26,7 @@ type Props = {
   uneditable: boolean;
 };
 
-const defaultValues: Partial<IIssueLabels> = {
+const defaultValues: Partial<IIssueLabel> = {
   name: "",
   color: "#ff0000",
 };
@@ -44,6 +43,9 @@ export const SidebarLabelSelect: React.FC<Props> = ({
   const [createLabelForm, setCreateLabelForm] = useState(false);
 
   const router = useRouter();
+
+  const { setToastAlert } = useToast();
+
   const { workspaceSlug, projectId } = router.query;
 
   const {
@@ -53,24 +55,22 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     watch,
     control,
     setFocus,
-  } = useForm<Partial<IIssueLabels>>({
+  } = useForm<Partial<IIssueLabel>>({
     defaultValues,
   });
 
-  const { user } = useUser();
-
-  const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabels[]>(
+  const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabel[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
       : null
   );
 
-  const handleNewLabel = async (formData: Partial<IIssueLabels>) => {
+  const handleNewLabel = async (formData: Partial<IIssueLabel>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
     await issueLabelService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
       .then((res) => {
         reset(defaultValues);
 
@@ -79,6 +79,14 @@ export const SidebarLabelSelect: React.FC<Props> = ({
         submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
 
         setCreateLabelForm(false);
+      })
+      .catch((error) => {
+        setToastAlert({
+          title: "Oops!",
+          type: "error",
+          message: error?.error ?? "Error while adding the label",
+        });
+        reset(formData);
       });
   };
 

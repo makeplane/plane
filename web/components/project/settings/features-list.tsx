@@ -5,8 +5,6 @@ import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { MiscellaneousEventType, TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
@@ -47,34 +45,15 @@ const PROJECT_FEATURES_LIST = [
   },
 ];
 
-const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType => {
-  switch (feature) {
-    case "Cycles":
-      return toggle ? "TOGGLE_CYCLE_ON" : "TOGGLE_CYCLE_OFF";
-    case "Modules":
-      return toggle ? "TOGGLE_MODULE_ON" : "TOGGLE_MODULE_OFF";
-    case "Views":
-      return toggle ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF";
-    case "Pages":
-      return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
-    case "Inbox":
-      return toggle ? "TOGGLE_INBOX_ON" : "TOGGLE_INBOX_OFF";
-    default:
-      throw new Error("Invalid feature");
-  }
-};
-
-// services
-const trackEventService = new TrackEventService();
-
 export const ProjectFeaturesList: FC<Props> = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
-  const { project: projectStore, user: userStore } = useMobxStore();
-  const { currentUser, currentProjectRole } = userStore;
-  const { currentProjectDetails } = projectStore;
+  const {
+    project: { currentProjectDetails, updateProject },
+    user: { currentUser, currentProjectRole },
+  } = useMobxStore();
   const isAdmin = currentProjectRole === 20;
   // hooks
   const { setToastAlert } = useToast();
@@ -86,7 +65,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       title: "Success!",
       message: "Project feature updated successfully.",
     });
-    projectStore.updateProject(workspaceSlug.toString(), projectId.toString(), formData);
+    updateProject(workspaceSlug.toString(), projectId.toString(), formData);
   };
 
   if (!currentUser) return <></>;
@@ -96,7 +75,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
       {PROJECT_FEATURES_LIST.map((feature) => (
         <div
           key={feature.property}
-          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-200 bg-custom-background-100 p-4"
+          className="flex items-center justify-between gap-x-8 gap-y-2 border-b border-custom-border-100 bg-custom-background-100 p-4"
         >
           <div className="flex items-start gap-3">
             <div className="flex items-center justify-center p-3 rounded bg-custom-background-90">{feature.icon}</div>
@@ -108,17 +87,6 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
           <ToggleSwitch
             value={currentProjectDetails?.[feature.property as keyof IProject]}
             onChange={() => {
-              trackEventService.trackMiscellaneousEvent(
-                {
-                  workspaceId: (currentProjectDetails?.workspace as any)?.id,
-                  workspaceSlug,
-                  projectId,
-                  projectIdentifier: currentProjectDetails?.identifier,
-                  projectName: currentProjectDetails?.name,
-                },
-                getEventType(feature.title, !currentProjectDetails?.[feature.property as keyof IProject]),
-                currentUser
-              );
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],
               });

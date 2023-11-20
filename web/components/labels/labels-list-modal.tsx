@@ -11,12 +11,12 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { LayerStackIcon } from "@plane/ui";
 import { Search } from "lucide-react";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  parent: IIssueLabels | undefined;
+  parent: IIssueLabel | undefined;
 };
 
 export const LabelsListModal: React.FC<Props> = observer((props) => {
@@ -27,7 +27,9 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { projectLabel: projectLabelStore, project: projectStore } = useMobxStore();
+  const {
+    projectLabel: { projectLabels, fetchProjectLabels, updateLabel },
+  } = useMobxStore();
 
   // states
   const [query, setQuery] = useState("");
@@ -35,28 +37,24 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
   // api call to fetch project details
   useSWR(
     workspaceSlug && projectId ? "PROJECT_LABELS" : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectLabels(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   // derived values
-  const issueLabels = projectStore.labels?.[projectId?.toString()!] ?? null;
-
-  const filteredLabels: IIssueLabels[] =
+  const filteredLabels: IIssueLabel[] =
     query === ""
-      ? issueLabels ?? []
-      : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
+      ? projectLabels ?? []
+      : projectLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase())) ?? [];
 
   const handleModalClose = () => {
     handleClose();
     setQuery("");
   };
 
-  const addChildLabel = async (label: IIssueLabels) => {
+  const addChildLabel = async (label: IIssueLabel) => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectLabelStore.updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
+    await updateLabel(workspaceSlug.toString(), projectId.toString(), label.id, {
       parent: parent?.id!,
     });
   };
@@ -73,7 +71,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -86,7 +84,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-xl border border-custom-border-200 bg-custom-background-100 shadow-2xl transition-all">
+            <Dialog.Panel className="relative mx-auto max-w-2xl transform rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
               <Combobox>
                 <div className="relative m-1">
                   <Search
@@ -108,7 +106,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {
-                          const children = issueLabels?.filter((l) => l.parent === label.id);
+                          const children = projectLabels?.filter((l) => l.parent === label.id);
 
                           if (
                             (label.parent === "" || label.parent === null) && // issue does not have any other parent
@@ -128,7 +126,6 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                                 }
                                 onClick={() => {
                                   addChildLabel(label);
-                                  handleClose();
                                 }}
                               >
                                 <span

@@ -1,11 +1,8 @@
-import React, { Fragment, useEffect, ReactElement } from "react";
-import { useRouter } from "next/router";
+import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { TrackEventService } from "services/track_event.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -21,45 +18,16 @@ import { ANALYTICS_TABS } from "constants/analytics";
 // type
 import { NextPageWithLayout } from "types/app";
 
-const trackEventService = new TrackEventService();
-
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, user: userStore } = useMobxStore();
-
-  const user = userStore.currentUser;
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug?.toString()] : null;
-
-  const trackAnalyticsEvent = (tab: string) => {
-    if (!user) return;
-
-    const eventPayload = {
-      workspaceSlug: workspaceSlug?.toString(),
-    };
-
-    const eventType =
-      tab === "scope_and_demand" ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS" : "WORKSPACE_CUSTOM_ANALYTICS";
-
-    trackEventService.trackAnalyticsEvent(eventPayload, eventType, user);
-  };
-
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (user && workspaceSlug)
-      trackEventService.trackAnalyticsEvent(
-        { workspaceSlug: workspaceSlug?.toString() },
-        "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
-        user
-      );
-  }, [user, workspaceSlug]);
+  const {
+    project: { workspaceProjects },
+    commandPalette: { toggleCreateProjectModal },
+  } = useMobxStore();
 
   return (
     <>
-      {projects && projects.length > 0 ? (
+      {workspaceProjects && workspaceProjects.length > 0 ? (
         <div className="h-full flex flex-col overflow-hidden bg-custom-background-100">
           <Tab.Group as={Fragment}>
             <Tab.List as="div" className="space-x-2 border-b border-custom-border-200 px-5 py-3">
@@ -71,7 +39,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
                       selected ? "bg-custom-background-80" : ""
                     }`
                   }
-                  onClick={() => trackAnalyticsEvent(tab.key)}
+                  onClick={() => {}}
                 >
                   {tab.title}
                 </Tab>
@@ -96,12 +64,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
               text: "New Project",
-              onClick: () => {
-                const e = new KeyboardEvent("keydown", {
-                  key: "p",
-                });
-                document.dispatchEvent(e);
-              },
+              onClick: () => toggleCreateProjectModal(true),
             }}
           />
         </>

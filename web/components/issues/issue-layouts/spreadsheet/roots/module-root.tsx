@@ -19,7 +19,9 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     moduleIssue: moduleIssueStore,
     issueDetail: issueDetailStore,
-    project: projectStore,
+    projectLabel: { projectLabels },
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
   } = useMobxStore();
 
   const issues = moduleIssueStore.getIssues;
@@ -58,9 +60,9 @@ export const ModuleSpreadsheetLayout: React.FC = observer(() => {
       displayFilters={issueFilterStore.userDisplayFilters}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
-      members={projectId ? projectStore.members?.[projectId.toString()]?.map((m) => m.member) : undefined}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
-      states={projectId ? projectStore.states?.[projectId.toString()] : undefined}
+      members={projectMembers?.map((m) => m.member)}
+      labels={projectLabels ?? undefined}
+      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssueAction={() => {}}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}

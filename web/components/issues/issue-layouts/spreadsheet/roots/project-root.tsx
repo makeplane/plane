@@ -19,7 +19,9 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
     issue: issueStore,
     issueFilter: issueFilterStore,
     issueDetail: issueDetailStore,
-    project: projectStore,
+    projectLabel: { projectLabels },
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
     user: userStore,
   } = useMobxStore();
 
@@ -38,6 +40,18 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
     },
     [issueFilterStore, projectId, workspaceSlug]
   );
+
+  const handleIssueAction = async (issue: IIssue, action: "copy" | "delete" | "edit") => {
+    if (!workspaceSlug || !projectId || !user) return;
+
+    if (action === "delete") {
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
+      issueStore.removeIssueFromStructure(null, null, issue);
+    } else if (action === "edit") {
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue);
+      issueStore.updateIssueStructure(null, null, issue);
+    }
+  };
 
   const handleUpdateIssue = useCallback(
     (issue: IIssue, data: Partial<IIssue>) => {
@@ -60,10 +74,10 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
       displayFilters={issueFilterStore.userDisplayFilters}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
-      members={projectId ? projectStore.members?.[projectId.toString()]?.map((m) => m.member) : undefined}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
-      states={projectId ? projectStore.states?.[projectId.toString()] : undefined}
-      handleIssueAction={() => {}}
+      members={projectMembers?.map((m) => m.member)}
+      labels={projectLabels || undefined}
+      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
+      handleIssueAction={handleIssueAction}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
       enableQuickCreateIssue

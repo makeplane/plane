@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -12,7 +11,12 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
 
-  const { project: projectStore, cycleIssueFilter: cycleIssueFilterStore } = useMobxStore();
+  const {
+    projectLabel: { projectLabels },
+    projectMember: { projectMembers },
+    cycleIssueFilter: cycleIssueFilterStore,
+    projectState: projectStateStore,
+  } = useMobxStore();
 
   const userFilters = cycleIssueFilterStore.cycleFilters;
 
@@ -68,9 +72,9 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
-        members={projectStore.members?.[projectId?.toString() ?? ""]?.map((m) => m.member)}
-        states={projectStore.states?.[projectId?.toString() ?? ""]}
+        labels={projectLabels ?? []}
+        members={projectMembers?.map((m) => m.member)}
+        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
     </div>
   );

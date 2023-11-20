@@ -6,6 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { List } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
+import { Spinner } from "@plane/ui";
 // helpers
 import { orderArrayBy } from "helpers/array.helper";
 // types
@@ -19,6 +20,9 @@ export const ListLayout: FC = observer(() => {
   // store
   const {
     project: projectStore,
+    projectLabel: { projectLabels },
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
     issue: issueStore,
     issueDetail: issueDetailStore,
     issueFilter: issueFilterStore,
@@ -29,7 +33,7 @@ export const ListLayout: FC = observer(() => {
 
   const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
   const group_by: string | null = userDisplayFilters?.group_by || null;
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
+  const displayProperties = issueFilterStore?.userDisplayProperties || null;
 
   const handleIssues = useCallback(
     (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
@@ -44,10 +48,8 @@ export const ListLayout: FC = observer(() => {
     [issueStore, issueDetailStore, workspaceSlug]
   );
 
-  const states = projectStore?.projectStates || null;
+  const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
-  const members = projectStore?.projectMembers || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
@@ -56,29 +58,37 @@ export const ListLayout: FC = observer(() => {
       : null;
 
   return (
-    <div className="relative w-full h-full bg-custom-background-90">
-      <List
-        issues={issues}
-        group_by={group_by}
-        handleIssues={handleIssues}
-        quickActions={(group_by, issue) => (
-          <ProjectIssueQuickActions
-            issue={issue}
-            handleDelete={async () => handleIssues(group_by, issue, "delete")}
-            handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+    <>
+      {issueStore.loader ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner />
+        </div>
+      ) : (
+        <div className="relative w-full h-full bg-custom-background-90">
+          <List
+            issues={issues}
+            group_by={group_by}
+            handleIssues={handleIssues}
+            quickActions={(group_by, issue) => (
+              <ProjectIssueQuickActions
+                issue={issue}
+                handleDelete={async () => handleIssues(group_by, issue, "delete")}
+                handleUpdate={async (data) => handleIssues(group_by, data, "update")}
+              />
+            )}
+            displayProperties={displayProperties}
+            states={states}
+            stateGroups={stateGroups}
+            priorities={priorities}
+            labels={projectLabels}
+            members={projectMembers?.map((m) => m.member) ?? null}
+            projects={projects}
+            enableQuickIssueCreate
+            estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+            showEmptyGroup={userDisplayFilters.show_empty_groups}
           />
-        )}
-        display_properties={display_properties}
-        states={states}
-        stateGroups={stateGroups}
-        priorities={priorities}
-        labels={labels}
-        members={members?.map((m) => m.member) ?? null}
-        projects={projects}
-        enableQuickIssueCreate
-        estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
-        showEmptyGroup={userDisplayFilters.show_empty_groups}
-      />
-    </div>
+        </div>
+      )}
+    </>
   );
 });

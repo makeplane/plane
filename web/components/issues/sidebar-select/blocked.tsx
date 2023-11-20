@@ -68,7 +68,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
     if (!user) return;
 
     issueService
-      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
+      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, {
         related_list: [
           ...selectedIssues.map((issue) => ({
             issue: issueId as string,
@@ -134,8 +134,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
                           workspaceSlug as string,
                           projectId as string,
                           issueId as string,
-                          relation.id,
-                          user
+                          relation.id
                         );
                       }}
                     >

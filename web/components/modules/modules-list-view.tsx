@@ -17,7 +17,7 @@ export const ModulesListView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
 
-  const { module: moduleStore } = useMobxStore();
+  const { module: moduleStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
@@ -85,12 +85,7 @@ export const ModulesListView: React.FC = observer(() => {
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
             text: "New Module",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "m",
-              });
-              document.dispatchEvent(e);
-            },
+            onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
           }}
         />
       )}

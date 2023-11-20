@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 // services
 import { AnalyticsService } from "services/analytics.service";
-import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -29,7 +28,6 @@ type Props = {
 };
 
 const analyticsService = new AnalyticsService();
-const trackEventService = new TrackEventService();
 
 export const CustomAnalyticsSidebar: React.FC<Props> = observer(
   ({ analytics, params, fullScreen, isProjectLevel = false }) => {
@@ -90,18 +88,6 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
         eventPayload.moduleId = moduleDetails.id;
         eventPayload.moduleName = moduleDetails.name;
       }
-
-      trackEventService.trackAnalyticsEvent(
-        eventPayload,
-        cycleId
-          ? "CYCLE_ANALYTICS_EXPORT"
-          : moduleId
-          ? "MODULE_ANALYTICS_EXPORT"
-          : projectId
-          ? "PROJECT_ANALYTICS_EXPORT"
-          : "WORKSPACE_ANALYTICS_EXPORT",
-        user
-      );
     };
 
     const exportAnalytics = () => {

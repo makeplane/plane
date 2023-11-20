@@ -1,6 +1,11 @@
-"use client"
-import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from '@plane/editor-core';
-import * as React from 'react';
+"use client";
+import {
+  EditorContainer,
+  EditorContentWrapper,
+  getEditorClassNames,
+  useReadOnlyEditor,
+} from "@plane/editor-core";
+import * as React from "react";
 
 interface IRichTextReadOnlyEditor {
   value: string;
@@ -8,6 +13,7 @@ interface IRichTextReadOnlyEditor {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
+  mentionHighlights?: string[];
 }
 
 interface RichTextReadOnlyEditorProps extends IRichTextReadOnlyEditor {
@@ -26,29 +32,39 @@ const RichReadOnlyEditor = ({
   customClassName,
   value,
   forwardedRef,
+  mentionHighlights,
 }: RichTextReadOnlyEditorProps) => {
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
+    mentionHighlights,
   });
 
-  const editorClassNames = getEditorClassNames({ noBorder, borderOnFocus, customClassName });
+  const editorClassNames = getEditorClassNames({
+    noBorder,
+    borderOnFocus,
+    customClassName,
+  });
 
   if (!editor) return null;
 
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
-        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
+        <EditorContentWrapper
+          editor={editor}
+          editorContentCustomClassNames={editorContentCustomClassNames}
+        />
       </div>
-    </EditorContainer >
+    </EditorContainer>
   );
 };
 
-const RichReadOnlyEditorWithRef = React.forwardRef<EditorHandle, IRichTextReadOnlyEditor>((props, ref) => (
-  <RichReadOnlyEditor {...props} forwardedRef={ref} />
-));
+const RichReadOnlyEditorWithRef = React.forwardRef<
+  EditorHandle,
+  IRichTextReadOnlyEditor
+>((props, ref) => <RichReadOnlyEditor {...props} forwardedRef={ref} />);
 
 RichReadOnlyEditorWithRef.displayName = "RichReadOnlyEditorWithRef";
 
-export { RichReadOnlyEditor , RichReadOnlyEditorWithRef };
+export { RichReadOnlyEditor, RichReadOnlyEditorWithRef };

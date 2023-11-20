@@ -1,5 +1,7 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // store imports
+import { InstanceStore, IInstanceStore } from "./instance";
+import AppConfigStore, { IAppConfigStore } from "./app-config.store";
 import CommandPaletteStore, { ICommandPaletteStore } from "./command-palette.store";
 import UserStore, { IUserStore } from "store/user.store";
 import ThemeStore, { IThemeStore } from "store/theme.store";
@@ -18,7 +20,14 @@ import {
   IIssueQuickAddStore,
   IssueQuickAddStore,
 } from "store/issue";
-import { IWorkspaceFilterStore, IWorkspaceStore, WorkspaceFilterStore, WorkspaceStore } from "store/workspace";
+import {
+  IWorkspaceFilterStore,
+  IWorkspaceStore,
+  WorkspaceFilterStore,
+  WorkspaceStore,
+  WorkspaceMemberStore,
+  IWorkspaceMemberStore,
+} from "store/workspace";
 import {
   IProjectPublishStore,
   IProjectStore,
@@ -30,6 +39,8 @@ import {
   ProjectLabelStore,
   ProjectEstimatesStore,
   IProjectEstimateStore,
+  ProjectMemberStore,
+  IProjectMemberStore,
 } from "store/project";
 import {
   IModuleFilterStore,
@@ -99,24 +110,31 @@ import {
   InboxIssuesStore,
   InboxStore,
 } from "store/inbox";
+import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 import { IMentionsStore, MentionsStore } from "store/editor";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
+  instance: IInstanceStore;
+
   user: IUserStore;
   theme: IThemeStore;
-
+  appConfig: IAppConfigStore;
   commandPalette: ICommandPaletteStore;
+
   workspace: IWorkspaceStore;
   workspaceFilter: IWorkspaceFilterStore;
+  workspaceMember: IWorkspaceMemberStore;
 
   projectPublish: IProjectPublishStore;
   project: IProjectStore;
   projectState: IProjectStateStore;
   projectLabel: IProjectLabelStore;
   projectEstimates: IProjectEstimateStore;
+  projectMember: IProjectMemberStore;
+
   issue: IIssueStore;
 
   module: IModuleStore;
@@ -164,21 +182,28 @@ export class RootStore {
   inboxIssueDetails: IInboxIssueDetailsStore;
   inboxFilters: IInboxFiltersStore;
 
+  webhook: IWebhookStore;
+
   mentionsStore: IMentionsStore;
 
   constructor() {
+    this.instance = new InstanceStore(this);
+
+    this.appConfig = new AppConfigStore(this);
     this.commandPalette = new CommandPaletteStore(this);
     this.user = new UserStore(this);
     this.theme = new ThemeStore(this);
 
     this.workspace = new WorkspaceStore(this);
     this.workspaceFilter = new WorkspaceFilterStore(this);
+    this.workspaceMember = new WorkspaceMemberStore(this);
 
     this.project = new ProjectStore(this);
     this.projectState = new ProjectStateStore(this);
     this.projectLabel = new ProjectLabelStore(this);
     this.projectEstimates = new ProjectEstimatesStore(this);
     this.projectPublish = new ProjectPublishStore(this);
+    this.projectMember = new ProjectMemberStore(this);
 
     this.module = new ModuleStore(this);
     this.moduleIssue = new ModuleIssueStore(this);
@@ -225,6 +250,8 @@ export class RootStore {
     this.inboxIssues = new InboxIssuesStore(this);
     this.inboxIssueDetails = new InboxIssueDetailsStore(this);
     this.inboxFilters = new InboxFiltersStore(this);
+
+    this.webhook = new WebhookStore(this);
 
     this.mentionsStore = new MentionsStore(this);
   }

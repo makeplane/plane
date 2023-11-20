@@ -18,7 +18,7 @@ export interface IProjectCardList {
 export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   const { workspaceSlug } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
@@ -38,12 +38,16 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   return (
     <>
       {projects.length > 0 ? (
-        <div className="h-full p-8 overflow-y-auto">
-          <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-            {projectStore.searchedProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
-            ))}
-          </div>
+        <div className="h-full w-full p-8 overflow-y-auto">
+          {projectStore.searchedProjects.length == 0 ? (
+            <div className="w-full text-center text-custom-text-400 mt-10">No matching projects</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
+              {projectStore.searchedProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <EmptyState
@@ -53,12 +57,7 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
             text: "New Project",
-            onClick: () => {
-              const e = new KeyboardEvent("keydown", {
-                key: "p",
-              });
-              document.dispatchEvent(e);
-            },
+            onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
           }}
         />
       )}

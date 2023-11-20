@@ -4,9 +4,9 @@ import useSWR, { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Popover, Transition } from "@headlessui/react";
 import { TwitterPicker } from "react-color";
-import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // services
-import { ProjectService } from "services/project";
+import { ProjectService, ProjectMemberService } from "services/project";
 import { PageService } from "services/page.service";
 import { IssueLabelService } from "services/issue";
 // hooks
@@ -33,7 +33,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { NextPageWithLayout } from "types/app";
-import { IIssueLabels, IPage, IPageBlock, IProjectMember } from "types";
+import { IIssueLabel, IPage, IPageBlock, IProjectMember } from "types";
 // fetch-keys
 import {
   PAGE_BLOCKS_LIST,
@@ -45,6 +45,7 @@ import {
 
 // services
 const projectService = new ProjectService();
+const projectMemberService = new ProjectMemberService();
 const pageService = new PageService();
 const issueLabelService = new IssueLabelService();
 
@@ -85,7 +86,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-  const { data: labels } = useSWR<IIssueLabels[]>(
+  const { data: labels } = useSWR<IIssueLabel[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
       ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
@@ -95,7 +96,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const { data: memberDetails } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
+      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
       : null
   );
 
@@ -104,18 +105,16 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
-    await pageService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
-      .then(() => {
-        mutate<IPage>(
-          PAGE_DETAILS(pageId as string),
-          (prevData) => ({
-            ...prevData,
-            ...formData,
-          }),
-          false
-        );
-      });
+    await pageService.patchPage(workspaceSlug as string, projectId as string, pageId as string, formData).then(() => {
+      mutate<IPage>(
+        PAGE_DETAILS(pageId as string),
+        (prevData) => ({
+          ...prevData,
+          ...formData,
+        }),
+        false
+      );
+    });
   };
 
   const partialUpdatePage = async (formData: Partial<IPage>) => {
@@ -130,11 +129,9 @@ const PageDetailsPage: NextPageWithLayout = () => {
       false
     );
 
-    await pageService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
-      .then(() => {
-        mutate(PAGE_DETAILS(pageId as string));
-      });
+    await pageService.patchPage(workspaceSlug as string, projectId as string, pageId as string, formData).then(() => {
+      mutate(PAGE_DETAILS(pageId as string));
+    });
   };
 
   const handleAddToFavorites = () => {
@@ -208,16 +205,9 @@ const PageDetailsPage: NextPageWithLayout = () => {
       false
     );
 
-    pageService.patchPageBlock(
-      workspaceSlug as string,
-      projectId as string,
-      pageId as string,
-      result.draggableId,
-      {
-        sort_order: newSortOrder,
-      },
-      user
-    );
+    pageService.patchPageBlock(workspaceSlug as string, projectId as string, pageId as string, result.draggableId, {
+      sort_order: newSortOrder,
+    });
   };
 
   const handleCopyText = () => {

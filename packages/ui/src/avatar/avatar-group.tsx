@@ -35,8 +35,11 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   // calculate total length of avatars inside the group
   const totalAvatars = React.Children.toArray(children).length;
 
+  // if avatars are equal to max + 1, then we need to show the last avatar as well, if avatars are more than max + 1, then we need to show the count of the remaining avatars
+  const maxAvatarsToRender = totalAvatars <= max + 1 ? max + 1 : max;
+
   // slice the children to the maximum number of avatars
-  const avatars = React.Children.toArray(children).slice(0, max);
+  const avatars = React.Children.toArray(children).slice(0, maxAvatarsToRender);
 
   // assign the necessary props from the AvatarGroup component to the Avatar components
   const avatarsWithUpdatedProps = avatars.map((avatar) => {
@@ -54,11 +57,14 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   return (
     <div className={`flex ${sizeInfo.spacing}`}>
       {avatarsWithUpdatedProps.map((avatar, index) => (
-        <div key={index} className="ring-1 ring-custom-border-200 rounded-full">
+        <div
+          key={index}
+          className="ring-1 ring-custom-background-100 rounded-full"
+        >
           {avatar}
         </div>
       ))}
-      {max < totalAvatars && (
+      {maxAvatarsToRender < totalAvatars && (
         <Tooltip
           tooltipContent={`${totalAvatars} total`}
           disabled={!showTooltip}
@@ -66,7 +72,7 @@ export const AvatarGroup: React.FC<Props> = (props) => {
           <div
             className={`${
               !isAValidNumber(size) ? sizeInfo.avatarSize : ""
-            } ring-1 ring-custom-border-200 bg-custom-primary-500 text-white rounded-full grid place-items-center text-[9px]`}
+            } ring-1 ring-custom-background-100 bg-custom-primary-10 text-custom-primary-100 rounded-full grid place-items-center text-[9px]`}
             style={
               isAValidNumber(size)
                 ? {

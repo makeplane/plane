@@ -54,7 +54,7 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="gap-2 p-4 border-b border-custom-border-200">
+      <div className="gap-2 p-4 border-b border-custom-border-100">
         <div className="flex items-center justify-between">
           <div>
             <h6 className="flex w-[40vw] items-center gap-2 truncate text-sm font-medium">

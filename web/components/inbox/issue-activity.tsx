@@ -41,7 +41,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
     if (!workspaceSlug || !projectId || !inboxIssueId || !user) return;
 
     await issueCommentService
-      .patchIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, data, user)
+      .patchIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, data)
       .then(() => mutateIssueActivity());
   };
 
@@ -51,7 +51,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issueCommentService
-      .deleteIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, user)
+      .deleteIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId)
       .then(() => mutateIssueActivity());
   };
 
@@ -59,7 +59,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
     if (!workspaceSlug || !issueDetails || !user) return;
 
     await issueCommentService
-      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })

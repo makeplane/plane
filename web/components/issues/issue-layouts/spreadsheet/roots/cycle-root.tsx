@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -19,7 +18,9 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
     issueFilter: issueFilterStore,
     cycleIssue: cycleIssueStore,
     issueDetail: issueDetailStore,
-    project: projectStore,
+    projectLabel: { projectLabels },
+    projectMember: { projectMembers },
+    projectState: projectStateStore,
   } = useMobxStore();
 
   const issues = cycleIssueStore.getIssues;
@@ -58,9 +59,9 @@ export const CycleSpreadsheetLayout: React.FC = observer(() => {
       displayFilters={issueFilterStore.userDisplayFilters}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
-      members={projectId ? projectStore.members?.[projectId.toString()]?.map((m) => m.member) : undefined}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
-      states={projectId ? projectStore.states?.[projectId.toString()] : undefined}
+      members={projectMembers?.map((m) => m.member)}
+      labels={projectLabels || undefined}
+      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssueAction={() => {}}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}

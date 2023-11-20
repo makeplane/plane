@@ -1,22 +1,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { DraggableProvided, DraggableStateSnapshot } from "react-beautiful-dnd";
+import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // icons
-import {
-  MoreVertical,
-  PenSquare,
-  LinkIcon,
-  Star,
-  Trash2,
-  FileText,
-  Settings,
-  Share2,
-  LogOut,
-  ChevronDown,
-} from "lucide-react";
+import { MoreVertical, PenSquare, LinkIcon, Star, FileText, Settings, Share2, LogOut, ChevronDown } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
@@ -27,7 +16,7 @@ import { IProject } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
-import { LeaveProjectModal, DeleteProjectModal, PublishProjectModal } from "components/project";
+import { LeaveProjectModal, PublishProjectModal } from "components/project";
 
 type Props = {
   project: IProject;
@@ -71,6 +60,7 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 ];
 
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store
   const { project: projectStore, theme: themeStore } = useMobxStore();
@@ -81,7 +71,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
-  const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
 
   const isAdmin = project.member_role === 20;
@@ -121,21 +110,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     setLeaveProjectModal(false);
   };
 
-  const handleDeleteProjectClick = () => {
-    setDeleteProjectModal(true);
-  };
-
-  const handleDeleteProjectModalClose = () => {
-    setDeleteProjectModal(false);
-    router.push(`/${workspaceSlug}/projects`);
-  };
-
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
-      <DeleteProjectModal project={project} isOpen={deleteProjectModalOpen} onClose={handleDeleteProjectModalClose} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={handleLeaveProjectModalClose} />
-      <Disclosure key={project.id} defaultOpen={projectId === project.id}>
+      <Disclosure key={`${project.id} ${projectId}`} defaultOpen={projectId === project.id}>
         {({ open }) => (
           <>
             <div
@@ -186,9 +165,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </span>
                     )}
 
-                    {!isCollapsed && (
-                      <p className={`truncate ${open ? "" : "text-custom-sidebar-text-200"}`}>{project.name}</p>
-                    )}
+                    {!isCollapsed && <p className={`truncate text-custom-sidebar-text-200`}>{project.name}</p>}
                   </div>
                   {!isCollapsed && (
                     <ChevronDown
@@ -278,15 +255,6 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                       </div>
                     </CustomMenu.MenuItem>
                   )}
-
-                  {!shortContextMenu && isAdmin && (
-                    <CustomMenu.MenuItem onClick={handleDeleteProjectClick}>
-                      <span className="flex items-center justify-start gap-2 ">
-                        <Trash2 className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Delete project</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  )}
                 </CustomMenu>
               )}
             </div>
@@ -322,7 +290,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                             className={`group flex items-center rounded-md px-2 py-1.5 gap-2.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
                                 ? "bg-custom-primary-100/10 text-custom-primary-100"
-                                : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
+                                : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"
                             } ${isCollapsed ? "justify-center" : ""}`}
                           >
                             <item.Icon className="h-4 w-4 stroke-[1.5]" />
