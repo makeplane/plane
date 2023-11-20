@@ -138,7 +138,7 @@ export class ArchivedIssueStore implements IArchivedIssueStore {
       };
     }
 
-    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
+    const orderBy = this.rootStore?.archivedIssueFilters?.userDisplayFilters?.order_by || "";
     if (orderBy === "-created_at") {
       issues = sortArrayByDate(issues as any, "created_at");
     }
