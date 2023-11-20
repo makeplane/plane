@@ -15,6 +15,7 @@ class Command(BaseCommand):
         config_keys = {
             # Authentication Settings
             "GOOGLE_CLIENT_ID": os.environ.get("GOOGLE_CLIENT_ID"),
+            "GOOGLE_CLIENT_SECRET": os.environ.get("GOOGLE_CLIENT_SECRET"),
             "GITHUB_CLIENT_ID": os.environ.get("GITHUB_CLIENT_ID"),
             "GITHUB_CLIENT_SECRET": os.environ.get("GITHUB_CLIENT_SECRET"),
             "ENABLE_SIGNUP": os.environ.get("ENABLE_SIGNUP", "1"),

@@ -230,13 +230,18 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
-        key = request.data.get("key", False)
-        if not key:
-            return Response(
-                {"error": "Key is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-        configuration = InstanceConfiguration.objects.get(key=key)
-        configuration.value = request.data.get("value")
-        configuration.save()
-        serializer = InstanceConfigurationSerializer(configuration)
+        configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
+
+        bulk_configurations = []
+        for configuration in configurations:
+            configuration.value = request.data.get(configuration.key, configuration.value)
+            bulk_configurations.append(configuration)
+
+        InstanceConfiguration.objects.bulk_update(
+            bulk_configurations,
+            ["value"],
+            batch_size=100
+        )
+
+        serializer = InstanceConfigurationSerializer(configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
