@@ -18,23 +18,23 @@ import { NextPageWithLayout } from "types/app";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
 
-const AllPagesList = dynamic(() => import("components/pages").then((a) => a.AllPagesList), {
+const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
 });
 
-const FavoritePagesList = dynamic(() => import("components/pages").then((a) => a.FavoritePagesList), {
+const FavoritePagesList = dynamic<any>(() => import("components/pages").then((a) => a.FavoritePagesList), {
   ssr: false,
 });
 
-const PrivatePagesList = dynamic(() => import("components/pages").then((a) => a.PrivatePagesList), {
+const PrivatePagesList = dynamic<any>(() => import("components/pages").then((a) => a.PrivatePagesList), {
   ssr: false,
 });
 
-const ArchivedPagesList = dynamic(() => import("components/pages").then((a) => a.ArchivedPagesList), {
+const ArchivedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.ArchivedPagesList), {
   ssr: false,
 });
 
-const SharedPagesList = dynamic(() => import("components/pages").then((a) => a.SharedPagesList), {
+const SharedPagesList = dynamic<any>(() => import("components/pages").then((a) => a.SharedPagesList), {
   ssr: false,
 });
 

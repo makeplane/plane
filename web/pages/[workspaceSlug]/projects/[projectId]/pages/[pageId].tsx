@@ -11,14 +11,14 @@ import useUser from "hooks/use-user";
 import { AppLayout } from "layouts/app-layout";
 // components
 import { PageDetailsHeader } from "components/headers/page-details";
+import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-
 import { Loader } from "@plane/ui";
-// images
+// assets
 import emptyPage from "public/empty-state/page.svg";
-
-import { EmptyState } from "components/common";
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IPage } from "types";
@@ -90,7 +90,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
           PAGE_DETAILS(pageId as string),
           (prevData) => {
             if (prevData && prevData.is_locked) {
-              prevData.archived_at = new Date();
+              prevData.archived_at = renderDateFormat(new Date());
               return prevData;
             }
           },
@@ -104,20 +104,18 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   const unArchivePage = async () => {
     try {
-      await pageService
-        .removePageFromArchives(workspaceSlug as string, projectId as string, pageId as string)
-        .then(() => {
-          mutate<IPage>(
-            PAGE_DETAILS(pageId as string),
-            (prevData) => {
-              if (prevData && prevData.is_locked) {
-                prevData.archived_at = undefined;
-                return prevData;
-              }
-            },
-            true
-          );
-        });
+      await pageService.restorePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
+        mutate<IPage>(
+          PAGE_DETAILS(pageId as string),
+          (prevData) => {
+            if (prevData && prevData.is_locked) {
+              prevData.archived_at = null;
+              return prevData;
+            }
+          },
+          true
+        );
+      });
     } catch (e) {
       console.log(e);
     }
@@ -213,7 +211,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     ? {
                         action: pageDetails.archived_at ? unArchivePage : archivePage,
                         is_archived: pageDetails.archived_at ? true : false,
-                        archived_at: pageDetails.archived_at,
+                        archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
                       }
                     : undefined
                 }
