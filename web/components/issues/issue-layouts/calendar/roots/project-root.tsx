@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
-// types
 import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const CalendarLayout: React.FC = observer(() => {
