@@ -108,10 +108,10 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
                     </div>
 
                     <div className="mt-6 px-4">
-                      <p className="text-onboarding-text-300 font-normal text-base">
+                      <ul className="text-onboarding-text-300 list-disc font-normal text-base">
                         <li>Delete this account if you have another and won’t use this account.</li>
                         <li>Switch to another account if you’d like to come back to this account another time.</li>
-                      </p>
+                      </ul>
                     </div>
                   </div>
                 </div>
