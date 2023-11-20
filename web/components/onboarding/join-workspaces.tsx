@@ -18,6 +18,7 @@ import { IWorkspaceMemberInvitation, TOnboardingSteps } from "types";
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -61,7 +62,11 @@ export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange, 
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async () => {
+      .then(async (res) => {
+        trackEvent(
+          'WORKSPACE_USER_INVITE_ACCEPT',
+          res
+        )
         await mutateInvitations();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
@@ -83,9 +88,8 @@ export const JoinWorkspaces: React.FC<Props> = ({ finishOnboarding, stepChange, 
             return (
               <div
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                  isSelected ? "border-custom-primary-100" : "border-custom-border-200 hover:bg-custom-background-80"
-                }`}
+                className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${isSelected ? "border-custom-primary-100" : "border-custom-border-200 hover:bg-custom-background-80"
+                  }`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">

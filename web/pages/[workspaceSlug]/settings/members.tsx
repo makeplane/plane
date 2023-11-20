@@ -17,6 +17,7 @@ import { Search } from "lucide-react";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IWorkspaceBulkInviteFormData } from "types";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
@@ -35,21 +36,23 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     if (!workspaceSlug) return;
 
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(async () => {
+      .then(async (res) => {
         setInviteModal(false);
+        trackEvent("WORKSPACE_USER_INVITE");
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Invitations sent successfully.",
         });
       })
-      .catch((err) =>
+      .catch((err) => {
+        trackEvent("WORKSPACE_USER_INVITE/FAIL");
         setToastAlert({
           type: "error",
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
-        })
-      );
+        });
+      });
   };
 
   return (

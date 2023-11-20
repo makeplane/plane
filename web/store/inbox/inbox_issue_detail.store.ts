@@ -121,13 +121,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
     };
 
     try {
-      const response = await this.inboxService.createInboxIssue(
-        workspaceSlug,
-        projectId,
-        inboxId,
-        payload,
-        this.rootStore.user.currentUser ?? undefined
-      );
+      const response = await this.inboxService.createInboxIssue(workspaceSlug, projectId, inboxId, payload);
 
       runInAction(() => {
         this.issueDetails = {
@@ -175,14 +169,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         };
       });
 
-      await this.inboxService.patchInboxIssue(
-        workspaceSlug,
-        projectId,
-        inboxId,
-        issueId,
-        { issue: data },
-        this.rootStore.user.currentUser ?? undefined
-      );
+      await this.inboxService.patchInboxIssue(workspaceSlug, projectId, inboxId, issueId, { issue: data });
     } catch (error) {
       runInAction(() => {
         this.error = error;
@@ -224,14 +211,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         };
       });
 
-      await this.inboxService.markInboxStatus(
-        workspaceSlug,
-        projectId,
-        inboxId,
-        issueId,
-        data,
-        this.rootStore.user.currentUser ?? undefined
-      );
+      await this.inboxService.markInboxStatus(workspaceSlug, projectId, inboxId, issueId, data);
     } catch (error) {
       runInAction(() => {
         this.error = error;
@@ -259,13 +239,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
         };
       });
 
-      await this.inboxService.deleteInboxIssue(
-        workspaceSlug,
-        projectId,
-        inboxId,
-        issueId,
-        this.rootStore.user.currentUser ?? undefined
-      );
+      await this.inboxService.deleteInboxIssue(workspaceSlug, projectId, inboxId, issueId);
     } catch (error) {
       runInAction(() => {
         this.error = error;

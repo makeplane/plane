@@ -9,4 +9,6 @@ export interface IAppConfig {
   github_client_id: string | null;
   magic_login: boolean;
   slack_client_id: string | null;
+  posthog_api_key: string | null;
+  posthog_host: string | null;
 }

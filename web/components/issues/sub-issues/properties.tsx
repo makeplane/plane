@@ -5,7 +5,6 @@ import { mutate } from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService } from "services/issue";
-import { TrackEventService } from "services/track_event.service";
 // components
 import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
 import { PrioritySelect } from "components/project";
@@ -25,7 +24,6 @@ export interface IIssueProperty {
 
 // services
 const issueService = new IssueService();
-const trackEventService = new TrackEventService();
 
 export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
   const { workspaceSlug, parentIssue, issue, user, editable } = props;
@@ -36,18 +34,6 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
 
   const handlePriorityChange = (data: any) => {
     partialUpdateIssue({ priority: data });
-    trackEventService.trackIssuePartialPropertyUpdateEvent(
-      {
-        workspaceSlug,
-        workspaceId: issue.workspace,
-        projectId: issue.project_detail.id,
-        projectIdentifier: issue.project_detail.identifier,
-        projectName: issue.project_detail.name,
-        issueId: issue.id,
-      },
-      "ISSUE_PROPERTY_UPDATE_PRIORITY",
-      user as IUser
-    );
   };
 
   const handleStateChange = (data: IState) => {
@@ -55,35 +41,10 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
       state: data.id,
       state_detail: data,
     });
-    trackEventService.trackIssuePartialPropertyUpdateEvent(
-      {
-        workspaceSlug,
-        workspaceId: issue.workspace,
-        projectId: issue.project_detail.id,
-        projectIdentifier: issue.project_detail.identifier,
-        projectName: issue.project_detail.name,
-        issueId: issue.id,
-      },
-      "ISSUE_PROPERTY_UPDATE_STATE",
-      user as IUser
-    );
   };
 
   const handleAssigneeChange = (data: string[]) => {
     partialUpdateIssue({ assignees: data });
-
-    trackEventService.trackIssuePartialPropertyUpdateEvent(
-      {
-        workspaceSlug,
-        workspaceId: issue.workspace,
-        projectId: issue.project_detail.id,
-        projectIdentifier: issue.project_detail.identifier,
-        projectName: issue.project_detail.name,
-        issueId: issue.id,
-      },
-      "ISSUE_PROPERTY_UPDATE_ASSIGNEE",
-      user as IUser
-    );
   };
 
   const partialUpdateIssue = async (data: Partial<IIssue>) => {
@@ -100,7 +61,7 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
       false
     );
 
-    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project, issue.id, data, user);
+    const issueResponse = await issueService.patchIssue(workspaceSlug as string, issue.project, issue.id, data);
 
     mutate(
       SUB_ISSUES(parentIssue.id),

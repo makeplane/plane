@@ -231,15 +231,10 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: issueName,
-          task: "Generate a proper description for this issue.",
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: issueName,
+        task: "Generate a proper description for this issue.",
+      })
       .then((res) => {
         if (res.response === "")
           setToastAlert({

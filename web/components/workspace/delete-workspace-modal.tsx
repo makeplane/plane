@@ -12,6 +12,7 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // types
 import type { IWorkspace } from "types";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -57,11 +58,17 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
 
     await workspaceStore
       .deleteWorkspace(data.slug)
-      .then(() => {
+      .then((res) => {
         handleClose();
-
+        console.log('DELETE WORKPSACE', res);
         router.push("/");
-
+        const payload = {
+          slug: data.slug
+        };
+        trackEvent(
+          'DELETE_WORKSPACE',
+          payload
+        );
         setToastAlert({
           type: "success",
           title: "Success!",

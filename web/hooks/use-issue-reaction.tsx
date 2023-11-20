@@ -47,8 +47,7 @@ const useIssueReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       issueId.toString(),
-      { reaction },
-      user.user
+      { reaction }
     );
 
     mutateReaction((prev: any) => [...(prev || []), data]);
@@ -72,8 +71,7 @@ const useIssueReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       issueId.toString(),
-      reaction,
-      user.user
+      reaction
     );
 
     mutateReaction();

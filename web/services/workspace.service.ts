@@ -1,6 +1,5 @@
 // services
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
@@ -12,15 +11,12 @@ import {
   ILastActiveWorkspaceDetails,
   IWorkspaceSearchResults,
   IProductUpdateResponse,
-  IUser,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // store
 import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store/issue";
-
-const trackEventService = new TrackEventService();
 
 export class WorkspaceService extends APIService {
   constructor() {
@@ -43,66 +39,43 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async createWorkspace(data: Partial<IWorkspace>, user: IUser | undefined): Promise<IWorkspace> {
+  async createWorkspace(data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.post("/api/workspaces/", data)
-      .then((response) => {
-        trackEventService.trackWorkspaceEvent(response.data, "CREATE_WORKSPACE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateWorkspace(
-    workspaceSlug: string,
-    data: Partial<IWorkspace>,
-    user: IUser | undefined
-  ): Promise<IWorkspace> {
+  async updateWorkspace(workspaceSlug: string, data: Partial<IWorkspace>): Promise<IWorkspace> {
     return this.patch(`/api/workspaces/${workspaceSlug}/`, data)
-      .then((response) => {
-        trackEventService.trackWorkspaceEvent(response.data, "UPDATE_WORKSPACE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteWorkspace(workspaceSlug: string, user: IUser | undefined): Promise<any> {
+  async deleteWorkspace(workspaceSlug: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/`)
-      .then((response) => {
-        trackEventService.trackWorkspaceEvent({ workspaceSlug }, "DELETE_WORKSPACE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async inviteWorkspace(
-    workspaceSlug: string,
-    data: IWorkspaceBulkInviteFormData,
-    user: IUser | undefined
-  ): Promise<any> {
+  async inviteWorkspace(workspaceSlug: string, data: IWorkspaceBulkInviteFormData): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
-      .then((response) => {
-        trackEventService.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async joinWorkspace(workspaceSlug: string, invitationId: string, data: any, user: IUser | undefined): Promise<any> {
+  async joinWorkspace(workspaceSlug: string, invitationId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, data, {
       headers: {},
     })
-      .then((response) => {
-        trackEventService.trackWorkspaceEvent(response.data, "WORKSPACE_USER_INVITE_ACCEPT", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

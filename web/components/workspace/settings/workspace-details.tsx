@@ -18,6 +18,7 @@ import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE } from "constants/workspace";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -66,12 +67,17 @@ export const WorkspaceDetails: FC = observer(() => {
     };
 
     await updateWorkspace(currentWorkspace.slug, payload)
-      .then(() =>
+      .then((res) => {
+        trackEvent(
+          'UPDATE_WORKSPACE',
+          res
+        )
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
         })
+      }
       )
       .catch((err) => console.error(err));
   };
@@ -83,7 +89,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
     fileService.deleteFile(currentWorkspace.id, url).then(() => {
       updateWorkspace(currentWorkspace.slug, { logo: "" })
-        .then(() => {
+        .then((res) => {
           setToastAlert({
             type: "success",
             title: "Success!",

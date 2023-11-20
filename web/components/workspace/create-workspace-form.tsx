@@ -14,6 +14,8 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+// events
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -71,6 +73,16 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await workspaceStore
             .createWorkspace(formData)
             .then(async (res) => {
+              const payload = {
+                name: formData.name,
+                slug: formData.slug,
+                workspace_url: formData.url,
+                organization_size: formData.organization_size
+              };
+              trackEvent(
+                "CREATE_WORKSPACE",
+                payload
+              )
               setToastAlert({
                 type: "success",
                 title: "Success!",

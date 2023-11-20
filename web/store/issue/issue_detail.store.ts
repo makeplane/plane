@@ -251,12 +251,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     });
 
     try {
-      const response = await this.issueService.createIssue(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.loader = false;
@@ -283,9 +278,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.loader = false;
@@ -323,7 +316,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       if (!user) return;
 
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data, user);
+      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       runInAction(() => {
         this.loader = false;
@@ -365,7 +358,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       if (!user) return;
 
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
+      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         this.loader = false;
@@ -521,8 +514,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         workspaceSlug,
         projectId,
         issueId,
-        data,
-        undefined
+        data
       );
 
       const _issueComments = {
@@ -551,8 +543,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         projectId,
         issueId,
         commentId,
-        data,
-        undefined
+        data
       );
 
       const _issueComments = {
@@ -577,7 +568,7 @@ export class IssueDetailStore implements IIssueDetailStore {
         [issueId]: this.issue_comments[issueId].filter((comment: any) => comment.id != commentId),
       };
 
-      await this.issueCommentService.deleteIssueComment(workspaceSlug, projectId, issueId, commentId, undefined);
+      await this.issueCommentService.deleteIssueComment(workspaceSlug, projectId, issueId, commentId);
 
       runInAction(() => {
         this.issue_comments = _issueComments;

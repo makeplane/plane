@@ -142,12 +142,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
   createView = async (workspaceSlug: string, projectId: string, data: Partial<IProjectView>): Promise<IProjectView> => {
     try {
-      const response = await this.viewService.createView(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser
-      );
+      const response = await this.viewService.createView(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.viewsList = {
@@ -191,13 +186,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
         };
       });
 
-      const response = await this.viewService.patchView(
-        workspaceSlug,
-        projectId,
-        viewId,
-        data,
-        this.rootStore.user.currentUser
-      );
+      const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
 
       return response;
     } catch (error) {
@@ -220,7 +209,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
         };
       });
 
-      await this.viewService.deleteView(workspaceSlug, projectId, viewId, this.rootStore.user.currentUser);
+      await this.viewService.deleteView(workspaceSlug, projectId, viewId);
     } catch (error) {
       this.fetchAllViews(workspaceSlug, projectId);
 

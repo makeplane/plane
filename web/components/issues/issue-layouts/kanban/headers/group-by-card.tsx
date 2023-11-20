@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
-
 // services
 import { ModuleService } from "services/module.service";
 import { IssueService } from "services/issue";
@@ -11,7 +10,6 @@ import { ExistingIssuesListModal } from "components/core";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
 // hooks
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 // mobx
 import { observer } from "mobx-react-lite";
@@ -43,8 +41,6 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
-  const { user } = useUser();
-
   const { setToastAlert } = useToast();
 
   const renderExistingIssueModal = moduleId || cycleId;
@@ -58,7 +54,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     };
 
     await moduleService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload, user)
+      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload)
       .catch(() =>
         setToastAlert({
           type: "error",
@@ -76,7 +72,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     };
 
     await issueService
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload, user)
+      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .catch(() => {
         setToastAlert({
           type: "error",

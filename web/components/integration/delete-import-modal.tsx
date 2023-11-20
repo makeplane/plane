@@ -29,7 +29,7 @@ type Props = {
 // services
 const integrationService = new IntegrationService();
 
-export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, user }) => {
+export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [confirmDeleteImport, setConfirmDeleteImport] = useState(false);
 
@@ -50,7 +50,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data, 
     );
 
     integrationService
-      .deleteImporterService(workspaceSlug as string, data.service, data.id, user)
+      .deleteImporterService(workspaceSlug as string, data.service, data.id)
       .catch(() =>
         setToastAlert({
           type: "error",

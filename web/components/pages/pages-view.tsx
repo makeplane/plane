@@ -182,7 +182,7 @@ export const PagesView: React.FC<Props> = observer(({ pages, viewType }) => {
       false
     );
 
-    pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData, user).then(() => {
+    pageService.patchPage(workspaceSlug.toString(), projectId.toString(), page.id, formData).then(() => {
       mutate(RECENT_PAGES_LIST(projectId.toString()));
     });
   };

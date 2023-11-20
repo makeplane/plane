@@ -31,7 +31,7 @@ type Props = {
 const issueService = new IssueService();
 
 export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
-  const { isOpen, onClose, user } = props;
+  const { isOpen, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -78,14 +78,9 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
     if (!Array.isArray(data.delete_issue_ids)) data.delete_issue_ids = [data.delete_issue_ids];
 
     await issueService
-      .bulkDeleteIssues(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          issue_ids: data.delete_issue_ids,
-        },
-        user
-      )
+      .bulkDeleteIssues(workspaceSlug as string, projectId as string, {
+        issue_ids: data.delete_issue_ids,
+      })
       .then(() => {
         setToastAlert({
           type: "success",

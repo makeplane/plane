@@ -226,36 +226,24 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await issueService.addIssueToCycle(
-      workspaceSlug as string,
-      activeProject ?? "",
-      cycleId,
-      {
-        issues: [issueId],
-      },
-      user
-    );
+    await issueService.addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
+      issues: [issueId],
+    });
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await moduleService.addIssuesToModule(
-      workspaceSlug as string,
-      activeProject ?? "",
-      moduleId as string,
-      {
-        issues: [issueId],
-      },
-      user
-    );
+    await moduleService.addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
+      issues: [issueId],
+    });
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
     await issueService
-      .createIssue(workspaceSlug.toString(), activeProject, payload, user)
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
         if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);

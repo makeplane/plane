@@ -212,9 +212,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.workspaceService.createWorkspace(data, user);
+      const response = await this.workspaceService.createWorkspace(data);
 
       runInAction(() => {
         this.loader = false;
@@ -247,9 +245,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.workspaceService.updateWorkspace(workspaceSlug, data, user);
+      const response = await this.workspaceService.updateWorkspace(workspaceSlug, data);
 
       runInAction(() => {
         this.loader = false;
@@ -281,9 +277,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.workspaceService.deleteWorkspace(workspaceSlug, user);
+      await this.workspaceService.deleteWorkspace(workspaceSlug);
 
       runInAction(() => {
         this.loader = false;

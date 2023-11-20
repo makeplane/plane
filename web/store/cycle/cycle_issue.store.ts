@@ -324,17 +324,9 @@ export class CycleIssueStore implements ICycleIssueStore {
 
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     try {
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.issueService.addIssueToCycle(
-        workspaceSlug,
-        projectId,
-        cycleId,
-        {
-          issues: issueIds,
-        },
-        user
-      );
+      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: issueIds,
+      });
 
       this.fetchIssues(workspaceSlug, projectId, cycleId);
     } catch (error) {

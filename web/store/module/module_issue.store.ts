@@ -339,17 +339,9 @@ export class ModuleIssueStore implements IModuleIssueStore {
 
   addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.moduleService.addIssuesToModule(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        {
-          issues: issueIds,
-        },
-        user
-      );
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: issueIds,
+      });
 
       this.fetchIssues(workspaceSlug, projectId, moduleId);
     } catch (error) {

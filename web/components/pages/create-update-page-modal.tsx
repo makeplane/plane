@@ -1,10 +1,6 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // services
 import { PageService } from "services/page.service";
@@ -16,6 +12,7 @@ import { PageForm } from "./page-form";
 import { IUser, IPage } from "types";
 // fetch-keys
 import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -30,7 +27,7 @@ type Props = {
 const pageService = new PageService();
 
 export const CreateUpdatePageModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // router
   const router = useRouter();
 
@@ -42,7 +39,7 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
 
   const createPage = async (payload: IPage) => {
     await pageService
-      .createPage(workspaceSlug as string, projectId as string, payload, user)
+      .createPage(workspaceSlug as string, projectId as string, payload)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
@@ -64,14 +61,19 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           false
         );
         onClose();
-
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page created successfully.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            ...res,
+            caase: "SUCCES"
+          }
+        )
       })
       .catch(() => {
         setToastAlert({
@@ -79,12 +81,18 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            case: "FAILED"
+          }
+        )
       });
   };
 
   const updatePage = async (payload: IPage) => {
     await pageService
-      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
+      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload)
       .then((res) => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
@@ -124,6 +132,13 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Page updated successfully.",
         });
+          trackEvent(
+            'PAGE_UPDATE',
+            {
+              ...res,
+              case: "SUCCESS"
+            }
+          )
       })
       .catch(() => {
         setToastAlert({
@@ -131,6 +146,12 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be updated. Please try again.",
         });
+        trackEvent(
+          'PAGE_UPDATE',
+          {
+            case: "FAILED"
+          }
+        )
       });
   };
 

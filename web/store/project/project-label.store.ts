@@ -119,12 +119,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
   createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
     try {
-      const response = await this.issueLabelService.createIssueLabel(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.issueLabelService.createIssueLabel(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.labels = {
@@ -208,13 +203,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
     });
 
     try {
-      const response = await this.issueLabelService.patchIssueLabel(
-        workspaceSlug,
-        projectId,
-        labelId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
 
       return response;
     } catch (error) {
@@ -243,12 +232,7 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
     try {
       // deleting using api
-      await this.issueLabelService.deleteIssueLabel(
-        workspaceSlug,
-        projectId,
-        labelId,
-        this.rootStore.user.currentUser!
-      );
+      await this.issueLabelService.deleteIssueLabel(workspaceSlug, projectId, labelId);
     } catch (error) {
       console.log("Failed to delete label from project store");
       // reverting back to original label list
