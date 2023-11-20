@@ -69,7 +69,7 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center gap-2">
             {currentProjectDetails?.estimate !== estimate?.id && estimate?.points?.length > 0 && (
-              <Button variant="neutral-primary" onClick={handleUseEstimate}>
+              <Button variant="neutral-primary" onClick={handleUseEstimate} size="sm">
                 Use
               </Button>
             )}

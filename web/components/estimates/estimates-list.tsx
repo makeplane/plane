@@ -23,7 +23,7 @@ export const EstimatesList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, projectEstimates: projectEstimatesStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
@@ -32,7 +32,7 @@ export const EstimatesList: React.FC = observer(() => {
   // hooks
   const { setToastAlert } = useToast();
   // derived values
-  const estimatesList = projectStore.projectEstimates;
+  const estimatesList = projectEstimatesStore.projectEstimates;
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -68,7 +68,7 @@ export const EstimatesList: React.FC = observer(() => {
       <DeleteEstimateModal
         isOpen={!!estimateToDelete}
         handleClose={() => setEstimateToDelete(null)}
-        data={projectStore.getProjectEstimateById(estimateToDelete!)}
+        data={projectEstimatesStore.getProjectEstimateById(estimateToDelete!)}
       />
 
       <section className="flex items-center justify-between py-3.5 border-b border-custom-border-100">
@@ -81,11 +81,12 @@ export const EstimatesList: React.FC = observer(() => {
                 setEstimateFormOpen(true);
                 setEstimateToUpdate(undefined);
               }}
+              size="sm"
             >
               Add Estimate
             </Button>
             {currentProjectDetails?.estimate && (
-              <Button variant="neutral-primary" onClick={disableEstimates}>
+              <Button variant="neutral-primary" onClick={disableEstimates} size="sm">
                 Disable Estimates
               </Button>
             )}

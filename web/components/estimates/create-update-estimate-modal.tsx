@@ -89,7 +89,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
     await projectEstimatesStore
       .updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
       .then(() => {
-        handleClose();
+        onClose();
       })
       .catch((err) => {
         const error = err?.error;
@@ -101,8 +101,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
           message: errorString ?? "Estimate could not be updated. Please try again.",
         });
       });
-
-    onClose();
   };
 
   const onSubmit = async (formData: FormValues) => {
