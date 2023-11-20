@@ -13,9 +13,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
-  isOpen: boolean;
-  handleClose: () => void;
   data?: IPage | null;
+  handleClose: () => void;
+  isOpen: boolean;
   projectId: string;
 };
 
@@ -49,7 +49,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
         });
         trackEvent("PAGE_CREATE", {
           ...res,
-          caase: "SUCCES",
+          case: "SUCCESS",
         });
       })
       .catch(() => {
@@ -94,6 +94,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
+
     if (!data) await createProjectPage(formData);
     else await updateProjectPage(formData);
   };

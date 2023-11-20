@@ -23,7 +23,7 @@ import { renderShortDate, render24HourFormatTime, renderLongDateFormat } from "h
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
-import { CreateUpdatePageModal, ArchivePageModal, DeletePageModal } from "components/pages";
+import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // types
 import { IPage } from "types";
 
@@ -37,11 +37,10 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   const { workspaceSlug, projectId, page } = props;
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
-  const [archivePageModal, setArchivePageModal] = useState(false);
   const [deletePageModal, setDeletePageModal] = useState(false);
   // store
   const {
-    page: { removeFromFavorites, addToFavorites, makePublic, makePrivate, restorePage },
+    page: { archivePage, removeFromFavorites, addToFavorites, makePublic, makePrivate, restorePage },
     user: { currentProjectRole },
     projectMember: { projectMembers },
   } = useMobxStore();
@@ -121,7 +120,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    setArchivePageModal(true);
+    archivePage(workspaceSlug, projectId, page.id);
   };
 
   const handleRestorePage = (e: any) => {
@@ -155,7 +154,6 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
         data={page}
         projectId={projectId}
       />
-      <ArchivePageModal isOpen={archivePageModal} onClose={() => setArchivePageModal(false)} data={page} />
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} data={page} />
       <li>
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
@@ -202,23 +200,25 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                       <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
                     </Tooltip>
                   )}
-                  {!page.archived_at &&
-                    userCanEdit &&
-                    (page.is_favorite ? (
-                      <button type="button" onClick={handleRemoveFromFavorites}>
-                        <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
-                      </button>
-                    ) : (
-                      <button type="button" onClick={handleAddToFavorites}>
-                        <Star className="h-3.5 w-3.5" />
-                      </button>
-                    ))}
+                  {!page.archived_at && userCanEdit && (
+                    <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
+                      {page.is_favorite ? (
+                        <button type="button" onClick={handleRemoveFromFavorites}>
+                          <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
+                        </button>
+                      ) : (
+                        <button type="button" onClick={handleAddToFavorites}>
+                          <Star className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </Tooltip>
+                  )}
                   {!page.archived_at && userCanEdit && (
                     <Tooltip
                       tooltipContent={`${
                         page.access
-                          ? "This page is only visible to you."
-                          : "This page can be viewed by anyone in the project."
+                          ? "This page is only visible to you"
+                          : "This page can be viewed by anyone in the project"
                       }`}
                     >
                       {page.access ? (

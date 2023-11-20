@@ -1,5 +1,4 @@
 export * from "./pages-list";
-export * from "./archive-page-modal";
 export * from "./create-block";
 export * from "./create-update-block-inline";
 export * from "./create-update-page-modal";
