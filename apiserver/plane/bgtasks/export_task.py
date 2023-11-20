@@ -71,7 +71,7 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
     file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
     expires_in = 7 * 24 * 60 * 60
 
-    if settings.DOCKERIZED and settings.USE_MINIO:
+    if settings.USE_MINIO:
         s3 = boto3.client(
             "s3",
             endpoint_url=settings.AWS_S3_ENDPOINT_URL,

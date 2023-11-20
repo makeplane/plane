@@ -149,7 +149,7 @@ else:
 
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
-REDIS_SSL = "rediss" in REDIS_URL
+REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
 if REDIS_SSL:
     CACHES = {
