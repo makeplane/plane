@@ -34,14 +34,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     # Inhouse apps
     "plane.analytics",
-    "plane.api",
+    "plane.app",
+    "plane.space",
     "plane.bgtasks",
     "plane.db",
     "plane.utils",
     "plane.web",
     "plane.middleware",
     "plane.license",
-    "plane.proxy",
+    "plane.api",
     # Third-party things
     "rest_framework",
     "rest_framework.authtoken",
@@ -74,7 +75,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_THROTTLE_CLASSES": ("plane.proxy.rate_limit.ApiKeyRateThrottle",),
+    "DEFAULT_THROTTLE_CLASSES": ("plane.api.rate_limit.ApiKeyRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
         "api_key": "60/minute",
     },
@@ -223,7 +224,8 @@ STORAGES["default"] = {
 }
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
-AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
@@ -232,7 +234,7 @@ AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_ENDPOINT_URL", None) or os.environ.
 )
 if AWS_S3_ENDPOINT_URL:
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
-    AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_STORAGE_BUCKET_NAME}"
+    AWS_S3_CUSTOM_DOMAIN = f"{parsed_url.netloc}/{AWS_S3_BUCKET_NAME}"
     AWS_S3_URL_PROTOCOL = f"{parsed_url.scheme}:"
 
 
@@ -284,6 +286,7 @@ else:
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.file_asset_task",
 )
 
 # Sentry Settings

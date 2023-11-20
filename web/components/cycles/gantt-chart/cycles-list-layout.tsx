@@ -11,7 +11,7 @@ import useUser from "hooks/use-user";
 import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
-import { CycleGanttBlock, CycleGanttSidebarBlock } from "components/cycles";
+import { CycleGanttBlock } from "components/cycles";
 // types
 import { ICycle } from "types";
 
@@ -60,7 +60,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    cycleService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload, user);
+    cycleService.patchCycle(workspaceSlug.toString(), cycle.project, cycle.id, newPayload);
   };
 
   const blockFormat = (blocks: ICycle[]) =>

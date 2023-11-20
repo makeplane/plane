@@ -24,6 +24,7 @@ export const ModuleListLayout: React.FC = observer(() => {
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectEstimates: { projectEstimates },
     issueFilter: issueFilterStore,
     moduleIssue: moduleIssueStore,
     issueDetail: issueDetailStore,
@@ -64,7 +65,7 @@ export const ModuleListLayout: React.FC = observer(() => {
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
     currentProjectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
+      ? projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (
