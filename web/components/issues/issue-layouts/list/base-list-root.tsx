@@ -12,7 +12,7 @@ import { IProfileIssueFilterStore, IProfileIssueStore } from "store/profile-issu
 import { IModuleIssueStore } from "store/module";
 import { ICycleIssueStore } from "store/cycle";
 import { IArchivedIssueFilterStore, IArchivedIssueStore } from "store/archived-issues";
-import { IProjectIssueStore } from "store/project-issues";
+import { IProjectIssuesStore } from "store/issues";
 
 interface IBaseListRoot {
   issueStore:
@@ -21,7 +21,7 @@ interface IBaseListRoot {
     | IModuleIssueStore
     | ICycleIssueStore
     | IArchivedIssueStore
-    | IProjectIssueStore;
+    | IProjectIssuesStore;
   issueFilterStore: IssueFilterStore | IIssueFilterStore | IProfileIssueFilterStore | IArchivedIssueFilterStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -43,9 +43,14 @@ export const BaseListRoot = (props: IBaseListRoot) => {
   } = useMobxStore();
 
   const issues = issueStore.getIssues;
+  //temporary ignore to be removed after implementing other stores
+  //@ts-ignore
+  const issueIds = issueStore?.getIssueIds !== undefined ? issueStore?.getIssueIds : [];
   const userDisplayFilters = issueFilterStore?.userDisplayFilters;
   const group_by: string | null = userDisplayFilters?.group_by || null;
   const displayProperties = issueFilterStore?.userDisplayProperties;
+
+  const showEmptyGroup = userDisplayFilters.show_empty_groups ?? false;
 
   const states = projectStateStore?.projectStates;
   const priorities = ISSUE_PRIORITIES;
@@ -94,9 +99,9 @@ export const BaseListRoot = (props: IBaseListRoot) => {
             labels={labels}
             members={members}
             projects={projects}
-            issueIds={{} as IGroupedIssues}
-            showEmptyGroup={false}
-            enableIssueQuickAdd={false}
+            issueIds={issueIds}
+            showEmptyGroup={showEmptyGroup}
+            enableIssueQuickAdd={true}
             isReadonly={false}
           />
         </div>

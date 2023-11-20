@@ -37,7 +37,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
-  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
+  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -186,8 +186,8 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
-              displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
+              displayFilters={projectIssueFiltersStore.issueFilters?.displayFilters ?? {}}
+              displayProperties={projectIssueFiltersStore.issueFilters?.displayProperties ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
               handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={
