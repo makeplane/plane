@@ -18,6 +18,7 @@ import { ROLE } from "constants/workspace";
 import { IWorkspaceMemberInvitation } from "types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -63,7 +64,11 @@ const Invitations: React.FC<Props> = (props) => {
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async () => {
+      .then(async (res) => {
+        trackEvent(
+          'WORKSPACE_USER_INVITE_ACCEPT',
+          res
+        )
         await mutateInvitations();
         await workspaceStore.fetchWorkspaces();
         await mutate(USER_WORKSPACES);

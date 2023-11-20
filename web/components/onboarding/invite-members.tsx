@@ -171,7 +171,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 };
 
 export const InviteMembers: React.FC<Props> = (props) => {
-  const { finishOnboarding, stepChange, user, workspace } = props;
+  const { finishOnboarding, stepChange, workspace } = props;
 
   const { setToastAlert } = useToast();
 
@@ -201,7 +201,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
     const payload = { ...formData };
 
     await workspaceService
-      .inviteWorkspace(workspace.slug, payload, user)
+      .inviteWorkspace(workspace.slug, payload)
       .then(async () => {
         setToastAlert({
           type: "success",

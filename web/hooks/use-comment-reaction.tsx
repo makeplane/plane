@@ -1,5 +1,4 @@
 import useSWR from "swr";
-
 // fetch keys
 import { COMMENT_REACTION_LIST } from "constants/fetch-keys";
 // services
@@ -52,8 +51,7 @@ const useCommentReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
-      { reaction },
-      user.user
+      { reaction }
     );
 
     mutateCommentReactions((prev: any) => [...(prev || []), data]);
@@ -77,8 +75,7 @@ const useCommentReaction = (
       workspaceSlug.toString(),
       projectId.toString(),
       commendId.toString(),
-      reaction,
-      user.user
+      reaction
     );
 
     mutateCommentReactions();
