@@ -125,6 +125,24 @@
     --color-border-200: 229, 229, 229; /* subtle border- 2 */
     --color-border-300: 212, 212, 212; /* strong border- 1 */
     --color-border-400: 185, 185, 185; /* strong border- 2 */
+
+    /* onboarding colors */
+    --gradient-onboarding-primary: linear-gradient(106deg, #F2F6FF 29.8%, #E1EAFF 99.34%);
+    --gradient-onboarding-secondary: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
+
+    --color-onboarding-text-100: 23, 23, 23;
+    --color-onboarding-text-200: 58, 58, 58;
+    --color-onboarding-text-300: 82, 82, 82;
+    --color-onboarding-text-400: 163, 163, 163;
+
+    --color-onboarding-background-100: 236, 241, 255;
+    --color-onboarding-background-200: 255, 255, 255;
+    --color-onboarding-background-300: 236, 241, 255;
+    --color-onboarding-background-400: 177, 206, 250; 
+
+    --color-onboarding-border-100: 229, 229, 229;
+    --color-onboarding-border-200: 217, 228, 255;
+    
   }
 
   [data-theme="light-contrast"] {
@@ -172,6 +190,25 @@
     --color-border-200: 38, 38, 38; /* subtle border- 2 */
     --color-border-300: 46, 46, 46; /* strong border- 1 */
     --color-border-400: 58, 58, 58; /* strong border- 2 */
+
+
+
+    /* onboarding colors */
+    --gradient-onboarding-primary: linear-gradient(106deg, #18191B 25.17%, #18191B 99.34%);
+    --gradient-onboarding-secondary: linear-gradient(129deg, rgba(47, 49, 53, 0.80) -22.23%, rgba(33, 34, 37, 0.80) 62.98%);
+
+    --color-onboarding-text-100: 237, 238, 240;
+    --color-onboarding-text-200: 176, 180, 187;
+    --color-onboarding-text-300: 118, 123, 132;
+    --color-onboarding-text-400: 105, 110, 119;
+
+    --color-onboarding-background-100: 54, 58, 64; 
+    --color-onboarding-background-200: 40, 42, 45; 
+    --color-onboarding-background-300: 40, 42, 45; 
+    --color-onboarding-background-400: 67, 72, 79;
+
+    --color-onboarding-border-100: 54, 58, 64;
+    --color-onboarding-border-200: 54, 58, 64;
   }
 
   [data-theme="dark-contrast"] {
