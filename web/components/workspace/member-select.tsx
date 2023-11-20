@@ -64,7 +64,13 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
   );
 
   return (
-    <Listbox as="div" className={`flex-shrink-0 text-left`} value={value?.member.id} onChange={onChange} disabled={disabled}>
+    <Listbox
+      as="div"
+      className={`flex-shrink-0 text-left`}
+      value={value?.member.id}
+      onChange={onChange}
+      disabled={disabled}
+    >
       <Listbox.Button as={React.Fragment}>
         <button
           ref={setReferenceElement}
@@ -99,20 +105,20 @@ export const WorkspaceMemberSelect: FC<IWorkspaceMemberSelect> = (props) => {
                   {filteredOptions.map((workspaceMember: IWorkspaceMember) => (
                     <Listbox.Option
                       key={workspaceMember.id}
-                      value={workspaceMember.id}
+                      value={workspaceMember.member.id}
                       className={({ active, selected }) =>
                         `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
                           active && !selected ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
                     >
-                      {({ selected }) => (
+                      {() => (
                         <>
                           <div className="flex items-center gap-2">
                             <Avatar name={workspaceMember?.member.display_name} src={workspaceMember?.member.avatar} />
                             {workspaceMember.member.display_name}
                           </div>
-                          {selected && <Check className="h-3.5 w-3.5" />}
+                          {value && value.member.id === workspaceMember.member.id && <Check className="h-3.5 w-3.5" />}
                         </>
                       )}
                     </Listbox.Option>
