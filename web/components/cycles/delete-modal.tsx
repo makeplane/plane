@@ -1,4 +1,6 @@
 import { Fragment, useState } from "react";
+// next
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { AlertTriangle } from "lucide-react";
@@ -27,6 +29,8 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { setToastAlert } = useToast();
   // states
   const [loader, setLoader] = useState(false);
+  const router = useRouter();
+  const { cycleId } = router.query;
 
   const formSubmit = async () => {
     setLoader(true);
@@ -38,6 +42,9 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           title: "Success!",
           message: "Cycle deleted successfully.",
         });
+
+        if (cycleId) router.replace(`/${workspaceSlug}/projects/${projectId}/cycles`);
+
         handleClose();
       } catch (error) {
         setToastAlert({
