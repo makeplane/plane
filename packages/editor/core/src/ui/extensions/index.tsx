@@ -6,12 +6,12 @@ import { Color } from "@tiptap/extension-color";
 import TaskItem from "@tiptap/extension-task-item";
 import TaskList from "@tiptap/extension-task-list";
 import { Markdown } from "tiptap-markdown";
-import Gapcursor from "@tiptap/extension-gapcursor";
 
 import TableHeader from "./table/table-header/table-header";
 import Table from "./table/table";
 import TableCell from "./table/table-cell/table-cell";
 import TableRow from "./table/table-row/table-row";
+import HorizontalRule from "./horizontal-rule";
 
 import ImageExtension from "./image";
 
@@ -19,6 +19,10 @@ import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
 import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
+
+import { CustomKeymap } from "./keymap";
+import { CustomCodeBlock } from "./code";
+import { ListKeymap } from "./custom-list-keymap";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -49,22 +53,16 @@ export const CoreEditorExtensions = (
         class: "border-l-4 border-custom-border-300",
       },
     },
-    code: {
-      HTMLAttributes: {
-        class:
-          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
-        spellcheck: "false",
-      },
-    },
+    code: false,
     codeBlock: false,
     horizontalRule: false,
     dropcursor: {
       color: "rgba(var(--color-text-100))",
       width: 2,
     },
-    gapcursor: false,
   }),
-  Gapcursor,
+  CustomKeymap,
+  ListKeymap,
   TiptapLink.configure({
     protocols: ["http", "https"],
     validate: (url) => isValidHttpUrl(url),
@@ -86,6 +84,7 @@ export const CoreEditorExtensions = (
       class: "not-prose pl-2",
     },
   }),
+  CustomCodeBlock,
   TaskItem.configure({
     HTMLAttributes: {
       class: "flex items-start my-4",
@@ -95,7 +94,9 @@ export const CoreEditorExtensions = (
   Markdown.configure({
     html: true,
     transformCopiedText: true,
+    transformPastedText: true,
   }),
+  HorizontalRule,
   Table,
   TableHeader,
   TableCell,

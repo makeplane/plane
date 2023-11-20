@@ -87,7 +87,7 @@ type Props = {
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
+export const GithubImporterRoot: React.FC<Props> = () => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
@@ -147,7 +147,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
     };
 
     await githubIntegrationService
-      .createGithubServiceImport(workspaceSlug as string, payload, user)
+      .createGithubServiceImport(workspaceSlug as string, payload)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));

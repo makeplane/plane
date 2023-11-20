@@ -15,7 +15,7 @@ import {
   FilterTargetDate,
 } from "components/issues";
 // types
-import { IIssueFilterOptions, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
 // constants
 import { ILayoutDisplayFiltersOptions } from "constants/issue";
 
@@ -23,7 +23,7 @@ type Props = {
   filters: IIssueFilterOptions;
   handleFiltersUpdate: (key: keyof IIssueFilterOptions, value: string | string[]) => void;
   layoutDisplayFiltersOptions: ILayoutDisplayFiltersOptions | undefined;
-  labels?: IIssueLabels[] | undefined;
+  labels?: IIssueLabel[] | undefined;
   members?: IUserLite[] | undefined;
   projects?: IProject[] | undefined;
   states?: IState[] | undefined;

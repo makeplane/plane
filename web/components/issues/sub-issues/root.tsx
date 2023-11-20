@@ -126,7 +126,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
     if (!workspaceSlug || !projectId || !parentIssue || !issue?.id) return;
     issueService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null }, user)
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null })
       .then(async () => {
         if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
         handleIssuesLoader({ key: "delete", issueId: issue?.id });

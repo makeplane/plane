@@ -12,12 +12,12 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssueLabels } from "types";
+import type { IIssueLabel } from "types";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  data: IIssueLabels | null;
+  data: IIssueLabel | null;
 };
 
 export const DeleteLabelModal: React.FC<Props> = observer((props) => {

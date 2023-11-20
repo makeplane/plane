@@ -6,12 +6,12 @@ import { Check, ChevronDown, Search } from "lucide-react";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 type Props = {
   value: string[];
   onChange: (data: string[]) => void;
-  labels: IIssueLabels[] | undefined;
+  labels: IIssueLabel[] | undefined;
   className?: string;
   buttonClassName?: string;
   optionsClassName?: string;
