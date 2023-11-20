@@ -1,7 +1,7 @@
 import React from "react";
 // components
 import { ListGroupByHeaderRoot } from "./headers/group-by-root";
-import { EIssueActions, IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
+import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // types
 import {
   IIssue,
@@ -14,6 +14,7 @@ import {
   IUserLite,
   TUnGroupedIssues,
 } from "types";
+import { EIssueActions } from "../types";
 // constants
 import { getValueFromObject } from "constants/issue";
 

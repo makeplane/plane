@@ -5,14 +5,11 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner, Tooltip } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
+import { EIssueActions } from "../types";
 
-export enum EIssueActions {
-  UPDATE = "update",
-  DELETE = "delete",
-  REMOVE = "remove",
-}
 interface IssueBlockProps {
   columnId: string;
+
   issue: IIssue;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;

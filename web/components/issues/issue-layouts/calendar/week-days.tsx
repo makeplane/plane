@@ -8,19 +8,20 @@ import { CalendarDayTile } from "components/issues";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
-import { IIssueGroupedStructure } from "store/issue";
-import { IIssue } from "types";
+import { IGroupedIssues, IIssue, IIssueResponse } from "types";
+import { EIssueActions } from "../types";
 
 type Props = {
-  issues: IIssueGroupedStructure | null;
+  issues: IIssueResponse | undefined;
+  groupedIssueIds: IGroupedIssues;
   week: ICalendarWeek | undefined;
-  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
-  const { issues, week, handleIssues, quickActions, enableQuickIssueCreate } = props;
+  const { issues, groupedIssueIds, week, handleIssues, quickActions, enableQuickIssueCreate } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -43,6 +44,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             key={renderDateFormat(date.date)}
             date={date}
             issues={issues}
+            groupedIssueIds={groupedIssueIds}
             handleIssues={handleIssues}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}

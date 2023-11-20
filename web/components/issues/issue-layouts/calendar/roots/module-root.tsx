@@ -63,7 +63,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
       <DragDropContext onDragEnd={onDragEnd}>
         <CalendarChart
-          issues={issues as IIssueGroupedStructure | null}
+          issues={undefined}
+          groupedIssueIds={{}}
           layout={issueFilterStore.userDisplayFilters.calendar?.layout}
           showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
           handleIssues={handleIssues}

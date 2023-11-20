@@ -1,8 +1,9 @@
 import { FC } from "react";
 // components
-import { EIssueActions, IssueBlock } from "components/issues";
+import { IssueBlock } from "components/issues";
 // types
 import { IGroupedIssues, IIssue, IIssueDisplayProperties, IIssueResponse, TUnGroupedIssues } from "types";
+import { EIssueActions } from "../types";
 
 interface Props {
   columnId: string;

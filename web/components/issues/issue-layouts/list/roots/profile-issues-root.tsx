@@ -1,12 +1,13 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { EIssueActions, ProjectIssueQuickActions } from "components/issues";
+import { ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
+import { EIssueActions } from "../../types";
 import { IProjectStore } from "store/project";
 //components
 import { BaseListRoot } from "../base-list-root";

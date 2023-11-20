@@ -4,12 +4,13 @@ import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { ArchivedIssueQuickActions, EIssueActions } from "components/issues";
+import { ArchivedIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
+import { EIssueActions } from "../../types";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
   const router = useRouter();

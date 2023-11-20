@@ -4,9 +4,10 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { EIssueActions, ModuleIssueQuickActions } from "components/issues";
+import { ModuleIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
+import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";

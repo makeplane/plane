@@ -1,17 +1,18 @@
-import { IIssueUnGroupedStructure, IssueFilterStore } from "store/issue";
+import { IIssueUnGroupedStructure } from "store/issue";
 import { SpreadsheetView } from "./spreadsheet-view";
 import { useCallback } from "react";
 import { IIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
 import { useRouter } from "next/router";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
+import { observer } from "mobx-react-lite";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore: IProjectIssuesFilterStore;
   issueStore: IProjectIssuesStore;
 }
 
-export const BaseSpreadsheetRoot = (props: IBaseSpreadsheetRoot) => {
+export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const { issueFiltersStore, issueStore } = props;
 
   const router = useRouter();
@@ -88,4 +89,4 @@ export const BaseSpreadsheetRoot = (props: IBaseSpreadsheetRoot) => {
       enableQuickCreateIssue
     />
   );
-};
+});

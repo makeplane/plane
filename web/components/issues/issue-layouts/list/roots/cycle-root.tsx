@@ -4,12 +4,13 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CycleIssueQuickActions, EIssueActions } from "components/issues";
+import { CycleIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
+import { EIssueActions } from "../../types";
 
 export interface ICycleListLayout {}
 
