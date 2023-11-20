@@ -101,15 +101,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       if (!workspaceSlug || !projectId || !issueDetail || !user) return;
 
       issueService
-        .addIssueToCycle(
-          workspaceSlug as string,
-          projectId as string,
-          cycleId,
-          {
-            issues: [issueDetail.id],
-          },
-          user
-        )
+        .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId, {
+          issues: [issueDetail.id],
+        })
         .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
@@ -122,15 +116,9 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       if (!workspaceSlug || !projectId || !issueDetail || !user) return;
 
       moduleService
-        .addIssuesToModule(
-          workspaceSlug as string,
-          projectId as string,
-          moduleId,
-          {
-            issues: [issueDetail.id],
-          },
-          user
-        )
+        .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId, {
+          issues: [issueDetail.id],
+        })
         .then(() => {
           mutate(ISSUE_DETAILS(issueId as string));
         });

@@ -25,7 +25,7 @@ type Props = {
 const issueService = new IssueService();
 const stateService = new ProjectStateService();
 
-export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
+export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -52,7 +52,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
 
       const payload = { ...formData };
       await issueService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then(() => {
           mutateStates();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
@@ -61,7 +61,7 @@ export const ChangeIssueState: React.FC<Props> = ({ setIsPaletteOpen, issue, use
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, mutateStates, user]
+    [workspaceSlug, issueId, projectId, mutateStates]
   );
 
   const handleIssueState = (stateId: string) => {
