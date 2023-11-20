@@ -1,9 +1,9 @@
 # Python imports
 import json
 
-# Django import
+# Django improts
 from django.utils import timezone
-from django.db.models import Q, Count, OuterRef, Func, F, Prefetch
+from django.db.models import Q
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
@@ -11,69 +11,20 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from .base import BaseViewSet
-from plane.app.permissions import ProjectBasePermission, ProjectLitePermission
-from plane.db.models import (
-    Inbox,
-    InboxIssue,
-    Issue,
-    State,
-    IssueLink,
-    IssueAttachment,
-    ProjectMember,
-)
-from plane.app.serializers import (
-    IssueSerializer,
-    InboxSerializer,
-    InboxIssueSerializer,
-    IssueCreateSerializer,
-    IssueStateInboxSerializer,
-)
-from plane.utils.issue_filters import issue_filters
+from .base import BaseAPIView
+from plane.app.permissions import ProjectLitePermission
+from plane.api.serializers import InboxIssueSerializer, IssueSerializer
+from plane.db.models import InboxIssue, Issue, State, ProjectMember
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
-class InboxViewSet(BaseViewSet):
-    permission_classes = [
-        ProjectBasePermission,
-    ]
+class InboxIssueAPIEndpoint(BaseAPIView):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions related to inbox issues.
 
-    serializer_class = InboxSerializer
-    model = Inbox
+    """
 
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(
-                workspace__slug=self.kwargs.get("slug"),
-                project_id=self.kwargs.get("project_id"),
-            )
-            .annotate(
-                pending_issue_count=Count(
-                    "issue_inbox",
-                    filter=Q(issue_inbox__status=-2),
-                )
-            )
-            .select_related("workspace", "project")
-        )
-
-    def perform_create(self, serializer):
-        serializer.save(project_id=self.kwargs.get("project_id"))
-
-    def destroy(self, request, slug, project_id, pk):
-        inbox = Inbox.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        # Handle default inbox delete
-        if inbox.is_default:
-            return Response(
-                {"error": "You cannot delete the default inbox"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        inbox.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class InboxIssueViewSet(BaseViewSet):
     permission_classes = [
         ProjectLitePermission,
     ]
@@ -96,55 +47,34 @@ class InboxIssueViewSet(BaseViewSet):
                 inbox_id=self.kwargs.get("inbox_id"),
             )
             .select_related("issue", "workspace", "project")
+            .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def list(self, request, slug, project_id, inbox_id):
-        filters = issue_filters(request.query_params, "GET")
-        issues = (
-            Issue.objects.filter(
-                issue_inbox__inbox_id=inbox_id,
-                workspace__slug=slug,
-                project_id=project_id,
+    def get(self, request, slug, project_id, inbox_id, pk=None):
+        if pk:
+            issue_queryset = self.get_queryset().get(pk=pk)
+            issues_data = InboxIssueSerializer(
+                issue_queryset,
+                fields=self.fields,
+                expand=self.expand,
+            ).data
+            return Response(
+                issues_data,
+                status=status.HTTP_200_OK,
             )
-            .filter(**filters)
-            .annotate(bridge_id=F("issue_inbox__id"))
-            .select_related("workspace", "project", "state", "parent")
-            .prefetch_related("assignees", "labels")
-            .order_by("issue_inbox__snoozed_till", "issue_inbox__status")
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .prefetch_related(
-                Prefetch(
-                    "issue_inbox",
-                    queryset=InboxIssue.objects.only(
-                        "status", "duplicate_to", "snoozed_till", "source"
-                    ),
-                )
-            )
-        )
-        issues_data = IssueStateInboxSerializer(issues, many=True).data
-        return Response(
-            issues_data,
-            status=status.HTTP_200_OK,
+        issue_queryset = self.get_queryset()
+        return self.paginate(
+            request=request,
+            queryset=(issue_queryset),
+            on_results=lambda inbox_issues: InboxIssueSerializer(
+                inbox_issues,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
         )
 
-    def create(self, request, slug, project_id, inbox_id):
+    def post(self, request, slug, project_id, inbox_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
@@ -201,10 +131,10 @@ class InboxIssueViewSet(BaseViewSet):
             source=request.data.get("source", "in-app"),
         )
 
-        serializer = IssueStateInboxSerializer(issue)
+        serializer = IssueSerializer(issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def partial_update(self, request, slug, project_id, inbox_id, pk):
+    def patch(self, request, slug, project_id, inbox_id, pk):
         inbox_issue = InboxIssue.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
         )
@@ -242,9 +172,7 @@ class InboxIssueViewSet(BaseViewSet):
                     "description": issue_data.get("description", issue.description),
                 }
 
-            issue_serializer = IssueCreateSerializer(
-                issue, data=issue_data, partial=True
-            )
+            issue_serializer = IssueSerializer(issue, data=issue_data, partial=True)
 
             if issue_serializer.is_valid():
                 current_instance = issue
@@ -316,17 +244,7 @@ class InboxIssueViewSet(BaseViewSet):
                 InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK
             )
 
-    def retrieve(self, request, slug, project_id, inbox_id, pk):
-        inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
-        )
-        issue = Issue.objects.get(
-            pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
-        )
-        serializer = IssueStateInboxSerializer(issue)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def destroy(self, request, slug, project_id, inbox_id, pk):
+    def delete(self, request, slug, project_id, inbox_id, pk):
         inbox_issue = InboxIssue.objects.get(
             pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
         )
@@ -355,4 +273,3 @@ class InboxIssueViewSet(BaseViewSet):
 
         inbox_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-

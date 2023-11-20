@@ -1,6 +1,6 @@
 from django.urls import path
 
-from plane.proxy.views.cycle import (
+from plane.api.views.cycle import (
     CycleAPIEndpoint,
     CycleIssueAPIEndpoint,
     TransferCycleIssueAPIEndpoint,

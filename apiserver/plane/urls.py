@@ -13,7 +13,7 @@ urlpatterns = [
     path("api/", include("plane.app.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/licenses/", include("plane.license.urls")),
-    path("api/v1/", include("plane.proxy.urls")),
+    path("api/v1/", include("plane.api.urls")),
     path("", include("plane.web.urls")),
 ]
 

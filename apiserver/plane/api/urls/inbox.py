@@ -1,6 +1,6 @@
 from django.urls import path
 
-from plane.proxy.views import InboxIssueAPIEndpoint
+from plane.api.views import InboxIssueAPIEndpoint
 
 
 urlpatterns = [
