@@ -12,7 +12,7 @@ export const FavoritePagesList: FC = observer(() => {
     page: { favoriteProjectPages },
   } = useMobxStore();
 
-  if (!favoriteProjectPages) {
+  if (!favoriteProjectPages)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -20,7 +20,6 @@ export const FavoritePagesList: FC = observer(() => {
         <Loader.Item height="40px" />
       </Loader>
     );
-  }
 
   return <PagesListView pages={favoriteProjectPages} />;
 });

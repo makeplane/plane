@@ -2,12 +2,14 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 import isYesterday from "date-fns/isYesterday";
 import isToday from "date-fns/isToday";
 import isThisWeek from "date-fns/isThisWeek";
-// types
-import { RootStore } from "./root";
-import { IPage, IRecentPages } from "types";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
+// helpers
+import { renderDateFormat } from "helpers/date-time.helper";
+// types
+import { RootStore } from "./root";
+import { IPage, IRecentPages } from "types";
 
 export interface IPageStore {
   loader: boolean;
@@ -29,6 +31,7 @@ export interface IPageStore {
   fetchPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
   createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<IPage>;
   updatePage: (workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>) => Promise<IPage>;
+  deletePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
   addToFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
   removeFromFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
   makePublic: (workspaceSlug: string, projectId: string, pageId: string) => Promise<IPage>;
@@ -67,6 +70,7 @@ export class PageStore implements IPageStore {
       fetchPages: action,
       createPage: action,
       updatePage: action,
+      deletePage: action,
       addToFavorites: action,
       removeFromFavorites: action,
       makePublic: action,
@@ -197,14 +201,34 @@ export class PageStore implements IPageStore {
   updatePage = async (workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>) => {
     try {
       runInAction(() => {
-        this.pages[projectId] = this.pages[projectId].map((page) => {
-          if (page.id === pageId) {
-            return { ...page, ...data };
-          }
-          return page;
-        });
+        this.pages = {
+          ...this.pages,
+          [projectId]: this.pages[projectId]?.map((page) => {
+            if (page.id === pageId) {
+              return { ...page, ...data };
+            }
+            return page;
+          }),
+        };
       });
+
       const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  deletePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
+      runInAction(() => {
+        this.archivedPages = {
+          ...this.archivedPages,
+          [projectId]: this.archivedPages[projectId]?.filter((page) => page.id !== pageId),
+        };
+      });
+
+      const response = await this.pageService.deletePage(workspaceSlug, projectId, pageId);
       return response;
     } catch (error) {
       throw error;
@@ -214,14 +238,15 @@ export class PageStore implements IPageStore {
   makePublic = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
       runInAction(() => {
-        this.pages[projectId] = this.pages[projectId].map((page) => {
-          if (page.id === pageId) {
-            return { ...page, access: 1 };
-          }
-          return page;
-        });
+        this.pages = {
+          ...this.pages,
+          [projectId]: this.pages[projectId]?.map((page) => ({
+            ...page,
+            access: page.id === pageId ? 0 : page.access,
+          })),
+        };
       });
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
       return response;
     } catch (error) {
       throw error;
@@ -231,14 +256,16 @@ export class PageStore implements IPageStore {
   makePrivate = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
       runInAction(() => {
-        this.pages[projectId] = this.pages[projectId].map((page) => {
-          if (page.id === pageId) {
-            return { ...page, access: 0 };
-          }
-          return page;
-        });
+        this.pages = {
+          ...this.pages,
+          [projectId]: this.pages[projectId]?.map((page) => ({
+            ...page,
+            access: page.id === pageId ? 1 : page.access,
+          })),
+        };
       });
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
+
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
       return response;
     } catch (error) {
       throw error;
@@ -262,13 +289,24 @@ export class PageStore implements IPageStore {
 
   archivePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
-      const archivedPage = this.pages[projectId].find((page) => page.id != pageId);
+      const archivedPage = this.pages[projectId]?.find((page) => page.id === pageId);
+
       if (archivedPage) {
         runInAction(() => {
-          this.pages[projectId] = this.pages[projectId].filter((page) => page.id != pageId);
-          this.archivedPages[projectId] = [...this.archivedPages[projectId], archivedPage];
+          this.pages = {
+            ...this.pages,
+            [projectId]: [...this.pages[projectId]?.filter((page) => page.id != pageId)],
+          };
+          this.archivedPages = {
+            ...this.archivedPages,
+            [projectId]: [
+              ...this.archivedPages[projectId],
+              { ...archivedPage, archived_at: renderDateFormat(new Date()) },
+            ],
+          };
         });
       }
+
       await this.pageService.archivePage(workspaceSlug, projectId, pageId);
     } catch (error) {
       throw error;
@@ -277,14 +315,21 @@ export class PageStore implements IPageStore {
 
   restorePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
     try {
-      const restoredPage = this.archivedPages[projectId].find((page) => page.id != pageId);
+      const restoredPage = this.archivedPages[projectId]?.find((page) => page.id === pageId);
+
       if (restoredPage) {
         runInAction(() => {
-          this.pages[projectId] = [...this.pages[projectId], restoredPage];
-          this.archivedPages[projectId] = this.archivedPages[projectId].filter((page) => page.id != pageId);
+          this.pages = {
+            ...this.pages,
+            [projectId]: [...this.pages[projectId], { ...restoredPage, archived_at: null }],
+          };
+          this.archivedPages = {
+            ...this.archivedPages,
+            [projectId]: [...this.archivedPages[projectId]?.filter((page) => page.id != pageId)],
+          };
         });
       }
-      await this.pageService.removePageFromArchives(workspaceSlug, projectId, pageId);
+      await this.pageService.restorePage(workspaceSlug, projectId, pageId);
     } catch (error) {
       throw error;
     }

@@ -13,19 +13,14 @@ export const AllPagesList: FC = observer(() => {
     page: { projectPages },
   } = useMobxStore();
 
-  console.log("projectPages", projectPages);
-
-  if (projectPages) {
-    return <PagesListView pages={projectPages} />;
-  }
-
-  return (
-    <>
+  if (!projectPages)
+    return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
         <Loader.Item height="40px" />
         <Loader.Item height="40px" />
       </Loader>
-    </>
-  );
+    );
+
+  return <PagesListView pages={projectPages} />;
 });

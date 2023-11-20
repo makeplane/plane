@@ -1,4 +1,4 @@
-import { Globe, LayoutGrid, List, Lock } from "lucide-react";
+import { Globe2, LayoutGrid, List, Lock } from "lucide-react";
 
 export const PAGE_VIEW_LAYOUTS = [
   {
@@ -44,7 +44,7 @@ export const PAGE_ACCESS_SPECIFIERS: { key: number; label: string; icon: any }[]
   {
     key: 0,
     label: "Public",
-    icon: Globe,
+    icon: Globe2,
   },
   {
     key: 1,

@@ -172,7 +172,7 @@ export class PageService extends APIService {
       });
   }
 
-  async removePageFromArchives(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
+  async restorePage(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
     this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unarchive/`)
       .then((response) => response?.data)
       .catch((error) => {

@@ -12,7 +12,7 @@ export const SharedPagesList: FC = observer(() => {
     page: { sharedProjectPages },
   } = useMobxStore();
 
-  if (!sharedProjectPages) {
+  if (!sharedProjectPages)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -20,7 +20,6 @@ export const SharedPagesList: FC = observer(() => {
         <Loader.Item height="40px" />
       </Loader>
     );
-  }
 
   return <PagesListView pages={sharedProjectPages} />;
 });

@@ -12,7 +12,7 @@ export const ArchivedPagesList: FC = observer(() => {
     page: { archivedProjectPages },
   } = useMobxStore();
 
-  if (!archivedProjectPages) {
+  if (!archivedProjectPages)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -20,7 +20,6 @@ export const ArchivedPagesList: FC = observer(() => {
         <Loader.Item height="40px" />
       </Loader>
     );
-  }
 
   return <PagesListView pages={archivedProjectPages} />;
 });

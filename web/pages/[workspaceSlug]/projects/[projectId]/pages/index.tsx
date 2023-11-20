@@ -48,7 +48,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
     page: { fetchPages, fetchArchivedPages },
   } = useMobxStore();
   // hooks
-  const { user } = useUserAuth();
+  const {} = useUserAuth();
   // local storage
   const { storedValue: pageTab, setValue: setPageTab } = useLocalStorage("pageTab", "Recent");
   // fetching pages from API
@@ -87,8 +87,6 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
         <CreateUpdatePageModal
           isOpen={createUpdatePageModal}
           handleClose={() => setCreateUpdatePageModal(false)}
-          user={user}
-          workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
         />
       )}
@@ -114,7 +112,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               case 5:
                 return setPageTab("Archived");
               default:
-                return setPageTab("Recent");
+                return setPageTab("All");
             }
           }}
         >
@@ -147,13 +145,13 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
               <FavoritePagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <PrivatePagesList viewType={"list"} />
+              <PrivatePagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <SharedPagesList viewType={"list"} />
+              <SharedPagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">
-              <ArchivedPagesList viewType={"list"} />
+              <ArchivedPagesList />
             </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>

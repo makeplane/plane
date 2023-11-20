@@ -9,7 +9,20 @@ import useToast from "hooks/use-toast";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // icons
-import { AlertCircle, ArchiveRestoreIcon, FileLock, FileLock2, FileText, Globe, LinkIcon, Lock, Pencil, Star, Trash2, Unlock } from "lucide-react";
+import {
+  AlertCircle,
+  ArchiveRestoreIcon,
+  FileLock,
+  FileLock2,
+  FileText,
+  Globe,
+  LinkIcon,
+  Lock,
+  Pencil,
+  Star,
+  Trash2,
+  Unlock,
+} from "lucide-react";
 // helpers
 import { copyTextToClipboard, truncateText } from "helpers/string.helper";
 import { renderLongDateFormat, renderShortDate, render24HourFormatTime } from "helpers/date-time.helper";
@@ -35,7 +48,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
   handleAddToFavorites,
   handleRemoveFromFavorites,
   partialUpdatePage,
-  handleArchiveRestore
+  handleArchiveRestore,
 }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -85,49 +98,54 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-2">
-                  {page.archived_at ?
-                    <Tooltip tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderShortDate(
-                      page.archived_at
-                    )}`}
+                  {page.archived_at ? (
+                    <Tooltip
+                      tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderShortDate(
+                        page.archived_at
+                      )}`}
                     >
                       <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.archived_at)}</p>
-                    </Tooltip> :
-                    <Tooltip tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
-                      page.updated_at
-                    )}`}
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
+                        page.updated_at
+                      )}`}
                     >
                       <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
                     </Tooltip>
-                  }
-                  {!page.archived_at && (page.is_favorite ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleRemoveFromFavorites();
-                      }}
-                    >
-                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAddToFavorites();
-                      }}
-                    >
-                      <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
-                    </button>
-                  ))}
-                  {(page.created_by === user?.id && !page.archived_at) && (
+                  )}
+                  {!page.archived_at &&
+                    (page.is_favorite ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleRemoveFromFavorites();
+                        }}
+                      >
+                        <Star className="h-4 w-4 text-orange-400 fill-orange-400" />
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddToFavorites();
+                        }}
+                      >
+                        <Star className="h-4 w-4 " color="rgb(var(--color-text-200))" />
+                      </button>
+                    ))}
+                  {page.created_by === user?.id && !page.archived_at && (
                     <Tooltip
-                      tooltipContent={`${page.access
-                        ? "This page is only visible to you."
-                        : "This page can be viewed by anyone in the project."
-                        }`}
+                      tooltipContent={`${
+                        page.access
+                          ? "This page is only visible to you."
+                          : "This page can be viewed by anyone in the project."
+                      }`}
                     >
                       <button
                         type="button"
@@ -147,58 +165,59 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                   )}
                   <Tooltip
                     position="top-right"
-                    tooltipContent={`Created by ${people?.find((person) => person.member.id === page.created_by)?.member.display_name ?? ""
-                      } on ${renderLongDateFormat(`${page.created_at}`)}`}
+                    tooltipContent={`Created by ${
+                      people?.find((person) => person.member.id === page.created_by)?.member.display_name ?? ""
+                    } on ${renderLongDateFormat(`${page.created_at}`)}`}
                   >
                     <span>
                       <AlertCircle className="h-4 w-4 text-custom-text-200" />
                     </span>
                   </Tooltip>
 
-                  {!page.archived_at && <CustomMenu width="auto" verticalEllipsis>
-
-                    {user && user.id == page.owned_by &&
+                  {!page.archived_at && (
+                    <CustomMenu width="auto" verticalEllipsis>
+                      {user && user.id == page.owned_by && (
+                        <CustomMenu.MenuItem
+                          onClick={(e: any) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleEditPage();
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <Pencil className="h-3.5 w-3.5" />
+                            <span>Edit Page</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      )}
+                      {user && user.id == page.owned_by && (
+                        <CustomMenu.MenuItem
+                          onClick={(e: any) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleArchivePage();
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <Trash2 className="h-3.5 w-3.5" />
+                            <span>Archive Page</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      )}
                       <CustomMenu.MenuItem
-                        onClick={(e: any) => {
+                        onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleEditPage();
+                          handleCopyText();
                         }}
                       >
-                        <span className="flex items-center justify-start gap-2">
-                          <Pencil className="h-3.5 w-3.5" />
-                          <span>Edit Page</span>
-                        </span>
+                        <div className="flex items-center justify-start gap-2">
+                          <LinkIcon className="h-4 w-4" />
+                          <span>Copy Page link</span>
+                        </div>
                       </CustomMenu.MenuItem>
-                    }
-                    {user && user.id == page.owned_by &&
-                      <CustomMenu.MenuItem
-                        onClick={(e: any) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleArchivePage();
-                        }}
-                      >
-                        <span className="flex items-center justify-start gap-2">
-                          <Trash2 className="h-3.5 w-3.5" />
-                          <span>Archive Page</span>
-                        </span>
-                      </CustomMenu.MenuItem>
-                    }
-                    <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleCopyText();
-                      }}
-                    >
-                      <div className="flex items-center justify-start gap-2">
-                        <LinkIcon className="h-4 w-4" />
-                        <span>Copy Page link</span>
-                      </div>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                  }
+                    </CustomMenu>
+                  )}
 
                   {page.archived_at && user && user.id === page.owned_by && (
                     <CustomMenu verticalEllipsis>
@@ -215,8 +234,7 @@ export const SinglePageListItem: React.FC<TSingleStatProps> = ({
                         </span>
                       </CustomMenu.MenuItem>
                     </CustomMenu>
-                  )
-                  }
+                  )}
                 </div>
               </div>
             </div>

@@ -12,7 +12,7 @@ export const PrivatePagesList: FC = observer(() => {
     page: { privateProjectPages },
   } = useMobxStore();
 
-  if (!privateProjectPages) {
+  if (!privateProjectPages)
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -20,7 +20,6 @@ export const PrivatePagesList: FC = observer(() => {
         <Loader.Item height="40px" />
       </Loader>
     );
-  }
 
   return <PagesListView pages={privateProjectPages} />;
 });

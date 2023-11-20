@@ -19,48 +19,48 @@ type TConfirmPageDeletionProps = {
   onClose: () => void;
 };
 
-export const ArchivePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
   const { data, isOpen, onClose } = props;
 
-  const [isArchiveLoading, setIsArchiveLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    page: { archivePage },
+    page: { deletePage },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsArchiveLoading(false);
+    setIsDeleting(false);
     onClose();
   };
 
-  const handleArchive = async () => {
+  const handleDelete = async () => {
     if (!data || !workspaceSlug || !projectId) return;
 
-    setIsArchiveLoading(true);
+    setIsDeleting(true);
 
-    await archivePage(workspaceSlug.toString(), data.project, data.id)
+    await deletePage(workspaceSlug.toString(), data.project, data.id)
       .then(() => {
         handleClose();
         setToastAlert({
           type: "success",
           title: "Success!",
-          message: "Page archived successfully.",
+          message: "Page deleted successfully.",
         });
       })
       .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Page could not be archived. Please try again.",
+          message: "Page could not be deleted. Please try again.",
         });
       })
       .finally(() => {
-        setIsArchiveLoading(false);
+        setIsDeleting(false);
       });
   };
 
@@ -98,13 +98,13 @@ export const ArchivePageModal: React.FC<TConfirmPageDeletionProps> = observer((p
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        Archive Page
+                        Delete Page
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to archive page-{" "}
+                          Are you sure you want to delete page-{" "}
                           <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? The Page
-                          will be moved to the archive section, from where it can be restored if needed.
+                          will be deleted permanently. This action cannot be undone.
                         </p>
                       </div>
                     </div>
@@ -114,8 +114,8 @@ export const ArchivePageModal: React.FC<TConfirmPageDeletionProps> = observer((p
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleArchive} loading={isArchiveLoading}>
-                    {isArchiveLoading ? "Archiving..." : "Archive"}
+                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleDelete} loading={isDeleting}>
+                    {isDeleting ? "Deleting..." : "Delete"}
                   </Button>
                 </div>
               </Dialog.Panel>

@@ -99,7 +99,7 @@ export const SinglePageDetailedItem: React.FC<TSingleStatProps> = ({
                   }}
                   className="z-10 grid place-items-center"
                 >
-                  <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                  <Star className="h-4 w-4 text-orange-400 fill-orange-400" />
                 </button>
               ) : (
                 <button

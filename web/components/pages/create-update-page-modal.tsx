@@ -6,7 +6,7 @@ import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IUser, IPage } from "types";
+import { IPage } from "types";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
@@ -16,15 +16,14 @@ type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data?: IPage | null;
-  user: IUser | undefined;
-  workspaceSlug: string;
   projectId: string;
 };
 
 export const CreateUpdatePageModal: FC<Props> = (props) => {
-  const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
+  const { isOpen, handleClose, data, projectId } = props;
   // router
   const router = useRouter();
+  const { workspaceSlug } = router.query;
   // store
   const {
     page: { createPage, updatePage },
@@ -36,8 +35,10 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
     handleClose();
   };
 
-  const createProjectPage = async (payload: IPage) =>
-    createPage(workspaceSlug, projectId, payload)
+  const createProjectPage = async (payload: IPage) => {
+    if (!workspaceSlug) return;
+
+    createPage(workspaceSlug.toString(), projectId, payload)
       .then((res) => {
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
         onClose();
@@ -61,10 +62,12 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           case: "FAILED",
         });
       });
+  };
 
   const updateProjectPage = async (payload: IPage) => {
-    if (!data) return;
-    return updatePage(workspaceSlug, projectId, data.id, payload)
+    if (!data || !workspaceSlug) return;
+
+    return updatePage(workspaceSlug.toString(), projectId, data.id, payload)
       .then((res) => {
         onClose();
         setToastAlert({

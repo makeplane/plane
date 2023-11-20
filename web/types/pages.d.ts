@@ -3,6 +3,7 @@ import { IIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "types";
 
 export interface IPage {
   access: number;
+  archived_at: string | null;
   blocks: IPageBlock[];
   color: string;
   created_at: Date;
@@ -13,7 +14,6 @@ export interface IPage {
   id: string;
   is_favorite: boolean;
   is_locked: boolean;
-  archived_at?: Date;
   label_details: IIssueLabel[];
   labels: string[];
   name: string;
