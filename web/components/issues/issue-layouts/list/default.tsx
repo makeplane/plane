@@ -6,7 +6,7 @@ import { EIssueActions, IssueBlocksList, ListQuickAddIssueForm } from "component
 import {
   IIssue,
   IIssueDisplayProperties,
-  IIssueLabels,
+  IIssueLabel,
   IIssueResponse,
   IProject,
   IState,
@@ -123,7 +123,7 @@ export interface IList {
   enableIssueQuickAdd: boolean;
   isReadonly: boolean;
   states: IState[] | null;
-  labels: IIssueLabels[] | null;
+  labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
   stateGroups: any;

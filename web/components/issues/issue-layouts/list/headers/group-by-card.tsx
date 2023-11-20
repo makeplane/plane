@@ -111,6 +111,7 @@ export const HeaderGroupByCard = observer(({ icon, title, count, issuePayload }:
           handleClose={() => setIsOpen(false)}
           handleSubmit={(data: Partial<IIssue>) => {
             console.log(data);
+            return Promise.resolve();
           }}
           prePopulateData={issuePayload}
         />

@@ -114,15 +114,15 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     });
 
     try {
-      quickAddStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          group_id: null,
-          sub_group_id: null,
-        },
-        payload
-      );
+      // quickAddStore.createIssue(
+      //   workspaceSlug.toString(),
+      //   projectId.toString(),
+      //   {
+      //     group_id: null,
+      //     sub_group_id: null,
+      //   },
+      //   payload
+      // );
 
       setToastAlert({
         type: "success",

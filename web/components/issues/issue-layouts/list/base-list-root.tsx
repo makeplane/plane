@@ -40,6 +40,7 @@ export const BaseListRoot = (props: IBaseListRoot) => {
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectLabel: { projectLabels },
   } = useMobxStore();
 
   const issues = issueStore.getIssues;
@@ -54,7 +55,7 @@ export const BaseListRoot = (props: IBaseListRoot) => {
 
   const states = projectStateStore?.projectStates;
   const priorities = ISSUE_PRIORITIES;
-  const labels = projectStore?.projectLabels;
+  const labels = projectLabels;
   const stateGroups = ISSUE_STATE_GROUPS;
 
   const projects = getProjects(projectStore);

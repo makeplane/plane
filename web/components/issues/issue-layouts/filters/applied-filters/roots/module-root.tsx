@@ -14,6 +14,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
 
   const {
     project: projectStore,
+    projectLabel: { projectLabels },
     moduleIssueFilters: moduleIssueFiltersStore,
     projectState: projectStateStore,
     projectMember: { projectMembers },
@@ -73,7 +74,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
+        labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />

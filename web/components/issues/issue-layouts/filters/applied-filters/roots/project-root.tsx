@@ -15,6 +15,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const {
     projectIssuesFilter: projectIssueFiltersStore,
     project: projectStore,
+    projectLabel: { projectLabels },
     projectState: projectStateStore,
     projectMember: { projectMembers },
   } = useMobxStore();
@@ -77,7 +78,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
+        labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />

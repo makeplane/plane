@@ -70,7 +70,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
               issue={issue}
               handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
               handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
-              handleRemoveFromCycle={async () => handleIssues(issue.target_date ?? "", issue, "remove")}
+              handleRemoveFromView={async () => handleIssues(issue.target_date ?? "", issue, "remove")}
             />
           )}
         />

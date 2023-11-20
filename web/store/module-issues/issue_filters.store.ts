@@ -81,7 +81,7 @@ export class ModuleIssueFiltersStore implements IModuleIssueFiltersStore {
   };
 
   get appliedFilters(): TIssueParams[] | undefined {
-    const userDisplayFilters = this.rootStore?.projectIssueFilters.projectFilters?.displayFilters;
+    const userDisplayFilters = this.rootStore?.projectIssuesFilter.issueFilters?.displayFilters;
 
     const moduleId = this.rootStore.module.moduleId;
 
