@@ -1,4 +1,4 @@
-import { LayoutGrid, List } from "lucide-react";
+import { Globe, LayoutGrid, List, Lock } from "lucide-react";
 
 export const PAGE_VIEW_LAYOUTS = [
   {
@@ -34,8 +34,21 @@ export const PAGE_TABS_LIST: { key: string; title: string }[] = [
     key: "shared",
     title: "Shared",
   },
-	{
-		key: "archived-pages",
-		title: "Archived"
-	}
+  {
+    key: "archived-pages",
+    title: "Archived",
+  },
+];
+
+export const PAGE_ACCESS_SPECIFIERS: { key: number; label: string; icon: any }[] = [
+  {
+    key: 0,
+    label: "Public",
+    icon: Globe,
+  },
+  {
+    key: 1,
+    label: "Private",
+    icon: Lock,
+  },
 ];

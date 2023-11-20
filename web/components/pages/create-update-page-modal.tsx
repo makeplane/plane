@@ -10,7 +10,7 @@ import { IUser, IPage } from "types";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
-import {trackEvent} from "helpers/event-tracker.helper"
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -46,13 +46,10 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Success!",
           message: "Page created successfully.",
         });
-        trackEvent(
-          'PAGE_CREATE',
-          {
-            ...res,
-            caase: "SUCCES"
-          }
-        )
+        trackEvent("PAGE_CREATE", {
+          ...res,
+          caase: "SUCCES",
+        });
       })
       .catch(() => {
         setToastAlert({
@@ -60,12 +57,9 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
-        trackEvent(
-          'PAGE_CREATE',
-          {
-            case: "FAILED"
-          }
-        )
+        trackEvent("PAGE_CREATE", {
+          case: "FAILED",
+        });
       });
 
   const updateProjectPage = async (payload: IPage) => {
@@ -78,13 +72,10 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Success!",
           message: "Page updated successfully.",
         });
-          trackEvent(
-            'PAGE_UPDATE',
-            {
-              ...res,
-              case: "SUCCESS"
-            }
-          )
+        trackEvent("PAGE_UPDATE", {
+          ...res,
+          case: "SUCCESS",
+        });
       })
       .catch(() => {
         setToastAlert({
@@ -92,12 +83,9 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be updated. Please try again.",
         });
-        trackEvent(
-          'PAGE_UPDATE',
-          {
-            case: "FAILED"
-          }
-        )
+        trackEvent("PAGE_UPDATE", {
+          case: "FAILED",
+        });
       });
   };
 
@@ -123,7 +111,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="flex justify-center text-center p-4 sm:p-0 my-10 md:my-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -133,13 +121,8 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <PageForm
-                  handleFormSubmit={handleFormSubmit}
-                  handleClose={handleClose}
-                  status={data ? true : false}
-                  data={data}
-                />
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all px-4 sm:w-full sm:max-w-2xl">
+                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} data={data} />
               </Dialog.Panel>
             </Transition.Child>
           </div>
