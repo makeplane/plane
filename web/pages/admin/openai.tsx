@@ -10,20 +10,20 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceGeneralForm } from "components/instance";
+import { InstanceOpenAIForm } from "components/instance/openai-form";
 
-const InstanceAdminPage: NextPageWithLayout = observer(() => {
+const InstanceAdminOpenAIPage: NextPageWithLayout = observer(() => {
   // store
   const {
-    instance: { fetchInstanceInfo, instance },
+    instance: { fetchInstanceConfigurations, formattedConfig },
   } = useMobxStore();
 
-  useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
     <div>
-      {instance ? (
-        <InstanceGeneralForm instance={instance} />
+      {formattedConfig ? (
+        <InstanceOpenAIForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4 m-8">
           <Loader.Item height="50px" />
@@ -35,8 +35,8 @@ const InstanceAdminPage: NextPageWithLayout = observer(() => {
   );
 });
 
-InstanceAdminPage.getLayout = function getLayout(page: ReactElement) {
-  return <InstanceAdminLayout header={<InstanceAdminHeader title="General" />}>{page}</InstanceAdminLayout>;
+InstanceAdminOpenAIPage.getLayout = function getLayout(page: ReactElement) {
+  return <InstanceAdminLayout header={<InstanceAdminHeader title="OpenAI" />}>{page}</InstanceAdminLayout>;
 };
 
-export default InstanceAdminPage;
+export default InstanceAdminOpenAIPage;

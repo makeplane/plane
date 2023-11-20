@@ -2,7 +2,7 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import type { IInstance } from "types/instance";
+import type { IFormattedInstanceConfiguration, IInstance, IInstanceConfiguration } from "types/instance";
 
 export class InstanceService extends APIService {
   constructor() {
@@ -33,5 +33,15 @@ export class InstanceService extends APIService {
       .catch((error) => {
         throw error;
       });
+  }
+
+  async updateInstanceConfigurations(
+    data: Partial<IFormattedInstanceConfiguration>
+  ): Promise<IInstanceConfiguration[]> {
+    return this.patch("/api/licenses/instances/configurations/", data)
+    .then((response) => response?.data)
+    .catch((error) => {
+      throw error?.response?.data;
+    })
   }
 }
