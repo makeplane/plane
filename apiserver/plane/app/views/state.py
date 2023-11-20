@@ -7,10 +7,9 @@ from django.db.models import Q
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-from sentry_sdk import capture_exception
 
 # Module imports
-from . import BaseViewSet, BaseAPIView
+from . import BaseViewSet
 from plane.app.serializers import StateSerializer
 from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import State, Issue

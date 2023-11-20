@@ -3,7 +3,6 @@ import json
 
 # Django Imports
 from django.utils import timezone
-from django.db import IntegrityError
 from django.db.models import Prefetch, F, OuterRef, Func, Exists, Count, Q
 from django.core import serializers
 from django.utils.decorators import method_decorator
@@ -12,7 +11,6 @@ from django.views.decorators.gzip import gzip_page
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-from sentry_sdk import capture_exception
 
 # Module imports
 from . import BaseViewSet, BaseAPIView, WebhookMixin

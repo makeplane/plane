@@ -29,7 +29,6 @@ from plane.db.models import (
     ProjectMemberInvite,
     ProjectMember,
 )
-from plane.app.serializers import UserSerializer
 from .base import BaseAPIView
 
 

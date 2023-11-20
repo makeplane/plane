@@ -39,11 +39,8 @@ from plane.app.serializers import (
 )
 
 from plane.app.permissions import (
-    WorkspaceUserPermission,
     ProjectBasePermission,
-    ProjectEntityPermission,
     ProjectMemberPermission,
-    ProjectLitePermission,
 )
 
 from plane.db.models import (
@@ -965,6 +962,37 @@ class ProjectFavoritesViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ProjectPublicCoverImagesEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def get(self, request):
+        files = []
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        )
+        params = {
+            "Bucket": settings.AWS_S3_BUCKET_NAME,
+            "Prefix": "static/project-cover/",
+        }
+
+        response = s3.list_objects_v2(**params)
+        # Extracting file keys from the response
+        if "Contents" in response:
+            for content in response["Contents"]:
+                if not content["Key"].endswith(
+                    "/"
+                ):  # This line ensures we're only getting files, not "sub-folders"
+                    files.append(
+                        f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                    )
+
+        return Response(files, status=status.HTTP_200_OK)
+
+
 class ProjectDeployBoardViewSet(BaseViewSet):
     permission_classes = [
         ProjectMemberPermission,
@@ -1013,76 +1041,3 @@ class ProjectDeployBoardViewSet(BaseViewSet):
 
         serializer = ProjectDeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class ProjectDeployBoardPublicSettingsEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get(self, request, slug, project_id):
-        project_deploy_board = ProjectDeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id
-        )
-        serializer = ProjectDeployBoardSerializer(project_deploy_board)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get(self, request, slug):
-        projects = (
-            Project.objects.filter(workspace__slug=slug)
-            .annotate(
-                is_public=Exists(
-                    ProjectDeployBoard.objects.filter(
-                        workspace__slug=slug, project_id=OuterRef("pk")
-                    )
-                )
-            )
-            .filter(is_public=True)
-        ).values(
-            "id",
-            "identifier",
-            "name",
-            "description",
-            "emoji",
-            "icon_prop",
-            "cover_image",
-        )
-
-        return Response(projects, status=status.HTTP_200_OK)
-
-
-class ProjectPublicCoverImagesEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def get(self, request):
-        files = []
-        s3 = boto3.client(
-            "s3",
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        )
-        params = {
-            "Bucket": settings.AWS_S3_BUCKET_NAME,
-            "Prefix": "static/project-cover/",
-        }
-
-        response = s3.list_objects_v2(**params)
-        # Extracting file keys from the response
-        if "Contents" in response:
-            for content in response["Contents"]:
-                if not content["Key"].endswith(
-                    "/"
-                ):  # This line ensures we're only getting files, not "sub-folders"
-                    files.append(
-                        f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
-                    )
-
-        return Response(files, status=status.HTTP_200_OK)

@@ -7,7 +7,6 @@ from django.db.models import Q
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from sentry_sdk import capture_exception
 
 # Module imports
 from .base import BaseAPIView

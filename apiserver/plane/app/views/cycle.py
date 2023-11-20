@@ -20,7 +20,6 @@ from django.views.decorators.gzip import gzip_page
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
-from sentry_sdk import capture_exception
 
 # Module imports
 from . import BaseViewSet, BaseAPIView, WebhookMixin

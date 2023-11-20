@@ -5,7 +5,6 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from sentry_sdk import capture_exception
 from plane.utils.paginator import BasePaginator
 
 # Module imports

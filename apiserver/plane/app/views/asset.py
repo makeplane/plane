@@ -2,8 +2,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from sentry_sdk import capture_exception
-from django.conf import settings
+
 # Module imports
 from .base import BaseAPIView
 from plane.db.models import FileAsset, Workspace

@@ -1,6 +1,8 @@
 # Module imports
-from plane.db.models import User
 from .base import BaseSerializer
+from plane.db.models import (
+    User,
+)
 
 
 class UserLiteSerializer(BaseSerializer):

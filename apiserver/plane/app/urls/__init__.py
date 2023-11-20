@@ -1,4 +1,3 @@
-# Module imports
 from .analytic import urlpatterns as analytic_urls
 from .asset import urlpatterns as asset_urls
 from .authentication import urlpatterns as authentication_urls
@@ -14,7 +13,6 @@ from .module import urlpatterns as module_urls
 from .notification import urlpatterns as notification_urls
 from .page import urlpatterns as page_urls
 from .project import urlpatterns as project_urls
-from .public_board import urlpatterns as public_board_urls
 from .search import urlpatterns as search_urls
 from .state import urlpatterns as state_urls
 from .user import urlpatterns as user_urls
@@ -22,7 +20,6 @@ from .views import urlpatterns as view_urls
 from .workspace import urlpatterns as workspace_urls
 from .api import urlpatterns as api_urls
 from .webhook import urlpatterns as webhook_urls
-
 
 
 urlpatterns = [
@@ -41,7 +38,6 @@ urlpatterns = [
     *notification_urls,
     *page_urls,
     *project_urls,
-    *public_board_urls,
     *search_urls,
     *state_urls,
     *user_urls,

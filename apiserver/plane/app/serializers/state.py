@@ -1,7 +1,6 @@
 # Module imports
 from .base import BaseSerializer
-from .workspace import WorkspaceLiteSerializer
-from .project import ProjectLiteSerializer
+
 
 from plane.db.models import State
 

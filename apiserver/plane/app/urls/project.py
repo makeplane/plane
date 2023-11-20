@@ -10,8 +10,9 @@ from plane.app.views import (
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
-    ProjectPublicCoverImagesEndpoint,
     UserProjectInvitationsViewset,
+    ProjectPublicCoverImagesEndpoint,
+    ProjectDeployBoardViewSet,
 )
 
 
@@ -146,5 +147,26 @@ urlpatterns = [
         "project-covers/",
         ProjectPublicCoverImagesEndpoint.as_view(),
         name="project-covers",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/",
+        ProjectDeployBoardViewSet.as_view(
+            {
+                "get": "list",
+                "post": "create",
+            }
+        ),
+        name="project-deploy-board",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/project-deploy-boards/<uuid:pk>/",
+        ProjectDeployBoardViewSet.as_view(
+            {
+                "get": "retrieve",
+                "patch": "partial_update",
+                "delete": "destroy",
+            }
+        ),
+        name="project-deploy-board",
     ),
 ]

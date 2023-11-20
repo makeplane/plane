@@ -1,10 +1,10 @@
 # Module imports
-from plane.db.models import Workspace
 from .base import BaseSerializer
-
+from plane.db.models import (
+    Workspace,
+)
 
 class WorkspaceLiteSerializer(BaseSerializer):
-    """Lite serializer with only required fields"""
     class Meta:
         model = Workspace
         fields = [

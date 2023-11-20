@@ -5,8 +5,6 @@ import requests
 from openai import OpenAI
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
-from sentry_sdk import capture_exception
 
 # Django imports
 from django.conf import settings
