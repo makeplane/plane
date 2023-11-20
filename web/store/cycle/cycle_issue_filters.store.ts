@@ -133,9 +133,7 @@ export class CycleIssueFilterStore implements ICycleIssueFilterStore {
         },
       };
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, payload, user);
+      await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, payload);
     } catch (error) {
       this.fetchCycleFilters(workspaceSlug, projectId, cycleId);
 

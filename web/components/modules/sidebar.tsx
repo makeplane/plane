@@ -57,7 +57,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const { module: moduleStore, user: userStore } = useMobxStore();
 
-  const user = userStore.currentUser ?? undefined;
   const userRole = userStore.currentProjectRole;
   const moduleDetails = moduleStore.moduleDetails[moduleId] ?? undefined;
 
@@ -80,7 +79,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     );
 
     moduleService
-      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data, user)
+      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
       .then(() => mutate(MODULE_DETAILS(moduleId as string)))
       .catch((e) => console.log(e));
   };

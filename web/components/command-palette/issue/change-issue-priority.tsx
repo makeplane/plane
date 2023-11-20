@@ -1,9 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback } from "react";
-
 import { useRouter } from "next/router";
-
 import { mutate } from "swr";
-
 // cmdk
 import { Command } from "cmdk";
 // services
@@ -26,7 +23,7 @@ type Props = {
 // services
 const issueService = new IssueService();
 
-export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, user }) => {
+export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue }) => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
@@ -49,7 +46,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
 
       const payload = { ...formData };
       await issueService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -57,7 +54,7 @@ export const ChangeIssuePriority: React.FC<Props> = ({ setIsPaletteOpen, issue, 
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, user]
+    [workspaceSlug, issueId, projectId]
   );
 
   const handleIssueState = (priority: TIssuePriorities) => {
