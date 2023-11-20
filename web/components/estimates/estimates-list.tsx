@@ -23,8 +23,10 @@ export const EstimatesList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { project: projectStore, projectEstimates: projectEstimatesStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const {
+    project: { currentProjectDetails, updateProject },
+    projectEstimates: { projectEstimates, getProjectEstimateById },
+  } = useMobxStore();
   // states
   const [estimateFormOpen, setEstimateFormOpen] = useState(false);
   const [estimateToDelete, setEstimateToDelete] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export const EstimatesList: React.FC = observer(() => {
   // hooks
   const { setToastAlert } = useToast();
   // derived values
-  const estimatesList = projectEstimatesStore.projectEstimates;
+  const estimatesList = projectEstimates;
 
   const editEstimate = (estimate: IEstimate) => {
     setEstimateFormOpen(true);
@@ -42,7 +44,7 @@ export const EstimatesList: React.FC = observer(() => {
   const disableEstimates = () => {
     if (!workspaceSlug || !projectId) return;
 
-    projectStore.updateProject(workspaceSlug.toString(), projectId.toString(), { estimate: null }).catch((err) => {
+    updateProject(workspaceSlug.toString(), projectId.toString(), { estimate: null }).catch((err) => {
       const error = err?.error;
       const errorString = Array.isArray(error) ? error[0] : error;
 
@@ -68,7 +70,7 @@ export const EstimatesList: React.FC = observer(() => {
       <DeleteEstimateModal
         isOpen={!!estimateToDelete}
         handleClose={() => setEstimateToDelete(null)}
-        data={projectEstimatesStore.getProjectEstimateById(estimateToDelete!)}
+        data={getProjectEstimateById(estimateToDelete!)}
       />
 
       <section className="flex items-center justify-between py-3.5 border-b border-custom-border-100">

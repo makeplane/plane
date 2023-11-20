@@ -53,11 +53,11 @@ export const IssuePropertyEstimates: React.FC<IIssuePropertyEstimates> = observe
   });
 
   const {
-    project: projectStore,
+    project: { project_details },
     projectEstimates: { projectEstimates },
   } = useMobxStore();
 
-  const projectDetails = projectId ? projectStore.project_details[projectId] : null;
+  const projectDetails = projectId ? project_details[projectId] : null;
   const isEstimateEnabled = projectDetails?.estimate !== null;
   const estimates = projectEstimates;
   const estimatePoints =
