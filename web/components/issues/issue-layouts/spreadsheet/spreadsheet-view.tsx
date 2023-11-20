@@ -46,8 +46,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     issueId: string;
   } | null>(null);
 
-  const [isInlineCreateIssueFormOpen, setIsInlineCreateIssueFormOpen] = useState(false);
-
   const [isScrolled, setIsScrolled] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);

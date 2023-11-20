@@ -2,7 +2,6 @@ import useSWR, { mutate } from "swr";
 // services
 import { IssueCommentService, IssueService } from "services/issue";
 // hooks
-import useUser from "hooks/use-user";
 import useToast from "hooks/use-toast";
 import useProjectDetails from "hooks/use-project-details";
 // components
@@ -26,7 +25,6 @@ export const PeekOverviewIssueActivity: React.FC<Props> = (props) => {
   // toast
   const { setToastAlert } = useToast();
 
-  const { user } = useUser();
   const { projectDetails } = useProjectDetails();
 
   const { data: issueActivity, mutate: mutateIssueActivity } = useSWR(
@@ -40,7 +38,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = (props) => {
     if (!workspaceSlug || !issue) return;
 
     await issueCommentService
-      .patchIssueComment(workspaceSlug as string, issue.project, issue.id, commentId, data, user)
+      .patchIssueComment(workspaceSlug as string, issue.project, issue.id, commentId, data)
       .then(() => mutateIssueActivity());
   };
 
@@ -50,7 +48,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = (props) => {
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issueCommentService
-      .deleteIssueComment(workspaceSlug as string, issue.project, issue.id, commentId, user)
+      .deleteIssueComment(workspaceSlug as string, issue.project, issue.id, commentId)
       .then(() => mutateIssueActivity());
   };
 
@@ -58,7 +56,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = (props) => {
     if (!workspaceSlug || !issue) return;
 
     await issueCommentService
-      .createIssueComment(workspaceSlug.toString(), issue.project, issue.id, formData, user)
+      .createIssueComment(workspaceSlug.toString(), issue.project, issue.id, formData)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issue.id));
       })

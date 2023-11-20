@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": [
+    "NODE_ENV",
     "NEXT_PUBLIC_API_BASE_URL",
     "NEXT_PUBLIC_DEPLOY_URL",
     "NEXT_PUBLIC_SENTRY_DSN",
@@ -16,12 +17,8 @@
     "NEXT_PUBLIC_DEPLOY_WITH_NGINX",
     "NEXT_PUBLIC_POSTHOG_KEY",
     "NEXT_PUBLIC_POSTHOG_HOST",
-    "SLACK_OAUTH_URL",
-    "SLACK_CLIENT_ID",
-    "SLACK_CLIENT_SECRET",
     "JITSU_TRACKER_ACCESS_KEY",
-    "JITSU_TRACKER_HOST",
-    "UNSPLASH_ACCESS_KEY"
+    "JITSU_TRACKER_HOST"
   ],
   "pipeline": {
     "build": {

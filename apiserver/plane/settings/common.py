@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     # Inhouse apps
     "plane.analytics",
-    "plane.api",
+    "plane.app",
+    "plane.space",
     "plane.bgtasks",
     "plane.db",
     "plane.utils",
@@ -284,6 +285,7 @@ else:
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.file_asset_task",
 )
 
 # Sentry Settings

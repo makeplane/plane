@@ -67,12 +67,7 @@ export class IssueQuickAddStore implements IIssueQuickAddStore {
     try {
       this.updateIssueStructure(group_id, sub_group_id, data as IIssue);
 
-      const response = await this.issueService.createIssue(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       this.updateQuickAddIssueStructure(group_id, sub_group_id, {
         ...data,

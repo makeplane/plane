@@ -384,7 +384,7 @@ export class ProjectStore implements IProjectStore {
       this.loader = true;
       this.error = null;
 
-      const response = await this.projectService.leaveProject(workspaceSlug, projectId, this.rootStore.user);
+      const response = await this.projectService.leaveProject(workspaceSlug, projectId);
       await this.fetchProjects(workspaceSlug);
 
       runInAction(() => {
@@ -402,7 +402,7 @@ export class ProjectStore implements IProjectStore {
 
   createProject = async (workspaceSlug: string, data: any) => {
     try {
-      const response = await this.projectService.createProject(workspaceSlug, data, this.rootStore.user.currentUser);
+      const response = await this.projectService.createProject(workspaceSlug, data);
       runInAction(() => {
         this.projects = {
           ...this.projects,
@@ -433,12 +433,7 @@ export class ProjectStore implements IProjectStore {
         };
       });
 
-      const response = await this.projectService.updateProject(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser
-      );
+      const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
@@ -451,7 +446,7 @@ export class ProjectStore implements IProjectStore {
 
   deleteProject = async (workspaceSlug: string, projectId: string) => {
     try {
-      await this.projectService.deleteProject(workspaceSlug, projectId, this.rootStore.user.currentUser);
+      await this.projectService.deleteProject(workspaceSlug, projectId);
       await this.fetchProjects(workspaceSlug);
     } catch (error) {
       console.log("Failed to delete project from project store");

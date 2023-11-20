@@ -7,8 +7,6 @@ import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
 // services
 import { IssueLabelService } from "services/issue";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
@@ -61,8 +59,6 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     defaultValues,
   });
 
-  const { user } = useUser();
-
   const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabel[]>(
     workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
     workspaceSlug && projectId
@@ -74,7 +70,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
     await issueLabelService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData, user)
+      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
       .then((res) => {
         reset(defaultValues);
 

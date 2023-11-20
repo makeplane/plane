@@ -9,6 +9,8 @@ import { PageForm } from "./page-form";
 import { IUser, IPage } from "types";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
+// helpers
+import {trackEvent} from "helpers/event-tracker.helper"
 
 type Props = {
   isOpen: boolean;
@@ -44,6 +46,13 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Success!",
           message: "Page created successfully.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            ...res,
+            caase: "SUCCES"
+          }
+        )
       })
       .catch(() => {
         setToastAlert({
@@ -51,18 +60,31 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            case: "FAILED"
+          }
+        )
       });
 
   const updateProjectPage = async (payload: IPage) => {
     if (!data) return;
     return updatePage(workspaceSlug, projectId, data.id, payload)
-      .then(() => {
+      .then((res) => {
         onClose();
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page updated successfully.",
         });
+          trackEvent(
+            'PAGE_UPDATE',
+            {
+              ...res,
+              case: "SUCCESS"
+            }
+          )
       })
       .catch(() => {
         setToastAlert({
@@ -70,6 +92,12 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be updated. Please try again.",
         });
+        trackEvent(
+          'PAGE_UPDATE',
+          {
+            case: "FAILED"
+          }
+        )
       });
   };
 

@@ -208,12 +208,7 @@ export class ModuleStore implements IModuleStore {
 
   createModule = async (workspaceSlug: string, projectId: string, data: Partial<IModule>) => {
     try {
-      const response = await this.moduleService.createModule(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser
-      );
+      const response = await this.moduleService.createModule(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.modules = {
@@ -255,9 +250,7 @@ export class ModuleStore implements IModuleStore {
           });
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data, user);
+      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
 
       return response;
     } catch (error) {
@@ -283,7 +276,7 @@ export class ModuleStore implements IModuleStore {
         };
       });
 
-      await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId, this.rootStore.user.currentUser);
+      await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId);
     } catch (error) {
       console.error("Failed to delete module in module store", error);
 

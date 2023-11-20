@@ -36,15 +36,10 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
   const handleAccept = () => {
     if (!invitationDetail) return;
     workspaceService
-      .joinWorkspace(
-        invitationDetail.workspace.slug,
-        invitationDetail.id,
-        {
-          accepted: true,
-          email: invitationDetail.email,
-        },
-        user
-      )
+      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+        accepted: true,
+        email: invitationDetail.email,
+      })
       .then(() => {
         if (email === user?.email) {
           router.push("/invitations");

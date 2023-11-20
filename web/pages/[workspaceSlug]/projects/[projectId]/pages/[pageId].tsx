@@ -57,22 +57,20 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
-    await pageService
-      .patchPage(workspaceSlug as string, projectId as string, pageId as string, formData, user)
-      .then(() => {
-        mutate<IPage>(
-          PAGE_DETAILS(pageId as string),
-          (prevData) => ({
-            ...prevData,
-            ...formData,
-          }),
-          false
-        );
-      });
+    await pageService.patchPage(workspaceSlug as string, projectId as string, pageId as string, formData).then(() => {
+      mutate<IPage>(
+        PAGE_DETAILS(pageId as string),
+        (prevData) => ({
+          ...prevData,
+          ...formData,
+        }),
+        false
+      );
+    });
   };
 
   const createPage = async (payload: Partial<IPage>) => {
-    await pageService.createPage(workspaceSlug as string, projectId as string, payload, user);
+    await pageService.createPage(workspaceSlug as string, projectId as string, payload);
   };
 
   // ================ Page Menu Actions ==================
