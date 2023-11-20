@@ -25,7 +25,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 # Module imports
 from plane.utils.paginator import BasePaginator
 from plane.bgtasks.webhook_task import send_webhook
-
+from plane.bgtasks.track_events import track_event
 
 class TimezoneMixin:
     """
@@ -44,8 +44,8 @@ class TimezoneMixin:
 class WebhookMixin:
     webhook_event = None
 
-    def finalize_response(self, request, response, *args, **kwargs):
-        response = super().finalize_response(request, response, *args, **kwargs)
+    def initial_request(self, request, response, *args, **kwargs):
+        response = super().initial_request(request, response, *args, **kwargs)
 
         if (
             self.webhook_event
@@ -61,6 +61,30 @@ class WebhookMixin:
 
         return response
 
+
+class AnalyticsMixin:
+    analytic_event = None
+    print("did it come here or not")
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        print("hieieie")
+        print(self.workspace_slug,"workspace_slug")
+        # if (
+        #     self.analytic_event
+        #     and self.request.method in ["POST", "PATCH", "DELETE"]
+        #     and response.status_code in [200, 201, 204]
+        # ):
+        #     print(self.workspace_slug,"workspace_slug")
+        #     track_event.delay(
+        #         event_name=self.analytic_event,
+        #         slug=self.workspace_slug,
+        #         project_id=self.project_id,
+        #         user_id=self.request.user.id,
+        #     )
+
+        # return response
+    
 
 class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
     model = None

@@ -11,6 +11,7 @@ from django.conf import settings
 urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html")),
     path("api/", include("plane.app.urls")),
+    path("api/analytics/", include("plane.analytics.urls")),
     path("api/public/", include("plane.space.urls")),
     path("api/licenses/", include("plane.license.urls")),
     path("api/v1/", include("plane.proxy.urls")),

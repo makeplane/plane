@@ -26,7 +26,7 @@ from rest_framework import serializers
 from rest_framework.permissions import AllowAny
 
 # Module imports
-from .base import BaseViewSet, BaseAPIView, WebhookMixin
+from .base import BaseViewSet, BaseAPIView, WebhookMixin, AnalyticsMixin
 from plane.app.serializers import (
     ProjectSerializer,
     ProjectListSerializer,
@@ -64,10 +64,11 @@ from plane.db.models import (
 from plane.bgtasks.project_invitation_task import project_invitation
 
 
-class ProjectViewSet(WebhookMixin, BaseViewSet):
+class ProjectViewSet(WebhookMixin, AnalyticsMixin, BaseViewSet):
     serializer_class = ProjectSerializer
     model = Project
     webhook_event = "project"
+    analytic_event = "project"
 
     permission_classes = [
         ProjectBasePermission,
