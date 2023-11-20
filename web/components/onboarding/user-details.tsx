@@ -169,22 +169,20 @@ export const UserDetails: React.FC<Props> = observer((props) => {
             <Controller
               control={control}
               name="use_case"
-              render={({ field: { value, onChange } }) => {
-                return (
-                  <div className="flex flex-wrap break-all overflow-auto">
-                    {useCases.map((useCase) => (
-                      <div
-                        className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
-                          value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
-                        } mr-3 rounded-sm p-3 text-sm font-medium`}
-                        onClick={() => onChange(useCase)}
-                      >
-                        {useCase}
-                      </div>
-                    ))}
-                  </div>
-                );
-              }}
+              render={({ field: { value, onChange } }) => (
+                <div className="flex flex-wrap break-all overflow-auto">
+                  {useCases.map((useCase) => (
+                    <div
+                      className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
+                        value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
+                      } mr-3 rounded-sm p-3 text-sm font-medium`}
+                      onClick={() => onChange(useCase)}
+                    >
+                      {useCase}
+                    </div>
+                  ))}
+                </div>
+              )}
             />
           </div>
 
