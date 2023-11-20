@@ -570,7 +570,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
         ProjectEntityPermission,
     ]
 
-    def get(self, request, slug, project_id, issue_id):
+    def get(self, request, slug, project_id, issue_id, pk=None):
         issue_activities = (
             IssueActivity.objects.filter(
                 issue_id=issue_id, workspace__slug=slug, project_id=project_id
@@ -580,19 +580,20 @@ class IssueActivityAPIEndpoint(BaseAPIView):
                 project__project_projectmember__member=self.request.user,
             )
             .select_related("actor", "workspace", "issue", "project")
-        ).order_by("created_at")
-        issue_comments = (
-            IssueComment.objects.filter(issue_id=issue_id)
-            .filter(project__project_projectmember__member=self.request.user)
-            .order_by("created_at")
-            .select_related("actor", "issue", "project", "workspace")
-        )
-        issue_activities = IssueActivitySerializer(issue_activities, many=True).data
-        issue_comments = IssueCommentSerializer(issue_comments, many=True).data
+        ).order_by(request.GET.get("order_by", "created_at"))
+ 
+        if pk:
+            issue_activities = issue_activities.get(pk=pk)
+            serializer = IssueActivitySerializer(issue_activities)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        result_list = sorted(
-            chain(issue_activities, issue_comments),
-            key=lambda instance: instance[request.GET.get("order_by", "created_at")],
+        self.paginate(
+            request=request,
+            queryset=(issue_activities),
+            on_results=lambda issue_activity: IssueActivitySerializer(
+                issue_activity,
+                many=True,
+                fields=self.fields,
+                expand=self.expand,
+            ).data,
         )
-
-        return Response(result_list, status=status.HTTP_200_OK)

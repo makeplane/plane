@@ -298,6 +298,7 @@ class IssueAttachmentSerializer(BaseSerializer):
         model = IssueAttachment
         fields = "__all__"
         read_only_fields = [
+            "id",
             "created_by",
             "updated_by",
             "created_at",
@@ -312,3 +313,7 @@ class IssueActivitySerializer(BaseSerializer):
     class Meta:
         model = IssueActivity
         fields = "__all__"
+        exclude = [
+            "created_by",
+            "udpated_by",
+        ]
