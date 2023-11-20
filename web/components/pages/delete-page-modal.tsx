@@ -1,13 +1,9 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { PageService } from "services/page.service";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -15,56 +11,40 @@ import { Button } from "@plane/ui";
 // icons
 import { AlertTriangle } from "lucide-react";
 // types
-import type { IUser, IPage } from "types";
-// fetch-keys
-import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import type { IPage } from "types";
 
 type TConfirmPageDeletionProps = {
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data?: IPage | null;
-  user: IUser | undefined;
+  isOpen: boolean;
+  onClose: () => void;
 };
 
-// services
-const pageService = new PageService();
+export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = observer((props) => {
+  const { data, isOpen, onClose } = props;
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data }) => {
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
+  const {
+    page: { deletePage },
+  } = useMobxStore();
+
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
-    setIsOpen(false);
-    setIsDeleteLoading(false);
+    setIsDeleting(false);
+    onClose();
   };
 
-  const handleDeletion = async () => {
-    setIsDeleteLoading(true);
+  const handleDelete = async () => {
     if (!data || !workspaceSlug || !projectId) return;
 
-    await pageService
-      .deletePage(workspaceSlug as string, data.project, data.id)
+    setIsDeleting(true);
+
+    await deletePage(workspaceSlug.toString(), data.project, data.id)
       .then(() => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
-        mutate<IPage[]>(
-          MY_PAGES_LIST(projectId as string),
-          (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
-          false
-        );
-        mutate<IPage[]>(
-          ALL_PAGES_LIST(projectId as string),
-          (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
-          false
-        );
-        mutate<IPage[]>(
-          FAVORITE_PAGES_LIST(projectId as string),
-          (prevData) => (prevData ?? []).filter((page) => page.id !== data?.id),
-          false
-        );
         handleClose();
         setToastAlert({
           type: "success",
@@ -80,7 +60,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
         });
       })
       .finally(() => {
-        setIsDeleteLoading(false);
+        setIsDeleting(false);
       });
   };
 
@@ -122,9 +102,9 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
-                          Are you sure you want to delete Page-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
-                          data related to the page will be permanently removed. This action cannot be undone.
+                          Are you sure you want to delete page-{" "}
+                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? The Page
+                          will be deleted permanently. This action cannot be undone.
                         </p>
                       </div>
                     </div>
@@ -134,8 +114,8 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
                   <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                     Cancel
                   </Button>
-                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Deleting..." : "Delete"}
+                  <Button variant="danger" size="sm" tabIndex={1} onClick={handleDelete} loading={isDeleting}>
+                    {isDeleting ? "Deleting..." : "Delete"}
                   </Button>
                 </div>
               </Dialog.Panel>
@@ -145,4 +125,4 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
       </Dialog>
     </Transition.Root>
   );
-};
+});

@@ -113,6 +113,8 @@ import {
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 import { IMentionsStore, MentionsStore } from "store/editor";
+// pages
+import { PageStore, IPageStore } from "store/page.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -186,6 +188,8 @@ export class RootStore {
 
   mentionsStore: IMentionsStore;
 
+  page: IPageStore;
+
   constructor() {
     this.instance = new InstanceStore(this);
 
@@ -254,5 +258,7 @@ export class RootStore {
     this.webhook = new WebhookStore(this);
 
     this.mentionsStore = new MentionsStore(this);
+
+    this.page = new PageStore(this);
   }
 }

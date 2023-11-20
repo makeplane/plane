@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { LogOut, Settings, Shield, UserCircle2 } from "lucide-react";
+import { Cog, LogIn, LogOut, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 // services
 import { AuthService } from "services/auth.service";
 // ui
-import { Avatar } from "@plane/ui";
+import { Avatar, Tooltip } from "@plane/ui";
 
 // Static Data
 const profileLinks = (workspaceSlug: string, userId: string) => [
@@ -70,19 +70,30 @@ export const InstanceSidebarDropdown = observer(() => {
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <div className={`flex-shrink-0 `}>
-            <Shield className="h-6 w-6 text-custom-text-100" />
+          <div className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}>
+            <Cog className="h-5 w-5 text-custom-text-200" />
           </div>
 
           {!sidebarCollapsed && (
-            <h4 className="text-custom-text-100 font-medium text-base truncate">Instance Admin Settings</h4>
+            <h4 className="text-custom-text-200 font-medium text-base truncate">Instance Admin</h4>
           )}
         </div>
       </div>
 
       {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="grid place-items-center outline-none">
+          <Menu.Button className="flex gap-4 place-items-center outline-none">
+            {!sidebarCollapsed && (
+              <Tooltip position="bottom-left" tooltipContent="Go back to your workspace">
+                <div className="flex-shrink-0">
+                  <Link href={`/${redirectWorkspaceSlug}`}>
+                    <a>
+                      <LogIn className="h-5 w-5 text-custom-text-200 rotate-180" />
+                    </a>
+                  </Link>
+                </div>
+              </Tooltip>
+            )}
             <Avatar
               name={currentUser?.display_name}
               src={currentUser?.avatar}
@@ -132,7 +143,7 @@ export const InstanceSidebarDropdown = observer(() => {
 
               <div className="p-2 pb-0">
                 <Menu.Item as="button" type="button" className="w-full">
-                  <Link href={redirectWorkspaceSlug}>
+                  <Link href={`/${redirectWorkspaceSlug}`}>
                     <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-10 hover:bg-custom-primary-20">
                       Normal Mode
                     </a>
