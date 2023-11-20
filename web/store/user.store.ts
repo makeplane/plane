@@ -282,7 +282,7 @@ class UserStore implements IUserStore {
 
       if (!user) return;
 
-      await this.userService.updateUserOnBoard({ userRole: user.role }, user);
+      await this.userService.updateUserOnBoard();
     } catch (error) {
       this.fetchCurrentUser();
 
@@ -300,7 +300,7 @@ class UserStore implements IUserStore {
           } as IUser;
         });
 
-        const response = await this.userService.updateUserTourCompleted(this.currentUser);
+        const response = await this.userService.updateUserTourCompleted();
 
         return response;
       }

@@ -25,7 +25,7 @@ type Props = {
 const issueService = new IssueService();
 
 export const ChangeIssueAssignee: FC<Props> = observer((props) => {
-  const { setIsPaletteOpen, issue, user } = props;
+  const { setIsPaletteOpen, issue } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -71,7 +71,7 @@ export const ChangeIssueAssignee: FC<Props> = observer((props) => {
 
       const payload = { ...formData };
       await issueService
-        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload, user)
+        .patchIssue(workspaceSlug as string, projectId as string, issueId as string, payload)
         .then(() => {
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
         })
@@ -79,7 +79,7 @@ export const ChangeIssueAssignee: FC<Props> = observer((props) => {
           console.error(e);
         });
     },
-    [workspaceSlug, issueId, projectId, user]
+    [workspaceSlug, issueId, projectId]
   );
 
   const handleIssueAssignees = (assignee: string) => {

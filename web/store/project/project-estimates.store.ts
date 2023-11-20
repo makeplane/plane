@@ -49,12 +49,7 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
 
   createEstimate = async (workspaceSlug: string, projectId: string, data: IEstimateFormData) => {
     try {
-      const response = await this.estimateService.createEstimate(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.estimateService.createEstimate(workspaceSlug, projectId, data);
 
       const responseEstimate = {
         ...response.estimate,
@@ -88,13 +83,7 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
     });
 
     try {
-      const response = await this.estimateService.patchEstimate(
-        workspaceSlug,
-        projectId,
-        estimateId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.estimateService.patchEstimate(workspaceSlug, projectId, estimateId, data);
       await this.rootStore.project.fetchProjectEstimates(workspaceSlug, projectId);
 
       return response;
@@ -126,7 +115,7 @@ export class ProjectEstimatesStore implements IProjectEstimateStore {
 
     try {
       // deleting using api
-      await this.estimateService.deleteEstimate(workspaceSlug, projectId, estimateId, this.rootStore.user.currentUser!);
+      await this.estimateService.deleteEstimate(workspaceSlug, projectId, estimateId);
     } catch (error) {
       console.log("Failed to delete estimate from project store");
       // reverting back to original estimate list

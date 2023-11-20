@@ -20,6 +20,8 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+// track events
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -129,6 +131,14 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     return projectStore
       .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
+        const newPayload = {
+          ...payload,
+          id: res.id
+        }
+        trackEvent(
+          "CREATE_PROJECT",
+          newPayload,
+        )
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -211,7 +221,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   )}
 
                   <div className="absolute right-2 top-2 p-2">
-                    <button type="button" onClick={handleClose}>
+                    <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose}>
                       <X className="h-5 w-5 text-white" />
                     </button>
                   </div>
