@@ -23,6 +23,7 @@ import { Camera, User2 } from "lucide-react";
 const defaultValues: Partial<IUser> = {
   first_name: "",
   avatar: "",
+  use_case: undefined,
 };
 
 type Props = {
@@ -59,6 +60,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
       ...formData,
       first_name: formData.first_name.split(" ")[0],
       last_name: formData.first_name.split(" ")[1],
+      use_case: formData.use_case,
       onboarding_step: {
         ...user.onboarding_step,
         profile_complete: true,
@@ -91,7 +93,6 @@ export const UserDetails: React.FC<Props> = observer((props) => {
         handleDelete={() => {}}
         onSuccess={(url) => {
           setValue("avatar", url);
-          // handleSubmit(onSubmit)();
           setIsImageUploadModalOpen(false);
         }}
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
@@ -158,25 +159,31 @@ export const UserDetails: React.FC<Props> = observer((props) => {
               name="first_name"
               render={({ field: { value } }) => (
                 <p className="font-medium text-onboarding-text-200 text-xl sm:text-2xl p-0">
-                  And how will you use Plane, {value} ?
+                  And how will you use Plane{value.length>0?", ":""}{value}?
                 </p>
               )}
             />
 
             <p className="font-medium text-onboarding-text-300 text-sm my-3">Choose just one</p>
 
-            <div className="flex flex-wrap break-all overflow-auto">
-              {useCases.map((useCase, index) => (
-                <div
-                  className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
-                    selectedUsecase === index ? "border-custom-primary-100" : "border-onboarding-border-100"
-                  } mr-3 rounded-sm p-3 text-sm font-medium`}
-                  onClick={() => setSelectedUsecase(index)}
-                >
-                  {useCase}
+            <Controller
+              control={control}
+              name="use_case"
+              render={({ field: { value, onChange } }) => (
+                <div className="flex flex-wrap break-all overflow-auto">
+                  {useCases.map((useCase) => (
+                    <div
+                      className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
+                        value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
+                      } mr-3 rounded-sm p-3 text-sm font-medium`}
+                      onClick={() => onChange(useCase)}
+                    >
+                      {useCase}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+            />
           </div>
 
           <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>

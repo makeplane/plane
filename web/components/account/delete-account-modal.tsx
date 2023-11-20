@@ -12,6 +12,7 @@ import { AuthService } from "services/auth.service";
 import { Dialog, Transition } from "@headlessui/react";
 // icons
 import { AlertTriangle } from "lucide-react";
+import { UserService } from "services/user.service";
 
 type Props = {
   isOpen: boolean;
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const authService = new AuthService();
+const userService = new UserService();
 
 const DeleteAccountModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
@@ -39,6 +41,28 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
           message: "Failed to sign out. Please try again.",
         })
       );
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleteLoading(true);
+    await userService
+      .deleteAccount()
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Account deleted successfully.",
+        });
+        router.push("/");
+      })
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: err?.data?.error,
+        })
+      );
+    setIsDeleteLoading(false);
   };
 
   const handleClose = () => {
@@ -84,10 +108,10 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
                     </div>
 
                     <div className="mt-6 px-4">
-                      <p className="text-onboarding-text-300 font-normal text-base">
+                      <ul className="text-onboarding-text-300 list-disc font-normal text-base">
                         <li>Delete this account if you have another and won’t use this account.</li>
                         <li>Switch to another account if you’d like to come back to this account another time.</li>
-                      </p>
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -95,7 +119,10 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
                   <span className="text-sm font-medium hover:cursor-pointer" onClick={handleSignOut}>
                     Switch account
                   </span>
-                  <button className="py-1.5 px-3 font-medium rounded-sm text-red-500 border border-red-500 text-sm ">
+                  <button
+                    className="py-1.5 px-3 font-medium rounded-sm text-red-500 border border-red-500 text-sm "
+                    onClick={handleDeleteAccount}
+                  >
                     {isDeleteLoading ? "Deleting..." : "Delete account"}
                   </button>
                 </div>

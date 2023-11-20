@@ -18,6 +18,7 @@ import { ROLE } from "constants/workspace";
 import { IWorkspaceMemberInvitation } from "types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -32,7 +33,7 @@ const Invitations: React.FC<Props> = (props) => {
 
   const {
     workspace: workspaceStore,
-    user: { updateCurrentUser },
+    user: { currentUser, updateCurrentUser },
   } = useMobxStore();
 
   const {
@@ -63,7 +64,8 @@ const Invitations: React.FC<Props> = (props) => {
 
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(async () => {
+      .then(async (res) => {
+        trackEvent("WORKSPACE_USER_INVITE_ACCEPT", res);
         await mutateInvitations();
         await workspaceStore.fetchWorkspaces();
         await mutate(USER_WORKSPACES);
@@ -145,15 +147,15 @@ const Invitations: React.FC<Props> = (props) => {
       </div>
     </div>
   ) : (
-    <EmptyInvitation />
+    <EmptyInvitation email={currentUser!.email} />
   );
 };
 
-const EmptyInvitation = () => (
+const EmptyInvitation = ({ email }: { email: string }) => (
   <div className="items-center md:w-4/5 bg-onboarding-background-300/30 my-16 border-onboarding-border-200 py-5 px-10 rounded border justify-center ">
-    <p className="text-lg text-onboarding-text-300 text-center font-semibold">Is your Team already on Plane?</p>
+    <p className="text-lg text-onboarding-text-300 text-center font-semibold">Is your team already on Plane?</p>
     <p className="text-sm text-onboarding-text-300 mt-6 text-center">
-      We couldn’t find any existing workspaces for the email address bhavesh@caravel.ai
+      We couldn’t find any existing workspaces for the email address {email}
     </p>
     <div
       className="bg-onboarding-background-200 mt-6 py-3 text-center hover:cursor-pointer text-custom-text-200 rounded-md text-sm font-medium border border-custom-border-200"

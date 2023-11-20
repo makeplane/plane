@@ -372,8 +372,8 @@ module.exports = {
         96: "21.6rem",
       },
       backgroundImage: {
-        "gradient-primary": "var( --gradient-onboarding-primary)",
-        "gradient-secondary": "var( --gradient-onboarding-secondary)",
+        "onboarding-gradient-primary": "var( --gradient-onboarding-primary)",
+        "onboarding-gradient-secondary": "var( --gradient-onboarding-secondary)",
       },
     },
     fontFamily: {
