@@ -22,7 +22,6 @@ export interface ICycleStore {
       [filterType: string]: ICycle[];
     };
   };
-  projectCycles: ICycle[] | null;
   cycle_details: {
     [cycleId: string]: ICycle;
   };
