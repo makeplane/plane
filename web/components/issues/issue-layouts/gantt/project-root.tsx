@@ -28,7 +28,7 @@ export const GanttLayout: React.FC = observer(() => {
     projectIssuesFilter: projectIssueFiltersStore,
   } = useMobxStore();
 
-  const appliedDisplayFilters = projectIssueFiltersStore.projectFilters?.displayFilters;
+  const appliedDisplayFilters = projectIssueFiltersStore.issueFilters?.displayFilters;
 
   const issuesResponse = projectIssuesStore.getIssues;
   const issueIds = (projectIssuesStore.getIssuesIds ?? []) as TUnGroupedIssues;

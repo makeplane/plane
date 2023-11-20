@@ -81,7 +81,7 @@ export class CycleIssueFiltersStore implements ICycleIssueFiltersStore {
   };
 
   get appliedFilters(): TIssueParams[] | undefined {
-    const userDisplayFilters = this.rootStore?.projectIssueFilters.projectFilters?.displayFilters;
+    const userDisplayFilters = this.rootStore?.projectIssuesFilter.issueFilters?.displayFilters;
 
     const cycleId = this.rootStore.cycle.cycleId;
 

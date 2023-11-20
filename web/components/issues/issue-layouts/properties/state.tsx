@@ -17,7 +17,7 @@ import { RootStore } from "store/root";
 export interface IIssuePropertyState {
   view?: "profile" | "workspace" | "project";
   projectId: string | null;
-  value: string | null;
+  value: any | string | null;
   onChange: (state: IState) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;

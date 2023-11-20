@@ -26,6 +26,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const {
     projectIssuesFilter: projectIssueFiltersStore,
     project: projectStore,
+    issueFilter: issueFilterStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     inbox: inboxStore,
@@ -93,7 +96,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );
-  const { currentProjectDetails } = projectStore;
 
   const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
 
@@ -179,7 +181,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
               states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />

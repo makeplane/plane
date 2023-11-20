@@ -64,7 +64,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
     const defaultState = states?.find((state) => state.default);
     if (groupByKey === "state") return { state: groupByKey === "state" ? value : defaultState?.id };
-    else return { state: defaultState?.id, [groupByKey]: value };
+    else return { state: defaultState?.id, [groupByKey as string]: value };
   };
 
   const validateEmptyIssueGroups = (issues: IIssue[]) => {

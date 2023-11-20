@@ -30,14 +30,14 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     cycle: cycleStore,
     cycleIssueFilters: cycleIssueFiltersStore,
     projectIssuesFilter: projectIssueFiltersStore,
-    project: projectStore,
+    project: { currentProjectDetails },
     projectMember: { projectMembers },
+    projectLabel: { projectLabels },
     projectState: projectStateStore,
     commandPalette: commandPaletteStore,
   } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
 
-  const activeLayout = projectIssueFiltersStore.projectFilters?.displayFilters?.layout;
+  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", "false");
 
@@ -179,15 +179,15 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
               states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={projectIssueFiltersStore.projectFilters?.displayFilters ?? {}}
-              displayProperties={projectIssueFiltersStore.projectFilters?.displayProperties ?? {}}
+              displayFilters={projectIssueFiltersStore.issueFilters?.displayFilters ?? {}}
+              displayProperties={projectIssueFiltersStore.issueFilters?.displayProperties ?? {}}
               handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
               handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={

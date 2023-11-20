@@ -12,7 +12,7 @@ import { IProfileIssueFilterStore, IProfileIssueStore } from "store/profile-issu
 import { IModuleIssueStore } from "store/module";
 import { ICycleIssueStore } from "store/cycle";
 import { IArchivedIssueFilterStore, IArchivedIssueStore } from "store/archived-issues";
-import { IProjectIssueStore } from "store/project-issues";
+import { IProjectIssuesStore } from "store/issues";
 
 interface IBaseListRoot {
   issueStore:
@@ -21,7 +21,7 @@ interface IBaseListRoot {
     | IModuleIssueStore
     | ICycleIssueStore
     | IArchivedIssueStore
-    | IProjectIssueStore;
+    | IProjectIssuesStore;
   issueFilterStore: IssueFilterStore | IIssueFilterStore | IProfileIssueFilterStore | IArchivedIssueFilterStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -40,6 +40,7 @@ export const BaseListRoot = (props: IBaseListRoot) => {
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectLabel: { projectLabels },
   } = useMobxStore();
 
   const issues = issueStore.getIssues;
@@ -49,7 +50,7 @@ export const BaseListRoot = (props: IBaseListRoot) => {
 
   const states = projectStateStore?.projectStates;
   const priorities = ISSUE_PRIORITIES;
-  const labels = projectStore?.projectLabels;
+  const labels = projectLabels;
   const stateGroups = ISSUE_STATE_GROUPS;
 
   const projects = getProjects(projectStore);

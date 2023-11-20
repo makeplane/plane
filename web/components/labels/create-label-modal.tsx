@@ -12,7 +12,7 @@ import { Button, Input } from "@plane/ui";
 // icons
 import { ChevronDown } from "lucide-react";
 // types
-import type { IIssueLabels, IState } from "types";
+import type { IIssueLabel, IState } from "types";
 // constants
 import { LABEL_COLOR_OPTIONS, getRandomLabelColor } from "constants/label";
 import useToast from "hooks/use-toast";
@@ -22,7 +22,7 @@ type Props = {
   isOpen: boolean;
   projectId: string;
   handleClose: () => void;
-  onSuccess?: (response: IIssueLabels) => void;
+  onSuccess?: (response: IIssueLabel) => void;
 };
 
 const defaultValues: Partial<IState> = {
@@ -47,7 +47,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
     reset,
     setValue,
     setFocus,
-  } = useForm<IIssueLabels>({
+  } = useForm<IIssueLabel>({
     defaultValues,
   });
 
@@ -69,7 +69,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const onSubmit = async (formData: IIssueLabels) => {
+  const onSubmit = async (formData: IIssueLabel) => {
     if (!workspaceSlug) return;
 
     await projectLabelStore
