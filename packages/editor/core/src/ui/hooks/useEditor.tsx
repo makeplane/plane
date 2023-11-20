@@ -18,6 +18,7 @@ interface CustomEditorProps {
   value: string;
   deleteFile: DeleteImage;
   debouncedUpdatesEnabled?: boolean;
+  onStart?: (json: any, html: string) => void;
   onChange?: (json: any, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -34,6 +35,7 @@ export const useEditor = ({
   editorProps = {},
   value,
   extensions = [],
+  onStart,
   onChange,
   setIsSubmitting,
   forwardedRef,
@@ -60,6 +62,9 @@ export const useEditor = ({
       ],
       content:
         typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      onCreate: async ({ editor }) => {
+        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()))
+      },
       onUpdate: async ({ editor }) => {
         // for instant feedback loop
         setIsSubmitting?.("submitting");

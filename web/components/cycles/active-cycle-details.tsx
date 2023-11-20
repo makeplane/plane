@@ -250,7 +250,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         handleRemoveFromFavorites(e);
                       }}
                     >
-                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400 fill-orange-400" />
                     </button>
                   ) : (
                     <button

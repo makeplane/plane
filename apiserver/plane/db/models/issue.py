@@ -133,6 +133,7 @@ class Issue(ProjectBaseModel):
             except ImportError:
                 pass
 
+
         if self._state.adding:
             # Get the maximum display_id value from the database
             last_id = IssueSequence.objects.filter(project=self.project).aggregate(

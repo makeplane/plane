@@ -10,7 +10,6 @@ import { CreateUpdateProjectViewModal, DeleteProjectViewModal } from "components
 // ui
 import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
-import { truncateText } from "helpers/string.helper";
 import { calculateTotalFilters } from "helpers/filter.helper";
 // types
 import { IProjectView } from "types";
@@ -85,7 +84,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                       }}
                       className="grid place-items-center"
                     >
-                      <StarIcon className="text-orange-400" fill="#f6ad55" size={14} strokeWidth={2} />
+                      <StarIcon className="h-3.5 w-3.5 text-orange-400 fill-orange-400" strokeWidth={2} />
                     </button>
                   ) : (
                     <button

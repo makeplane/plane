@@ -195,7 +195,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <Star className="h-3.5 w-3.5 stroke-[1.5] text-orange-400" fill="#f6ad55" />
+                        <Star className="h-3.5 w-3.5 stroke-[1.5] text-orange-400 fill-orange-400" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>

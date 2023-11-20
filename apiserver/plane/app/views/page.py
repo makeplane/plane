@@ -136,7 +136,9 @@ class PageViewSet(BaseViewSet):
             )
 
     def lock(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
+        page = Page.objects.filter(
+            pk=page_id, workspace__slug=slug, project_id=project_id
+        ).first()
 
         # only the owner can lock the page
         if request.user.id != page.owned_by_id:
@@ -149,7 +151,9 @@ class PageViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def unlock(self, request, slug, project_id, page_id):
-        page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
+        page = Page.objects.filter(
+            pk=page_id, workspace__slug=slug, project_id=project_id
+        ).first()
 
         # only the owner can unlock the page
         if request.user.id != page.owned_by_id:
@@ -164,66 +168,8 @@ class PageViewSet(BaseViewSet):
 
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
-        page_view = request.GET.get("page_view", False)
-
-        if not page_view:
-            return Response(
-                {"error": "Page View parameter is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # All Pages
-        if page_view == "all":
-            return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Recent pages
-        if page_view == "recent":
-            current_time = date.today()
-            day_before = current_time - timedelta(days=1)
-            todays_pages = queryset.filter(updated_at__date=date.today())
-            yesterdays_pages = queryset.filter(updated_at__date=day_before)
-            earlier_this_week = queryset.filter(
-                updated_at__date__range=(
-                    (timezone.now() - timedelta(days=7)),
-                    (timezone.now() - timedelta(days=2)),
-                )
-            )
-            return Response(
-                {
-                    "today": PageSerializer(todays_pages, many=True).data,
-                    "yesterday": PageSerializer(yesterdays_pages, many=True).data,
-                    "earlier_this_week": PageSerializer(
-                        earlier_this_week, many=True
-                    ).data,
-                },
-                status=status.HTTP_200_OK,
-            )
-
-        # Favorite Pages
-        if page_view == "favorite":
-            queryset = queryset.filter(is_favorite=True)
-            return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # My pages
-        if page_view == "created_by_me":
-            queryset = queryset.filter(owned_by=request.user)
-            return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Created by other Pages
-        if page_view == "created_by_other":
-            queryset = queryset.filter(~Q(owned_by=request.user), access=0)
-            return Response(
-                PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
         return Response(
-            {"error": "No matching view found"}, status=status.HTTP_400_BAD_REQUEST
+            PageSerializer(queryset, many=True).data, status=status.HTTP_200_OK
         )
 
     def archive(self, request, slug, project_id, page_id):
@@ -247,28 +193,43 @@ class PageViewSet(BaseViewSet):
                 {"error": "Only the owner of the page can unarchive a page"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         # if parent page is archived then the page will be un archived breaking the hierarchy
         if page.parent_id and page.parent.archived_at:
             page.parent = None
-            page.save(update_fields=['parent'])
+            page.save(update_fields=["parent"])
 
         unarchive_archive_page_and_descendants(page_id, None)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def archive_list(self, request, slug, project_id):
-        pages = (
-            Page.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-            )
-            .filter(archived_at__isnull=False)
-        )
+        pages = Page.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+        ).filter(archived_at__isnull=False)
 
         return Response(
             PageSerializer(pages, many=True).data, status=status.HTTP_200_OK
         )
+
+    def destroy(self, request, slug, project_id, pk):
+        page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
+
+        if page.archived_at is None:
+            return Response(
+                {"error": "The page should be archived before deleting"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # remove parent from all the children
+        _ = Page.objects.filter(
+            parent_id=pk, project_id=project_id, workspace__slug=slug
+        ).update(parent=None)
+
+
+        page.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PageFavoriteViewSet(BaseViewSet):
@@ -305,6 +266,7 @@ class PageFavoriteViewSet(BaseViewSet):
         )
         page_favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class PageLogEndpoint(BaseAPIView):
     permission_classes = [

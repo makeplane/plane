@@ -203,8 +203,6 @@ export const CommandPalette: FC = observer(() => {
           <CreateUpdatePageModal
             isOpen={isCreatePageModalOpen}
             handleClose={() => toggleCreatePageModal(false)}
-            user={user}
-            workspaceSlug={workspaceSlug.toString()}
             projectId={projectId.toString()}
           />
         </>
