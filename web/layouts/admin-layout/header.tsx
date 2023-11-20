@@ -1,26 +1,17 @@
 import { FC } from "react";
-// next
-import Link from "next/link";
 // mobx
 import { observer } from "mobx-react-lite";
 // ui
 import { Breadcrumbs } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // icons
-import { ArrowLeftToLine, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 
-export const InstanceAdminHeader: FC = observer(() => {
-  const {
-    workspace: { workspaceSlug },
-    user: { currentUserSettings },
-  } = useMobxStore();
+export interface IInstanceAdminHeader {
+  title: string;
+}
 
-  const redirectWorkspaceSlug =
-    workspaceSlug ||
-    currentUserSettings?.workspace?.last_workspace_slug ||
-    currentUserSettings?.workspace?.fallback_workspace_slug ||
-    "";
+export const InstanceAdminHeader: FC<IInstanceAdminHeader> = observer((props) => {
+  const { title } = props;
 
   return (
     <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -30,17 +21,15 @@ export const InstanceAdminHeader: FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               icon={<Settings className="h-4 w-4 text-custom-text-300" />}
-              label="General"
+              label="Settings"
+              link="/admin"
+            />
+            <Breadcrumbs.BreadcrumbItem
+              type="text"
+              label={title}
             />
           </Breadcrumbs>
         </div>
-      </div>
-      <div className="flex-shrink-0">
-        <Link href={redirectWorkspaceSlug}>
-          <a>
-            <ArrowLeftToLine className="h-4 w-4 text-custom-text-300" />
-          </a>
-        </Link>
       </div>
     </div>
   );

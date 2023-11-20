@@ -56,7 +56,7 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
 
 ProfileOverviewPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader title="Overview" />}>
+    <AppLayout header={<UserProfileHeader title="Summary" />}>
       <ProfileAuthWrapper>{page}</ProfileAuthWrapper>
     </AppLayout>
   );
