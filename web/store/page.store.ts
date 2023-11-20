@@ -160,7 +160,7 @@ export class PageStore implements IPageStore {
 
   createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
     try {
-      const response = await this.pageService.createPage(workspaceSlug, projectId, data, undefined);
+      const response = await this.pageService.createPage(workspaceSlug, projectId, data);
       runInAction(() => {
         this.pages = {
           ...this.pages,
@@ -183,7 +183,7 @@ export class PageStore implements IPageStore {
           return page;
         });
       });
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, data, undefined);
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, data);
       return response;
     } catch (error) {
       throw error;
@@ -200,7 +200,7 @@ export class PageStore implements IPageStore {
           return page;
         });
       });
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 }, undefined);
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
       return response;
     } catch (error) {
       throw error;
@@ -217,7 +217,7 @@ export class PageStore implements IPageStore {
           return page;
         });
       });
-      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 }, undefined);
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
       return response;
     } catch (error) {
       throw error;
