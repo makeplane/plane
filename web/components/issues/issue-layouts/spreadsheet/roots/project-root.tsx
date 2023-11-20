@@ -41,6 +41,18 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
     [issueFilterStore, projectId, workspaceSlug]
   );
 
+  const handleIssueAction = async (issue: IIssue, action: "copy" | "delete" | "edit") => {
+    if (!workspaceSlug || !projectId || !user) return;
+
+    if (action === "delete") {
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
+      issueStore.removeIssueFromStructure(null, null, issue);
+    } else if (action === "edit") {
+      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue);
+      issueStore.updateIssueStructure(null, null, issue);
+    }
+  };
+
   const handleUpdateIssue = useCallback(
     (issue: IIssue, data: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !user) return;
@@ -65,7 +77,7 @@ export const ProjectSpreadsheetLayout: React.FC = observer(() => {
       members={projectMembers?.map((m) => m.member)}
       labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
-      handleIssueAction={() => {}}
+      handleIssueAction={handleIssueAction}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
       enableQuickCreateIssue
