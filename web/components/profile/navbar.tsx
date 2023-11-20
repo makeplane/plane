@@ -14,7 +14,7 @@ type Props = {
 const viewerTabs = [
   {
     route: "",
-    label: "Overview",
+    label: "Summary",
     selected: "/[workspaceSlug]/profile/[userId]",
   },
 ];
