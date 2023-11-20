@@ -15,13 +15,13 @@ import { X } from "lucide-react";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 // types
-import { IIssueFilterOptions, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IIssueFilterOptions, IIssueLabel, IProject, IState, IUserLite } from "types";
 
 type Props = {
   appliedFilters: IIssueFilterOptions;
   handleClearAllFilters: () => void;
   handleRemoveFilter: (key: keyof IIssueFilterOptions, value: string | null) => void;
-  labels?: IIssueLabels[] | undefined;
+  labels?: IIssueLabel[] | undefined;
   members?: IUserLite[] | undefined;
   projects?: IProject[] | undefined;
   states?: IState[] | undefined;

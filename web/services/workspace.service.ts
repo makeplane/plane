@@ -96,7 +96,7 @@ export class WorkspaceService extends APIService {
   }
 
   async joinWorkspace(workspaceSlug: string, invitationId: string, data: any, user: IUser | undefined): Promise<any> {
-    return this.post(`/api/users/me/invitations/workspaces/${workspaceSlug}/${invitationId}/join/`, data, {
+    return this.post(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/join/`, data, {
       headers: {},
     })
       .then((response) => {
