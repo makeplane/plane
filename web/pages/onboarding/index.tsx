@@ -108,7 +108,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         }}
       />
       {user && step !== null ? (
-        <div className={` bg-gradient-primary h-full overflow-y-auto`}>
+        <div className={` bg-onboarding-gradient-primary h-full overflow-y-auto`}>
           <div className="sm:py-14 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
             <div className="w-full flex items-center justify-between font-semibold ">
               <div className="text-3xl flex items-center gap-x-1">
@@ -165,8 +165,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
             </div>
           </div>
           <div className="w-full lg:w-4/5 xl:w-3/4 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
-            <div className={`bg-gradient-primary p-4`}>
-              <div className={`bg-gradient-secondary h-full rounded-md`}>
+            <div className={`bg-onboarding-gradient-primary p-4`}>
+              <div className={`bg-onboarding-gradient-secondary h-full rounded-md`}>
                 {step === 1 ? (
                   <JoinWorkspaces
                     setTryDiffAccount={() => {

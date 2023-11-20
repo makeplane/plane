@@ -58,7 +58,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
 
       <div className="w-full lg:w-1/2 md:w-4/5 md:px-0 px-7  my-16 mx-auto">
         <div className="flex justify-between items-center">
-          <p className="font-semibold text-onboarding-text-200 text-xl sm:text-2xl">What will your workspace </p>
+          <p className="font-semibold text-onboarding-text-200 text-xl sm:text-2xl">What will your workspace be?</p>
           <OnboardingStepIndicator step={1} />
         </div>
         <Workspace

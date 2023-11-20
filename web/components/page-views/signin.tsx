@@ -184,7 +184,7 @@ export const SignInView = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`bg-gradient-primary h-full overflow-y-auto`}>
+        <div className={`bg-onboarding-gradient-primary h-full overflow-y-auto`}>
           <div className="sm:py-5 pl-8 pb-4 sm:pl-16 lg:pl-28 ">
             <div className="flex text-3xl items-center mt-16 font-semibold">
               <div className="h-[30px] w-[30px] mr-2">
@@ -196,7 +196,7 @@ export const SignInView = observer(() => {
 
           <div className="md:w-2/3 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
             <div className={`p-4`}>
-              <div className={`px-7 sm:px-0 bg-gradient-secondary h-full pt-32 pb-20 rounded-md`}>
+              <div className={`px-7 sm:px-0 bg-onboarding-gradient-secondary h-full pt-32 pb-20 rounded-md`}>
                 {!envConfig ? (
                   <div className="pt-10 mx-auto flex justify-center">
                     <div>

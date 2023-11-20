@@ -231,7 +231,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
   return (
     <div className="flex py-14">
       <div
-        className={`hidden lg:block w-1/4 p-3 ml-auto rounded bg-gradient-secondary border border-onboarding-border-100 border-opacity-10`}
+        className={`hidden lg:block w-1/4 p-3 ml-auto rounded bg-onboarding-gradient-secondary border border-onboarding-border-100 border-opacity-10`}
       >
         <p className="text-base text-onboarding-text-400 font-semibold">Members</p>
 
