@@ -42,7 +42,7 @@ def delete_old_s3_link():
         # Delete object from S3
         if file_name:
             if settings.DOCKERIZED and settings.USE_MINIO:
-                s3.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=file_name)
+                s3.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=file_name)
             else:
                 s3.delete_object(Bucket=settings.AWS_S3_BUCKET_NAME, Key=file_name)
 
