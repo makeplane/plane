@@ -1,22 +1,29 @@
-import { useEffect } from "react";
+// react
+import React, { useState } from "react";
+// next
+import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// ui
-import { Button, CustomSelect, CustomSearchSelect, Input } from "@plane/ui";
+// components
+import { Button, Input } from "@plane/ui";
+import DummySidebar from "components/account/sidebar";
+import OnboardingStepIndicator from "components/account/step-indicator";
 // types
 import { IUser } from "types";
-// helpers
-import { getUserTimeZoneFromWindow } from "helpers/date-time.helper";
 // constants
-import { USER_ROLES } from "constants/workspace";
 import { TIME_ZONES } from "constants/timezones";
+// assets
+import IssuesSvg from "public/onboarding/onboarding-issues.svg";
+import { ImageUploadModal } from "components/core";
+// icons
+import { Camera, User2 } from "lucide-react";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
-  last_name: "",
-  role: "",
+  avatar: "",
+  use_case: undefined,
 };
 
 type Props = {
@@ -31,13 +38,16 @@ const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
 
 export const UserDetails: React.FC<Props> = observer((props) => {
   const { user } = props;
-
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [selectedUsecase, setSelectedUsecase] = useState<number | null>();
+  const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const { user: userStore } = useMobxStore();
 
   const {
     handleSubmit,
     control,
-    reset,
+    watch,
+    setValue,
     formState: { errors, isSubmitting, isValid },
   } = useForm<IUser>({
     defaultValues,
@@ -48,6 +58,9 @@ export const UserDetails: React.FC<Props> = observer((props) => {
 
     const payload: Partial<IUser> = {
       ...formData,
+      first_name: formData.first_name.split(" ")[0],
+      last_name: formData.first_name.split(" ")[1],
+      use_case: formData.use_case,
       onboarding_step: {
         ...user.onboarding_step,
         profile_complete: true,
@@ -57,136 +70,130 @@ export const UserDetails: React.FC<Props> = observer((props) => {
     await userStore.updateCurrentUser(payload);
   };
 
-  useEffect(() => {
-    if (user) {
-      reset({
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role: user.role,
-        user_timezone: getUserTimeZoneFromWindow(),
-      });
-    }
-  }, [user, reset]);
+  const useCases = [
+    "Build Products",
+    "Manage Feedbacks",
+    "Service delivery",
+    "Field force management",
+    "Code Repository Integration",
+    "Bug Tracking",
+    "Test Case Management",
+    "Rescource allocation",
+  ];
 
   return (
-    <form
-      className="h-full w-full space-y-7 sm:space-y-10 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="relative sm:text-lg">
-        <div className="text-custom-primary-100 absolute -top-1 -left-3">{'"'}</div>
-        <h5>Hey there 👋🏻</h5>
-        <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
-        <h4 className="text-xl sm:text-2xl font-semibold">Set up your Plane profile.</h4>
+    <div className="h-full w-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
+      <div className="hidden lg:block w-3/12">
+        <DummySidebar showProject workspaceName="New Workspace" />
       </div>
+      <ImageUploadModal
+        isOpen={isImageUploadModalOpen}
+        onClose={() => setIsImageUploadModalOpen(false)}
+        isRemoving={isRemoving}
+        handleDelete={() => {}}
+        onSuccess={(url) => {
+          setValue("avatar", url);
+          setIsImageUploadModalOpen(false);
+        }}
+        value={watch("avatar") !== "" ? watch("avatar") : undefined}
+        userImage
+      />
+      <div className="flex lg:w-3/5 md:w-4/5 md:px-0 px-7 mx-auto flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="md:w-11/12 mx-auto">
+          <div className="flex justify-between items-center">
+            <p className="font-semibold text-xl sm:text-2xl">What do we call you? </p>
+            <OnboardingStepIndicator step={2} />
+          </div>
+          <div className="flex mt-5 w-full ">
+            <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
+              {!watch("avatar") || watch("avatar") === "" ? (
+                <div className="h-16 hover:cursor-pointer justify-center items-center flex w-16 rounded-full flex-shrink-0 mr-3 relative bg-onboarding-background-300">
+                  <div className="h-6 w-6 flex justify-center items-center bottom-1 border border-onboarding-border-100 -right-1 bg-onboarding-background-100 rounded-full absolute">
+                    <Camera className="h-4 w-4 stroke-onboarding-background-400" />
+                  </div>
+                  <User2 className="h-10 w-10 stroke-onboarding-background-300 fill-onboarding-background-400" />
+                </div>
+              ) : (
+                <div className="relative h-16 w-16 overflow-hidden mr-3">
+                  <img
+                    src={watch("avatar")}
+                    className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                    onClick={() => setIsImageUploadModalOpen(true)}
+                    alt={user?.display_name}
+                  />
+                </div>
+              )}
+            </button>
 
-      <div className="space-y-7 sm:w-3/4 md:w-2/5">
-        <div className="space-y-1 text-sm">
-          <label htmlFor="firstName">First Name</label>
-          <Controller
-            control={control}
-            name="first_name"
-            rules={{
-              required: "First name is required",
-              maxLength: {
-                value: 24,
-                message: "First name cannot exceed the limit of 24 characters",
-              },
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="first_name"
+            <div className="my-2 bg-onboarding-background-200 w-full mr-10 rounded-md flex text-sm">
+              <Controller
+                control={control}
                 name="first_name"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.first_name)}
-                placeholder="Enter your first name..."
-                className="w-full"
+                rules={{
+                  required: "First name is required",
+                  maxLength: {
+                    value: 24,
+                    message: "First name cannot exceed the limit of 24 characters",
+                  },
+                }}
+                render={({ field: { value, onChange, ref } }) => (
+                  <Input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    value={value}
+                    autoFocus={true}
+                    onChange={onChange}
+                    ref={ref}
+                    hasError={Boolean(errors.first_name)}
+                    placeholder="Enter your full name..."
+                    className="w-full focus:border-custom-primary-100 border-onboarding-border-100"
+                  />
+                )}
               />
-            )}
-          />
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="lastName">Last Name</label>
-          <Controller
-            control={control}
-            name="last_name"
-            rules={{
-              required: "Last name is required",
-              maxLength: {
-                value: 24,
-                message: "Last name cannot exceed the limit of 24 characters",
-              },
-            }}
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="last_name"
-                name="last_name"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.last_name)}
-                placeholder="Enter your last name..."
-                className="w-full"
-              />
-            )}
-          />
-        </div>
-        <div className="space-y-1 text-sm">
-          <span>What{"'"}s your role?</span>
-          <div className="w-full">
+            </div>
+          </div>
+          <div className="mt-14 mb-10">
             <Controller
-              name="role"
               control={control}
-              rules={{ required: "This field is required" }}
+              name="first_name"
+              render={({ field: { value } }) => (
+                <p className="font-medium text-onboarding-text-200 text-xl sm:text-2xl p-0">
+                  And how will you use Plane{value.length>0?", ":""}{value}?
+                </p>
+              )}
+            />
+
+            <p className="font-medium text-onboarding-text-300 text-sm my-3">Choose just one</p>
+
+            <Controller
+              control={control}
+              name="use_case"
               render={({ field: { value, onChange } }) => (
-                <CustomSelect
-                  value={value}
-                  onChange={(val: any) => onChange(val)}
-                  label={value ? value.toString() : <span className="text-custom-text-400">Select your role...</span>}
-                  input
-                  width="w-full"
-                >
-                  {USER_ROLES.map((item) => (
-                    <CustomSelect.Option key={item.value} value={item.value}>
-                      {item.label}
-                    </CustomSelect.Option>
+                <div className="flex flex-wrap break-all overflow-auto">
+                  {useCases.map((useCase) => (
+                    <div
+                      className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
+                        value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
+                      } mr-3 rounded-sm p-3 text-sm font-medium`}
+                      onClick={() => onChange(useCase)}
+                    >
+                      {useCase}
+                    </div>
                   ))}
-                </CustomSelect>
+                </div>
               )}
             />
-            {errors.role && <span className="text-sm text-red-500">{errors.role.message}</span>}
           </div>
-        </div>
-        <div className="space-y-1 text-sm">
-          <span>What time zone are you in? </span>
-          <div className="w-full">
-            <Controller
-              name="user_timezone"
-              control={control}
-              rules={{ required: "This field is required" }}
-              render={({ field: { value, onChange } }) => (
-                <CustomSearchSelect
-                  value={value}
-                  label={value ? TIME_ZONES.find((t) => t.value === value)?.label ?? value : "Select a timezone"}
-                  options={timeZoneOptions}
-                  onChange={onChange}
-                  optionsClassName="w-full"
-                  input
-                />
-              )}
-            />
-            {errors?.user_timezone && <span className="text-sm text-red-500">{errors.user_timezone.message}</span>}
-          </div>
+
+          <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+            {isSubmitting ? "Updating..." : "Continue"}
+          </Button>
+        </form>
+        <div className="mt-3 flex ml-auto">
+          <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" />
         </div>
       </div>
-
-      <Button variant="primary" type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
-        {isSubmitting ? "Updating..." : "Continue"}
-      </Button>
-    </form>
+    </div>
   );
 });
