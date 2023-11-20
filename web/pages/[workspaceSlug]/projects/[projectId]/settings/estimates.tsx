@@ -4,7 +4,7 @@ import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // components
 import { ProjectSettingHeader } from "components/headers";
-import { EstimatesList } from "components/estimates/estimate-list";
+import { EstimatesList } from "components/estimates";
 // types
 import { NextPageWithLayout } from "types/app";
 
