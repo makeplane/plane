@@ -149,6 +149,42 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
         return response
 
+    def handle_exception(self, exc):
+        """
+        Handle any exception that occurs, by returning an appropriate response,
+        or re-raising the error.
+        """
+        try:
+            response = super().handle_exception(exc)
+            return response
+        except Exception as e:
+            if settings.DEBUG:
+                print(e)
+            if isinstance(e, IntegrityError):
+                return Response(
+                    {"error": "The payload is not valid"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if isinstance(e, ValidationError):
+                return Response(
+                    {"error": "Please provide valid detail"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if isinstance(e, ObjectDoesNotExist):
+                model_name = str(exc).split(" matching query does not exist.")[0]
+                return Response(
+                    {"error": f"{model_name} does not exist."},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+            
+            if isinstance(e, KeyError):
+                return Response({"error": f"key {e} does not exist"}, status=status.HTTP_400_BAD_REQUEST)
+
+            capture_exception(e)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
     @property
     def workspace_slug(self):
         return self.kwargs.get("slug", None)
