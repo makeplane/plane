@@ -152,19 +152,11 @@ export class ModuleFilterStore implements IModuleFilterStore {
         this.moduleFilters = newFilters;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      this.moduleService.patchModule(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        {
-          view_props: {
-            filters: newFilters,
-          },
+      this.moduleService.patchModule(workspaceSlug, projectId, moduleId, {
+        view_props: {
+          filters: newFilters,
         },
-        user
-      );
+      });
     } catch (error) {
       this.fetchModuleFilters(workspaceSlug, projectId, moduleId);
 

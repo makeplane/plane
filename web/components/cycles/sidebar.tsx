@@ -52,9 +52,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
 
-  const { user: userStore, cycle: cycleDetailsStore } = useMobxStore();
+  const { cycle: cycleDetailsStore } = useMobxStore();
 
-  const user = userStore.currentUser ?? undefined;
   const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
 
   const { setToastAlert } = useToast();
@@ -74,7 +73,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     mutate<ICycle>(CYCLE_DETAILS(cycleId as string), (prevData) => ({ ...(prevData as ICycle), ...data }), false);
 
     cycleService
-      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data, user)
+      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
       .then(() => mutate(CYCLE_DETAILS(cycleId as string)))
       .catch((e) => console.log(e));
   };

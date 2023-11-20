@@ -12,6 +12,7 @@ import { Button, Input } from "@plane/ui";
 import type { IProject } from "types";
 // fetch-keys
 import { useMobxStore } from "lib/mobx/store-provider";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -62,6 +63,9 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
+        trackEvent(
+          'DELETE_PROJECT'
+        )
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -69,6 +73,9 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         });
       })
       .catch(() => {
+        trackEvent(
+          'DELETE_PROJECT/FAIL'
+        )
         setToastAlert({
           type: "error",
           title: "Error!",

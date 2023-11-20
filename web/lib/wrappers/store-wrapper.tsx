@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState, FC } from "react";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useTheme } from "next-themes";
@@ -8,7 +8,12 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { applyTheme, unsetCustomCssVariables } from "helpers/theme.helper";
 
-const MobxStoreInit = observer(() => {
+interface IStoreWrapper {
+  children: ReactNode;
+}
+
+const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
+  const { children } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, globalViewId, viewId, inboxId } = router.query;
@@ -86,7 +91,7 @@ const MobxStoreInit = observer(() => {
     setInboxId,
   ]);
 
-  return <></>;
+  return <>{children}</>;
 });
 
-export default MobxStoreInit;
+export default StoreWrapper;

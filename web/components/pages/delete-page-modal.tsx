@@ -29,7 +29,7 @@ type TConfirmPageDeletionProps = {
 // services
 const pageService = new PageService();
 
-export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data, user }) => {
+export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, setIsOpen, data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
@@ -47,7 +47,7 @@ export const DeletePageModal: React.FC<TConfirmPageDeletionProps> = ({ isOpen, s
     if (!data || !workspaceSlug || !projectId) return;
 
     await pageService
-      .deletePage(workspaceSlug as string, data.project, data.id, user)
+      .deletePage(workspaceSlug as string, data.project, data.id)
       .then(() => {
         mutate(RECENT_PAGES_LIST(projectId as string));
         mutate<IPage[]>(
