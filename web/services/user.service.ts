@@ -5,6 +5,7 @@ import type {
   IIssue,
   IUser,
   IUserActivityResponse,
+  IInstanceAdminStatus,
   IUserProfileData,
   IUserProfileProjectSegregation,
   IUserSettings,
@@ -46,6 +47,14 @@ export class UserService extends APIService {
   async currentUser(): Promise<IUser> {
     return this.get("/api/users/me/")
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
+    return this.get("/api/users/me/instance-admin/")
+      .then((respone) => respone?.data)
       .catch((error) => {
         throw error?.response;
       });

@@ -9,7 +9,7 @@ import { AppliedFiltersList, FilterSelection, FiltersDropdown } from "components
 // ui
 import { Button, Input, TextArea } from "@plane/ui";
 // types
-import { IProjectView } from "types";
+import { IProjectView, IIssueFilterOptions } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 
@@ -27,7 +27,7 @@ const defaultValues: Partial<IProjectView> = {
 
 export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, handleClose, data, preLoadedData }) => {
   const {
-    project: projectStore,
+    projectLabel: { projectLabels },
     projectState: projectStateStore,
     projectMember: { projectMembers },
   } = useMobxStore();
@@ -43,7 +43,34 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
     defaultValues,
   });
 
-  const selectedFilters = watch("query_data");
+  const selectedFilters: IIssueFilterOptions = {};
+  Object.entries(watch("query_data") ?? {}).forEach(([key, value]) => {
+    if (!value) return;
+
+    if (Array.isArray(value) && value.length === 0) return;
+
+    selectedFilters[key as keyof IIssueFilterOptions] = value;
+  });
+
+  // for removing filters from a key
+  const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
+    if (!value) return;
+
+    const newValues = selectedFilters?.[key] ?? [];
+
+    if (Array.isArray(value)) {
+      value.forEach((val) => {
+        if (newValues.includes(val)) newValues.splice(newValues.indexOf(val), 1);
+      });
+    } else {
+      if (selectedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+    }
+
+    setValue("query_data", {
+      ...selectedFilters,
+      [key]: newValues,
+    });
+  };
 
   const handleCreateUpdateView = async (formData: IProjectView) => {
     await handleFormSubmit(formData);
@@ -106,7 +133,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                   id="description"
                   name="description"
                   placeholder="Description"
-                  className="resize-none text-sm"
+                  className="h-24 w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
                   value={value}
                   onChange={onChange}
@@ -140,7 +167,7 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
                       });
                     }}
                     layoutDisplayFiltersOptions={ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues.list}
-                    labels={projectStore.projectLabels ?? undefined}
+                    labels={projectLabels ?? undefined}
                     members={projectMembers?.map((m) => m.member) ?? undefined}
                     states={projectStateStore.projectStates ?? undefined}
                   />
@@ -153,10 +180,10 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
               <AppliedFiltersList
                 appliedFilters={selectedFilters}
                 handleClearAllFilters={clearAllFilters}
-                handleRemoveFilter={() => {}}
-                labels={projectStore.projectLabels ?? undefined}
-                members={projectMembers?.map((m) => m.member) ?? undefined}
-                states={projectStateStore.projectStates ?? undefined}
+                handleRemoveFilter={handleRemoveFilter}
+                labels={projectLabels ?? []}
+                members={projectMembers?.map((m) => m.member) ?? []}
+                states={projectStateStore.projectStates ?? []}
               />
             </div>
           )}

@@ -56,7 +56,7 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
 
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
+  // const labels = projectStore?.projectLabels || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = projectStateStore?.projectStates || null;
   const estimates = null;

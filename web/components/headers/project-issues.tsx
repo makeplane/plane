@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Circle, ExternalLink, Plus } from "lucide-react";
+import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -25,7 +25,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
 
   const {
     issueFilter: issueFilterStore,
-    project: projectStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     inbox: inboxStore,
@@ -92,7 +93,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     },
     [issueFilterStore, projectId, workspaceSlug]
   );
-  const { currentProjectDetails } = projectStore;
 
   const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
 
@@ -121,17 +121,23 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
+                  currentProjectDetails ? (
+                    currentProjectDetails?.emoji ? (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                        {renderEmoji(currentProjectDetails.emoji)}
+                      </span>
+                    ) : currentProjectDetails?.icon_prop ? (
+                      <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                        {renderEmoji(currentProjectDetails.icon_prop)}
+                      </div>
+                    ) : (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        {currentProjectDetails?.name.charAt(0)}
+                      </span>
+                    )
                   ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      <Briefcase className="h-4 w-4" />
                     </span>
                   )
                 }
@@ -172,7 +178,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
               states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
             />

@@ -2,14 +2,14 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import { IIssueLabels } from "types";
+import { IIssueLabel } from "types";
 
 export class IssueLabelService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async getWorkspaceIssueLabels(workspaceSlug: string): Promise<IIssueLabels[]> {
+  async getWorkspaceIssueLabels(workspaceSlug: string): Promise<IIssueLabel[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/labels/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -17,7 +17,7 @@ export class IssueLabelService extends APIService {
       });
   }
 
-  async getProjectIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabels[]> {
+  async getProjectIssueLabels(workspaceSlug: string, projectId: string): Promise<IIssueLabel[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -25,7 +25,7 @@ export class IssueLabelService extends APIService {
       });
   }
 
-  async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<IIssueLabels> {
+  async createIssueLabel(workspaceSlug: string, projectId: string, data: any): Promise<IIssueLabel> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-labels/`, data)
       .then((response) => response?.data)
       .catch((error) => {

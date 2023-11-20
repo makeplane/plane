@@ -20,7 +20,8 @@ export const ProjectAuthWrapper: FC<IProjectAuthWrapper> = observer((props) => {
   // store
   const {
     user: { fetchUserProjectInfo, projectMemberInfo, hasPermissionToProject },
-    project: { fetchProjectDetails, fetchProjectLabels, fetchProjectEstimates, workspaceProjects },
+    project: { fetchProjectDetails, fetchProjectEstimates, workspaceProjects },
+    projectLabel: { fetchProjectLabels },
     projectMember: { fetchProjectMembers },
     projectState: { fetchProjectStates },
     cycle: { fetchCycles },

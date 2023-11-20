@@ -5,12 +5,12 @@ import { IssuePropertyLabels } from "../../properties";
 // hooks
 import useSubIssue from "hooks/use-sub-issue";
 // types
-import { IIssue, IIssueLabels } from "types";
+import { IIssue, IIssueLabel } from "types";
 
 type Props = {
   issue: IIssue;
   onChange: (formData: Partial<IIssue>) => void;
-  labels: IIssueLabels[] | undefined;
+  labels: IIssueLabel[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
 };
