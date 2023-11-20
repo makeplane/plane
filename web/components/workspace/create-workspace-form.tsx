@@ -15,7 +15,7 @@ import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
 // events
-import { eventTracker } from "helpers/event-tracker.helper";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -73,22 +73,15 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await workspaceStore
             .createWorkspace(formData)
             .then(async (res) => {
-              const data = {
+              const payload = {
                 name: formData.name,
                 slug: formData.slug,
                 workspace_url: formData.url,
                 organization_size: formData.organization_size
               };
-              console.log(data);
-              eventTracker(
+              trackEvent(
                 "CREATE_WORKSPACE",
-                {
-                  name: formData.name,
-                  slug: formData.slug,
-                  workspace_url: formData.url,
-                  organization_size: formData.organization_size
-                },
-                res.id,
+                payload
               )
               setToastAlert({
                 type: "success",

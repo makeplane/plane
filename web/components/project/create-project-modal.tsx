@@ -20,8 +20,8 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
-import posthog from "posthog-js";
-import { eventTracker } from "helpers/event-tracker.helper";
+// track events
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -131,14 +131,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     return projectStore
       .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
-        // posthog.capture("CREATE_PROJECT", {
-        //   ...payload,
-        //   id: res.id,
-        // });
-        eventTracker(
+        const newPayload = {
+          ...payload,
+          id: res.id
+        }
+        trackEvent(
           "CREATE_PROJECT",
-          payload,
-          res.id,
+          newPayload,
         )
         setToastAlert({
           type: "success",

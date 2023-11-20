@@ -20,6 +20,7 @@ import { IUser, TUserProjectRole } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -92,8 +93,11 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     await projectMemberService
       .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then(() => {
+      .then((res) => {
         setIsOpen(false);
+        trackEvent(
+          'PROJECT_MEMBER_INVITE',
+        )
         setToastAlert({
           title: "Success",
           type: "success",

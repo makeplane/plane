@@ -19,7 +19,6 @@ import { MobxStoreProvider } from "lib/mobx/store-provider";
 import { AppProvider } from "lib/app-provider";
 // types
 import { NextPageWithLayout } from "types/app";
-import { PosthogEvents } from "components/posthog-events";
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
@@ -37,7 +36,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <MobxStoreProvider {...pageProps}>
         <ThemeProvider themes={THEMES} defaultTheme="system">
           <ToastContextProvider>
-            <PosthogEvents />
             <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
           </ToastContextProvider>
         </ThemeProvider>

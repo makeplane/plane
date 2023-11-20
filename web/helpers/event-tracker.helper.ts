@@ -1,11 +1,12 @@
 import posthog from "posthog-js";
 
-export const eventTracker = (eventName: string, payload: object | [] | null, id: string | null) => {
+export const trackEvent = (eventName: string, payload: object | [] | null = null) => {
   try {
-    posthog.capture(eventName, {
+    console.log(eventName);
+    posthog?.capture(eventName, {
       ...payload,
-      id: id,
     });
+    console.log(payload);
   } catch (error) {
     console.log(error);
   }

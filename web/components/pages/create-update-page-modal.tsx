@@ -12,6 +12,7 @@ import { PageForm } from "./page-form";
 import { IUser, IPage } from "types";
 // fetch-keys
 import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -60,14 +61,32 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           false
         );
         onClose();
-
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page created successfully.",
         });
+        try {
+          const payload = {
+            id: res.id,
+            name: res.name,
+            description: res.description,
+            project_id: res.project_detail.id,
+            project_name: res.project_detail.name,
+            project_identifier: res.project_detail.identifier,
+            workspace_id: res.workspace_detail.id,
+            workspace_name: res.workspace_detail.name,
+            workspace_slug: res.workspace_detail.slug,
+            case: "Success"
+          }
+          trackEvent(
+            'PAGE_CREATE',
+            payload
+          )
+        } catch (error) {
+          console.log(error);
+        }
       })
       .catch(() => {
         setToastAlert({
@@ -75,6 +94,12 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+        trackEvent(
+          'PAGE_CREATE',
+          {
+            case: "failed"
+          }
+        )
       });
   };
 
@@ -120,6 +145,26 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Page updated successfully.",
         });
+        try {
+          const payload = {
+            id: res.id,
+            name: res.name,
+            description: res.description,
+            project_id: res.project_detail.id,
+            project_name: res.project_detail.name,
+            project_identifier: res.project_detail.identifier,
+            workspace_id: res.workspace_detail.id,
+            workspace_name: res.workspace_detail.name,
+            workspace_slug: res.workspace_detail.slug,
+            case: "Success"
+          }
+          trackEvent(
+            'PAGE_CREATE',
+            payload
+          )
+        } catch (error) {
+          console.log(error);
+        }
       })
       .catch(() => {
         setToastAlert({
