@@ -111,7 +111,7 @@ export const GptAssistantModal: React.FC<Props> = ({
       .catch((err) => {
         const error = err?.data?.error;
 
-        if (err.status === 429)
+        if (err?.status === 429)
           setToastAlert({
             type: "error",
             title: "Error!",
