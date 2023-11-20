@@ -1,5 +1,4 @@
 import { FC, useCallback } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // mobx store
@@ -17,14 +16,16 @@ interface IBaseCalendarRoot {
   issueStore: IProjectIssuesStore;
   calendarViewStore: IIssueCalendarViewStore;
   QuickActions: FC<IQuickActionProps>;
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: IIssue) => void;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => void;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => void;
+  };
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, calendarViewStore, QuickActions } = props;
-  const { projectIssuesFilter: issueFilterStore, issueDetail: issueDetailStore } = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { issueStore, calendarViewStore, QuickActions, issueActions } = props;
+  const { projectIssuesFilter: issueFilterStore } = useMobxStore();
 
   const displayFilters = issueFilterStore.issueFilters?.displayFilters;
 
@@ -45,15 +46,11 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   const handleIssues = useCallback(
     (date: string, issue: IIssue, action: EIssueActions) => {
-      if (!workspaceSlug) return;
-
-      if (action === EIssueActions.UPDATE) {
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      } else {
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+      if (issueActions[action]) {
+        issueActions[action]!(issue);
       }
     },
-    [issueStore, issueDetailStore, workspaceSlug]
+    [issueStore]
   );
 
   return (
@@ -69,7 +66,16 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             <QuickActions
               issue={issue}
               handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
-              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, EIssueActions.UPDATE)}
+              handleUpdate={
+                issueActions[EIssueActions.UPDATE]
+                  ? async (data) => handleIssues(issue.target_date ?? "", data, EIssueActions.UPDATE)
+                  : undefined
+              }
+              handleRemoveFromView={
+                issueActions[EIssueActions.REMOVE]
+                  ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.UPDATE)
+                  : undefined
+              }
             />
           )}
         />

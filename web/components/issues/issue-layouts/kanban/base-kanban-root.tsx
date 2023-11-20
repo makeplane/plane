@@ -33,9 +33,6 @@ export interface IBaseKanBanLayout {
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const { issueStore, kanbanViewStore, QuickActions, issueActions, showLoader } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
-
   const {
     project: { workspaceProjects },
     projectLabel: { projectLabels },
@@ -92,7 +89,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         issueActions[action]!(issue);
       }
     },
-    [issueStore, workspaceSlug]
+    [issueStore]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
@@ -125,7 +122,16 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                 <QuickActions
                   issue={issue}
                   handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
-                  handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)}
+                  handleUpdate={
+                    issueActions[EIssueActions.UPDATE]
+                      ? async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)
+                      : undefined
+                  }
+                  handleRemoveFromView={
+                    issueActions[EIssueActions.REMOVE]
+                      ? async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)
+                      : undefined
+                  }
                 />
               )}
               displayProperties={displayProperties}
@@ -159,7 +165,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
                       : undefined
                   }
                   handleRemoveFromView={
-                    issueActions[EIssueActions.UPDATE]
+                    issueActions[EIssueActions.REMOVE]
                       ? async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)
                       : undefined
                   }

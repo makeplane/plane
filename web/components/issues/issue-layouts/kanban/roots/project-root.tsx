@@ -29,6 +29,8 @@ export const KanBanLayout: React.FC = observer(() => {
       await issueDetailStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
+
       await issueDetailStore.deleteIssue(workspaceSlug, issue.project, issue.id);
     },
   };
