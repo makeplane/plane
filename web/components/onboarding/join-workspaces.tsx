@@ -1,17 +1,15 @@
-import React, { useState } from "react";
-
+import React from "react";
 // hooks
 import useUser from "hooks/use-user";
 // components
 import Invitations from "./invitations";
 import DummySidebar from "components/account/sidebar";
 import OnboardingStepIndicator from "components/account/step-indicator";
+import { Workspace } from "./workspace";
 // types
 import { IWorkspace, TOnboardingSteps } from "types";
 // react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// icons
-import { Workspace } from "./workspace";
 
 type Props = {
   finishOnboarding: () => Promise<void>;

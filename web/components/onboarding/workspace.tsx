@@ -3,12 +3,16 @@ import { useState } from "react";
 import { Button, Input } from "@plane/ui";
 // types
 import { IUser, IWorkspace, TOnboardingSteps } from "types";
+// hooks
+import useToast from "hooks/use-toast";
+// services
+import { WorkspaceService } from "services/workspace.service";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { RESTRICTED_URLS } from "constants/workspace";
+// react-hook-form
 import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
-import { WorkspaceService } from "services/workspace.service";
-import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;

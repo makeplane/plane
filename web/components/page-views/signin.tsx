@@ -70,7 +70,7 @@ export const SignInView = observer(() => {
           const workspaceSlug =
             userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
           if (workspaceSlug) router.push(`/${workspaceSlug}`);
-          // else if (userSettings.workspace.invites > 0) router.push("/invitations");
+          else if (userSettings.workspace.invites > 0) router.push("/invitations");
           else router.push("/create-workspace");
         })
         .catch(() => {

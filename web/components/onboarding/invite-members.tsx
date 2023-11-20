@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+// next
+import Image from "next/image";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react-hook-form
@@ -9,6 +11,8 @@ import { WorkspaceService } from "services/workspace.service";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
+// components
+import OnboardingStepIndicator from "components/account/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
@@ -17,11 +21,9 @@ import { Check, ChevronDown, Plus, User2, X, XCircle } from "lucide-react";
 import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
-import OnboardingStepIndicator from "components/account/step-indicator";
-import { useTheme } from "next-themes";
+// assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
-import Image from "next/image";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
