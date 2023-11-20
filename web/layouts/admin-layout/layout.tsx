@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
 // layouts
-import { UserAuthWrapper } from "layouts/auth-layout";
+import { AdminAuthWrapper, UserAuthWrapper } from "layouts/auth-layout";
 // components
 import { InstanceAdminSidebar } from "./sidebar";
 
@@ -15,17 +15,19 @@ export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
   return (
     <>
       <UserAuthWrapper>
-        <div className="relative flex h-screen w-full overflow-hidden">
-          <InstanceAdminSidebar />
-          <main className="relative flex flex-col h-full w-full overflow-hidden bg-custom-background-100">
-            {header}
-            <div className="h-full w-full overflow-hidden">
-              <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
-                <>{children}</>
+        <AdminAuthWrapper>
+          <div className="relative flex h-screen w-full overflow-hidden">
+            <InstanceAdminSidebar />
+            <main className="relative flex flex-col h-full w-full overflow-hidden bg-custom-background-100">
+              {header}
+              <div className="h-full w-full overflow-hidden">
+                <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
+                  <>{children}</>
+                </div>
               </div>
-            </div>
-          </main>
-        </div>
+            </main>
+          </div>
+        </AdminAuthWrapper>
       </UserAuthWrapper>
     </>
   );
