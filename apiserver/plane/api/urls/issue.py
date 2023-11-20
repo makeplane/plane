@@ -1,51 +1,62 @@
 from django.urls import path
 
-from plane.proxy.views import (
+from plane.api.views import (
     IssueAPIEndpoint,
     LabelAPIEndpoint,
     IssueLinkAPIEndpoint,
     IssueCommentAPIEndpoint,
+    IssueActivityAPIEndpoint,
 )
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/",
         IssueAPIEndpoint.as_view(),
-        name="issues",
+        name="issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/",
         IssueAPIEndpoint.as_view(),
-        name="issues",
+        name="issue",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
         LabelAPIEndpoint.as_view(),
-        name="labels",
+        name="label",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/<uuid:pk>/",
         LabelAPIEndpoint.as_view(),
-        name="labels",
+        name="label",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/",
         IssueLinkAPIEndpoint.as_view(),
-        name="issue-links",
+        name="link",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
         IssueLinkAPIEndpoint.as_view(),
-        name="issue-links",
+        name="link",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/",
-        IssueCommentAPIEndpoint.as_view(), 
-        name="project-issue-comment",
+        IssueCommentAPIEndpoint.as_view(),
+        name="comment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/comments/<uuid:pk>/",
         IssueCommentAPIEndpoint.as_view(),
-        name="project-issue-comment",
+        name="comment",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activites/",
+        IssueActivityAPIEndpoint.as_view(),
+        name="activity",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activites/<uuid:pk>/",
+        IssueActivityAPIEndpoint.as_view(),
+        name="activity",
     ),
 ]

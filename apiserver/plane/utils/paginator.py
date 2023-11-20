@@ -28,15 +28,15 @@ class Cursor:
 
     @classmethod
     def from_string(cls, value):
-        bits = value.split(":")
-        if len(bits) != 3:
-            raise ValueError
         try:
+            bits = value.split(":")
+            if len(bits) != 3:
+                raise ValueError("Cursor must be in the format 'value:offset:is_prev'")
+            
             value = float(bits[0]) if "." in bits[0] else int(bits[0])
-            bits = value, int(bits[1]), int(bits[2])
-        except (TypeError, ValueError):
-            raise ValueError
-        return cls(*bits)
+            return cls(value, int(bits[1]), bool(int(bits[2])))
+        except (TypeError, ValueError) as e:
+            raise ValueError(f"Invalid cursor format: {e}")
 
 
 class CursorResult(Sequence):
@@ -125,7 +125,8 @@ class OffsetPaginator:
         if self.on_results:
             results = self.on_results(results)
 
-        max_hits = math.ceil(queryset.count() / limit)
+        count = queryset.count()
+        max_hits = math.ceil(count / limit)
 
         return CursorResult(
             results=results,
