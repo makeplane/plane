@@ -1,4 +1,7 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
+import isYesterday from "date-fns/isYesterday";
+import isToday from "date-fns/isToday";
+import isThisWeek from "date-fns/isThisWeek";
 // types
 import { RootStore } from "./root";
 import { IPage, IRecentPages } from "types";
@@ -80,10 +83,11 @@ export class PageStore implements IPageStore {
   get recentProjectPages() {
     if (!this.rootStore.project.projectId) return;
     const data: IRecentPages = { today: [], yesterday: [], this_week: [] };
-    data["today"] =
-      this.pages[this.rootStore.project.projectId]?.filter(
-        (p) => new Date(p.created_at).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0)
-      ) || [];
+    data["today"] = this.pages[this.rootStore.project.projectId]?.filter((p) => isToday(new Date(p.created_at))) || [];
+    data["yesterday"] =
+      this.pages[this.rootStore.project.projectId]?.filter((p) => isYesterday(new Date(p.created_at))) || [];
+    data["this_week"] =
+      this.pages[this.rootStore.project.projectId]?.filter((p) => isThisWeek(new Date(p.created_at))) || [];
     return data;
   }
 
@@ -138,7 +142,10 @@ export class PageStore implements IPageStore {
       const response = await this.pageService.getPagesWithParams(workspaceSlug, projectId, "all");
 
       runInAction(() => {
-        this.pages[projectId] = response;
+        this.pages = {
+          ...this.pages,
+          [projectId]: response,
+        };
         this.loader = false;
         this.error = null;
       });
