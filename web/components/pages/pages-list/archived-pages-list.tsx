@@ -1,30 +1,26 @@
-
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
-// services
-import { PageService } from "services/page.service";
+import { FC } from "react";
+import { observer } from "mobx-react-lite";
 // components
-import { PagesView } from "components/pages";
-// types
-import { TPagesListProps } from "./types";
-// fetch-keys
-import { ARCHIVED_PAGES_LIST } from "constants/fetch-keys";
+import { PagesListView } from "components/pages/pages-list";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { Loader } from "@plane/ui";
 
-// services
-const pageService = new PageService();
+export const ArchivedPagesList: FC = observer(() => {
+  const {
+    page: { archivedProjectPages },
+  } = useMobxStore();
 
-export const ArchivedPagesList: React.FC<TPagesListProps> = ({ viewType }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  if (!archivedProjectPages) {
+    return (
+      <Loader className="space-y-4">
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+      </Loader>
+    );
+  }
 
-  const { data: pages } = useSWR(
-    workspaceSlug && projectId ? ARCHIVED_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => pageService.getArchivedPages(workspaceSlug as string, projectId as string)
-      : null
-  );
-
-  return <PagesView pages={pages} viewType={viewType} />;
-};
+  return <PagesListView pages={archivedProjectPages} />;
+});

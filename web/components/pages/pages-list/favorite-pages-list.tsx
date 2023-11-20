@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { observer } from "mobx-react-lite";
 // components
 import { PagesListView } from "components/pages/pages-list";
 // hooks
@@ -6,12 +7,12 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 
-export const FavoritePagesList: FC = () => {
+export const FavoritePagesList: FC = observer(() => {
   const {
-    page: { favoritePages },
+    page: { favoriteProjectPages },
   } = useMobxStore();
 
-  if (!favoritePages) {
+  if (!favoriteProjectPages) {
     return (
       <Loader className="space-y-4">
         <Loader.Item height="40px" />
@@ -21,5 +22,5 @@ export const FavoritePagesList: FC = () => {
     );
   }
 
-  return <PagesListView pages={favoritePages} />;
-};
+  return <PagesListView pages={favoriteProjectPages} />;
+});

@@ -20,8 +20,6 @@ export const RecentPagesList: FC = observer(() => {
     page: { recentProjectPages },
   } = useMobxStore();
 
-  console.log("recentProjectPages", recentProjectPages);
-
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
 
   if (!recentProjectPages) {

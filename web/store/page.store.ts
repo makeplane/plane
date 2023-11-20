@@ -21,7 +21,10 @@ export interface IPageStore {
   //computed
   projectPages: IPage[] | undefined;
   recentProjectPages: IRecentPages | undefined;
-  favoritePages: IPage[] | undefined;
+  favoriteProjectPages: IPage[] | undefined;
+  privateProjectPages: IPage[] | undefined;
+  sharedProjectPages: IPage[] | undefined;
+  archivedProjectPages: IPage[] | undefined;
   // actions
   fetchPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
   createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<IPage>;
@@ -56,7 +59,10 @@ export class PageStore implements IPageStore {
       // computed
       projectPages: computed,
       recentProjectPages: computed,
-      favoritePages: computed,
+      favoriteProjectPages: computed,
+      privateProjectPages: computed,
+      sharedProjectPages: computed,
+      archivedProjectPages: computed,
       // action
       fetchPages: action,
       createPage: action,
@@ -91,9 +97,24 @@ export class PageStore implements IPageStore {
     return data;
   }
 
-  get favoritePages() {
+  get favoriteProjectPages() {
     if (!this.rootStore.project.projectId) return;
     return this.pages[this.rootStore.project.projectId]?.filter((p) => p.is_favorite);
+  }
+
+  get privateProjectPages() {
+    if (!this.rootStore.project.projectId) return;
+    return this.pages[this.rootStore.project.projectId]?.filter((p) => p.access === 1);
+  }
+
+  get sharedProjectPages() {
+    if (!this.rootStore.project.projectId) return;
+    return this.pages[this.rootStore.project.projectId]?.filter((p) => p.access === 0);
+  }
+
+  get archivedProjectPages() {
+    if (!this.rootStore.project.projectId) return;
+    return this.archivedPages[this.rootStore.project.projectId];
   }
 
   addToFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {
