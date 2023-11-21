@@ -238,8 +238,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             >
               {isLoading ? "Signing in..." : "Next step"}
             </Button>
-            <div className="w-[70%] my-4 mx-auto">
-              <p className="text-xs text-onboarding-text-300">
+            <div className="w-3/4 my-4 mx-auto">
+              <p className="text-xs text-center text-onboarding-text-300">
                 When you click the button above, you agree with our{" "}
                 <a
                   href="https://plane.so/terms-and-conditions"
