@@ -42,6 +42,7 @@ class IssueSerializer(BaseSerializer):
         model = Issue
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
             "created_by",
@@ -64,6 +65,7 @@ class IssueSerializer(BaseSerializer):
             data["assignees"] = ProjectMember.objects.filter(
                 project_id=self.context.get("project_id"),
                 member_id__in=data["assignees"],
+                is_active=True,
             ).values_list("member_id", flat=True)
 
         # Validate labels are from project
@@ -231,8 +233,13 @@ class LabelSerializer(BaseSerializer):
         model = Label
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -241,13 +248,14 @@ class IssueLinkSerializer(BaseSerializer):
         model = IssueLink
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-            "issue",
         ]
 
     # Validation if url already exists
@@ -266,13 +274,14 @@ class IssueAttachmentSerializer(BaseSerializer):
         model = IssueAttachment
         fields = "__all__"
         read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-            "workspace",
-            "project",
-            "issue",
         ]
 
 
@@ -283,36 +292,20 @@ class IssueCommentSerializer(BaseSerializer):
         model = IssueComment
         fields = "__all__"
         read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class IssueAttachmentSerializer(BaseSerializer):
-    class Meta:
-        model = IssueAttachment
-        fields = "__all__"
-        read_only_fields = [
             "id",
+            "workspace",
+            "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-            "workspace",
-            "project",
-            "issue",
         ]
 
 
 class IssueActivitySerializer(BaseSerializer):
     class Meta:
         model = IssueActivity
-        fields = "__all__"
         exclude = [
             "created_by",
             "udpated_by",

@@ -114,7 +114,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                         ).select_related("member"),
                     )
                 )
-                .order_by("sort_order", "name")
+                .order_by(request.GET.get("order_by", "sort_order"))
             )
             return self.paginate(
                 request=request,
@@ -131,7 +131,6 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
-
             serializer = ProjectSerializer(
                 data={**request.data}, context={"workspace_id": workspace.id}
             )

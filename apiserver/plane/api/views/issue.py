@@ -22,7 +22,6 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from .base import BaseAPIView, WebhookMixin
@@ -48,7 +47,6 @@ from plane.api.serializers import (
     LabelSerializer,
     IssueLinkSerializer,
     IssueCommentSerializer,
-    IssueAttachmentSerializer,
     IssueActivitySerializer,
 )
 
@@ -103,7 +101,6 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        filters = issue_filters(request.query_params, "GET")
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
@@ -112,7 +109,6 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
         issue_queryset = (
             self.get_queryset()
-            .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(module_id=F("issue_module__module_id"))
             .annotate(
