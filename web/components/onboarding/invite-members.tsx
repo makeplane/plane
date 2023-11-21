@@ -324,7 +324,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
           <Button
             variant="primary"
             type="submit"
-            disabled={isInvitationDisabled && !isValid}
+            disabled={isInvitationDisabled || !isValid}
             loading={isSubmitting}
             size="md"
           >

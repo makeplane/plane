@@ -159,7 +159,7 @@ const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDi
     </p>
     <div
       className="bg-onboarding-background-200 mt-6 py-3 text-center hover:cursor-pointer text-custom-text-200 rounded-md text-sm font-medium border border-custom-border-200"
-      onClick={() => {setTryDiffAccount}}
+      onClick={setTryDiffAccount}
     >
       Try a different email address
     </div>

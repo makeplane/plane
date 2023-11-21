@@ -19,6 +19,7 @@ import IssuesSvg from "public/onboarding/onboarding-issues.svg";
 import { ImageUploadModal } from "components/core";
 // icons
 import { Camera, User2 } from "lucide-react";
+import { FileService } from "services/file.service";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -36,6 +37,19 @@ const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
   content: timeZone.label,
 }));
 
+const useCases = [
+  "Build Products",
+  "Manage Feedbacks",
+  "Service delivery",
+  "Field force management",
+  "Code Repository Integration",
+  "Bug Tracking",
+  "Test Case Management",
+  "Rescource allocation",
+];
+
+const fileService = new FileService();
+
 export const UserDetails: React.FC<Props> = observer((props) => {
   const { user } = props;
   const [isRemoving, setIsRemoving] = useState(false);
@@ -47,6 +61,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   } = useMobxStore();
   const workspaceName = workspaces ? workspaces[0]?.name : "New Workspace";
   const {
+    getValues,
     handleSubmit,
     control,
     watch,
@@ -72,17 +87,17 @@ export const UserDetails: React.FC<Props> = observer((props) => {
 
     await userStore.updateCurrentUser(payload);
   };
+  const handleDelete = (url: string | null | undefined) => {
+    if (!url) return;
 
-  const useCases = [
-    "Build Products",
-    "Manage Feedbacks",
-    "Service delivery",
-    "Field force management",
-    "Code Repository Integration",
-    "Bug Tracking",
-    "Test Case Management",
-    "Rescource allocation",
-  ];
+    setIsRemoving(true);
+    fileService
+      .deleteUserFile(url)
+      .finally(() => {
+        setValue("avatar","");
+        setIsRemoving(false);
+      });
+  };
 
   return (
     <div className="w-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
@@ -93,7 +108,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
         isRemoving={isRemoving}
-        handleDelete={() => {}}
+        handleDelete={() => {handleDelete(getValues("avatar"))}}
         onSuccess={(url) => {
           setValue("avatar", url);
           setIsImageUploadModalOpen(false);
