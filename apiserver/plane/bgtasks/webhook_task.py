@@ -2,15 +2,63 @@ import requests
 import uuid
 import hashlib
 import json
+import hmac
 
 # Django imports
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from celery import shared_task
 from sentry_sdk import capture_exception
 
-from plane.db.models import Webhook, WebhookLog
+from plane.db.models import (
+    Webhook,
+    WebhookLog,
+    Project,
+    Issue,
+    Cycle,
+    Module,
+    ModuleIssue,
+    CycleIssue,
+    IssueComment,
+)
+from plane.api.serializers import (
+    ProjectSerializer,
+    IssueSerializer,
+    CycleSerializer,
+    ModuleSerializer,
+    CycleIssueSerializer,
+    ModuleIssueSerializer,
+    IssueCommentSerializer,
+)
+
+SERIALIZER_MAPPER = {
+    "project": ProjectSerializer,
+    "issue": IssueSerializer,
+    "cycle": CycleSerializer,
+    "module": ModuleSerializer,
+    "cycle_issue": CycleIssueSerializer,
+    "module_issue": ModuleIssueSerializer,
+    "issue_comment": IssueCommentSerializer,
+}
+
+MODEL_MAPPER = {
+    "project": Project,
+    "issue": Issue,
+    "cycle": Cycle,
+    "module": Module,
+    "cycle_issue": CycleIssue,
+    "module_issue": ModuleIssue,
+    "issue_comment": IssueComment,
+}
+
+
+def get_model_data(event, event_id):
+    model = MODEL_MAPPER.get(event)
+    queryset = model.objects.get(pk=event_id)
+    serializer = SERIALIZER_MAPPER.get(event)
+    return serializer(queryset).data
 
 
 @shared_task(
@@ -20,7 +68,7 @@ from plane.db.models import Webhook, WebhookLog
     max_retries=5,
     retry_jitter=True,
 )
-def webhook_task(self, webhook, slug, event, event_data, action):
+def webhook_task(self, webhook, slug, event, event_id, action):
     try:
         webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
 
@@ -31,18 +79,25 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             "X-Plane-Event": event,
         }
 
-        # Your secret key
+        event_data = get_model_data(event=event, event_id=event_id)
+
+        # # Your secret key
+        event_data = (
+            json.loads(json.dumps(event_data, cls=DjangoJSONEncoder))
+            if event_data is not None
+            else None
+        )
+
+        # Use HMAC for generating signature
         if webhook.secret_key:
-            # Concatenate the data and the secret key
-            message = event_data + webhook.secret_key
-
-            # Create a SHA-256 hash of the message
-            sha256 = hashlib.sha256()
-            sha256.update(message.encode("utf-8"))
-            signature = sha256.hexdigest()
+            event_data_json = json.dumps(event_data) if event_data is not None else '{}'
+            hmac_signature = hmac.new(
+                webhook.secret_key.encode("utf-8"),
+                event_data_json.encode("utf-8"),
+                hashlib.sha256
+            )
+            signature = hmac_signature.hexdigest()
             headers["X-Plane-Signature"] = signature
-
-        event_data = json.loads(event_data) if event_data is not None else None
 
         action = {
             "POST": "create",
@@ -103,6 +158,7 @@ def webhook_task(self, webhook, slug, event, event_data, action):
         raise requests.RequestException()
 
     except Exception as e:
+        print(e)
         if settings.DEBUG:
             print(e)
         capture_exception(e)
@@ -110,7 +166,7 @@ def webhook_task(self, webhook, slug, event, event_data, action):
 
 
 @shared_task()
-def send_webhook(event, event_data, action, slug):
+def send_webhook(event, event_id, action, slug):
     try:
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
@@ -130,7 +186,7 @@ def send_webhook(event, event_data, action, slug):
             webhooks = webhooks.filter(issue_comment=True)
 
         for webhook in webhooks:
-            webhook_task.delay(webhook.id, slug, event, event_data, action)
+            webhook_task.delay(webhook.id, slug, event, event_id, action)
 
     except Exception as e:
         if settings.DEBUG:
