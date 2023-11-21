@@ -31,6 +31,7 @@ export const CoreEditorExtensions = (
   },
   deleteFile: DeleteImage,
   cancelUploadImage?: () => any,
+  restoreImage?: any,
 ) => [
   StarterKit.configure({
     bulletList: {
@@ -71,7 +72,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtension(deleteFile, cancelUploadImage).configure({
+  ImageExtension(deleteFile, cancelUploadImage, restoreImage).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },

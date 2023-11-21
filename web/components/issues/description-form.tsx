@@ -148,6 +148,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
+              restoreImage={fileService.restoreImage}
               value={value}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}

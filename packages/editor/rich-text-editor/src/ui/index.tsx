@@ -27,6 +27,7 @@ interface IRichTextEditor {
   value: string;
   dragDropEnabled?: boolean;
   uploadFile: UploadImage;
+  restoreImage?: any;
   deleteFile: DeleteImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
@@ -67,6 +68,7 @@ const RichTextEditor = ({
   cancelUploadImage,
   borderOnFocus,
   customClassName,
+  restoreImage,
   forwardedRef,
   mentionHighlights,
   mentionSuggestions,
@@ -87,6 +89,7 @@ const RichTextEditor = ({
       dragDropEnabled,
     ),
     mentionHighlights,
+    restoreImage,
     mentionSuggestions,
   });
 

@@ -19,6 +19,7 @@ interface CustomEditorProps {
   deleteFile: DeleteImage;
   debouncedUpdatesEnabled?: boolean;
   onStart?: (json: any, html: string) => void;
+  restoreImage?: any;
   onChange?: (json: any, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
@@ -39,6 +40,7 @@ export const useEditor = ({
   onChange,
   setIsSubmitting,
   forwardedRef,
+  restoreImage,
   setShouldShowAlert,
   mentionHighlights,
   mentionSuggestions,
@@ -57,13 +59,14 @@ export const useEditor = ({
           },
           deleteFile,
           cancelUploadImage,
+          restoreImage,
         ),
         ...extensions,
       ],
       content:
         typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
       onCreate: async ({ editor }) => {
-        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()))
+        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
       onUpdate: async ({ editor }) => {
         // for instant feedback loop
