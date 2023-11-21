@@ -975,7 +975,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
         params = {
-            "Bucket": settings.AWS_S3_BUCKET_NAME,
+            "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",
         }
 
@@ -987,7 +987,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
                     files.append(
-                        f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
                     )
 
         return Response(files, status=status.HTTP_200_OK)
