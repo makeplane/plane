@@ -245,7 +245,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
   return (
     <div className="flex py-14">
       <div
-        className={`hidden lg:block w-1/4 p-3 ml-auto rounded bg-onboarding-gradient-secondary border border-onboarding-border-100 border-opacity-10`}
+        className={`hidden lg:block w-1/4 p-3 pb-52 h-fit ml-auto rounded bg-onboarding-gradient-secondary border border-onboarding-border-100 border-opacity-10`}
       >
         <p className="text-base text-onboarding-text-400 font-semibold">Members</p>
 
@@ -261,8 +261,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
           </div>
         ))}
 
-        <div className="relative mt-20 h-32">
-          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 w-full mt-1 -left-1/2">
+        <div className="mt-20 relative">
+          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 w-full mt-1 right-24">
             <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user2} alt="user" />
             </div>
@@ -272,7 +272,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 -left-1/3 mt-14 w-full">
+          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 w-full right-12 mt-14">
             <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user1} alt="user" />
             </div>
