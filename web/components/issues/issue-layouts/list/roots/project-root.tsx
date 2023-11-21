@@ -23,6 +23,7 @@ export const ListLayout: FC = observer(() => {
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectEstimates: { projectEstimates },
     issue: issueStore,
     issueDetail: issueDetailStore,
     issueFilter: issueFilterStore,
@@ -54,7 +55,7 @@ export const ListLayout: FC = observer(() => {
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
     currentProjectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
+      ? projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
       : null;
 
   return (

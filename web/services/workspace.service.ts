@@ -64,7 +64,7 @@ export class WorkspaceService extends APIService {
   }
 
   async inviteWorkspace(workspaceSlug: string, data: IWorkspaceBulkInviteFormData): Promise<any> {
-    return this.post(`/api/workspaces/${workspaceSlug}/invite/`, data)
+    return this.post(`/api/workspaces/${workspaceSlug}/invitations/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

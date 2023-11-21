@@ -356,4 +356,3 @@ class InboxIssueViewSet(BaseViewSet):
         inbox_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-

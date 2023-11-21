@@ -186,6 +186,7 @@ export const CreateUpdateLabelInline = observer(
                 id="labelName"
                 name="name"
                 type="text"
+                autoFocus
                 value={value}
                 onChange={onChange}
                 ref={ref}

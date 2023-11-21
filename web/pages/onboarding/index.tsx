@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactElement } from "react";
+import { useEffect, useState, ReactElement, Fragment } from "react";
 import Image from "next/image";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -15,46 +15,40 @@ import { UserAuthWrapper } from "layouts/auth-layout";
 // components
 import { InviteMembers, JoinWorkspaces, UserDetails, Workspace } from "components/onboarding";
 // ui
-import { Spinner } from "@plane/ui";
+import { Avatar, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import BlackHorizontalLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
-import WhiteHorizontalLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
 // types
 import { IUser, TOnboardingSteps } from "types";
 import { NextPageWithLayout } from "types/app";
+import { ChevronDown } from "lucide-react";
+import { Menu, Popover, Transition } from "@headlessui/react";
+import DeleteAccountModal from "components/account/delete-account-modal";
+import { useRouter } from "next/router";
 
 // services
 const workspaceService = new WorkspaceService();
 
 const OnboardingPage: NextPageWithLayout = observer(() => {
   const [step, setStep] = useState<number | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const {
     user: { currentUser, updateCurrentUser, updateUserOnBoard },
     workspace: workspaceStore,
   } = useMobxStore();
+  const router = useRouter();
 
   const user = currentUser ?? undefined;
   const workspaces = workspaceStore.workspaces;
-  const userWorkspaces = workspaceStore.workspacesCreateByCurrentUser;
 
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
 
   const {} = useUserAuth("onboarding");
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
     workspaceService.userWorkspaceInvitations()
   );
-
-  // update last active workspace details
-  const updateLastWorkspace = async () => {
-    if (!workspaces) return;
-
-    await updateCurrentUser({
-      last_workspace_id: workspaces[0]?.id,
-    });
-  };
 
   // handle step change
   const stepChange = async (steps: Partial<TOnboardingSteps>) => {
@@ -69,12 +63,13 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
     await updateCurrentUser(payload);
   };
-
   // complete onboarding
   const finishOnboarding = async () => {
-    if (!user) return;
+    if (!user || !workspaces) return;
 
     await updateUserOnBoard();
+
+    router.replace(`/${workspaces[0].slug}`);
   };
 
   useEffect(() => {
@@ -87,17 +82,14 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
       const onboardingStep = user.onboarding_step;
 
-      if (!onboardingStep.profile_complete && step !== 1) setStep(1);
+      if (!onboardingStep.workspace_join && !onboardingStep.workspace_create && step !== 1) setStep(1);
 
-      if (onboardingStep.profile_complete) {
-        if (!onboardingStep.workspace_join && invitations.length > 0 && step !== 2 && step !== 4) setStep(4);
-        else if (!onboardingStep.workspace_create && (step !== 4 || onboardingStep.workspace_join) && step !== 2)
-          setStep(2);
+      if (onboardingStep.workspace_join || onboardingStep.workspace_create) {
+        if (!onboardingStep.profile_complete && step !== 2) setStep(2);
       }
-
       if (
         onboardingStep.profile_complete &&
-        onboardingStep.workspace_create &&
+        (onboardingStep.workspace_join || onboardingStep.workspace_create) &&
         !onboardingStep.workspace_invite &&
         step !== 3
       )
@@ -109,74 +101,93 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
+      <DeleteAccountModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+        }}
+      />
       {user && step !== null ? (
-        <div className="flex h-full w-full flex-col gap-y-2 sm:gap-y-0 sm:flex-row overflow-hidden">
-          <div className="relative h-1/6 flex-shrink-0 sm:w-2/12 md:w-3/12 lg:w-1/5">
-            <div className="absolute border-b-[0.5px] sm:border-r-[0.5px] border-custom-border-200 h-[0.5px] w-full top-1/2 left-0 -translate-y-1/2 sm:h-screen sm:w-[0.5px] sm:top-0 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 sm:translate-y-0 z-10" />
-            {step === 1 ? (
-              <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 py-5 left-2 sm:left-1/2 md:left-1/3 sm:-translate-x-1/2 top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12 z-10">
-                <div className="h-[30px] w-[30px]">
-                  <Image src={BluePlaneLogoWithoutText} alt="Plane logo" />
-                </div>
+        <div className={` bg-onboarding-gradient-primary h-full overflow-y-auto`}>
+          <div className="sm:py-14 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
+            <div className="w-full flex items-center justify-between font-semibold ">
+              <div className="text-3xl flex items-center gap-x-1">
+                <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
+                Plane
               </div>
-            ) : (
-              <div className="absolute grid place-items-center bg-custom-background-100 px-3 sm:px-0 sm:py-5 left-5 sm:left-1/2 md:left-1/3 sm:-translate-x-[15px] top-1/2 -translate-y-1/2 sm:translate-y-0 sm:top-12 z-10">
-                <div className="h-[30px] w-[133px]">
-                  {theme === "light" ? (
-                    <Image src={BlackHorizontalLogo} alt="Plane black logo" />
-                  ) : (
-                    <Image src={WhiteHorizontalLogo} alt="Plane white logo" />
-                  )}
-                </div>
-              </div>
-            )}
-            <div className="absolute sm:fixed text-custom-text-100 text-sm font-medium right-4 top-1/4 sm:top-12 -translate-y-1/2 sm:translate-y-0 sm:right-16 sm:py-5">
-              {user?.email}
-            </div>
-          </div>
-          <div className="relative flex justify-center sm:items-center h-full px-8 pb-0 sm:px-0 sm:py-12 sm:pr-[8.33%] sm:w-10/12 md:w-9/12 lg:w-4/5 overflow-hidden">
-            {step === 1 ? (
-              <UserDetails user={user} />
-            ) : step === 2 ? (
-              <Workspace
-                finishOnboarding={finishOnboarding}
-                stepChange={stepChange}
-                updateLastWorkspace={updateLastWorkspace}
-                user={user}
-                workspaces={workspaces}
-              />
-            ) : step === 3 ? (
-              <InviteMembers
-                finishOnboarding={finishOnboarding}
-                stepChange={stepChange}
-                user={user}
-                workspace={userWorkspaces?.[0]}
-              />
-            ) : (
-              step === 4 && (
-                <JoinWorkspaces
-                  finishOnboarding={finishOnboarding}
-                  stepChange={stepChange}
-                  updateLastWorkspace={updateLastWorkspace}
-                />
-              )
-            )}
-          </div>
-          {step !== 4 && (
-            <div className="sticky sm:fixed bottom-0 md:bottom-14 md:right-16 py-6 md:py-0 flex justify-center md:justify-end bg-custom-background-100 md:bg-transparent pointer-events-none w-full z-[1]">
-              <div className="w-3/4 md:w-1/5 space-y-1">
-                <p className="text-xs text-custom-text-200">{step} of 3 steps</p>
-                <div className="relative h-1 w-full rounded bg-custom-background-80">
-                  <div
-                    className="absolute top-0 left-0 h-1 rounded bg-custom-primary-100 duration-300"
-                    style={{
-                      width: `${((step / 3) * 100).toFixed(0)}%`,
-                    }}
+
+              <div className="pr-4 flex gap-x-2 items-center">
+                {step != 1 && (
+                  <Avatar
+                    name={workspaces ? workspaces[0].name : "N"}
+                    size={35}
+                    shape="square"
+                    fallbackBackgroundColor="#FCBE1D"
+                    className="!text-base"
                   />
+                )}
+                <div>
+                  {step != 1 && (
+                    <p className="text-sm text-custom-text-200 font-medium">
+                      {currentUser?.first_name} {currentUser?.last_name}
+                    </p>
+                  )}
+
+                  <Menu>
+                    <Menu.Button className={"flex items-center gap-x-2"}>
+                      <span className="text-base font-medium">{user.email}</span>
+                      <ChevronDown className="h-4 w-4 text-custom-text-300" />
+                    </Menu.Button>
+                    <Transition
+                      enter="transition duration-100 ease-out"
+                      enterFrom="transform scale-95 opacity-0"
+                      enterTo="transform scale-100 opacity-100"
+                      leave="transition duration-75 ease-out"
+                      leaveFrom="transform scale-100 opacity-100"
+                      leaveTo="transform scale-95 opacity-0"
+                    >
+                      <Menu.Items className={"absolute translate-x-full"}>
+                        <Menu.Item>
+                          <div
+                            className="absolute pr-28 hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md text-custom-text-300 text-base font-normal p-3 shadow-sm border border-custom-border-200"
+                            onClick={() => {
+                              setShowDeleteModal(true);
+                            }}
+                          >
+                            Delete
+                          </div>
+                        </Menu.Item>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+          <div className="w-full lg:w-4/5 xl:w-3/4 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
+            <div className={`bg-onboarding-gradient-primary p-4`}>
+              <div className={`bg-onboarding-gradient-secondary h-full rounded-md`}>
+                {step === 1 ? (
+                  <JoinWorkspaces
+                    setTryDiffAccount={() => {
+                      setShowDeleteModal(true);
+                    }}
+                    finishOnboarding={finishOnboarding}
+                    stepChange={stepChange}
+                  />
+                ) : step === 2 ? (
+                  <UserDetails user={user} />
+                ) : (
+                  <InviteMembers
+                    finishOnboarding={finishOnboarding}
+                    stepChange={stepChange}
+                    user={user}
+                    workspace={workspaces?.[0]}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="h-screen w-full grid place-items-center">

@@ -92,4 +92,13 @@ class ConfigurationEndpoint(BaseAPIView):
             )
         )
 
+        # Open AI settings
+        data["has_openai_configured"] = bool(
+            get_configuration_value(
+                instance_configuration,
+                "OPENAI_API_KEY",
+                os.environ.get("OPENAI_API_KEY", None),
+            )
+        )
+
         return Response(data, status=status.HTTP_200_OK)

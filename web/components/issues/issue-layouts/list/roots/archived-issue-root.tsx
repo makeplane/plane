@@ -22,6 +22,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectEstimates: { projectEstimates },
     archivedIssues: archivedIssueStore,
     archivedIssueFilters: archivedIssueFiltersStore,
   } = useMobxStore();
@@ -48,9 +49,7 @@ export const ArchivedIssueListLayout: FC = observer(() => {
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
-      : null;
+    projectDetails?.estimate !== null ? projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null : null;
 
   return (
     <div className="relative w-full h-full bg-custom-background-90">
