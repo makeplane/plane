@@ -149,8 +149,12 @@ export const Workspace: React.FC<Props> = (props) => {
                 onChange={(e) => {
                   const host = window.location.host;
                   const slug = e.currentTarget.value.split("/");
-                  /^[a-zA-Z0-9_-]+$/.test(slug[slug.length - 1]) ? setInvalidSlug(false) : setInvalidSlug(true);
-                  setValue("slug", `${host}/${slug[slug.length - 1].toLocaleLowerCase().trim().replace(/ /g, "-")}`);
+                  if (slug.length > 1) {
+                    /^[a-zA-Z0-9_-]+$/.test(slug[slug.length - 1]) ? setInvalidSlug(false) : setInvalidSlug(true);
+                    setValue("slug", `${host}/${slug[slug.length - 1].toLocaleLowerCase().trim().replace(/ /g, "-")}`);
+                  } else {
+                    setValue("slug", `${host}/`);
+                  }
                 }}
                 ref={ref}
                 hasError={Boolean(errors.slug)}
