@@ -30,6 +30,7 @@ export interface IRecentPages {
   today: IPage[];
   yesterday: IPage[];
   this_week: IPage[];
+  older: IPage[];
   [key: string]: IPage[];
 }
 

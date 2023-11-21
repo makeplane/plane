@@ -86,39 +86,67 @@ export class PageStore implements IPageStore {
   }
 
   get projectPages() {
-    if (!this.rootStore.project.projectId) return;
-    return this.pages?.[this.rootStore.project.projectId] || [];
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId || !this.pages[projectId]) return undefined;
+
+    return this.pages?.[projectId] || [];
   }
 
   get recentProjectPages() {
-    if (!this.rootStore.project.projectId) return;
-    const data: IRecentPages = { today: [], yesterday: [], this_week: [] };
-    data["today"] = this.pages[this.rootStore.project.projectId]?.filter((p) => isToday(new Date(p.created_at))) || [];
-    data["yesterday"] =
-      this.pages[this.rootStore.project.projectId]?.filter((p) => isYesterday(new Date(p.created_at))) || [];
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId) return undefined;
+
+    if (!this.pages[projectId]) return undefined;
+
+    const data: IRecentPages = { today: [], yesterday: [], this_week: [], older: [] };
+
+    data["today"] = this.pages[projectId]?.filter((p) => isToday(new Date(p.created_at))) || [];
+    data["yesterday"] = this.pages[projectId]?.filter((p) => isYesterday(new Date(p.created_at))) || [];
     data["this_week"] =
-      this.pages[this.rootStore.project.projectId]?.filter((p) => isThisWeek(new Date(p.created_at))) || [];
+      this.pages[projectId]?.filter(
+        (p) =>
+          isThisWeek(new Date(p.created_at)) && !isToday(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
+      ) || [];
+    data["older"] =
+      this.pages[projectId]?.filter(
+        (p) => !isThisWeek(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
+      ) || [];
+
     return data;
   }
 
   get favoriteProjectPages() {
-    if (!this.rootStore.project.projectId) return;
-    return this.pages[this.rootStore.project.projectId]?.filter((p) => p.is_favorite);
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId || !this.pages[projectId]) return undefined;
+
+    return this.pages[projectId]?.filter((p) => p.is_favorite);
   }
 
   get privateProjectPages() {
-    if (!this.rootStore.project.projectId) return;
-    return this.pages[this.rootStore.project.projectId]?.filter((p) => p.access === 1);
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId || !this.pages[projectId]) return undefined;
+
+    return this.pages[projectId]?.filter((p) => p.access === 1);
   }
 
   get sharedProjectPages() {
-    if (!this.rootStore.project.projectId) return;
-    return this.pages[this.rootStore.project.projectId]?.filter((p) => p.access === 0);
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId || !this.pages[projectId]) return undefined;
+
+    return this.pages[projectId]?.filter((p) => p.access === 0);
   }
 
   get archivedProjectPages() {
-    if (!this.rootStore.project.projectId) return;
-    return this.archivedPages[this.rootStore.project.projectId];
+    const projectId = this.rootStore.project.projectId;
+
+    if (!projectId || !this.archivedPages[projectId]) return undefined;
+
+    return this.archivedPages[projectId];
   }
 
   addToFavorites = async (workspaceSlug: string, projectId: string, pageId: string) => {

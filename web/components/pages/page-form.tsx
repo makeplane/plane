@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input, Tooltip } from "@plane/ui";
 // types
 import { IPage } from "types";
+// constants
 import { PAGE_ACCESS_SPECIFIERS } from "constants/page";
 
 type Props = {
@@ -18,30 +18,20 @@ const defaultValues = {
   access: 0,
 };
 
-export const PageForm: React.FC<Props> = ({ handleFormSubmit, handleClose, data }) => {
+export const PageForm: React.FC<Props> = (props) => {
+  const { handleFormSubmit, handleClose, data } = props;
+
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
     control,
-    reset,
   } = useForm<IPage>({
-    defaultValues,
+    defaultValues: { ...defaultValues, ...data },
   });
 
   const handleCreateUpdatePage = async (formData: IPage) => {
     await handleFormSubmit(formData);
-
-    reset({
-      ...defaultValues,
-    });
   };
-
-  useEffect(() => {
-    reset({
-      ...defaultValues,
-      ...data,
-    });
-  }, [data, reset]);
 
   return (
     <form onSubmit={handleSubmit(handleCreateUpdatePage)}>
