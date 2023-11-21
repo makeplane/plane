@@ -165,8 +165,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
             </div>
           </div>
           <div className="w-full h-full lg:w-4/5 xl:w-3/4 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200 overflow-y-auto">
-            <div className={`bg-onboarding-gradient-primary p-4`}>
-              <div className={`bg-onboarding-gradient-secondary rounded-md`}>
+            <div className={`min-h-full bg-onboarding-gradient-primary p-4`}>
+              <div className={`min-h-full bg-onboarding-gradient-secondary rounded-md`}>
                 {step === 1 ? (
                   <JoinWorkspaces
                     setTryDiffAccount={() => {
