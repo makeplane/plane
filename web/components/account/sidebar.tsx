@@ -19,6 +19,7 @@ import {
   PenSquare,
   Search,
   Settings,
+  Bell,
 } from "lucide-react";
 
 const workspaceLinks = [
@@ -39,7 +40,7 @@ const workspaceLinks = [
     name: "All Issues",
   },
   {
-    Icon: CheckCircle,
+    Icon: Bell,
     name: "Notifications",
   },
 ];
