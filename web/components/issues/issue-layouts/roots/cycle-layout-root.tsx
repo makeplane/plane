@@ -38,7 +38,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     if (workspaceSlug && projectId && cycleId) {
       // TODO: remove the old store fetch functions
       await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-      await projectIssueFiltersStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
+      await projectIssueFiltersStore.fetchFilters(workspaceSlug.toString(), projectId.toString());
       // fetching the cycle filters
       await cycleIssueFiltersStore.fetchCycleFilters(
         workspaceSlug.toString(),

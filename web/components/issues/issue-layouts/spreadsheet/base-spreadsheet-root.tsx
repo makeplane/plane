@@ -1,11 +1,12 @@
 import { IIssueUnGroupedStructure } from "store/issue";
 import { SpreadsheetView } from "./spreadsheet-view";
 import { useCallback } from "react";
-import { IIssue, IIssueDisplayFilterOptions, TUnGroupedIssues } from "types";
+import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { useRouter } from "next/router";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
 import { observer } from "mobx-react-lite";
+import { EFilterType, TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore: IProjectIssuesFilterStore;
@@ -49,10 +50,8 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
+      issueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+        ...updatedDisplayFilter,
       });
     },
     [issueFiltersStore, projectId, workspaceSlug]
@@ -86,6 +85,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       handleIssueAction={handleIssueAction}
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
+      quickAddCallback={issueStore.quickAddIssue}
       enableQuickCreateIssue
     />
   );

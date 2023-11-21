@@ -20,6 +20,7 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -50,18 +51,13 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, subGroupId = null, prePopulatedData } = props;
+  const { formKey, groupId, prePopulatedData, quickAddCallback } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    issue: issueStore,
-    quickAddIssue: quickAddIssueStore,
-  } = useMobxStore();
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   // ref
   const ref = useRef<HTMLDivElement>(null);
@@ -120,10 +116,10 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     });
 
     try {
-      issueStore.updateIssueStructure(groupId, subGroupId, payload);
-      await quickAddIssueStore.updateQuickAddIssueStructure(workspaceSlug, groupId, subGroupId, {
-        ...payload,
-      });
+      quickAddCallback &&
+        (await quickAddCallback(workspaceSlug, projectId, {
+          ...payload,
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",

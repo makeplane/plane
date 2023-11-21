@@ -19,6 +19,7 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EFilterType } from "store/issues/types";
 
 export const CycleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -50,11 +51,14 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
 
-      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
+      projectIssueFiltersStore.updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EFilterType.DISPLAY_FILTERS,
+        {
           layout,
-        },
-      });
+        }
+      );
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );
@@ -86,11 +90,14 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
+      projectIssueFiltersStore.updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EFilterType.DISPLAY_FILTERS,
+        {
           ...updatedDisplayFilter,
-        },
-      });
+        }
+      );
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );
@@ -99,7 +106,12 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
 
-      projectIssueFiltersStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      projectIssueFiltersStore.updateFilters(
+        workspaceSlug.toString(),
+        projectId.toString(),
+        EFilterType.DISPLAY_PROPERTIES,
+        property
+      );
     },
     [projectIssueFiltersStore, projectId, workspaceSlug]
   );

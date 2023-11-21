@@ -8,8 +8,9 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IGroupedIssues, IIssue, IIssueResponse } from "types";
+import { IIssue } from "types";
 import { EIssueActions } from "../types";
+import { IGroupedIssues, IIssueResponse } from "store/issues/types";
 
 type Props = {
   issues: IIssueResponse | undefined;
@@ -18,10 +19,11 @@ type Props = {
   showWeekends: boolean;
   handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, groupedIssueIds, layout, showWeekends, handleIssues, quickActions } = props;
+  const { issues, groupedIssueIds, layout, showWeekends, handleIssues, quickActions, quickAddCallback } = props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -54,6 +56,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                     enableQuickIssueCreate
                     handleIssues={handleIssues}
                     quickActions={quickActions}
+                    quickAddCallback={quickAddCallback}
                   />
                 ))}
             </div>
@@ -66,6 +69,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               enableQuickIssueCreate
               handleIssues={handleIssues}
               quickActions={quickActions}
+              quickAddCallback={quickAddCallback}
             />
           )}
         </div>

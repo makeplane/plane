@@ -19,6 +19,7 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -49,19 +50,14 @@ const Inputs = (props: any) => {
 };
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, subGroupId = null, prePopulatedData } = props;
+  const { formKey, groupId, subGroupId = null, prePopulatedData, quickAddCallback } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   // store
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    issue: issueStore,
-    quickAddIssue: quickAddIssueStore,
-  } = useMobxStore();
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   const {
     reset,
@@ -153,7 +149,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
   // };
 
   const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+    if (isSubmitting || !workspaceDetail || !projectDetail) return;
 
     reset({ ...defaultValues });
 
@@ -163,10 +159,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     });
 
     try {
-      issueStore.updateIssueStructure(groupId, subGroupId, payload);
-      await quickAddIssueStore.updateQuickAddIssueStructure(workspaceSlug, groupId, subGroupId, {
-        ...payload,
-      });
+      quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload } as IIssue));
       setToastAlert({
         type: "success",
         title: "Success!",

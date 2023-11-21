@@ -8,8 +8,9 @@ import { CalendarDayTile } from "components/issues";
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
-import { IGroupedIssues, IIssue, IIssueResponse } from "types";
+import { IIssue } from "types";
 import { EIssueActions } from "../types";
+import { IGroupedIssues, IIssueResponse } from "store/issues/types";
 
 type Props = {
   issues: IIssueResponse | undefined;
@@ -18,10 +19,11 @@ type Props = {
   handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
-  const { issues, groupedIssueIds, week, handleIssues, quickActions, enableQuickIssueCreate } = props;
+  const { issues, groupedIssueIds, week, handleIssues, quickActions, enableQuickIssueCreate, quickAddCallback } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -48,6 +50,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             handleIssues={handleIssues}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
+            quickAddCallback={quickAddCallback}
           />
         );
       })}

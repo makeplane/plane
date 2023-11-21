@@ -5,18 +5,8 @@ import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
 // types
-import {
-  IGroupedIssues,
-  IIssue,
-  IIssueDisplayProperties,
-  IIssueLabel,
-  IIssueResponse,
-  IProject,
-  IState,
-  ISubGroupedIssues,
-  IUserLite,
-  TUnGroupedIssues,
-} from "types";
+import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 // constants
 import { getValueFromObject } from "constants/issue";
 import { EIssueActions } from "../types";

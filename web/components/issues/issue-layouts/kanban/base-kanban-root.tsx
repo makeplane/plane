@@ -146,6 +146,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               enableQuickIssueCreate
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
+              quickAddCallback={issueStore.quickAddIssue}
             />
           ) : (
             <KanBanSwimLanes

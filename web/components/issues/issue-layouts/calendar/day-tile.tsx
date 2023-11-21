@@ -9,8 +9,9 @@ import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "c
 import { renderDateFormat } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
-import { IGroupedIssues, IIssue, IIssueResponse } from "types";
+import { IIssue } from "types";
 import { EIssueActions } from "../types";
+import { IGroupedIssues, IIssueResponse } from "store/issues/types";
 
 type Props = {
   date: ICalendarDate;
@@ -19,10 +20,11 @@ type Props = {
   handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues, groupedIssueIds, handleIssues, quickActions, enableQuickIssueCreate } = props;
+  const { date, issues, groupedIssueIds, handleIssues, quickActions, enableQuickIssueCreate, quickAddCallback } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -78,6 +80,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                       prePopulatedData={{
                         target_date: renderDateFormat(date.date),
                       }}
+                      quickAddCallback={quickAddCallback}
                     />
                   </div>
                 )}

@@ -7,6 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
+import { EFilterType } from "store/issues/types";
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
@@ -37,10 +38,8 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: null,
-        },
+      projectIssueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+        [key]: null,
       });
       return;
     }
@@ -49,10 +48,8 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
     let newValues = projectIssueFiltersStore.issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: {
-        [key]: newValues,
-      },
+    projectIssueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      [key]: newValues,
     });
   };
 
@@ -64,8 +61,8 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    projectIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: { ...newFilters },
+    projectIssueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      ...newFilters,
     });
   };
 

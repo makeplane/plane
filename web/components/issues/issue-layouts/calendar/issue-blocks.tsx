@@ -4,8 +4,9 @@ import { Draggable } from "@hello-pangea/dnd";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Tooltip } from "@plane/ui";
 // types
-import { IIssue, IIssueResponse } from "types";
+import { IIssue } from "types";
 import { EIssueActions } from "../types";
+import { IIssueResponse } from "store/issues/types";
 
 type Props = {
   issues: IIssueResponse | undefined;

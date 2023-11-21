@@ -3,7 +3,7 @@ import { List } from "./default";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { FC } from "react";
-import { IIssue, IIssueResponse, IProject } from "types";
+import { IIssue, IProject } from "types";
 import { IProjectStore } from "store/project";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
@@ -13,6 +13,7 @@ import { ICycleIssueStore } from "store/cycle";
 import { IArchivedIssueFilterStore, IArchivedIssueStore } from "store/archived-issues";
 import { IProjectIssuesStore } from "store/issues";
 import { observer } from "mobx-react-lite";
+import { IIssueResponse } from "store/issues/types";
 
 enum EIssueActions {
   UPDATE = "update",

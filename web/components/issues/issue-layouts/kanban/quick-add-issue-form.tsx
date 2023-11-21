@@ -8,7 +8,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
-import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
@@ -42,6 +41,7 @@ interface IKanBanQuickAddIssueForm {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 }
 
 const defaultValues: Partial<IIssue> = {
@@ -49,18 +49,13 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = observer((props) => {
-  const { formKey, groupId, subGroupId = null, prePopulatedData } = props;
+  const { formKey, groupId, prePopulatedData, quickAddCallback } = props;
 
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    issue: issueStore,
-    quickAddIssue: quickAddIssueStore,
-  } = useMobxStore();
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
   const projectDetail: IProject | null =
@@ -98,10 +93,10 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
     });
 
     try {
-      issueStore.updateIssueStructure(groupId, subGroupId, payload);
-      await quickAddIssueStore.updateQuickAddIssueStructure(workspaceSlug, groupId, subGroupId, {
-        ...payload,
-      });
+      quickAddCallback &&
+        (await quickAddCallback(workspaceSlug, projectId, {
+          ...payload,
+        }));
       setToastAlert({
         type: "success",
         title: "Success!",

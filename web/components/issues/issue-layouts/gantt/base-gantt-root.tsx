@@ -14,9 +14,10 @@ import {
 } from "components/gantt-chart";
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
-import { IIssue, TUnGroupedIssues } from "types";
+import { IIssue } from "types";
 import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
 import { EUserWorkspaceRoles } from "layouts/settings-layout/workspace/sidebar";
+import { TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseGanttRoot {
   issueFiltersStore: IProjectIssuesFilterStore;
