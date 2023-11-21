@@ -72,8 +72,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
   get getIssuesIds() {
     const projectId = this.rootStore?.project.projectId;
-    // const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
-    const displayFilters: any = undefined;
+    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
     const subGroupBy = displayFilters?.sub_group_by;
