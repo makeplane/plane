@@ -50,10 +50,8 @@ export const ImageUploadModal: React.FC<Props> = observer((props) => {
   });
 
   const handleSubmit = async () => {
+    if (!image || (!workspaceSlug && router.pathname != "/onboarding")) return;
     setIsImageUploading(true);
-
-    if (!image || !workspaceSlug) return;
-
     const formData = new FormData();
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
@@ -183,7 +181,13 @@ export const ImageUploadModal: React.FC<Props> = observer((props) => {
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" size="sm" onClick={handleSubmit} disabled={!image} loading={isImageUploading}>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleSubmit}
+                      disabled={!image}
+                      loading={isImageUploading}
+                    >
                       {isImageUploading ? "Uploading..." : "Upload & Save"}
                     </Button>
                   </div>

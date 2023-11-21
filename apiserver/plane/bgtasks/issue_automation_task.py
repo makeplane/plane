@@ -12,7 +12,7 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.db.models import Issue, Project, State, Page
+from plane.db.models import Issue, Project, State
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -20,7 +20,6 @@ from plane.bgtasks.issue_activites_task import issue_activity
 def archive_and_close_old_issues():
     archive_old_issues()
     close_old_issues()
-    delete_archived_pages()
 
 
 def archive_old_issues():
@@ -167,20 +166,3 @@ def close_old_issues():
             print(e)
         capture_exception(e)
         return
-
-
-def delete_archived_pages():
-    try:
-        pages_to_delete = Page.objects.filter(
-            archived_at__isnull=False,
-            archived_at__lte=(timezone.now() - timedelta(days=30)),
-        )
-
-        pages_to_delete._raw_delete(pages_to_delete.db)
-        return 
-    except Exception as e:
-        if settings.DEBUG:
-            print(e)
-        capture_exception(e)
-        return
-

@@ -31,6 +31,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -40,6 +41,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -48,6 +50,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -56,6 +59,7 @@
       "dependsOn": [
         "@plane/lite-text-editor#build",
         "@plane/rich-text-editor#build",
+        "@plane/document-editor#build",
         "@plane/ui#build"
       ]
     },
@@ -66,6 +70,12 @@
     "@plane/rich-text-editor#build": {
       "cache": true,
       "dependsOn": ["@plane/editor-core#build"]
+    },
+    "@plane/document-editor#build": {
+      "cache": true,
+      "dependsOn": [
+        "@plane/editor-core#build"
+      ]
     },
     "test": {
       "dependsOn": ["^build"],

@@ -184,4 +184,13 @@ export class UserService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async deleteAccount(): Promise<void> {
+    return this.delete("/api/users/me/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
 }

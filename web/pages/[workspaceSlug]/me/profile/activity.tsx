@@ -154,7 +154,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               </div>
                             </div>
                             <div className="min-w-0 flex-1 py-4 border-b border-custom-border-100">
-                              <div className="text-sm text-custom-text-200 break-words">
+                              <div className="text-sm text-custom-text-200 break-words flex gap-1">
                                 {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                   <span className="text-gray font-medium">Plane</span>
                                 ) : activityItem.actor_detail.is_bot ? (
@@ -166,7 +166,12 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                     <a className="text-gray font-medium">{activityItem.actor_detail.display_name}</a>
                                   </Link>
                                 )}{" "}
-                                {message} <span className="whitespace-nowrap">{timeAgo(activityItem.created_at)}</span>
+                                <div className="flex gap-1 truncate">
+                                  {message}{" "}
+                                  <span className="whitespace-nowrap flex-shrink-0">
+                                    {timeAgo(activityItem.created_at)}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </>

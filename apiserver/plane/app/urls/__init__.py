@@ -22,10 +22,6 @@ from .api import urlpatterns as api_urls
 from .webhook import urlpatterns as webhook_urls
 
 
-# Django imports
-from django.conf import settings
-
-
 urlpatterns = [
     *analytic_urls,
     *asset_urls,

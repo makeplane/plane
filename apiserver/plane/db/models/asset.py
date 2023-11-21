@@ -36,6 +36,7 @@ class FileAsset(BaseModel):
     workspace = models.ForeignKey(
         "db.Workspace", on_delete=models.CASCADE, null=True, related_name="assets"
     )
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "File Asset"
