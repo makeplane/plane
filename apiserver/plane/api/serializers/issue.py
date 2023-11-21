@@ -66,7 +66,6 @@ class IssueSerializer(BaseSerializer):
                 project_id=self.context.get("project_id"),
                 is_active=True,
                 member_id__in=data["assignees"],
-                is_active=True,
             ).values_list("member_id", flat=True)
 
         # Validate labels are from project
