@@ -19,8 +19,6 @@ def forgot_password(first_name, email, uidb64, token, current_site):
         realtivelink = f"/accounts/reset-password/?uidb64={uidb64}&token={token}"
         abs_url = current_site + realtivelink
 
-        from_email_string = settings.EMAIL_FROM
-
         subject = "Reset Your Password - Plane"
 
         context = {

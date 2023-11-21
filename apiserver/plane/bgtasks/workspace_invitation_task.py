@@ -32,9 +32,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         # The complete url including the domain
         abs_url = current_site + relative_link
 
-        # The email from
-        from_email_string = settings.EMAIL_FROM
-
         # Subject of the email
         subject = f"{user.first_name or user.display_name or user.email} invited you to join {workspace.name} on Plane"
 

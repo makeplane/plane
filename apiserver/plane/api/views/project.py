@@ -283,3 +283,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+    def delete(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

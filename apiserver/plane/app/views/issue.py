@@ -298,6 +298,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         current_instance = json.dumps(
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
+        issue.delete()
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),
@@ -307,7 +308,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             current_instance=current_instance,
             epoch=int(timezone.now().timestamp()),
         )
-        issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

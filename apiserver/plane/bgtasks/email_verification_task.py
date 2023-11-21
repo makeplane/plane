@@ -21,8 +21,6 @@ def email_verification(first_name, email, token, current_site):
         realtivelink = "/request-email-verification/" + "?token=" + str(token)
         abs_url = current_site + realtivelink
 
-        from_email_string = settings.EMAIL_FROM
-
         subject = "Verify your Email!"
 
         context = {

@@ -142,7 +142,6 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
             )
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
-        queryset = queryset.order_by("-is_favorite", "-created_at")
 
         # Current Cycle
         if cycle_view == "current":
@@ -305,8 +304,8 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
 
 class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to cycle issues.
+    This viewset automatically provides `list`, `create`,
+    and `destroy` actions related to cycle issues.
 
     """
 
@@ -457,7 +456,7 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
-            requested_data=json.dumps({"cycles_list": issues}),
+            requested_data=json.dumps({"cycles_list": str(issues)}),
             actor_id=str(self.request.user.id),
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
