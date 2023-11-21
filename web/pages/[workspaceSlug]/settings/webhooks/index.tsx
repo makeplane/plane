@@ -31,7 +31,7 @@ const WebhooksPage: NextPage = observer(() => {
   return (
     <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
       <WorkspaceSettingLayout>
-        <div className="w-full overflow-y-auto py-3 pr-4">
+        <div className="w-full overflow-y-auto py-3 pr-9">
           {loader ? (
             <div className="flex h-full w-ful items-center justify-center">
               <Spinner />
@@ -41,10 +41,8 @@ const WebhooksPage: NextPage = observer(() => {
               {Object.keys(webhooks).length > 0 ? (
                 <WebhookLists workspaceSlug={workspaceSlug} />
               ) : (
-                <div className="flex justify-center w-full h-full items-center">
-                  <div className="w-auto h-fit">
-                    <EmptyWebhooks workspaceSlug={workspaceSlug} />
-                  </div>
+                <div className="py-5 mx-auto">
+                  <EmptyWebhooks />
                 </div>
               )}
             </>
