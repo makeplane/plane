@@ -91,24 +91,24 @@ export const UserDetails: React.FC<Props> = observer((props) => {
     if (!url) return;
 
     setIsRemoving(true);
-    fileService
-      .deleteUserFile(url)
-      .finally(() => {
-        setValue("avatar","");
-        setIsRemoving(false);
-      });
+    fileService.deleteUserFile(url).finally(() => {
+      setValue("avatar", "");
+      setIsRemoving(false);
+    });
   };
 
   return (
     <div className="w-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
-      <div className="hidden flex-shrink-0 lg:block w-3/12">
+      <div className="h-full fixed hidden lg:block w-1/5">
         <DummySidebar showProject workspaceName={workspaceName} />
       </div>
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
         onClose={() => setIsImageUploadModalOpen(false)}
         isRemoving={isRemoving}
-        handleDelete={() => {handleDelete(getValues("avatar"))}}
+        handleDelete={() => {
+          handleDelete(getValues("avatar"));
+        }}
         onSuccess={(url) => {
           setValue("avatar", url);
           setIsImageUploadModalOpen(false);
@@ -116,14 +116,14 @@ export const UserDetails: React.FC<Props> = observer((props) => {
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
         userImage
       />
-      <div>
-        <div className="flex lg:w-3/5 md:w-4/5 md:px-0 px-7 pt-3 mx-auto flex-col">
+      <div className="lg:w-2/3 w-full ml-auto ">
+        <div className="flex lg:w-4/5 md:px-0 px-7 pt-3 mx-auto flex-col">
           <form onSubmit={handleSubmit(onSubmit)} className="md:w-11/12  ml-auto">
             <div className="flex justify-between items-center">
               <p className="font-semibold text-xl sm:text-2xl">What do we call you? </p>
               <OnboardingStepIndicator step={2} />
             </div>
-            <div className="flex mt-5 w-full ">
+            <div className="flex mt-6 w-full ">
               <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                 {!watch("avatar") || watch("avatar") === "" ? (
                   <div className="h-16 hover:cursor-pointer justify-center items-center flex w-16 rounded-full flex-shrink-0 mr-3 relative bg-onboarding-background-300">

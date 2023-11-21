@@ -184,7 +184,7 @@ export const SignInView = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`bg-onboarding-gradient-primary h-full flex flex-col fixed w-full`}>
+        <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
           <div className="sm:py-5 pl-8 pb-4 sm:pl-16 lg:pl-28 ">
             <div className="flex text-3xl items-center mt-16 font-semibold">
               <div className="h-[30px] w-[30px] mr-2">
@@ -194,69 +194,69 @@ export const SignInView = observer(() => {
             </div>
           </div>
 
-          <div className="h-full md:w-2/3 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200 overflow-auto">
-            <div className="min-h-full p-4">
-              <div className={`min-h-full px-7 sm:px-0 bg-onboarding-gradient-secondary h-full pt-32 pb-20 rounded-md`}>
-                {!envConfig ? (
-                  <div className="pt-10 mx-auto flex justify-center">
-                    <div>
-                      <Loader className="space-y-4 w-full pb-4 mx-auto">
-                        <Loader.Item height="46px" width="360px" />
-                        <Loader.Item height="46px" width="360px" />
-                      </Loader>
+          <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
+            <div
+              className={`min-h-full px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-32 pb-20 rounded-t-md overflow-auto`}
+            >
+              {!envConfig ? (
+                <div className="pt-10 mx-auto flex justify-center">
+                  <div>
+                    <Loader className="space-y-4 w-full pb-4 mx-auto">
+                      <Loader.Item height="46px" width="360px" />
+                      <Loader.Item height="46px" width="360px" />
+                    </Loader>
 
-                      <Loader className="space-y-4 w-full pt-4 mx-auto">
-                        <Loader.Item height="46px" width="360px" />
-                        <Loader.Item height="46px" width="360px" />
-                      </Loader>
-                    </div>
+                    <Loader className="space-y-4 w-full pt-4 mx-auto">
+                      <Loader.Item height="46px" width="360px" />
+                      <Loader.Item height="46px" width="360px" />
+                    </Loader>
                   </div>
-                ) : (
+                </div>
+              ) : (
+                <>
                   <>
-                    <>
-                      {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
-                      {envConfig?.magic_login && (
-                        <div className="flex flex-col divide-y divide-custom-border-200">
-                          <div className="pb-2">
-                            <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
-                          </div>
+                    {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
+                    {envConfig?.magic_login && (
+                      <div className="flex flex-col divide-y divide-custom-border-200">
+                        <div className="pb-2">
+                          <EmailCodeForm handleSignIn={handleEmailCodeSignIn} />
                         </div>
-                      )}
-                      <div className="flex sm:w-96 items-center mt-4 mx-auto">
-                        <hr className={`border-onboarding-border-100 w-full`} />
-                        <p className="text-center text-sm text-onboarding-text-400 mx-3 flex-shrink-0">
-                          Or continue with
-                        </p>
-                        <hr className={`border-onboarding-border-100 w-full`} />
                       </div>
-                      <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-96 mx-auto overflow-hidden">
-                        {envConfig?.google_client_id && (
-                          <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
-                        )}
-                        {envConfig?.github_client_id && (
-                          <GithubLoginButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
-                        )}
-                      </div>
-                    </>
-                    <div className={`flex py-2 bg-onboarding-background-100 mx-auto rounded-sm sm:w-96 mt-16`}>
-                      <Lightbulb className="h-7 w-7 mr-2 mx-3" />
-                      <p className={`text-sm text-left text-onboarding-text-200`}>
-                        Try the latest features, like Tiptap editor, to write compelling responses.{" "}
-                        <span className="font-medium underline hover:cursor-pointer" onClick={() => {}}>
-                          See new features
-                        </span>
+                    )}
+                    <div className="flex sm:w-96 items-center mt-4 mx-auto">
+                      <hr className={`border-onboarding-border-100 w-full`} />
+                      <p className="text-center text-sm text-onboarding-text-400 mx-3 flex-shrink-0">
+                        Or continue with
                       </p>
+                      <hr className={`border-onboarding-border-100 w-full`} />
                     </div>
-                    <div className="flex justify-center sm:w-96 sm:h-64 object-cover mt-8 mx-auto rounded-md ">
-                      <Image
-                        src={signInIssues}
-                        alt="Plane Logo"
-                        className={`flex object-cover rounded-md bg-onboarding-background-100`}
-                      />
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:w-96 mx-auto overflow-hidden">
+                      {envConfig?.google_client_id && (
+                        <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
+                      )}
+                      {envConfig?.github_client_id && (
+                        <GithubLoginButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
+                      )}
                     </div>
                   </>
-                )}
-              </div>
+                  <div className={`flex py-2 bg-onboarding-background-100 mx-auto rounded-sm sm:w-96 mt-16`}>
+                    <Lightbulb className="h-7 w-7 mr-2 mx-3" />
+                    <p className={`text-sm text-left text-onboarding-text-200`}>
+                      Try the latest features, like Tiptap editor, to write compelling responses.{" "}
+                      <span className="font-medium underline hover:cursor-pointer" onClick={() => {}}>
+                        See new features
+                      </span>
+                    </p>
+                  </div>
+                  <div className="flex justify-center sm:w-96 sm:h-64 object-cover mt-8 mx-auto rounded-md ">
+                    <Image
+                      src={signInIssues}
+                      alt="Plane Logo"
+                      className={`flex object-cover rounded-md bg-onboarding-background-100`}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

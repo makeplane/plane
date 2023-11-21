@@ -24,6 +24,9 @@ import { ROLE } from "constants/workspace";
 // assets
 import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
+import userDark from "public/onboarding/user-dark.svg";
+import userLight from "public/onboarding/user-light.svg";
+import { useTheme } from "next-themes";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -187,6 +190,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
   const { setToastAlert } = useToast();
+  const { resolvedTheme } = useTheme();
 
   const {
     control,
@@ -234,36 +238,41 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (fields.length === 0) {
-      append([
-        { email: "", role: 15 },
-        { email: "", role: 15 },
-        { email: "", role: 15 },
-      ]);
+      append(
+        [
+          { email: "", role: 15 },
+          { email: "", role: 15 },
+          { email: "", role: 15 },
+        ],
+        {
+          focusIndex: 0,
+        }
+      );
     }
   }, [fields, append]);
 
   return (
-    <div className="flex py-14">
+    <div className="flex w-full py-14 ">
       <div
-        className={`hidden lg:block w-1/4 p-3 pb-52 h-fit ml-auto rounded bg-onboarding-gradient-secondary border border-onboarding-border-100 border-opacity-10`}
+        className={`fixed ml-16 hidden lg:block w-1/5 p-4 pb-40 h-fit rounded bg-onboarding-gradient-300 border-x border-t border-onboarding-border-300 border-opacity-10`}
       >
         <p className="text-base text-onboarding-text-400 font-semibold">Members</p>
 
         {Array.from({ length: 4 }).map(() => (
-          <div className="flex items-center gap-2 mt-4">
-            <div className="w-8 h-8 flex justify-center items-center flex-shrink-0 rounded-full bg-onboarding-background-400">
-              <User2 className="h-4 w-4 stroke-onboarding-background-300 fill-onboarding-background-400" />
+          <div className="flex items-center gap-2 mt-6">
+            <div className=" flex justify-center items-center flex-shrink-0 rounded-full">
+              <Image src={resolvedTheme === "dark" ? userDark : userLight} alt="user" className="object-cover" />
             </div>
             <div className="w-full">
-              <div className="rounded-md h-2.5 my-2 bg-onboarding-background-100 w-2/3" />
-              <div className="rounded-md h-2 bg-onboarding-background-400 w-1/2" />
+              <div className="rounded-md h-2.5 bg-onboarding-background-400 my-2  w-1/2" />
+              <div className="rounded-md h-2 bg-onboarding-background-100 w-1/3" />
             </div>
           </div>
         ))}
 
         <div className="mt-20 relative">
-          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 w-full mt-1 right-24">
-            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10">
+          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full shadow-onbording-shadow-sm gap-x-2 border border-onboarding-border-100 w-full mt-1 right-24">
+            <div className="w-10 h-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user2} alt="user" />
             </div>
             <div>
@@ -272,8 +281,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full gap-x-2 border border-onboarding-border-100 w-full right-12 mt-14">
-            <div className="w-8 h-8 flex-shrink-0 rounded-full bg-custom-primary-10">
+          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full shadow-onbording-shadow-sm gap-x-2 border border-onboarding-border-100 w-full right-12 mt-16">
+            <div className="w-10 h-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user1} alt="user" />
             </div>
             <div>
@@ -283,62 +292,64 @@ export const InviteMembers: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <form
-        className="px-7 sm:px-0 md:w-4/5 lg:w-1/2  mx-auto space-y-7 sm:space-y-10 overflow-hidden flex flex-col"
-        onSubmit={handleSubmit(onSubmit)}
-        onKeyDown={(e) => {
-          if (e.code === "Enter") e.preventDefault();
-        }}
-      >
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl sm:text-2xl font-semibold">Invite your team to work with you</h2>
-          <OnboardingStepIndicator step={3} />
-        </div>
-
-        <div className="md:w-4/5 text-sm flex flex-col overflow-hidden">
-          <div className="space-y-3 sm:space-y-4 mb-3 h-full overflow-y-auto">
-            {fields.map((field, index) => (
-              <InviteMemberForm
-                isInvitationDisabled={isInvitationDisabled}
-                setIsInvitationDisabled={(value: boolean) => setIsInvitationDisabled(value)}
-                control={control}
-                errors={errors}
-                field={field}
-                fields={fields}
-                index={index}
-                remove={remove}
-                key={field.id}
-              />
-            ))}
+      <div className="lg:w-2/3 w-full ml-auto ">
+        <form
+          className="px-7 sm:px-0 ml-auto w-full lg:w-5/6 space-y-7 sm:space-y-10 mx-auto"
+          onSubmit={handleSubmit(onSubmit)}
+          onKeyDown={(e) => {
+            if (e.code === "Enter") e.preventDefault();
+          }}
+        >
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl sm:text-2xl font-semibold">Invite your team to work with you</h2>
+            <OnboardingStepIndicator step={3} />
           </div>
-          <button
-            type="button"
-            className="flex items-center gap-2 outline-custom-primary-100 bg-transparent text-custom-primary-100 text-sm font-semibold py-2 pr-3"
-            onClick={appendField}
-          >
-            <Plus className="h-3 w-3" />
-            Add another
-          </button>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button
-            variant="primary"
-            type="submit"
-            disabled={isInvitationDisabled || !isValid}
-            loading={isSubmitting}
-            size="md"
-          >
-            {isSubmitting ? "Inviting..." : "Invite members"}
-          </Button>
-          {/* <Button variant="outline-primary" size="md" onClick={nextStep}>
+
+          <div className="xl:w-5/6 w-full text-sm">
+            <div className="space-y-3 sm:space-y-4 mb-3">
+              {fields.map((field, index) => (
+                <InviteMemberForm
+                  isInvitationDisabled={isInvitationDisabled}
+                  setIsInvitationDisabled={(value: boolean) => setIsInvitationDisabled(value)}
+                  control={control}
+                  errors={errors}
+                  field={field}
+                  fields={fields}
+                  index={index}
+                  remove={remove}
+                  key={field.id}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="flex items-center gap-2 outline-custom-primary-100 bg-transparent text-custom-primary-100 text-sm font-semibold py-2 pr-3"
+              onClick={appendField}
+            >
+              <Plus className="h-3 w-3" />
+              Add another
+            </button>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={isInvitationDisabled || !isValid}
+              loading={isSubmitting}
+              size="md"
+            >
+              {isSubmitting ? "Inviting..." : "Invite members"}
+            </Button>
+            {/* <Button variant="outline-primary" size="md" onClick={nextStep}>
             Copy invite link
           </Button> */}
 
-          <span className="text-sm text-onboarding-text-400 hover:cursor-pointer" onClick={nextStep}>
-            Do this later
-          </span>
-        </div>
-      </form>
+            <span className="text-sm text-onboarding-text-400 hover:cursor-pointer" onClick={nextStep}>
+              Do this later
+            </span>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

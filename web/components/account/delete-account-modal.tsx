@@ -2,8 +2,6 @@
 import React, { useState } from "react";
 // next
 import { useRouter } from "next/router";
-// components
-import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
 // services
@@ -11,8 +9,9 @@ import { AuthService } from "services/auth.service";
 // headless ui
 import { Dialog, Transition } from "@headlessui/react";
 // icons
-import { AlertTriangle } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { UserService } from "services/user.service";
+import { useTheme } from "next-themes";
 
 type Props = {
   isOpen: boolean;
@@ -25,13 +24,18 @@ const userService = new UserService();
 const DeleteAccountModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
   const router = useRouter();
+  const { setTheme } = useTheme();
   const { setToastAlert } = useToast();
 
   const handleSignOut = async () => {
     await authService
       .signOut()
       .then(() => {
+        authService.purgeAccessToken();
+        authService.purgeRefreshToken();
+        setTheme("system");
         router.push("/");
       })
       .catch(() =>
@@ -100,7 +104,7 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
                   <div className="">
                     <div className="flex items-center gap-x-4">
                       <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
+                        <Trash2 className="h-5 w-5 text-red-600" aria-hidden="true" />
                       </div>
                       <Dialog.Title as="h3" className="text-2xl font-medium leading-6 text-onboarding-text-100">
                         Not the right workspace?
