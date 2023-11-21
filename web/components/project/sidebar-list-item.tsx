@@ -188,9 +188,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   </div>
                   {!isCollapsed && (
                     <ChevronDown
-                      className={`h-3.5 w-3.5 flex-shrink-0 hidden ${open ? "rotate-180" : ""} ${
+                      className={`h-4 w-4 flex-shrink-0 hidden ${open ? "rotate-180" : ""} ${
                         isMenuActive ? "!block" : ""
-                      }  group-hover:!block text-custom-sidebar-text-400 duration-300`}
+                      }  group-hover:!block mb-0.5 text-custom-sidebar-text-400 duration-300`}
                     />
                   )}
                 </Disclosure.Button>
