@@ -303,7 +303,8 @@ const ProfilePage: NextPageWithLayout = () => {
                       value={value}
                       onChange={onChange}
                       label={value ? value.toString() : "Select your role"}
-                      buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : ""}
+                      buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : "border-none"}
+                      className="rounded-md border !border-custom-border-200"
                       width="w-full"
                       input
                     >
@@ -369,6 +370,8 @@ const ProfilePage: NextPageWithLayout = () => {
                       options={timeZoneOptions}
                       onChange={onChange}
                       optionsClassName="w-full"
+                      buttonClassName={"border-none"}
+                      className="rounded-md border !border-custom-border-200"
                       input
                     />
                   )}

@@ -38,7 +38,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   const createProjectPage = async (payload: IPage) => {
     if (!workspaceSlug) return;
 
-    createPage(workspaceSlug.toString(), projectId, payload)
+    await createPage(workspaceSlug.toString(), projectId, payload)
       .then((res) => {
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
         onClose();
@@ -67,7 +67,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   const updateProjectPage = async (payload: IPage) => {
     if (!data || !workspaceSlug) return;
 
-    return updatePage(workspaceSlug.toString(), projectId, data.id, payload)
+    await updatePage(workspaceSlug.toString(), projectId, data.id, payload)
       .then((res) => {
         onClose();
         setToastAlert({
