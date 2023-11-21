@@ -17,7 +17,6 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.api.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
-    IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 

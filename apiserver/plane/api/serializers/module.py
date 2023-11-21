@@ -33,6 +33,7 @@ class ModuleSerializer(BaseSerializer):
         model = Module
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
             "created_by",
