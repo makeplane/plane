@@ -1,5 +1,13 @@
 import { IIssue } from "types";
 
+// issue filters
+export enum EFilterType {
+  FILTERS = "filters",
+  DISPLAY_FILTERS = "display_filters",
+  DISPLAY_PROPERTIES = "display_properties",
+}
+
+// issues
 export interface IGroupedIssues {
   [group_id: string]: string[];
 }

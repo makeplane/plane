@@ -113,14 +113,19 @@ import {
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
 import {
-  IProjectIssuesDisplayFilterStore,
-  ProjectIssuesDisplayFilterStore,
+  // global
+  IIssuesFilterStore,
+  IssuesFilterStore,
+  // project issues
   IProjectIssuesStore,
   ProjectIssuesStore,
+  // project issues filter
   IProjectIssuesFilterStore,
   ProjectIssuesFilterStore,
+  // module issues
   IModuleIssuesStore,
   ModuleIssuesStore,
+  // module issues filter
   IModuleIssuesFilterStore,
   ModuleIssuesFilterStore,
 } from "store/issues";
@@ -204,7 +209,7 @@ export class RootStore {
   mentionsStore: IMentionsStore;
 
   // project v3 issue and issue-filters starts
-  projectIssuesDisplayFilter: IProjectIssuesDisplayFilterStore;
+  issuesFilter: IIssuesFilterStore;
 
   projectIssues: IProjectIssuesStore;
   projectIssuesFilter: IProjectIssuesFilterStore;
@@ -286,7 +291,7 @@ export class RootStore {
     this.mentionsStore = new MentionsStore(this);
 
     // project v3 issue and issue-filters starts
-    this.projectIssuesDisplayFilter = new ProjectIssuesDisplayFilterStore(this);
+    this.issuesFilter = new IssuesFilterStore(this);
 
     this.projectIssues = new ProjectIssuesStore(this);
     this.projectIssuesFilter = new ProjectIssuesFilterStore(this);

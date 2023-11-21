@@ -5,7 +5,7 @@ export * from "./project-issues/base-issue.store";
 export * from "./project-issues/base-issue-filter.store";
 
 // project display filters and display properties
-export * from "./project-issues/issue-display-filters";
+export * from "./project-issues/issue-filters.store";
 
 // project issues and filters
 export * from "./project-issues/project/issue.store";
