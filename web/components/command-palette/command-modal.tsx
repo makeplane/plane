@@ -18,11 +18,11 @@ import {
   ChangeIssueAssignee,
   ChangeIssuePriority,
   ChangeIssueState,
-  commandGroups,
   CommandPaletteHelpActions,
   CommandPaletteIssueActions,
   CommandPaletteProjectActions,
   CommandPaletteWorkspaceSettingsActions,
+  CommandPaletteSearchResults,
 } from "components/command-palette";
 import { LayersIcon, Loader, ToggleSwitch, Tooltip } from "@plane/ui";
 // types
@@ -56,7 +56,6 @@ export const CommandModal: React.FC = observer(() => {
   const [pages, setPages] = useState<string[]>([]);
 
   const {
-    user: { currentUser },
     commandPalette: {
       isCommandPaletteOpen,
       toggleCommandPaletteModal,
@@ -64,7 +63,6 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateProjectModal,
     },
   } = useMobxStore();
-  const user = currentUser ?? undefined;
 
   // router
   const router = useRouter();
@@ -136,16 +134,8 @@ export const CommandModal: React.FC = observer(() => {
     [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug] // Only call effect if debounced search term changes
   );
 
-  if (!user) return null;
-
   return (
-    <Transition.Root
-      show={isCommandPaletteOpen}
-      afterLeave={() => {
-        setSearchTerm("");
-      }}
-      as={React.Fragment}
-    >
+    <Transition.Root show={isCommandPaletteOpen} afterLeave={() => setSearchTerm("")} as={React.Fragment}>
       <Dialog as="div" className="relative z-30" onClose={() => closePalette()}>
         <Transition.Child
           as={React.Fragment}
@@ -179,9 +169,8 @@ export const CommandModal: React.FC = observer(() => {
                   onKeyDown={(e) => {
                     // when search is empty and page is undefined
                     // when user tries to close the modal with esc
-                    if (e.key === "Escape" && !page && !searchTerm) {
-                      closePalette();
-                    }
+                    if (e.key === "Escape" && !page && !searchTerm) closePalette();
+
                     // Escape goes to previous page
                     // Backspace goes to previous page when search is empty
                     if (e.key === "Escape" || (e.key === "Backspace" && !searchTerm)) {
@@ -229,9 +218,7 @@ export const CommandModal: React.FC = observer(() => {
                       className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-custom-text-100 placeholder:text-custom-text-400 outline-none focus:ring-0 text-sm"
                       placeholder={placeholder}
                       value={searchTerm}
-                      onValueChange={(e) => {
-                        setSearchTerm(e);
-                      }}
+                      onValueChange={(e) => setSearchTerm(e)}
                       autoFocus
                       tabIndex={1}
                     />
@@ -251,7 +238,7 @@ export const CommandModal: React.FC = observer(() => {
                     )}
 
                     {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="my-4 text-center text-custom-text-200">No results found.</div>
+                      <div className="my-4 text-center text-custom-text-200 text-sm">No results found.</div>
                     )}
 
                     {(isLoading || isSearching) && (
@@ -265,34 +252,9 @@ export const CommandModal: React.FC = observer(() => {
                       </Command.Loading>
                     )}
 
-                    {debouncedSearchTerm !== "" &&
-                      Object.keys(results.results).map((key) => {
-                        const section = (results.results as any)[key];
-                        const currentSection = commandGroups[key];
-
-                        if (section.length > 0) {
-                          return (
-                            <Command.Group key={key} heading={currentSection.title}>
-                              {section.map((item: any) => (
-                                <Command.Item
-                                  key={item.id}
-                                  onSelect={() => {
-                                    closePalette();
-                                    router.push(currentSection.path(item));
-                                  }}
-                                  value={`${key}-${item?.name}`}
-                                  className="focus:outline-none"
-                                >
-                                  <div className="flex items-center gap-2 overflow-hidden text-custom-text-200">
-                                    {currentSection.icon}
-                                    <p className="block flex-1 truncate">{currentSection.itemName(item)}</p>
-                                  </div>
-                                </Command.Item>
-                              ))}
-                            </Command.Group>
-                          );
-                        }
-                      })}
+                    {debouncedSearchTerm !== "" && (
+                      <CommandPaletteSearchResults closePalette={closePalette} results={results} />
+                    )}
 
                     {!page && (
                       <>
