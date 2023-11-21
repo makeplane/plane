@@ -48,13 +48,15 @@ type InviteMemberFormProps = {
   field: FieldArrayWithId<FormValues, "emails", "id">;
   fields: FieldArrayWithId<FormValues, "emails", "id">[];
   errors: any;
+  isInvitationDisabled: boolean;
+  setIsInvitationDisabled: (value: boolean) => void;
 };
 
 // services
 const workspaceService = new WorkspaceService();
 
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
-  const { control, index, fields, remove, errors } = props;
+  const { control, index, fields, remove, errors, isInvitationDisabled, setIsInvitationDisabled } = props;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -70,7 +72,6 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
           control={control}
           name={`emails.${index}.email`}
           rules={{
-            required: "Email ID is required",
             pattern: {
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: "Invalid Email ID",
@@ -82,7 +83,17 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
               name={`emails.${index}.email`}
               type="text"
               value={value}
-              onChange={onChange}
+              onChange={(event) => {
+                if (isInvitationDisabled && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(event.target.value)) {
+                  setIsInvitationDisabled(false);
+                } else if (
+                  !isInvitationDisabled &&
+                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(event.target.value)
+                ) {
+                  setIsInvitationDisabled(true);
+                }
+                onChange(event);
+              }}
               ref={ref}
               hasError={Boolean(errors.emails?.[index]?.email)}
               placeholder="Enter their email..."
@@ -173,6 +184,8 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 export const InviteMembers: React.FC<Props> = (props) => {
   const { finishOnboarding, stepChange, workspace } = props;
 
+  const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
+
   const { setToastAlert } = useToast();
 
   const {
@@ -198,7 +211,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
   const onSubmit = async (formData: FormValues) => {
     if (!workspace) return;
 
-    const payload = { ...formData };
+    let payload = { ...formData };
+    payload = { emails: payload.emails.filter((email) => email.email !== "") };
 
     await workspaceService
       .inviteWorkspace(workspace.slug, payload)
@@ -285,6 +299,8 @@ export const InviteMembers: React.FC<Props> = (props) => {
           <div className="space-y-3 sm:space-y-4 mb-3 h-full overflow-y-auto">
             {fields.map((field, index) => (
               <InviteMemberForm
+                isInvitationDisabled={isInvitationDisabled}
+                setIsInvitationDisabled={(value: boolean) => setIsInvitationDisabled(value)}
                 control={control}
                 errors={errors}
                 field={field}
@@ -305,7 +321,13 @@ export const InviteMembers: React.FC<Props> = (props) => {
           </button>
         </div>
         <div className="flex items-center gap-4">
-          <Button variant="primary" type="submit" disabled={!isValid} loading={isSubmitting} size="md">
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={isInvitationDisabled && !isValid}
+            loading={isSubmitting}
+            size="md"
+          >
             {isSubmitting ? "Inviting..." : "Invite members"}
           </Button>
           {/* <Button variant="outline-primary" size="md" onClick={nextStep}>
