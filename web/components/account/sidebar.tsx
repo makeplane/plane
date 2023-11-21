@@ -95,16 +95,15 @@ const DummySidebar: React.FC<Props> = (props) => {
     lastWorkspaceName = value;
     if (timer > 0) {
       timer += 2;
-      timer = Math.min(timer, 4);
+      timer = Math.min(timer, 2);
     } else {
       timer = 2;
-      timer = Math.min(timer, 4);
+      timer = Math.min(timer, 2);
       const interval = setInterval(() => {
         if (timer < 0) {
           setValue!("name", lastWorkspaceName);
           clearInterval(interval);
         }
-        console.log("timer", timer);
         timer--;
       }, 1000);
     }
@@ -112,7 +111,7 @@ const DummySidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (watch) {
-      watch();
+      watch("name");
     }
   });
 
@@ -126,6 +125,8 @@ const DummySidebar: React.FC<Props> = (props) => {
             render={({ field: { value } }) => {
               if (value.length > 0) {
                 handleZoomWorkspace(value);
+              } else {
+                lastWorkspaceName = "";
               }
               return timer > 0 ? (
                 <div className="py-6 pl-4 top-3 mt-4 transition-all bg-onboarding-background-200 w-full max-w-screen-sm flex items-center ml-6 border-8 border-onboarding-background-100 rounded-md">
