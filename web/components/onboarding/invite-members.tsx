@@ -306,7 +306,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
         </div>
         <div className="flex items-center gap-4">
           <Button variant="primary" type="submit" disabled={!isValid} loading={isSubmitting} size="md">
-            {isSubmitting ? "Sending..." : "Send Invite"}
+            {isSubmitting ? "Inviting..." : "Invite members"}
           </Button>
           {/* <Button variant="outline-primary" size="md" onClick={nextStep}>
             Copy invite link
