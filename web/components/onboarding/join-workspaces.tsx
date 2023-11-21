@@ -39,7 +39,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
   };
 
   return (
-    <div className="flex h-full w-full">
+    <div className="flex">
       <div className="hidden lg:block w-3/12">
         <Controller
           control={control}
@@ -70,7 +70,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
           errors={errors}
           isSubmitting={isSubmitting}
         />
-        <div className="flex  md:w-4/5 items-center my-8">
+        <div className="flex md:w-4/5 items-center my-8">
           <hr className="border-onboarding-border-100 w-full" />
           <p className="text-center text-sm text-custom-text-400 mx-3 flex-shrink-0">Or</p>
           <hr className="border-onboarding-border-100 w-full" />
