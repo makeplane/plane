@@ -64,6 +64,7 @@ class IssueSerializer(BaseSerializer):
             print(data.get("assignees"))
             data["assignees"] = ProjectMember.objects.filter(
                 project_id=self.context.get("project_id"),
+                is_active=True,
                 member_id__in=data["assignees"],
                 is_active=True,
             ).values_list("member_id", flat=True)
@@ -90,7 +91,7 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspce_id=self.context.get("workspace_id"), pk=data.get("parent")
+                workspace_id=self.context.get("workspace_id"), pk=data.get("parent")
             ).exists()
         ):
             raise serializers.ValidationError(
