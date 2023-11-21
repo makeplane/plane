@@ -6,6 +6,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
 // types
 import { IWorkspace } from "types";
+// assets
+import projectEmoji from "public/emoji/project-emoji.svg";
 // icons
 import {
   BarChart2,
@@ -21,6 +23,7 @@ import {
   Settings,
   Bell,
 } from "lucide-react";
+import Image from "next/image";
 
 const workspaceLinks = [
   {
@@ -246,11 +249,15 @@ const DummySidebar: React.FC<Props> = (props) => {
           <div className="px-3">
             {" "}
             <div className="w-4/5 flex items-center text-base font-medium text-custom-text-200 mb-3 justify-between">
-              <span> Plane web</span>
+              <div className="flex items-center gap-x-2">
+                <Image src={projectEmoji} alt="Plane Logo" className="h-4 w-4" />
+                <span> Plane</span>
+              </div>
+
               <ChevronDown className="h-4 w-4" />
             </div>
             {projectLinks.map((link) => (
-              <a className="block w-full">
+              <a className="block ml-6 w-full">
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium outline-none 
                     text-custom-sidebar-text-200  focus:bg-custom-sidebar-background-80
