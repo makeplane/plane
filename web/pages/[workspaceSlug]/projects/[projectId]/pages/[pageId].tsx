@@ -185,8 +185,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
           }}
         />
       ) : pageDetails ? (
-        <div className="flex h-full flex-col justify-between pl-5 pr-5">
-          <div className="h-full w-full">
+        <div className="flex h-full flex-col justify-between">
+          <div className="h-full w-full overflow-hidden">
             {pageDetails.is_locked || pageDetails.archived_at ? (
               <DocumentReadOnlyEditorWithRef
                 ref={editorRef}
