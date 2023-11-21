@@ -82,10 +82,7 @@ export class FileService extends APIService {
         is_deleted: true,
       },
     })
-      .then((response) => {
-        console.log(response?.status);
-        return response?.status;
-      })
+      .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -99,10 +96,7 @@ export class FileService extends APIService {
         is_deleted: false,
       },
     })
-      .then((response) => {
-        console.log(response?.status);
-        return response?.status;
-      })
+      .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
       });
