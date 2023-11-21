@@ -292,7 +292,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
       >
         <div className="flex justify-between items-center">
           <h2 className="text-xl sm:text-2xl font-semibold">Invite your team to work with you</h2>
-          <OnboardingStepIndicator step={2} />
+          <OnboardingStepIndicator step={3} />
         </div>
 
         <div className="md:w-4/5 text-sm flex flex-col overflow-hidden">
