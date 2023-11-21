@@ -21,22 +21,21 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: { joinProject },
+  } = useMobxStore();
   // router
   const router = useRouter();
 
   const handleJoin = () => {
     setIsJoiningLoading(true);
 
-    projectStore
-      .joinProject(workspaceSlug, [project.id])
+    joinProject(workspaceSlug, [project.id])
       .then(() => {
-        setIsJoiningLoading(false);
-
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
         handleClose();
       })
-      .catch(() => {
+      .finally(() => {
         setIsJoiningLoading(false);
       });
   };
@@ -73,8 +72,9 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                     Join Project?
                   </Dialog.Title>
                   <p>
-                    Are you sure you want to join the project <span className="font-semibold break-words">{project?.name}</span>?
-                    Please click the &apos;Join Project&apos; button below to continue.
+                    Are you sure you want to join the project{" "}
+                    <span className="font-semibold break-words">{project?.name}</span>? Please click the &apos;Join
+                    Project&apos; button below to continue.
                   </p>
                   <div className="space-y-3" />
                 </div>
