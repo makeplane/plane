@@ -111,10 +111,7 @@ export class PageStore implements IPageStore {
       ) || [];
     data["older"] =
       this.pages[projectId]?.filter(
-        (p) =>
-          !isThisWeek(new Date(p.created_at)) &&
-          !isToday(new Date(p.created_at)) &&
-          !isYesterday(new Date(p.created_at))
+        (p) => !isThisWeek(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
       ) || [];
 
     return data;
