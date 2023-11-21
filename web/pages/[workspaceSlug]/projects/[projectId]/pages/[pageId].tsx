@@ -235,7 +235,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     debouncedUpdatesEnabled={false}
                     setIsSubmitting={setIsSubmitting}
                     value={!value || value === "" ? "<p></p>" : value}
-                    customClassName="tracking-tight self-center w-full max-w-full px-0"
+                    customClassName="tracking-tight self-center px-0 h-full w-full"
                     onChange={(_description_json: Object, description_html: string) => {
                       onChange(description_html);
                       setIsSubmitting("submitting");
