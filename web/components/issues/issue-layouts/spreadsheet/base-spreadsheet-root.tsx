@@ -4,13 +4,18 @@ import { useCallback } from "react";
 import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { useRouter } from "next/router";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
+import {
+  IModuleIssuesFilterStore,
+  IModuleIssuesStore,
+  IProjectIssuesFilterStore,
+  IProjectIssuesStore,
+} from "store/issues";
 import { observer } from "mobx-react-lite";
 import { EFilterType, TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore: IProjectIssuesFilterStore;
-  issueStore: IProjectIssuesStore;
+  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {

@@ -53,7 +53,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const issues = issueStore.getIssues;
   //temporary ignore to be removed after implementing other stores
   //@ts-ignore
-  const issueIds = issueStore?.getIssueIds !== undefined ? issueStore?.getIssueIds : [];
+  const issueIds = issueStore?.getIssueIds || [];
   const userDisplayFilters = issueFilterStore?.userDisplayFilters;
   const group_by: string | null = userDisplayFilters?.group_by || null;
   const displayProperties = issueFilterStore?.userDisplayProperties;

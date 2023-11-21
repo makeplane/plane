@@ -33,7 +33,7 @@ export interface IModuleIssuesStore {
     data: Partial<IIssue>
   ) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<IIssue>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => Promise<IIssue>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue, moduleId?: string) => Promise<IIssue>;
 }
 
 export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesStore {
@@ -79,14 +79,14 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
   }
 
   get getIssues() {
-    const projectId = this.rootStore?.project.projectId;
-    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+    const moduleId = this.rootStore?.module?.moduleId;
+    if (!moduleId || !this.issues || !this.issues[moduleId]) return undefined;
 
-    return this.issues[projectId];
+    return this.issues[moduleId];
   }
 
   get getIssuesIds() {
-    const projectId = this.rootStore?.project.projectId;
+    const moduleId = this.rootStore?.module?.moduleId;
     const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
 
     const subGroupBy = displayFilters?.sub_group_by;
@@ -94,20 +94,20 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+    if (!moduleId || !this.issues || !this.issues[moduleId]) return undefined;
 
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[projectId]);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[moduleId]);
+      else issues = this.unGroupedIssues(orderBy, this.issues[moduleId]);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
-      else issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[moduleId]);
+      else issues = this.groupedIssues(groupBy, orderBy, this.issues[moduleId]);
     } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[projectId], true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[projectId]);
+      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[moduleId], true);
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[moduleId]);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[moduleId]);
 
     return issues;
   }
@@ -208,7 +208,8 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
     }
   };
 
-  quickAddIssue = async (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => {
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue, moduleId?: string) => {
+    if (!moduleId) return;
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};

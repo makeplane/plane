@@ -15,13 +15,18 @@ import {
 // types
 import { IIssueUnGroupedStructure } from "store/issue";
 import { IIssue } from "types";
-import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
+import {
+  IModuleIssuesFilterStore,
+  IModuleIssuesStore,
+  IProjectIssuesFilterStore,
+  IProjectIssuesStore,
+} from "store/issues";
 import { EUserWorkspaceRoles } from "layouts/settings-layout/workspace/sidebar";
 import { TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseGanttRoot {
-  issueFiltersStore: IProjectIssuesFilterStore;
-  issueRootStore: IProjectIssuesStore;
+  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore;
+  issueRootStore: IProjectIssuesStore | IModuleIssuesStore;
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {

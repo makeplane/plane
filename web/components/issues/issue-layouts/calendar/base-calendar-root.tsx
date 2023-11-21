@@ -7,14 +7,14 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CalendarChart } from "components/issues";
 // types
 import { IIssue } from "types";
-import { IProjectIssuesStore } from "store/issues";
+import { IModuleIssuesStore, IProjectIssuesStore } from "store/issues";
 import { IIssueCalendarViewStore, IssueStore } from "store/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { IGroupedIssues } from "store/issues/types";
 
 interface IBaseCalendarRoot {
-  issueStore: IProjectIssuesStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore;
   calendarViewStore: IIssueCalendarViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
