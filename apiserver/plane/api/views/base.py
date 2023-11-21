@@ -36,26 +36,29 @@ class TimezoneMixin:
         else:
             timezone.deactivate()
 
+
 class WebhookMixin:
     webhook_event = None
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
-
         if (
             self.webhook_event
-            and self.request.method in ["POST", "PATCH", "DELETE"]
+            and self.request.method in ["POST", "PATCH"]
             and response.status_code in [200, 201, 204]
         ):
+            # Get the id
+            object_id = (
+                response.data.get("id") if isinstance(response.data, dict) else None
+            )
+
             send_webhook.delay(
                 event=self.webhook_event,
-                event_data=json.dumps(response.data, cls=DjangoJSONEncoder),
+                event_id=object_id,
                 action=self.request.method,
                 slug=self.workspace_slug,
             )
-
         return response
-
 
 
 class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
@@ -139,13 +142,13 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
         response = super().finalize_response(request, response, *args, **kwargs)
 
         # Add custom headers if they exist in the request META
-        ratelimit_remaining = request.META.get('X-RateLimit-Remaining')
+        ratelimit_remaining = request.META.get("X-RateLimit-Remaining")
         if ratelimit_remaining is not None:
-            response['X-RateLimit-Remaining'] = ratelimit_remaining
+            response["X-RateLimit-Remaining"] = ratelimit_remaining
 
-        ratelimit_reset = request.META.get('X-RateLimit-Reset')
+        ratelimit_reset = request.META.get("X-RateLimit-Reset")
         if ratelimit_reset is not None:
-            response['X-RateLimit-Reset'] = ratelimit_reset
+            response["X-RateLimit-Reset"] = ratelimit_reset
 
         return response
 
