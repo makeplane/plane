@@ -94,8 +94,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, pk=None):
-        if pk is None:
+    def get(self, request, slug, project_id=None):
+        if project_id is None:
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -124,7 +124,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 ).data,
             )
         else:
-            project = self.get_queryset().get(workspace__slug=slug, pk=pk)
+            project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
             serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -236,10 +236,10 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_410_GONE,
             )
 
-    def patch(self, request, slug, pk=None):
+    def patch(self, request, slug, project_id=None):
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=project_id)
 
             serializer = ProjectSerializer(
                 project,
@@ -260,7 +260,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                         name="Triage",
                         group="backlog",
                         description="Default state for managing all Inbox Issues",
-                        project_id=pk,
+                        project_id=project_id,
                         color="#ff7700",
                     )
 

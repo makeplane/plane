@@ -15,7 +15,7 @@ urlpatterns = [
         name="issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
         IssueAPIEndpoint.as_view(),
         name="issue",
     ),
