@@ -144,7 +144,7 @@ export class PageStore implements IPageStore {
   get archivedProjectPages() {
     const projectId = this.rootStore.project.projectId;
 
-    if (!projectId || !this.pages[projectId]) return undefined;
+    if (!projectId || !this.archivedPages[projectId]) return undefined;
 
     return this.archivedPages[projectId];
   }
