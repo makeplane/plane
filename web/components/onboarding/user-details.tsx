@@ -41,8 +41,11 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [selectedUsecase, setSelectedUsecase] = useState<number | null>();
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  const { user: userStore } = useMobxStore();
-
+  const {
+    user: userStore,
+    workspace: { workspaces },
+  } = useMobxStore();
+  const workspaceName = workspaces ? workspaces[0]?.name : "New Workspace";
   const {
     handleSubmit,
     control,
@@ -84,7 +87,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   return (
     <div className="h-full w-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
       <div className="hidden lg:block w-3/12">
-        <DummySidebar showProject workspaceName="New Workspace" />
+        <DummySidebar showProject workspaceName={workspaceName} />
       </div>
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}
@@ -159,7 +162,8 @@ export const UserDetails: React.FC<Props> = observer((props) => {
               name="first_name"
               render={({ field: { value } }) => (
                 <p className="font-medium text-onboarding-text-200 text-xl sm:text-2xl p-0">
-                  And how will you use Plane{value.length>0?", ":""}{value}?
+                  And how will you use Plane{value.length > 0 ? ", " : ""}
+                  {value}?
                 </p>
               )}
             />
