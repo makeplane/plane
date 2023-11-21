@@ -20,9 +20,7 @@ export const commandGroups: {
     icon: <ContrastIcon className="h-3 w-3" />,
     itemName: (cycle: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{cycle.project__identifier}</span>
-        {"- "}
-        {cycle.name}
+        <span className="text-custom-text-300 text-xs">{cycle.project__identifier}</span> {cycle.name}
       </h6>
     ),
     path: (cycle: IWorkspaceDefaultSearchResult) =>
@@ -33,8 +31,9 @@ export const commandGroups: {
     icon: <LayersIcon className="h-3 w-3" />,
     itemName: (issue: IWorkspaceIssueSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{issue.project__identifier}</span>
-        {"- "}
+        <span className="text-custom-text-300 text-xs">
+          {issue.project__identifier}-{issue.sequence_id}
+        </span>{" "}
         {issue.name}
       </h6>
     ),
@@ -46,9 +45,7 @@ export const commandGroups: {
     icon: <PhotoFilterIcon className="h-3 w-3" />,
     itemName: (view: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{view.project__identifier}</span>
-        {"- "}
-        {view.name}
+        <span className="text-custom-text-300 text-xs">{view.project__identifier}</span> {view.name}
       </h6>
     ),
     path: (view: IWorkspaceDefaultSearchResult) =>
@@ -59,9 +56,7 @@ export const commandGroups: {
     icon: <DiceIcon className="h-3 w-3" />,
     itemName: (module: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{module.project__identifier}</span>
-        {"- "}
-        {module.name}
+        <span className="text-custom-text-300 text-xs">{module.project__identifier}</span> {module.name}
       </h6>
     ),
     path: (module: IWorkspaceDefaultSearchResult) =>
@@ -72,9 +67,7 @@ export const commandGroups: {
     icon: <FileText className="h-3 w-3" />,
     itemName: (page: IWorkspaceDefaultSearchResult) => (
       <h6>
-        <span className="text-custom-text-200 text-xs">{page.project__identifier}</span>
-        {"- "}
-        {page.name}
+        <span className="text-custom-text-300 text-xs">{page.project__identifier}</span> {page.name}
       </h6>
     ),
     path: (page: IWorkspaceDefaultSearchResult) =>
