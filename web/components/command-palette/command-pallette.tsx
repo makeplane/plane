@@ -32,7 +32,6 @@ export const CommandPalette: FC = observer(() => {
   // store
   const { commandPalette, theme: themeStore } = useMobxStore();
   const {
-    isCommandPaletteOpen,
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
     toggleCreateIssueModal,
@@ -156,11 +155,6 @@ export const CommandPalette: FC = observer(() => {
 
   if (!user) return null;
 
-  const deleteIssue = () => {
-    toggleCommandPaletteModal(false);
-    toggleDeleteIssueModal(true);
-  };
-
   return (
     <>
       <ShortcutsModal
@@ -231,13 +225,7 @@ export const CommandPalette: FC = observer(() => {
         }}
         user={user}
       />
-      <CommandModal
-        deleteIssue={deleteIssue}
-        isPaletteOpen={isCommandPaletteOpen}
-        closePalette={() => {
-          toggleCommandPaletteModal(false);
-        }}
-      />
+      <CommandModal />
     </>
   );
 });

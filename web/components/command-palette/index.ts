@@ -1,5 +1,4 @@
-export * from "./issue";
-export * from "./change-interface-theme";
+export * from "./actions";
 export * from "./command-modal";
 export * from "./command-pallette";
 export * from "./helpers";
