@@ -24,34 +24,29 @@ export const CycleLayoutRoot: React.FC = observer(() => {
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const {
-    issueFilter: issueFilterStore,
-    projectIssuesFilter: projectIssueFiltersStore,
     cycle: cycleStore,
-    cycleIssue: cycleIssueStore,
-    cycleIssueFilters: cycleIssueFiltersStore,
+    cycleIssues: { loader, getIssues, fetchIssues },
+    cycleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId && cycleId ? `CYCLE_FILTERS_AND_ISSUES_${cycleId.toString()}` : null, async () => {
-    if (workspaceSlug && projectId && cycleId) {
-      // TODO: remove the old store fetch functions
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-      await projectIssueFiltersStore.fetchFilters(workspaceSlug.toString(), projectId.toString());
-      // fetching the cycle filters
-      await cycleIssueFiltersStore.fetchCycleFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        cycleId.toString()
-      );
-
-      // fetching the cycle issues
-      await cycleIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString(), cycleId.toString());
+  useSWR(
+    workspaceSlug && projectId && cycleId ? `CYCLE_ISSUES_V3_${workspaceSlug}_${projectId}_${cycleId}` : null,
+    async () => {
+      if (workspaceSlug && projectId && cycleId) {
+        await fetchFilters(workspaceSlug, projectId, cycleId);
+        // await fetchIssues(workspaceSlug, projectId, cycleId, getIssues ? "mutation" : "init-loader");
+      }
     }
-  });
+  );
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const cycleDetails = cycleId ? cycleStore.cycle_details[cycleId.toString()] : undefined;
   const cycleStatus =
@@ -59,41 +54,35 @@ export const CycleLayoutRoot: React.FC = observer(() => {
       ? getDateRangeStatus(cycleDetails?.start_date, cycleDetails?.end_date)
       : "draft";
 
-  const issueCount = cycleIssueStore.getIssuesCount;
-
-  if (!cycleIssueStore.getIssues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
-
   return (
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
+
       <div className="relative w-full h-full flex flex-col overflow-hidden">
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
-        {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-          <CycleEmptyState
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
-            cycleId={cycleId?.toString()}
-          />
-        ) : (
-          <div className="w-full h-full overflow-auto">
-            {activeLayout === "list" ? (
-              <CycleListLayout />
-            ) : activeLayout === "kanban" ? (
-              <CycleKanBanLayout />
-            ) : activeLayout === "calendar" ? (
-              <CycleCalendarLayout />
-            ) : activeLayout === "gantt_chart" ? (
-              <CycleGanttLayout />
-            ) : activeLayout === "spreadsheet" ? (
-              <CycleSpreadsheetLayout />
-            ) : null}
+
+        {loader === "init-loader" ? (
+          <div className="w-full h-full flex justify-center items-center">
+            <Spinner />
           </div>
+        ) : (
+          <>
+            {/* <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} /> */}
+            <div className="h-full w-full overflow-auto">
+              {activeLayout === "list" ? (
+                <CycleListLayout />
+              ) : activeLayout === "kanban" ? (
+                <CycleKanBanLayout />
+              ) : activeLayout === "calendar" ? (
+                <CycleCalendarLayout />
+              ) : activeLayout === "gantt_chart" ? (
+                <CycleGanttLayout />
+              ) : activeLayout === "spreadsheet" ? (
+                <CycleSpreadsheetLayout />
+              ) : null}
+            </div>
+          </>
         )}
       </div>
     </>

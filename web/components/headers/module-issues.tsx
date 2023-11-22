@@ -56,8 +56,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      console.log("layout", layout);
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -76,7 +75,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, moduleId);
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.FILTERS, { [key]: newValues });
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -84,7 +83,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -92,7 +91,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, moduleId);
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_PROPERTIES, property);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -174,7 +173,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
               }
               labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">

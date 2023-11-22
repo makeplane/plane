@@ -16,6 +16,8 @@ export * from "./project-issues/module/issue.store";
 export * from "./project-issues/module/filter.store";
 
 // cycle
+export * from "./project-issues/cycle/issue.store";
+export * from "./project-issues/cycle/filter.store";
 
 // project views
 
