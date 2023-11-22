@@ -13,7 +13,7 @@ interface IssueBlockProps {
   issue: IIssue;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadonly?: boolean;
 }
 

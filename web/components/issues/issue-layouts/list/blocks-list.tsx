@@ -13,7 +13,7 @@ interface Props {
   isReadonly?: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {

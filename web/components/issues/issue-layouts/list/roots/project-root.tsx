@@ -19,7 +19,7 @@ export const ListLayout: FC = observer(() => {
   if (!workspaceSlug || !projectId) return null;
 
   // store
-  const { issueFilter: projectIssuesFilterStore, projectIssues: projectIssuesStore } = useMobxStore();
+  const { projectIssuesFilter: projectIssuesFilterStore, projectIssues: projectIssuesStore } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
@@ -34,6 +34,9 @@ export const ListLayout: FC = observer(() => {
 
   const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
 
+  console.log("projectIssuesFilterStore", projectIssuesFilterStore);
+  console.log("projectIssuesStore", projectIssuesStore);
+
   return (
     <BaseListRoot
       issueFilterStore={projectIssuesFilterStore}
@@ -41,7 +44,6 @@ export const ListLayout: FC = observer(() => {
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
-      showLoader={false}
     />
   );
 });

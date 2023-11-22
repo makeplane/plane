@@ -64,6 +64,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
   }
 
   get getIssues() {
+    console.log("calling get issues computed method---");
     const projectId = this.rootStore?.project.projectId;
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
@@ -71,6 +72,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
   }
 
   get getIssuesIds() {
+    console.log("calling get issue Ids computed method---");
     const projectId = this.rootStore?.project.projectId;
     const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
@@ -122,7 +124,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
   createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
     try {
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
@@ -152,7 +153,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
         this.issues = _issues;
       });
 
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
@@ -173,7 +173,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
         this.issues = _issues;
       });
 
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       return response;
@@ -194,7 +193,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
         this.issues = _issues;
       });
 
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       if (this.issues) {

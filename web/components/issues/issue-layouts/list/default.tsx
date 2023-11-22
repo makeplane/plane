@@ -19,7 +19,7 @@ export interface IGroupByList {
   is_list?: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
   isReadonly: boolean;
@@ -105,12 +105,12 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
 };
 
 export interface IList {
-  issueIds: IGroupedIssues | TUnGroupedIssues;
+  issueIds: IGroupedIssues | TUnGroupedIssues | any;
   issues: IIssueResponse | undefined;
   group_by: string | null;
   handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
   isReadonly: boolean;

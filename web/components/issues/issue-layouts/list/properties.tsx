@@ -17,7 +17,7 @@ export interface IListProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadonly?: boolean;
 }
 

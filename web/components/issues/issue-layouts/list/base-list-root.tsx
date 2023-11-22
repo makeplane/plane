@@ -11,7 +11,7 @@ import { IProfileIssueFilterStore, IProfileIssueStore } from "store/profile-issu
 import { IModuleIssueStore } from "store/module";
 import { ICycleIssueStore } from "store/cycle";
 import { IArchivedIssueFilterStore, IArchivedIssueStore } from "store/archived-issues";
-import { IProjectIssuesStore } from "store/issues";
+import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
 import { observer } from "mobx-react-lite";
 import { IIssueResponse } from "store/issues/types";
 
@@ -22,14 +22,14 @@ enum EIssueActions {
 }
 
 interface IBaseListRoot {
-  issueStore:
-    | IIssueStore
-    | IProfileIssueStore
-    | IModuleIssueStore
-    | ICycleIssueStore
-    | IArchivedIssueStore
-    | IProjectIssuesStore;
-  issueFilterStore: IssueFilterStore | IIssueFilterStore | IProfileIssueFilterStore | IArchivedIssueFilterStore;
+  issueFilterStore: IProjectIssuesFilterStore;
+  // IssueFilterStore | IIssueFilterStore | IProfileIssueFilterStore | IArchivedIssueFilterStore;
+  issueStore: IProjectIssuesStore;
+  // | IProfileIssueStore
+  // | IModuleIssueStore
+  // | ICycleIssueStore
+  // | IArchivedIssueStore
+  // | IProjectIssuesStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => void;
@@ -37,11 +37,10 @@ interface IBaseListRoot {
     [EIssueActions.REMOVE]?: (group_by: string | null, issue: IIssue) => void;
   };
   getProjects: (projectStore: IProjectStore) => IProject[] | null;
-  showLoader?: boolean;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects, showLoader } = props;
+  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects } = props;
 
   const {
     project: projectStore,
@@ -50,23 +49,20 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     projectLabel: { projectLabels },
   } = useMobxStore();
 
+  const issueIds = issueStore.getIssuesIds || [];
   const issues = issueStore.getIssues;
-  //temporary ignore to be removed after implementing other stores
-  //@ts-ignore
-  const issueIds = issueStore?.getIssueIds || [];
-  const userDisplayFilters = issueFilterStore?.userDisplayFilters;
-  const group_by: string | null = userDisplayFilters?.group_by || null;
-  const displayProperties = issueFilterStore?.userDisplayProperties;
 
-  const showEmptyGroup = userDisplayFilters.show_empty_groups ?? false;
+  const displayFilters = issueFilterStore?.issueFilters?.displayFilters;
+  const group_by = displayFilters?.group_by || null;
+  const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
+
+  const displayProperties = issueFilterStore?.issueFilters?.displayProperties;
 
   const states = projectStateStore?.projectStates;
   const priorities = ISSUE_PRIORITIES;
   const labels = projectLabels;
   const stateGroups = ISSUE_STATE_GROUPS;
-
   const projects = getProjects(projectStore);
-
   const members = projectMembers?.map((m) => m.member) ?? null;
   const handleIssues = async (issue: IIssue, action: EIssueActions) => {
     if (issueActions[action]) {
@@ -76,7 +72,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <>
-      {showLoader && issueStore.loader === "mutation" ? (
+      {issueStore.loader === "mutation" ? (
         <div className="w-full h-full flex justify-center items-center">
           <Spinner />
         </div>
