@@ -429,10 +429,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Disclosure>
                 {({ open }) => (
                   <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <Disclosure.Button
-                      className="flex w-full items-center justify-between gap-2 p-1.5"
-                      disabled={!isStartValid || !isEndValid}
-                    >
+                    <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
                       <div className="flex items-center justify-start gap-2 text-sm">
                         <span className="font-medium text-custom-text-200">Links</span>
                       </div>
