@@ -98,8 +98,8 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="w-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
-      <div className="h-full fixed hidden lg:block w-1/5">
+    <div className="w-full h-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
+      <div className="h-full fixed hidden lg:block w-1/5 max-w-[320px]">
         <DummySidebar showProject workspaceName={workspaceName} />
       </div>
       <ImageUploadModal
@@ -116,7 +116,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
         userImage
       />
-      <div className="lg:w-2/3 w-full ml-auto ">
+      <div className="lg:w-2/3 w-full flex flex-col justify-between ml-auto ">
         <div className="flex lg:w-4/5 md:px-0 px-7 pt-3 mx-auto flex-col">
           <form onSubmit={handleSubmit(onSubmit)} className="md:w-11/12  ml-auto">
             <div className="flex justify-between items-center">
@@ -211,7 +211,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
             </Button>
           </form>
         </div>
-        <div className="md:w-11/12 mt-3 flex justify-end ml-auto">
+        <div className="md:w-11/12 relative flex justify-end  bottom-0 ml-auto">
           <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" />
         </div>
       </div>

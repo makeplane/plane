@@ -109,7 +109,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
       />
       {user && step !== null ? (
         <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
-          <div className="sm:py-14 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
+          <div className="sm:pt-14 sm:pb-8 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
             <div className="w-full flex items-center justify-between font-semibold ">
               <div className="text-3xl flex items-center gap-x-1">
                 <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
