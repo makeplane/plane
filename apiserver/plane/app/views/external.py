@@ -27,8 +27,8 @@ class GPTIntegrationEndpoint(BaseAPIView):
 
         # Get the configuration value
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        api_key = get_configuration_value(instance_configuration, "OPENAI_API_KEY")
-        gpt_engine = get_configuration_value(instance_configuration, "GPT_ENGINE")
+        api_key = get_configuration_value(instance_configuration, "OPENAI_API_KEY", os.environ.get("OPENAI_API_KEY"))
+        gpt_engine = get_configuration_value(instance_configuration, "GPT_ENGINE", os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"))
 
         # Check the keys
         if not api_key or not gpt_engine:
@@ -46,10 +46,6 @@ class GPTIntegrationEndpoint(BaseAPIView):
             )
 
         final_text = task + "\n" + prompt
-
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        
-        gpt_engine = get_configuration_value(instance_configuration, "GPT_ENGINE")
 
         client = OpenAI(
             api_key=api_key,
