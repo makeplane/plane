@@ -9,65 +9,37 @@ import { CalendarChart, ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
 import { EIssueActions } from "../../types";
+import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const ProjectViewCalendarLayout: React.FC = observer(() => {
   const {
-    projectViewIssues: projectViewIssuesStore,
-    issueFilter: issueFilterStore,
+    viewIssues: projectViewIssuesStore,
     issueDetail: issueDetailStore,
     projectViewIssueCalendarView: projectViewIssueCalendarViewStore,
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string };
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result) return;
-
-    // return if not dropped on the correct place
-    if (!result.destination) return;
-
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
-
-    projectViewIssueCalendarViewStore?.handleDragDrop(result.source, result.destination);
-  };
-
-  const issues = projectViewIssuesStore.getIssues;
-
-  const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: EIssueActions) => {
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      if (action === "update") {
-        projectViewIssuesStore.updateIssueStructure(date, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      } else {
-        projectViewIssuesStore.deleteIssue(date, null, issue);
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      }
+      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
-    [projectViewIssuesStore, issueDetailStore, workspaceSlug]
-  );
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
+
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+    },
+  };
 
   return (
-    <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart
-          issues={undefined}
-          groupedIssueIds={{}}
-          layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
-          handleIssues={handleIssues}
-          quickActions={(issue) => (
-            <ProjectIssueQuickActions
-              issue={issue}
-              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
-              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, EIssueActions.UPDATE)}
-            />
-          )}
-        />
-      </DragDropContext>
-    </div>
+    <BaseCalendarRoot
+      issueStore={projectViewIssuesStore}
+      calendarViewStore={projectViewIssueCalendarViewStore}
+      QuickActions={ProjectIssueQuickActions}
+      issueActions={issueActions}
+    />
   );
 });

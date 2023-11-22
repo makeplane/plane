@@ -9,7 +9,7 @@ import { Spinner } from "@plane/ui";
 // types
 import { IIssue } from "types";
 import { EIssueActions } from "../types";
-import { ICycleIssuesStore, IModuleIssuesStore, IProjectIssuesStore } from "store/issues";
+import { ICycleIssuesStore, IModuleIssuesStore, IProjectIssuesStore, IViewIssuesStore } from "store/issues";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IIssueKanBanViewStore } from "store/issue";
 // constants
@@ -19,7 +19,7 @@ import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 
 export interface IBaseKanBanLayout {
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   kanbanViewStore: IIssueKanBanViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
