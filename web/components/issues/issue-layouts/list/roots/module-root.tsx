@@ -16,42 +16,28 @@ export interface IModuleListLayout {}
 
 export const ModuleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, moduleId } = router.query;
+  const { workspaceSlug, moduleId } = router.query as { workspaceSlug: string; moduleId: string };
 
-  const {
-    moduleIssues: moduleIssueStore,
-    moduleIssuesFilter: moduleIssueFilterStore,
-    issueDetail: issueDetailStore,
-  } = useMobxStore();
+  const { moduleIssues: moduleIssueStore, moduleIssuesFilter: moduleIssueFilterStore } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-
-      //moduleIssueStore.updateIssueStructure(group_by, null, issue);
-      moduleIssueStore.updateIssue(
-        workspaceSlug.toString(),
-        issue.project,
-        moduleId?.toString() || "",
-        issue.id,
-        issue
-      );
+      moduleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, moduleId);
     },
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      //moduleIssueStore.  (workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id, issue);
+      moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
     },
     [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
-
-      moduleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id);
+      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
+      moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
     },
   };
 
   const getProjects = (projectStore: IProjectStore) => {
     if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug.toString()] || null;
+    return projectStore?.projects[workspaceSlug] || null;
   };
 
   return (

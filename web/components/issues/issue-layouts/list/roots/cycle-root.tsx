@@ -16,35 +16,27 @@ export interface ICycleListLayout {}
 
 export const CycleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
   // store
-  const {
-    cycleIssues: cycleIssueStore,
-    cycleIssuesFilter: cycleIssueFilterStore,
-    issueDetail: issueDetailStore,
-  } = useMobxStore();
+  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
-
-      //cycleIssueStore.updateIssueStructure(group_by, null, issue);
-      cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
+      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
     },
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
-      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      //cycleIssueStore.  (workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
+      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
     },
     [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-
-      cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id);
+      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
     },
   };
   const getProjects = (projectStore: IProjectStore) => {
     if (!workspaceSlug) return null;
-    return projectStore?.projects[workspaceSlug.toString()] || null;
+    return projectStore?.projects[workspaceSlug] || null;
   };
 
   return (

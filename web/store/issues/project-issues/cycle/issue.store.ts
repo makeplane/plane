@@ -21,19 +21,34 @@ export interface ICycleIssuesStore {
   fetchIssues: (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
-    loadType: TLoader
-  ) => Promise<IIssueResponse>;
-  createIssue: (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<IIssue>) => Promise<IIssue>;
+    loadType: TLoader,
+    cycleId?: string | undefined
+  ) => Promise<IIssueResponse | undefined>;
+  createIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IIssue>,
+    cycleId?: string | undefined
+  ) => Promise<IIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     issueId: string,
-    data: Partial<IIssue>
-  ) => Promise<IIssue>;
-  removeIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<IIssue>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => Promise<IIssue>;
+    data: Partial<IIssue>,
+    cycleId?: string | undefined
+  ) => Promise<IIssue | undefined>;
+  removeIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    cycleId?: string | undefined
+  ) => Promise<IIssue | undefined>;
+  quickAddIssue: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    cycleId?: string | undefined
+  ) => Promise<IIssue | undefined>;
   removeIssueFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -82,7 +97,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       if (!workspaceSlug || !projectId || !cycleId) return;
 
       const userFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
+      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
     });
   }
 
@@ -123,9 +138,11 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
   fetchIssues = async (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
-    loadType: TLoader = "init-loader"
+    loadType: TLoader = "init-loader",
+    cycleId: string | undefined = undefined
   ) => {
+    if (!cycleId) return undefined;
+
     try {
       this.loader = loadType;
 
@@ -141,13 +158,20 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, cycleId);
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       this.loader = undefined;
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<IIssue>) => {
+  createIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IIssue>,
+    cycleId: string | undefined = undefined
+  ) => {
+    if (!cycleId) return undefined;
+
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
       const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
@@ -165,7 +189,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return issueToCycle;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
@@ -173,10 +197,12 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
   updateIssue = async (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     issueId: string,
-    data: Partial<IIssue>
+    data: Partial<IIssue>,
+    cycleId: string | undefined = undefined
   ) => {
+    if (!cycleId) return undefined;
+
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
@@ -191,12 +217,18 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
 
-  removeIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
+  removeIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    cycleId: string | undefined = undefined
+  ) => {
+    if (!cycleId) return undefined;
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
@@ -211,12 +243,17 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
 
-  quickAddIssue = async (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => {
+  quickAddIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    cycleId: string | undefined = undefined
+  ) => {
     if (!cycleId) return;
     try {
       let _issues = { ...this.issues };
@@ -228,7 +265,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
         this.issues = _issues;
       });
 
-      const response = await this.createIssue(workspaceSlug, projectId, cycleId, data);
+      const response = await this.createIssue(workspaceSlug, projectId, data, cycleId);
 
       if (this.issues) {
         delete this.issues[cycleId][data.id as keyof IIssue];
@@ -245,7 +282,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };
@@ -271,7 +308,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
   };

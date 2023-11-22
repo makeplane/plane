@@ -39,8 +39,6 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
-  console.log("issueFilters", issueFilters);
-
   return (
     <div className="relative h-full w-full flex flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
