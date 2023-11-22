@@ -438,17 +438,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </Disclosure>
           </div>
 
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
-            <Disclosure>
-              {({ open }) => (
-                <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                  <Disclosure.Button
-                    className="flex w-full items-center justify-between gap-2 p-1.5"
-                    disabled={!isStartValid || !isEndValid}
-                  >
-                    <div className="flex items-center justify-start gap-2 text-sm">
-                      <span className="font-medium text-custom-text-200">Links</span>
-                    </div>
+            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
+              <Disclosure>
+                {({ open }) => (
+                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
+                    <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
+                      <div className="flex items-center justify-start gap-2 text-sm">
+                        <span className="font-medium text-custom-text-200">Links</span>
+                      </div>
 
                     <div className="flex items-center gap-2.5">
                       <ChevronDown className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
