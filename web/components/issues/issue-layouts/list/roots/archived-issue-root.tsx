@@ -38,7 +38,6 @@ export const ArchivedIssueListLayout: FC = observer(() => {
       QuickActions={ArchivedIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
-      showLoader={false}
     />
   );
 });

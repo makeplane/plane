@@ -23,6 +23,7 @@ export interface IGroupByList {
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
   isReadonly: boolean;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 }
 
 const GroupByList: React.FC<IGroupByList> = (props) => {
@@ -40,6 +41,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     enableIssueQuickAdd,
     showEmptyGroup,
     isReadonly,
+    quickAddCallback,
   } = props;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
@@ -94,6 +96,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   <div className="flex-shrink-0 w-full sticky bottom-0 z-[1]">
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, getValueFromObject(_list, listKey))}
+                      quickAddCallback={quickAddCallback}
                     />
                   </div>
                 )}
@@ -120,6 +123,7 @@ export interface IList {
   projects: IProject[] | null;
   stateGroups: any;
   priorities: any;
+  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 }
 
 export const List: React.FC<IList> = (props) => {
@@ -129,6 +133,7 @@ export const List: React.FC<IList> = (props) => {
     group_by,
     handleIssues,
     quickActions,
+    quickAddCallback,
 
     displayProperties,
     showEmptyGroup,
@@ -160,6 +165,7 @@ export const List: React.FC<IList> = (props) => {
           enableIssueQuickAdd={enableIssueQuickAdd}
           showEmptyGroup={showEmptyGroup}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -177,6 +183,7 @@ export const List: React.FC<IList> = (props) => {
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -194,6 +201,7 @@ export const List: React.FC<IList> = (props) => {
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -211,6 +219,7 @@ export const List: React.FC<IList> = (props) => {
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -228,6 +237,7 @@ export const List: React.FC<IList> = (props) => {
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -262,6 +272,7 @@ export const List: React.FC<IList> = (props) => {
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -279,6 +290,7 @@ export const List: React.FC<IList> = (props) => {
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
           isReadonly={isReadonly}
+          quickAddCallback={quickAddCallback}
         />
       )}
     </div>

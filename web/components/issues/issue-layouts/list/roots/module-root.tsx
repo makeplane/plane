@@ -19,31 +19,33 @@ export const ModuleListLayout: React.FC = observer(() => {
   const { workspaceSlug, moduleId } = router.query;
 
   const {
-    issueFilter: issueFilterStore,
-    moduleIssue: moduleIssueStore,
+    moduleIssues: moduleIssueStore,
+    moduleIssuesFilter: moduleIssueFilterStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !moduleId) return;
 
-      moduleIssueStore.updateIssueStructure(group_by, null, issue);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
-      moduleIssueStore.deleteIssue(group_by, null, issue);
-    },
-    [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
-
-      moduleIssueStore.deleteIssue(group_by, null, issue);
-      moduleIssueStore.removeIssueFromModule(
+      //moduleIssueStore.updateIssueStructure(group_by, null, issue);
+      moduleIssueStore.updateIssue(
         workspaceSlug.toString(),
         issue.project,
-        moduleId.toString(),
-        issue.bridge_id
+        moduleId?.toString() || "",
+        issue.id,
+        issue
       );
+    },
+    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !moduleId) return;
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+      //moduleIssueStore.  (workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id, issue);
+    },
+    [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !moduleId) return;
+
+      moduleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id);
     },
   };
 
@@ -54,12 +56,11 @@ export const ModuleListLayout: React.FC = observer(() => {
 
   return (
     <BaseListRoot
-      issueFilterStore={issueFilterStore}
+      issueFilterStore={moduleIssueFilterStore}
       issueStore={moduleIssueStore}
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
-      showLoader={false}
     />
   );
 });
