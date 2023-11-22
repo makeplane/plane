@@ -1,4 +1,3 @@
-import { IIssueFilterStore, IIssueStore, IssueFilterStore } from "store/issue";
 import { List } from "./default";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
@@ -7,11 +6,16 @@ import { IIssue, IProject } from "types";
 import { IProjectStore } from "store/project";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
-import { IProfileIssueFilterStore, IProfileIssueStore } from "store/profile-issues";
-import { IModuleIssueStore } from "store/module";
-import { ICycleIssueStore } from "store/cycle";
-import { IArchivedIssueFilterStore, IArchivedIssueStore } from "store/archived-issues";
-import { IProjectIssuesFilterStore, IProjectIssuesStore } from "store/issues";
+import {
+  ICycleIssuesFilterStore,
+  ICycleIssuesStore,
+  IModuleIssuesFilterStore,
+  IModuleIssuesStore,
+  IProjectIssuesFilterStore,
+  IProjectIssuesStore,
+  IViewIssuesFilterStore,
+  IViewIssuesStore,
+} from "store/issues";
 import { observer } from "mobx-react-lite";
 import { IIssueResponse } from "store/issues/types";
 
@@ -22,14 +26,12 @@ enum EIssueActions {
 }
 
 interface IBaseListRoot {
-  issueFilterStore: IProjectIssuesFilterStore | any;
-  // IssueFilterStore | IIssueFilterStore | IProfileIssueFilterStore | IArchivedIssueFilterStore;
-  issueStore: IProjectIssuesStore | any;
-  // | IProfileIssueStore
-  // | IModuleIssueStore
-  // | ICycleIssueStore
-  // | IArchivedIssueStore
-  // | IProjectIssuesStore;
+  issueFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => void;

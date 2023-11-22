@@ -22,13 +22,19 @@ import {
   IModuleIssuesStore,
   IProjectIssuesFilterStore,
   IProjectIssuesStore,
+  IViewIssuesFilterStore,
+  IViewIssuesStore,
 } from "store/issues";
 import { EUserWorkspaceRoles } from "layouts/settings-layout/workspace/sidebar";
 import { TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseGanttRoot {
-  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore | ICycleIssuesFilterStore;
-  issueRootStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore;
+  issueFiltersStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+  issueRootStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {

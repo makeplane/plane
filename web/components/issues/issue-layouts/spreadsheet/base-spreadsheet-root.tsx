@@ -11,13 +11,19 @@ import {
   IModuleIssuesStore,
   IProjectIssuesFilterStore,
   IProjectIssuesStore,
+  IViewIssuesFilterStore,
+  IViewIssuesStore,
 } from "store/issues";
 import { observer } from "mobx-react-lite";
 import { EFilterType, TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore | ICycleIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore;
+  issueFiltersStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
