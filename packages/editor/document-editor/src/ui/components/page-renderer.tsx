@@ -18,17 +18,17 @@ export const PageRenderer = (props: IPageRenderer) => {
   } = props;
 
   return (
-    <div className="h-full w-full transition-all duration-200 ease-in-out">
-      <div className="h-full w-full overflow-y-auto pl-7 py-5">
-        <h1 className="text-4xl font-bold">{documentDetails.title}</h1>
-        <div className="flex flex-col h-full w-full pr-5">
-          <EditorContainer editor={editor} editorClassNames={editorClassNames}>
-            <EditorContentWrapper
-              editor={editor}
-              editorContentCustomClassNames={editorContentCustomClassNames}
-            />
-          </EditorContainer>
-        </div>
+    <div className="h-full w-full overflow-y-auto pl-7 py-5">
+      <h1 className="text-4xl font-bold break-all pr-5 leading-8">
+        {documentDetails.title}
+      </h1>
+      <div className="flex flex-col h-full w-full pr-5">
+        <EditorContainer editor={editor} editorClassNames={editorClassNames}>
+          <EditorContentWrapper
+            editor={editor}
+            editorContentCustomClassNames={editorContentCustomClassNames}
+          />
+        </EditorContainer>
       </div>
     </div>
   );
