@@ -194,7 +194,7 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
-    webhook_event = "module"
+    webhook_event = "module_issue"
 
     permission_classes = [
         ProjectEntityPermission,

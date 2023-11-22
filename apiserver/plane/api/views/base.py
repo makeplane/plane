@@ -45,24 +45,6 @@ class WebhookMixin:
         # Check for the case should webhook be sent
         if (
             self.webhook_event
-            and self.request.method in ["POST", "PATCH"]
-            and response.status_code in [200, 201, 204]
-        ):
-            # Get the id
-            object_id = (
-                response.data.get("id") if isinstance(response.data, dict) else None
-            )
-            # Push the object to delay
-            send_webhook.delay(
-                event=self.webhook_event,
-                event_id=object_id,
-                action=self.request.method,
-                slug=self.workspace_slug,
-            )
-
-        # Check for the case should webhook be sent
-        if (
-            self.webhook_event
             and self.request.method in ["DELETE"]
             and response.status_code in [204]
         ):
