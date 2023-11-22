@@ -14,169 +14,44 @@ import { IIssue } from "types";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { EIssueActions } from "../../types";
+import { BaseKanBanRoot } from "../base-kanban-root";
 
 export interface ICycleKanBanLayout {}
 
 export const CycleKanBanLayout: React.FC = observer(() => {
-  // router
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query;
+
   // store
   const {
-    project: projectStore,
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    cycleIssue: cycleIssueStore,
-    issueFilter: issueFilterStore,
+    cycleIssues: cycleIssueStore,
     cycleIssueKanBanView: cycleIssueKanBanViewStore,
     issueDetail: issueDetailStore,
   } = useMobxStore();
 
-  const issues = cycleIssueStore?.getIssues;
-
-  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
-
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
-  const order_by: string | null = issueFilterStore?.userDisplayFilters?.order_by || null;
-
-  const userDisplayFilters = issueFilterStore?.userDisplayFilters || null;
-
-  const displayProperties = issueFilterStore?.userDisplayProperties || null;
-
-  const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
-    ? "swimlanes"
-    : "default";
-
-  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
-
-  // const onDragStart = () => {
-  //   setIsDragStarted(true);
-  // };
-
-  const onDragEnd = (result: any) => {
-    setIsDragStarted(false);
-
-    if (!result) return;
-
-    if (
-      result.destination &&
-      result.source &&
-      result.destination.droppableId === result.source.droppableId &&
-      result.destination.index === result.source.index
-    )
-      return;
-
-    currentKanBanView === "default"
-      ? cycleIssueKanBanViewStore?.handleDragDrop(result.source, result.destination)
-      : cycleIssueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
-  };
-
-  const handleIssues = useCallback(
-    (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions | "remove") => {
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      if (action === EIssueActions.UPDATE) {
-        cycleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      }
-      if (action === EIssueActions.DELETE) cycleIssueStore.deleteIssue(group_by, sub_group_by, issue);
-      if (action === EIssueActions.REMOVE && issue.bridge_id) {
-        cycleIssueStore.deleteIssue(group_by, sub_group_by, issue);
-        cycleIssueStore.removeIssueFromCycle(
-          workspaceSlug.toString(),
-          issue.project,
-          cycleId.toString(),
-          issue.bridge_id
-        );
-      }
+      cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
     },
-    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
-  );
-
-  const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
-    cycleIssueKanBanViewStore.handleKanBanToggle(toggle, value);
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug || !cycleId) return;
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+      //cycleIssueStore.  (workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
+    },
+    [EIssueActions.REMOVE]: async (issue: IIssue) => {
+      if (!workspaceSlug || !cycleId) return;
+      cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id);
+    },
   };
-
-  const states = projectStateStore?.projectStates || null;
-  const priorities = ISSUE_PRIORITIES || null;
-  const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
-  // const estimates =
-  //   currentProjectDetails?.estimate !== null
-  //     ? projectStore.projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
-  //     : null;
-
   return (
-    <>
-      {cycleIssueStore.loader ? (
-        <div className="w-full h-full flex justify-center items-center">
-          <Spinner />
-        </div>
-      ) : (
-        <div className={`relative min-w-full min-h-full h-max bg-custom-background-90 px-3 horizontal-scroll-enable`}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            {currentKanBanView === "default" ? (
-              <KanBan
-                issues={{}}
-                issueIds={[]}
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                order_by={order_by}
-                handleIssues={handleIssues}
-                quickActions={(sub_group_by, group_by, issue) => (
-                  <CycleIssueQuickActions
-                    issue={issue}
-                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
-                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)}
-                    handleRemoveFromView={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)}
-                  />
-                )}
-                displayProperties={displayProperties}
-                kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
-                handleKanBanToggle={handleKanBanToggle}
-                states={states}
-                stateGroups={stateGroups}
-                priorities={priorities}
-                labels={projectLabels}
-                members={projectMembers?.map((m) => m.member) ?? null}
-                projects={projects}
-                showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-                isDragStarted={isDragStarted}
-              />
-            ) : (
-              <KanBanSwimLanes
-                issues={{}}
-                issueIds={[]}
-                sub_group_by={sub_group_by}
-                group_by={group_by}
-                order_by={order_by}
-                handleIssues={handleIssues}
-                quickActions={(sub_group_by, group_by, issue) => (
-                  <CycleIssueQuickActions
-                    issue={issue}
-                    handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
-                    handleUpdate={async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)}
-                    handleRemoveFromView={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)}
-                  />
-                )}
-                displayProperties={displayProperties}
-                kanBanToggle={cycleIssueKanBanViewStore?.kanBanToggle}
-                handleKanBanToggle={handleKanBanToggle}
-                states={states}
-                stateGroups={stateGroups}
-                priorities={priorities}
-                labels={projectLabels}
-                members={projectMembers?.map((m) => m.member) ?? null}
-                projects={projects}
-                showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-                isDragStarted={isDragStarted}
-              />
-            )}
-          </DragDropContext>
-        </div>
-      )}
-    </>
+    <BaseKanBanRoot
+      issueActions={issueActions}
+      issueStore={cycleIssueStore}
+      kanbanViewStore={cycleIssueKanBanViewStore}
+      showLoader={true}
+      QuickActions={CycleIssueQuickActions}
+    />
   );
 });

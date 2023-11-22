@@ -18,31 +18,30 @@ export const CycleListLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query;
   // store
-  const { issueFilter: issueFilterStore, cycleIssue: cycleIssueStore, issueDetail: issueDetailStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    cycleIssuesFilter: cycleIssueFilterStore,
+    issueDetail: issueDetailStore,
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug) return;
+      if (!workspaceSlug || !cycleId) return;
 
-      cycleIssueStore.updateIssueStructure(group_by, null, issue);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      //cycleIssueStore.updateIssueStructure(group_by, null, issue);
+      cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
     },
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
-      cycleIssueStore.deleteIssue(group_by, null, issue);
+      if (!workspaceSlug || !cycleId) return;
+      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+      //cycleIssueStore.  (workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
     },
     [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+      if (!workspaceSlug || !cycleId) return;
 
-      cycleIssueStore.deleteIssue(group_by, null, issue);
-      cycleIssueStore.removeIssueFromCycle(
-        workspaceSlug.toString(),
-        issue.project,
-        cycleId.toString(),
-        issue.bridge_id
-      );
+      cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id);
     },
   };
-
   const getProjects = (projectStore: IProjectStore) => {
     if (!workspaceSlug) return null;
     return projectStore?.projects[workspaceSlug.toString()] || null;
@@ -50,7 +49,7 @@ export const CycleListLayout: React.FC = observer(() => {
 
   return (
     <BaseListRoot
-      issueFilterStore={issueFilterStore}
+      issueFilterStore={cycleIssueFilterStore}
       issueStore={cycleIssueStore}
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}

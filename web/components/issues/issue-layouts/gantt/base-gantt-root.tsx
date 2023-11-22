@@ -16,6 +16,8 @@ import {
 import { IIssueUnGroupedStructure } from "store/issue";
 import { IIssue } from "types";
 import {
+  ICycleIssuesFilterStore,
+  ICycleIssuesStore,
   IModuleIssuesFilterStore,
   IModuleIssuesStore,
   IProjectIssuesFilterStore,
@@ -25,8 +27,8 @@ import { EUserWorkspaceRoles } from "layouts/settings-layout/workspace/sidebar";
 import { TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseGanttRoot {
-  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore;
-  issueRootStore: IProjectIssuesStore | IModuleIssuesStore;
+  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore | ICycleIssuesFilterStore;
+  issueRootStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore;
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {

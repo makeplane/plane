@@ -23,7 +23,9 @@ export interface IGroupByList {
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
   isReadonly: boolean;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
 }
 
 const GroupByList: React.FC<IGroupByList> = (props) => {
@@ -123,7 +125,9 @@ export interface IList {
   projects: IProject[] | null;
   stateGroups: any;
   priorities: any;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
 }
 
 export const List: React.FC<IList> = (props) => {

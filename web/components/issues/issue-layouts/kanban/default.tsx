@@ -33,7 +33,9 @@ export interface IGroupByKanBan {
   handleKanBanToggle: any;
   enableQuickIssueCreate?: boolean;
   isDragStarted?: boolean;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -177,7 +179,9 @@ export interface IKanBan {
   projects: any;
   enableQuickIssueCreate?: boolean;
   isDragStarted?: boolean;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {

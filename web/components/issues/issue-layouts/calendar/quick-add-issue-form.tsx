@@ -20,7 +20,9 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -116,10 +118,10 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     });
 
     try {
-      quickAddCallback &&
-        (await quickAddCallback(workspaceSlug, projectId, {
-          ...payload,
-        }));
+      // quickAddCallback &&
+      //   (await quickAddCallback(workspaceSlug, projectId, {
+      //     ...payload,
+      //   }));
       setToastAlert({
         type: "success",
         title: "Success!",
