@@ -59,13 +59,6 @@ def magic_link(email, key, token, current_site):
                     os.environ.get("EMAIL_USE_TLS", "1"),
                 )
             ),
-            use_ssl=bool(
-                get_configuration_value(
-                    instance_configuration,
-                    "EMAIL_USE_SSL",
-                    os.environ.get("EMAIL_USE_SSL", "0"),
-                )
-            ),
         )
 
         msg = EmailMultiAlternatives(
