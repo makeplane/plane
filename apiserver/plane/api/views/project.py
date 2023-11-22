@@ -123,10 +123,9 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     projects, many=True, fields=self.fields, expand=self.expand,
                 ).data,
             )
-        else:
-            project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
-            serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
+        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug):
         try:
