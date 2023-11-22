@@ -81,7 +81,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       const moduleId = this.rootStore.module.moduleId;
       if (!workspaceSlug || !projectId || !moduleId) return;
 
-      const userFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.filters;
+      const userFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, moduleId, "mutation");
     });
   }
@@ -95,7 +95,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
   get getIssuesIds() {
     const moduleId = this.rootStore?.module?.moduleId;
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootStore?.moduleIssuesFilter?.issueFilters?.displayFilters;
 
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;

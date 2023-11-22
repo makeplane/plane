@@ -15,7 +15,11 @@ import { IIssueFilterOptions } from "types";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    viewId: string;
+  };
 
   const {
     projectLabel: { projectLabels },
@@ -23,6 +27,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     projectState: projectStateStore,
     projectViews: projectViewsStore,
     projectViewFilters: projectViewFiltersStore,
+    viewIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;

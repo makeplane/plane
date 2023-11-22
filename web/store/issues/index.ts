@@ -20,6 +20,8 @@ export * from "./project-issues/cycle/issue.store";
 export * from "./project-issues/cycle/filter.store";
 
 // project views
+export * from "./project-issues/project-view/issue.store";
+export * from "./project-issues/project-view/filter.store";
 
 // archived
 

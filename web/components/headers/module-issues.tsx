@@ -43,7 +43,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     moduleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
-  const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
   const { currentProjectDetails } = projectStore;
 
   const { setValue, storedValue } = useLocalStorage("module_sidebar_collapsed", "false");
@@ -52,6 +51,8 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const toggleSidebar = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
+
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {

@@ -81,7 +81,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       const cycleId = this.rootStore.cycle.cycleId;
       if (!workspaceSlug || !projectId || !cycleId) return;
 
-      const userFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.filters;
+      const userFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, cycleId, "mutation");
     });
   }
@@ -95,7 +95,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
   get getIssuesIds() {
     const cycleId = this.rootStore?.cycle?.cycleId;
-    const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootStore?.cycleIssuesFilter?.issueFilters?.displayFilters;
 
     const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
