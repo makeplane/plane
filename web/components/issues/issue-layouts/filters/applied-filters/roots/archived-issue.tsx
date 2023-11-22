@@ -14,7 +14,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
 
   const {
     archivedIssueFilters: archivedIssueFiltersStore,
-    project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
   } = useMobxStore();
@@ -77,7 +77,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
-        labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? []}
+        labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />

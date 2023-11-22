@@ -1,87 +1,39 @@
 # Django imports
 from django.utils import timezone
 
-# Third Party imports
+#  Third party imports
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer, DynamicBaseSerializer
-from .user import UserLiteSerializer
-from .state import StateSerializer, StateLiteSerializer
-from .project import ProjectLiteSerializer
-from .workspace import WorkspaceLiteSerializer
 from plane.db.models import (
     User,
     Issue,
-    IssueActivity,
-    IssueComment,
-    IssueProperty,
+    State,
     IssueAssignee,
-    IssueSubscriber,
-    IssueLabel,
     Label,
-    CycleIssue,
-    Cycle,
-    Module,
-    ModuleIssue,
+    IssueLabel,
     IssueLink,
+    IssueComment,
     IssueAttachment,
-    IssueReaction,
-    CommentReaction,
-    IssueVote,
-    IssueRelation,
+    IssueActivity,
+    ProjectMember,
 )
+from .base import BaseSerializer
 
 
-class IssueFlatSerializer(BaseSerializer):
-    ## Contain only flat fields
-
-    class Meta:
-        model = Issue
-        fields = [
-            "id",
-            "name",
-            "description",
-            "description_html",
-            "priority",
-            "start_date",
-            "target_date",
-            "sequence_id",
-            "sort_order",
-            "is_draft",
-        ]
-
-
-class IssueProjectLiteSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-
-    class Meta:
-        model = Issue
-        fields = [
-            "id",
-            "project_detail",
-            "name",
-            "sequence_id",
-        ]
-        read_only_fields = fields
-
-
-##TODO: Find a better way to write this serializer
-## Find a better approach to save manytomany?
-class IssueCreateSerializer(BaseSerializer):
-    state_detail = StateSerializer(read_only=True, source="state")
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-
+class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=User.objects.values_list("id", flat=True)
+        ),
         write_only=True,
         required=False,
     )
 
     labels = serializers.ListField(
-        child=serializers.PrimaryKeyRelatedField(queryset=Label.objects.all()),
+        child=serializers.PrimaryKeyRelatedField(
+            queryset=Label.objects.values_list("id", flat=True)
+        ),
         write_only=True,
         required=False,
     )
@@ -98,12 +50,6 @@ class IssueCreateSerializer(BaseSerializer):
             "updated_at",
         ]
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['assignees'] = [str(assignee.id) for assignee in instance.assignees.all()]
-        data['labels'] = [str(label.id) for label in instance.labels.all()]
-        return data
-
     def validate(self, data):
         if (
             data.get("start_date", None) is not None
@@ -111,6 +57,44 @@ class IssueCreateSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+
+        # Validate assignees are from project
+        if data.get("assignees", []):
+            print(data.get("assignees"))
+            data["assignees"] = ProjectMember.objects.filter(
+                project_id=self.context.get("project_id"),
+                member_id__in=data["assignees"],
+            ).values_list("member_id", flat=True)
+
+        # Validate labels are from project
+        if data.get("labels", []):
+            data["labels"] = Label.objects.filter(
+                project_id=self.context.get("project_id"),
+                id__in=data["labels"],
+            ).values_list("id", flat=True)
+
+        # Check state is from the project only else raise validation error
+        if (
+            data.get("state")
+            and not State.objects.filter(
+                project_id=self.context.get("project_id"), pk=data.get("state")
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "State is not valid please pass a valid state_id"
+            )
+
+        # Check parent issue is from workspace as it can be cross workspace
+        if (
+            data.get("parent")
+            and not Issue.objects.filter(
+                workspce_id=self.context.get("workspace_id"), pk=data.get("parent")
+            ).exists()
+        ):
+            raise serializers.ValidationError(
+                "Parent is not valid issue_id please pass a valid issue_id"
+            )
+
         return data
 
     def create(self, validated_data):
@@ -131,14 +115,14 @@ class IssueCreateSerializer(BaseSerializer):
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
-                        assignee=user,
+                        assignee_id=assignee_id,
                         issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for user in assignees
+                    for assignee_id in assignees
                 ],
                 batch_size=10,
             )
@@ -158,14 +142,14 @@ class IssueCreateSerializer(BaseSerializer):
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
-                        label=label,
+                        label_id=label_id,
                         issue=issue,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for label in labels
+                    for label_id in labels
                 ],
                 batch_size=10,
             )
@@ -187,14 +171,14 @@ class IssueCreateSerializer(BaseSerializer):
             IssueAssignee.objects.bulk_create(
                 [
                     IssueAssignee(
-                        assignee=user,
+                        assignee_id=assignee_id,
                         issue=instance,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for user in assignees
+                    for assignee_id in assignees
                 ],
                 batch_size=10,
             )
@@ -204,14 +188,14 @@ class IssueCreateSerializer(BaseSerializer):
             IssueLabel.objects.bulk_create(
                 [
                     IssueLabel(
-                        label=label,
+                        label_id=label_id,
                         issue=instance,
                         project_id=project_id,
                         workspace_id=workspace_id,
                         created_by_id=created_by_id,
                         updated_by_id=updated_by_id,
                     )
-                    for label in labels
+                    for label_id in labels
                 ],
                 batch_size=10,
             )
@@ -220,169 +204,39 @@ class IssueCreateSerializer(BaseSerializer):
         instance.updated_at = timezone.now()
         return super().update(instance, validated_data)
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if "assignees" in self.fields:
+            if "assignees" in self.expand:
+                from .user import UserLiteSerializer
 
-class IssueActivitySerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
+                data["assignees"] = UserLiteSerializer(
+                    instance.assignees.all(), many=True
+                ).data
+            else:
+                data["assignees"] = [
+                    str(assignee.id) for assignee in instance.assignees.all()
+                ]
+        if "labels" in self.fields:
+            if "labels" in self.expand:
+                data["labels"] = LabelSerializer(instance.labels.all(), many=True).data
+            else:
+                data["labels"] = [str(label.id) for label in instance.labels.all()]
 
-    class Meta:
-        model = IssueActivity
-        fields = "__all__"
-
-
-
-class IssuePropertySerializer(BaseSerializer):
-    class Meta:
-        model = IssueProperty
-        fields = "__all__"
-        read_only_fields = [
-            "user",
-            "workspace",
-            "project",
-        ]
+        return data
 
 
 class LabelSerializer(BaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
-    project_detail = ProjectLiteSerializer(source="project", read_only=True)
-
     class Meta:
         model = Label
         fields = "__all__"
         read_only_fields = [
             "workspace",
             "project",
-        ]
-
-
-class LabelLiteSerializer(BaseSerializer):
-    class Meta:
-        model = Label
-        fields = [
-            "id",
-            "name",
-            "color",
-        ]
-
-
-class IssueLabelSerializer(BaseSerializer):
-
-    class Meta:
-        model = IssueLabel
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
-
-
-class IssueRelationSerializer(BaseSerializer):
-    issue_detail = IssueProjectLiteSerializer(read_only=True, source="related_issue")
-
-    class Meta:
-        model = IssueRelation
-        fields = [
-            "issue_detail",
-            "relation_type",
-            "related_issue",
-            "issue",
-            "id"
-        ]
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
-
-class RelatedIssueSerializer(BaseSerializer):
-    issue_detail = IssueProjectLiteSerializer(read_only=True, source="issue")
-
-    class Meta:
-        model = IssueRelation
-        fields = [
-            "issue_detail",
-            "relation_type",
-            "related_issue",
-            "issue",
-            "id"
-        ]
-        read_only_fields = [
-            "workspace",
-            "project",
-        ]
-
-
-class IssueAssigneeSerializer(BaseSerializer):
-    assignee_details = UserLiteSerializer(read_only=True, source="assignee")
-
-    class Meta:
-        model = IssueAssignee
-        fields = "__all__"
-
-
-class CycleBaseSerializer(BaseSerializer):
-    class Meta:
-        model = Cycle
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class IssueCycleDetailSerializer(BaseSerializer):
-    cycle_detail = CycleBaseSerializer(read_only=True, source="cycle")
-
-    class Meta:
-        model = CycleIssue
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class ModuleBaseSerializer(BaseSerializer):
-    class Meta:
-        model = Module
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class IssueModuleDetailSerializer(BaseSerializer):
-    module_detail = ModuleBaseSerializer(read_only=True, source="module")
-
-    class Meta:
-        model = ModuleIssue
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
         ]
 
 
 class IssueLinkSerializer(BaseSerializer):
-    created_by_detail = UserLiteSerializer(read_only=True, source="created_by")
-
     class Meta:
         model = IssueLink
         fields = "__all__"
@@ -422,57 +276,7 @@ class IssueAttachmentSerializer(BaseSerializer):
         ]
 
 
-class IssueReactionSerializer(BaseSerializer):
-    
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    
-    class Meta:
-        model = IssueReaction
-        fields = "__all__"
-        read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "actor",
-        ]
-
-
-class CommentReactionLiteSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-
-    class Meta:
-        model = CommentReaction
-        fields = [
-            "id",
-            "reaction",
-            "comment",
-            "actor_detail",
-        ]
-
-
-class CommentReactionSerializer(BaseSerializer):
-    class Meta:
-        model = CommentReaction
-        fields = "__all__"
-        read_only_fields = ["workspace", "project", "comment", "actor"]
-
-
-class IssueVoteSerializer(BaseSerializer):
-
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-
-    class Meta:
-        model = IssueVote
-        fields = ["issue", "vote", "workspace", "project", "actor", "actor_detail"]
-        read_only_fields = fields
-
-
 class IssueCommentSerializer(BaseSerializer):
-    actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    issue_detail = IssueFlatSerializer(read_only=True, source="issue")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-    comment_reactions = CommentReactionLiteSerializer(read_only=True, many=True)
     is_member = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -489,127 +293,27 @@ class IssueCommentSerializer(BaseSerializer):
         ]
 
 
-class IssueStateFlatSerializer(BaseSerializer):
-    state_detail = StateLiteSerializer(read_only=True, source="state")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-
+class IssueAttachmentSerializer(BaseSerializer):
     class Meta:
-        model = Issue
-        fields = [
-            "id",
-            "sequence_id",
-            "name",
-            "state_detail",
-            "project_detail",
-        ]
-
-
-# Issue Serializer with state details
-class IssueStateSerializer(BaseSerializer):
-    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    state_detail = StateLiteSerializer(read_only=True, source="state")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
-    sub_issues_count = serializers.IntegerField(read_only=True)
-    bridge_id = serializers.UUIDField(read_only=True)
-    attachment_count = serializers.IntegerField(read_only=True)
-    link_count = serializers.IntegerField(read_only=True)
-
-    class Meta:
-        model = Issue
-        fields = "__all__"
-
-
-class IssueSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    state_detail = StateSerializer(read_only=True, source="state")
-    parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
-    label_details = LabelSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
-    related_issues = IssueRelationSerializer(read_only=True, source="issue_relation", many=True)
-    issue_relations = RelatedIssueSerializer(read_only=True, source="issue_related", many=True)
-    issue_cycle = IssueCycleDetailSerializer(read_only=True)
-    issue_module = IssueModuleDetailSerializer(read_only=True)
-    issue_link = IssueLinkSerializer(read_only=True, many=True)
-    issue_attachment = IssueAttachmentSerializer(read_only=True, many=True)
-    sub_issues_count = serializers.IntegerField(read_only=True)
-    issue_reactions = IssueReactionSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Issue
+        model = IssueAttachment
         fields = "__all__"
         read_only_fields = [
-            "workspace",
-            "project",
+            "id",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-        ]
-
-
-class IssueLiteSerializer(DynamicBaseSerializer):
-    workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    state_detail = StateLiteSerializer(read_only=True, source="state")
-    label_details = LabelLiteSerializer(read_only=True, source="labels", many=True)
-    assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
-    sub_issues_count = serializers.IntegerField(read_only=True)
-    cycle_id = serializers.UUIDField(read_only=True)
-    module_id = serializers.UUIDField(read_only=True)
-    attachment_count = serializers.IntegerField(read_only=True)
-    link_count = serializers.IntegerField(read_only=True)
-    issue_reactions = IssueReactionSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Issue
-        fields = "__all__"
-        read_only_fields = [
-            "start_date",
-            "target_date",
-            "completed_at",
-            "workspace",
-            "project",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class IssuePublicSerializer(BaseSerializer):
-    project_detail = ProjectLiteSerializer(read_only=True, source="project")
-    state_detail = StateLiteSerializer(read_only=True, source="state")
-    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
-    votes = IssueVoteSerializer(read_only=True, many=True)
-
-    class Meta:
-        model = Issue
-        fields = [
-            "id",
-            "name",
-            "description_html",
-            "sequence_id",
-            "state",
-            "state_detail",
-            "project",
-            "project_detail",
-            "workspace",
-            "priority",
-            "target_date",
-            "reactions",
-            "votes",
-        ]
-        read_only_fields = fields
-
-
-
-class IssueSubscriberSerializer(BaseSerializer):
-    class Meta:
-        model = IssueSubscriber
-        fields = "__all__"
-        read_only_fields = [
             "workspace",
             "project",
             "issue",
+        ]
+
+
+class IssueActivitySerializer(BaseSerializer):
+    class Meta:
+        model = IssueActivity
+        fields = "__all__"
+        exclude = [
+            "created_by",
+            "udpated_by",
         ]

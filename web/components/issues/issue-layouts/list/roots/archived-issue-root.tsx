@@ -19,8 +19,10 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
   const {
     project: projectStore,
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectEstimates: { projectEstimates },
     archivedIssues: archivedIssueStore,
     archivedIssueFilters: archivedIssueFiltersStore,
   } = useMobxStore();
@@ -29,12 +31,14 @@ export const ArchivedIssueListLayout: FC = observer(() => {
   const issues = archivedIssueStore.getIssues;
   const displayProperties = archivedIssueFiltersStore?.userDisplayProperties || null;
   const group_by: string | null = archivedIssueFiltersStore?.userDisplayFilters?.group_by || null;
+  const showEmptyGroup = archivedIssueFiltersStore?.userDisplayFilters?.show_empty_groups || false;
 
   const handleIssues = (group_by: string | null, issue: IIssue, action: "delete" | "update") => {
     if (!workspaceSlug || !projectId) return;
 
     if (action === "delete") {
-      archivedIssueStore.deleteArchivedIssue(group_by, null, issue);
+      archivedIssueStore.deleteArchivedIssue(group_by === "null" ? null : group_by, null, issue);
+      archivedIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
     }
   };
 
@@ -42,13 +46,10 @@ export const ArchivedIssueListLayout: FC = observer(() => {
 
   const states = projectStateStore?.projectStates || null;
   const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
   const stateGroups = ISSUE_STATE_GROUPS || null;
   const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
   const estimates =
-    projectDetails?.estimate !== null
-      ? projectStore.projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null
-      : null;
+    projectDetails?.estimate !== null ? projectEstimates?.find((e) => e.id === projectDetails?.estimate) || null : null;
 
   return (
     <div className="relative w-full h-full bg-custom-background-90">
@@ -64,10 +65,11 @@ export const ArchivedIssueListLayout: FC = observer(() => {
         states={states}
         stateGroups={stateGroups}
         priorities={priorities}
-        labels={labels}
+        labels={projectLabels}
         members={projectMembers?.map((m) => m.member) ?? null}
         projects={projects}
         estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
+        showEmptyGroup={showEmptyGroup}
       />
     </div>
   );

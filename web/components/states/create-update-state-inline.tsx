@@ -18,6 +18,7 @@ import type { IState } from "types";
 import { STATES_LIST } from "constants/fetch-keys";
 // constants
 import { GROUP_CHOICES } from "constants/project";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   data: IState | null;
@@ -87,8 +88,12 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
 
     await projectStateStore
       .createState(workspaceSlug.toString(), projectId.toString(), formData)
-      .then(() => {
+      .then((res) => {
         handleClose();
+        trackEvent(
+          'STATE_CREATE',
+          res
+        )
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -116,10 +121,13 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
 
     await projectStateStore
       .updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
-      .then(() => {
+      .then((res) => {
         mutate(STATES_LIST(projectId.toString()));
         handleClose();
-
+        trackEvent(
+          'STATE_UPDATE',
+          res
+        )
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -161,9 +169,8 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
           {({ open }) => (
             <>
               <Popover.Button
-                className={`group inline-flex items-center text-base font-medium focus:outline-none ${
-                  open ? "text-custom-text-100" : "text-custom-text-200"
-                }`}
+                className={`group inline-flex items-center text-base font-medium focus:outline-none ${open ? "text-custom-text-100" : "text-custom-text-200"
+                  }`}
               >
                 {watch("color") && watch("color") !== "" && (
                   <span

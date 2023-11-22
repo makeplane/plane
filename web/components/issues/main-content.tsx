@@ -69,7 +69,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
     await issueCommentService
-      .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, data, user)
+      .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, data)
       .then(() => mutateIssueActivity());
   };
 
@@ -79,7 +79,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issueCommentService
-      .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, user)
+      .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId)
       .then(() => mutateIssueActivity());
   };
 
@@ -87,7 +87,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     if (!workspaceSlug || !issueDetails || !user) return;
 
     await issueCommentService
-      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData, user)
+      .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData)
       .then(() => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
       })

@@ -1,11 +1,8 @@
-import React, { Fragment, useEffect, ReactElement } from "react";
-import { useRouter } from "next/router";
+import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { TrackEventService } from "services/track_event.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -21,39 +18,12 @@ import { ANALYTICS_TABS } from "constants/analytics";
 // type
 import { NextPageWithLayout } from "types/app";
 
-const trackEventService = new TrackEventService();
-
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
   // store
   const {
     project: { workspaceProjects },
-    user: { currentUser },
     commandPalette: { toggleCreateProjectModal },
   } = useMobxStore();
-
-  const trackAnalyticsEvent = (tab: string) => {
-    if (!currentUser) return;
-    const eventPayload = {
-      workspaceSlug: workspaceSlug?.toString(),
-    };
-    const eventType =
-      tab === "scope_and_demand" ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS" : "WORKSPACE_CUSTOM_ANALYTICS";
-    trackEventService.trackAnalyticsEvent(eventPayload, eventType, currentUser);
-  };
-
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (currentUser && workspaceSlug)
-      trackEventService.trackAnalyticsEvent(
-        { workspaceSlug: workspaceSlug?.toString() },
-        "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
-        currentUser
-      );
-  }, [currentUser, workspaceSlug]);
 
   return (
     <>
@@ -69,7 +39,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
                       selected ? "bg-custom-background-80" : ""
                     }`
                   }
-                  onClick={() => trackAnalyticsEvent(tab.key)}
+                  onClick={() => {}}
                 >
                   {tab.title}
                 </Tab>

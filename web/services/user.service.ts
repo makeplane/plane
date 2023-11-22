@@ -1,11 +1,11 @@
 // services
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // types
 import type {
   IIssue,
   IUser,
   IUserActivityResponse,
+  IInstanceAdminStatus,
   IUserProfileData,
   IUserProfileProjectSegregation,
   IUserSettings,
@@ -13,8 +13,6 @@ import type {
 } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-
-const trackEventService = new TrackEventService();
 
 export class UserService extends APIService {
   constructor() {
@@ -54,6 +52,14 @@ export class UserService extends APIService {
       });
   }
 
+  async currentUserInstanceAdminStatus(): Promise<IInstanceAdminStatus> {
+    return this.get("/api/users/me/instance-admin/")
+      .then((respone) => respone?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async currentUserSettings(): Promise<IUserSettings> {
     return this.get("/api/users/me/settings/")
       .then((response) => response?.data)
@@ -70,32 +76,21 @@ export class UserService extends APIService {
       });
   }
 
-  async updateUserOnBoard({ userRole }: any, user: IUser | undefined): Promise<any> {
+  async updateUserOnBoard(): Promise<any> {
     return this.patch("/api/users/me/onboard/", {
       is_onboarded: true,
     })
-      .then((response) => {
-        trackEventService.trackUserOnboardingCompleteEvent(
-          {
-            user_role: userRole ?? "None",
-          },
-          user as IUser
-        );
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async updateUserTourCompleted(user: IUser): Promise<any> {
+  async updateUserTourCompleted(): Promise<any> {
     return this.patch("/api/users/me/tour-completed/", {
       is_tour_completed: true,
     })
-      .then((response) => {
-        trackEventService.trackUserTourCompleteEvent({ user_role: user.role ?? "None" }, user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -189,4 +184,13 @@ export class UserService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  async deleteAccount(): Promise<void> {
+    return this.delete("/api/users/me/")
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
 }

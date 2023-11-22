@@ -13,6 +13,7 @@ import useToast from "hooks/use-toast";
 import { Button } from "@plane/ui";
 // types
 import type { IState } from "types";
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -47,7 +48,10 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     await projectStateStore
       .deleteState(workspaceSlug.toString(), data.project, data.id)
-      .then(() => {
+      .then((res) => {
+        trackEvent(
+          'STATE_DELETE',
+        )
         handleClose();
       })
       .catch((err) => {

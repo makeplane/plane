@@ -103,7 +103,6 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
               editor={props.editor!}
               isOpen={isNodeSelectorOpen}
               setIsOpen={() => {
-                console.log("setIsNodeSelectorOpen");
                 setIsNodeSelectorOpen(!isNodeSelectorOpen);
                 setIsLinkSelectorOpen(false);
               }}
@@ -113,7 +112,6 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
             editor={props.editor!!}
             isOpen={isLinkSelectorOpen}
             setIsOpen={() => {
-              console.log("setIsLinkSelectorOpen");
               setIsLinkSelectorOpen(!isLinkSelectorOpen);
               setIsNodeSelectorOpen(false);
             }}
