@@ -17,11 +17,11 @@ export interface IViewIssuesStore {
   getIssues: IIssueResponse | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, viewId: string, loadType: TLoader) => Promise<IIssueResponse>;
-  createIssue: (workspaceSlug: string, viewId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  updateIssue: (workspaceSlug: string, viewId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  removeIssue: (workspaceSlug: string, viewId: string, issueId: string) => Promise<IIssue>;
-  quickAddIssue: (workspaceSlug: string, viewId: string, data: IIssue) => Promise<IIssue>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
+  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
+  updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
+  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
 }
 
 export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore {
@@ -55,23 +55,23 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
-      const viewId = this.rootStore.projectViews.viewId;
-      if (!workspaceSlug || !viewId) return;
+      const projectId = this.rootStore.project.projectId;
+      if (!workspaceSlug || !projectId) return;
 
       const userFilters = this.rootStore?.viewIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, viewId, "mutation");
+      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
     });
   }
 
   get getIssues() {
-    const viewId = this.rootStore?.projectViews.viewId;
-    if (!viewId || !this.issues || !this.issues[viewId]) return undefined;
+    const projectId = this.rootStore?.project.projectId;
+    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
-    return this.issues[viewId];
+    return this.issues[projectId];
   }
 
   get getIssuesIds() {
-    const viewId = this.rootStore?.projectViews.viewId;
+    const projectId = this.rootStore?.project.projectId;
     const displayFilters = this.rootStore?.viewIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
@@ -80,32 +80,32 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!viewId || !this.issues || !this.issues[viewId]) return undefined;
+    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[viewId]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[viewId]);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
+      else issues = this.unGroupedIssues(orderBy, this.issues[projectId]);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[viewId]);
-      else issues = this.groupedIssues(groupBy, orderBy, this.issues[viewId]);
+      if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
+      else issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
     } else if (layout === "calendar")
-      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[viewId], true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[viewId]);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[viewId]);
+      issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[projectId], true);
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[projectId]);
 
     return issues;
   }
 
-  fetchIssues = async (workspaceSlug: string, viewId: string, loadType: TLoader = "init-loader") => {
+  fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
     try {
       this.loader = loadType;
 
       const params = this.rootStore?.viewIssuesFilter?.appliedFilters;
-      const response = await this.issueService.getV3Issues(workspaceSlug, viewId, params);
+      const response = await this.issueService.getV3Issues(workspaceSlug, projectId, params);
 
-      const _issues = { ...this.issues, [viewId]: { ...response } };
+      const _issues = { ...this.issues, [projectId]: { ...response } };
 
       runInAction(() => {
         this.issues = _issues;
@@ -114,20 +114,20 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, viewId);
+      this.fetchIssues(workspaceSlug, projectId);
       this.loader = undefined;
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, viewId: string, data: Partial<IIssue>) => {
+  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
     try {
-      const response = await this.issueService.createIssue(workspaceSlug, viewId, data);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
-      if (!_issues[viewId]) _issues[viewId] = {};
-      _issues[viewId] = { ..._issues[viewId], ...{ [response.id]: response } };
+      if (!_issues[projectId]) _issues[projectId] = {};
+      _issues[projectId] = { ..._issues[projectId], ...{ [response.id]: response } };
 
       runInAction(() => {
         this.issues = _issues;
@@ -135,71 +135,71 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, viewId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
 
-  updateIssue = async (workspaceSlug: string, viewId: string, issueId: string, data: Partial<IIssue>) => {
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
-      if (!_issues[viewId]) _issues[viewId] = {};
-      _issues[viewId][issueId] = { ..._issues[viewId][issueId], ...data };
+      if (!_issues[projectId]) _issues[projectId] = {};
+      _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...data };
 
       runInAction(() => {
         this.issues = _issues;
       });
 
-      const response = await this.issueService.patchIssue(workspaceSlug, viewId, issueId, data);
+      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, viewId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
 
-  removeIssue = async (workspaceSlug: string, viewId: string, issueId: string) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
-      if (!_issues[viewId]) _issues[viewId] = {};
-      delete _issues?.[viewId]?.[issueId];
+      if (!_issues[projectId]) _issues[projectId] = {};
+      delete _issues?.[projectId]?.[issueId];
 
       runInAction(() => {
         this.issues = _issues;
       });
 
-      const response = await this.issueService.deleteIssue(workspaceSlug, viewId, issueId);
+      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, viewId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
 
-  quickAddIssue = async (workspaceSlug: string, viewId: string, data: IIssue) => {
+  quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue) => {
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
-      if (!_issues[viewId]) _issues[viewId] = {};
-      _issues[viewId] = { ..._issues[viewId], ...{ [data.id as keyof IIssue]: data } };
+      if (!_issues[projectId]) _issues[projectId] = {};
+      _issues[projectId] = { ..._issues[projectId], ...{ [data.id as keyof IIssue]: data } };
 
       runInAction(() => {
         this.issues = _issues;
       });
 
-      const response = await this.issueService.createIssue(workspaceSlug, viewId, data);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       if (this.issues) {
-        delete this.issues[viewId][data.id as keyof IIssue];
+        delete this.issues[projectId][data.id as keyof IIssue];
 
         let _issues = { ...this.issues };
         if (!_issues) _issues = {};
-        if (!_issues[viewId]) _issues[viewId] = {};
-        _issues[viewId] = { ..._issues[viewId], ...{ [response.id as keyof IIssue]: response } };
+        if (!_issues[projectId]) _issues[projectId] = {};
+        _issues[projectId] = { ..._issues[projectId], ...{ [response.id as keyof IIssue]: response } };
 
         runInAction(() => {
           this.issues = _issues;
@@ -208,7 +208,7 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, viewId, "mutation");
+      this.fetchIssues(workspaceSlug, projectId, "mutation");
       throw error;
     }
   };
