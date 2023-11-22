@@ -87,7 +87,22 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
               type="text"
               value={value}
               onChange={(event) => {
-                if (isInvitationDisabled && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(event.target.value)) {
+                if (event.target.value === "") {
+                  const validEmail = !fields
+                    .filter((ele) => {
+                      ele.id !== `emails.${index}.email`;
+                    })
+                    .map((ele) => ele.email)
+                    .includes("");
+                  if (validEmail) {
+                    setIsInvitationDisabled(false);
+                  } else {
+                    setIsInvitationDisabled(true);
+                  }
+                } else if (
+                  isInvitationDisabled &&
+                  /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(event.target.value)
+                ) {
                   setIsInvitationDisabled(false);
                 } else if (
                   !isInvitationDisabled &&
@@ -260,7 +275,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
         {Array.from({ length: 4 }).map(() => (
           <div className="flex items-center gap-2 mt-6">
-            <div className=" flex justify-center items-center flex-shrink-0 rounded-full">
+            <div className="h-8 w-8 flex justify-center items-center flex-shrink-0 rounded-full">
               <Image src={resolvedTheme === "dark" ? userDark : userLight} alt="user" className="object-cover" />
             </div>
             <div className="w-full">
