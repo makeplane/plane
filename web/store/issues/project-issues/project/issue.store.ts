@@ -64,7 +64,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
   }
 
   get getIssues() {
-    console.log("calling get issues computed method---");
     const projectId = this.rootStore?.project.projectId;
     if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
 
@@ -72,7 +71,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
   }
 
   get getIssuesIds() {
-    console.log("calling get issue Ids computed method---");
     const projectId = this.rootStore?.project.projectId;
     const displayFilters = this.rootStore?.projectIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
