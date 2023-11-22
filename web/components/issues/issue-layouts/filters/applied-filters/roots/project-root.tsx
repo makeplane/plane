@@ -14,56 +14,46 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    projectIssuesFilter: projectIssueFiltersStore,
-    project: projectStore,
     projectLabel: { projectLabels },
     projectState: projectStateStore,
     projectMember: { projectMembers },
+    projectIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
-  const userFilters = projectIssueFiltersStore.issueFilters?.filters;
+  const userFilters = issueFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
   Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!workspaceSlug || !projectId) return;
-
-    // remove all values of the key if value is null
     if (!value) {
-      projectIssueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
         [key]: null,
       });
       return;
     }
 
-    // remove the passed value from the key
-    let newValues = projectIssueFiltersStore.issueFilters?.filters?.[key] ?? [];
+    let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    projectIssueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
       [key]: newValues,
     });
   };
 
   const handleClearAllFilters = () => {
     if (!workspaceSlug || !projectId) return;
-
     const newFilters: IIssueFilterOptions = {};
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-
-    projectIssueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
-      ...newFilters,
-    });
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { ...newFilters });
   };
 
   // return if no filters are applied
