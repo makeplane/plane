@@ -1,8 +1,10 @@
+import { Dispatch, SetStateAction } from "react";
+import { Control, Controller } from "react-hook-form";
+// ui
 import { TextArea } from "@plane/ui";
-import { Control, Controller, FieldErrors } from "react-hook-form";
+// types
 import { IApiToken } from "types/api_token";
 import { IApiFormFields } from "./types";
-import { Dispatch, SetStateAction } from "react";
 
 interface IApiTokenDescription {
   generatedToken: IApiToken | null | undefined;
@@ -45,6 +47,7 @@ export const ApiTokenDescription = ({
             setFocusTitle(false);
             setFocusDescription(true);
           }}
+          role="button"
           className={`${value.length === 0 ? "text-custom-text-400/60" : "text-custom-text-300"} text-lg pt-3`}
         >
           {value.length != 0 ? value : "Description"}

@@ -142,7 +142,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                     name="first_name"
                     type="text"
                     value={value}
-                    autoFocus={true}
+                    autoFocus
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.first_name)}
@@ -159,7 +159,8 @@ export const UserDetails: React.FC<Props> = observer((props) => {
               name="first_name"
               render={({ field: { value } }) => (
                 <p className="font-medium text-onboarding-text-200 text-xl sm:text-2xl p-0">
-                  And how will you use Plane{value.length>0?", ":""}{value}?
+                  And how will you use Plane{value.length > 0 ? ", " : ""}
+                  {value}?
                 </p>
               )}
             />
@@ -191,7 +192,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
           </Button>
         </form>
         <div className="mt-3 flex ml-auto">
-          <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" />
+          <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" alt="issues-image" />
         </div>
       </div>
     </div>

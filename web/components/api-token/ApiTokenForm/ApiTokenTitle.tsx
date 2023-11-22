@@ -44,7 +44,7 @@ export const ApiTokenTitle = ({
           onError={() => {
             console.log("error");
           }}
-          autoFocus={true}
+          autoFocus
           value={value}
           onChange={onChange}
           ref={ref}
@@ -59,6 +59,7 @@ export const ApiTokenTitle = ({
             setFocusDescription(false);
             setFocusTitle(true);
           }}
+          role="button"
           className={`${value.length === 0 ? "text-custom-text-400/60" : ""} font-medium text-[24px]`}
         >
           {value.length != 0 ? value : "Api Title"}
