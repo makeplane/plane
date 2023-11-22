@@ -25,9 +25,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    projectIssuesFilter: projectIssueFiltersStore,
-    project: projectStore,
-    issueFilter: issueFilterStore,
     project: { currentProjectDetails },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
