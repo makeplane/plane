@@ -33,7 +33,14 @@ export interface IModuleIssuesStore {
     data: Partial<IIssue>
   ) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<IIssue>;
-  quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue, moduleId?: string) => Promise<IIssue>;
+  quickAddIssue: (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => Promise<IIssue>;
+  removeIssueFromModule: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string,
+    issueBridgeId: string
+  ) => Promise<IIssue>;
 }
 
 export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesStore {
@@ -61,6 +68,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       updateIssue: action,
       removeIssue: action,
       quickAddIssue: action,
+      removeIssueFromModule: action,
     });
 
     this.rootStore = _rootStore;
@@ -141,7 +149,10 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
   createIssue = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IIssue>) => {
     try {
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
+      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: [response.id],
+      });
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -152,7 +163,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      return response;
+      return issueToModule;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, moduleId, "mutation");
       throw error;
@@ -176,7 +187,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      const response = await this.rootStore.projectIssues.updateIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
     } catch (error) {
@@ -196,7 +207,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+      const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
 
       return response;
     } catch (error) {
@@ -205,7 +216,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
     }
   };
 
-  quickAddIssue = async (workspaceSlug: string, projectId: string, data: IIssue, moduleId?: string) => {
+  quickAddIssue = async (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => {
     if (!moduleId) return;
     try {
       let _issues = { ...this.issues };
@@ -217,7 +228,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
+      const response = await this.createIssue(workspaceSlug, projectId, moduleId, data);
 
       if (this.issues) {
         delete this.issues[moduleId][data.id as keyof IIssue];
@@ -231,6 +242,37 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
           this.issues = _issues;
         });
       }
+
+      return response;
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, moduleId, "mutation");
+      throw error;
+    }
+  };
+
+  removeIssueFromModule = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    issueId: string,
+    issueBridgeId: string
+  ) => {
+    try {
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[moduleId]) _issues[moduleId] = {};
+      delete _issues?.[moduleId]?.[issueId];
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      const response = await this.moduleService.removeIssueFromModule(
+        workspaceSlug,
+        projectId,
+        moduleId,
+        issueBridgeId
+      );
 
       return response;
     } catch (error) {

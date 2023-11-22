@@ -26,28 +26,6 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     moduleId: string;
   };
 
-  // const {
-  //   issueFilter: issueFilterStore,
-  //   projectIssuesFilter: projectIssueFiltersStore,
-  //   moduleIssue: moduleIssueStore,
-  //   moduleIssueFilters: moduleIssueFiltersStore,
-  // } = useMobxStore();
-
-  // useSWR(
-  //   workspaceSlug && projectId && moduleId ? `MODULE_FILTERS_AND_ISSUES_${moduleId.toString()}` : null,
-  //   async () => {
-  //     if (workspaceSlug && projectId && moduleId) {
-  //       // fetching the project display filters and display properties
-  //       await issueFilterStore.fetchUserProjectFilters(workspaceSlug, projectId);
-  //       await projectIssueFiltersStore.fetchUserProjectFilters(workspaceSlug, projectId);
-  //       // fetching the module filters
-  //       await moduleIssueFiltersStore.fetchModuleFilters(workspaceSlug, projectId, moduleId);
-  //       // fetching the module issues
-  //       await moduleIssueStore.fetchIssues(workspaceSlug, projectId, moduleId);
-  //     }
-  //   }
-  // );
-
   const {
     moduleIssues: { loader, getIssues, fetchIssues },
     moduleIssuesFilter: { issueFilters, fetchFilters },
@@ -64,16 +42,6 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   );
 
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
-
-  activeLayout &&
-    console.log(
-      "--- Module issues ---",
-      `workspaceSlug: ${workspaceSlug}, projectId: ${projectId}, moduleId: ${moduleId}`
-    );
-  activeLayout && console.log("activeLayout", activeLayout);
-  activeLayout && console.log("issueFilters", issueFilters);
-  activeLayout && console.log("getIssues", getIssues);
-  activeLayout && console.log("---------------------------------");
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
