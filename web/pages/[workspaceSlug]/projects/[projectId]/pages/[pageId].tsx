@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { PageService } from "services/page.service";
-import { useDebouncedCallback } from "use-debounce";
+import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
+import { useDebouncedCallback } from "use-debounce";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -24,7 +25,6 @@ import { NextPageWithLayout } from "types/app";
 import { IPage } from "types";
 // fetch-keys
 import { PAGE_DETAILS } from "constants/fetch-keys";
-import { FileService } from "services/file.service";
 
 // services
 const fileService = new FileService();
@@ -45,10 +45,14 @@ const PageDetailsPage: NextPageWithLayout = () => {
   });
 
   // =================== Fetching Page Details ======================
-  const { data: pageDetails, error } = useSWR(
-    workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId as string) : null,
-    workspaceSlug && projectId
-      ? () => pageService.getPageDetails(workspaceSlug as string, projectId as string, pageId as string)
+  const {
+    data: pageDetails,
+    mutate: mutatePageDetails,
+    error,
+  } = useSWR(
+    workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId.toString()) : null,
+    workspaceSlug && projectId && pageId
+      ? () => pageService.getPageDetails(workspaceSlug.toString(), projectId.toString(), pageId.toString())
       : null
   );
 
@@ -57,20 +61,23 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
     if (!formData.name || formData.name.length === 0 || formData.name === "") return;
 
-    await pageService.patchPage(workspaceSlug as string, projectId as string, pageId as string, formData).then(() => {
-      mutate<IPage>(
-        PAGE_DETAILS(pageId as string),
-        (prevData) => ({
-          ...prevData,
-          ...formData,
-        }),
-        false
-      );
-    });
+    await pageService
+      .patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), formData)
+      .then(() => {
+        mutatePageDetails(
+          (prevData) => ({
+            ...prevData,
+            ...formData,
+          }),
+          false
+        );
+      });
   };
 
   const createPage = async (payload: Partial<IPage>) => {
-    await pageService.createPage(workspaceSlug as string, projectId as string, payload);
+    if (!workspaceSlug || !projectId) return;
+
+    await pageService.createPage(workspaceSlug.toString(), projectId.toString(), payload);
   };
 
   // ================ Page Menu Actions ==================
@@ -84,79 +91,79 @@ const PageDetailsPage: NextPageWithLayout = () => {
   };
 
   const archivePage = async () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
     try {
-      await pageService.archivePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
-        mutate<IPage>(
-          PAGE_DETAILS(pageId as string),
-          (prevData) => {
-            if (prevData && prevData.is_locked) {
-              prevData.archived_at = renderDateFormat(new Date());
-              return prevData;
-            }
-          },
-          true
-        );
-      });
+      mutatePageDetails((prevData) => {
+        if (!prevData) return;
+
+        return {
+          ...prevData,
+          archived_at: renderDateFormat(new Date()),
+        };
+      }, true);
+
+      await pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
     } catch (e) {
-      console.log(e);
+      mutatePageDetails();
     }
   };
 
   const unArchivePage = async () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
     try {
-      await pageService.restorePage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
-        mutate<IPage>(
-          PAGE_DETAILS(pageId as string),
-          (prevData) => {
-            if (prevData && prevData.is_locked) {
-              prevData.archived_at = null;
-              return prevData;
-            }
-          },
-          true
-        );
-      });
+      mutatePageDetails((prevData) => {
+        if (!prevData) return;
+
+        return {
+          ...prevData,
+          archived_at: null,
+        };
+      }, false);
+
+      await pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
     } catch (e) {
-      console.log(e);
+      mutatePageDetails();
     }
   };
 
   // ========================= Page Lock ==========================
   const lockPage = async () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
     try {
-      await pageService.lockPage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
-        mutate<IPage>(
-          PAGE_DETAILS(pageId as string),
-          (prevData) => {
-            if (prevData && prevData.is_locked) {
-              prevData.is_locked = true;
-            }
-            return prevData;
-          },
-          true
-        );
-      });
+      mutatePageDetails((prevData) => {
+        if (!prevData) return;
+
+        return {
+          ...prevData,
+          is_locked: true,
+        };
+      }, false);
+
+      await pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
     } catch (e) {
-      console.log(e);
+      mutatePageDetails();
     }
   };
 
   const unlockPage = async () => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
     try {
-      await pageService.unlockPage(workspaceSlug as string, projectId as string, pageId as string).then(() => {
-        mutate<IPage>(
-          PAGE_DETAILS(pageId as string),
-          (prevData) => {
-            if (prevData && prevData.is_locked) {
-              prevData.is_locked = false;
-              return prevData;
-            }
-          },
-          true
-        );
-      });
+      mutatePageDetails((prevData) => {
+        if (!prevData) return;
+
+        return {
+          ...prevData,
+          is_locked: false,
+        };
+      }, false);
+
+      await pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
     } catch (e) {
-      console.log(e);
+      mutatePageDetails();
     }
   };
 
@@ -185,8 +192,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
           }}
         />
       ) : pageDetails ? (
-        <div className="flex h-full flex-col justify-between pl-5 pr-5">
-          <div className="h-full w-full">
+        <div className="flex h-full flex-col justify-between">
+          <div className="h-full w-full overflow-hidden">
             {pageDetails.is_locked || pageDetails.archived_at ? (
               <DocumentReadOnlyEditorWithRef
                 ref={editorRef}
