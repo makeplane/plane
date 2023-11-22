@@ -25,7 +25,11 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    moduleId: string;
+  };
 
   const {
     module: moduleStore,
@@ -36,6 +40,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
     projectState: projectStateStore,
     commandPalette: commandPaletteStore,
     projectLabel: { projectLabels },
+    moduleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
   const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
@@ -51,70 +56,45 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-
-      projectIssueFiltersStore.updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EFilterType.DISPLAY_FILTERS,
-        {
-          layout,
-        }
-      );
+      console.log("layout", layout);
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_FILTERS, { layout: layout });
     },
-    [projectIssueFiltersStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !projectId || !moduleId) return;
-
-      const newValues = moduleIssueFiltersStore.moduleFilters?.filters?.[key] ?? [];
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (moduleIssueFiltersStore.moduleFilters?.filters?.[key]?.includes(value))
-          newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      moduleIssueFiltersStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
-        [key]: newValues,
-      });
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.FILTERS, { [key]: newValues });
     },
-    [moduleId, moduleIssueFiltersStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-
-      projectIssueFiltersStore.updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EFilterType.DISPLAY_FILTERS,
-        {
-          ...updatedDisplayFilter,
-        }
-      );
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [projectIssueFiltersStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-
-      projectIssueFiltersStore.updateFilters(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        EFilterType.DISPLAY_PROPERTIES,
-        property
-      );
+      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_PROPERTIES, property);
     },
-    [projectIssueFiltersStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, moduleId, updateFilters]
   );
 
   const modulesList = projectId ? moduleStore.modules[projectId.toString()] : undefined;
@@ -187,7 +167,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={moduleIssueFiltersStore.moduleFilters?.filters ?? {}}
+              filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
@@ -199,13 +179,13 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={projectIssueFiltersStore.issueFilters?.displayFilters ?? {}}
-              displayProperties={projectIssueFiltersStore.issueFilters?.displayProperties ?? {}}
-              handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-              handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">

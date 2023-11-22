@@ -141,7 +141,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
   createIssue = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IIssue>) => {
     try {
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
@@ -177,7 +176,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
@@ -198,7 +196,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       return response;
@@ -220,7 +217,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const user = this.rootStore.user.currentUser || undefined;
       const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       if (this.issues) {

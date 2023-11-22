@@ -50,20 +50,20 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
 
   const {
     moduleIssues: { loader, getIssues, fetchIssues },
-    moduleIssuesFilter: { issueFilters, fetchUserProjectFilters },
+    moduleIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
   useSWR(
     workspaceSlug && projectId && moduleId ? `MODULE_ISSUES_V3_${workspaceSlug}_${projectId}_${moduleId}` : null,
     async () => {
       if (workspaceSlug && projectId && moduleId) {
-        await fetchUserProjectFilters(workspaceSlug, projectId, moduleId);
+        await fetchFilters(workspaceSlug, projectId, moduleId);
         await fetchIssues(workspaceSlug, projectId, moduleId, getIssues ? "mutation" : "init-loader");
       }
     }
   );
 
-  const activeLayout = issueFilters?.displayFilters?.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   activeLayout &&
     console.log(
