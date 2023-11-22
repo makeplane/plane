@@ -41,7 +41,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && cycleId) {
         await fetchFilters(workspaceSlug, projectId, cycleId);
-        // await fetchIssues(workspaceSlug, projectId, cycleId, getIssues ? "mutation" : "init-loader");
+        await fetchIssues(workspaceSlug, projectId, cycleId, getIssues ? "mutation" : "init-loader");
       }
     }
   );
