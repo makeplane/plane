@@ -3,17 +3,17 @@ import { action, observable, makeObservable, computed, runInAction, autorun } fr
 import { IssueBaseStore } from "store/issues";
 // services
 import { IssueService } from "services/issue";
-import { ModuleService } from "services/module.service";
+import { CycleService } from "services/cycle.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
 import { RootStore } from "store/root";
 
-export interface IModuleIssuesStore {
+export interface ICycleIssuesStore {
   // observable
   loader: TLoader;
-  issues: { [module_id: string]: IIssueResponse } | undefined;
+  issues: { [cycle_id: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
@@ -34,7 +34,7 @@ export interface IModuleIssuesStore {
   ) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => Promise<IIssue>;
-  removeIssueFromModule: (
+  removeIssueFromCycle: (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
@@ -43,13 +43,13 @@ export interface IModuleIssuesStore {
   ) => Promise<IIssue>;
 }
 
-export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesStore {
+export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStore {
   loader: TLoader = "init-loader";
-  issues: { [module_id: string]: IIssueResponse } | undefined = undefined;
+  issues: { [cycle_id: string]: IIssueResponse } | undefined = undefined;
   // root store
   rootStore;
   // service
-  moduleService;
+  cycleService;
   issueService;
 
   constructor(_rootStore: RootStore) {
@@ -68,12 +68,12 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       updateIssue: action,
       removeIssue: action,
       quickAddIssue: action,
-      removeIssueFromModule: action,
+      removeIssueFromCycle: action,
     });
 
     this.rootStore = _rootStore;
     this.issueService = new IssueService();
-    this.moduleService = new ModuleService();
+    this.cycleService = new CycleService();
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
@@ -130,7 +130,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       this.loader = loadType;
 
       const params = this.rootStore?.projectIssuesFilter?.appliedFilters;
-      const response = await this.moduleService.getV3ModuleIssues(workspaceSlug, projectId, moduleId, params);
+      const response = await this.cycleService.getV3ModuleIssues(workspaceSlug, projectId, moduleId, params);
 
       const _issues = { ...this.issues, [moduleId]: { ...response } };
 
@@ -150,7 +150,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
   createIssue = async (workspaceSlug: string, projectId: string, moduleId: string, data: Partial<IIssue>) => {
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+      const issueToCycle = await this.cycleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
         issues: [response.id],
       });
 
@@ -163,7 +163,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      return issueToModule;
+      return issueToCycle;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, moduleId, "mutation");
       throw error;
@@ -250,7 +250,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
     }
   };
 
-  removeIssueFromModule = async (
+  removeIssueFromCycle = async (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
@@ -267,12 +267,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      const response = await this.moduleService.removeIssueFromModule(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        issueBridgeId
-      );
+      const response = await this.cycleService.removeIssueFromCycle(workspaceSlug, projectId, moduleId, issueBridgeId);
 
       return response;
     } catch (error) {

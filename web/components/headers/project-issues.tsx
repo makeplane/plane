@@ -60,7 +60,6 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      console.log("layout", layout);
       updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout });
     },
     [workspaceSlug, projectId, updateFilters]

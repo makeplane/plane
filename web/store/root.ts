@@ -128,6 +128,12 @@ import {
   // module issues filter
   IModuleIssuesFilterStore,
   ModuleIssuesFilterStore,
+  // module issues
+  ICycleIssuesStore,
+  CycleIssuesStore,
+  // module issues filter
+  ICycleIssuesFilterStore,
+  CycleIssuesFilterStore,
 } from "store/issues";
 
 import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
@@ -218,6 +224,9 @@ export class RootStore {
 
   moduleIssues: IModuleIssuesStore;
   moduleIssuesFilter: IModuleIssuesFilterStore;
+
+  cycleIssues: ICycleIssuesStore;
+  cycleIssuesFilter: ICycleIssuesFilterStore;
   // project v3 issue and issue-filters ends
 
   cycleIssueFilters: ICycleIssueFiltersStore;
@@ -302,6 +311,9 @@ export class RootStore {
 
     this.moduleIssues = new ModuleIssuesStore(this);
     this.moduleIssuesFilter = new ModuleIssuesFilterStore(this);
+
+    this.cycleIssues = new CycleIssuesStore(this);
+    this.cycleIssuesFilter = new CycleIssuesFilterStore(this);
     // project v3 issue and issue-filters ends
 
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
