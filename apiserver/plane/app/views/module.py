@@ -283,9 +283,10 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueViewSet(BaseViewSet):
+class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
+    webhook_event = "module_issue"
 
     filterset_fields = [
         "issue__labels__id",

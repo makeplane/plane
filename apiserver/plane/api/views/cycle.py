@@ -310,7 +310,7 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     serializer_class = CycleIssueSerializer
     model = CycleIssue
-    webhook_event = "cycle"
+    webhook_event = "cycle_issue"
     permission_classes = [
         ProjectEntityPermission,
     ]
