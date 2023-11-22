@@ -55,7 +55,6 @@ export const CycleListLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
-      showLoader={false}
     />
   );
 });

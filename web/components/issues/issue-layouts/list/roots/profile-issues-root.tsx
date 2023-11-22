@@ -43,7 +43,6 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
-      showLoader={false}
     />
   );
 });

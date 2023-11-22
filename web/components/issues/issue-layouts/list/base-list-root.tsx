@@ -22,9 +22,9 @@ enum EIssueActions {
 }
 
 interface IBaseListRoot {
-  issueFilterStore: IProjectIssuesFilterStore;
+  issueFilterStore: IProjectIssuesFilterStore | any;
   // IssueFilterStore | IIssueFilterStore | IProfileIssueFilterStore | IArchivedIssueFilterStore;
-  issueStore: IProjectIssuesStore;
+  issueStore: IProjectIssuesStore | any;
   // | IProfileIssueStore
   // | IModuleIssueStore
   // | ICycleIssueStore
@@ -107,6 +107,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             showEmptyGroup={showEmptyGroup}
             enableIssueQuickAdd={true}
             isReadonly={false}
+            quickAddCallback={issueStore.quickAddIssue}
           />
         </div>
       )}
