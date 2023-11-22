@@ -11,7 +11,7 @@ import { ConfirmProjectMemberRemove } from "components/project";
 // ui
 import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
-import { ChevronDown, XCircle } from "lucide-react";
+import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
 import { ROLE } from "constants/workspace";
 // types
@@ -116,7 +116,15 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             ) : (
               <h4 className="text-sm cursor-default">{member.display_name || member.email}</h4>
             )}
-            <p className="mt-0.5 text-xs text-custom-sidebar-text-300">{member.email ?? member.display_name}</p>
+            <div className="flex items-center">
+              <p className="text-xs text-custom-text-300">{member.display_name}</p>
+              {isAdmin && (
+                <>
+                  <Dot height={16} width={16} className="text-custom-text-300" />
+                  <p className="text-xs text-custom-text-300">{member.email}</p>
+                </>
+              )}
+            </div>
           </div>
         </div>
 

@@ -56,7 +56,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer(({ sea
     );
 
   return (
-    <div className="divide-y-[0.5px] divide-custom-border-200">
+    <div className="divide-y-[0.5px] divide-custom-border-100">
       {workspaceMembersWithInvitations.length > 0
         ? searchedMembers?.map((member) => <WorkspaceMembersListItem key={member.id} member={member} />)
         : null}

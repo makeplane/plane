@@ -168,7 +168,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             onClick: () => {
               markNotificationReadStatusToggle(notification.id).then(() => {
                 setToastAlert({
-                  title: notification.read_at ? "Notification marked as unread" : "Notification marked as read",
+                  title: notification.read_at ? "Notification marked as read" : "Notification marked as unread",
                   type: "success",
                 });
               });
