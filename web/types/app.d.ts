@@ -11,4 +11,6 @@ export interface IAppConfig {
   slack_client_id: string | null;
   posthog_api_key: string | null;
   posthog_host: string | null;
+  has_openai_configured: boolean;
+  has_unsplash_configured: boolean;
 }

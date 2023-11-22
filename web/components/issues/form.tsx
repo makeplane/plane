@@ -94,28 +94,29 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     fieldsToShow,
     handleFormDirty,
   } = props;
-
+  // states
   const [stateModal, setStateModal] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
-
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
+  // refs
   const editorRef = useRef<any>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user: userStore } = useMobxStore();
-
+  // store
+  const {
+    user: userStore,
+    appConfig: { envConfig },
+  } = useMobxStore();
   const user = userStore.currentUser;
-
+  console.log("envConfig", envConfig);
+  // hooks
   const editorSuggestion = useEditorSuggestions();
-
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     formState: { errors, isSubmitting, isDirty },
     handleSubmit,
@@ -396,21 +397,23 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                       />
                     )}
                   />
-                  <GptAssistantModal
-                    isOpen={gptAssistantModal}
-                    handleClose={() => {
-                      setGptAssistantModal(false);
-                      // this is done so that the title do not reset after gpt popover closed
-                      reset(getValues());
-                    }}
-                    inset="top-2 left-0"
-                    content=""
-                    htmlContent={watch("description_html")}
-                    onResponse={(response) => {
-                      handleAiAssistance(response);
-                    }}
-                    projectId={projectId}
-                  />
+                  {envConfig?.has_openai_configured && (
+                    <GptAssistantModal
+                      isOpen={gptAssistantModal}
+                      handleClose={() => {
+                        setGptAssistantModal(false);
+                        // this is done so that the title do not reset after gpt popover closed
+                        reset(getValues());
+                      }}
+                      inset="top-2 left-0"
+                      content=""
+                      htmlContent={watch("description_html")}
+                      onResponse={(response) => {
+                        handleAiAssistance(response);
+                      }}
+                      projectId={projectId}
+                    />
+                  )}
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-2">

@@ -1,10 +1,10 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { ToggleSwitch } from "@plane/ui";
-import { Pencil, XCircle } from "lucide-react";
-import { IWebhook } from "types";
 import Link from "next/link";
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
+// types
+import { IWebhook } from "types";
 
 interface IWebhookListItem {
   workspaceSlug: string;
