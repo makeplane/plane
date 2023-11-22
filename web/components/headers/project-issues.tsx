@@ -31,6 +31,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     projectState: projectStateStore,
     inbox: inboxStore,
     commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement }
   } = useMobxStore();
 
   const activeLayout = issueFilterStore.userDisplayFilters.layout;
@@ -211,7 +212,12 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button onClick={() => commandPaletteStore.toggleCreateIssueModal(true)} size="sm" prependIcon={<Plus />}>
+          <Button onClick={() => 
+            {
+              setTrackElement("PROJECT_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true)
+            }
+            } size="sm" prependIcon={<Plus />}>
             Add Issue
           </Button>
         </div>

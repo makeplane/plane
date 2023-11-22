@@ -20,8 +20,6 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
-// track events
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -68,6 +66,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const {
     project: projectStore,
     workspaceMember: { workspaceMembers },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -132,11 +131,11 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
         const newPayload = {
-          ...payload,
-          id: res.id
+          ...res,
+          state: "SUCCESS"
         }
-        trackEvent(
-          "CREATE_PROJECT",
+        postHogEventTracker(
+          "PROJECT_CREATE",
           newPayload,
         )
         setToastAlert({
@@ -151,11 +150,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       })
       .catch((err) => {
         Object.keys(err.data).map((key) =>
+        {
           setToastAlert({
             type: "error",
             title: "Error!",
             message: err.data[key],
-          })
+          });
+          postHogEventTracker(
+            "PROJECT_CREATE",
+            {
+              state: "FAILED"
+            },
+          )
+        }
         );
       });
   };

@@ -20,7 +20,6 @@ import { IUser, TUserProjectRole } from "types";
 import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
 // constants
 import { ROLE } from "constants/workspace";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -60,7 +59,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { user: userStore } = useMobxStore();
+  const { user: userStore, trackEvent: { postHogEventTracker } } = useMobxStore();
   const userRole = userStore.currentProjectRole;
 
   const { data: people } = useSWR(
@@ -95,9 +94,13 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
       .then((res) => {
         setIsOpen(false);
-        trackEvent(
+        postHogEventTracker(
           'PROJECT_MEMBER_INVITE',
-        )
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        );
         setToastAlert({
           title: "Success",
           type: "success",
@@ -107,6 +110,12 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
       })
       .catch((error) => {
         console.log(error);
+        postHogEventTracker(
+          'PROJECT_MEMBER_INVITE',
+          {
+            state: "FAILED",
+          }
+        );
       })
       .finally(() => {
         reset(defaultValues);

@@ -23,6 +23,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   const {
     project: { workspaceProjects },
     commandPalette: { toggleCreateProjectModal },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
 
   return (
@@ -64,7 +65,11 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
               text: "New Project",
-              onClick: () => toggleCreateProjectModal(true),
+              onClick: () => 
+              {
+                setTrackElement("ANALYTICS_EMPTY_STATE");
+                toggleCreateProjectModal(true)
+              }
             }}
           />
         </>

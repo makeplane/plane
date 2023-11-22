@@ -18,7 +18,6 @@ import { ROLE } from "constants/workspace";
 import { IWorkspaceMemberInvitation } from "types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -34,6 +33,7 @@ const Invitations: React.FC<Props> = (props) => {
   const {
     workspace: workspaceStore,
     user: { currentUser, updateCurrentUser },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
 
   const {
@@ -65,13 +65,17 @@ const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        trackEvent("WORKSPACE_USER_INVITE_ACCEPT", res);
+        postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", {...res, state: "SUCCESS"});
         await mutateInvitations();
         await workspaceStore.fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
         await handleNextStep();
       })
+      .catch((error) => {
+        console.log(error);
+        postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", { state: "FAILED" });
+      }) 
       .finally(() => setIsJoiningWorkspaces(false));
   };
 

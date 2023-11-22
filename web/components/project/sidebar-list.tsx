@@ -26,7 +26,7 @@ export const ProjectSidebarList: FC = observer(() => {
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const { theme: themeStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { theme: themeStore, project: projectStore, commandPalette: commandPaletteStore, trackEvent: {setTrackElement} } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -141,6 +141,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             <button
                               className="group-hover:opacity-100 opacity-0"
                               onClick={() => {
+                                setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK")
                                 setIsFavoriteProjectCreate(true);
                                 setIsProjectModalOpen(true);
                               }}
@@ -263,7 +264,12 @@ export const ProjectSidebarList: FC = observer(() => {
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
-            onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
+            onClick={() => 
+              {
+                setTrackElement("APP_SIDEBAR");
+                commandPaletteStore.toggleCreateProjectModal(true)
+              }
+            }
           >
             <Plus className="h-5 w-5" />
             {!isCollapsed && "Add Project"}

@@ -110,6 +110,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
   const {
     user: userStore,
     appConfig: { envConfig },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
   const user = userStore.currentUser;
   console.log("envConfig", envConfig);
@@ -173,6 +174,13 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
       description_html: "<p></p>",
     });
     editorRef?.current?.clearEditor();
+    postHogEventTracker(
+      "ISSUE_CREATE",
+      {
+        formData,
+        state: "SUCCESS"
+      }
+    );
   };
 
   const handleAiAssistance = async (response: string) => {

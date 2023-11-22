@@ -342,7 +342,8 @@ export class ProjectStore implements IProjectStore {
     } catch (error) {
       this.loader = false;
       this.error = error;
-      return error;
+
+      throw error;
     }
   };
 

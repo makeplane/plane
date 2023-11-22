@@ -54,6 +54,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
     theme: { sidebarCollapsed },
     workspace: { workspaces, currentWorkspace: activeWorkspace },
     user: { currentUser, updateCurrentUser, isUserInstanceAdmin },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
@@ -201,6 +202,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         as="button"
                         type="button"
                         onClick={() => {
+                          setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
                           router.push("/create-workspace");
                         }}
                         className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"

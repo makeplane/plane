@@ -75,7 +75,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store
-  const { project: projectStore, theme: themeStore } = useMobxStore();
+  const { project: projectStore, theme: themeStore, trackEvent: { setTrackElement } } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -118,6 +118,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   };
 
   const handleLeaveProject = () => {
+    setTrackElement("APP_SIDEBAR_PROJECT_DROPDOWN");
     setLeaveProjectModal(true);
   };
 

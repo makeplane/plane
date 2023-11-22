@@ -30,7 +30,7 @@ export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
   // store
-  const { commandPalette, theme: themeStore } = useMobxStore();
+  const { commandPalette, theme: themeStore, trackEvent: {setTrackElement} } = useMobxStore();
   const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
@@ -112,8 +112,10 @@ export const CommandPalette: FC = observer(() => {
         }
       } else {
         if (keyPressed === "c") {
+          setTrackElement("SHORTCUT_KEY");
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
+          setTrackElement("SHORTCUT_KEY");
           toggleCreateProjectModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
