@@ -12,6 +12,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
 import { UserService } from "services/user.service";
 import { useTheme } from "next-themes";
+import { mutate } from "swr";
 
 type Props = {
   isOpen: boolean;
@@ -33,8 +34,7 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
     await authService
       .signOut()
       .then(() => {
-        authService.purgeAccessToken();
-        authService.purgeRefreshToken();
+        mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
         router.push("/");
       })
