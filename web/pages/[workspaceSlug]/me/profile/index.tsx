@@ -160,7 +160,7 @@ const ProfilePage: NextPageWithLayout = () => {
       />
       {myProfile ? (
         <form onSubmit={handleSubmit(onSubmit)} className="h-full w-full">
-          <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
+          <div className={`flex flex-col gap-8 pr-9 py-9 w-full h-full overflow-y-auto`}>
             <div className="relative h-44 w-full mt-6">
               <img
                 src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
