@@ -19,7 +19,9 @@ type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
   disableUserActions: boolean;
   enableQuickCreateIssue?: boolean;
 };

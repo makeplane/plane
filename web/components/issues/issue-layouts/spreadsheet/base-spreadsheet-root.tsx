@@ -5,6 +5,8 @@ import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { useRouter } from "next/router";
 import { useMobxStore } from "lib/mobx/store-provider";
 import {
+  ICycleIssuesFilterStore,
+  ICycleIssuesStore,
   IModuleIssuesFilterStore,
   IModuleIssuesStore,
   IProjectIssuesFilterStore,
@@ -14,8 +16,8 @@ import { observer } from "mobx-react-lite";
 import { EFilterType, TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseSpreadsheetRoot {
-  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore;
+  issueFiltersStore: IProjectIssuesFilterStore | IModuleIssuesFilterStore | ICycleIssuesFilterStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {

@@ -19,7 +19,9 @@ type Props = {
   handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
-  quickAddCallback?: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  quickAddCallback?:
+    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
+    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
 };
 
 export const CalendarWeekDays: React.FC<Props> = observer((props) => {
