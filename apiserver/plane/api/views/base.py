@@ -7,7 +7,6 @@ from django.conf import settings
 from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils import timezone
-from django.core.serializers.json import DjangoJSONEncoder
 
 # Third party imports
 from rest_framework.views import APIView
@@ -42,6 +41,8 @@ class WebhookMixin:
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
+
+        # Check for the case should webhook be sent
         if (
             self.webhook_event
             and self.request.method in ["POST", "PATCH"]
@@ -51,13 +52,30 @@ class WebhookMixin:
             object_id = (
                 response.data.get("id") if isinstance(response.data, dict) else None
             )
-
+            # Push the object to delay
             send_webhook.delay(
                 event=self.webhook_event,
                 event_id=object_id,
                 action=self.request.method,
                 slug=self.workspace_slug,
             )
+
+        # Check for the case should webhook be sent
+        if (
+            self.webhook_event
+            and self.request.method in ["DELETE"]
+            and response.status_code in [204]
+        ):
+            # Get the id
+            object_id = self.kwargs.get("pk")
+            # Push the object to delay
+            send_webhook.delay(
+                event=self.webhook_event,
+                event_id=object_id,
+                action=self.request.method,
+                slug=self.workspace_slug,
+            )
+
         return response
 
 

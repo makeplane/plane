@@ -590,7 +590,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 member_with_role=Count(
                     "project_projectmember",
                     filter=Q(
-                        project_projectmember__member_id=request.user.id,
+                        project_projectmember__member_id=workspace_member.id,
                         project_projectmember__role=20,
                     ),
                 ),

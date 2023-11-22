@@ -40,7 +40,6 @@ from plane.db.models import (
     IssueComment,
     IssueActivity,
 )
-from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.api.serializers import (
     IssueSerializer,
@@ -452,7 +451,7 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
-    webhook_event = "issue-comment"
+    webhook_event = "issue_comment"
     permission_classes = [
         ProjectLitePermission,
     ]

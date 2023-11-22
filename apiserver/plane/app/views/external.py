@@ -1,6 +1,6 @@
 # Python imports
 import requests
-
+import os
 # Third party imports
 from openai import OpenAI
 from rest_framework.response import Response
@@ -85,14 +85,22 @@ class ReleaseNotesEndpoint(BaseAPIView):
 class UnsplashEndpoint(BaseAPIView):
 
     def get(self, request):
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        unsplash_access_key = get_configuration_value(instance_configuration, "UNSPLASH_ACCESS_KEY", os.environ.get("UNSPLASH_ACCESS_KEY"))
+
+        # Check unsplash access key
+        if not unsplash_access_key:
+            return Response([], status=status.HTTP_200_OK)
+
+        # Query parameters
         query = request.GET.get("query", False)
         page = request.GET.get("page", 1)
         per_page = request.GET.get("per_page", 20)
 
         url = (
-            f"https://api.unsplash.com/search/photos/?client_id={settings.UNSPLASH_ACCESS_KEY}&query={query}&page=${page}&per_page={per_page}"
+            f"https://api.unsplash.com/search/photos/?client_id={unsplash_access_key}&query={query}&page=${page}&per_page={per_page}"
             if query
-            else f"https://api.unsplash.com/photos/?client_id={settings.UNSPLASH_ACCESS_KEY}&page={page}&per_page={per_page}"
+            else f"https://api.unsplash.com/photos/?client_id={unsplash_access_key}&page={page}&per_page={per_page}"
         )
 
         headers = {
