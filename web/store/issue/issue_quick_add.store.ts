@@ -32,7 +32,7 @@ export class IssueQuickAddStore implements IIssueQuickAddStore {
   createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
     try {
       const user = this.rootStore.user.currentUser ?? undefined;
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
       return response;
     } catch (error) {
       throw error;

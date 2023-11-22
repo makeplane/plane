@@ -11,7 +11,7 @@ import { IntegrationService } from "services/integrations";
 import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // ui
-import { Button, Loader } from "@plane/ui";
+import { Button, Loader, Tooltip } from "@plane/ui";
 // icons
 import GithubLogo from "public/services/github.png";
 import SlackLogo from "public/services/slack.png";
@@ -46,7 +46,10 @@ const integrationService = new IntegrationService();
 export const SingleIntegrationCard: React.FC<Props> = observer(({ integration }) => {
   const {
     appConfig: { envConfig },
+    user: { currentWorkspaceRole },
   } = useMobxStore();
+
+  const isUserAdmin = currentWorkspaceRole === 20;
 
   const [deletingIntegration, setDeletingIntegration] = useState(false);
 
@@ -127,13 +130,40 @@ export const SingleIntegrationCard: React.FC<Props> = observer(({ integration })
 
       {workspaceIntegrations ? (
         isInstalled ? (
-          <Button variant="danger" onClick={handleRemoveIntegration} loading={deletingIntegration}>
-            {deletingIntegration ? "Uninstalling..." : "Uninstall"}
-          </Button>
+          <Tooltip
+            disabled={isUserAdmin}
+            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+          >
+            <Button
+              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
+              variant="danger"
+              onClick={() => {
+                if (!isUserAdmin) return;
+                handleRemoveIntegration;
+              }}
+              disabled={!isUserAdmin}
+              loading={deletingIntegration}
+            >
+              {deletingIntegration ? "Uninstalling..." : "Uninstall"}
+            </Button>
+          </Tooltip>
         ) : (
-          <Button variant="primary" onClick={startAuth} loading={isInstalling}>
-            {isInstalling ? "Installing..." : "Install"}
-          </Button>
+          <Tooltip
+            disabled={isUserAdmin}
+            tooltipContent={!isUserAdmin ? "You don't have permission to perform this" : null}
+          >
+            <Button
+              className={`${!isUserAdmin ? "hover:cursor-not-allowed" : ""}`}
+              variant="primary"
+              onClick={() => {
+                if (!isUserAdmin) return;
+                startAuth();
+              }}
+              loading={isInstalling}
+            >
+              {isInstalling ? "Installing..." : "Install"}
+            </Button>
+          </Tooltip>
         )
       ) : (
         <Loader>

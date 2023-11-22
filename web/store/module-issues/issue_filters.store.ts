@@ -187,7 +187,7 @@ export class ModuleIssueFiltersStore implements IModuleIssueFiltersStore {
 
       const user = this.rootStore.user.currentUser ?? undefined;
 
-      await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, payload, user);
+      await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, payload);
     } catch (error) {
       this.fetchModuleFilters(workspaceSlug, projectId, moduleId);
 

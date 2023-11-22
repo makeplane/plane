@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "plane.web",
     "plane.middleware",
     "plane.license",
-    "plane.proxy",
+    "plane.api",
     # Third-party things
     "rest_framework",
     "rest_framework.authtoken",
@@ -75,7 +75,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_THROTTLE_CLASSES": ("plane.proxy.rate_limit.ApiKeyRateThrottle",),
+    "DEFAULT_THROTTLE_CLASSES": ("plane.api.rate_limit.ApiKeyRateThrottle",),
     "DEFAULT_THROTTLE_RATES": {
         "api_key": "60/minute",
     },
@@ -149,7 +149,7 @@ else:
 
 # Redis Config
 REDIS_URL = os.environ.get("REDIS_URL")
-REDIS_SSL = "rediss" in REDIS_URL
+REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
 if REDIS_SSL:
     CACHES = {
@@ -225,6 +225,7 @@ STORAGES["default"] = {
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "access-key")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "secret-key")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME", "uploads")
+AWS_REGION = os.environ.get("AWS_REGION", "")
 AWS_DEFAULT_ACL = "public-read"
 AWS_QUERYSTRING_AUTH = False
 AWS_S3_FILE_OVERWRITE = False
@@ -285,6 +286,7 @@ else:
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
+    "plane.bgtasks.file_asset_task",
 )
 
 # Sentry Settings

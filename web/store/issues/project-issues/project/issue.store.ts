@@ -123,7 +123,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
   createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
     try {
       const user = this.rootStore.user.currentUser || undefined;
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -153,7 +153,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       });
 
       const user = this.rootStore.user.currentUser || undefined;
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data, user);
+      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
     } catch (error) {
@@ -174,7 +174,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       });
 
       const user = this.rootStore.user.currentUser || undefined;
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId, user);
+      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       return response;
     } catch (error) {
@@ -195,7 +195,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       });
 
       const user = this.rootStore.user.currentUser || undefined;
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data, user);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       if (this.issues) {
         delete this.issues[projectId][data.id as keyof IIssue];

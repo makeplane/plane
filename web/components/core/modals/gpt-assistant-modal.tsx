@@ -4,10 +4,8 @@ import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AIService } from "services/ai.service";
-import { TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
-import useUserAuth from "hooks/use-user-auth";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
@@ -34,26 +32,14 @@ type FormData = {
 
 // services
 const aiService = new AIService();
-const trackEventService = new TrackEventService();
 
-export const GptAssistantModal: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  inset = "top-0 left-0",
-  content,
-  htmlContent,
-  onResponse,
-  projectId,
-  block,
-  issue,
-}) => {
+export const GptAssistantModal: React.FC<Props> = (props) => {
+  const { isOpen, handleClose, inset = "top-0 left-0", content, htmlContent, onResponse, projectId } = props;
   const [response, setResponse] = useState("");
   const [invalidResponse, setInvalidResponse] = useState(false);
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user } = useUserAuth();
 
   const editorRef = useRef<any>(null);
 
@@ -92,15 +78,10 @@ export const GptAssistantModal: React.FC<Props> = ({
     }
 
     await aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: content && content !== "" ? content : htmlContent ?? "",
-          task: formData.task,
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: content && content !== "" ? content : htmlContent ?? "",
+        task: formData.task,
+      })
       .then((res) => {
         setResponse(res.response_html);
         setFocus("task");
@@ -193,10 +174,6 @@ export const GptAssistantModal: React.FC<Props> = ({
             onClick={() => {
               onResponse(response);
               onClose();
-              if (block && user)
-                trackEventService.trackUseGPTResponseEvent(block, "USE_GPT_RESPONSE_IN_PAGE_BLOCK", user);
-              else if (issue && user)
-                trackEventService.trackUseGPTResponseEvent(issue, "USE_GPT_RESPONSE_IN_ISSUE", user);
             }}
           >
             Use this response

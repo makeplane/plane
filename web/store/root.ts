@@ -134,6 +134,8 @@ import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-iss
 import { ModuleIssueFiltersStore, IModuleIssueFiltersStore } from "store/module-issues";
 
 import { IMentionsStore, MentionsStore } from "store/editor";
+// pages
+import { PageStore, IPageStore } from "store/page.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -221,6 +223,8 @@ export class RootStore {
   cycleIssueFilters: ICycleIssueFiltersStore;
   moduleIssueFilters: IModuleIssueFiltersStore;
 
+  page: IPageStore;
+
   constructor() {
     this.instance = new InstanceStore(this);
 
@@ -303,5 +307,7 @@ export class RootStore {
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
 
     this.moduleIssueFilters = new ModuleIssueFiltersStore(this);
+
+    this.page = new PageStore(this);
   }
 }
