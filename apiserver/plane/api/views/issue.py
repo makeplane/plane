@@ -450,7 +450,7 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
-    webhook_event = "issue-comment"
+    webhook_event = "issue_comment"
     permission_classes = [
         ProjectLitePermission,
     ]

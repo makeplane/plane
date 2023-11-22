@@ -176,13 +176,13 @@ def send_webhook(event, event_id, action, slug):
         if event == "issue":
             webhooks = webhooks.filter(issue=True)
 
-        if event == "module":
+        if event == "module" or event == "module_issue":
             webhooks = webhooks.filter(module=True)
 
-        if event == "cycle":
+        if event == "cycle" or event == "cycle_issue":
             webhooks = webhooks.filter(cycle=True)
 
-        if event == "issue-comment":
+        if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
         for webhook in webhooks:
