@@ -688,7 +688,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
         )
         issue_id = cycle_issue.issue_id
-        cycle_issue.delete()
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
@@ -698,11 +697,12 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 }
             ),
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
+            issue_id=str(cycle_issue.issue_id),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        cycle_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
