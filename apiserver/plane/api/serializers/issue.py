@@ -308,5 +308,5 @@ class IssueActivitySerializer(BaseSerializer):
         model = IssueActivity
         exclude = [
             "created_by",
-            "udpated_by",
+            "updated_by",
         ]

@@ -19,6 +19,7 @@ import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   handleClose: () => void;
@@ -40,19 +41,24 @@ const pagesService = new PageService();
 const issueService = new IssueService();
 const fileService = new FileService();
 
-export const CreateUpdateBlockInline: FC<Props> = ({ handleClose, data, handleAiAssistance, setIsSyncing, focus }) => {
+export const CreateUpdateBlockInline: FC<Props> = (props) => {
+  const { handleClose, data, handleAiAssistance, setIsSyncing, focus } = props;
+  // states
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
-
+  // store
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
+  // refs
   const editorRef = useRef<any>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
-
+  // hooks
   const editorSuggestion = useEditorSuggestions();
-
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
     control,
@@ -222,9 +228,7 @@ export const CreateUpdateBlockInline: FC<Props> = ({ handleClose, data, handleAi
         else handleSubmit(createPageBlock)();
       }
     };
-
     window.addEventListener("keydown", submitForm);
-
     return () => {
       window.removeEventListener("keydown", submitForm);
     };
@@ -345,26 +349,28 @@ export const CreateUpdateBlockInline: FC<Props> = ({ handleClose, data, handleAi
           </Button>
         </div>
       </form>
-      <GptAssistantModal
-        block={data ? data : undefined}
-        isOpen={gptAssistantModal}
-        handleClose={() => setGptAssistantModal(false)}
-        inset="top-8 left-0"
-        content={watch("description_html")}
-        htmlContent={watch("description_html")}
-        onResponse={(response) => {
-          if (data && handleAiAssistance) {
-            handleAiAssistance(response);
-            editorRef.current?.setEditorValue(`${watch("description_html")}<p>${response}</p>` ?? "");
-          } else {
-            setValue("description", {});
-            setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
+      {envConfig?.has_openai_configured && (
+        <GptAssistantModal
+          block={data ? data : undefined}
+          isOpen={gptAssistantModal}
+          handleClose={() => setGptAssistantModal(false)}
+          inset="top-8 left-0"
+          content={watch("description_html")}
+          htmlContent={watch("description_html")}
+          onResponse={(response) => {
+            if (data && handleAiAssistance) {
+              handleAiAssistance(response);
+              editorRef.current?.setEditorValue(`${watch("description_html")}<p>${response}</p>` ?? "");
+            } else {
+              setValue("description", {});
+              setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
 
-            editorRef.current?.setEditorValue(watch("description_html") ?? "");
-          }
-        }}
-        projectId={projectId?.toString() ?? ""}
-      />
+              editorRef.current?.setEditorValue(watch("description_html") ?? "");
+            }
+          }}
+          projectId={projectId?.toString() ?? ""}
+        />
+      )}
     </div>
   );
 };

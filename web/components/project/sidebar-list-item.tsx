@@ -1,11 +1,22 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { DraggableProvided, DraggableStateSnapshot } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 // icons
-import { MoreVertical, PenSquare, LinkIcon, Star, FileText, Settings, Share2, LogOut, ChevronDown } from "lucide-react";
+import {
+  MoreVertical,
+  PenSquare,
+  LinkIcon,
+  Star,
+  FileText,
+  Settings,
+  Share2,
+  LogOut,
+  ChevronDown,
+  MoreHorizontal,
+} from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // helpers
@@ -17,6 +28,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 type Props = {
   project: IProject;
@@ -72,11 +84,14 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
+  const [isMenuActive, setIsMenuActive] = useState(false);
 
   const isAdmin = project.member_role === 20;
   const isViewerOrGuest = project.member_role === 10 || project.member_role === 5;
 
   const isCollapsed = themeStore.sidebarCollapsed;
+
+  const actionSectionRef = useRef<HTMLDivElement | null>(null);
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -110,6 +125,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
     setLeaveProjectModal(false);
   };
 
+  useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} project={project} onClose={() => setPublishModal(false)} />
@@ -120,7 +137,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
             <div
               className={`group relative text-custom-sidebar-text-10 px-2 py-1 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
                 snapshot?.isDragging ? "opacity-60" : ""
-              }`}
+              } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
             >
               {provided && (
                 <Tooltip
@@ -131,7 +148,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     type="button"
                     className={`absolute top-1/2 -translate-y-1/2 -left-2.5 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
                       isCollapsed ? "" : "group-hover:!flex"
-                    } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""}`}
+                    } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""} ${
+                      isMenuActive ? "!flex" : ""
+                    }`}
                     {...provided?.dragHandleProps}
                   >
                     <MoreVertical className="h-3.5" />
@@ -169,9 +188,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   </div>
                   {!isCollapsed && (
                     <ChevronDown
-                      className={`h-4 w-4 flex-shrink-0 ${
-                        open ? "rotate-180" : ""
-                      } !hidden group-hover:!block text-custom-sidebar-text-400 duration-300`}
+                      className={`h-4 w-4 flex-shrink-0 hidden ${open ? "rotate-180" : ""} ${
+                        isMenuActive ? "!block" : ""
+                      }  group-hover:!block mb-0.5 text-custom-sidebar-text-400 duration-300`}
                     />
                   )}
                 </Disclosure.Button>
@@ -179,7 +198,16 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
               {!isCollapsed && (
                 <CustomMenu
-                  className="hidden group-hover:block flex-shrink-0"
+                  customButton={
+                    <div
+                      ref={actionSectionRef}
+                      className="w-full cursor-pointer text-custom-sidebar-text-400 px-1 mt-1.5 my-auto duration-300"
+                      onClick={() => setIsMenuActive(!isMenuActive)}
+                    >
+                      <MoreHorizontal className="h-3.5 w-3.5" />
+                    </div>
+                  }
+                  className={`hidden group-hover:block flex-shrink-0 ${isMenuActive ? "!block" : ""}`}
                   buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
                   ellipsis
                   placement="bottom-start"

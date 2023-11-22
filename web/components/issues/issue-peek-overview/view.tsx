@@ -225,6 +225,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       size="sm"
                       prependIcon={<Bell className="h-3 w-3" />}
                       variant="outline-primary"
+                      className="hover:!bg-custom-primary-100/20"
                       onClick={() =>
                         issueSubscription && issueSubscription.subscribed
                           ? issueSubscriptionRemove()
