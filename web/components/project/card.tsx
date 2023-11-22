@@ -113,7 +113,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             className="absolute top-0 left-0 h-full w-full object-cover rounded-t"
           />
 
-          <div className="absolute h-10 w-full bottom-4 z-10 flex items-center justify-between px-4">
+          <div className="absolute h-10 w-full bottom-4 z-10 flex items-center justify-between gap-3 px-4">
             <div className="flex items-center gap-2.5 flex-grow truncate">
               <div className="h-9 w-9 flex item-center justify-center rounded bg-white/90 flex-shrink-0">
                 <span className="flex items-center justify-center">
