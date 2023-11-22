@@ -600,7 +600,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "User is part of some projects where they are the only admin you should leave that project first"
+                    "error": "User is a part of some projects where they are the only admin, they should either leave that project or promote another user to admin."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -635,7 +635,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "You cannot leave the workspace as your the only admin of the workspace you will have to either delete the workspace or create an another admin"
+                    "error": "You cannot leave the workspace as you are the only admin of the workspace you will have to either delete the workspace or promote another user to admin."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -656,7 +656,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         ):
             return Response(
                 {
-                    "error": "User is part of some projects where they are the only admin you should leave that project first"
+                    "error": "You are a part of some projects where you are the only admin, you should either leave the project or promote another user to admin."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
