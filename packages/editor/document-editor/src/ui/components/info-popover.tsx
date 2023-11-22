@@ -1,11 +1,30 @@
 import { useState } from "react";
 import { usePopper } from "react-popper";
-import { Calendar, Info, RotateCcw } from "lucide-react";
+import { Calendar, History, Info } from "lucide-react";
 // types
 import { DocumentDetails } from "../types/editor-types";
 
 type Props = {
   documentDetails: DocumentDetails;
+};
+
+// function to render a Date in the format- 25 May 2023 at 2:53PM
+const renderDate = (date: Date): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  };
+
+  const formattedDate: string = new Intl.DateTimeFormat(
+    "en-US",
+    options,
+  ).format(date);
+
+  return formattedDate;
 };
 
 export const InfoPopover: React.FC<Props> = (props) => {
@@ -29,7 +48,7 @@ export const InfoPopover: React.FC<Props> = (props) => {
       onMouseEnter={() => setIsPopoverOpen(true)}
       onMouseLeave={() => setIsPopoverOpen(false)}
     >
-      <button type="button" ref={setReferenceElement} className="mt-1.5">
+      <button type="button" ref={setReferenceElement} className="block mt-1.5">
         <Info className="h-3.5 w-3.5" />
       </button>
       {isPopoverOpen && (
@@ -42,15 +61,15 @@ export const InfoPopover: React.FC<Props> = (props) => {
           <div className="space-y-1.5">
             <h6 className="text-custom-text-400 text-xs">Last updated on</h6>
             <h5 className="text-sm flex items-center gap-1">
-              <RotateCcw className="h-3 w-3" />
-              {new Date(documentDetails.last_updated_at).toLocaleString()}
+              <History className="h-3.5 w-3.5" />
+              {renderDate(new Date(documentDetails.last_updated_at))}
             </h5>
           </div>
           <div className="space-y-1.5">
             <h6 className="text-custom-text-400 text-xs">Created on</h6>
             <h5 className="text-sm flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {new Date(documentDetails.created_on).toLocaleString()}
+              {renderDate(new Date(documentDetails.created_on))}
             </h5>
           </div>
         </div>
