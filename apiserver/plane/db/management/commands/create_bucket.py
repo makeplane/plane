@@ -40,7 +40,7 @@ class Command(BaseCommand):
             )
             # Create an S3 client using the session
             s3_client = session.client('s3', endpoint_url=settings.AWS_S3_ENDPOINT_URL)
-            bucket_name = settings.AWS_S3_BUCKET_NAME
+            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
 
             self.stdout.write(self.style.NOTICE("Checking bucket..."))
 
@@ -50,7 +50,7 @@ class Command(BaseCommand):
             self.set_bucket_public_policy(s3_client, bucket_name)
         except ClientError as e:
             error_code = int(e.response['Error']['Code'])
-            bucket_name = settings.AWS_S3_BUCKET_NAME
+            bucket_name = settings.AWS_STORAGE_BUCKET_NAME
             if error_code == 404:
                 # Bucket does not exist, create it
                 self.stdout.write(self.style.WARNING(f"Bucket '{bucket_name}' does not exist. Creating bucket..."))

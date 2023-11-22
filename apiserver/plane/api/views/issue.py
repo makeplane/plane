@@ -351,11 +351,11 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id, pk=None):
+    def get(self, request, slug, project_id, issue_id, pk=None):
         if pk is None:
-            labels = self.get_queryset()
+            issue_links = self.get_queryset()
             serializer = IssueLinkSerializer(
-                labels,
+                issue_links,
                 fields=self.fields,
                 expand=self.expand,
             )
@@ -369,14 +369,13 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                     expand=self.expand,
                 ).data,
             )
-        else:
-            label = self.get_queryset().get(pk=pk)
-            serializer = IssueLinkSerializer(
-                label,
-                fields=self.fields,
-                expand=self.expand,
-            )
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        issue_link = self.get_queryset().get(pk=pk)
+        serializer = IssueLinkSerializer(
+            issue_link,
+            fields=self.fields,
+            expand=self.expand,
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
@@ -589,7 +588,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             serializer = IssueActivitySerializer(issue_activities)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        self.paginate(
+        return self.paginate(
             request=request,
             queryset=(issue_activities),
             on_results=lambda issue_activity: IssueActivitySerializer(

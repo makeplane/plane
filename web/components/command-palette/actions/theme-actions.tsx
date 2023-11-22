@@ -1,4 +1,4 @@
-import React, { FC, Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Command } from "cmdk";
 import { useTheme } from "next-themes";
 import { Settings } from "lucide-react";
@@ -10,22 +10,25 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { THEME_OPTIONS } from "constants/themes";
 
 type Props = {
-  setIsPaletteOpen: Dispatch<SetStateAction<boolean>>;
+  closePalette: () => void;
 };
 
-export const ChangeInterfaceTheme: FC<Props> = observer((props) => {
-  const { setIsPaletteOpen } = props;
-  // store
-  const { user: userStore } = useMobxStore();
+export const CommandPaletteThemeActions: FC<Props> = observer((props) => {
+  const { closePalette } = props;
   // states
   const [mounted, setMounted] = useState(false);
+  // store
+  const {
+    user: { updateCurrentUserTheme },
+  } = useMobxStore();
   // hooks
   const { setTheme } = useTheme();
   const { setToastAlert } = useToast();
 
-  const updateUserTheme = (newTheme: string) => {
+  const updateUserTheme = async (newTheme: string) => {
     setTheme(newTheme);
-    return userStore.updateCurrentUserTheme(newTheme).catch(() => {
+
+    return updateCurrentUserTheme(newTheme).catch(() => {
       setToastAlert({
         title: "Failed to save user theme settings!",
         type: "error",
@@ -47,7 +50,7 @@ export const ChangeInterfaceTheme: FC<Props> = observer((props) => {
           key={theme.value}
           onSelect={() => {
             updateUserTheme(theme.value);
-            setIsPaletteOpen(false);
+            closePalette();
           }}
           className="focus:outline-none"
         >

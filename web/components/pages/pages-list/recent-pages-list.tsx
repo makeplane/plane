@@ -38,8 +38,9 @@ export const RecentPagesList: FC = observer(() => {
         <>
           {Object.keys(recentProjectPages).map((key) => {
             if (recentProjectPages[key].length === 0) return null;
+
             return (
-              <div key={key} className="h-full overflow-hidden pb-9">
+              <div key={key} className="overflow-hidden">
                 <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
                 <PagesListView pages={recentProjectPages[key]} />
               </div>
