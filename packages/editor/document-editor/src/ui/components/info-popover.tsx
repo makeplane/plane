@@ -61,7 +61,7 @@ export const InfoPopover: React.FC<Props> = (props) => {
           <div className="space-y-1.5">
             <h6 className="text-custom-text-400 text-xs">Last updated on</h6>
             <h5 className="text-sm flex items-center gap-1">
-              <History className="h-3.5 w-3.5" />
+              <History className="h-3 w-3" />
               {renderDate(new Date(documentDetails.last_updated_at))}
             </h5>
           </div>

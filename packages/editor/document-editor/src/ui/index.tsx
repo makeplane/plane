@@ -127,7 +127,7 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
       />
       <div className="h-full w-full flex overflow-hidden">
-        <div className="flex-shrink-0 h-full w-80">
+        <div className="flex-shrink-0 h-full w-56 lg:w-80">
           <SummarySideBar
             editor={editor}
             markings={markings}
@@ -142,7 +142,7 @@ const DocumentEditor = ({
             documentDetails={documentDetails}
           />
         </div>
-        {/* Page Element */}
+        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-80" />
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export const PageRenderer = (props: IPageRenderer) => {
 
   return (
     <div className="h-full w-full overflow-y-auto pl-7 py-5">
-      <h1 className="text-4xl font-bold break-all pr-5 leading-8">
+      <h1 className="text-4xl font-bold break-all pr-5 -mt-2">
         {documentDetails.title}
       </h1>
       <div className="flex flex-col h-full w-full pr-5">
