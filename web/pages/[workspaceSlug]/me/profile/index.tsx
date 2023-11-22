@@ -2,6 +2,7 @@ import React, { useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
+import { Disclosure, Transition } from "@headlessui/react";
 // services
 import { FileService } from "services/file.service";
 import { UserService } from "services/user.service";
@@ -14,10 +15,11 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
 import { WorkspaceSettingHeader } from "components/headers";
+import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
 // icons
-import { User2, UserCircle2 } from "lucide-react";
+import { ChevronDown, User2, UserCircle2 } from "lucide-react";
 // types
 import type { IUser } from "types";
 import type { NextPageWithLayout } from "types/app";
@@ -41,6 +43,7 @@ const userService = new UserService();
 const ProfilePage: NextPageWithLayout = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
+  const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -143,6 +146,13 @@ const ProfilePage: NextPageWithLayout = () => {
     content: timeZone.label,
   }));
 
+  if (!myProfile)
+    return (
+      <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+        <Spinner />
+      </div>
+    );
+
   return (
     <>
       <ImageUploadModal
@@ -158,9 +168,10 @@ const ProfilePage: NextPageWithLayout = () => {
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
         userImage
       />
-      {myProfile ? (
-        <form onSubmit={handleSubmit(onSubmit)} className="h-full w-full">
-          <div className={`flex flex-col gap-8 pr-9 py-9 w-full overflow-y-auto`}>
+      <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
+      <div className="h-full w-full flex flex-col py-9 pr-9 space-y-10 overflow-y-auto">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-8 w-full">
             <div className="relative h-44 w-full mt-6">
               <img
                 src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
@@ -387,11 +398,43 @@ const ProfilePage: NextPageWithLayout = () => {
             </div>
           </div>
         </form>
-      ) : (
-        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-          <Spinner />
-        </div>
-      )}
+        <Disclosure as="div" className="border-t border-custom-border-100 px-8">
+          {({ open }) => (
+            <>
+              <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+                <span className="text-lg tracking-tight">Deactivate Account</span>
+                {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
+                <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+              </Disclosure.Button>
+
+              <Transition
+                show={open}
+                enter="transition duration-100 ease-out"
+                enterFrom="transform opacity-0"
+                enterTo="transform opacity-100"
+                leave="transition duration-75 ease-out"
+                leaveFrom="transform opacity-100"
+                leaveTo="transform opacity-0"
+              >
+                <Disclosure.Panel>
+                  <div className="flex flex-col gap-8">
+                    <span className="text-sm tracking-tight">
+                      The danger zone of the profile page is a critical area that requires careful consideration and
+                      attention. When deactivating an account, all of the data and resources within that account will be
+                      permanently removed and cannot be recovered.
+                    </span>
+                    <div>
+                      <Button variant="danger" onClick={() => setDeactivateAccountModal(true)}>
+                        Deactivate account
+                      </Button>
+                    </div>
+                  </div>
+                </Disclosure.Panel>
+              </Transition>
+            </>
+          )}
+        </Disclosure>
+      </div>
     </>
   );
 };
