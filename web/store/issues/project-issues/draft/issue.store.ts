@@ -2,7 +2,7 @@ import { action, observable, makeObservable, computed, runInAction, autorun } fr
 // base class
 import { IssueBaseStore } from "store/issues";
 // services
-import { IssueService } from "services/issue/issue.service";
+import { IssueDraftService } from "services/issue/issue_draft.service";
 // types
 import { IIssue } from "types/issues";
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
@@ -28,7 +28,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
   // root store
   rootStore;
   // service
-  issueService;
+  issueDraftService;
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -48,7 +48,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
     });
 
     this.rootStore = _rootStore;
-    this.issueService = new IssueService();
+    this.issueDraftService = new IssueDraftService();
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
@@ -97,7 +97,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
       this.loader = loadType;
 
       const params = this.rootStore?.projectDraftIssuesFilter?.appliedFilters;
-      const response = await this.issueService.getV3Issues(workspaceSlug, projectId, params);
+      const response = await this.issueDraftService.getV3DraftIssues(workspaceSlug, projectId, params);
 
       const _issues = { ...this.issues, [projectId]: { ...response } };
 
@@ -116,7 +116,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
 
   createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
     try {
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
+      const response = await this.issueDraftService.createDraftIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -145,7 +145,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
         this.issues = _issues;
       });
 
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      const response = await this.issueDraftService.updateDraftIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
     } catch (error) {
@@ -165,7 +165,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
         this.issues = _issues;
       });
 
-      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
+      const response = await this.issueDraftService.deleteDraftIssue(workspaceSlug, projectId, issueId);
 
       return response;
     } catch (error) {
