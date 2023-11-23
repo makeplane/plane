@@ -214,7 +214,7 @@ export const SignInView = observer(() => {
           </div>
 
           <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
-            <div className={`px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-32 pb-56 rounded-t-md overflow-auto`}>
+            <div className={`px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-24 pb-56 rounded-t-md overflow-auto`}>
               {!envConfig ? (
                 <div className="pt-10 mx-auto flex justify-center">
                   <div>
@@ -284,10 +284,10 @@ export const SignInView = observer(() => {
                       </span>
                     </p>
                   </div>
-                  <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-64 object-cover mt-8 mx-auto rounded-md ">
+                  <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 ">
                     <Image
                       src={signInIssues}
-                      alt="Plane Logo"
+                      alt="Plane Issues"
                       className={`flex object-cover rounded-md ${
                         resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
                       } `}
