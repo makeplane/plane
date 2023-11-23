@@ -26,16 +26,17 @@ export const ProjectSidebarList: FC = observer(() => {
   // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const { theme: themeStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    theme: { sidebarCollapsed },
+    project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
+    commandPalette: { toggleCreateProjectModal },
+  } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   // toast
   const { setToastAlert } = useToast();
-
-  const joinedProjects = workspaceSlug && projectStore.joinedProjects;
-  const favoriteProjects = workspaceSlug && projectStore.favoriteProjects;
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -62,20 +63,18 @@ export const ProjectSidebarList: FC = observer(() => {
 
     if (source.index === destination.index) return;
 
-    const updatedSortOrder = projectStore.orderProjectsWithSortOrder(source.index, destination.index, draggableId);
+    const updatedSortOrder = orderProjectsWithSortOrder(source.index, destination.index, draggableId);
 
-    projectStore
-      .updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder })
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
-        });
+    updateProjectView(workspaceSlug.toString(), draggableId, { sort_order: updatedSortOrder }).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Something went wrong. Please try again.",
       });
+    });
   };
 
-  const isCollapsed = themeStore.sidebarCollapsed || false;
+  const isCollapsed = sidebarCollapsed || false;
 
   /**
    * Implementing scroll animation styles based on the scroll length of the container
@@ -263,7 +262,7 @@ export const ProjectSidebarList: FC = observer(() => {
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
-            onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
+            onClick={() => toggleCreateProjectModal(true)}
           >
             <Plus className="h-5 w-5" />
             {!isCollapsed && "Add Project"}

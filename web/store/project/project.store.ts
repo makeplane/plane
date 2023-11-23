@@ -39,8 +39,6 @@ export interface IProjectStore {
   orderProjectsWithSortOrder: (sourceIndex: number, destinationIndex: number, projectId: string) => number;
   updateProjectView: (workspaceSlug: string, projectId: string, viewProps: any) => Promise<any>;
 
-  joinProject: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
-  leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   createProject: (workspaceSlug: string, data: any) => Promise<any>;
   updateProject: (workspaceSlug: string, projectId: string, data: Partial<IProject>) => Promise<any>;
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -100,7 +98,6 @@ export class ProjectStore implements IProjectStore {
       updateProjectView: action,
       createProject: action,
       updateProject: action,
-      leaveProject: action,
     });
 
     this.rootStore = _rootStore;
@@ -292,57 +289,6 @@ export class ProjectStore implements IProjectStore {
     } catch (error) {
       console.log("Failed to update sort order of the projects");
       throw error;
-    }
-  };
-
-  joinProject = async (workspaceSlug: string, projectIds: string[]) => {
-    const newPermissions: { [projectId: string]: boolean } = {};
-    projectIds.forEach((projectId) => {
-      newPermissions[projectId] = true;
-    });
-
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const response = await this.projectService.joinProject(workspaceSlug, projectIds);
-      await this.fetchProjects(workspaceSlug);
-
-      runInAction(() => {
-        this.rootStore.user.hasPermissionToProject = {
-          ...this.rootStore.user.hasPermissionToProject,
-          ...newPermissions,
-        };
-        this.loader = false;
-        this.error = null;
-      });
-
-      return response;
-    } catch (error) {
-      this.loader = false;
-      this.error = error;
-      return error;
-    }
-  };
-
-  leaveProject = async (workspaceSlug: string, projectId: string) => {
-    try {
-      this.loader = true;
-      this.error = null;
-
-      const response = await this.projectService.leaveProject(workspaceSlug, projectId);
-      await this.fetchProjects(workspaceSlug);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = null;
-      });
-
-      return response;
-    } catch (error) {
-      this.loader = false;
-      this.error = error;
-      return error;
     }
   };
 

@@ -75,9 +75,9 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-red-500/20 p-4">
+                    <div className="grid place-items-center rounded-full bg-red-500/20 p-4">
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
-                    </span>
+                    </div>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
                     </span>
