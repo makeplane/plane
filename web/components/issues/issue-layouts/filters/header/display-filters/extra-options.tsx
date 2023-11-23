@@ -26,11 +26,6 @@ export const FilterExtraOptions: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <FilterHeader
-        title="Extra Options"
-        isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
-      />
       {previewEnabled && (
         <div>
           {ISSUE_EXTRA_OPTIONS.map((option) => {
