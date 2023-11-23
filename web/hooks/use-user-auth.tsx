@@ -3,29 +3,28 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 // swr
 import useSWR from "swr";
-// keys
-import { CURRENT_USER } from "constants/fetch-keys";
 // services
-import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
-// types
-import type { IUser } from "types";
+// mobx
+import { useMobxStore } from "lib/mobx/store-provider";
 
-const userService = new UserService();
 const workspaceService = new WorkspaceService();
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
   const router = useRouter();
-  const { next_url } = router.query as { next_url: string };
+  const { next_url } = router.query;
 
   const [isRouteAccess, setIsRouteAccess] = useState(true);
+  const {
+    user: { fetchCurrentUser },
+  } = useMobxStore();
 
   const {
     data: user,
     isLoading,
     error,
     mutate,
-  } = useSWR<IUser>(CURRENT_USER, () => userService.currentUser(), {
+  } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     refreshInterval: 0,
     shouldRetryOnError: false,
   });
@@ -91,7 +90,7 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
       if (!isLoading) {
         setIsRouteAccess(() => true);
         if (user) {
-          if (next_url) router.push(next_url);
+          if (next_url) router.push(next_url.toString());
           else handleUserRouteAuthentication();
         } else {
           if (routeAuth === "sign-in") {

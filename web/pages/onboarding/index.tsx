@@ -108,8 +108,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
         }}
       />
       {user && step !== null ? (
-        <div className={` bg-onboarding-gradient-primary h-full overflow-y-auto`}>
-          <div className="sm:py-14 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
+        <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
+          <div className="sm:pt-14 sm:pb-8 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
             <div className="w-full flex items-center justify-between font-semibold ">
               <div className="text-3xl flex items-center gap-x-1">
                 <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
@@ -164,28 +164,26 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               </div>
             </div>
           </div>
-          <div className="w-full lg:w-4/5 xl:w-3/4 sm:w-4/5 rounded-md mx-auto shadow-sm border border-custom-border-200">
-            <div className={`bg-onboarding-gradient-primary p-4`}>
-              <div className={`bg-onboarding-gradient-secondary h-full rounded-md`}>
-                {step === 1 ? (
-                  <JoinWorkspaces
-                    setTryDiffAccount={() => {
-                      setShowDeleteModal(true);
-                    }}
-                    finishOnboarding={finishOnboarding}
-                    stepChange={stepChange}
-                  />
-                ) : step === 2 ? (
-                  <UserDetails user={user} />
-                ) : (
-                  <InviteMembers
-                    finishOnboarding={finishOnboarding}
-                    stepChange={stepChange}
-                    user={user}
-                    workspace={workspaces?.[0]}
-                  />
-                )}
-              </div>
+          <div className="w-full h-full lg:w-4/5 xl:w-3/4 bg-onboarding-gradient-100 pt-4 px-4 sm:w-4/5 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 overflow-auto">
+            <div className={`h-full w-full bg-onboarding-gradient-200 rounded-t-md overflow-auto`}>
+              {step === 1 ? (
+                <JoinWorkspaces
+                  setTryDiffAccount={() => {
+                    setShowDeleteModal(true);
+                  }}
+                  finishOnboarding={finishOnboarding}
+                  stepChange={stepChange}
+                />
+              ) : step === 2 ? (
+                <UserDetails user={user} />
+              ) : (
+                <InviteMembers
+                  finishOnboarding={finishOnboarding}
+                  stepChange={stepChange}
+                  user={user}
+                  workspace={workspaces?.[0]}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { XCircle } from "lucide-react";
 // ui
 import { Button, Input } from "@plane/ui";
+// components
+import { AuthType } from "components/page-views";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
-// icons
-import { XCircle } from "lucide-react";
-import { useTheme } from "next-themes";
 
-// types
 type EmailCodeFormValues = {
   email: string;
   key?: string;
@@ -20,7 +19,14 @@ type EmailCodeFormValues = {
 
 const authService = new AuthService();
 
-export const EmailCodeForm = ({ handleSignIn }: any) => {
+type Props = {
+  handleSignIn: any;
+  authType: AuthType;
+};
+
+export const EmailCodeForm: React.FC<Props> = (Props) => {
+  const { handleSignIn, authType } = Props;
+  // states
   const [codeSent, setCodeSent] = useState(false);
   const [codeResent, setCodeResent] = useState(false);
   const [isCodeResending, setIsCodeResending] = useState(false);
@@ -37,7 +43,6 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     setError,
     setValue,
     getValues,
-    watch,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
@@ -49,14 +54,13 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     reValidateMode: "onChange",
   });
 
-  const isResendDisabled = resendCodeTimer > 0 || isCodeResending || isSubmitting || errorResendingCode;
+  const isResendDisabled = resendCodeTimer > 0 || isCodeResending || isSubmitting;
 
   const onSubmit = async ({ email }: EmailCodeFormValues) => {
     setErrorResendingCode(false);
     await authService
       .emailCode({ email })
       .then((res) => {
-        console.log(res);
         setSentEmail(email);
         setValue("key", res.key);
         setCodeSent(true);
@@ -139,12 +143,20 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
       ) : (
         <>
           <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
-            Let’s get you prepped!
+            {authType === "sign-in" ? "Get on your flight deck!" : "Let’s get you prepped!"}
           </h1>
-          <p className="text-center text-sm text-onboarding-text-200 mt-3">
-            This whole thing will take less than two minutes.
-          </p>
-          <p className="text-center text-sm text-onboarding-text-200 mt-1">Promise!</p>
+          {authType == "sign-up" ? (
+            <div>
+              <p className="text-center text-sm text-onboarding-text-200 mt-3">
+                This whole thing will take less than two minutes.
+              </p>
+              <p className="text-center text-sm text-onboarding-text-200 mt-1">Promise!</p>
+            </div>
+          ) : (
+            <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
+              Sign in with the email you used to sign up for Plane
+            </p>
+          )}
         </>
       )}
 
@@ -216,11 +228,39 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.token)}
-                    placeholder="get-set-fly"
+                    placeholder="gets-sets-flys"
                     className="border-onboarding-border-100 h-[46px] w-full"
                   />
                 )}
               />
+              {resendCodeTimer <= 0 && !isResendDisabled && (
+                <button
+                  type="button"
+                  className={`flex absolute w-fit right-3.5 justify-end text-xs outline-none cursor-pointer text-custom-primary-100`}
+                  onClick={() => {
+                    setIsCodeResending(true);
+                    onSubmit({ email: getValues("email") }).then(() => {
+                      setCodeResent(true);
+                      setIsCodeResending(false);
+                      setResendCodeTimer(30);
+                    });
+                  }}
+                  disabled={isResendDisabled}
+                >
+                  <span className="font-medium">Resend</span>
+                </button>
+              )}
+            </div>
+            <div
+              className={`flex w-full justify-end text-xs outline-none ${
+                isResendDisabled ? "cursor-default text-custom-text-200" : "cursor-pointer text-custom-primary-100"
+              } `}
+            >
+              {resendCodeTimer > 0 ? (
+                <span className="text-right">Request new code in {resendCodeTimer}s</span>
+              ) : isCodeResending ? (
+                "Sending new code..."
+              ) : null}
             </div>
           </>
         )}
@@ -238,8 +278,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             >
               {isLoading ? "Signing in..." : "Next step"}
             </Button>
-            <div className="w-[70%] my-4 mx-auto">
-              <p className="text-xs text-onboarding-text-300">
+            <div className="w-3/4 my-4 mx-auto">
+              <p className="text-xs text-center text-onboarding-text-300">
                 When you click the button above, you agree with our{" "}
                 <a
                   href="https://plane.so/terms-and-conditions"

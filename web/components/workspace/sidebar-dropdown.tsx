@@ -2,7 +2,9 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
+import { mutate } from "swr";
 import { Check, ChevronDown, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -57,6 +59,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
+  const { setTheme } = useTheme();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
     updateCurrentUser({
@@ -78,6 +81,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
     await authService
       .signOut()
       .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
       })
       .catch(() =>
@@ -251,7 +256,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-          <Avatar
+            <Avatar
               name={currentUser?.display_name}
               src={currentUser?.avatar}
               size={24}

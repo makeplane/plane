@@ -127,8 +127,10 @@
     --color-border-400: 185, 185, 185; /* strong border- 2 */
 
     /* onboarding colors */
-    --gradient-onboarding-primary: linear-gradient(106deg, #F2F6FF 29.8%, #E1EAFF 99.34%);
-    --gradient-onboarding-secondary: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
+    --gradient-onboarding-100: linear-gradient(106deg, #F2F6FF 29.8%, #E1EAFF 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
+    --gradient-onboarding-300: linear-gradient(164deg, #FFF 4.25%, rgba(255, 255, 255, 0.06) 93.5%);
+    --gradient-onboarding-400: linear-gradient(129deg, rgba(255, 255, 255, 0.00) -22.23%, rgba(255, 255, 255, 0.80) 62.98%);
 
     --color-onboarding-text-100: 23, 23, 23;
     --color-onboarding-text-200: 58, 58, 58;
@@ -142,6 +144,9 @@
 
     --color-onboarding-border-100: 229, 229, 229;
     --color-onboarding-border-200: 217, 228, 255;
+    --color-onboarding-border-300: 229, 229, 229, 0.5;
+
+    --color-onboarding-shadow-sm: 0px 4px 20px 0px rgba(126, 139, 171, 0.10);
     
   }
 
@@ -194,8 +199,9 @@
 
 
     /* onboarding colors */
-    --gradient-onboarding-primary: linear-gradient(106deg, #18191B 25.17%, #18191B 99.34%);
-    --gradient-onboarding-secondary: linear-gradient(129deg, rgba(47, 49, 53, 0.80) -22.23%, rgba(33, 34, 37, 0.80) 62.98%);
+    --gradient-onboarding-100: linear-gradient(106deg, #18191B 25.17%, #18191B 99.34%);
+    --gradient-onboarding-200: linear-gradient(129deg, rgba(47, 49, 53, 0.80) -22.23%, rgba(33, 34, 37, 0.80) 62.98%);
+    --gradient-onboarding-300: linear-gradient(167deg, rgba(47, 49, 53, 0.45) 19.22%, #212225 98.48%);
 
     --color-onboarding-text-100: 237, 238, 240;
     --color-onboarding-text-200: 176, 180, 187;
@@ -209,6 +215,10 @@
 
     --color-onboarding-border-100: 54, 58, 64;
     --color-onboarding-border-200: 54, 58, 64;
+    --color-onboarding-border-300: 34, 35, 38, 0.5;
+
+    --color-onboarding-shadow-sm:  0px 4px 20px 0px rgba(39, 44, 56, 0.10);
+    
   }
 
   [data-theme="dark-contrast"] {
