@@ -65,7 +65,7 @@ const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader title="Assigned" />}>
+    <AppLayout header={<UserProfileHeader />}>
       <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
     </AppLayout>
   );

@@ -3,11 +3,11 @@ import { FC } from "react";
 import { Breadcrumbs } from "@plane/ui";
 import { Settings } from "lucide-react";
 
-export interface IWorkspaceSettingHeader {
+interface IProfileSettingHeader {
   title: string;
 }
 
-export const ProfileSettingsHeader: FC<IWorkspaceSettingHeader> = (props) => {
+export const ProfileSettingsHeader: FC<IProfileSettingHeader> = (props) => {
   const { title } = props;
 
   return (

@@ -61,7 +61,7 @@ const ProfileSubscribedIssuesPage: NextPageWithLayout = () => {
 
 ProfileSubscribedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<UserProfileHeader title="Subscribed" />}>
+    <AppLayout header={<UserProfileHeader />}>
       <ProfileAuthWrapper showProfileIssuesFilter>{page}</ProfileAuthWrapper>
     </AppLayout>
   );
