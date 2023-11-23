@@ -92,7 +92,7 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
                       <CreateUpdateLabelInline
                         labelForm={isEditLabelForm}
                         setLabelForm={setEditLabelForm}
-                        isUpdating={true}
+                        isUpdating
                         labelToUpdate={label}
                         onClose={() => {
                           setEditLabelForm(false);

@@ -9,14 +9,9 @@ import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IQuickActionProps } from "../list/list-view-types";
 
-type Props = {
-  issue: IIssue;
-  handleDelete: () => Promise<void>;
-};
-
-export const ArchivedIssueQuickActions: React.FC<Props> = (props) => {
+export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete } = props;
 
   const router = useRouter();

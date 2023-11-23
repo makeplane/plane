@@ -42,7 +42,7 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: "/me/profile",
   },
 ];
 
@@ -99,7 +99,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       <Menu as="div" className="relative col-span-4 text-left flex-grow h-full truncate">
         {({ open }) => (
           <>
-            <Menu.Button className="text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
+            <Menu.Button className="group/menu-button text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
               <div
                 className={`flex items-center justify-between gap-x-2 rounded p-1 truncate ${
                   sidebarCollapsed ? "justify-center" : ""
@@ -131,7 +131,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
 
                 {!sidebarCollapsed && (
                   <ChevronDown
-                    className={`h-4 w-4 mx-1 flex-shrink-0 ${
+                    className={`hidden group-hover/menu-button:block h-4 w-4 mx-1 flex-shrink-0 ${
                       open ? "rotate-180" : ""
                     } text-custom-sidebar-text-400 duration-300`}
                   />

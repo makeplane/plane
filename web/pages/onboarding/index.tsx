@@ -22,8 +22,8 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import { IUser, TOnboardingSteps } from "types";
 import { NextPageWithLayout } from "types/app";
 import { ChevronDown } from "lucide-react";
-import { Menu, Popover, Transition } from "@headlessui/react";
-import DeleteAccountModal from "components/account/delete-account-modal";
+import { Menu, Transition } from "@headlessui/react";
+import { DeactivateAccountModal } from "components/account";
 import { useRouter } from "next/router";
 
 // services
@@ -101,12 +101,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      <DeleteAccountModal
-        isOpen={showDeleteModal}
-        onClose={() => {
-          setShowDeleteModal(false);
-        }}
-      />
+      <DeactivateAccountModal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
       {user && step !== null ? (
         <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
           <div className="sm:pt-14 sm:pb-8 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">

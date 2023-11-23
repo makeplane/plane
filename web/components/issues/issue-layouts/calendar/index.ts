@@ -7,4 +7,4 @@ export * from "./header";
 export * from "./issue-blocks";
 export * from "./week-days";
 export * from "./week-header";
-export * from "./inline-create-issue-form";
+export * from "./quick-add-issue-form";

@@ -29,11 +29,11 @@ type Props = {
   user?: IUser;
 };
 
-const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-  value: timeZone.value,
-  query: timeZone.label + " " + timeZone.value,
-  content: timeZone.label,
-}));
+// const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
+//   value: timeZone.value,
+//   query: timeZone.label + " " + timeZone.value,
+//   content: timeZone.label,
+// }));
 
 const useCases = [
   "Build Products",
@@ -51,7 +51,7 @@ const fileService = new FileService();
 export const UserDetails: React.FC<Props> = observer((props) => {
   const { user } = props;
   const [isRemoving, setIsRemoving] = useState(false);
-  const [selectedUsecase, setSelectedUsecase] = useState<number | null>();
+  // const [selectedUsecase, setSelectedUsecase] = useState<number | null>();
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const {
     user: userStore,
@@ -210,7 +210,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
           </form>
         </div>
         <div className="md:w-11/12 relative flex justify-end  bottom-0 ml-auto">
-          <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" />
+          <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" alt="issue-image" />
         </div>
       </div>
     </div>
