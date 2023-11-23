@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
-// icons
 import { Lightbulb } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
@@ -24,7 +24,6 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import signInIssues from "public/onboarding/onboarding-issues.svg";
 // types
 import { IUser, IUserSettings } from "types";
-import { useTheme } from "next-themes";
 
 export type AuthType = "sign-in" | "sign-up";
 

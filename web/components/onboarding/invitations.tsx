@@ -1,5 +1,7 @@
-// react
 import React, { useState } from "react";
+import { CheckCircle2, Search } from "lucide-react";
+import useSWR, { mutate } from "swr";
+import { trackEvent } from "helpers/event-tracker.helper";
 // components
 import { Button, Loader } from "@plane/ui";
 
@@ -9,16 +11,12 @@ import { truncateText } from "helpers/string.helper";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// swr
-import useSWR, { mutate } from "swr";
+
 // contants
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
 // types
 import { IWorkspaceMemberInvitation } from "types";
-// icons
-import { CheckCircle2, Search } from "lucide-react";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   handleNextStep: () => void;

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 // next
 import Image from "next/image";
+import { useTheme } from "next-themes";
 // headless ui
 import { Listbox, Transition } from "@headlessui/react";
 // react-hook-form
@@ -26,7 +27,7 @@ import user1 from "public/users/user-1.png";
 import user2 from "public/users/user-2.png";
 import userDark from "public/onboarding/user-dark.svg";
 import userLight from "public/onboarding/user-light.svg";
-import { useTheme } from "next-themes";
+
 
 type Props = {
   finishOnboarding: () => Promise<void>;

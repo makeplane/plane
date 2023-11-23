@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
@@ -11,8 +12,6 @@ import { WorkspaceService } from "services/workspace.service";
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { RESTRICTED_URLS } from "constants/workspace";
-// react-hook-form
-import { Control, Controller, FieldErrors, UseFormHandleSubmit, UseFormSetValue } from "react-hook-form";
 
 type Props = {
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;

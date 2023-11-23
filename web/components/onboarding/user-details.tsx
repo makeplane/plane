@@ -1,9 +1,8 @@
-// react
 import React, { useState } from "react";
-// next
 import Image from "next/image";
 import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
+import { Camera, User2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -14,12 +13,11 @@ import OnboardingStepIndicator from "components/account/step-indicator";
 import { IUser } from "types";
 // constants
 import { TIME_ZONES } from "constants/timezones";
+// services
+import { FileService } from "services/file.service";
 // assets
 import IssuesSvg from "public/onboarding/onboarding-issues.svg";
 import { ImageUploadModal } from "components/core";
-// icons
-import { Camera, User2 } from "lucide-react";
-import { FileService } from "services/file.service";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",

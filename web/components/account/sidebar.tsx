@@ -1,15 +1,7 @@
 import React, { useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// react-hook-form
+import Image from "next/image";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
-// types
-import { IWorkspace } from "types";
-// assets
-import projectEmoji from "public/emoji/project-emoji.svg";
-// icons
 import {
   BarChart2,
   Briefcase,
@@ -24,7 +16,14 @@ import {
   Settings,
   Bell,
 } from "lucide-react";
-import Image from "next/image";
+import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+
+// types
+import { IWorkspace } from "types";
+// assets
+import projectEmoji from "public/emoji/project-emoji.svg";
 
 const workspaceLinks = [
   {

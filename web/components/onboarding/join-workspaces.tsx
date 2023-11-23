@@ -1,4 +1,5 @@
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 // hooks
 import useUser from "hooks/use-user";
 // components
@@ -8,8 +9,6 @@ import OnboardingStepIndicator from "components/account/step-indicator";
 import { Workspace } from "./workspace";
 // types
 import { IWorkspace, TOnboardingSteps } from "types";
-// react-hook-form
-import { Controller, useForm } from "react-hook-form";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
