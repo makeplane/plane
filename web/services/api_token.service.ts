@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 import { APIService } from "./api.service";
 import { IApiToken } from "types/api_token";
 
-export class ApiTokenService extends APIService {
+export class APITokenService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }

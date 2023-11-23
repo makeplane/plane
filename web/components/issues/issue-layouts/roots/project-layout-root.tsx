@@ -17,48 +17,49 @@ import {
 import { Spinner } from "@plane/ui";
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { issue: issueStore, issueFilter: issueFilterStore } = useMobxStore();
+  const {
+    projectIssues: { loader, getIssues, fetchIssues },
+    projectIssuesFilter: { issueFilters, fetchFilters },
+  } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
+  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await issueFilterStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-      await issueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+      await fetchFilters(workspaceSlug, projectId);
+      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
     }
   });
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
-
-  const issueCount = issueStore.getIssuesCount;
-
-  if (!issueStore.getIssues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ProjectAppliedFiltersRoot />
-      {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 ? (
-        <ProjectEmptyState />
-      ) : (
-        <div className="w-full h-full overflow-auto">
-          {activeLayout === "list" ? (
-            <ListLayout />
-          ) : activeLayout === "kanban" ? (
-            <KanBanLayout />
-          ) : activeLayout === "calendar" ? (
-            <CalendarLayout />
-          ) : activeLayout === "gantt_chart" ? (
-            <GanttLayout />
-          ) : activeLayout === "spreadsheet" ? (
-            <ProjectSpreadsheetLayout />
-          ) : null}
+
+      {loader === "init-loader" ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <Spinner />
         </div>
+      ) : (
+        <>
+          {/* {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 && <ProjectEmptyState />} */}
+          <div className="w-full h-full relative overflow-auto">
+            {activeLayout === "list" ? (
+              <ListLayout />
+            ) : activeLayout === "kanban" ? (
+              <KanBanLayout />
+            ) : activeLayout === "calendar" ? (
+              <CalendarLayout />
+            ) : activeLayout === "gantt_chart" ? (
+              <GanttLayout />
+            ) : activeLayout === "spreadsheet" ? (
+              <ProjectSpreadsheetLayout />
+            ) : null}
+          </div>
+        </>
       )}
     </div>
   );

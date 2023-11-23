@@ -96,7 +96,7 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
             value={issue?.state_detail || null}
             onChange={(data) => handleStateChange(data)}
             disabled={false}
-            hideDropdownArrow={true}
+            hideDropdownArrow
           />
         </div>
       )}
@@ -128,7 +128,7 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
           <IssuePropertyAssignee
             projectId={issue?.project_detail?.id || null}
             value={issue?.assignees || null}
-            hideDropdownArrow={true}
+            hideDropdownArrow
             onChange={(val) => handleAssigneeChange(val)}
             disabled={false}
           />
