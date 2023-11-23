@@ -1,24 +1,19 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { List } from "../default";
 import { ProjectIssueQuickActions } from "components/issues";
 // types
 import { IIssue } from "types";
-// constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
-
-export interface IProfileIssuesListLayout {}
+import { EIssueActions } from "../../types";
+import { IProjectStore } from "store/project";
+//components
+import { BaseListRoot } from "../base-list-root";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
   const {
-    workspace: workspaceStore,
-    projectState: projectStateStore,
-    project: projectStore,
-    projectMember: { projectMembers },
     profileIssueFilters: profileIssueFiltersStore,
     profileIssues: profileIssuesStore,
     issueDetail: issueDetailStore,
@@ -27,53 +22,29 @@ export const ProfileIssuesListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const issues = profileIssuesStore?.getIssues;
-
-  const group_by: string | null = profileIssueFiltersStore?.userDisplayFilters?.group_by || null;
-
-  const displayProperties = profileIssueFiltersStore?.userDisplayProperties || null;
-
-  const handleIssues = useCallback(
-    (group_by: string | null, issue: IIssue, action: "update" | "delete") => {
+  const issueActions = {
+    [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      if (action === "update") {
-        profileIssuesStore.updateIssueStructure(group_by, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      }
-      if (action === "delete") profileIssuesStore.deleteIssue(group_by, null, issue);
+      profileIssuesStore.updateIssueStructure(group_by, null, issue);
+      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
-    [profileIssuesStore, issueDetailStore, workspaceSlug]
-  );
+    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+      profileIssuesStore.deleteIssue(group_by, null, issue);
+    },
+  };
 
-  const states = projectStateStore?.projectStates || null;
-  const priorities = ISSUE_PRIORITIES || null;
-  const labels = workspaceStore.workspaceLabels || null;
-  const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStore?.workspaceProjects || null;
+  const getProjects = (projectStore: IProjectStore) => projectStore?.workspaceProjects || null;
 
-  return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
-      <List
-        issues={issues}
-        group_by={group_by}
-        handleIssues={handleIssues}
-        quickActions={(group_by, issue) => (
-          <ProjectIssueQuickActions
-            issue={issue}
-            handleDelete={async () => handleIssues(group_by, issue, "delete")}
-            handleUpdate={async (data) => handleIssues(group_by, data, "update")}
-          />
-        )}
-        displayProperties={displayProperties}
-        states={states}
-        stateGroups={stateGroups}
-        priorities={priorities}
-        labels={labels}
-        members={projectMembers?.map((m) => m.member) ?? null}
-        projects={projects}
-        estimates={null}
-      />
-    </div>
-  );
+  return null;
+
+  // return (
+  //   <BaseListRoot
+  //     issueFilterStore={profileIssueFiltersStore}
+  //     issueStore={profileIssuesStore}
+  //     QuickActions={ProjectIssueQuickActions}
+  //     issueActions={issueActions}
+  //     getProjects={getProjects}
+  //   />
+  // );
 });

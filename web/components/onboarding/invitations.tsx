@@ -1,5 +1,7 @@
-// react
 import React, { useState } from "react";
+import { CheckCircle2, Search } from "lucide-react";
+import useSWR, { mutate } from "swr";
+import { trackEvent } from "helpers/event-tracker.helper";
 // components
 import { Button, Loader } from "@plane/ui";
 
@@ -9,16 +11,12 @@ import { truncateText } from "helpers/string.helper";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// swr
-import useSWR, { mutate } from "swr";
+
 // contants
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
 // types
 import { IWorkspaceMemberInvitation } from "types";
-// icons
-import { CheckCircle2, Search } from "lucide-react";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -147,11 +145,11 @@ const Invitations: React.FC<Props> = (props) => {
       </div>
     </div>
   ) : (
-    <EmptyInvitation email={currentUser!.email} />
+    <EmptyInvitation email={currentUser!.email} setTryDiffAccount={setTryDiffAccount} />
   );
 };
 
-const EmptyInvitation = ({ email }: { email: string }) => (
+const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDiffAccount: () => void }) => (
   <div className="items-center md:w-4/5 bg-onboarding-background-300/30 my-16 border-onboarding-border-200 py-5 px-10 rounded border justify-center ">
     <p className="text-lg text-onboarding-text-300 text-center font-semibold">Is your team already on Plane?</p>
     <p className="text-sm text-onboarding-text-300 mt-6 text-center">
@@ -159,7 +157,7 @@ const EmptyInvitation = ({ email }: { email: string }) => (
     </p>
     <div
       className="bg-onboarding-background-200 mt-6 py-3 text-center hover:cursor-pointer text-custom-text-200 rounded-md text-sm font-medium border border-custom-border-200"
-      onClick={() => {}}
+      onClick={setTryDiffAccount}
     >
       Try a different email address
     </div>
