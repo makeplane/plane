@@ -18,6 +18,7 @@ export interface IProjectArchivedIssuesStore {
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeIssueFromArchived: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  quickAddIssue: undefined;
 }
 
 export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProjectArchivedIssuesStore {
@@ -124,4 +125,6 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
       throw error;
     }
   };
+
+  quickAddIssue: undefined;
 }

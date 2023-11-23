@@ -11,6 +11,8 @@ import {
   ICycleIssuesStore,
   IModuleIssuesFilterStore,
   IModuleIssuesStore,
+  IProjectArchivedIssuesStore,
+  IProjectDraftIssuesStore,
   IProjectIssuesFilterStore,
   IProjectIssuesStore,
   IViewIssuesFilterStore,
@@ -31,7 +33,13 @@ interface IBaseListRoot {
     | IModuleIssuesFilterStore
     | ICycleIssuesFilterStore
     | IViewIssuesFilterStore;
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issueStore:
+    | IProjectIssuesStore
+    | IModuleIssuesStore
+    | ICycleIssuesStore
+    | IViewIssuesStore
+    | IProjectArchivedIssuesStore
+    | IProjectDraftIssuesStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => void;

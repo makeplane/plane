@@ -9,19 +9,18 @@ import { AppliedFiltersList } from "components/issues";
 import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store/issues/types";
 
-export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
+export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    projectArchivedIssuesFilter: { issueFilters, updateFilters },
+    projectDraftIssuesFilter: { issueFilters, updateFilters },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
   } = useMobxStore();
 
   const userFilters = issueFilters?.filters;
-
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
   Object.entries(userFilters ?? {}).forEach(([key, value]) => {
@@ -60,9 +59,7 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
-      ...newFilters,
-    });
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, { ...newFilters });
   };
 
   // return if no filters are applied

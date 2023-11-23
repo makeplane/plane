@@ -20,6 +20,7 @@ export interface IProjectDraftIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+  quickAddIssue: undefined;
 }
 
 export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectDraftIssuesStore {
@@ -173,4 +174,6 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
       throw error;
     }
   };
+
+  quickAddIssue: undefined;
 }
