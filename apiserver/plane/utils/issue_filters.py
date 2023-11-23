@@ -326,6 +326,20 @@ def filter_start_target_date_issues(params, filter, method):
     return filter
 
 
+def filter_archived_issues(params, filter, method):
+    archived = params.get("archived", "false")
+    if archived == "true":
+        filter["archived_at__isnull"] = False
+    return filter
+
+
+def filter_draft_issues(params, filter, method):
+    draft = params.get("draft", "false")
+    if draft == "true":
+        filter["is_draft"] = True
+    return filter
+
+
 def issue_filters(query_params, method):
     filter = {}
 
@@ -353,6 +367,8 @@ def issue_filters(query_params, method):
         "sub_issue": filter_sub_issue_toggle,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
+        "archived": filter_archived_issues,
+        "draft": filter_draft_issues,
     }
 
     for key, value in ISSUE_FILTER.items():
