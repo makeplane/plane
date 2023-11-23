@@ -12,11 +12,11 @@ import { BaseKanBanRoot } from "../base-kanban-root";
 
 export interface IKanBanLayout {}
 
-export const KanBanLayout: React.FC = observer(() => {
+export const DraftKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string };
 
-  const { projectIssues: issueStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
+  const { projectDraftIssues: issueStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {

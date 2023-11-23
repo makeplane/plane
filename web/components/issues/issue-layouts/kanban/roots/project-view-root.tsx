@@ -16,22 +16,18 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string };
 
-  const {
-    viewIssues: projectViewIssuesStore,
-    issueKanBanView: projectViewIssueKanBanViewStore,
-    issueDetail: issueDetailStore,
-  } = useMobxStore();
+  const { viewIssues: projectViewIssuesStore, issueKanBanView: projectViewIssueKanBanViewStore } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      await issueDetailStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      await projectViewIssuesStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      await issueDetailStore.deleteIssue(workspaceSlug, issue.project, issue.id);
+      await projectViewIssuesStore.removeIssue(workspaceSlug, issue.project, issue.id);
     },
   };
 
