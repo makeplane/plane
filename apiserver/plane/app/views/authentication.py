@@ -1,4 +1,5 @@
 # Python imports
+import os
 import uuid
 import random
 import string
@@ -32,7 +33,8 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
-
+from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -46,7 +48,17 @@ class SignUpEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        if not settings.ENABLE_SIGNUP:
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        if (
+            not get_configuration_value(
+                instance_configuration,
+                "ENABLE_SIGNUP",
+                os.environ.get("ENABLE_SIGNUP", "0"),
+            )
+            and not WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).exists()
+        ):
             return Response(
                 {
                     "error": "New account creation is disabled. Please contact your site administrator"
@@ -224,15 +236,9 @@ class SignInEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if not user.is_active:
-            return Response(
-                {
-                    "error": "Your account has been deactivated. Please contact your site administrator."
-                },
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         # settings last active for the user
+        user.is_active = True
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
         user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -360,6 +366,24 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
     def post(self, request):
         email = request.data.get("email", False)
 
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        if (
+            not get_configuration_value(
+                instance_configuration,
+                "ENABLE_MAGIC_LINK_LOGIN",
+                os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
+            )
+            and not WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).exists()
+        ):
+            return Response(
+                {
+                    "error": "New account creation is disabled. Please contact your site administrator"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if not email:
             return Response(
                 {"error": "Please provide a valid email address"},
@@ -443,13 +467,6 @@ class MagicSignInEndpoint(BaseAPIView):
             if str(token) == str(user_token):
                 if User.objects.filter(email=email).exists():
                     user = User.objects.get(email=email)
-                    if not user.is_active:
-                        return Response(
-                            {
-                                "error": "Your account has been deactivated. Please contact your site administrator."
-                            },
-                            status=status.HTTP_403_FORBIDDEN,
-                        )
                     try:
                         # Send event to Jitsu for tracking
                         if settings.ANALYTICS_BASE_API:
@@ -506,6 +523,7 @@ class MagicSignInEndpoint(BaseAPIView):
                     except RequestException as e:
                         capture_exception(e)
 
+                user.is_active = True
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
                 user.last_login_ip = request.META.get("REMOTE_ADDR")

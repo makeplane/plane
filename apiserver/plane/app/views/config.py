@@ -25,7 +25,7 @@ class ConfigurationEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
-        data["google_client_id"] = get_configuration_value(
+        data["google_client_id"] = (
             instance_configuration,
             "GOOGLE_CLIENT_ID",
             os.environ.get("GOOGLE_CLIENT_ID", None),
@@ -45,22 +45,22 @@ class ConfigurationEndpoint(BaseAPIView):
                 get_configuration_value(
                     instance_configuration,
                     "EMAIL_HOST_USER",
-                    os.environ.get("GITHUB_APP_NAME", None),
+                    os.environ.get("EMAIL_HOST_USER", None),
                 ),
             )
             and bool(
                 get_configuration_value(
                     instance_configuration,
                     "EMAIL_HOST_PASSWORD",
-                    os.environ.get("GITHUB_APP_NAME", None),
+                    os.environ.get("EMAIL_HOST_PASSWORD", None),
                 )
             )
         ) and get_configuration_value(
-            instance_configuration, "ENABLE_MAGIC_LINK_LOGIN", "0"
+            instance_configuration, "ENABLE_MAGIC_LINK_LOGIN", "1"
         ) == "1"
         data["email_password_login"] = (
             get_configuration_value(
-                instance_configuration, "ENABLE_EMAIL_PASSWORD", "0"
+                instance_configuration, "ENABLE_EMAIL_PASSWORD", "1"
             )
             == "1"
         )
