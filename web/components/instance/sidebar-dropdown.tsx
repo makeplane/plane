@@ -1,9 +1,11 @@
 import { Fragment } from "react";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
 import { Cog, LogIn, LogOut, Settings, UserCircle2 } from "lucide-react";
+import { mutate } from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -39,6 +41,7 @@ export const InstanceSidebarDropdown = observer(() => {
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
+  const { setTheme } = useTheme();
 
   // redirect url for normal mode
   const redirectWorkspaceSlug =
@@ -51,6 +54,8 @@ export const InstanceSidebarDropdown = observer(() => {
     await authService
       .signOut()
       .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
       })
       .catch(() =>

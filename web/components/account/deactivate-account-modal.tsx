@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { mutate } from "swr";
+import { useTheme } from "next-themes";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
 // mobx store
@@ -31,6 +33,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
 
   const router = useRouter();
 
+  const { setTheme } = useTheme();
+
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -45,6 +49,8 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
     await authService
       .signOut()
       .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
         handleClose();
       })
