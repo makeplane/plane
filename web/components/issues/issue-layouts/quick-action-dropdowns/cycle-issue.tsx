@@ -10,16 +10,10 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+import { IQuickActionProps } from "../list/list-view-types";
 
-type Props = {
-  issue: IIssue;
-  handleDelete: () => Promise<void>;
-  handleUpdate: (data: IIssue) => Promise<void>;
-  handleRemoveFromCycle: () => Promise<void>;
-};
-
-export const CycleIssueQuickActions: React.FC<Props> = (props) => {
-  const { issue, handleDelete, handleUpdate, handleRemoveFromCycle } = props;
+export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+  const { issue, handleDelete, handleUpdate, handleRemoveFromView } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -59,7 +53,7 @@ export const CycleIssueQuickActions: React.FC<Props> = (props) => {
         prePopulateData={!issueToEdit && createUpdateIssueModal ? { ...issue, name: `${issue.name} (copy)` } : {}}
         data={issueToEdit}
         onSubmit={async (data) => {
-          if (issueToEdit) handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
         }}
       />
       <CustomMenu placement="bottom-start" ellipsis>
@@ -92,7 +86,7 @@ export const CycleIssueQuickActions: React.FC<Props> = (props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            handleRemoveFromCycle();
+            handleRemoveFromView && handleRemoveFromView();
           }}
         >
           <div className="flex items-center gap-2">

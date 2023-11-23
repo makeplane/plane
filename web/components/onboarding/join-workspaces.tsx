@@ -1,4 +1,5 @@
 import React from "react";
+import { Controller, useForm } from "react-hook-form";
 // hooks
 import useUser from "hooks/use-user";
 // components
@@ -8,8 +9,6 @@ import OnboardingStepIndicator from "components/account/step-indicator";
 import { Workspace } from "./workspace";
 // types
 import { IWorkspace, TOnboardingSteps } from "types";
-// react-hook-form
-import { Controller, useForm } from "react-hook-form";
 
 type Props = {
   finishOnboarding: () => Promise<void>;
@@ -39,8 +38,8 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
   };
 
   return (
-    <div className="flex h-full w-full">
-      <div className="hidden lg:block w-3/12">
+    <div className="flex w-full">
+      <div className="h-full fixed hidden lg:block w-1/5 max-w-[320px]">
         <Controller
           control={control}
           name="name"
@@ -55,28 +54,29 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
           )}
         />
       </div>
-
-      <div className="w-full lg:w-1/2 md:w-4/5 md:px-0 px-7  my-16 mx-auto">
-        <div className="flex justify-between items-center">
-          <p className="font-semibold text-onboarding-text-200 text-xl sm:text-2xl">What will your workspace be?</p>
-          <OnboardingStepIndicator step={1} />
-        </div>
-        <Workspace
-          stepChange={stepChange}
-          user={user}
-          control={control}
-          handleSubmit={handleSubmit}
-          setValue={setValue}
-          errors={errors}
-          isSubmitting={isSubmitting}
-        />
-        <div className="flex  md:w-4/5 items-center my-8">
-          <hr className="border-onboarding-border-100 w-full" />
-          <p className="text-center text-sm text-custom-text-400 mx-3 flex-shrink-0">Or</p>
-          <hr className="border-onboarding-border-100 w-full" />
-        </div>
-        <div className="w-full">
-          <Invitations setTryDiffAccount={setTryDiffAccount} handleNextStep={handleNextStep} />
+      <div className="lg:w-2/3 w-full ml-auto ">
+        <div className="w-full lg:w-4/5 px-7 lg:px-0 my-16 mx-auto">
+          <div className="flex justify-between items-center">
+            <p className="font-semibold text-onboarding-text-200 text-xl sm:text-2xl">What will your workspace be?</p>
+            <OnboardingStepIndicator step={1} />
+          </div>
+          <Workspace
+            stepChange={stepChange}
+            user={user}
+            control={control}
+            handleSubmit={handleSubmit}
+            setValue={setValue}
+            errors={errors}
+            isSubmitting={isSubmitting}
+          />
+          <div className="flex md:w-1/2 items-center my-8">
+            <hr className="border-onboarding-border-100 w-full" />
+            <p className="text-center text-sm text-custom-text-400 mx-3 flex-shrink-0">Or</p>
+            <hr className="border-onboarding-border-100 w-full" />
+          </div>
+          <div className="w-full">
+            <Invitations setTryDiffAccount={setTryDiffAccount} handleNextStep={handleNextStep} />
+          </div>
         </div>
       </div>
     </div>

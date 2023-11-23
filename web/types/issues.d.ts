@@ -209,6 +209,7 @@ export interface IIssueActivity {
   updated_by: string;
   verb: string;
   workspace: string;
+  workspace_detail?: IWorkspaceLite;
 }
 
 export interface IIssueComment extends IIssueActivity {

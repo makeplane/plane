@@ -1,7 +1,8 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IModule, IIssue } from "types";
+import type { IModule, IIssue, IUser } from "types";
+import { IIssueResponse } from "store/issues/types";
 import { API_BASE_URL } from "helpers/common.helper";
 
 export class ModuleService extends APIService {
@@ -70,17 +71,27 @@ export class ModuleService extends APIService {
       });
   }
 
+  async getV3ModuleIssues(
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    queries?: any
+  ): Promise<IIssueResponse> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getModuleIssuesWithParams(
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
     queries?: any
-  ): Promise<
-    | IIssue[]
-    | {
-        [key: string]: IIssue[];
-      }
-  > {
+  ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
       params: queries,
     })

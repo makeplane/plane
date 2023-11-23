@@ -6,16 +6,18 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useTheme } from "next-themes";
 // images
-import githubBlackImage from "/public/logos/github-black.png";
-import githubWhiteImage from "/public/logos/github-white.png";
+import githubLightModeImage from "/public/logos/github-black.png";
+import githubDarkModeImage from "/public/logos/github-dark.svg";
+import { AuthType } from "components/page-views";
 
 export interface GithubLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
   clientId: string;
+  authType: AuthType;
 }
 
 export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
-  const { handleSignIn, clientId } = props;
+  const { handleSignIn, clientId, authType } = props;
   // states
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
   const [gitCode, setGitCode] = useState<null | string>(null);
@@ -24,7 +26,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
     query: { code },
   } = useRouter();
   // theme
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (code && !gitCode) {
@@ -37,22 +39,23 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
     const origin = typeof window !== "undefined" && window.location.origin ? window.location.origin : "";
     setLoginCallBackURL(`${origin}/` as any);
   }, []);
-
   return (
     <div className="w-full flex justify-center items-center">
       <Link
         href={`https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
         <button
-          className={`flex w-full items-center justify-center gap-2 hover:bg-onboarding-background-300 rounded border border-onboarding-border-200 p-2 text-sm font-medium text-custom-text-100 duration-300 h-[46px]`}
+          className={`flex w-full items-center justify-center gap-2 hover:bg-onboarding-background-300 rounded border px-2 text-sm font-medium text-custom-text-100 duration-300 h-[42px] ${
+            resolvedTheme === "dark" ? "bg-[#2F3135] border-[#43484F]" : "border-[#D9E4FF]"
+          }`}
         >
           <Image
-            src={theme === "dark" ? githubWhiteImage : githubBlackImage}
+            src={resolvedTheme === "dark" ? githubDarkModeImage : githubLightModeImage}
             height={20}
             width={20}
             alt="GitHub Logo"
           />
-          <span className="text-onboarding-text-200">Sign in with GitHub</span>
+          <span className="text-onboarding-text-200">{authType == "sign-in" ? "Sign-in" : "Sign-up"} with GitHub</span>
         </button>
       </Link>
     </div>

@@ -5,12 +5,11 @@ import Link from "next/link";
 // services
 import { UserService } from "services/user.service";
 // layouts
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
-import { AppLayout } from "layouts/app-layout";
+import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
-import { WorkspaceSettingHeader } from "components/headers";
+import { ProfileSettingsHeader } from "components/headers";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
@@ -28,10 +27,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: userActivity } = useSWR(
-    workspaceSlug ? USER_ACTIVITY : null,
-    workspaceSlug ? () => userService.getUserWorkspaceActivity(workspaceSlug.toString()) : null
-  );
+  const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
     <>
@@ -197,11 +193,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
 };
 
 ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <AppLayout header={<WorkspaceSettingHeader title="My Profile Activity" />}>
-      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
-    </AppLayout>
-  );
+  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Activity" />}>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfileActivityPage;
