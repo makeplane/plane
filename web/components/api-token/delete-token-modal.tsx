@@ -7,7 +7,7 @@ import { Button } from "@plane/ui";
 //hooks
 import useToast from "hooks/use-toast";
 //services
-import { ApiTokenService } from "services/api_token.service";
+import { APITokenService } from "services/api_token.service";
 //headless ui
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -17,10 +17,15 @@ type Props = {
   tokenId?: string;
 };
 
-const apiTokenService = new ApiTokenService();
-const DeleteTokenModal: FC<Props> = ({ isOpen, handleClose, tokenId }) => {
+const apiTokenService = new APITokenService();
+
+export const DeleteTokenModal: FC<Props> = (props) => {
+  const { isOpen, handleClose, tokenId } = props;
+  // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  // hooks
   const { setToastAlert } = useToast();
+  // router
   const router = useRouter();
   const { workspaceSlug, tokenId: tokenIdFromQuery } = router.query;
 
@@ -107,5 +112,3 @@ const DeleteTokenModal: FC<Props> = ({ isOpen, handleClose, tokenId }) => {
     </Transition.Root>
   );
 };
-
-export default DeleteTokenModal;

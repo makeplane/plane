@@ -52,7 +52,7 @@ export const ProjectMemberList: React.FC = observer(() => {
             className="max-w-[234px] w-full border-none bg-transparent text-sm focus:outline-none"
             placeholder="Search"
             value={searchQuery}
-            autoFocus={true}
+            autoFocus
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>

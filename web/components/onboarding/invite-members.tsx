@@ -17,7 +17,7 @@ import OnboardingStepIndicator from "components/account/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
 // icons
-import { Check, ChevronDown, Plus, User2, X, XCircle } from "lucide-react";
+import { Check, ChevronDown, Plus, User2, XCircle } from "lucide-react";
 // types
 import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
 // constants

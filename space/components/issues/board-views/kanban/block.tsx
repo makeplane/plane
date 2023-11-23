@@ -43,7 +43,11 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
       </div>
 
       {/* name */}
-      <h6 onClick={handleBlockClick} className="text-sm font-medium break-words line-clamp-2 cursor-pointer">
+      <h6
+        onClick={handleBlockClick}
+        role="button"
+        className="text-sm font-medium break-words line-clamp-2 cursor-pointer"
+      >
         {issue.name}
       </h6>
 

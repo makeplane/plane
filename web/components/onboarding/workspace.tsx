@@ -51,7 +51,7 @@ export const Workspace: React.FC<Props> = (props) => {
 
           await workspaceStore
             .createWorkspace(formData)
-            .then(async (res) => {
+            .then(async () => {
               setToastAlert({
                 type: "success",
                 title: "Success!",
@@ -137,13 +137,12 @@ export const Workspace: React.FC<Props> = (props) => {
         <Controller
           control={control}
           name="slug"
-          render={({ field: { value, onChange, ref } }) => (
+          render={({ field: { value, ref } }) => (
             <div className="flex items-center relative rounded-md bg-onboarding-background-200">
               <Input
                 id="slug"
                 name="slug"
                 type="text"
-                prefix="asdasdasdas"
                 value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                 onChange={(e) => {
                   const host = window.location.host;

@@ -26,7 +26,7 @@ export const EmptyState: React.FC<Props> = ({
   secondaryButton,
   disabled = false,
 }) => (
-  <div className={`flex items-center lg:p-20 md:px-10 px-5 justify-center h-full w-full`}>
+  <div className="flex items-center lg:p-20 md:px-10 px-5 justify-center h-full w-full">
     <div className="relative h-full w-full max-w-6xl">
       <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text} layout="fill" />
     </div>

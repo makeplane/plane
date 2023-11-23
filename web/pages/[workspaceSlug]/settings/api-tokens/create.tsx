@@ -1,7 +1,4 @@
-// react
 import { useState } from "react";
-// next
-
 import { NextPage } from "next";
 // layouts
 import { AppLayout } from "layouts/app-layout/layout";
@@ -12,8 +9,7 @@ import { IApiToken } from "types/api_token";
 import { observer } from "mobx-react-lite";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
-import DeleteTokenModal from "components/api-token/delete-token-modal";
-import { ApiTokenForm } from "components/api-token/ApiTokenForm";
+import { APITokenForm, DeleteTokenModal } from "components/api-token";
 
 const CreateApiToken: NextPage = () => {
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null>();
@@ -27,7 +23,7 @@ const CreateApiToken: NextPage = () => {
           handleClose={() => setDeleteTokenModal(false)}
           tokenId={generatedToken?.id}
         />
-        <ApiTokenForm
+        <APITokenForm
           generatedToken={generatedToken}
           setGeneratedToken={setGeneratedToken}
           setDeleteTokenModal={setDeleteTokenModal}

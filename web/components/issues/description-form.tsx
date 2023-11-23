@@ -151,7 +151,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               value={value}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
-              dragDropEnabled={true}
+              dragDropEnabled
               customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
               noBorder={!isAllowed}
               onChange={(description: Object, description_html: string) => {

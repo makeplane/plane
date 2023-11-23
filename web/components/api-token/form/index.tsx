@@ -1,36 +1,53 @@
+import { Dispatch, SetStateAction, useState, FC } from "react";
 import { useForm } from "react-hook-form";
-
-import { addDays, renderDateFormat } from "helpers/date-time.helper";
-import { IApiToken } from "types/api_token";
-import { csvDownload } from "helpers/download.helper";
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction, useState } from "react";
-import useToast from "hooks/use-toast";
+// helpers
+import { addDays, renderDateFormat } from "helpers/date-time.helper";
+import { csvDownload } from "helpers/download.helper";
+// types
+import { IApiToken } from "types/api_token";
+// hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { ApiTokenService } from "services/api_token.service";
-import { ApiTokenTitle } from "./ApiTokenTitle";
-import { ApiTokenDescription } from "./ApiTokenDescription";
-import { ApiTokenExpiry, expiryOptions } from "./ApiTokenExpiry";
+import useToast from "hooks/use-toast";
+// services
+import { APITokenService } from "services/api_token.service";
+// components
+import { APITokenTitle } from "./token-title";
+import { APITokenDescription } from "./token-description";
+import { APITokenExpiry, EXPIRY_OPTIONS } from "./token-expiry";
+import { APITokenKeySection } from "./token-key-section";
+// ui
 import { Button } from "@plane/ui";
-import { ApiTokenKeySection } from "./ApiTokenKeySection";
 
-interface IApiTokenForm {
+interface APITokenFormProps {
   generatedToken: IApiToken | null | undefined;
   setGeneratedToken: Dispatch<SetStateAction<IApiToken | null | undefined>>;
   setDeleteTokenModal: Dispatch<SetStateAction<boolean>>;
 }
 
-const apiTokenService = new ApiTokenService();
-export const ApiTokenForm = ({ generatedToken, setGeneratedToken, setDeleteTokenModal }: IApiTokenForm) => {
+export interface APIFormFields {
+  never_expires: boolean;
+  title: string;
+  description: string;
+}
+
+const apiTokenService = new APITokenService();
+
+export const APITokenForm: FC<APITokenFormProps> = (props) => {
+  const { generatedToken, setGeneratedToken, setDeleteTokenModal } = props;
+  // states
   const [loading, setLoading] = useState<boolean>(false);
   const [neverExpires, setNeverExpire] = useState<boolean>(false);
   const [focusTitle, setFocusTitle] = useState<boolean>(false);
   const [focusDescription, setFocusDescription] = useState<boolean>(false);
   const [selectedExpiry, setSelectedExpiry] = useState<number>(1);
-
+  // hooks
   const { setToastAlert } = useToast();
-  const { theme: themStore } = useMobxStore();
-
+  // store
+  const {
+    theme: { sidebarCollapsed },
+  } = useMobxStore();
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -48,11 +65,11 @@ export const ApiTokenForm = ({ generatedToken, setGeneratedToken, setDeleteToken
 
   const getExpiryDate = (): string | null => {
     if (neverExpires === true) return null;
-    return addDays({ date: new Date(), days: expiryOptions[selectedExpiry].days }).toISOString();
+    return addDays({ date: new Date(), days: EXPIRY_OPTIONS[selectedExpiry].days }).toISOString();
   };
 
   function renderExpiry(): string {
-    return renderDateFormat(addDays({ date: new Date(), days: expiryOptions[selectedExpiry].days }), true);
+    return renderDateFormat(addDays({ date: new Date(), days: EXPIRY_OPTIONS[selectedExpiry].days }), true);
   }
 
   const downloadSecretKey = (token: IApiToken) => {
@@ -95,10 +112,10 @@ export const ApiTokenForm = ({ generatedToken, setGeneratedToken, setDeleteToken
           setFocusTitle(true);
         }
       })}
-      className={`${themStore.sidebarCollapsed ? "xl:w-[50%] lg:w-[60%] " : "w-[60%]"} mx-auto py-8`}
+      className={`${sidebarCollapsed ? "xl:w-[50%] lg:w-[60%] " : "w-[60%]"} mx-auto py-8`}
     >
       <div className="border-b border-custom-border-200 pb-4">
-        <ApiTokenTitle
+        <APITokenTitle
           generatedToken={generatedToken}
           control={control}
           errors={errors}
@@ -107,7 +124,7 @@ export const ApiTokenForm = ({ generatedToken, setGeneratedToken, setDeleteToken
           setFocusDescription={setFocusDescription}
         />
         {errors.title && focusTitle && <p className=" text-red-600">{errors.title.message}</p>}
-        <ApiTokenDescription
+        <APITokenDescription
           generatedToken={generatedToken}
           control={control}
           focusDescription={focusDescription}
@@ -119,7 +136,7 @@ export const ApiTokenForm = ({ generatedToken, setGeneratedToken, setDeleteToken
       {!generatedToken && (
         <div className="mt-12">
           <>
-            <ApiTokenExpiry
+            <APITokenExpiry
               neverExpires={neverExpires}
               selectedExpiry={selectedExpiry}
               setSelectedExpiry={setSelectedExpiry}
@@ -133,7 +150,7 @@ export const ApiTokenForm = ({ generatedToken, setGeneratedToken, setDeleteToken
           </>
         </div>
       )}
-      <ApiTokenKeySection
+      <APITokenKeySection
         generatedToken={generatedToken}
         renderExpiry={renderExpiry}
         setDeleteTokenModal={setDeleteTokenModal}

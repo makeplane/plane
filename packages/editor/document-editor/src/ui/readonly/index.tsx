@@ -82,7 +82,7 @@ const DocumentReadOnlyEditor = ({
       <EditorHeader
         isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
         isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
-        readonly={true}
+        readonly
         editor={editor}
         sidePeekVisible={sidePeekVisible}
         setSidePeekVisible={setSidePeekVisible}

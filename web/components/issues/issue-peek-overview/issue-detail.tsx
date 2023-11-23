@@ -140,7 +140,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
       <RichTextEditor
-        dragDropEnabled={true}
+        dragDropEnabled
         cancelUploadImage={fileService.cancelUpload}
         uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
         deleteFile={fileService.deleteImage}

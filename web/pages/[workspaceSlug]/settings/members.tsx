@@ -74,8 +74,8 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
               className="max-w-[234px] w-full border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
               placeholder="Search..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
               autoFocus
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
           <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>

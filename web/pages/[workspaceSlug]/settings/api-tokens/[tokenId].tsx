@@ -1,20 +1,18 @@
-// react
 import { useState } from "react";
-// next
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
-import DeleteTokenModal from "components/api-token/delete-token-modal";
+import { DeleteTokenModal } from "components/api-token";
 import { WorkspaceSettingHeader } from "components/headers";
 // ui
 import { Spinner } from "@plane/ui";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { ApiTokenService } from "services/api_token.service";
+import { APITokenService } from "services/api_token.service";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // constants
@@ -22,8 +20,9 @@ import { API_TOKEN_DETAILS } from "constants/fetch-keys";
 // swr
 import useSWR from "swr";
 
-const apiTokenService = new ApiTokenService();
-const ApiTokenDetail: NextPage = () => {
+const apiTokenService = new APITokenService();
+
+const APITokenDetail: NextPage = () => {
   const { theme: themStore } = useMobxStore();
   const [deleteTokenModal, setDeleteTokenModal] = useState<boolean>(false);
   const router = useRouter();
@@ -67,4 +66,4 @@ const ApiTokenDetail: NextPage = () => {
   );
 };
 
-export default ApiTokenDetail;
+export default APITokenDetail;

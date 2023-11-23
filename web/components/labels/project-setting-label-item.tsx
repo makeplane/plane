@@ -70,7 +70,7 @@ export const ProjectSettingLabelItem: React.FC<Props> = (props) => {
         <CreateUpdateLabelInline
           labelForm={isEditLabelForm}
           setLabelForm={setEditLabelForm}
-          isUpdating={true}
+          isUpdating
           labelToUpdate={label}
           onClose={() => {
             setEditLabelForm(false);

@@ -133,7 +133,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
               <Droppable
                 droppableId={LABELS_ROOT}
                 isCombineEnabled={!isDraggingGroup}
-                ignoreContainerClipping={true}
+                ignoreContainerClipping
                 isDropDisabled={isUpdating}
               >
                 {(droppableProvided, droppableSnapshot) => (

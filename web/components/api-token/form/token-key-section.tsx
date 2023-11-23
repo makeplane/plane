@@ -1,16 +1,22 @@
-import { Button } from "@plane/ui";
-import useToast from "hooks/use-toast";
+import { Dispatch, SetStateAction, FC } from "react";
+// icons
 import { Copy } from "lucide-react";
-import { Dispatch, SetStateAction } from "react";
+// ui
+import { Button } from "@plane/ui";
+// hooks
+import useToast from "hooks/use-toast";
+// types
 import { IApiToken } from "types/api_token";
 
-interface IApiTokenKeySection {
+interface APITokenKeySectionProps {
   generatedToken: IApiToken | null | undefined;
   renderExpiry: () => string;
   setDeleteTokenModal: Dispatch<SetStateAction<boolean>>;
 }
 
-export const ApiTokenKeySection = ({ generatedToken, renderExpiry, setDeleteTokenModal }: IApiTokenKeySection) => {
+export const APITokenKeySection: FC<APITokenKeySectionProps> = (props) => {
+  const { generatedToken, renderExpiry, setDeleteTokenModal } = props;
+  // hooks
   const { setToastAlert } = useToast();
 
   return generatedToken ? (
