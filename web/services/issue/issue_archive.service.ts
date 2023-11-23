@@ -18,8 +18,8 @@ export class IssueArchiveService extends APIService {
   }
 
   async getV3ArchivedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<any> {
-    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`, {
-      params: queries,
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
+      params: { ...queries, archived: true },
     })
       .then((response) => response?.data)
       .catch((error) => {
