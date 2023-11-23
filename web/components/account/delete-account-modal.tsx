@@ -57,6 +57,8 @@ const DeleteAccountModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Account deleted successfully.",
         });
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
       })
       .catch((err) =>

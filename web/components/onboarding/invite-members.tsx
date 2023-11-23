@@ -28,7 +28,6 @@ import user2 from "public/users/user-2.png";
 import userDark from "public/onboarding/user-dark.svg";
 import userLight from "public/onboarding/user-light.svg";
 
-
 type Props = {
   finishOnboarding: () => Promise<void>;
   stepChange: (steps: Partial<TOnboardingSteps>) => Promise<void>;
@@ -310,7 +309,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
       </div>
       <div className="lg:w-2/3 w-full ml-auto ">
         <form
-          className="px-7 sm:px-0 ml-auto w-full lg:w-5/6 space-y-7 sm:space-y-10 mx-auto"
+          className="px-7 lg:px-0 ml-auto w-full lg:w-5/6 space-y-7 sm:space-y-10 mx-auto"
           onSubmit={handleSubmit(onSubmit)}
           onKeyDown={(e) => {
             if (e.code === "Enter") e.preventDefault();

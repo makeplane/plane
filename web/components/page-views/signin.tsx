@@ -189,7 +189,7 @@ export const SignInView = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
+        <div className={`bg-onboarding-gradient-100 h-full w-full`}>
           <div className="flex items-center justify-between sm:py-5 px-8 pb-4 sm:px-16 lg:px-28 ">
             <div className="flex gap-x-2 py-10 items-center">
               <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
@@ -247,7 +247,7 @@ export const SignInView = observer(() => {
                       </p>
                       <hr className={`border-onboarding-border-100 w-full`} />
                     </div>
-                    <div className="flex items-center justify-center gap-4 pt-7 sm:w-96 mx-auto overflow-hidden">
+                    <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:flex-row sm:w-96 mx-auto overflow-hidden">
                       {envConfig?.google_client_id && (
                         <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
                       )}
