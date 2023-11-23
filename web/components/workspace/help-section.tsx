@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -45,7 +44,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
   // store
   const {
     theme: { sidebarCollapsed, toggleSidebar },
-    commandPalette: commandPaletteStore,
+    commandPalette: { toggleShortcutModal },
   } = useMobxStore();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
@@ -74,7 +73,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             className={`grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
               isCollapsed ? "w-full" : ""
             }`}
-            onClick={() => commandPaletteStore.toggleShortcutModal(true)}
+            onClick={() => toggleShortcutModal(true)}
           >
             <Zap className="h-3.5 w-3.5" />
           </button>

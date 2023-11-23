@@ -1,5 +1,4 @@
 import React, { useEffect, useState, ReactElement } from "react";
-import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
 // services
@@ -17,7 +16,7 @@ import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
 // icons
-import { ChevronDown, ExternalLink, User2 } from "lucide-react";
+import { ChevronDown, User2 } from "lucide-react";
 // types
 import type { IUser } from "types";
 import type { NextPageWithLayout } from "types/app";
@@ -433,7 +432,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 };
 
 ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="My Profile" />}>{page}</ProfileSettingsLayout>;
+  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Settings" />}>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfileSettingsPage;

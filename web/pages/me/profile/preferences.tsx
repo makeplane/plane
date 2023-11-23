@@ -75,11 +75,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
 });
 
 ProfilePreferencesPage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <ProfileSettingsLayout header={<ProfileSettingsHeader title="My Profile Preferences" />}>
-      {page}
-    </ProfileSettingsLayout>
-  );
+  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Preferences" />}>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfilePreferencesPage;

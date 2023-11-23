@@ -96,8 +96,8 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserWorkspaceActivity(workspaceSlug: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/workspaces/${workspaceSlug}/activities/`)
+  async getUserActivity(): Promise<IUserActivityResponse> {
+    return this.get(`/api/users/me/activities/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

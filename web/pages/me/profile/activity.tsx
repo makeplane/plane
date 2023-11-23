@@ -27,10 +27,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: userActivity } = useSWR(
-    workspaceSlug ? USER_ACTIVITY : null,
-    workspaceSlug ? () => userService.getUserWorkspaceActivity(workspaceSlug.toString()) : null
-  );
+  const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
     <>
@@ -196,9 +193,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
 };
 
 ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <ProfileSettingsLayout header={<ProfileSettingsHeader title="My Profile Activity" />}>{page}</ProfileSettingsLayout>
-  );
+  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Activity" />}>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfileActivityPage;
