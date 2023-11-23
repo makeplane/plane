@@ -25,7 +25,7 @@ class ConfigurationEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
-        data["google_client_id"] = (
+        data["google_client_id"] = get_configuration_value(
             instance_configuration,
             "GOOGLE_CLIENT_ID",
             os.environ.get("GOOGLE_CLIENT_ID", None),
