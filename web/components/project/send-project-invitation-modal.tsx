@@ -93,11 +93,9 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     await projectMemberService
       .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then((res) => {
+      .then(() => {
         setIsOpen(false);
-        trackEvent(
-          'PROJECT_MEMBER_INVITE',
-        )
+        trackEvent("PROJECT_MEMBER_INVITE");
         setToastAlert({
           title: "Success",
           type: "success",

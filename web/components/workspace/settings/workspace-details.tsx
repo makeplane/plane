@@ -68,17 +68,13 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        trackEvent(
-          'UPDATE_WORKSPACE',
-          res
-        )
+        trackEvent("UPDATE_WORKSPACE", res);
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
-        })
-      }
-      )
+        });
+      })
       .catch((err) => console.error(err));
   };
 
@@ -89,7 +85,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
     fileService.deleteFile(currentWorkspace.id, url).then(() => {
       updateWorkspace(currentWorkspace.slug, { logo: "" })
-        .then((res) => {
+        .then(() => {
           setToastAlert({
             type: "success",
             title: "Success!",

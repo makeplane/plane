@@ -1,11 +1,13 @@
+import React, { FC, useState } from "react";
+import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+// icons
+import { AlertTriangle } from "lucide-react";
+// ui
 import { Button } from "@plane/ui";
+// hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { AlertTriangle } from "lucide-react";
-import { useRouter } from "next/router";
-import React, { FC, useState } from "react";
-import { useForm } from "react-hook-form";
 
 interface IDeleteWebhook {
   isOpen: boolean;
