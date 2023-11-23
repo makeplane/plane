@@ -16,7 +16,11 @@ export const DraftKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string };
 
-  const { projectDraftIssues: issueStore, issueKanBanView: issueKanBanViewStore } = useMobxStore();
+  const {
+    projectDraftIssues: issueStore,
+    projectDraftIssuesFilter: projectIssuesFilterStore,
+    issueKanBanView: issueKanBanViewStore,
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -34,6 +38,7 @@ export const DraftKanBanLayout: React.FC = observer(() => {
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
+      issuesFilterStore={projectIssuesFilterStore}
       issueStore={issueStore}
       kanbanViewStore={issueKanBanViewStore}
       showLoader={true}

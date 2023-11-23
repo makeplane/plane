@@ -10,10 +10,14 @@ import { Spinner } from "@plane/ui";
 import { IIssue } from "types";
 import { EIssueActions } from "../types";
 import {
+  ICycleIssuesFilterStore,
   ICycleIssuesStore,
+  IModuleIssuesFilterStore,
   IModuleIssuesStore,
   IProjectDraftIssuesStore,
+  IProjectIssuesFilterStore,
   IProjectIssuesStore,
+  IViewIssuesFilterStore,
   IViewIssuesStore,
 } from "store/issues";
 import { IQuickActionProps } from "../list/list-view-types";
@@ -31,6 +35,11 @@ export interface IBaseKanBanLayout {
     | ICycleIssuesStore
     | IViewIssuesStore
     | IProjectDraftIssuesStore;
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
   kanbanViewStore: IIssueKanBanViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -43,21 +52,20 @@ export interface IBaseKanBanLayout {
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { issueStore, kanbanViewStore, QuickActions, issueActions, showLoader, viewId } = props;
+  const { issueStore, issuesFilterStore, kanbanViewStore, QuickActions, issueActions, showLoader, viewId } = props;
 
   const {
     project: { workspaceProjects },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
-    projectIssuesFilter: issueFilterStore,
   } = useMobxStore();
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];
 
-  const displayFilters = issueFilterStore?.issueFilters?.displayFilters;
-  const displayProperties = issueFilterStore?.issueFilters?.displayProperties || null;
+  const displayFilters = issuesFilterStore?.issueFilters?.displayFilters;
+  const displayProperties = issuesFilterStore?.issueFilters?.displayProperties || null;
 
   const sub_group_by: string | null = displayFilters?.sub_group_by || null;
 

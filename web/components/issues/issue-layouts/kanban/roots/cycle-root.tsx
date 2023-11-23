@@ -18,7 +18,11 @@ export const CycleKanBanLayout: React.FC = observer(() => {
   const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
 
   // store
-  const { cycleIssues: cycleIssueStore, cycleIssueKanBanView: cycleIssueKanBanViewStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    cycleIssuesFilter: cycleIssueFilterStore,
+    cycleIssueKanBanView: cycleIssueKanBanViewStore,
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -39,6 +43,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     <BaseKanBanRoot
       issueActions={issueActions}
       issueStore={cycleIssueStore}
+      issuesFilterStore={cycleIssueFilterStore}
       kanbanViewStore={cycleIssueKanBanViewStore}
       showLoader={true}
       QuickActions={CycleIssueQuickActions}
