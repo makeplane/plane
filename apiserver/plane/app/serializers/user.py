@@ -155,6 +155,16 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+
+    def validate(self, data):
+        if data.get("old_password") == data.get("new_password"):
+            raise serializers.ValidationError("New password cannot be same as old password.")
+
+        if data.get("new_password") != data.get("confirm_password"):
+            raise serializers.ValidationError("confirm password should be same as the new password.")
+
+        return data
 
 
 class ResetPasswordSerializer(serializers.Serializer):
