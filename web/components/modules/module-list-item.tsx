@@ -157,7 +157,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-center">
               {moduleStatus && (
                 <span
-                  className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                  className="flex items-center justify-center text-xs text-center h-6 w-20 rounded-sm"
+                  style={{
+                    color: moduleStatus.color,
+                    backgroundColor: `${moduleStatus.color}20`,
+                  }}
                 >
                   {moduleStatus.label}
                 </span>
