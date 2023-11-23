@@ -1,5 +1,4 @@
 import React, { useEffect, useState, ReactElement } from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Transition } from "@headlessui/react";
@@ -10,16 +9,15 @@ import { UserService } from "services/user.service";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
+import { ProfileSettingsHeader } from "components/headers";
 import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
 // icons
-import { ChevronDown, User2, UserCircle2 } from "lucide-react";
+import { ChevronDown, ExternalLink, User2 } from "lucide-react";
 // types
 import type { IUser } from "types";
 import type { NextPageWithLayout } from "types/app";
@@ -32,6 +30,7 @@ const defaultValues: Partial<IUser> = {
   cover_image: "",
   first_name: "",
   last_name: "",
+  display_name: "",
   email: "",
   role: "Product / Project Manager",
   user_timezone: "Asia/Kolkata",
@@ -40,13 +39,11 @@ const defaultValues: Partial<IUser> = {
 const fileService = new FileService();
 const userService = new UserService();
 
-const ProfilePage: NextPageWithLayout = () => {
+const ProfileSettingsPage: NextPageWithLayout = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+
   // form info
   const {
     handleSubmit,
@@ -205,14 +202,12 @@ const ProfilePage: NextPageWithLayout = () => {
                 <Controller
                   control={control}
                   name="cover_image"
-                  render={() => (
+                  render={({ field: { value, onChange } }) => (
                     <ImagePickerPopover
                       label={"Change cover"}
-                      onChange={(imageUrl) => {
-                        setValue("cover_image", imageUrl);
-                      }}
+                      onChange={(imageUrl) => onChange(imageUrl)}
                       control={control}
-                      value={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                      value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                     />
                   )}
                 />
@@ -227,14 +222,12 @@ const ProfilePage: NextPageWithLayout = () => {
                 <span className="text-sm tracking-tight">{watch("email")}</span>
               </div>
 
-              <Link href={`/${workspaceSlug}/profile/${myProfile.id}`}>
-                <a className="flex item-center cursor-pointer gap-2 h-4 leading-4 text-sm text-custom-primary-100">
-                  <span className="h-4 w-4">
-                    <UserCircle2 className="h-4 w-4" />
-                  </span>
-                  View Profile
+              {/* <Link href={`/profile/${myProfile.id}`}>
+                <a className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
+                  <ExternalLink className="h-4 w-4" />
+                  Activity Overview
                 </a>
-              </Link>
+              </Link> */}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
@@ -439,12 +432,8 @@ const ProfilePage: NextPageWithLayout = () => {
   );
 };
 
-ProfilePage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <AppLayout header={<WorkspaceSettingHeader title="My Profile" />}>
-      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
-    </AppLayout>
-  );
+ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="My Profile" />}>{page}</ProfileSettingsLayout>;
 };
 
-export default ProfilePage;
+export default ProfileSettingsPage;

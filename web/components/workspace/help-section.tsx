@@ -43,7 +43,10 @@ export interface WorkspaceHelpSectionProps {
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
   // store
-  const { theme: themeStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    theme: { sidebarCollapsed, toggleSidebar },
+    commandPalette: commandPaletteStore,
+  } = useMobxStore();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs
@@ -51,7 +54,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
 
   useOutsideClickDetector(helpOptionsRef, () => setIsNeedHelpOpen(false));
 
-  const isCollapsed = themeStore.sidebarCollapsed || false;
+  const isCollapsed = sidebarCollapsed || false;
 
   return (
     <>
@@ -87,7 +90,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
-            onClick={() => themeStore.toggleSidebar()}
+            onClick={() => toggleSidebar()}
           >
             <MoveLeft className="h-3.5 w-3.5" />
           </button>
@@ -96,7 +99,7 @@ export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observe
             className={`hidden md:grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ${
               isCollapsed ? "w-full" : ""
             }`}
-            onClick={() => themeStore.toggleSidebar()}
+            onClick={() => toggleSidebar()}
           >
             <MoveLeft className={`h-3.5 w-3.5 duration-300 ${isCollapsed ? "rotate-180" : ""}`} />
           </button>

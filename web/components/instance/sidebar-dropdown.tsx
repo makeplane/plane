@@ -23,7 +23,7 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: `/me/profile`,
   },
 ];
 
@@ -70,13 +70,13 @@ export const InstanceSidebarDropdown = observer(() => {
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <div className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}>
+          <div
+            className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}
+          >
             <Cog className="h-5 w-5 text-custom-text-200" />
           </div>
 
-          {!sidebarCollapsed && (
-            <h4 className="text-custom-text-200 font-medium text-base truncate">Instance Admin</h4>
-          )}
+          {!sidebarCollapsed && <h4 className="text-custom-text-200 font-medium text-base truncate">Instance Admin</h4>}
         </div>
       </div>
 

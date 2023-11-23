@@ -5,11 +5,10 @@ import { useTheme } from "next-themes";
 import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
+import { ProfileSettingsHeader } from "components/headers";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -77,9 +76,9 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
 
 ProfilePreferencesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="My Profile Preferences" />}>
-      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
-    </AppLayout>
+    <ProfileSettingsLayout header={<ProfileSettingsHeader title="My Profile Preferences" />}>
+      {page}
+    </ProfileSettingsLayout>
   );
 };
 
