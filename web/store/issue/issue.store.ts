@@ -5,7 +5,6 @@ import { RootStore } from "../root";
 import { IIssue } from "types";
 // services
 import { IssueService } from "services/issue";
-import { sortArrayByDate, sortArrayByPriority } from "constants/kanban-helpers";
 import { IBlockUpdateData } from "components/gantt-chart";
 
 export type IIssueType = "grouped" | "groupWithSubGroups" | "ungrouped";
@@ -18,8 +17,9 @@ export type IIssueGroupWithSubGroupsStructure = {
 export type IIssueUnGroupedStructure = IIssue[];
 
 export interface IIssueStore {
-  loader: boolean;
+  loader: "initial-load" | "mutation" | null;
   error: any | null;
+
   // issues
   issues: {
     [project_id: string]: {
@@ -33,15 +33,14 @@ export interface IIssueStore {
   getIssues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null;
   getIssuesCount: number;
   // action
-  fetchIssues: (workspaceSlug: string, projectId: string) => Promise<any>;
+  fetchIssues: (workspaceSlug: string, projectId: string, loadType?: "initial-load" | "mutation") => Promise<any>;
   updateIssueStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   removeIssueFromStructure: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
-  deleteIssue: (group_id: string | null, sub_group_id: string | null, issue: IIssue) => void;
   updateGanttIssueStructure: (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => void;
 }
 
 export class IssueStore implements IIssueStore {
-  loader: boolean = false;
+  loader: "initial-load" | "mutation" | null = null;
   error: any | null = null;
   issues: {
     [project_id: string]: {
@@ -74,7 +73,6 @@ export class IssueStore implements IIssueStore {
       fetchIssues: action,
       updateIssueStructure: action,
       removeIssueFromStructure: action,
-      deleteIssue: action,
       updateGanttIssueStructure: action,
     });
 
@@ -84,14 +82,13 @@ export class IssueStore implements IIssueStore {
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
-
       if (
         workspaceSlug &&
         projectId &&
         this.rootStore.issueFilter.userFilters &&
         this.rootStore.issueFilter.userDisplayFilters
       )
-        this.fetchIssues(workspaceSlug, projectId);
+        this.fetchIssues(workspaceSlug, projectId, "mutation");
     });
   }
 
@@ -100,13 +97,16 @@ export class IssueStore implements IIssueStore {
     const ungroupedLayouts = ["spreadsheet", "gantt_chart"];
 
     const issueLayout = this.rootStore?.issueFilter?.userDisplayFilters?.layout || null;
+    const issueGroup = this.rootStore?.issueFilter?.userDisplayFilters?.group_by || null;
     const issueSubGroup = this.rootStore?.issueFilter?.userDisplayFilters?.sub_group_by || null;
     if (!issueLayout) return null;
 
     const _issueState = groupedLayouts.includes(issueLayout)
-      ? issueSubGroup
-        ? "groupWithSubGroups"
-        : "grouped"
+      ? issueGroup
+        ? issueSubGroup
+          ? "groupWithSubGroups"
+          : "grouped"
+        : "ungrouped"
       : ungroupedLayouts.includes(issueLayout)
       ? "ungrouped"
       : null;
@@ -200,20 +200,6 @@ export class IssueStore implements IIssueStore {
         : [...(issues ?? []), issue];
     }
 
-    const orderBy = this.rootStore?.issueFilter?.userDisplayFilters?.order_by || "";
-    if (orderBy === "-created_at") {
-      issues = sortArrayByDate(issues as any, "created_at");
-    }
-    if (orderBy === "-updated_at") {
-      issues = sortArrayByDate(issues as any, "updated_at");
-    }
-    if (orderBy === "start_date") {
-      issues = sortArrayByDate(issues as any, "updated_at");
-    }
-    if (orderBy === "priority") {
-      issues = sortArrayByPriority(issues as any, "priority");
-    }
-
     runInAction(() => {
       this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
     });
@@ -222,7 +208,6 @@ export class IssueStore implements IIssueStore {
   removeIssueFromStructure = (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
     const projectId: string | null = issue?.project;
     const issueType = this.getIssueType;
-
     if (!projectId || !issueType) return null;
 
     let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
@@ -257,7 +242,7 @@ export class IssueStore implements IIssueStore {
   };
 
   updateGanttIssueStructure = async (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => {
-    if (!issue || !workspaceSlug) return;
+    if (!issue || !workspaceSlug || !this.getIssues) return;
 
     const issues = this.getIssues as IIssueUnGroupedStructure;
 
@@ -296,45 +281,13 @@ export class IssueStore implements IIssueStore {
     this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
-  deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
-    const projectId: string | null = issue?.project;
-    const issueType = this.getIssueType;
-    if (!projectId || !issueType) return null;
-
-    let issues: IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure | null =
-      this.getIssues;
-    if (!issues) return null;
-
-    if (issueType === "grouped" && group_id) {
-      issues = issues as IIssueGroupedStructure;
-      issues = {
-        ...issues,
-        [group_id]: issues[group_id].filter((i) => i?.id !== issue?.id),
-      };
-    }
-    if (issueType === "groupWithSubGroups" && group_id && sub_group_id) {
-      issues = issues as IIssueGroupWithSubGroupsStructure;
-      issues = {
-        ...issues,
-        [sub_group_id]: {
-          ...issues[sub_group_id],
-          [group_id]: issues[sub_group_id][group_id].filter((i) => i?.id !== issue?.id),
-        },
-      };
-    }
-    if (issueType === "ungrouped") {
-      issues = issues as IIssueUnGroupedStructure;
-      issues = issues.filter((i) => i?.id !== issue?.id);
-    }
-
-    runInAction(() => {
-      this.issues = { ...this.issues, [projectId]: { ...this.issues[projectId], [issueType]: issues } };
-    });
-  };
-
-  fetchIssues = async (workspaceSlug: string, projectId: string) => {
+  fetchIssues = async (
+    workspaceSlug: string,
+    projectId: string,
+    loadType: "initial-load" | "mutation" = "initial-load"
+  ) => {
     try {
-      this.loader = true;
+      this.loader = loadType;
       this.error = null;
 
       this.rootStore.workspace.setWorkspaceSlug(workspaceSlug);
@@ -354,7 +307,7 @@ export class IssueStore implements IIssueStore {
         };
         runInAction(() => {
           this.issues = _issues;
-          this.loader = false;
+          this.loader = null;
           this.error = null;
         });
       }
@@ -362,7 +315,7 @@ export class IssueStore implements IIssueStore {
       return issueResponse;
     } catch (error) {
       console.error("Error: Fetching error in issues", error);
-      this.loader = false;
+      this.loader = null;
       this.error = error;
       return error;
     }

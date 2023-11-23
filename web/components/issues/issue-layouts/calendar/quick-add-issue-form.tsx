@@ -7,19 +7,26 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
-import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { IIssue } from "types";
+import { IIssue, IProject } from "types";
 
 type Props = {
+  formKey: keyof IIssue;
   groupId?: string;
+  subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
-  onSuccess?: (data: IIssue) => Promise<void> | void;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -49,15 +56,14 @@ const Inputs = (props: any) => {
   );
 };
 
-export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData, groupId } = props;
+export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
+  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  // store
-  const { workspace: workspaceStore, quickAddIssue: quickAddStore } = useMobxStore();
+  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
 
   // ref
   const ref = useRef<HTMLDivElement>(null);
@@ -67,7 +73,10 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
 
   const { setToastAlert } = useToast();
 
-  const { projectDetails } = useProjectDetails();
+  // derived values
+  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
+  const projectDetail: IProject | null =
+    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
 
   const {
     reset,
@@ -83,9 +92,6 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
 
   useKeypress("Escape", handleClose);
   useOutsideClickDetector(ref, handleClose);
-
-  // derived values
-  const workspaceDetail = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString()!);
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
@@ -106,42 +112,36 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
   }, [errors, setToastAlert]);
 
   const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !workspaceSlug || !projectId) return;
+    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
 
-    // resetting the form so that user can add another issue quickly
-    reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
+    reset({ ...defaultValues });
 
-    const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+    const payload = createIssuePayload(workspaceDetail, projectDetail, {
       ...(prePopulatedData ?? {}),
       ...formData,
     });
 
     try {
-      quickAddStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          group_id: groupId ?? null,
-          sub_group_id: null,
-        },
-        payload
-      );
-
+      quickAddCallback &&
+        (await quickAddCallback(
+          workspaceSlug,
+          projectId,
+          {
+            ...payload,
+          },
+          viewId
+        ));
       setToastAlert({
         type: "success",
         title: "Success!",
         message: "Issue created successfully.",
       });
     } catch (err: any) {
-      Object.keys(err || {}).forEach((key) => {
-        const error = err?.[key];
-        const errorTitle = error ? (Array.isArray(error) ? error.join(", ") : error) : null;
-
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: errorTitle || "Some error occurred. Please try again.",
-        });
+      console.error(err);
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: err?.message || "Some error occurred. Please try again.",
       });
     }
   };
@@ -159,7 +159,7 @@ export const CalendarInlineCreateIssueForm: React.FC<Props> = observer((props) =
             onSubmit={handleSubmit(onSubmitHandler)}
             className="flex w-full px-2 border-[0.5px] border-custom-border-200 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-2xs transition-opacity"
           >
-            <Inputs register={register} setFocus={setFocus} projectDetails={projectDetails} />
+            <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>
         </div>
       )}

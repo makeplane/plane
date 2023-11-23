@@ -13,17 +13,16 @@ import { Tooltip } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 
-export interface IKanBanProperties {
+export interface IListProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (group_by: string | null, issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadonly?: boolean;
-  showEmptyGroup?: boolean;
 }
 
-export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
-  const { columnId: group_id, issue, handleIssues, displayProperties, isReadonly, showEmptyGroup } = props;
+export const ListProperties: FC<IListProperties> = observer((props) => {
+  const { columnId: group_id, issue, handleIssues, displayProperties, isReadonly } = props;
 
   const handleState = (state: IState) => {
     handleIssues(!group_id && group_id === "null" ? null : group_id, { ...issue, state: state.id });
@@ -60,7 +59,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       {displayProperties && displayProperties?.state && (
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
-          value={issue?.state_detail || null}
+          value={issue?.state || null}
           hideDropdownArrow
           onChange={handleState}
           disabled={isReadonly}
@@ -78,7 +77,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* label */}
-      {displayProperties && displayProperties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
+      {displayProperties && displayProperties?.labels && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
@@ -89,7 +88,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* assignee */}
-      {displayProperties && displayProperties?.assignee && (showEmptyGroup || issue?.assignees?.length > 0) && (
+      {displayProperties && displayProperties?.assignee && (
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
@@ -101,7 +100,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* start date */}
-      {displayProperties && displayProperties?.start_date && (showEmptyGroup || issue?.start_date) && (
+      {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
@@ -111,7 +110,7 @@ export const KanBanProperties: FC<IKanBanProperties> = observer((props) => {
       )}
 
       {/* target/due date */}
-      {displayProperties && displayProperties?.due_date && (showEmptyGroup || issue?.target_date) && (
+      {displayProperties && displayProperties?.due_date && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}

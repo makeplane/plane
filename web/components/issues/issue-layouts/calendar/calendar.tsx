@@ -8,19 +8,28 @@ import { CalendarHeader, CalendarWeekDays, CalendarWeekHeader } from "components
 import { Spinner } from "@plane/ui";
 // types
 import { ICalendarWeek } from "./types";
-import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
+import { EIssueActions } from "../types";
+import { IGroupedIssues, IIssueResponse } from "store/issues/types";
 
 type Props = {
-  issues: IIssueGroupedStructure | null;
+  issues: IIssueResponse | undefined;
+  groupedIssueIds: IGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
-  handleIssues: (date: string, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, layout, showWeekends, handleIssues, quickActions } = props;
+  const { issues, groupedIssueIds, layout, showWeekends, handleIssues, quickActions, quickAddCallback, viewId } = props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -49,9 +58,12 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                     key={weekIndex}
                     week={week}
                     issues={issues}
+                    groupedIssueIds={groupedIssueIds}
                     enableQuickIssueCreate
                     handleIssues={handleIssues}
                     quickActions={quickActions}
+                    quickAddCallback={quickAddCallback}
+                    viewId={viewId}
                   />
                 ))}
             </div>
@@ -60,9 +72,12 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
             <CalendarWeekDays
               week={calendarStore.allDaysOfActiveWeek}
               issues={issues}
+              groupedIssueIds={groupedIssueIds}
               enableQuickIssueCreate
               handleIssues={handleIssues}
               quickActions={quickActions}
+              quickAddCallback={quickAddCallback}
+              viewId={viewId}
             />
           )}
         </div>

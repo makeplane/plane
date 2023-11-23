@@ -6,61 +6,69 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
+import { EFilterType } from "store/issues/types";
 
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query;
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const {
     projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    cycleIssueFilter: cycleIssueFilterStore,
     projectState: projectStateStore,
+    projectMember: { projectMembers },
+    cycleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
-  const userFilters = cycleIssueFilterStore.cycleFilters;
+  const userFilters = issueFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(userFilters).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-
-    // remove all values of the key if value is null
+    if (!workspaceSlug || !projectId) return;
     if (!value) {
-      cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug,
+        projectId,
+        EFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        cycleId
+      );
       return;
     }
 
-    // remove the passed value from the key
-    let newValues = cycleIssueFilterStore.cycleFilters?.[key] ?? [];
+    let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug,
+      projectId,
+      EFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      cycleId
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !cycleId) return;
-
+    if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-
-    cycleIssueFilterStore.updateCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId?.toString(), {
-      ...newFilters,
-    });
+    updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { ...newFilters }, cycleId);
   };
 
   // return if no filters are applied
@@ -74,7 +82,7 @@ export const CycleAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
-        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStateStore.states?.[cycleId ?? ""]}
       />
     </div>
   );

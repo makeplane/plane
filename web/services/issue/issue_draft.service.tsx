@@ -17,6 +17,16 @@ export class IssueDraftService extends APIService {
       });
   }
 
+  async getV3DraftIssues(workspaceSlug: string, projectId: string, params?: any): Promise<any> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
   async createDraftIssue(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-drafts/`, data)
       .then((response) => response?.data)

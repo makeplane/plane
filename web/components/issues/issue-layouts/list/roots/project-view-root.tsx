@@ -1,57 +1,49 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-// components
-import { List } from "../default";
+
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 // constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
+import { useRouter } from "next/router";
+import { EIssueActions } from "../../types";
+import { IProjectStore } from "store/project";
+import { IIssue } from "types";
+// components
+import { BaseListRoot } from "../base-list-root";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 
 export interface IViewListLayout {}
 
 export const ProjectViewListLayout: React.FC = observer(() => {
-  const {
-    project: projectStore,
-    issue: issueStore,
-    issueFilter: issueFilterStore,
-    projectState: projectStateStore,
-  }: RootStore = useMobxStore();
+  const { viewIssues: projectViewIssueStore, viewIssuesFilter: projectViewIssueFilterStore }: RootStore =
+    useMobxStore();
 
-  const issues = issueStore?.getIssues;
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
+  if (!workspaceSlug || !projectId) return null;
 
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
-
-  const updateIssue = (group_by: string | null, issue: any) => {
-    issueStore.updateIssueStructure(group_by, null, issue);
+  const issueActions = {
+    [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !projectId) return;
+      projectViewIssueStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
+    },
+    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !projectId) return;
+      projectViewIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
+    },
   };
 
-  const states = projectStateStore?.projectStates || null;
-  const priorities = ISSUE_PRIORITIES || null;
-  // const labels = projectStore?.projectLabels || null;
-  const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStateStore?.projectStates || null;
-  const estimates = null;
+  const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
 
-  return null;
-
-  // return (
-  //   <div className={`relative w-full h-full bg-custom-background-90`}>
-  //     <List
-  //       issues={issues}
-  //       group_by={group_by}
-  //       handleIssues={updateIssue}
-  //       display_properties={display_properties}
-  //       states={states}
-  //       stateGroups={stateGroups}
-  //       priorities={priorities}
-  //       labels={labels}
-  //       members={members}
-  //       projects={projects}
-  //       estimates={estimates}
-  //     />
-  //   </div>
-  // );
+  return (
+    <BaseListRoot
+      issueFilterStore={projectViewIssueFilterStore}
+      issueStore={projectViewIssueStore}
+      QuickActions={ProjectIssueQuickActions}
+      issueActions={issueActions}
+      getProjects={getProjects}
+    />
+  );
 });

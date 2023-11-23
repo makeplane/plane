@@ -18,6 +18,7 @@ export const WorkspaceDashboardView = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
+
   const { user: userStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
 
   const user = userStore.currentUser;

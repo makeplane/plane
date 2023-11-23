@@ -1,96 +1,52 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { List } from "../default";
 import { CycleIssueQuickActions } from "components/issues";
-// helpers
-import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IIssue } from "types";
 // constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
+import { BaseListRoot } from "../base-list-root";
+import { IProjectStore } from "store/project";
+import { EIssueActions } from "../../types";
 
 export interface ICycleListLayout {}
 
 export const CycleListLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
   // store
-  const {
-    project: projectStore,
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    projectEstimates: { projectEstimates },
-    issueFilter: issueFilterStore,
-    cycleIssue: cycleIssueStore,
-    issueDetail: issueDetailStore,
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
 
-  const issues = cycleIssueStore?.getIssues;
-
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
-  const displayProperties = issueFilterStore?.userDisplayProperties || null;
-
-  const handleIssues = useCallback(
-    (group_by: string | null, issue: IIssue, action: "update" | "delete" | "remove") => {
+  const issueActions = {
+    [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
-
-      if (action === "update") {
-        cycleIssueStore.updateIssueStructure(group_by, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      }
-      if (action === "delete") cycleIssueStore.deleteIssue(group_by, null, issue);
-      if (action === "remove" && issue.bridge_id) {
-        cycleIssueStore.deleteIssue(group_by, null, issue);
-        cycleIssueStore.removeIssueFromCycle(
-          workspaceSlug.toString(),
-          issue.project,
-          cycleId.toString(),
-          issue.bridge_id
-        );
-      }
+      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
     },
-    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
-  );
-
-  const states = projectStateStore?.projectStates || null;
-  const priorities = ISSUE_PRIORITIES || null;
-  const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = workspaceSlug ? projectStore?.projects[workspaceSlug.toString()] || null : null;
-  const estimates =
-    currentProjectDetails?.estimate !== null
-      ? projectEstimates?.find((e) => e.id === currentProjectDetails?.estimate) || null
-      : null;
+    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !cycleId) return;
+      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+    },
+    [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
+      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+    },
+  };
+  const getProjects = (projectStore: IProjectStore) => {
+    if (!workspaceSlug) return null;
+    return projectStore?.projects[workspaceSlug] || null;
+  };
 
   return (
-    <div className={`relative w-full h-full bg-custom-background-90`}>
-      <List
-        issues={issues}
-        group_by={group_by}
-        handleIssues={handleIssues}
-        quickActions={(group_by, issue) => (
-          <CycleIssueQuickActions
-            issue={issue}
-            handleDelete={async () => handleIssues(group_by, issue, "delete")}
-            handleUpdate={async (data) => handleIssues(group_by, data, "update")}
-            handleRemoveFromCycle={async () => handleIssues(group_by, issue, "remove")}
-          />
-        )}
-        displayProperties={displayProperties}
-        states={states}
-        stateGroups={stateGroups}
-        priorities={priorities}
-        labels={projectLabels}
-        members={projectMembers?.map((m) => m.member) ?? null}
-        projects={projects}
-        estimates={estimates?.points ? orderArrayBy(estimates.points, "key") : null}
-      />
-    </div>
+    <BaseListRoot
+      issueFilterStore={cycleIssueFilterStore}
+      issueStore={cycleIssueStore}
+      QuickActions={CycleIssueQuickActions}
+      issueActions={issueActions}
+      getProjects={getProjects}
+      viewId={cycleId}
+    />
   );
 });

@@ -4,6 +4,7 @@ import { APIService } from "services/api.service";
 import type { CycleDateCheckData, ICycle, IIssue } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
+import { IIssueResponse } from "store/issues/types";
 
 export class CycleService extends APIService {
   constructor() {
@@ -44,6 +45,21 @@ export class CycleService extends APIService {
 
   async getCycleIssues(workspaceSlug: string, projectId: string, cycleId: string): Promise<IIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getV3CycleIssues(
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    queries?: any
+  ): Promise<IIssueResponse> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

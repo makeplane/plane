@@ -15,6 +15,7 @@ export interface IProjectMemberStore {
   };
   // computed
   projectMembers: IProjectMember[] | null;
+  projectMemberIds: (isLayoutRender?: boolean) => string[];
   // actions
   getProjectMemberById: (memberId: string) => IProjectMember | null;
   getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
@@ -93,6 +94,13 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!members) return null;
     const memberInfo: IProjectMember | null = members.find((member) => member.member.id === memberId) || null;
     return memberInfo;
+  };
+
+  projectMemberIds = (isLayoutRender: boolean = false) => {
+    if (!this.projectMembers) return [];
+    let memberIds = (this.projectMembers ?? []).map((member) => member.member.id);
+    memberIds = isLayoutRender ? [...memberIds, "None"] : memberIds;
+    return memberIds;
   };
 
   /**

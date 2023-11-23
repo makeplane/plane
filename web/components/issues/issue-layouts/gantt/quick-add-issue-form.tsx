@@ -20,6 +20,13 @@ import { createIssuePayload } from "helpers/issue.helper";
 type Props = {
   prePopulatedData?: Partial<IIssue>;
   onSuccess?: (data: IIssue) => Promise<void> | void;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -47,14 +54,14 @@ const Inputs = (props: any) => {
 };
 
 export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
-  const { prePopulatedData } = props;
+  const { prePopulatedData, quickAddCallback, viewId } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   // store
-  const { workspace: workspaceStore, quickAddIssue: quickAddStore } = useMobxStore();
+  const { workspace: workspaceStore } = useMobxStore();
 
   const { projectDetails } = useProjectDetails();
 
@@ -114,15 +121,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     });
 
     try {
-      quickAddStore.createIssue(
-        workspaceSlug.toString(),
-        projectId.toString(),
-        {
-          group_id: null,
-          sub_group_id: null,
-        },
-        payload
-      );
+      quickAddCallback && quickAddCallback(workspaceSlug, projectId, payload, viewId);
 
       setToastAlert({
         type: "success",

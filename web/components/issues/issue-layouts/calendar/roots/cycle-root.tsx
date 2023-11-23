@@ -1,80 +1,43 @@
-import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarChart, CycleIssueQuickActions } from "components/issues";
+import { CycleIssueQuickActions } from "components/issues";
 // types
-import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
+import { EIssueActions } from "../../types";
+import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
-  const {
-    cycleIssue: cycleIssueStore,
-    issueFilter: issueFilterStore,
-    issueDetail: issueDetailStore,
-    cycleIssueCalendarView: cycleIssueCalendarViewStore,
-  } = useMobxStore();
+  const { cycleIssues: cycleIssueStore, cycleIssueCalendarView: cycleIssueCalendarViewStore } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result) return;
-
-    // return if not dropped on the correct place
-    if (!result.destination) return;
-
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
-
-    cycleIssueCalendarViewStore?.handleDragDrop(result.source, result.destination);
-  };
-
-  const issues = cycleIssueStore.getIssues;
-
-  const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: "update" | "delete" | "remove") => {
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      if (action === "update") {
-        cycleIssueStore.updateIssueStructure(date, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      }
-      if (action === "delete") cycleIssueStore.deleteIssue(date, null, issue);
-      if (action === "remove" && issue.bridge_id) {
-        cycleIssueStore.deleteIssue(date, null, issue);
-        cycleIssueStore.removeIssueFromCycle(
-          workspaceSlug.toString(),
-          issue.project,
-          cycleId.toString(),
-          issue.bridge_id
-        );
-      }
+      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
     },
-    [cycleIssueStore, issueDetailStore, cycleId, workspaceSlug]
-  );
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug || !cycleId) return;
+      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+    },
+    [EIssueActions.REMOVE]: async (issue: IIssue) => {
+      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+    },
+  };
 
   return (
-    <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart
-          issues={issues as IIssueGroupedStructure | null}
-          layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
-          handleIssues={handleIssues}
-          quickActions={(issue) => (
-            <CycleIssueQuickActions
-              issue={issue}
-              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
-              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
-              handleRemoveFromCycle={async () => handleIssues(issue.target_date ?? "", issue, "remove")}
-            />
-          )}
-        />
-      </DragDropContext>
-    </div>
+    <BaseCalendarRoot
+      issueStore={cycleIssueStore}
+      calendarViewStore={cycleIssueCalendarViewStore}
+      QuickActions={CycleIssueQuickActions}
+      issueActions={issueActions}
+      viewId={cycleId}
+    />
   );
 });

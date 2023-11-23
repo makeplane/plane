@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
-import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetInlineCreateIssueForm } from "components/issues";
+import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetQuickAddIssueForm } from "components/issues";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner } from "@plane/ui";
 // types
@@ -19,6 +19,13 @@ type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
   disableUserActions: boolean;
   enableQuickCreateIssue?: boolean;
 };
@@ -34,7 +41,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     states,
     handleIssueAction,
     handleUpdateIssue,
-    openIssuesListModal,
+    quickAddCallback,
+    viewId,
     disableUserActions,
     enableQuickCreateIssue,
   } = props;
@@ -132,7 +140,9 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
         <div className="border-t border-custom-border-100">
           <div className="mb-3 z-50 sticky bottom-0 left-0">
-            {enableQuickCreateIssue && <SpreadsheetInlineCreateIssueForm />}
+            {enableQuickCreateIssue && (
+              <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
+            )}
           </div>
 
           {/* {!disableUserActions &&

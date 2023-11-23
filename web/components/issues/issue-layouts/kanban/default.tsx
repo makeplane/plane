@@ -5,40 +5,47 @@ import { Droppable } from "@hello-pangea/dnd";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { KanbanIssueBlocksList, BoardInlineCreateIssueForm } from "components/issues";
+import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from "components/issues";
 // types
-import { IIssueDisplayProperties, IIssue } from "types";
+import { IIssueDisplayProperties, IIssue, IState } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
+import { EIssueActions } from "../types";
+import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface IGroupByKanBan {
-  issues: any;
+  issues: IIssueResponse;
+  issueIds: any;
   sub_group_by: string | null;
   group_by: string | null;
   order_by: string | null;
   sub_group_id: string;
   list: any;
   listKey: string;
+  states: IState[] | null;
   isDragDisabled: boolean;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   showEmptyGroup: boolean;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   enableQuickIssueCreate?: boolean;
   isDragStarted?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
   const {
     issues,
+    issueIds,
     sub_group_by,
     group_by,
     order_by,
@@ -54,6 +61,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     handleKanBanToggle,
     enableQuickIssueCreate,
     isDragStarted,
+    quickAddCallback,
+    viewId,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -74,7 +83,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   column_value={_list}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
-                  issues_count={issues?.[getValueFromObject(_list, listKey) as string]?.length || 0}
+                  issues_count={issueIds?.[getValueFromObject(_list, listKey) as string]?.length || 0}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
                 />
@@ -102,7 +111,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                       <KanbanIssueBlocksList
                         sub_group_id={sub_group_id}
                         columnId={getValueFromObject(_list, listKey) as string}
-                        issues={issues[getValueFromObject(_list, listKey) as string]}
+                        issues={issues}
+                        issueIds={issueIds?.[getValueFromObject(_list, listKey) as string] || []}
                         isDragDisabled={isDragDisabled}
                         showEmptyGroup={showEmptyGroup}
                         handleIssues={handleIssues}
@@ -125,13 +135,16 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 
             <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky bottom-0 z-[0]">
               {enableQuickIssueCreate && (
-                <BoardInlineCreateIssueForm
+                <KanBanQuickAddIssueForm
+                  formKey="name"
                   groupId={getValueFromObject(_list, listKey) as string}
                   subGroupId={sub_group_id}
                   prePopulatedData={{
                     ...(group_by && { [group_by]: getValueFromObject(_list, listKey) }),
                     ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
                   }}
+                  quickAddCallback={quickAddCallback}
+                  viewId={viewId}
                 />
               )}
             </div>
@@ -152,19 +165,15 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
 });
 
 export interface IKanBan {
-  issues: any;
+  issues: IIssueResponse;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
   sub_group_by: string | null;
   group_by: string | null;
   order_by: string | null;
   sub_group_id?: string;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
@@ -176,11 +185,19 @@ export interface IKanBan {
   projects: any;
   enableQuickIssueCreate?: boolean;
   isDragStarted?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
   const {
     issues,
+    issueIds,
     sub_group_by,
     group_by,
     order_by,
@@ -199,6 +216,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     projects,
     enableQuickIssueCreate,
     isDragStarted,
+    quickAddCallback,
+    viewId,
   } = props;
 
   const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -208,12 +227,14 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
       {group_by && group_by === "project" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={projects}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -223,18 +244,22 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
       {group_by && group_by === "state" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={states}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -244,18 +269,22 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
       {group_by && group_by === "state_detail.group" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={stateGroups}
           listKey={`key`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -265,18 +294,22 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
       {group_by && group_by === "priority" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={priorities}
           listKey={`key`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -286,18 +319,22 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
       {group_by && group_by === "labels" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={labels ? [...labels, { id: "None", name: "None" }] : labels}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -307,18 +344,22 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
       {group_by && group_by === "assignees" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={members ? [...members, { id: "None", display_name: "None" }] : members}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -328,18 +369,22 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
       {group_by && group_by === "created_by" && (
         <GroupByKanBan
           issues={issues}
+          issueIds={issueIds}
           group_by={group_by}
           order_by={order_by}
           sub_group_by={sub_group_by}
           sub_group_id={sub_group_id}
           list={members}
           listKey={`id`}
+          states={states}
           isDragDisabled={!issueKanBanViewStore?.canUserDragDrop}
           showEmptyGroup={showEmptyGroup}
           handleIssues={handleIssues}
@@ -349,6 +394,8 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           handleKanBanToggle={handleKanBanToggle}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
+          quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
     </div>

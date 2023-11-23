@@ -34,6 +34,7 @@
     "date-fns": "^2.30.0",
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.274.0",
     "mobx": "^6.10.0",

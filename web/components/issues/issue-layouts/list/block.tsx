@@ -1,26 +1,27 @@
 // components
-import { KanBanProperties } from "./properties";
+import { ListProperties } from "./properties";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
+import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
   columnId: string;
+
   issue: IIssue;
-  handleIssues: (group_by: string | null, issue: IIssue, action: "update" | "delete") => void;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | undefined;
   isReadonly?: boolean;
-  showEmptyGroup?: boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, displayProperties, showEmptyGroup, isReadonly } = props;
+  const { columnId, issue, handleIssues, quickActions, displayProperties, isReadonly } = props;
 
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
-    handleIssues(group_by, issueToUpdate, "update");
+    handleIssues(issueToUpdate, EIssueActions.UPDATE);
   };
 
   return (
@@ -31,16 +32,18 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
         )}
+
         {issue?.tempId !== undefined && (
           <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
         )}
+
         <IssuePeekOverview
           workspaceSlug={issue?.workspace_detail?.slug}
           projectId={issue?.project_detail?.id}
           issueId={issue?.id}
           isArchived={issue?.archived_at !== null}
           handleIssue={(issueToUpdate) => {
-            handleIssues(!columnId && columnId === "null" ? null : columnId, issueToUpdate as IIssue, "update");
+            handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE);
           }}
         >
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
@@ -49,15 +52,22 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
         </IssuePeekOverview>
 
         <div className="ml-auto flex-shrink-0 flex items-center gap-2">
-          <KanBanProperties
-            columnId={columnId}
-            issue={issue}
-            isReadonly={isReadonly}
-            handleIssues={updateIssue}
-            displayProperties={displayProperties}
-            showEmptyGroup={showEmptyGroup}
-          />
-          {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+          {!issue?.tempId ? (
+            <>
+              <ListProperties
+                columnId={columnId}
+                issue={issue}
+                isReadonly={isReadonly}
+                handleIssues={updateIssue}
+                displayProperties={displayProperties}
+              />
+              {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
+            </>
+          ) : (
+            <div className="w-4 h-4">
+              <Spinner className="w-4 h-4" />
+            </div>
+          )}
         </div>
       </div>
     </>

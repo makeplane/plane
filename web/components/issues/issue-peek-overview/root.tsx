@@ -109,7 +109,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const handleDeleteIssue = async () => {
     if (isArchived) await archivedIssuesStore.deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else await issueStore.deleteIssue(workspaceSlug, projectId, issue!);
+    else await issueStore.removeIssueFromStructure(workspaceSlug, projectId, issue!);
     const { query } = router;
     if (query.peekIssueId) {
       issueDetailStore.setPeekId(null);
