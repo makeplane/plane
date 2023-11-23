@@ -18,8 +18,8 @@ export class IssueDraftService extends APIService {
   }
 
   async getV3DraftIssues(workspaceSlug: string, projectId: string, query?: any): Promise<any> {
-    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
-      params: { ...query, draft: true },
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/issues/?draft=true`, {
+      params: { ...query },
     })
       .then((response) => response?.data)
       .catch((error) => {
