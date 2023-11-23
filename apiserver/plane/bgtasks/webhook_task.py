@@ -54,11 +54,16 @@ MODEL_MAPPER = {
 }
 
 
-def get_model_data(event, event_id):
+def get_model_data(event, event_id, many=False):
     model = MODEL_MAPPER.get(event)
-    queryset = model.objects.get(pk=event_id)
+    if many:
+        queryset = model.objects.get(pk__in=event_id)
+    else:
+        queryset = model.objects.get(pk__in=event_id)
+
     serializer = SERIALIZER_MAPPER.get(event)
-    return serializer(queryset).data
+    data = serializer(queryset, many=many).data
+    return data
 
 
 @shared_task(
@@ -79,7 +84,10 @@ def webhook_task(self, webhook, slug, event, event_id, action):
             "X-Plane-Event": event,
         }
 
-        event_data = get_model_data(event=event, event_id=event_id)
+        if action == "DELETE":
+            event_data = {"id": str(event_id)}
+        else:
+            event_data = get_model_data(event=event, event_id=event_id, many=isinstance(event_id, list))
 
         # # Your secret key
         event_data = (
@@ -166,7 +174,7 @@ def webhook_task(self, webhook, slug, event, event_id, action):
 
 
 @shared_task()
-def send_webhook(event, event_id, action, slug):
+def send_webhook(event, event_data, kw, action, slug, bulk):
     try:
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
@@ -185,8 +193,20 @@ def send_webhook(event, event_id, action, slug):
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
-        for webhook in webhooks:
-            webhook_task.delay(webhook.id, slug, event, event_id, action)
+        
+        if webhooks:
+            
+            if action in ["POST", "PATCH"]:
+                if bulk:
+                    event_id = []
+                else:
+                    event_id = event_data.get("id") if isinstance(event_data, dict) else None
+            if action == "DELETE":
+                event_id = kw.get("pk")
+
+
+            for webhook in webhooks:
+                webhook_task.delay(webhook.id, slug, event, event_id, action)
 
     except Exception as e:
         if settings.DEBUG:
