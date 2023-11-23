@@ -31,11 +31,12 @@ from plane.api.serializers import (
     CycleIssueSerializer,
     ModuleIssueSerializer,
     IssueCommentSerializer,
+    IssueExpandSerializer,
 )
 
 SERIALIZER_MAPPER = {
     "project": ProjectSerializer,
-    "issue": IssueSerializer,
+    "issue": IssueExpandSerializer,
     "cycle": CycleSerializer,
     "module": ModuleSerializer,
     "cycle_issue": CycleIssueSerializer,
@@ -54,11 +55,14 @@ MODEL_MAPPER = {
 }
 
 
-def get_model_data(event, event_id):
+def get_model_data(event, event_id, many=False):
     model = MODEL_MAPPER.get(event)
-    queryset = model.objects.get(pk=event_id)
+    if many:
+        queryset = model.objects.filter(pk__in=event_id)
+    else:
+        queryset = model.objects.get(pk=event_id)
     serializer = SERIALIZER_MAPPER.get(event)
-    return serializer(queryset).data
+    return serializer(queryset, many=many).data
 
 
 @shared_task(
@@ -68,7 +72,7 @@ def get_model_data(event, event_id):
     max_retries=5,
     retry_jitter=True,
 )
-def webhook_task(self, webhook, slug, event, event_id, action):
+def webhook_task(self, webhook, slug, event, event_data, action):
     try:
         webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
 
@@ -79,8 +83,6 @@ def webhook_task(self, webhook, slug, event, event_id, action):
             "X-Plane-Event": event,
         }
 
-        event_data = get_model_data(event=event, event_id=event_id)
-
         # # Your secret key
         event_data = (
             json.loads(json.dumps(event_data, cls=DjangoJSONEncoder))
@@ -90,11 +92,11 @@ def webhook_task(self, webhook, slug, event, event_id, action):
 
         # Use HMAC for generating signature
         if webhook.secret_key:
-            event_data_json = json.dumps(event_data) if event_data is not None else '{}'
+            event_data_json = json.dumps(event_data) if event_data is not None else "{}"
             hmac_signature = hmac.new(
                 webhook.secret_key.encode("utf-8"),
                 event_data_json.encode("utf-8"),
-                hashlib.sha256
+                hashlib.sha256,
             )
             signature = hmac_signature.hexdigest()
             headers["X-Plane-Signature"] = signature
@@ -158,7 +160,6 @@ def webhook_task(self, webhook, slug, event, event_id, action):
         raise requests.RequestException()
 
     except Exception as e:
-        print(e)
         if settings.DEBUG:
             print(e)
         capture_exception(e)
@@ -166,7 +167,7 @@ def webhook_task(self, webhook, slug, event, event_id, action):
 
 
 @shared_task()
-def send_webhook(event, event_id, action, slug):
+def send_webhook(event, payload, kw, action, slug, bulk):
     try:
         webhooks = Webhook.objects.filter(workspace__slug=slug, is_active=True)
 
@@ -185,8 +186,39 @@ def send_webhook(event, event_id, action, slug):
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
-        for webhook in webhooks:
-            webhook_task.delay(webhook.id, slug, event, event_id, action)
+        if webhooks:
+            if action in ["POST", "PATCH"]:
+                if bulk and event in ["cycle_issue", "module_issue"]:
+                    event_data = IssueExpandSerializer(
+                        Issue.objects.filter(
+                            pk__in=[
+                                str(event.get("issue")) for event in payload
+                            ]
+                        ).prefetch_related("issue_cycle", "issue_module"), many=True
+                    ).data
+                    event = "issue"
+                    action = "PATCH"
+                else:
+                    event_data = [
+                        get_model_data(
+                            event=event,
+                            event_id=payload.get("id") if isinstance(payload, dict) else None,
+                            many=False,
+                        )
+                    ]
+
+            if action == "DELETE":
+                event_data = [{"id": kw.get("pk")}]
+
+            for webhook in webhooks:
+                for data in event_data:
+                    webhook_task.delay(
+                        webhook=webhook.id,
+                        slug=slug,
+                        event=event,
+                        event_data=data,
+                        action=action,
+                    )
 
     except Exception as e:
         if settings.DEBUG:

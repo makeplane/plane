@@ -79,7 +79,7 @@ class StateAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request, slug, project_id, state_id=None):
-        state = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=state_id)
+        state = State.objects.get(workspace__slug=slug, project_id=project_id, pk=state_id)
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
