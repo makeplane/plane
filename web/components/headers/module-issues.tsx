@@ -56,7 +56,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -75,7 +75,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, moduleId);
     },
     [workspaceSlug, projectId, moduleId, issueFilters, updateFilters]
   );
@@ -83,7 +83,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );
@@ -91,7 +91,7 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, moduleId);
     },
     [workspaceSlug, projectId, moduleId, updateFilters]
   );

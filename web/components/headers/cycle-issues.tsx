@@ -56,7 +56,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, cycleId, EFilterType.DISPLAY_FILTERS, { layout: layout });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -75,7 +75,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         else newValues.push(value);
       }
 
-      updateFilters(workspaceSlug, projectId, cycleId, EFilterType.FILTERS, { [key]: newValues });
+      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, issueFilters, updateFilters]
   );
@@ -83,7 +83,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, cycleId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );
@@ -91,7 +91,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-      updateFilters(workspaceSlug, projectId, cycleId, EFilterType.DISPLAY_PROPERTIES, property);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
   );

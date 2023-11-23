@@ -37,18 +37,30 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
     if (!workspaceSlug || !projectId) return;
     if (!value) {
-      updateFilters(workspaceSlug, projectId, moduleId, EFilterType.FILTERS, {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug,
+        projectId,
+        EFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        moduleId
+      );
       return;
     }
 
     let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    updateFilters(workspaceSlug, projectId, moduleId, EFilterType.FILTERS, {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug,
+      projectId,
+      EFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      moduleId
+    );
   };
 
   const handleClearAllFilters = () => {
@@ -57,7 +69,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
     Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-    updateFilters(workspaceSlug, projectId, moduleId, EFilterType.FILTERS, { ...newFilters });
+    updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { ...newFilters }, moduleId);
   };
 
   // return if no filters are applied

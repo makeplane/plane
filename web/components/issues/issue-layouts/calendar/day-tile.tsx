@@ -20,13 +20,26 @@ type Props = {
   handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues, groupedIssueIds, handleIssues, quickActions, enableQuickIssueCreate, quickAddCallback } = props;
+  const {
+    date,
+    issues,
+    groupedIssueIds,
+    handleIssues,
+    quickActions,
+    enableQuickIssueCreate,
+    quickAddCallback,
+    viewId,
+  } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -83,6 +96,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                         target_date: renderDateFormat(date.date),
                       }}
                       quickAddCallback={quickAddCallback}
+                      viewId={viewId}
                     />
                   </div>
                 )}

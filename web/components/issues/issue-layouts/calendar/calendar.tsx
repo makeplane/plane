@@ -19,13 +19,17 @@ type Props = {
   showWeekends: boolean;
   handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, groupedIssueIds, layout, showWeekends, handleIssues, quickActions, quickAddCallback } = props;
+  const { issues, groupedIssueIds, layout, showWeekends, handleIssues, quickActions, quickAddCallback, viewId } = props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -59,6 +63,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
                     handleIssues={handleIssues}
                     quickActions={quickActions}
                     quickAddCallback={quickAddCallback}
+                    viewId={viewId}
                   />
                 ))}
             </div>
@@ -72,6 +77,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               handleIssues={handleIssues}
               quickActions={quickActions}
               quickAddCallback={quickAddCallback}
+              viewId={viewId}
             />
           )}
         </div>

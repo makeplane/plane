@@ -36,13 +36,15 @@ export const ProfileIssuesListLayout: FC = observer(() => {
 
   const getProjects = (projectStore: IProjectStore) => projectStore?.workspaceProjects || null;
 
-  return (
-    <BaseListRoot
-      issueFilterStore={profileIssueFiltersStore}
-      issueStore={profileIssuesStore}
-      QuickActions={ProjectIssueQuickActions}
-      issueActions={issueActions}
-      getProjects={getProjects}
-    />
-  );
+  return null;
+
+  // return (
+  //   <BaseListRoot
+  //     issueFilterStore={profileIssueFiltersStore}
+  //     issueStore={profileIssuesStore}
+  //     QuickActions={ProjectIssueQuickActions}
+  //     issueActions={issueActions}
+  //     getProjects={getProjects}
+  //   />
+  // );
 });

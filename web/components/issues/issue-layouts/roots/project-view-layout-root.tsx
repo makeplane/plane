@@ -22,7 +22,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const { workspaceSlug, projectId, viewId } = router.query as {
     workspaceSlug: string;
     projectId: string;
-    viewId: string;
+    viewId?: string;
   };
 
   const {

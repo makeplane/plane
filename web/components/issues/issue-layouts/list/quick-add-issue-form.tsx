@@ -45,9 +45,13 @@ const Inputs: FC<IInputProps> = (props) => {
 
 interface IListQuickAddIssueForm {
   prePopulatedData?: Partial<IIssue>;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 }
 
 const defaultValues: Partial<IIssue> = {
@@ -55,7 +59,7 @@ const defaultValues: Partial<IIssue> = {
 };
 
 export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props) => {
-  const { prePopulatedData, quickAddCallback } = props;
+  const { prePopulatedData, quickAddCallback, viewId } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
@@ -98,7 +102,7 @@ export const ListQuickAddIssueForm: FC<IListQuickAddIssueForm> = observer((props
     });
 
     try {
-      //quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload }));
+      quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload }, viewId));
       setToastAlert({
         type: "success",
         title: "Success!",

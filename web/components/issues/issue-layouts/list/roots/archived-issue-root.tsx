@@ -31,13 +31,15 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     return projectStore?.projects[workspaceSlug.toString()] || null;
   };
 
-  return (
-    <BaseListRoot
-      issueFilterStore={archivedIssueFiltersStore}
-      issueStore={archivedIssueStore}
-      QuickActions={ArchivedIssueQuickActions}
-      issueActions={issueActions}
-      getProjects={getProjects}
-    />
-  );
+  return null;
+
+  // return (
+  //   <BaseListRoot
+  //     issueFilterStore={archivedIssueFiltersStore}
+  //     issueStore={archivedIssueStore}
+  //     QuickActions={ArchivedIssueQuickActions}
+  //     issueActions={issueActions}
+  //     getProjects={getProjects}
+  //   />
+  // );
 });

@@ -43,9 +43,9 @@ export interface IModuleIssuesFilterStore {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
     filterType: EFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    moduleId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -219,11 +219,13 @@ export class ModuleIssuesFilterStore extends IssueFilterBaseStore implements IMo
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    moduleId: string,
     filterType: EFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    moduleId?: string | undefined
   ) => {
     try {
+      if (!moduleId) throw new Error();
+
       switch (filterType) {
         case EFilterType.FILTERS:
           await this.updateModuleFilters(

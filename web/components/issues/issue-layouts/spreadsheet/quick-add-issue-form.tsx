@@ -19,9 +19,13 @@ type Props = {
   groupId?: string;
   subGroupId?: string | null;
   prePopulatedData?: Partial<IIssue>;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -52,7 +56,7 @@ const Inputs = (props: any) => {
 };
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, subGroupId = null, prePopulatedData, quickAddCallback } = props;
+  const { formKey, groupId, subGroupId = null, prePopulatedData, quickAddCallback, viewId } = props;
 
   // router
   const router = useRouter();
@@ -161,7 +165,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
     });
 
     try {
-      //quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload } as IIssue));
+      quickAddCallback && (await quickAddCallback(workspaceSlug, projectId, { ...payload } as IIssue, viewId));
       setToastAlert({
         type: "success",
         title: "Success!",

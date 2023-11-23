@@ -10,29 +10,24 @@ import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
-  const {
-    cycleIssues: cycleIssueStore,
-    cycleIssueCalendarView: cycleIssueCalendarViewStore,
-    issueDetail: issueDetailStore,
-  } = useMobxStore();
+  const { cycleIssues: cycleIssueStore, cycleIssueCalendarView: cycleIssueCalendarViewStore } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query;
+  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id, issue);
+      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
-      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      //moduleIssueStore.  (workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id, issue);
+      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId) return;
-      cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, cycleId?.toString() || "", issue.id);
+      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
+      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
     },
   };
 
@@ -42,6 +37,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       calendarViewStore={cycleIssueCalendarViewStore}
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
+      viewId={cycleId}
     />
   );
 });

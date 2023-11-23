@@ -33,9 +33,13 @@ export interface IGroupByKanBan {
   handleKanBanToggle: any;
   enableQuickIssueCreate?: boolean;
   isDragStarted?: boolean;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -58,6 +62,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     enableQuickIssueCreate,
     isDragStarted,
     quickAddCallback,
+    viewId,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -139,6 +144,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
                   }}
                   quickAddCallback={quickAddCallback}
+                  viewId={viewId}
                 />
               )}
             </div>
@@ -179,9 +185,13 @@ export interface IKanBan {
   projects: any;
   enableQuickIssueCreate?: boolean;
   isDragStarted?: boolean;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -207,6 +217,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     enableQuickIssueCreate,
     isDragStarted,
     quickAddCallback,
+    viewId,
   } = props;
 
   const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -234,6 +245,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
@@ -258,6 +270,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
@@ -282,6 +295,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
@@ -306,6 +320,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
@@ -330,6 +345,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
@@ -354,6 +370,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
 
@@ -378,6 +395,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           enableQuickIssueCreate={enableQuickIssueCreate}
           isDragStarted={isDragStarted}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
     </div>

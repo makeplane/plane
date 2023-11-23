@@ -28,10 +28,11 @@ export interface IBaseKanBanLayout {
     [EIssueActions.REMOVE]?: (issue: IIssue) => void;
   };
   showLoader?: boolean;
+  viewId?: string;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { issueStore, kanbanViewStore, QuickActions, issueActions, showLoader } = props;
+  const { issueStore, kanbanViewStore, QuickActions, issueActions, showLoader, viewId } = props;
 
   const {
     project: { workspaceProjects },
@@ -147,6 +148,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
               quickAddCallback={issueStore.quickAddIssue}
+              viewId={viewId}
             />
           ) : (
             <KanBanSwimLanes

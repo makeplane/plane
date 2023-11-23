@@ -36,7 +36,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     async () => {
       if (workspaceSlug && projectId && moduleId) {
         await fetchFilters(workspaceSlug, projectId, moduleId);
-        await fetchIssues(workspaceSlug, projectId, moduleId, getIssues ? "mutation" : "init-loader");
+        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader", moduleId);
       }
     }
   );

@@ -19,18 +19,19 @@ import { EFilterType, TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore:
-    | IProjectIssuesFilterStore
-    | IModuleIssuesFilterStore
+    | IViewIssuesFilterStore
     | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+    | IModuleIssuesFilterStore
+    | IProjectIssuesFilterStore;
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  viewId?: string;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { issueFiltersStore, issueStore } = props;
+  const { issueFiltersStore, issueStore, viewId } = props;
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
     issueDetail: issueDetailStore,
@@ -63,9 +64,15 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
 
-      issueFiltersStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
-        ...updatedDisplayFilter,
-      });
+      issueFiltersStore.updateFilters(
+        workspaceSlug,
+        projectId,
+        EFilterType.DISPLAY_FILTERS,
+        {
+          ...updatedDisplayFilter,
+        },
+        viewId
+      );
     },
     [issueFiltersStore, projectId, workspaceSlug]
   );
@@ -99,6 +106,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       handleUpdateIssue={handleUpdateIssue}
       disableUserActions={false}
       quickAddCallback={issueStore.quickAddIssue}
+      viewId={viewId}
       enableQuickCreateIssue
     />
   );

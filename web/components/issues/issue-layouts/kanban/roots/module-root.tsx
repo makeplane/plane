@@ -1,18 +1,13 @@
-import React, { useCallback, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { DragDropContext } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { KanBanSwimLanes } from "../swimlanes";
-import { KanBan } from "../default";
 import { ModuleIssueQuickActions } from "components/issues";
-import { Spinner } from "@plane/ui";
 // types
 import { IIssue } from "types";
 // constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 
@@ -20,7 +15,7 @@ export interface IModuleKanBanLayout {}
 
 export const ModuleKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, moduleId } = router.query;
+  const { workspaceSlug, moduleId } = router.query as { workspaceSlug: string; moduleId: string };
 
   // store
   const {
@@ -55,22 +50,15 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
 
-      moduleIssueStore.updateIssue(
-        workspaceSlug.toString(),
-        issue.project,
-        moduleId?.toString() || "",
-        issue.id,
-        issue
-      );
+      moduleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, moduleId);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      //moduleIssueStore.  (workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id, issue);
+      moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !moduleId) return;
-      moduleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, moduleId?.toString() || "", issue.id);
+      if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
+      moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, issue.id, moduleId, issue.bridge_id);
     },
   };
   return (
@@ -80,6 +68,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       kanbanViewStore={moduleIssueKanBanViewStore}
       showLoader={true}
       QuickActions={ModuleIssueQuickActions}
+      viewId={moduleId}
     />
   );
 });

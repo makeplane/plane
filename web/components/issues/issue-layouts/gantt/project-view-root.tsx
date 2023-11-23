@@ -7,5 +7,5 @@ import { BaseGanttRoot } from "./base-gantt-root";
 export const ProjectViewGanttLayout: React.FC = observer(() => {
   const { viewIssues: projectIssueViewStore, viewIssuesFilter: projectIssueViewFiltersStore } = useMobxStore();
 
-  return <BaseGanttRoot issueFiltersStore={projectIssueViewFiltersStore} issueRootStore={projectIssueViewStore} />;
+  return <BaseGanttRoot issueFiltersStore={projectIssueViewFiltersStore} issueStore={projectIssueViewStore} />;
 });

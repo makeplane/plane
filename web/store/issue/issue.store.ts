@@ -242,7 +242,7 @@ export class IssueStore implements IIssueStore {
   };
 
   updateGanttIssueStructure = async (workspaceSlug: string, issue: IIssue, payload: IBlockUpdateData) => {
-    if (!issue || !workspaceSlug) return;
+    if (!issue || !workspaceSlug || !this.getIssues) return;
 
     const issues = this.getIssues as IIssueUnGroupedStructure;
 

@@ -39,10 +39,11 @@ interface IBaseListRoot {
     [EIssueActions.REMOVE]?: (group_by: string | null, issue: IIssue) => void;
   };
   getProjects: (projectStore: IProjectStore) => IProject[] | null;
+  viewId?: string;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects } = props;
+  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects, viewId } = props;
 
   const {
     project: projectStore,
@@ -110,6 +111,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             enableIssueQuickAdd={true}
             isReadonly={false}
             quickAddCallback={issueStore.quickAddIssue}
+            viewId={viewId}
           />
         </div>
       )}

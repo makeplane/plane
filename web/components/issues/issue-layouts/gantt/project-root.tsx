@@ -8,5 +8,5 @@ import { BaseGanttRoot } from "./base-gantt-root";
 export const GanttLayout: React.FC = observer(() => {
   const { projectIssues: projectIssuesStore, projectIssuesFilter: projectIssueFiltersStore } = useMobxStore();
 
-  return <BaseGanttRoot issueFiltersStore={projectIssueFiltersStore} issueRootStore={projectIssuesStore} />;
+  return <BaseGanttRoot issueFiltersStore={projectIssueFiltersStore} issueStore={projectIssuesStore} />;
 });

@@ -47,6 +47,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
+      viewId={moduleId}
     />
   );
 });

@@ -43,9 +43,9 @@ export interface ICycleIssuesFilterStore {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     filterType: EFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    cycleId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -218,11 +218,12 @@ export class CycleIssuesFilterStore extends IssueFilterBaseStore implements ICyc
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    cycleId: string,
     filterType: EFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    cycleId?: string | undefined
   ) => {
     try {
+      if (!cycleId) throw new Error();
       switch (filterType) {
         case EFilterType.FILTERS:
           await this.updateCycleFilters(workspaceSlug, projectId, cycleId, filterType, filters as IIssueFilterOptions);

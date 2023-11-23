@@ -22,10 +22,11 @@ interface IBaseCalendarRoot {
     [EIssueActions.UPDATE]?: (issue: IIssue) => void;
     [EIssueActions.REMOVE]?: (issue: IIssue) => void;
   };
+  viewId?: string;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, calendarViewStore, QuickActions, issueActions } = props;
+  const { issueStore, calendarViewStore, QuickActions, issueActions, viewId } = props;
   const { projectIssuesFilter: issueFilterStore } = useMobxStore();
 
   const displayFilters = issueFilterStore.issueFilters?.displayFilters;
@@ -80,6 +81,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             />
           )}
           quickAddCallback={issueStore.quickAddIssue}
+          viewId={viewId}
         />
       </DragDropContext>
     </div>

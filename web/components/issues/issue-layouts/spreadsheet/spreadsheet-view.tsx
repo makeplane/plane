@@ -19,9 +19,13 @@ type Props = {
   handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   openIssuesListModal?: (() => void) | null;
-  quickAddCallback?:
-    | ((workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>)
-    | ((workspaceSlug: string, projectId: string, viewId: string, data: IIssue) => Promise<IIssue>);
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
   disableUserActions: boolean;
   enableQuickCreateIssue?: boolean;
 };
@@ -38,6 +42,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     handleIssueAction,
     handleUpdateIssue,
     quickAddCallback,
+    viewId,
     disableUserActions,
     enableQuickCreateIssue,
   } = props;
@@ -136,7 +141,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         <div className="border-t border-custom-border-100">
           <div className="mb-3 z-50 sticky bottom-0 left-0">
             {enableQuickCreateIssue && (
-              <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} />
+              <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
             )}
           </div>
 

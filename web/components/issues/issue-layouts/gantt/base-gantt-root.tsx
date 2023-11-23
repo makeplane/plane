@@ -34,30 +34,33 @@ interface IBaseGanttRoot {
     | IModuleIssuesFilterStore
     | ICycleIssuesFilterStore
     | IViewIssuesFilterStore;
-  issueRootStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  viewId?: string;
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueRootStore } = props;
+  const { issueFiltersStore, issueStore, viewId } = props;
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
 
   const { projectDetails } = useProjectDetails();
 
-  const { issue: issueStore } = useMobxStore();
-
   const appliedDisplayFilters = issueFiltersStore.issueFilters?.displayFilters;
 
-  const issuesResponse = issueRootStore.getIssues;
-  const issueIds = (issueRootStore.getIssuesIds ?? []) as TUnGroupedIssues;
+  const issuesResponse = issueStore.getIssues;
+  const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
 
   const issues = issueIds.map((id) => issuesResponse?.[id]);
 
-  const updateIssue = (block: IIssue, payload: IBlockUpdateData) => {
+  const updateIssue = (issue: IIssue, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
-    issueStore.updateGanttIssueStructure(workspaceSlug.toString(), block, payload);
+    //Todo fix sort order in the structure
+    issueStore.updateIssue(workspaceSlug, issue.project, issue.id, {
+      start_date: payload.start_date,
+      target_date: payload.target_date,
+    });
   };
 
   const isAllowed = (projectDetails?.member_role || 0) >= EUserWorkspaceRoles.MEMBER;
@@ -72,7 +75,14 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
-          sidebarToRender={(props) => <IssueGanttSidebar {...props} enableQuickIssueCreate />}
+          sidebarToRender={(props) => (
+            <IssueGanttSidebar
+              {...props}
+              quickAddCallback={issueStore.quickAddIssue}
+              viewId={viewId}
+              enableQuickIssueCreate
+            />
+          )}
           enableBlockLeftResize={isAllowed}
           enableBlockRightResize={isAllowed}
           enableBlockMove={isAllowed}

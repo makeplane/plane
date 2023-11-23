@@ -43,9 +43,9 @@ export interface IViewIssuesFilterStore {
   updateFilters: (
     workspaceSlug: string,
     projectId: string,
-    viewId: string,
     filterType: EFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId?: string | undefined
   ) => Promise<void>;
 }
 
@@ -219,11 +219,13 @@ export class ViewIssuesFilterStore extends IssueFilterBaseStore implements IView
   updateFilters = async (
     workspaceSlug: string,
     projectId: string,
-    viewId: string,
     filterType: EFilterType,
-    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties,
+    viewId?: string | undefined
   ) => {
     try {
+      if (!viewId) throw new Error();
+
       switch (filterType) {
         case EFilterType.FILTERS:
           await this.updateViewFilters(workspaceSlug, projectId, viewId, filterType, filters as IIssueFilterOptions);
