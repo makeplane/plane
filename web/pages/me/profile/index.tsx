@@ -1,7 +1,6 @@
 import React, { useEffect, useState, ReactElement } from "react";
-import { useRouter } from "next/router";
-import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
+import { Disclosure, Transition } from "@headlessui/react";
 // services
 import { FileService } from "services/file.service";
 import { UserService } from "services/user.service";
@@ -9,15 +8,15 @@ import { UserService } from "services/user.service";
 import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
-import { AppLayout } from "layouts/app-layout";
-import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, ImageUploadModal } from "components/core";
-import { WorkspaceSettingHeader } from "components/headers";
+import { ProfileSettingsHeader } from "components/headers";
+import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
 // icons
-import { User2, UserCircle2 } from "lucide-react";
+import { ChevronDown, User2 } from "lucide-react";
 // types
 import type { IUser } from "types";
 import type { NextPageWithLayout } from "types/app";
@@ -30,6 +29,7 @@ const defaultValues: Partial<IUser> = {
   cover_image: "",
   first_name: "",
   last_name: "",
+  display_name: "",
   email: "",
   role: "Product / Project Manager",
   user_timezone: "Asia/Kolkata",
@@ -38,12 +38,11 @@ const defaultValues: Partial<IUser> = {
 const fileService = new FileService();
 const userService = new UserService();
 
-const ProfilePage: NextPageWithLayout = () => {
+const ProfileSettingsPage: NextPageWithLayout = () => {
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const [deactivateAccountModal, setDeactivateAccountModal] = useState(false);
+
   // form info
   const {
     handleSubmit,
@@ -143,6 +142,13 @@ const ProfilePage: NextPageWithLayout = () => {
     content: timeZone.label,
   }));
 
+  if (!myProfile)
+    return (
+      <div className="grid h-full w-full place-items-center px-4 sm:px-0">
+        <Spinner />
+      </div>
+    );
+
   return (
     <>
       <ImageUploadModal
@@ -158,9 +164,10 @@ const ProfilePage: NextPageWithLayout = () => {
         value={watch("avatar") !== "" ? watch("avatar") : undefined}
         userImage
       />
-      {myProfile ? (
-        <form onSubmit={handleSubmit(onSubmit)} className="h-full w-full">
-          <div className={`flex flex-col gap-8 pr-9 py-9 w-full h-full overflow-y-auto`}>
+      <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
+      <div className="h-full w-full flex flex-col py-9 pr-9 space-y-10 overflow-y-auto">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col gap-8 w-full">
             <div className="relative h-44 w-full mt-6">
               <img
                 src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
@@ -194,14 +201,12 @@ const ProfilePage: NextPageWithLayout = () => {
                 <Controller
                   control={control}
                   name="cover_image"
-                  render={() => (
+                  render={({ field: { value, onChange } }) => (
                     <ImagePickerPopover
                       label={"Change cover"}
-                      onChange={(imageUrl) => {
-                        setValue("cover_image", imageUrl);
-                      }}
+                      onChange={(imageUrl) => onChange(imageUrl)}
                       control={control}
-                      value={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
+                      value={value ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                     />
                   )}
                 />
@@ -216,14 +221,12 @@ const ProfilePage: NextPageWithLayout = () => {
                 <span className="text-sm tracking-tight">{watch("email")}</span>
               </div>
 
-              <Link href={`/${workspaceSlug}/profile/${myProfile.id}`}>
-                <a className="flex item-center cursor-pointer gap-2 h-4 leading-4 text-sm text-custom-primary-100">
-                  <span className="h-4 w-4">
-                    <UserCircle2 className="h-4 w-4" />
-                  </span>
-                  View Profile
+              {/* <Link href={`/profile/${myProfile.id}`}>
+                <a className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
+                  <ExternalLink className="h-4 w-4" />
+                  Activity Overview
                 </a>
-              </Link>
+              </Link> */}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
@@ -387,21 +390,49 @@ const ProfilePage: NextPageWithLayout = () => {
             </div>
           </div>
         </form>
-      ) : (
-        <div className="grid h-full w-full place-items-center px-4 sm:px-0">
-          <Spinner />
-        </div>
-      )}
+        <Disclosure as="div" className="border-t border-custom-border-100 px-8">
+          {({ open }) => (
+            <>
+              <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+                <span className="text-lg tracking-tight">Deactivate Account</span>
+                {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
+                <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
+              </Disclosure.Button>
+
+              <Transition
+                show={open}
+                enter="transition duration-100 ease-out"
+                enterFrom="transform opacity-0"
+                enterTo="transform opacity-100"
+                leave="transition duration-75 ease-out"
+                leaveFrom="transform opacity-100"
+                leaveTo="transform opacity-0"
+              >
+                <Disclosure.Panel>
+                  <div className="flex flex-col gap-8">
+                    <span className="text-sm tracking-tight">
+                      The danger zone of the profile page is a critical area that requires careful consideration and
+                      attention. When deactivating an account, all of the data and resources within that account will be
+                      permanently removed and cannot be recovered.
+                    </span>
+                    <div>
+                      <Button variant="danger" onClick={() => setDeactivateAccountModal(true)}>
+                        Deactivate account
+                      </Button>
+                    </div>
+                  </div>
+                </Disclosure.Panel>
+              </Transition>
+            </>
+          )}
+        </Disclosure>
+      </div>
     </>
   );
 };
 
-ProfilePage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <AppLayout header={<WorkspaceSettingHeader title="My Profile" />}>
-      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
-    </AppLayout>
-  );
+ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
+  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Settings" />}>{page}</ProfileSettingsLayout>;
 };
 
-export default ProfilePage;
+export default ProfileSettingsPage;

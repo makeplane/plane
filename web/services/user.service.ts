@@ -96,8 +96,8 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserWorkspaceActivity(workspaceSlug: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/workspaces/${workspaceSlug}/activities/`)
+  async getUserActivity(): Promise<IUserActivityResponse> {
+    return this.get(`/api/users/me/activities/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -185,12 +185,35 @@ export class UserService extends APIService {
       });
   }
 
-  async deleteAccount(): Promise<void> {
-    return this.delete("/api/users/me/")
+  async deactivateAccount() {
+    return this.delete(`/api/users/me/`)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response;
+        throw error?.response?.data;
       });
   }
 
+  async leaveWorkspace(workspaceSlug: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/members/leave/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/invitations/`, { project_ids })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async leaveProject(workspaceSlug: string, projectId: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

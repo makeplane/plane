@@ -259,18 +259,14 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const index = members.findIndex((m) => m.id === memberId);
     members.splice(index, 1);
 
-    // optimistic update
-    runInAction(() => {
-      this.members = {
-        ...this.members,
-        [workspaceSlug]: members,
-      };
-    });
-
     try {
       runInAction(() => {
         this.loader = true;
         this.error = null;
+        this.members = {
+          ...this.members,
+          [workspaceSlug]: members,
+        };
       });
 
       await this.workspaceService.deleteWorkspaceMember(workspaceSlug, memberId);

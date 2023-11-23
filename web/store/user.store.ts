@@ -53,6 +53,13 @@ export interface IUserStore {
   updateTourCompleted: () => Promise<void>;
   updateCurrentUser: (data: Partial<IUser>) => Promise<IUser>;
   updateCurrentUserTheme: (theme: string) => Promise<IUser>;
+
+  deactivateAccount: () => Promise<void>;
+
+  leaveWorkspace: (workspaceSlug: string) => Promise<void>;
+
+  joinProject: (workspaceSlug: string, projectIds: string[]) => Promise<any>;
+  leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
 class UserStore implements IUserStore {
@@ -110,6 +117,10 @@ class UserStore implements IUserStore {
       updateTourCompleted: action,
       updateCurrentUser: action,
       updateCurrentUserTheme: action,
+      deactivateAccount: action,
+      leaveWorkspace: action,
+      joinProject: action,
+      leaveProject: action,
       // computed
       currentProjectMemberInfo: computed,
       currentWorkspaceMemberInfo: computed,
@@ -179,7 +190,7 @@ class UserStore implements IUserStore {
       if (response) {
         runInAction(() => {
           this.isUserInstanceAdmin = response.is_instance_admin;
-        })
+        });
       }
       return response.is_instance_admin;
     } catch (error) {
@@ -346,6 +357,67 @@ class UserStore implements IUserStore {
         theme: { ...this.currentUser?.theme, theme },
       } as IUser);
       return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  deactivateAccount = async () => {
+    try {
+      await this.userService.deactivateAccount();
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  leaveWorkspace = async (workspaceSlug: string) => {
+    try {
+      await this.userService.leaveWorkspace(workspaceSlug);
+
+      runInAction(() => {
+        delete this.workspaceMemberInfo[workspaceSlug];
+        delete this.hasPermissionToWorkspace[workspaceSlug];
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  joinProject = async (workspaceSlug: string, projectIds: string[]) => {
+    const newPermissions: { [projectId: string]: boolean } = {};
+    projectIds.forEach((projectId) => {
+      newPermissions[projectId] = true;
+    });
+
+    try {
+      const response = await this.userService.joinProject(workspaceSlug, projectIds);
+
+      runInAction(() => {
+        this.hasPermissionToProject = {
+          ...this.hasPermissionToProject,
+          ...newPermissions,
+        };
+      });
+
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  leaveProject = async (workspaceSlug: string, projectId: string) => {
+    const newPermissions: { [projectId: string]: boolean } = {};
+    newPermissions[projectId] = false;
+
+    try {
+      await this.userService.leaveProject(workspaceSlug, projectId);
+
+      runInAction(() => {
+        this.hasPermissionToProject = {
+          ...this.hasPermissionToProject,
+          ...newPermissions,
+        };
+      });
     } catch (error) {
       throw error;
     }

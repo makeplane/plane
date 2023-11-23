@@ -61,28 +61,4 @@ export class ProjectMemberService extends APIService {
         throw error?.response?.data;
       });
   }
-
-  async fetchProjectInvitations(workspaceSlug: string, projectId: string): Promise<IProjectMemberInvitation[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async updateProjectInvitation(workspaceSlug: string, projectId: string, invitationId: string): Promise<any> {
-    return this.put(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async deleteProjectInvitation(workspaceSlug: string, projectId: string, invitationId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/invitations/${invitationId}/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
 }

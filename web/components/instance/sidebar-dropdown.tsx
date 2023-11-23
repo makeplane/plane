@@ -25,7 +25,7 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: `/me/profile`,
   },
 ];
 

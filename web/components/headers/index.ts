@@ -9,6 +9,7 @@ export * from "./workspace-analytics";
 export * from "./workspace-dashboard";
 export * from "./projects";
 export * from "./profile-preferences";
+export * from "./profile-settings";
 export * from "./cycles";
 export * from "./modules-list";
 export * from "./project-settings";
