@@ -1,12 +1,7 @@
 import React, { useEffect } from "react";
-import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// react-hook-form
+import { useTheme } from "next-themes";
+import Image from "next/image";
 import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
-// types
-import { IWorkspace } from "types";
-// icons
 import {
   BarChart2,
   Briefcase,
@@ -19,7 +14,16 @@ import {
   PenSquare,
   Search,
   Settings,
+  Bell,
 } from "lucide-react";
+import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+
+// types
+import { IWorkspace } from "types";
+// assets
+import projectEmoji from "public/emoji/project-emoji.svg";
 
 const workspaceLinks = [
   {
@@ -39,7 +43,7 @@ const workspaceLinks = [
     name: "All Issues",
   },
   {
-    Icon: CheckCircle,
+    Icon: Bell,
     name: "Notifications",
   },
 ];
@@ -89,22 +93,23 @@ const DummySidebar: React.FC<Props> = (props) => {
   const { workspace: workspaceStore, user: userStore } = useMobxStore();
   const workspace = workspaceStore.workspaces ? workspaceStore.workspaces[0] : null;
 
+  const { resolvedTheme } = useTheme();
+
   const handleZoomWorkspace = (value: string) => {
     // console.log(lastWorkspaceName,value);
     if (lastWorkspaceName === value) return;
     lastWorkspaceName = value;
     if (timer > 0) {
       timer += 2;
-      timer = Math.min(timer, 4);
+      timer = Math.min(timer, 2);
     } else {
       timer = 2;
-      timer = Math.min(timer, 4);
+      timer = Math.min(timer, 2);
       const interval = setInterval(() => {
         if (timer < 0) {
           setValue!("name", lastWorkspaceName);
           clearInterval(interval);
         }
-        console.log("timer", timer);
         timer--;
       }, 1000);
     }
@@ -112,7 +117,7 @@ const DummySidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (watch) {
-      watch();
+      watch("name");
     }
   });
 
@@ -126,22 +131,34 @@ const DummySidebar: React.FC<Props> = (props) => {
             render={({ field: { value } }) => {
               if (value.length > 0) {
                 handleZoomWorkspace(value);
+              } else {
+                lastWorkspaceName = "";
               }
               return timer > 0 ? (
-                <div className="py-6 pl-4 top-3 mt-4 transition-all bg-onboarding-background-200 w-full max-w-screen-sm flex items-center ml-6 border-8 border-onboarding-background-100 rounded-md">
-                  <div className="bg-onboarding-background-100 w-full p-1 flex items-center">
-                    <div className="flex flex-shrink-0">
-                      <Avatar
-                        name={value.length > 0 ? value[0].toLocaleUpperCase() : "N"}
-                        src={""}
-                        size={30}
-                        shape="square"
-                        fallbackBackgroundColor="black"
-                        className="!text-base"
-                      />
-                    </div>
+                <div
+                  className={`top-3 mt-4 transition-all bg-onboarding-background-200 w-full max-w-screen-sm flex items-center ml-6 border-[6px] ${
+                    resolvedTheme == "dark" ? "border-onboarding-background-100" : "border-custom-primary-20"
+                  } rounded-xl`}
+                >
+                  <div className="border rounded-lg py-6 pl-4 w-full border-onboarding-background-400">
+                    <div
+                      className={`${
+                        resolvedTheme == "light" ? "bg-[#F5F5F5]" : "bg-[#363A40]"
+                      }  w-full p-1 flex items-center`}
+                    >
+                      <div className="flex flex-shrink-0">
+                        <Avatar
+                          name={value.length > 0 ? value[0].toLocaleUpperCase() : "N"}
+                          src={""}
+                          size={30}
+                          shape="square"
+                          fallbackBackgroundColor="black"
+                          className="!text-base"
+                        />
+                      </div>
 
-                    <span className="text-xl font-medium text-onboarding-text-100 ml-2 truncate">{value}</span>
+                      <span className="text-xl font-medium text-onboarding-text-100 ml-2 truncate">{value}</span>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -206,7 +223,7 @@ const DummySidebar: React.FC<Props> = (props) => {
         <div className={`flex items-center justify-between w-full px-1 mb-3 gap-2 mt-4 `}>
           <div
             className={`relative flex items-center justify-between w-full rounded gap-1 group
-             px-3 shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200
+             px-3 shadow-custom-shadow-2xs border-onboarding-border-100 border 
           `}
           >
             <div className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none`}>
@@ -217,7 +234,7 @@ const DummySidebar: React.FC<Props> = (props) => {
 
           <div
             className={`flex items-center justify-center rounded flex-shrink-0 p-2 outline-none
-             shadow-custom-sidebar-shadow-2xs border-[0.5px] border-onboarding-border-200
+            shadow-custom-shadow-2xs border border-onboarding-border-100
             `}
           >
             <Search className="h-4 w-4 text-onboarding-text-200" />
@@ -244,11 +261,15 @@ const DummySidebar: React.FC<Props> = (props) => {
           <div className="px-3">
             {" "}
             <div className="w-4/5 flex items-center text-base font-medium text-custom-text-200 mb-3 justify-between">
-              <span> Plane web</span>
+              <div className="flex items-center gap-x-2">
+                <Image src={projectEmoji} alt="Plane Logo" className="h-4 w-4" />
+                <span> Plane</span>
+              </div>
+
               <ChevronDown className="h-4 w-4" />
             </div>
             {projectLinks.map((link) => (
-              <a className="block w-full">
+              <a className="block ml-6 w-full">
                 <div
                   className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-base font-medium outline-none 
                     text-custom-sidebar-text-200  focus:bg-custom-sidebar-background-80
