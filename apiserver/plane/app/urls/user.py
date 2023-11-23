@@ -63,7 +63,7 @@ urlpatterns = [
         name="user-tour",
     ),
     path(
-        "users/workspaces/<str:slug>/activities/",
+        "users/me/activities/",
         UserActivityEndpoint.as_view(),
         name="user-activities",
     ),
