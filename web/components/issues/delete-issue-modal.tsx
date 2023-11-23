@@ -1,10 +1,6 @@
 import { useEffect, useState, Fragment } from "react";
-import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button } from "@plane/ui";
 // types
@@ -17,13 +13,8 @@ type Props = {
   onSubmit?: () => Promise<void>;
 };
 
-export const DeleteIssueModal: React.FC<Props> = observer((props) => {
+export const DeleteIssueModal: React.FC<Props> = (props) => {
   const { data, isOpen, handleClose, onSubmit } = props;
-
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { issueDetail: issueDetailStore } = useMobxStore();
 
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
@@ -37,12 +28,7 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
   };
 
   const handleIssueDelete = async () => {
-    if (!workspaceSlug) return;
-
     setIsDeleteLoading(true);
-
-    await issueDetailStore.deleteIssue(workspaceSlug.toString(), data.project, data.id);
-
     if (onSubmit) await onSubmit().finally(() => setIsDeleteLoading(false));
   };
 
@@ -75,9 +61,9 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
-                    <span className="place-items-center rounded-full bg-red-500/20 p-4">
+                    <div className="grid place-items-center rounded-full bg-red-500/20 p-4">
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
-                    </span>
+                    </div>
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">Delete Issue</h3>
                     </span>
@@ -114,4 +100,4 @@ export const DeleteIssueModal: React.FC<Props> = observer((props) => {
       </Dialog>
     </Transition.Root>
   );
-});
+};

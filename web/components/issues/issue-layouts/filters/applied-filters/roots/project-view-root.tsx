@@ -12,64 +12,77 @@ import { Button } from "@plane/ui";
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
 import { IIssueFilterOptions } from "types";
+import { EFilterType } from "store/issues/types";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    viewId: string;
+  };
 
   const {
     projectLabel: { projectLabels },
-    projectMember: { projectMembers },
     projectState: projectStateStore,
+    projectMember: { projectMembers },
     projectViews: projectViewsStore,
     projectViewFilters: projectViewFiltersStore,
+    viewIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
   const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
 
+  const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(storedFilters ?? {}).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!viewId) return;
-
-    // remove all values of the key if value is null
+    if (!workspaceSlug || !projectId) return;
     if (!value) {
-      projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug,
+        projectId,
+        EFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        viewId
+      );
       return;
     }
 
-    // remove the passed value from the key
-    let newValues = storedFilters?.[key] ?? [];
+    let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug,
+      projectId,
+      EFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      viewId
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !viewId) return;
-
+    if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(storedFilters ?? {}).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-
-    projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-      ...newFilters,
-    });
+    updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { ...newFilters }, viewId);
   };
+
+  // return if no filters are applied
+  if (Object.keys(appliedFilters).length === 0) return null;
 
   const handleUpdateView = () => {
     if (!workspaceSlug || !projectId || !viewId || !viewDetails) return;
@@ -81,17 +94,6 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
       },
     });
   };
-
-  // update stored filters when view details are fetched
-  useEffect(() => {
-    if (!viewId || !viewDetails) return;
-
-    if (!projectViewFiltersStore.storedFilters[viewId.toString()])
-      projectViewFiltersStore.updateStoredFilters(viewId.toString(), viewDetails?.query_data ?? {});
-  }, [projectViewFiltersStore, viewDetails, viewId]);
-
-  // return if no filters are applied
-  if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
     <div className="flex items-center justify-between gap-4 p-4">

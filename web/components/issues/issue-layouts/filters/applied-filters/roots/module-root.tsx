@@ -7,61 +7,69 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
+import { EFilterType } from "store/issues/types";
 
 export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    moduleId: string;
+  };
 
   const {
     projectLabel: { projectLabels },
-    moduleFilter: moduleFilterStore,
     projectState: projectStateStore,
     projectMember: { projectMembers },
+    moduleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
-  const userFilters = moduleFilterStore.moduleFilters;
+  const userFilters = issueFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(userFilters).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
-
-    // remove all values of the key if value is null
+    if (!workspaceSlug || !projectId) return;
     if (!value) {
-      moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
-        [key]: null,
-      });
+      updateFilters(
+        workspaceSlug,
+        projectId,
+        EFilterType.FILTERS,
+        {
+          [key]: null,
+        },
+        moduleId
+      );
       return;
     }
 
-    // remove the passed value from the key
-    let newValues = moduleFilterStore.moduleFilters?.[key] ?? [];
+    let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
-      [key]: newValues,
-    });
+    updateFilters(
+      workspaceSlug,
+      projectId,
+      EFilterType.FILTERS,
+      {
+        [key]: newValues,
+      },
+      moduleId
+    );
   };
 
   const handleClearAllFilters = () => {
-    if (!workspaceSlug || !projectId || !moduleId) return;
-
+    if (!workspaceSlug || !projectId) return;
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
-
-    moduleFilterStore.updateModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId?.toString(), {
-      ...newFilters,
-    });
+    updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { ...newFilters }, moduleId);
   };
 
   // return if no filters are applied
@@ -75,7 +83,7 @@ export const ModuleAppliedFiltersRoot: React.FC = observer(() => {
         handleRemoveFilter={handleRemoveFilter}
         labels={projectLabels ?? []}
         members={projectMembers?.map((m) => m.member)}
-        states={projectStateStore.states?.[projectId?.toString() ?? ""]}
+        states={projectStateStore.states?.[moduleId ?? ""]}
       />
     </div>
   );

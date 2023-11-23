@@ -30,9 +30,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   // toast
   const { setToastAlert } = useToast();
 
-  const createCycle = async (payload: Partial<ICycle>) =>
-    cycleStore
-      .createCycle(workspaceSlug, projectId, payload)
+  const createCycle = async (payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .createCycle(workspaceSlug, selectedProjectId, payload)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -47,10 +49,13 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Error in creating cycle. Please try again.",
         });
       });
+  };
 
-  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) =>
-    cycleStore
-      .patchCycle(workspaceSlug, projectId, cycleId, payload)
+  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .patchCycle(workspaceSlug, selectedProjectId, cycleId, payload)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -65,6 +70,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Error in updating cycle. Please try again.",
         });
       });
+  };
 
   const dateChecker = async (payload: CycleDateCheckData) => {
     let status = false;
