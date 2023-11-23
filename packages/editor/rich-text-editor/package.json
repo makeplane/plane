@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
     "@tiptap/core": "^2.1.11",
