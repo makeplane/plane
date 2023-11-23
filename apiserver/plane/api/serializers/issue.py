@@ -19,7 +19,8 @@ from plane.db.models import (
     ProjectMember,
 )
 from .base import BaseSerializer
-
+from .cycle import CycleSerializer
+from .module import ModuleSerializer
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -308,4 +309,23 @@ class IssueActivitySerializer(BaseSerializer):
         exclude = [
             "created_by",
             "updated_by",
+        ]
+
+
+class IssueExpandSerializer(BaseSerializer):
+
+    cycle = CycleSerializer(source="issue_cycle.cycle", many=True)
+    module = ModuleSerializer(source="issue_module.module", many=True)
+
+    class Meta:
+        model = Issue
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]

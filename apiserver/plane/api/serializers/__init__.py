@@ -9,6 +9,7 @@ from .issue import (
     IssueCommentSerializer,
     IssueAttachmentSerializer,
     IssueActivitySerializer,
+    IssueExpandSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
 from .cycle import CycleSerializer, CycleIssueSerializer

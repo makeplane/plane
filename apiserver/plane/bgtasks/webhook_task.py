@@ -31,11 +31,12 @@ from plane.api.serializers import (
     CycleIssueSerializer,
     ModuleIssueSerializer,
     IssueCommentSerializer,
+    IssueExpandSerializer,
 )
 
 SERIALIZER_MAPPER = {
     "project": ProjectSerializer,
-    "issue": IssueSerializer,
+    "issue": IssueExpandSerializer,
     "cycle": CycleSerializer,
     "module": ModuleSerializer,
     "cycle_issue": CycleIssueSerializer,
@@ -54,16 +55,11 @@ MODEL_MAPPER = {
 }
 
 
-def get_model_data(event, event_id, many=False):
+def get_model_data(event, event_id, many=True):
     model = MODEL_MAPPER.get(event)
-    if many:
-        queryset = model.objects.get(pk__in=event_id)
-    else:
-        queryset = model.objects.get(pk__in=event_id)
-
+    queryset = model.objects.get(pk=event_id)
     serializer = SERIALIZER_MAPPER.get(event)
-    data = serializer(queryset, many=many).data
-    return data
+    return serializer(queryset).data
 
 
 @shared_task(
@@ -73,7 +69,7 @@ def get_model_data(event, event_id, many=False):
     max_retries=5,
     retry_jitter=True,
 )
-def webhook_task(self, webhook, slug, event, event_id, action):
+def webhook_task(self, webhook, slug, event, event_data, action):
     try:
         webhook = Webhook.objects.get(id=webhook, workspace__slug=slug)
 
@@ -83,11 +79,6 @@ def webhook_task(self, webhook, slug, event, event_id, action):
             "X-Plane-Delivery": str(uuid.uuid4()),
             "X-Plane-Event": event,
         }
-
-        if action == "DELETE":
-            event_data = {"id": str(event_id)}
-        else:
-            event_data = get_model_data(event=event, event_id=event_id, many=isinstance(event_id, list))
 
         # # Your secret key
         event_data = (
@@ -195,18 +186,20 @@ def send_webhook(event, event_data, kw, action, slug, bulk):
 
         
         if webhooks:
-            
             if action in ["POST", "PATCH"]:
                 if bulk:
-                    event_id = []
+                    event_data= []
+                    if event in ["cycle_issue", "module_issue"]:
+                        pass
                 else:
                     event_id = event_data.get("id") if isinstance(event_data, dict) else None
+                    event_data = [get_model_data(event=event, event_id=event_id, many=isinstance(event_id, list))]
             if action == "DELETE":
-                event_id = kw.get("pk")
-
+                event_data = [{"id": kw.get("pk")}]
 
             for webhook in webhooks:
-                webhook_task.delay(webhook.id, slug, event, event_id, action)
+                for data in event_data:
+                    webhook_task.delay(webhook=webhook.id, slug=slug, event=event, event_data=data, action=action,)
 
     except Exception as e:
         if settings.DEBUG:
