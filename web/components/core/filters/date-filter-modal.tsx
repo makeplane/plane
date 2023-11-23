@@ -76,7 +76,7 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative flex transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <form className="space-y-4" onSubmit={handleSubmit(handleFormSubmit)}>
+                <form className="space-y-4">
                   <div className="flex w-full justify-between">
                     <Controller
                       control={control}
@@ -130,7 +130,13 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
                     </Button>
-                    <Button variant="primary" size="sm" type="submit" disabled={isInvalid}>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      type="button"
+                      onClick={handleSubmit(handleFormSubmit)}
+                      disabled={isInvalid}
+                    >
                       Apply
                     </Button>
                   </div>
