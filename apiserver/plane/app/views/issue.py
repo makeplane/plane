@@ -371,7 +371,6 @@ class IssueListGroupedEndpoint(BaseAPIView):
 
         issue_queryset = (
             Issue.objects.filter(workspace__slug=slug, project_id=project_id)
-            .filter(~Q(state="Triage"))
             .select_related("project")
             .select_related("workspace")
             .select_related("state")

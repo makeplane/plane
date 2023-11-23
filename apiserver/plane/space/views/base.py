@@ -78,7 +78,7 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
 
             if isinstance(e, ValidationError):
                 return Response(
-                    {"error": "Please provide valid detail"},
+                    {"error": "Please provide valid detail", "e":str(e)},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -167,7 +167,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ValidationError):
                 return Response(
-                    {"error": "Please provide valid detail"},
+                    {"error": "Please provide valid detail" ,"e":str(e)},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
