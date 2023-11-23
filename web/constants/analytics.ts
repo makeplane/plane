@@ -3,7 +3,7 @@ import { TXAxisValues, TYAxisValues } from "types";
 
 export const ANALYTICS_TABS = [
   { key: "scope_and_demand", title: "Scope and Demand" },
-  { key: "custom", title: "Custom Analytics" },
+  { key: "custom", title: "Custom analytics" },
 ];
 
 export const ANALYTICS_X_AXIS_VALUES: { value: TXAxisValues; label: string }[] = [

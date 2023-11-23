@@ -53,7 +53,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
             onClick={() => commandPaletteStore.toggleCreateIssueModal(true)}
           >
             <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
-            {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
+            {!isSidebarCollapsed && <span className="text-sm font-medium">New issue</span>}
           </button>
 
           {storedValue && Object.keys(JSON.parse(storedValue)).length > 0 && (
@@ -83,7 +83,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                     className="w-full flex text-sm items-center rounded flex-shrink-0 py-[10px] px-3 bg-custom-background-100 shadow border-[0.5px] border-custom-border-300 text-custom-text-300"
                   >
                     <PenSquare size={16} className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2" />
-                    Last Drafted Issue
+                    Last drafted issue
                   </button>
                 </div>
               </div>

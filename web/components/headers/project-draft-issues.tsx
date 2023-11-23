@@ -40,7 +40,7 @@ export const ProjectDraftIssueHeader: FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Draft Issues"
+              label="Draft issues"
             />
           </Breadcrumbs>
         </div>

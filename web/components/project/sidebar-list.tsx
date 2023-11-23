@@ -266,7 +266,7 @@ export const ProjectSidebarList: FC = observer(() => {
             onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
           >
             <Plus className="h-5 w-5" />
-            {!isCollapsed && "Add Project"}
+            {!isCollapsed && "Add project"}
           </button>
         )}
       </div>

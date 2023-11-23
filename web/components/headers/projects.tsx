@@ -42,7 +42,7 @@ export const ProjectsHeader = observer(() => {
         )}
 
         <Button prependIcon={<Plus />} size="sm" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
-          Add Project
+          Add project
         </Button>
       </div>
     </div>

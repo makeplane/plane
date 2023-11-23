@@ -299,8 +299,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       </Button>
                       <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
                         {isSubmitting
-                          ? `${fields && fields.length > 1 ? "Adding Members..." : "Adding Member..."}`
-                          : `${fields && fields.length > 1 ? "Add Members" : "Add Member"}`}
+                          ? `${fields && fields.length > 1 ? "Adding members..." : "Adding member..."}`
+                          : `${fields && fields.length > 1 ? "Add members" : "Add member"}`}
                       </Button>
                     </div>
                   </div>

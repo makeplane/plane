@@ -18,15 +18,15 @@ import { IWorkspace } from "types";
 // Static Data
 const userLinks = (workspaceSlug: string, userId: string) => [
   {
-    name: "Workspace Settings",
+    name: "Workspace settings",
     href: `/${workspaceSlug}/settings`,
   },
   {
-    name: "Workspace Invites",
+    name: "Workspace invites",
     href: "/invitations",
   },
   {
-    name: "My Profile",
+    name: "My profile",
     href: `/${workspaceSlug}/profile/${userId}`,
   },
 ];
@@ -206,7 +206,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
                       >
                         <Plus className="h-4 w-4" />
-                        Create Workspace
+                        Create workspace
                       </Menu.Item>
                     </div>
                   ) : (

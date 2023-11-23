@@ -77,8 +77,8 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
         </div>
       </div>
       <div className="p-4 lg:col-span-2">
-        <h3 className="mb-2 font-semibold capitalize flex items-center gap-2">
-          Activity Graph
+        <h3 className="mb-2 font-semibold flex items-center gap-2">
+          Activity graph
           <Tooltip
             tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."
             className="w-72 border border-custom-border-200"

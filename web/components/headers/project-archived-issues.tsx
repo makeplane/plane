@@ -103,7 +103,7 @@ export const ProjectArchivedIssuesHeader: FC = observer(() => {
             <Breadcrumbs.BreadcrumbItem
               type="text"
               icon={<LayersIcon className="h-4 w-4 text-custom-text-300" />}
-              label="Archived Issues"
+              label="Archived issues"
             />
           </Breadcrumbs>
         </div>

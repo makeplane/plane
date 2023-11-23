@@ -85,11 +85,11 @@ export const EstimatesList: React.FC = observer(() => {
               }}
               size="sm"
             >
-              Add Estimate
+              Add estimate
             </Button>
             {currentProjectDetails?.estimate && (
               <Button variant="neutral-primary" onClick={disableEstimates} size="sm">
-                Disable Estimates
+                Disable estimates
               </Button>
             )}
           </div>
@@ -116,7 +116,7 @@ export const EstimatesList: React.FC = observer(() => {
               image={emptyEstimate}
               primaryButton={{
                 icon: <Plus className="h-4 w-4" />,
-                text: "Add Estimate",
+                text: "Add estimate",
                 onClick: () => {
                   setEstimateFormOpen(true);
                   setEstimateToUpdate(undefined);

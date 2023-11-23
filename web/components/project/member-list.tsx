@@ -101,7 +101,7 @@ export const ProjectMemberList: React.FC = observer(() => {
           />
         </div>
         <Button variant="primary" onClick={() => setInviteModal(true)}>
-          Add Member
+          Add member
         </Button>
       </div>
       {!projectMembers || !projectInvitations ? (

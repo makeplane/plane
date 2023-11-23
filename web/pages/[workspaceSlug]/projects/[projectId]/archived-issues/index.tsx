@@ -26,7 +26,7 @@ const ProjectArchivedIssuesPage: NextPageWithLayout = () => {
           className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
         >
           <ArchiveIcon className="h-4 w-4" />
-          <span>Archived Issues</span>
+          <span>Archived issues</span>
           <X className="h-3 w-3" />
         </button>
       </div>

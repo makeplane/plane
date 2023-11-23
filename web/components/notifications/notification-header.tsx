@@ -148,10 +148,10 @@ export const NotificationHeader: React.FC<NotificationHeaderProps> = (props) => 
               <ArrowLeft className="h-3.5 w-3.5" />
               <span className="ml-2 font-medium">
                 {snoozed
-                  ? "Snoozed Notifications"
+                  ? "Snoozed notifications"
                   : readNotification
-                  ? "Unread Notifications"
-                  : "Archived Notifications"}
+                  ? "Unread notifications"
+                  : "Archived notifications"}
               </span>
             </h4>
           </button>

@@ -90,7 +90,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
       <div className="flex flex-col gap-2 pb-4 w-full">
         <div className="flex items-center py-8 gap-4 w-full">
           <div className="flex flex-col gap-2 w-1/2">
-            <h4 className="text-sm">Project Lead</h4>
+            <h4 className="text-sm">Project lead</h4>
             <div className="">
               {currentProjectDetails ? (
                 <Controller
@@ -115,7 +115,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
           </div>
 
           <div className="flex flex-col gap-2 w-1/2">
-            <h4 className="text-sm">Default Assignee</h4>
+            <h4 className="text-sm">Default assignee</h4>
             <div className="">
               {currentProjectDetails ? (
                 <Controller

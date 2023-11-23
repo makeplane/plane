@@ -69,7 +69,7 @@ export const WorkspaceDashboardView = observer(() => {
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
                 <Button variant="primary" size="sm" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
-                  Create Project
+                  Create project
                 </Button>
               </div>
               <div className="hidden md:block self-end overflow-hidden pt-8">

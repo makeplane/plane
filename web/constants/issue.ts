@@ -74,10 +74,10 @@ export const ISSUE_ORDER_BY_OPTIONS: {
   title: string;
 }[] = [
   { key: "sort_order", title: "Manual" },
-  { key: "-created_at", title: "Last Created" },
-  { key: "-updated_at", title: "Last Updated" },
-  { key: "start_date", title: "Start Date" },
-  { key: "target_date", title: "Due Date" },
+  { key: "-created_at", title: "Last created" },
+  { key: "-updated_at", title: "Last updated" },
+  { key: "start_date", title: "Start date" },
+  { key: "target_date", title: "Due date" },
   { key: "priority", title: "Priority" },
 ];
 
@@ -86,8 +86,8 @@ export const ISSUE_FILTER_OPTIONS: {
   title: string;
 }[] = [
   { key: null, title: "All" },
-  { key: "active", title: "Active Issues" },
-  { key: "backlog", title: "Backlog Issues" },
+  { key: "active", title: "Active issues" },
+  { key: "backlog", title: "Backlog issues" },
   // { key: "draft", title: "Draft Issues" },
 ];
 

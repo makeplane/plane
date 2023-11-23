@@ -253,7 +253,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                     >
                       <div className="flex items-center justify-start gap-2">
                         <ArchiveIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-                        <span>Archived Issues</span>
+                        <span>Archived issues</span>
                       </div>
                     </CustomMenu.MenuItem>
                   )}
@@ -262,7 +262,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   >
                     <div className="flex items-center justify-start gap-2">
                       <PenSquare className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
-                      <span>Draft Issues</span>
+                      <span>Draft issues</span>
                     </div>
                   </CustomMenu.MenuItem>
                   <CustomMenu.MenuItem

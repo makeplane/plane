@@ -21,7 +21,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
-            <span className="text-xl tracking-tight">Delete Project</span>
+            <span className="text-xl tracking-tight">Delete project</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </Disclosure.Button>
 
