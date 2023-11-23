@@ -42,7 +42,7 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Settings",
     icon: Settings,
-    link: "/me/profile",
+    link: "/profile",
   },
 ];
 
@@ -291,7 +291,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   </Menu.Item>
                 ))}
               </div>
-              <div className="py-2">
+              <div className={`pt-2 ${isUserInstanceAdmin ? "pb-2" : ""}`}>
                 <Menu.Item
                   as="button"
                   type="button"
@@ -305,7 +305,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               {isUserInstanceAdmin && (
                 <div className="p-2 pb-0">
                   <Menu.Item as="button" type="button" className="w-full">
-                    <Link href="/admin">
+                    <Link href="/god-mode">
                       <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-10 hover:bg-custom-primary-20">
                         God Mode
                       </a>

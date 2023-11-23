@@ -8,15 +8,15 @@ const PROFILE_LINKS: Array<{
 }> = [
   {
     label: "Profile",
-    href: `/me/profile`,
+    href: `/profile`,
   },
   {
     label: "Activity",
-    href: `/me/profile/activity`,
+    href: `/profile/activity`,
   },
   {
     label: "Preferences",
-    href: `/me/profile/preferences`,
+    href: `/profile/preferences`,
   },
 ];
 
