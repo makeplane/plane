@@ -1,8 +1,12 @@
 import { useEffect, useState, ReactElement, Fragment } from "react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import { useTheme } from "next-themes";
+import { ChevronDown } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+import { Controller, useForm } from "react-hook-form";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
@@ -13,7 +17,8 @@ import useUserAuth from "hooks/use-user-auth";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // components
-import { InviteMembers, JoinWorkspaces, UserDetails, Workspace } from "components/onboarding";
+import { InviteMembers, JoinWorkspaces, UserDetails } from "components/onboarding";
+import { DeactivateAccountModal } from "components/account";
 // ui
 import { Avatar, Spinner } from "@plane/ui";
 // images
@@ -21,11 +26,7 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import { IUser, TOnboardingSteps } from "types";
 import { NextPageWithLayout } from "types/app";
-import { ChevronDown } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
-import { DeactivateAccountModal } from "components/account";
-import { useRouter } from "next/router";
-import { Controller, useForm } from "react-hook-form";
+
 
 // services
 const workspaceService = new WorkspaceService();
