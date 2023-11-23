@@ -50,7 +50,7 @@ type EmptySpaceItemProps = {
 
 const EmptySpaceItem: React.FC<EmptySpaceItemProps> = ({ title, description, Icon, action }) => (
   <>
-    <li className="cursor-pointer" onClick={action}>
+    <li className="cursor-pointer" onClick={action} role="button">
       <div className={`group relative flex ${description ? "items-start" : "items-center"} space-x-3 py-4`}>
         <div className="flex-shrink-0">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-custom-primary">

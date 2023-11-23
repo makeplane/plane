@@ -2,7 +2,9 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
+import { mutate } from "swr";
 import { Check, ChevronDown, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -40,7 +42,7 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: "/me/profile",
   },
 ];
 
@@ -57,6 +59,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
+  const { setTheme } = useTheme();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
     updateCurrentUser({
@@ -78,6 +81,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
     await authService
       .signOut()
       .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
       })
       .catch(() =>
@@ -94,7 +99,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       <Menu as="div" className="relative col-span-4 text-left flex-grow h-full truncate">
         {({ open }) => (
           <>
-            <Menu.Button className="text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
+            <Menu.Button className="group/menu-button text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
               <div
                 className={`flex items-center justify-between gap-x-2 rounded p-1 truncate ${
                   sidebarCollapsed ? "justify-center" : ""
@@ -126,7 +131,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
 
                 {!sidebarCollapsed && (
                   <ChevronDown
-                    className={`h-4 w-4 mx-1 flex-shrink-0 ${
+                    className={`hidden group-hover/menu-button:block h-4 w-4 mx-1 flex-shrink-0 ${
                       open ? "rotate-180" : ""
                     } text-custom-sidebar-text-400 duration-300`}
                   />
@@ -251,7 +256,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
       {!sidebarCollapsed && (
         <Menu as="div" className="relative flex-shrink-0">
           <Menu.Button className="grid place-items-center outline-none">
-          <Avatar
+            <Avatar
               name={currentUser?.display_name}
               src={currentUser?.avatar}
               size={24}

@@ -1,22 +1,31 @@
 import React, { useState } from "react";
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { AlertTriangle } from "lucide-react";
 // ui
 import { Button } from "@plane/ui";
+// types
+import { IUserLite } from "types";
 
 type Props = {
+  data: IUserLite;
+  onSubmit: () => Promise<void>;
   isOpen: boolean;
   onClose: () => void;
-  handleDelete: () => void;
-  data?: any;
 };
 
-export const ConfirmProjectMemberRemove: React.FC<Props> = (props) => {
-  const { isOpen, onClose, data, handleDelete } = props;
+export const ConfirmProjectMemberRemove: React.FC<Props> = observer((props) => {
+  const { data, onSubmit, isOpen, onClose } = props;
 
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+
+  const {
+    user: { currentUser },
+  } = useMobxStore();
 
   const handleClose = () => {
     onClose();
@@ -25,9 +34,13 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = (props) => {
 
   const handleDeletion = async () => {
     setIsDeleteLoading(true);
-    handleDelete();
+
+    await onSubmit();
+
     handleClose();
   };
+
+  const isCurrentUser = currentUser?.id === data?.id;
 
   return (
     <Transition.Root show={isOpen} as={React.Fragment}>
@@ -63,7 +76,7 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = (props) => {
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
-                        Remove {data?.display_name}?
+                        {isCurrentUser ? "Leave project?" : `Remove ${data?.display_name}?`}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
@@ -80,7 +93,13 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = (props) => {
                     Cancel
                   </Button>
                   <Button variant="danger" size="sm" tabIndex={1} onClick={handleDeletion} loading={isDeleteLoading}>
-                    {isDeleteLoading ? "Removing..." : "Remove"}
+                    {isCurrentUser
+                      ? isDeleteLoading
+                        ? "Leaving..."
+                        : "Leave"
+                      : isDeleteLoading
+                      ? "Removing..."
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>
@@ -90,4 +109,4 @@ export const ConfirmProjectMemberRemove: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});
