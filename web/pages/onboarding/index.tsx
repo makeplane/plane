@@ -27,7 +27,6 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 import { IUser, TOnboardingSteps } from "types";
 import { NextPageWithLayout } from "types/app";
 
-
 // services
 const workspaceService = new WorkspaceService();
 
@@ -120,12 +119,12 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               </div>
 
               <div>
-                {step != 1 && (
-                  <Controller
-                    control={control}
-                    name="full_name"
-                    render={({ field: { value } }) => (
-                      <div className="pr-4 flex gap-x-2 items-center">
+                <Controller
+                  control={control}
+                  name="full_name"
+                  render={({ field: { value } }) => (
+                    <div className="pr-4 flex gap-x-2 items-center">
+                      {step != 1 && (
                         <Avatar
                           name={
                             currentUser?.first_name
@@ -140,49 +139,49 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                           fallbackBackgroundColor="#FCBE1D"
                           className="!text-base capitalize"
                         />
-                        <div>
-                          {step != 1 && (
-                            <p className="text-sm text-custom-text-200 font-medium">
-                              {currentUser?.first_name
-                                ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
-                                : value.length > 0
-                                ? value
-                                : null}
-                            </p>
-                          )}
+                      )}
+                      <div>
+                        {step != 1 && (
+                          <p className="text-sm text-custom-text-200 font-medium">
+                            {currentUser?.first_name
+                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
+                              : value.length > 0
+                              ? value
+                              : null}
+                          </p>
+                        )}
 
-                          <Menu>
-                            <Menu.Button className={"flex items-center gap-x-2"}>
-                              <span className="text-base font-medium">{user.email}</span>
-                              <ChevronDown className="h-4 w-4 text-custom-text-300" />
-                            </Menu.Button>
-                            <Transition
-                              enter="transition duration-100 ease-out"
-                              enterFrom="transform scale-95 opacity-0"
-                              enterTo="transform scale-100 opacity-100"
-                              leave="transition duration-75 ease-out"
-                              leaveFrom="transform scale-100 opacity-100"
-                              leaveTo="transform scale-95 opacity-0"
-                            >
-                              <Menu.Items className={"absolute translate-x-full"}>
-                                <Menu.Item>
-                                  <div
-                                    className="absolute pr-28 hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md text-custom-text-300 text-base font-normal p-3 shadow-sm border border-custom-border-200"
-                                    onClick={() => {
-                                      setShowDeleteModal(true);
-                                    }}
-                                  >
-                                    Delete
-                                  </div>
-                                </Menu.Item>
-                              </Menu.Items>
-                            </Transition>
-                          </Menu>
-                        </div>
+                        <Menu>
+                          <Menu.Button className={"flex items-center gap-x-2"}>
+                            <span className="text-base font-medium">{user.email}</span>
+                            <ChevronDown className="h-4 w-4 text-custom-text-300" />
+                          </Menu.Button>
+                          <Transition
+                            enter="transition duration-100 ease-out"
+                            enterFrom="transform scale-95 opacity-0"
+                            enterTo="transform scale-100 opacity-100"
+                            leave="transition duration-75 ease-out"
+                            leaveFrom="transform scale-100 opacity-100"
+                            leaveTo="transform scale-95 opacity-0"
+                          >
+                            <Menu.Items className={"absolute translate-x-full"}>
+                              <Menu.Item>
+                                <div
+                                  className="absolute pr-28 hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md text-custom-text-300 text-base font-normal p-3 shadow-sm border border-custom-border-200"
+                                  onClick={() => {
+                                    setShowDeleteModal(true);
+                                  }}
+                                >
+                                  Delete
+                                </div>
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
                       </div>
-                    )}
-                  />
-                )}
+                    </div>
+                  )}
+                />
               </div>
             </div>
           </div>
