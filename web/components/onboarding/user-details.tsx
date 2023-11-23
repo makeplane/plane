@@ -27,6 +27,7 @@ const defaultValues: Partial<IUser> = {
 
 type Props = {
   user?: IUser;
+  setUserName: (name: string) => void;
 };
 
 // const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
@@ -49,7 +50,7 @@ const useCases = [
 const fileService = new FileService();
 
 export const UserDetails: React.FC<Props> = observer((props) => {
-  const { user } = props;
+  const { user, setUserName } = props;
   const [isRemoving, setIsRemoving] = useState(false);
   // const [selectedUsecase, setSelectedUsecase] = useState<number | null>();
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
@@ -170,7 +171,10 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                       type="text"
                       value={value}
                       autoFocus={true}
-                      onChange={onChange}
+                      onChange={(event) => {
+                        setUserName(event.target.value);
+                        onChange(event);
+                      }}
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your full name..."
