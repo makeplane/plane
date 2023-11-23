@@ -33,7 +33,7 @@ import {
 import { CustomDatePicker } from "components/ui";
 // icons
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, User2 } from "lucide-react";
-import { ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -273,17 +273,18 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               !issueDetail?.assignees.includes(user?.id ?? "") &&
               !router.pathname.includes("[archivedIssueId]") &&
               (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
-                <button
-                  type="button"
-                  className="rounded-md flex items-center gap-2 border border-custom-primary-100 px-2 py-1 text-xs text-custom-primary-100 shadow-sm duration-300 focus:outline-none"
+                <Button
+                  size="sm"
+                  prependIcon={<Bell className="h-3 w-3" />}
+                  variant="outline-primary"
+                  className="hover:!bg-custom-primary-100/20"
                   onClick={() => {
                     if (subscribed) handleUnsubscribe();
                     else handleSubscribe();
                   }}
                 >
-                  <Bell className="h-3.5 w-3.5" />
                   {loading ? "Loading..." : subscribed ? "Unsubscribe" : "Subscribe"}
-                </button>
+                </Button>
               )}
             {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
               <button

@@ -49,9 +49,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
   const createModule = async (payload: Partial<IModule>) => {
     if (!workspaceSlug || !projectId) return;
-
+    const selectedProjectId = payload.project ?? projectId.toString();
     await moduleStore
-      .createModule(workspaceSlug.toString(), projectId.toString(), payload)
+      .createModule(workspaceSlug.toString(), selectedProjectId, payload)
       .then(() => {
         handleClose();
 
@@ -72,9 +72,9 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
   const updateModule = async (payload: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !data) return;
-
+    const selectedProjectId = payload.project ?? projectId.toString();
     await moduleStore
-      .updateModuleDetails(workspaceSlug.toString(), projectId.toString(), data.id, payload)
+      .updateModuleDetails(workspaceSlug.toString(), selectedProjectId, data.id, payload)
       .then(() => {
         handleClose();
 
@@ -99,7 +99,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
     const payload: Partial<IModule> = {
       ...formData,
     };
-
     if (!data) await createModule(payload);
     else await updateModule(payload);
   };

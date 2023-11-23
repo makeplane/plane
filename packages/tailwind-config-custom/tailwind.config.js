@@ -36,6 +36,8 @@ module.exports = {
         "custom-sidebar-shadow-xl": "var(--color-sidebar-shadow-xl)",
         "custom-sidebar-shadow-2xl": "var(--color-sidebar-shadow-2xl)",
         "custom-sidebar-shadow-3xl": "var(--color-sidebar-shadow-3xl)",
+        "onbording-shadow-sm": "var(--color-onboarding-shadow-sm)",
+
       },
       colors: {
         custom: {
@@ -192,6 +194,7 @@ module.exports = {
           border: {
             100: convertToRGB("--color-onboarding-border-100"),
             200: convertToRGB("--color-onboarding-border-200"),
+            300: convertToRGB("--color-onboarding-border-300"),
           },
         },
       },
@@ -372,8 +375,9 @@ module.exports = {
         96: "21.6rem",
       },
       backgroundImage: {
-        "onboarding-gradient-primary": "var( --gradient-onboarding-primary)",
-        "onboarding-gradient-secondary": "var( --gradient-onboarding-secondary)",
+        "onboarding-gradient-100": "var( --gradient-onboarding-100)",
+        "onboarding-gradient-200": "var( --gradient-onboarding-200)",
+        "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
     },
     fontFamily: {
