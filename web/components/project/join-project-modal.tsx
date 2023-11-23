@@ -22,7 +22,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store
   const {
-    project: { joinProject },
+    user: { joinProject },
   } = useMobxStore();
   // router
   const router = useRouter();

@@ -27,7 +27,7 @@ export interface IUser {
   user_timezone: string;
   username: string;
   theme: IUserTheme;
-  use_case? :string;
+  use_case?: string;
 }
 
 export interface IInstanceAdminStatus {

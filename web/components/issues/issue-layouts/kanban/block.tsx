@@ -5,6 +5,7 @@ import { Tooltip } from "@plane/ui";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
+import { EIssueActions } from "../types";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -13,14 +14,9 @@ interface IssueBlockProps {
   issue: IIssue;
   isDragDisabled: boolean;
   showEmptyGroup: boolean;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
 }
 
 export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
@@ -37,7 +33,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   } = props;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
-    if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, "update");
+    if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
   };
 
   return (
@@ -79,7 +75,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                     !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
                     !columnId && columnId === "null" ? null : columnId,
                     { ...issue, ...issueToUpdate },
-                    "update"
+                    EIssueActions.UPDATE
                   );
                 }}
               >

@@ -13,7 +13,9 @@ import JoinProjectImg from "public/auth/project-not-authorized.svg";
 export const JoinProject: React.FC = () => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
 
-  const { project: projectStore } = useMobxStore();
+  const {
+    user: { joinProject },
+  } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -23,7 +25,7 @@ export const JoinProject: React.FC = () => {
 
     setIsJoiningProject(true);
 
-    projectStore.joinProject(workspaceSlug.toString(), [projectId.toString()]).finally(() => {
+    joinProject(workspaceSlug.toString(), [projectId.toString()]).finally(() => {
       setIsJoiningProject(false);
     });
   };
