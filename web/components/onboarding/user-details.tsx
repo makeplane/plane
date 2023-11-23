@@ -98,7 +98,17 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   return (
     <div className="w-full h-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
       <div className="h-full fixed hidden lg:block w-1/5 max-w-[320px]">
-        <DummySidebar showProject workspaceName={workspaceName} />
+        <Controller
+          control={control}
+          name="first_name"
+          render={({ field: { value } }) => (
+            <DummySidebar
+              userFullName={value.length === 0 ? undefined : value}
+              showProject
+              workspaceName={workspaceName}
+            />
+          )}
+        />
       </div>
       <ImageUploadModal
         isOpen={isImageUploadModalOpen}

@@ -114,11 +114,16 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               <div className="pr-4 flex gap-x-2 items-center">
                 {step != 1 && (
                   <Avatar
-                    name={workspaces ? workspaces[0].name : "N"}
+                    name={
+                      currentUser?.first_name
+                        ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
+                        : currentUser?.email
+                    }
+                    src={currentUser?.avatar}
                     size={35}
                     shape="square"
                     fallbackBackgroundColor="#FCBE1D"
-                    className="!text-base"
+                    className="!text-base capitalize"
                   />
                 )}
                 <div>
