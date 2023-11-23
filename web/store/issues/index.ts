@@ -24,8 +24,12 @@ export * from "./project-issues/project-view/issue.store";
 export * from "./project-issues/project-view/filter.store";
 
 // archived
+export * from "./project-issues/archived/issue.store";
+export * from "./project-issues/archived/filter.store";
 
 // draft
+export * from "./project-issues/draft/issue.store";
+export * from "./project-issues/draft/filter.store";
 
 /** project issues and issue-filters ends */
 

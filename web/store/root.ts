@@ -140,6 +140,18 @@ import {
   // project view issues filter
   IViewIssuesFilterStore,
   ViewIssuesFilterStore,
+  // archived issues
+  IProjectArchivedIssuesStore,
+  ProjectArchivedIssuesStore,
+  // archived issues filter
+  IProjectArchivedIssuesFilterStore,
+  ProjectArchivedIssuesFilterStore,
+  // draft issues
+  IProjectDraftIssuesStore,
+  ProjectDraftIssuesStore,
+  // draft issues filter
+  IProjectDraftIssuesFilterStore,
+  ProjectDraftIssuesFilterStore,
 } from "store/issues";
 
 import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
@@ -236,6 +248,12 @@ export class RootStore {
 
   viewIssues: IViewIssuesStore;
   viewIssuesFilter: IViewIssuesFilterStore;
+
+  projectArchivedIssues: IProjectArchivedIssuesStore;
+  projectArchivedIssuesFilter: IProjectArchivedIssuesFilterStore;
+
+  projectDraftIssues: IProjectDraftIssuesStore;
+  projectDraftIssuesFilter: IProjectDraftIssuesFilterStore;
   // project v3 issue and issue-filters ends
 
   cycleIssueFilters: ICycleIssueFiltersStore;
@@ -326,6 +344,12 @@ export class RootStore {
 
     this.viewIssues = new ViewIssuesStore(this);
     this.viewIssuesFilter = new ViewIssuesFilterStore(this);
+
+    this.projectArchivedIssues = new ProjectArchivedIssuesStore(this);
+    this.projectArchivedIssuesFilter = new ProjectArchivedIssuesFilterStore(this);
+
+    this.projectDraftIssues = new ProjectDraftIssuesStore(this);
+    this.projectDraftIssuesFilter = new ProjectDraftIssuesFilterStore(this);
     // project v3 issue and issue-filters ends
 
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
