@@ -73,7 +73,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(handleAddComment)}>
-      <div className="space-y-2">
+      <div className="space-y-2 py-2">
         <div className="h-full">
           <Controller
             name="access"
