@@ -1,4 +1,4 @@
-import { cn, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
+import { getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 import { useRouter } from "next/router";
 import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "../components/editor-header";
@@ -91,8 +91,8 @@ const DocumentReadOnlyEditor = ({
         documentDetails={documentDetails}
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
       />
-      <div className="h-full w-full flex overflow-hidden">
-        <div className="flex-shrink-0 h-full w-56 lg:w-80">
+      <div className="h-full w-full flex overflow-y-auto">
+        <div className="flex-shrink-0 h-full w-56 lg:w-80 sticky top-0">
           <SummarySideBar
             editor={editor}
             markings={markings}

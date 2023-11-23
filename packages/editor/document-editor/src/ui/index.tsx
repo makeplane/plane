@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { cn, getEditorClassNames, useEditor } from "@plane/editor-core";
+import { getEditorClassNames, useEditor } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "./extensions";
 import {
   IDuplicationConfig,
@@ -126,8 +126,8 @@ const DocumentEditor = ({
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
         documentDetails={documentDetails}
       />
-      <div className="h-full w-full flex overflow-hidden">
-        <div className="flex-shrink-0 h-full w-56 lg:w-80">
+      <div className="h-full w-full flex overflow-y-auto">
+        <div className="flex-shrink-0 h-full w-56 lg:w-80 sticky top-0">
           <SummarySideBar
             editor={editor}
             markings={markings}

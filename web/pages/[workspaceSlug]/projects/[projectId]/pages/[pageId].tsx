@@ -15,7 +15,7 @@ import { PageDetailsHeader } from "components/headers/page-details";
 import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Loader } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
@@ -179,19 +179,22 @@ const PageDetailsPage: NextPageWithLayout = () => {
     handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 
+  if (error)
+    return (
+      <EmptyState
+        image={emptyPage}
+        title="Page does not exist"
+        description="The page you are looking for does not exist or has been deleted."
+        primaryButton={{
+          text: "View other pages",
+          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
+        }}
+      />
+    );
+
   return (
     <>
-      {error ? (
-        <EmptyState
-          image={emptyPage}
-          title="Page does not exist"
-          description="The page you are looking for does not exist or has been deleted."
-          primaryButton={{
-            text: "View other pages",
-            onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
-          }}
-        />
-      ) : pageDetails ? (
+      {pageDetails ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
             {pageDetails.is_locked || pageDetails.archived_at ? (
@@ -267,9 +270,9 @@ const PageDetailsPage: NextPageWithLayout = () => {
           </div>
         </div>
       ) : (
-        <Loader className="p-8">
-          <Loader.Item height="200px" />
-        </Loader>
+        <div className="h-full w-full grid place-items-center">
+          <Spinner />
+        </div>
       )}
     </>
   );
