@@ -102,14 +102,14 @@ export class PageStore implements IPageStore {
 
     const data: IRecentPages = { today: [], yesterday: [], this_week: [], older: [] };
 
-    data["today"] = this.pages[projectId]?.filter((p) => isToday(new Date(p.created_at))) || [];
-    data["yesterday"] = this.pages[projectId]?.filter((p) => isYesterday(new Date(p.created_at))) || [];
-    data["this_week"] =
+    data.today = this.pages[projectId]?.filter((p) => isToday(new Date(p.created_at))) || [];
+    data.yesterday = this.pages[projectId]?.filter((p) => isYesterday(new Date(p.created_at))) || [];
+    data.this_week =
       this.pages[projectId]?.filter(
         (p) =>
           isThisWeek(new Date(p.created_at)) && !isToday(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
       ) || [];
-    data["older"] =
+    data.older =
       this.pages[projectId]?.filter(
         (p) => !isThisWeek(new Date(p.created_at)) && !isYesterday(new Date(p.created_at))
       ) || [];

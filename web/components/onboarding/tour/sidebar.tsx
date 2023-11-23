@@ -52,6 +52,7 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
               : "text-custom-text-200 border-transparent"
           }`}
           onClick={() => setStep(option.key)}
+          role="button"
         >
           <option.Icon className="h-4 w-4" aria-hidden="true" />
           {option.key}

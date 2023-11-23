@@ -200,7 +200,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 value={pageDetails.description_html}
                 customClassName={"tracking-tight self-center w-full max-w-full px-0"}
                 borderOnFocus={false}
-                noBorder={true}
+                noBorder
                 documentDetails={{
                   title: pageDetails.name,
                   created_by: pageDetails.created_by,

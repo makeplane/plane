@@ -1,25 +1,22 @@
-// react
 import React from "react";
-// next
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
+import useSWR from "swr";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // component
 import { WorkspaceSettingHeader } from "components/headers";
-import ApiTokenEmptyState from "components/api-token/empty-state";
+import { APITokenEmptyState, APITokenListItem } from "components/api-token";
 // ui
 import { Spinner, Button } from "@plane/ui";
 // services
-import { ApiTokenService } from "services/api_token.service";
+import { APITokenService } from "services/api_token.service";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
-// swr
-import useSWR from "swr";
-import { ApiTokenListItem } from "components/api-token/ApiTokenListItem";
 
-const apiTokenService = new ApiTokenService();
+const apiTokenService = new APITokenService();
+
 const Api: NextPage = () => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -47,13 +44,13 @@ const Api: NextPage = () => {
               </div>
               <div>
                 {tokens?.map((token) => (
-                  <ApiTokenListItem token={token} workspaceSlug={workspaceSlug} />
+                  <APITokenListItem token={token} workspaceSlug={workspaceSlug} />
                 ))}
               </div>
             </section>
           ) : (
             <div className="mx-auto py-8">
-              <ApiTokenEmptyState />
+              <APITokenEmptyState />
             </div>
           )
         ) : (
