@@ -189,6 +189,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                             className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
                             onClick={() => setIsImageUploadModalOpen(true)}
                             alt={myProfile.display_name}
+                            role="button"
                           />
                         </div>
                       )}
