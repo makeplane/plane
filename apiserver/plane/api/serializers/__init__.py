@@ -12,6 +12,6 @@ from .issue import (
     IssueExpandSerializer,
 )
 from .state import StateLiteSerializer, StateSerializer
-from .cycle import CycleSerializer, CycleIssueSerializer
-from .module import ModuleSerializer, ModuleIssueSerializer
+from .cycle import CycleSerializer, CycleIssueSerializer, CycleLiteSerializer
+from .module import ModuleSerializer, ModuleIssueSerializer, ModuleLiteSerializer
 from .inbox import InboxIssueSerializer

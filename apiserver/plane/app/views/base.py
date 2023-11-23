@@ -43,27 +43,28 @@ class TimezoneMixin:
 
 class WebhookMixin:
     webhook_event = None
+    bulk = False
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
+
+        # Check for the case should webhook be sent
         if (
             self.webhook_event
-            and self.request.method in ["POST", "PATCH"]
+            and self.request.method in ["POST", "PATCH", "DELETE"]
             and response.status_code in [200, 201, 204]
         ):
-            # Get the id
-            object_id = (
-                response.data.get("id") if isinstance(response.data, dict) else None
-            )
-
+            # Push the object to delay
             send_webhook.delay(
                 event=self.webhook_event,
-                event_id=object_id,
+                payload=response.data,
+                kw=self.kwargs,
                 action=self.request.method,
                 slug=self.workspace_slug,
+                bulk=self.bulk,
             )
-        return response
 
+        return response
 
 
 class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):

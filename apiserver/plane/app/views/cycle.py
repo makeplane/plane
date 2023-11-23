@@ -502,7 +502,10 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
 class CycleIssueViewSet(WebhookMixin, BaseViewSet):
     serializer_class = CycleIssueSerializer
     model = CycleIssue
+
     webhook_event = "cycle_issue"
+    bulk = True
+
     permission_classes = [
         ProjectEntityPermission,
     ]

@@ -52,7 +52,7 @@ class WebhookMixin:
             # Push the object to delay
             send_webhook.delay(
                 event=self.webhook_event,
-                event_data=response.data,
+                payload=response.data,
                 kw=self.kwargs,
                 action=self.request.method,
                 slug=self.workspace_slug,

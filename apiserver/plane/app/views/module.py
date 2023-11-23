@@ -287,6 +287,8 @@ class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
     webhook_event = "module_issue"
+    bulk = True
+
 
     filterset_fields = [
         "issue__labels__id",

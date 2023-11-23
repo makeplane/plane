@@ -19,8 +19,9 @@ from plane.db.models import (
     ProjectMember,
 )
 from .base import BaseSerializer
-from .cycle import CycleSerializer
-from .module import ModuleSerializer
+from .cycle import CycleSerializer, CycleLiteSerializer
+from .module import ModuleSerializer, ModuleLiteSerializer
+
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -312,10 +313,30 @@ class IssueActivitySerializer(BaseSerializer):
         ]
 
 
-class IssueExpandSerializer(BaseSerializer):
+class CycleIssueSerializer(BaseSerializer):
+    cycle = CycleSerializer(read_only=True)
 
-    cycle = CycleSerializer(source="issue_cycle.cycle", many=True)
-    module = ModuleSerializer(source="issue_module.module", many=True)
+    class Meta:
+        fields = [
+            "cycle",
+        ]
+
+
+class ModuleIssueSerializer(BaseSerializer):
+    module = ModuleSerializer(read_only=True)
+
+    class Meta:
+        fields = [
+            "module",
+        ]
+
+
+class IssueExpandSerializer(BaseSerializer):
+    # Serialize the related cycle. It's a OneToOne relation.
+    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
+
+    # Serialize the related module. It's a OneToOne relation.
+    module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
 
     class Meta:
         model = Issue
