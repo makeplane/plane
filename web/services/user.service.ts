@@ -139,6 +139,14 @@ export class UserService extends APIService {
       });
   }
 
+  async changePassword(data: { old_password: string; new_password: string; confirm_password: string }): Promise<any> {
+    return this.post(`/api/users/me/change-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getUserProfileData(workspaceSlug: string, userId: string): Promise<IUserProfileData> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-stats/${userId}/`)
       .then((response) => response?.data)
