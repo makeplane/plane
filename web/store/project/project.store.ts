@@ -24,6 +24,8 @@ export interface IProjectStore {
   favoriteProjects: IProject[];
   currentProjectDetails: IProject | undefined;
 
+  workspaceProjectIds: () => string[];
+
   // actions
   setProjectId: (projectId: string | null) => void;
   setSearchQuery: (query: string) => void;
@@ -150,6 +152,11 @@ export class ProjectStore implements IProjectStore {
 
   setSearchQuery = (query: string) => {
     this.searchQuery = query;
+  };
+
+  workspaceProjectIds = () => {
+    if (!this.workspaceProjects) return [];
+    return (this.workspaceProjects ?? []).map((workspace) => workspace.id);
   };
 
   /**

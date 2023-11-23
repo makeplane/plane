@@ -39,12 +39,21 @@ export interface IssuesModalProps {
     | "cycle"
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
+  handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
 
 const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
+  const {
+    data,
+    handleClose,
+    isOpen,
+    prePopulateData: prePopulateDataProps,
+    fieldsToShow = ["all"],
+    onSubmit,
+    handleSubmit,
+  } = props;
 
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -186,18 +195,22 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     await issueDetailStore
       .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
-        issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
+        if (handleSubmit) {
+          await handleSubmit(res);
+        } else {
+          issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
-        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+          if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
-        });
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        }
       })
       .catch(() => {
         setToastAlert({

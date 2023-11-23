@@ -1,7 +1,8 @@
 // services
 import { APIService } from "services/api.service";
 // type
-import type { IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
+import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
+import { IIssueResponse } from "store/issues/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -20,6 +21,16 @@ export class IssueService extends APIService {
 
   async getIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getV3Issues(workspaceSlug: string, projectId: string, queries?: any): Promise<IIssueResponse> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
