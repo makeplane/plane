@@ -24,6 +24,7 @@
     "@nivo/scatterplot": "0.80.0",
     "@plane/lite-text-editor": "*",
     "@plane/rich-text-editor": "*",
+    "@plane/document-editor": "*",
     "@plane/ui": "*",
     "@popperjs/core": "^2.11.8",
     "@sentry/nextjs": "^7.36.0",
