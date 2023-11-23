@@ -17,6 +17,7 @@ export interface IPriorityHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
@@ -29,6 +30,7 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const priority = column_value || null;
@@ -56,6 +58,7 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ priority: priority?.key }}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>

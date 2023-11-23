@@ -14,6 +14,7 @@ export interface IStateGroupHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
@@ -32,6 +33,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const stateGroup = column_value || null;
@@ -59,6 +61,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{}}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>

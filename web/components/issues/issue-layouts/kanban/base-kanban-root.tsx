@@ -1,5 +1,4 @@
 import { FC, useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -79,6 +78,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
 
+  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
   const onDragStart = () => {
     setIsDragStarted(true);
   };
@@ -163,11 +163,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               labels={projectLabels}
               members={projectMembers?.map((m) => m.member) ?? null}
               projects={workspaceProjects}
-              enableQuickIssueCreate
+              enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
               quickAddCallback={issueStore.quickAddIssue}
               viewId={viewId}
+              disableIssueCreation={!enableIssueCreation}
             />
           ) : (
             <KanBanSwimLanes
@@ -204,6 +205,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               projects={workspaceProjects}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
+              disableIssueCreation={true}
+              enableQuickIssueCreate={enableQuickAdd}
             />
           )}
         </DragDropContext>

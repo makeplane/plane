@@ -8,6 +8,7 @@ export interface IPriorityHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
+  disableIssueCreation?: boolean;
 }
 
 const Icon = ({ priority }: any) => (
@@ -37,7 +38,7 @@ const Icon = ({ priority }: any) => (
 );
 
 export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
-  const { column_id, column_value, issues_count } = props;
+  const { column_id, column_value, issues_count, disableIssueCreation } = props;
 
   const priority = column_value ?? null;
 
@@ -49,6 +50,7 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
           title={priority?.title || ""}
           count={issues_count}
           issuePayload={{ priority: priority?.key }}
+          disableIssueCreation={disableIssueCreation}
         />
       )}
     </>

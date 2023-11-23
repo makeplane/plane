@@ -33,7 +33,6 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   const {
     cycle: cycleStore,
-    cycleIssueFilters: cycleIssueFiltersStore,
     projectIssuesFilter: projectIssueFiltersStore,
     project: { currentProjectDetails },
     projectMember: { projectMembers },

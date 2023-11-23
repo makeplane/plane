@@ -5,7 +5,7 @@ import { IssueBaseStore } from "store/issues";
 import { IssueDraftService } from "services/issue/issue_draft.service";
 // types
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IProjectDraftIssuesStore {
@@ -20,7 +20,9 @@ export interface IProjectDraftIssuesStore {
   createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
+
   quickAddIssue: undefined;
+  viewFlags: ViewFlags;
 }
 
 export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectDraftIssuesStore {
@@ -30,6 +32,13 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
   rootStore;
   // service
   issueDraftService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: false,
+    enableIssueCreation: false,
+    enableInlineEditing: false,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);

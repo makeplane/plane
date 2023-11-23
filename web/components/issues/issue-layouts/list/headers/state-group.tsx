@@ -11,6 +11,7 @@ export interface IStateGroupHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
+  disableIssueCreation?: boolean;
 }
 
 export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
@@ -20,7 +21,7 @@ export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) =>
 );
 
 export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
-  const { column_id, column_value, issues_count } = props;
+  const { column_value, issues_count, disableIssueCreation } = props;
 
   const stateGroup = column_value ?? null;
 
@@ -32,6 +33,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
           title={capitalizeFirstLetter(stateGroup?.key) || ""}
           count={issues_count}
           issuePayload={{}}
+          disableIssueCreation={disableIssueCreation}
         />
       )}
     </>

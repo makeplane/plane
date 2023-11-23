@@ -8,10 +8,11 @@ export interface ICreatedByHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
+  disableIssueCreation?: boolean;
 }
 
 export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
-  const { column_id, column_value, issues_count } = props;
+  const { column_value, issues_count, disableIssueCreation } = props;
 
   const createdBy = column_value ?? null;
 
@@ -23,6 +24,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
           title={createdBy?.display_name || ""}
           count={issues_count}
           issuePayload={{ created_by: createdBy?.member?.id }}
+          disableIssueCreation={disableIssueCreation}
         />
       )}
     </>

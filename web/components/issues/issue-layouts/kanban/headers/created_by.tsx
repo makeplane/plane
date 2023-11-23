@@ -14,6 +14,7 @@ export interface ICreatedByHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
@@ -26,6 +27,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const createdBy = column_value ?? null;
@@ -53,6 +55,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ created_by: createdBy?.id }}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>

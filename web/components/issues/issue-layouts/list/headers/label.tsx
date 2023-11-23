@@ -7,6 +7,7 @@ export interface ILabelHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
+  disableIssueCreation?: boolean;
 }
 
 const Icon = ({ color }: any) => (
@@ -14,7 +15,7 @@ const Icon = ({ color }: any) => (
 );
 
 export const LabelHeader: FC<ILabelHeader> = observer((props) => {
-  const { column_id, column_value, issues_count } = props;
+  const { column_value, issues_count, disableIssueCreation } = props;
 
   const label = column_value ?? null;
 
@@ -26,6 +27,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
           title={column_value?.name || ""}
           count={issues_count}
           issuePayload={{ labels: [label.id] }}
+          disableIssueCreation={disableIssueCreation}
         />
       )}
     </>

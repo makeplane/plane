@@ -8,10 +8,11 @@ export interface IStateHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
+  disableIssueCreation?: boolean;
 }
 
 export const StateHeader: FC<IStateHeader> = observer((props) => {
-  const { column_id, column_value, issues_count } = props;
+  const { column_value, issues_count, disableIssueCreation } = props;
 
   const state = column_value ?? null;
 
@@ -23,6 +24,7 @@ export const StateHeader: FC<IStateHeader> = observer((props) => {
           title={state?.name || ""}
           count={issues_count}
           issuePayload={{ state: state?.id }}
+          disableIssueCreation={disableIssueCreation}
         />
       )}
     </>

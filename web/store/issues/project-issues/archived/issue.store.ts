@@ -4,7 +4,7 @@ import { IssueBaseStore } from "store/issues";
 // services
 import { IssueArchiveService } from "services/issue";
 // types
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IProjectArchivedIssuesStore {
@@ -18,7 +18,9 @@ export interface IProjectArchivedIssuesStore {
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   removeIssueFromArchived: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+
   quickAddIssue: undefined;
+  viewFlags: ViewFlags;
 }
 
 export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProjectArchivedIssuesStore {
@@ -28,6 +30,13 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
   rootStore;
   // service
   archivedIssueService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);

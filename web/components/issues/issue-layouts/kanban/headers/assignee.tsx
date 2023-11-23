@@ -15,6 +15,7 @@ export interface IAssigneesHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="base" />;
@@ -29,6 +30,7 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const assignee = column_value ?? null;
@@ -56,6 +58,7 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ assignees: [assignee?.id] }}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>

@@ -7,7 +7,7 @@ import { CycleService } from "services/cycle.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
 
 export interface ICycleIssuesStore {
@@ -56,6 +56,8 @@ export interface ICycleIssuesStore {
     issueId: string,
     issueBridgeId: string
   ) => Promise<IIssue>;
+
+  viewFlags: ViewFlags;
 }
 
 export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStore {
@@ -66,6 +68,13 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
   // service
   cycleService;
   issueService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);

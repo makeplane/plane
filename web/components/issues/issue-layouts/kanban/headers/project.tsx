@@ -15,6 +15,7 @@ export interface IProjectHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 const Icon = ({ emoji }: any) => <div className="w-6 h-6">{renderEmoji(emoji)}</div>;
@@ -29,6 +30,7 @@ export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const project = column_value ?? null;
@@ -56,6 +58,7 @@ export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ project: project?.id }}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>

@@ -7,7 +7,7 @@ import { ModuleService } from "services/module.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IModuleIssuesStore {
@@ -56,6 +56,8 @@ export interface IModuleIssuesStore {
     issueId: string,
     issueBridgeId: string
   ) => Promise<IIssue>;
+
+  viewFlags: ViewFlags;
 }
 
 export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesStore {
@@ -66,6 +68,13 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
   // service
   moduleService;
   issueService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);

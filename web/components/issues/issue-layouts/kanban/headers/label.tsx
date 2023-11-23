@@ -13,6 +13,7 @@ export interface ILabelHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 const Icon = ({ color }: any) => (
@@ -29,6 +30,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const label = column_value ?? null;
@@ -56,6 +58,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ labels: [label?.id] }}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>

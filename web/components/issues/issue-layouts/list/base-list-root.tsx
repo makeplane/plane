@@ -63,6 +63,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const issueIds = issueStore.getIssuesIds || [];
   const issues = issueStore.getIssues;
 
+  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
+
   const displayFilters = issueFilterStore?.issueFilters?.displayFilters;
   const group_by = displayFilters?.group_by || null;
   const showEmptyGroup = displayFilters?.show_empty_groups ?? false;
@@ -116,10 +118,11 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             projects={projects}
             issueIds={issueIds}
             showEmptyGroup={showEmptyGroup}
-            enableIssueQuickAdd={true}
-            isReadonly={false}
-            quickAddCallback={issueStore.quickAddIssue}
             viewId={viewId}
+            quickAddCallback={issueStore.quickAddIssue}
+            enableIssueQuickAdd={!!enableQuickAdd}
+            isReadonly={!enableInlineEditing}
+            disableIssueCreation={!enableIssueCreation}
           />
         </div>
       )}

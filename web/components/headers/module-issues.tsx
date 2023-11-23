@@ -33,7 +33,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const {
     module: moduleStore,
-    projectIssuesFilter: projectIssueFiltersStore,
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,

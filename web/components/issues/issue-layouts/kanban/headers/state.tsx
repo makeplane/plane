@@ -14,6 +14,7 @@ export interface IStateHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
 }
 
 export const StateHeader: FC<IStateHeader> = observer((props) => {
@@ -26,6 +27,7 @@ export const StateHeader: FC<IStateHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
   } = props;
 
   const state = column_value ?? null;
@@ -53,6 +55,7 @@ export const StateHeader: FC<IStateHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ state: state?.id }}
+            disableIssueCreation={disableIssueCreation}
           />
         ))}
     </>
