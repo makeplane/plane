@@ -49,13 +49,4 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
       )}
     </div>
   );
-
-  return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
-      <DraftIssueAppliedFiltersRoot />
-      <div className="w-full h-full overflow-auto">
-        <DraftIssueListLayout />
-      </div>
-    </div>
-  );
 });
