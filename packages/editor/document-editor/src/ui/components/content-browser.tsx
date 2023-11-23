@@ -8,10 +8,7 @@ interface ContentBrowserProps {
   markings: IMarking[];
 }
 
-export const ContentBrowser = ({
-  editor,
-  markings,
-}: ContentBrowserProps) => (
+export const ContentBrowser = ({ editor, markings }: ContentBrowserProps) => (
   <div className="mt-4 flex w-[250px] flex-col h-full">
     <h2 className="ml-4 border-b border-solid border-custom-border py-5 font-medium leading-[85.714%] tracking-tight max-md:ml-2.5">
       Table of Contents
@@ -29,7 +26,7 @@ export const ContentBrowser = ({
             onClick={() => scrollSummary(editor, marking)}
             subHeading={marking.text}
           />
-        )
+        ),
       )
     ) : (
       <p className="ml-3 mr-3 flex h-full items-center px-5 text-center text-xs text-gray-500">

@@ -1,7 +1,22 @@
 import { Editor } from "@tiptap/react";
 import { BoldIcon, Heading1, Heading2, Heading3 } from "lucide-react";
 
-import { BoldItem, BulletListItem, cn, CodeItem, ImageItem, ItalicItem, NumberedListItem, QuoteItem, StrikeThroughItem, TableItem, UnderLineItem, HeadingOneItem, HeadingTwoItem, HeadingThreeItem } from "@plane/editor-core";
+import {
+  BoldItem,
+  BulletListItem,
+  cn,
+  CodeItem,
+  ImageItem,
+  ItalicItem,
+  NumberedListItem,
+  QuoteItem,
+  StrikeThroughItem,
+  TableItem,
+  UnderLineItem,
+  HeadingOneItem,
+  HeadingTwoItem,
+  HeadingThreeItem,
+} from "@plane/editor-core";
 import { UploadImage } from "..";
 
 export interface BubbleMenuItem {
@@ -14,8 +29,10 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = {
   editor: Editor;
   uploadFile: UploadImage;
-  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
-}
+  setIsSubmitting?: (
+    isSubmitting: "submitting" | "submitted" | "saved",
+  ) => void;
+};
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
   const basicMarkItems: BubbleMenuItem[] = [
@@ -47,11 +64,8 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
   //   props.commentAccessSpecifier?.onAccessChange(accessKey);
   // };
 
-
   return (
-    <div
-      className="flex w-fit rounded bg-custom-background-100"
-    >
+    <div className="flex w-fit rounded bg-custom-background-100">
       <div className="flex">
         {basicMarkItems.map((item, index) => (
           <button
@@ -62,11 +76,17 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
               {
                 "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
+              },
             )}
           >
             <item.icon
-              size={ item.icon === Heading1 || item.icon === Heading2 || item.icon === Heading3 ? 20 : 15}
+              size={
+                item.icon === Heading1 ||
+                item.icon === Heading2 ||
+                item.icon === Heading3
+                  ? 20
+                  : 15
+              }
               className={cn({
                 "text-custom-text-100": item.isActive(),
               })}
@@ -84,7 +104,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
               {
                 "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
+              },
             )}
           >
             <item.icon
@@ -105,7 +125,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
               {
                 "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
+              },
             )}
           >
             <item.icon
@@ -126,7 +146,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
               "p-2 text-custom-text-300 hover:bg-custom-primary-100/5 active:bg-custom-primary-100/5 transition-colors",
               {
                 "text-custom-text-100 bg-custom-primary-100/5": item.isActive(),
-              }
+              },
             )}
           >
             <item.icon

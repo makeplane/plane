@@ -16,8 +16,11 @@ type Props = {
 export const SummaryPopover: React.FC<Props> = (props) => {
   const { children, title = "SummaryPopover", placement } = props;
 
-  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
+    null,
+  );
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "auto",
@@ -55,7 +58,9 @@ export const SummaryPopover: React.FC<Props> = (props) => {
                   style={styles.popper}
                   {...attributes.popper}
                 >
-                  <div className="w-[18.75rem] max-h-[37.5rem] flex flex-col overflow-hidden">{children}</div>
+                  <div className="w-[18.75rem] max-h-[37.5rem] flex flex-col overflow-hidden">
+                    {children}
+                  </div>
                 </div>
               </Popover.Panel>
             </Transition>
