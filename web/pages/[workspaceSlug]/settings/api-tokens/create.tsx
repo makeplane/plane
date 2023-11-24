@@ -1,36 +1,40 @@
 import { useState } from "react";
-import { NextPage } from "next";
 // layouts
 import { AppLayout } from "layouts/app-layout/layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
-//types
-import { IApiToken } from "types/api_token";
-//Mobx
-import { observer } from "mobx-react-lite";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
 import { APITokenForm, DeleteTokenModal } from "components/api-token";
+// types
+import { IApiToken } from "types/api_token";
+import { NextPageWithLayout } from "types/app";
 
-const CreateApiToken: NextPage = () => {
+const CreateApiTokenPage: NextPageWithLayout = () => {
   const [generatedToken, setGeneratedToken] = useState<IApiToken | null>();
   const [deleteTokenModal, setDeleteTokenModal] = useState<boolean>(false);
 
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Api Tokens" />}>
-      <WorkspaceSettingLayout>
-        <DeleteTokenModal
-          isOpen={deleteTokenModal}
-          handleClose={() => setDeleteTokenModal(false)}
-          tokenId={generatedToken?.id}
-        />
-        <APITokenForm
-          generatedToken={generatedToken}
-          setGeneratedToken={setGeneratedToken}
-          setDeleteTokenModal={setDeleteTokenModal}
-        />
-      </WorkspaceSettingLayout>
+    <>
+      <DeleteTokenModal
+        isOpen={deleteTokenModal}
+        handleClose={() => setDeleteTokenModal(false)}
+        tokenId={generatedToken?.id}
+      />
+      <APITokenForm
+        generatedToken={generatedToken}
+        setGeneratedToken={setGeneratedToken}
+        setDeleteTokenModal={setDeleteTokenModal}
+      />
+    </>
+  );
+};
+
+CreateApiTokenPage.getLayout = function getLayout(page: React.ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="API Tokens" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
     </AppLayout>
   );
 };
 
-export default observer(CreateApiToken);
+export default CreateApiTokenPage;

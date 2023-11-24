@@ -36,12 +36,7 @@ export const APITokenTitle: FC<APITokenTitleProps> = (props) => {
             name="title"
             type="text"
             inputSize="md"
-            onBlur={() => {
-              setFocusTitle(false);
-            }}
-            onError={() => {
-              console.log("error");
-            }}
+            onBlur={() => setFocusTitle(false)}
             autoFocus
             value={value}
             onChange={onChange}
@@ -60,7 +55,7 @@ export const APITokenTitle: FC<APITokenTitleProps> = (props) => {
             role="button"
             className={`${value.length === 0 ? "text-custom-text-400/60" : ""} font-medium text-[24px]`}
           >
-            {value.length != 0 ? value : "Api Title"}
+            {value.length != 0 ? value : "API Title"}
           </p>
         )
       }

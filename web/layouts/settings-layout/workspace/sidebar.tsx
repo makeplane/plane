@@ -33,7 +33,7 @@ export const WorkspaceSettingsSidebar = () => {
       access: EUserWorkspaceRoles.GUEST,
     },
     {
-      label: "Billing & Plans",
+      label: "Billing and plans",
       href: `/${workspaceSlug}/settings/billing`,
       access: EUserWorkspaceRoles.ADMIN,
     },

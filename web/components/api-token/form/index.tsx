@@ -112,7 +112,7 @@ export const APITokenForm: FC<APITokenFormProps> = (props) => {
           setFocusTitle(true);
         }
       })}
-      className={`${sidebarCollapsed ? "xl:w-[50%] lg:w-[60%] " : "w-[60%]"} mx-auto py-8`}
+      className={`${sidebarCollapsed ? "xl:w-1/2 lg:w-3/5" : "w-3/5"} mx-auto py-8`}
     >
       <div className="border-b border-custom-border-200 pb-4">
         <APITokenTitle
@@ -145,7 +145,7 @@ export const APITokenForm: FC<APITokenFormProps> = (props) => {
               control={control}
             />
             <Button variant="primary" type="submit">
-              {loading ? "generating..." : "Add Api key"}
+              {loading ? "Generating..." : "Add API key"}
             </Button>
           </>
         </div>
