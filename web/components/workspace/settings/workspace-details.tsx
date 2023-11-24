@@ -11,7 +11,7 @@ import { FileService } from "services/file.service";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
-import { ImageUploadModal } from "components/core";
+import { WorkspaceImageUploadModal } from "components/core";
 // ui
 import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
 // types
@@ -19,6 +19,7 @@ import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE } from "constants/workspace";
 import { trackEvent } from "helpers/event-tracker.helper";
+import { copyUrlToClipboard } from "helpers/string.helper";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -33,8 +34,6 @@ const fileService = new FileService();
 export const WorkspaceDetails: FC = observer(() => {
   // states
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store
@@ -51,7 +50,6 @@ export const WorkspaceDetails: FC = observer(() => {
     control,
     reset,
     watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...currentWorkspace },
@@ -78,8 +76,12 @@ export const WorkspaceDetails: FC = observer(() => {
       .catch((err) => console.error(err));
   };
 
-  const handleDelete = (url: string | null | undefined) => {
-    if (!currentWorkspace || !url) return;
+  const handleRemoveLogo = () => {
+    if (!currentWorkspace) return;
+
+    const url = currentWorkspace.logo;
+
+    if (!url) return;
 
     setIsImageRemoving(true);
 
@@ -104,6 +106,17 @@ export const WorkspaceDetails: FC = observer(() => {
     });
   };
 
+  const handleCopyUrl = () => {
+    if (!currentWorkspace) return;
+
+    copyUrlToClipboard(`${currentWorkspace.slug}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Workspace URL copied to the clipboard.",
+      });
+    });
+  };
+
   useEffect(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
@@ -118,22 +131,27 @@ export const WorkspaceDetails: FC = observer(() => {
   return (
     <>
       <DeleteWorkspaceModal
+        data={currentWorkspace}
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
-        data={currentWorkspace}
       />
-      <ImageUploadModal
-        isOpen={isImageUploadModalOpen}
-        onClose={() => setIsImageUploadModalOpen(false)}
-        isRemoving={isImageRemoving}
-        handleDelete={() => handleDelete(currentWorkspace?.logo)}
-        onSuccess={(imageUrl) => {
-          setIsImageUploading(true);
-          setValue("logo", imageUrl);
-          setIsImageUploadModalOpen(false);
-          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
-        }}
-        value={watch("logo")}
+      <Controller
+        control={control}
+        name="logo"
+        render={({ field: { onChange, value } }) => (
+          <WorkspaceImageUploadModal
+            isOpen={isImageUploadModalOpen}
+            onClose={() => setIsImageUploadModalOpen(false)}
+            isRemoving={isImageRemoving}
+            handleRemove={handleRemoveLogo}
+            onSuccess={(imageUrl) => {
+              onChange(imageUrl);
+              setIsImageUploadModalOpen(false);
+              handleSubmit(onSubmit)();
+            }}
+            value={value}
+          />
+        )}
       />
       <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 items-center pb-7 border-b border-custom-border-100">
@@ -156,9 +174,9 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
-            <span className="text-sm tracking-tight">{`${
+            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-            }/${currentWorkspace.slug}`}</span>
+            }/${currentWorkspace.slug}`}</button>
             <div className="flex item-center gap-2.5">
               <button
                 className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"

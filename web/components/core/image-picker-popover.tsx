@@ -14,6 +14,8 @@ import { FileService } from "services/file.service";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // components
 import { Button, Input, Loader } from "@plane/ui";
+// constants
+import { MAX_FILE_SIZE } from "constants/common";
 
 const tabOptions = [
   {
@@ -58,8 +60,10 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { workspace: workspaceStore } = useMobxStore();
-  const { currentWorkspace: workspaceDetails } = workspaceStore;
+  const {
+    workspace: { currentWorkspace },
+    appConfig: { envConfig },
+  } = useMobxStore();
 
   const { data: unsplashImages, error: unsplashError } = useSWR(
     `UNSPLASH_IMAGES_${searchParams}`,
@@ -86,7 +90,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: 5 * 1024 * 1024,
+    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
   });
 
   const handleSubmit = async () => {
@@ -112,7 +116,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
 
         if (isUnsplashImage) return;
 
-        if (oldValue && workspaceDetails) fileService.deleteFile(workspaceDetails.id, oldValue);
+        if (oldValue && currentWorkspace) fileService.deleteFile(currentWorkspace.id, oldValue);
       })
       .catch((err) => {
         console.log(err);
