@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import { MoveLeft, Plus, UserPlus } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+import { LogIn, LogOut, MoveLeft, Plus, User, UserPlus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// services
+import { AuthService } from "services/auth.service";
 // ui
-import { Tooltip } from "@plane/ui";
+import { Avatar, Tooltip } from "@plane/ui";
+import { Fragment } from "react";
+import { mutate } from "swr";
+import { useRouter } from "next/router";
+import useToast from "hooks/use-toast";
+import { useTheme } from "next-themes";
 
 const SIDEBAR_LINKS = [
   {
@@ -21,11 +29,43 @@ const SIDEBAR_LINKS = [
   },
 ];
 
+const authService = new AuthService();
+
 export const ProfileLayoutSidebar = observer(() => {
+  const router = useRouter();
+
+  const { setTheme } = useTheme();
+
+  const { setToastAlert } = useToast();
+
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     workspace: { workspaces },
+    user: { currentUser, currentUserSettings },
   } = useMobxStore();
+
+  // redirect url for normal mode
+  const redirectWorkspaceSlug =
+    currentUserSettings?.workspace?.last_workspace_slug ||
+    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    "";
+
+  const handleSignOut = async () => {
+    await authService
+      .signOut()
+      .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
+        router.push("/");
+      })
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Failed to sign out. Please try again.",
+        })
+      );
+  };
 
   return (
     <div
@@ -34,6 +74,73 @@ export const ProfileLayoutSidebar = observer(() => {
       } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
       <div className="h-full w-full flex flex-col">
+        <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
+          <div className="w-full h-full truncate">
+            <div
+              className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
+                sidebarCollapsed ? "justify-center" : ""
+              }`}
+            >
+              <div
+                className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}
+              >
+                <User className="h-5 w-5 text-custom-text-200" />
+              </div>
+
+              {!sidebarCollapsed && <h4 className="text-custom-text-200 font-medium text-base truncate">My Profile</h4>}
+            </div>
+          </div>
+
+          {!sidebarCollapsed && (
+            <Tooltip position="bottom-left" tooltipContent="Go back to your workspace">
+              <div className="flex-shrink-0">
+                <Link href={`/${redirectWorkspaceSlug}`}>
+                  <a>
+                    <LogIn className="h-5 w-5 text-custom-text-200 rotate-180" />
+                  </a>
+                </Link>
+              </div>
+            </Tooltip>
+          )}
+
+          {!sidebarCollapsed && (
+            <Menu as="div" className="relative flex-shrink-0 ">
+              <Menu.Button className="flex gap-4 place-items-center outline-none">
+                <Avatar
+                  name={currentUser?.display_name}
+                  src={currentUser?.avatar}
+                  size={24}
+                  shape="square"
+                  className="!text-base"
+                />
+              </Menu.Button>
+
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute left-0 z-20 mt-1 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 shadow-custom-shadow-rg text-xs space-y-2 outline-none">
+                  <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
+                  <Menu.Item
+                    as="button"
+                    type="button"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="h-4 w-4 stroke-[1.5]" />
+                    Sign out
+                  </Menu.Item>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          )}
+        </div>
+
         <div className="w-full cursor-pointer space-y-1 p-4 flex-shrink-0">
           {SIDEBAR_LINKS.map((link) => (
             <Link key={link.key} href={link.href}>

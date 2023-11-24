@@ -102,4 +102,6 @@ class ConfigurationEndpoint(BaseAPIView):
             )
         )
 
+        data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
         return Response(data, status=status.HTTP_200_OK)

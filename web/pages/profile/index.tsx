@@ -10,7 +10,7 @@ import useToast from "hooks/use-toast";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
-import { ImagePickerPopover, ImageUploadModal } from "components/core";
+import { ImagePickerPopover, UserImageUploadModal } from "components/core";
 import { ProfileSettingsHeader } from "components/headers";
 import { DeactivateAccountModal } from "components/account";
 // ui
@@ -48,7 +48,6 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
     handleSubmit,
     reset,
     watch,
-    setValue,
     control,
     formState: { errors, isSubmitting },
   } = useForm<IUser>({ defaultValues });
@@ -151,18 +150,23 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 
   return (
     <>
-      <ImageUploadModal
-        isOpen={isImageUploadModalOpen}
-        onClose={() => setIsImageUploadModalOpen(false)}
-        isRemoving={isRemoving}
-        handleDelete={() => handleDelete(myProfile?.avatar, true)}
-        onSuccess={(url) => {
-          setValue("avatar", url);
-          handleSubmit(onSubmit)();
-          setIsImageUploadModalOpen(false);
-        }}
-        value={watch("avatar") !== "" ? watch("avatar") : undefined}
-        userImage
+      <Controller
+        control={control}
+        name="avatar"
+        render={({ field: { onChange, value } }) => (
+          <UserImageUploadModal
+            isOpen={isImageUploadModalOpen}
+            onClose={() => setIsImageUploadModalOpen(false)}
+            isRemoving={isRemoving}
+            handleDelete={() => handleDelete(myProfile?.avatar, true)}
+            onSuccess={(url) => {
+              onChange(url);
+              handleSubmit(onSubmit)();
+              setIsImageUploadModalOpen(false);
+            }}
+            value={value && value.trim() !== "" ? value : null}
+          />
+        )}
       />
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
       <div className="h-full w-full flex flex-col py-9 pr-9 space-y-10 overflow-y-auto">
