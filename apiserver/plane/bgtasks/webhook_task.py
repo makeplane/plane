@@ -153,10 +153,6 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             retry_count=str(self.request.retries),
         )
 
-        # Retry logic
-        if self.request.retries >= self.max_retries:
-            Webhook.objects.filter(pk=webhook.id).update(is_active=False)
-            return
         raise requests.RequestException()
 
     except Exception as e:
