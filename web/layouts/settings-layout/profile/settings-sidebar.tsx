@@ -13,22 +13,22 @@ const PROFILE_LINKS: Array<{
   {
     key: "profile",
     label: "Profile",
-    href: `/me/profile`,
+    href: `/profile`,
   },
   {
     key: "change-password",
     label: "Change password",
-    href: `/me/profile/change-password`,
+    href: `/profile/change-password`,
   },
   {
     key: "activity",
     label: "Activity",
-    href: `/me/profile/activity`,
+    href: `/profile/activity`,
   },
   {
     key: "preferences",
     label: "Preferences",
-    href: `/me/profile/preferences`,
+    href: `/profile/preferences`,
   },
 ];
 

@@ -22,12 +22,9 @@ export const InstanceAdminHeader: FC<IInstanceAdminHeader> = observer((props) =>
               type="text"
               icon={<Settings className="h-4 w-4 text-custom-text-300" />}
               label="Settings"
-              link="/admin"
+              link="/god-mode"
             />
-            <Breadcrumbs.BreadcrumbItem
-              type="text"
-              label={title}
-            />
+            <Breadcrumbs.BreadcrumbItem type="text" label={title} />
           </Breadcrumbs>
         </div>
       </div>

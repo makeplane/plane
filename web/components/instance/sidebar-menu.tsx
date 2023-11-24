@@ -12,25 +12,25 @@ const INSTANCE_ADMIN_LINKS = [
     Icon: Cog,
     name: "General",
     description: "General settings here",
-    href: `/admin`,
+    href: `/god-mode`,
   },
   {
     Icon: Mail,
     name: "Email",
     description: "Email related settings will go here",
-    href: `/admin/email`,
+    href: `/god-mode/email`,
   },
   {
     Icon: Lock,
     name: "Authorization",
     description: "Autorization",
-    href: `/admin/authorization`,
+    href: `/god-mode/authorization`,
   },
   {
     Icon: BrainCog,
     name: "OpenAI",
     description: "OpenAI configurations",
-    href: `/admin/openai`,
+    href: `/god-mode/openai`,
   },
 ];
 

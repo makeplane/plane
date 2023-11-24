@@ -4,7 +4,7 @@ import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { Cog, LogIn, LogOut, Settings, UserCircle2 } from "lucide-react";
+import { Cog, LogIn, LogOut, Settings } from "lucide-react";
 import { mutate } from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -16,16 +16,12 @@ import { AuthService } from "services/auth.service";
 import { Avatar, Tooltip } from "@plane/ui";
 
 // Static Data
-const profileLinks = (workspaceSlug: string, userId: string) => [
+const PROFILE_LINKS = [
   {
-    name: "View profile",
-    icon: UserCircle2,
-    link: `/${workspaceSlug}/profile/${userId}`,
-  },
-  {
+    key: "settings",
     name: "Settings",
     icon: Settings,
-    link: `/me/profile`,
+    link: `/profile`,
   },
 ];
 
@@ -123,8 +119,8 @@ export const InstanceSidebarDropdown = observer(() => {
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Menu.Item key={index} as="button" type="button">
+                {PROFILE_LINKS.map((link) => (
+                  <Menu.Item key={link.key} as="button" type="button">
                     <Link href={link.link}>
                       <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />

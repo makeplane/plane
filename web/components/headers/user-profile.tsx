@@ -6,7 +6,7 @@ export const UserProfileHeader = () => (
     <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
       <div>
         <Breadcrumbs>
-          <Breadcrumbs.BreadcrumbItem type="text" label="Activity Overview" link="/me/profile" />
+          <Breadcrumbs.BreadcrumbItem type="text" label="Activity Overview" link="/profile" />
         </Breadcrumbs>
       </div>
     </div>

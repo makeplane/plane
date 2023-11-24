@@ -26,15 +26,15 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
         <InstanceEmailForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4 m-8">
-        <Loader.Item height="50px" />
-        <Loader.Item height="50px" />
-        <Loader.Item height="50px" width="25%" />
-        <Loader.Item height="50px" width="25%" />
-        <Loader.Item height="50px" width="25%" />
-      </Loader>
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" />
+          <Loader.Item height="50px" width="25%" />
+          <Loader.Item height="50px" width="25%" />
+          <Loader.Item height="50px" width="25%" />
+        </Loader>
       )}
     </div>
-  )
+  );
 });
 
 InstanceAdminEmailPage.getLayout = function getLayout(page: ReactElement) {
