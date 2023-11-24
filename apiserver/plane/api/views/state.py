@@ -23,10 +23,8 @@ class StateAPIEndpoint(BaseAPIView):
     ]
 
     def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
+        return (
+            State.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
             .filter(~Q(name="Triage"))
@@ -42,9 +40,9 @@ class StateAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, request, slug, project_id, pk=None):
-        if pk:
-            serializer = StateSerializer(self.get_queryset().get(pk=pk))
+    def get(self, request, slug, project_id, state_id=None):
+        if state_id:
+            serializer = StateSerializer(self.get_queryset().get(pk=state_id))
             return Response(serializer.data, status=status.HTTP_200_OK)
         return self.paginate(
             request=request,
@@ -57,10 +55,10 @@ class StateAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def delete(self, request, slug, project_id, pk):
+    def delete(self, request, slug, project_id, state_id):
         state = State.objects.get(
             ~Q(name="Triage"),
-            pk=pk,
+            pk=state_id,
             project_id=project_id,
             workspace__slug=slug,
         )
@@ -69,7 +67,7 @@ class StateAPIEndpoint(BaseAPIView):
             return Response({"error": "Default state cannot be deleted"}, status=False)
 
         # Check for any issues in the state
-        issue_exist = Issue.issue_objects.filter(state=pk).exists()
+        issue_exist = Issue.issue_objects.filter(state=state_id).exists()
 
         if issue_exist:
             return Response(
@@ -80,8 +78,8 @@ class StateAPIEndpoint(BaseAPIView):
         state.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def patch(self, request, slug, project_id, pk=None):
-        state = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk)
+    def patch(self, request, slug, project_id, state_id=None):
+        state = State.objects.get(workspace__slug=slug, project_id=project_id, pk=state_id)
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

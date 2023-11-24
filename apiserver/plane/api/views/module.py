@@ -129,6 +129,14 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
             serializer = ModuleSerializer(module)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, slug, project_id, pk):
+        module = Module.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
+        serializer = ModuleSerializer(module, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, slug, project_id, pk=None):
         if pk:
@@ -168,7 +176,7 @@ class ModuleAPIEndpoint(WebhookMixin, BaseAPIView):
                 }
             ),
             actor_id=str(request.user.id),
-            issue_id=str(pk),
+            issue_id=None,
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
@@ -186,7 +194,8 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
-    webhook_event = "module"
+    webhook_event = "module_issue"
+    bulk = True
 
     permission_classes = [
         ProjectEntityPermission,
@@ -323,7 +332,7 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         # Capture Issue Activity
         issue_activity.delay(
             type="module.activity.created",
-            requested_data=json.dumps({"modules_list": issues}),
+            requested_data=json.dumps({"modules_list": str(issues)}),
             actor_id=str(self.request.user.id),
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
@@ -343,9 +352,9 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    def delete(self, request, slug, project_id, module_id, pk):
+    def delete(self, request, slug, project_id, module_id, issue_id):
         module_issue = ModuleIssue.objects.get(
-            workspace__slug=slug, project_id=project_id, module_id=module_id, pk=pk
+            workspace__slug=slug, project_id=project_id, module_id=module_id, issue_id=issue_id
         )
         module_issue.delete()
         issue_activity.delay(
@@ -357,7 +366,7 @@ class ModuleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 }
             ),
             actor_id=str(request.user.id),
-            issue_id=str(pk),
+            issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
