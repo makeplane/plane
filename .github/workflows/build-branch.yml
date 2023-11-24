@@ -98,7 +98,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }} "
+              "message": "${{ github.event.pull_request.title }} "
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -114,7 +114,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }}"
+              "message": "${{ github.event.pull_request.title }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -163,7 +163,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }} "
+              "message": "${{ github.event.pull_request.title }} "
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -179,7 +179,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }}"
+              "message": "${{ github.event.pull_request.title }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -226,7 +226,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }} "
+              "message": "${{ github.event.pull_request.title }} "
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -242,7 +242,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }}"
+              "message": "${{ github.event.pull_request.title }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -287,7 +287,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }} "
+              "message": "${{ github.event.pull_request.title }} "
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -303,7 +303,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }}"
+              "message": "${{ github.event.pull_request.title }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -350,7 +350,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }} "
+              "message": "${{ github.event.pull_request.title }} "
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
@@ -366,7 +366,7 @@ jobs:
               "action_name": "${{ github.workflow }}",
               "job_name": "${{ github.job }}",
               "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.head_commit.message }}"
+              "message": "${{ github.event.pull_request.title }}"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
