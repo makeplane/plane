@@ -10,17 +10,26 @@ import { RootStore } from "store/root";
 export interface IProfileIssuesStore {
   // observable
   loader: TLoader;
-  issues: { [project_id: string]: IIssueResponse } | undefined;
+  issues: { [user_id: string]: IIssueResponse } | undefined;
+  currentUserId: string | null;
+  currentUserIssueTab: "assigned" | "created" | "subscribed" | null;
   // computed
   getIssues: IIssueResponse | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
+  fetchIssues: (
+    workspaceSlug: string,
+    userId: string,
+    type: "assigned" | "created" | "subscribed",
+    loadType: TLoader
+  ) => Promise<IIssueResponse>;
 }
 
 export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssuesStore {
   loader: TLoader = "init-loader";
-  issues: { [project_id: string]: IIssueResponse } | undefined = undefined;
+  issues: { [user_id: string]: IIssueResponse } | undefined = undefined;
+  currentUserId: string | null = null;
+  currentUserIssueTab: "assigned" | "created" | "subscribed" | null = null;
   // root store
   rootStore;
   // service
@@ -33,6 +42,8 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       // observable
       loader: observable.ref,
       issues: observable.ref,
+      currentUserId: observable.ref,
+      currentUserIssueTab: observable.ref,
       // computed
       getIssues: computed,
       getIssuesIds: computed,
@@ -45,23 +56,21 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
-      const projectId = this.rootStore.project.projectId;
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !this.currentUserId || !this.currentUserIssueTab) return;
 
       const userFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
+      if (userFilters) this.fetchIssues(workspaceSlug, this.currentUserId, this.currentUserIssueTab, "mutation");
     });
   }
 
   get getIssues() {
-    const projectId = this.rootStore?.project.projectId;
-    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+    if (!this.currentUserId || !this.issues || !this.issues[this.currentUserId]) return undefined;
 
-    return this.issues[projectId];
+    return this.issues[this.currentUserId];
   }
 
   get getIssuesIds() {
-    const projectId = this.rootStore?.project.projectId;
+    const currentUserId = this.currentUserId;
     const displayFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
@@ -69,26 +78,43 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
 
-    if (!projectId || !this.issues || !this.issues[projectId]) return undefined;
+    if (!currentUserId || !this.issues || !this.issues[currentUserId]) return undefined;
 
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[projectId]);
+      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId]);
+      else issues = this.unGroupedIssues(orderBy, this.issues[currentUserId]);
     }
 
     return issues;
   }
 
-  fetchIssues = async (workspaceSlug: string, projectId: string, loadType: TLoader = "init-loader") => {
+  fetchIssues = async (
+    workspaceSlug: string,
+    userId: string,
+    type: "assigned" | "created" | "subscribed",
+    loadType: TLoader = "init-loader"
+  ) => {
     try {
       this.loader = loadType;
+      this.currentUserId = userId;
+      this.currentUserIssueTab = type;
 
-      const params = this.rootStore?.workspaceProfileIssuesFilter?.appliedFilters;
-      const response = await this.userService.getV3UserProfileIssues(workspaceSlug, projectId, params);
+      let params: any = this.rootStore?.workspaceProfileIssuesFilter?.appliedFilters;
+      params = {
+        ...params,
+        assignees: undefined,
+        created_by: undefined,
+        subscriber: undefined,
+      };
+      if (type === "assigned") params = params ? { ...params, assignees: userId } : { assignees: userId };
+      else if (type === "created") params = params ? { ...params, created_by: userId } : { created_by: userId };
+      else if (type === "subscribed") params = params ? { ...params, subscriber: userId } : { subscriber: userId };
 
-      const _issues = { ...this.issues, [projectId]: { ...response } };
+      const response = await this.userService.getV3UserProfileIssues(workspaceSlug, userId, params);
+
+      const _issues = { ...this.issues, [userId]: { ...response } };
 
       runInAction(() => {
         this.issues = _issues;
@@ -97,7 +123,6 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
       this.loader = undefined;
       throw error;
     }
