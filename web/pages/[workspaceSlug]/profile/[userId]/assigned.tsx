@@ -17,36 +17,31 @@ import { RootStore } from "store/root";
 import { NextPageWithLayout } from "types/app";
 
 const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    profileIssueFilters: profileIssueFiltersStore,
-    profileIssues: profileIssuesStore,
-  }: RootStore = useMobxStore();
-
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as {
     workspaceSlug: string;
     userId: string;
   };
 
-  const { isLoading } = useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
-    if (workspaceSlug && userId) {
-      // workspace labels
-      workspaceStore.setWorkspaceSlug(workspaceSlug);
-      await workspaceStore.fetchWorkspaceLabels(workspaceSlug);
-      await projectStore.fetchProjects(workspaceSlug);
+  const {
+    workspaceProfileIssues: { loader, getIssues, fetchIssues },
+    workspaceProfileIssuesFilter: { issueFilters, fetchFilters },
+  }: RootStore = useMobxStore();
 
-      //profile issues
-      await profileIssuesStore.fetchIssues(workspaceSlug, userId, "assigned");
+  useSWR(workspaceSlug ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}` : null, async () => {
+    if (workspaceSlug) {
+      await fetchFilters(workspaceSlug);
+      // await fetchIssues(workspaceSlug, getIssues ? "mutation" : "init-loader");
     }
   });
 
-  const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
+  console.log("issueFilters", issueFilters);
+
+  const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   return (
     <>
-      {isLoading ? (
+      {loader === "init-loader" ? (
         <div className="flex justify-center items-center w-full h-full">
           <Spinner />
         </div>
