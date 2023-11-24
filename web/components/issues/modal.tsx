@@ -214,7 +214,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [activeProject, data, projectId, projects, isOpen]);
+  }, [data, projectId, projects, isOpen]);
 
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
