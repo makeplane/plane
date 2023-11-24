@@ -169,6 +169,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               quickAddCallback={issueStore.quickAddIssue}
               viewId={viewId}
               disableIssueCreation={!enableIssueCreation}
+              isReadOnly={!enableInlineEditing}
             />
           ) : (
             <KanBanSwimLanes
@@ -207,6 +208,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               isDragStarted={isDragStarted}
               disableIssueCreation={true}
               enableQuickIssueCreate={enableQuickAdd}
+              isReadOnly={!enableInlineEditing}
             />
           )}
         </DragDropContext>

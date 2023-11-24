@@ -167,7 +167,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }

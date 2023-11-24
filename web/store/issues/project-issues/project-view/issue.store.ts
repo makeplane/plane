@@ -123,7 +123,7 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }

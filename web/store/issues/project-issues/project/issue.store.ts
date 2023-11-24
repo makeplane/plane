@@ -123,7 +123,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }

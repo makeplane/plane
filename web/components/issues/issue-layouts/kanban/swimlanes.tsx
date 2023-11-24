@@ -82,6 +82,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
   enableQuickIssueCreate: boolean;
+  isReadOnly: boolean;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -107,6 +108,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     isDragStarted,
     disableIssueCreation,
     enableQuickIssueCreate,
+    isReadOnly,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -162,6 +164,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   projects={projects}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   isDragStarted={isDragStarted}
+                  isReadOnly={isReadOnly}
                 />
               </div>
             )}
@@ -192,6 +195,7 @@ export interface IKanBanSwimLanes {
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
   enableQuickIssueCreate: boolean;
+  isReadOnly: boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -216,6 +220,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     isDragStarted,
     disableIssueCreation,
     enableQuickIssueCreate,
+    isReadOnly,
   } = props;
 
   return (
@@ -343,6 +348,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -370,6 +376,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -397,6 +404,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -424,6 +432,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -451,6 +460,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -478,6 +488,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -505,6 +516,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -532,6 +544,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
     </div>

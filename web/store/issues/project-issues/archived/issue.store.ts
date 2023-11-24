@@ -111,7 +111,7 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }

@@ -167,7 +167,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }

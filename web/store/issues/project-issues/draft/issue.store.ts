@@ -118,7 +118,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }
