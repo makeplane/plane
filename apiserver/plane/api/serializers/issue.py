@@ -19,6 +19,8 @@ from plane.db.models import (
     ProjectMember,
 )
 from .base import BaseSerializer
+from .cycle import CycleSerializer, CycleLiteSerializer
+from .module import ModuleSerializer, ModuleLiteSerializer
 
 
 class IssueSerializer(BaseSerializer):
@@ -42,6 +44,7 @@ class IssueSerializer(BaseSerializer):
         model = Issue
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
             "created_by",
@@ -60,9 +63,9 @@ class IssueSerializer(BaseSerializer):
 
         # Validate assignees are from project
         if data.get("assignees", []):
-            print(data.get("assignees"))
             data["assignees"] = ProjectMember.objects.filter(
                 project_id=self.context.get("project_id"),
+                is_active=True,
                 member_id__in=data["assignees"],
             ).values_list("member_id", flat=True)
 
@@ -88,7 +91,7 @@ class IssueSerializer(BaseSerializer):
         if (
             data.get("parent")
             and not Issue.objects.filter(
-                workspce_id=self.context.get("workspace_id"), pk=data.get("parent")
+                workspace_id=self.context.get("workspace_id"), pk=data.get("parent")
             ).exists()
         ):
             raise serializers.ValidationError(
@@ -231,8 +234,13 @@ class LabelSerializer(BaseSerializer):
         model = Label
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]
 
 
@@ -241,13 +249,14 @@ class IssueLinkSerializer(BaseSerializer):
         model = IssueLink
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-            "issue",
         ]
 
     # Validation if url already exists
@@ -266,13 +275,14 @@ class IssueAttachmentSerializer(BaseSerializer):
         model = IssueAttachment
         fields = "__all__"
         read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-            "workspace",
-            "project",
-            "issue",
         ]
 
 
@@ -283,37 +293,60 @@ class IssueCommentSerializer(BaseSerializer):
         model = IssueComment
         fields = "__all__"
         read_only_fields = [
-            "workspace",
-            "project",
-            "issue",
-            "created_by",
-            "updated_by",
-            "created_at",
-            "updated_at",
-        ]
-
-
-class IssueAttachmentSerializer(BaseSerializer):
-    class Meta:
-        model = IssueAttachment
-        fields = "__all__"
-        read_only_fields = [
             "id",
+            "workspace",
+            "project",
+            "issue",
             "created_by",
             "updated_by",
             "created_at",
             "updated_at",
-            "workspace",
-            "project",
-            "issue",
         ]
 
 
 class IssueActivitySerializer(BaseSerializer):
     class Meta:
         model = IssueActivity
-        fields = "__all__"
         exclude = [
             "created_by",
-            "udpated_by",
+            "updated_by",
+        ]
+
+
+class CycleIssueSerializer(BaseSerializer):
+    cycle = CycleSerializer(read_only=True)
+
+    class Meta:
+        fields = [
+            "cycle",
+        ]
+
+
+class ModuleIssueSerializer(BaseSerializer):
+    module = ModuleSerializer(read_only=True)
+
+    class Meta:
+        fields = [
+            "module",
+        ]
+
+
+class IssueExpandSerializer(BaseSerializer):
+    # Serialize the related cycle. It's a OneToOne relation.
+    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
+
+    # Serialize the related module. It's a OneToOne relation.
+    module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
+
+    class Meta:
+        model = Issue
+        fields = "__all__"
+        read_only_fields = [
+            "id",
+            "workspace",
+            "project",
+            "created_by",
+            "updated_by",
+            "created_at",
+            "updated_at",
         ]

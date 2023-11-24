@@ -20,8 +20,12 @@ class ProjectSerializer(BaseSerializer):
         model = Project
         fields = "__all__"
         read_only_fields = [
-            "workspace",
             "id",
+            "workspace",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
         ]
 
     def validate(self, data):

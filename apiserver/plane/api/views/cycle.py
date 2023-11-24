@@ -17,7 +17,6 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.api.serializers import (
     CycleSerializer,
     CycleIssueSerializer,
-    IssueSerializer,
 )
 from plane.bgtasks.issue_activites_task import issue_activity
 
@@ -142,7 +141,6 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
             )
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
-        queryset = queryset.order_by("-is_favorite", "-created_at")
 
         # Current Cycle
         if cycle_view == "current":
@@ -293,7 +291,7 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
                 }
             ),
             actor_id=str(request.user.id),
-            issue_id=str(pk),
+            issue_id=None,
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
@@ -305,14 +303,15 @@ class CycleAPIEndpoint(WebhookMixin, BaseAPIView):
 
 class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
     """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions related to cycle issues.
+    This viewset automatically provides `list`, `create`,
+    and `destroy` actions related to cycle issues.
 
     """
 
     serializer_class = CycleIssueSerializer
     model = CycleIssue
-    webhook_event = "cycle"
+    webhook_event = "cycle_issue"
+    bulk = True
     permission_classes = [
         ProjectEntityPermission,
     ]
@@ -457,7 +456,7 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
         # Capture Issue Activity
         issue_activity.delay(
             type="cycle.activity.created",
-            requested_data=json.dumps({"cycles_list": issues}),
+            requested_data=json.dumps({"cycles_list": str(issues)}),
             actor_id=str(self.request.user.id),
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
@@ -478,9 +477,9 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    def delete(self, request, slug, project_id, cycle_id, pk):
+    def delete(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
         )
         issue_id = cycle_issue.issue_id
         cycle_issue.delete()
@@ -493,7 +492,7 @@ class CycleIssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 }
             ),
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("pk", None)),
+            issue_id=str(issue_id),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),

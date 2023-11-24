@@ -48,7 +48,7 @@ class UserEndpoint(BaseViewSet):
         if WorkspaceMember.objects.filter(member=request.user, is_active=True).exists():
             return Response(
                 {
-                    "error": "User cannot deactivate account as user is active in some workspaces"
+                    "error": "You cannot deactivate account as you are a member in some workspaces."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

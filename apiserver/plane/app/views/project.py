@@ -388,7 +388,7 @@ class ProjectInvitationsViewset(BaseViewSet):
                 {"error": "You cannot invite a user with higher role"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         workspace = Workspace.objects.get(slug=slug)
 
         project_invitations = []
@@ -424,7 +424,7 @@ class ProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.bulk_create(
             project_invitations, batch_size=10, ignore_conflicts=True
         )
-        current_site = request.META.get('HTTP_ORIGIN')
+        current_site = request.META.get("HTTP_ORIGIN")
 
         # Send invitations
         for invitation in project_invitations:
@@ -468,6 +468,13 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
+
+        # If the user was already part of workspace
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id__in=project_ids,
+            member=request.user,
+        ).update(is_active=True)
 
         ProjectMember.objects.bulk_create(
             [

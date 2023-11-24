@@ -20,9 +20,10 @@ class WebhookEndpoint(BaseAPIView):
 
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
-
         try:
-            serializer = WebhookSerializer(data=request.data)
+            serializer = WebhookSerializer(
+                data=request.data, context={"request": request}
+            )
             if serializer.is_valid():
                 serializer.save(workspace_id=workspace.id)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -79,6 +80,7 @@ class WebhookEndpoint(BaseAPIView):
         serializer = WebhookSerializer(
             webhook,
             data=request.data,
+            context={request: request},
             partial=True,
             fields=(
                 "id",

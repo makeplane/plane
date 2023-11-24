@@ -58,6 +58,7 @@ class ConfigurationEndpoint(BaseAPIView):
         ) and get_configuration_value(
             instance_configuration, "ENABLE_MAGIC_LINK_LOGIN", "0"
         ) == "1"
+
         data["email_password_login"] = (
             get_configuration_value(
                 instance_configuration, "ENABLE_EMAIL_PASSWORD", "0"

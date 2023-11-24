@@ -22,7 +22,6 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser
 
 # Module imports
 from .base import BaseAPIView, WebhookMixin
@@ -41,14 +40,12 @@ from plane.db.models import (
     IssueComment,
     IssueActivity,
 )
-from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activites_task import issue_activity
 from plane.api.serializers import (
     IssueSerializer,
     LabelSerializer,
     IssueLinkSerializer,
     IssueCommentSerializer,
-    IssueAttachmentSerializer,
     IssueActivitySerializer,
 )
 
@@ -103,7 +100,6 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
-        filters = issue_filters(request.query_params, "GET")
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
         state_order = ["backlog", "unstarted", "started", "completed", "cancelled"]
@@ -112,7 +108,6 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
 
         issue_queryset = (
             self.get_queryset()
-            .filter(**filters)
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(module_id=F("issue_module__module_id"))
             .annotate(
@@ -278,7 +273,7 @@ class LabelAPIEndpoint(BaseAPIView):
 
     def get_queryset(self):
         return (
-            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            Label.objects.filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(project__project_projectmember__member=self.request.user)
             .select_related("project")
@@ -302,29 +297,29 @@ class LabelAPIEndpoint(BaseAPIView):
             )
 
     def get(self, request, slug, project_id, pk=None):
-        if pk:
-            label = self.get_queryset().get(pk=pk)
-            serializer = LabelSerializer(
-                label,
-                fields=self.fields,
-                expand=self.expand,
+        if pk is None:
+            return self.paginate(
+                request=request,
+                queryset=(self.get_queryset()),
+                on_results=lambda labels: LabelSerializer(
+                    labels,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return self.paginate(
-            request=request,
-            queryset=(self.get_queryset()),
-            on_results=lambda labels: LabelSerializer(
-                labels,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
-            ).data,
-        )
+        label = self.get_queryset().get(pk=pk)
+        serializer = LabelSerializer(label, fields=self.fields, expand=self.expand,)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelSerializer(label, data=request.data, partial=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
     def delete(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
@@ -356,25 +351,31 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, project_id, pk=None):
-        if pk:
-            label = self.get_queryset().get(pk=pk)
+    def get(self, request, slug, project_id, issue_id, pk=None):
+        if pk is None:
+            issue_links = self.get_queryset()
             serializer = IssueLinkSerializer(
-                label,
+                issue_links,
                 fields=self.fields,
                 expand=self.expand,
             )
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return self.paginate(
-            request=request,
-            queryset=(self.get_queryset()),
-            on_results=lambda issue_links: IssueLinkSerializer(
-                issue_links,
-                many=True,
-                fields=self.fields,
-                expand=self.expand,
-            ).data,
+            return self.paginate(
+                request=request,
+                queryset=(self.get_queryset()),
+                on_results=lambda issue_links: IssueLinkSerializer(
+                    issue_links,
+                    many=True,
+                    fields=self.fields,
+                    expand=self.expand,
+                ).data,
+            )
+        issue_link = self.get_queryset().get(pk=pk)
+        serializer = IssueLinkSerializer(
+            issue_link,
+            fields=self.fields,
+            expand=self.expand,
         )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
@@ -449,7 +450,7 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
-    webhook_event = "issue-comment"
+    webhook_event = "issue_comment"
     permission_classes = [
         ProjectLitePermission,
     ]
@@ -587,7 +588,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             serializer = IssueActivitySerializer(issue_activities)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
-        self.paginate(
+        return self.paginate(
             request=request,
             queryset=(issue_activities),
             on_results=lambda issue_activity: IssueActivitySerializer(

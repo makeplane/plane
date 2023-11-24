@@ -21,6 +21,22 @@ class WorkSpaceSerializer(BaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
 
+    def validated(self, data):
+        if data.get("slug") in [
+            "404",
+            "accounts",
+            "api",
+            "create-workspace",
+            "god-mode",
+            "installations",
+            "invitations",
+            "onboarding",
+            "profile",
+            "spaces",
+            "workspace-invitations",
+        ]:
+            raise serializers.ValidationError({"slug": "Slug is not valid"})
+
     class Meta:
         model = Workspace
         fields = "__all__"

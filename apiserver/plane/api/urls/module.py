@@ -19,7 +19,7 @@ urlpatterns = [
         name="module-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:issue_id>/",
         ModuleIssueAPIEndpoint.as_view(),
         name="module-issues",
     ),

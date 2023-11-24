@@ -16,7 +16,6 @@ def generate_token():
 
 def validate_schema(value):
     parsed_url = urlparse(value)
-    print(parsed_url)
     if parsed_url.scheme not in ["http", "https"]:
         raise ValidationError("Invalid schema. Only HTTP and HTTPS are allowed.")
 

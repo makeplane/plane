@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.app.permissions import ProjectLitePermission
 from plane.api.serializers import InboxIssueSerializer, IssueSerializer
-from plane.db.models import InboxIssue, Issue, State, ProjectMember
+from plane.db.models import InboxIssue, Issue, State, ProjectMember, Project, Inbox
 from plane.bgtasks.issue_activites_task import issue_activity
 
 
@@ -37,29 +37,39 @@ class InboxIssueAPIEndpoint(BaseAPIView):
     ]
 
     def get_queryset(self):
-        return self.filter_queryset(
-            super()
-            .get_queryset()
-            .filter(
+        inbox = Inbox.objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id=self.kwargs.get("project_id"),
+        ).first()
+
+        project = Project.objects.get(
+            workspace__slug=self.kwargs.get("slug"), pk=self.kwargs.get("project_id")
+        )
+
+        if inbox is None and not project.inbox_view:
+            return InboxIssue.objects.none()
+
+        return (
+            InboxIssue.objects.filter(
                 Q(snoozed_till__gte=timezone.now()) | Q(snoozed_till__isnull=True),
                 workspace__slug=self.kwargs.get("slug"),
                 project_id=self.kwargs.get("project_id"),
-                inbox_id=self.kwargs.get("inbox_id"),
+                inbox_id=inbox.id,
             )
             .select_related("issue", "workspace", "project")
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def get(self, request, slug, project_id, inbox_id, pk=None):
+    def get(self, request, slug, project_id, pk=None):
         if pk:
-            issue_queryset = self.get_queryset().get(pk=pk)
-            issues_data = InboxIssueSerializer(
-                issue_queryset,
+            inbox_issue_queryset = self.get_queryset().get(pk=pk)
+            inbox_issue_data = InboxIssueSerializer(
+                inbox_issue_queryset,
                 fields=self.fields,
                 expand=self.expand,
             ).data
             return Response(
-                issues_data,
+                inbox_issue_data,
                 status=status.HTTP_200_OK,
             )
         issue_queryset = self.get_queryset()
@@ -74,10 +84,28 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             ).data,
         )
 
-    def post(self, request, slug, project_id, inbox_id):
+    def post(self, request, slug, project_id):
         if not request.data.get("issue", {}).get("name", False):
             return Response(
                 {"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        inbox = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+
+        project = Project.objects.get(
+            workspace__slug=slug,
+            pk=project_id,
+        )
+
+        # Inbox view
+        if inbox is None and not project.inbox_view:
+            return Response(
+                {
+                    "error": "Inbox is not enabled for this project enable it through the project settings"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Check for valid priority
@@ -123,21 +151,45 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+
         # create an inbox issue
-        InboxIssue.objects.create(
-            inbox_id=inbox_id,
+        inbox_issue = InboxIssue.objects.create(
+            inbox_id=inbox.id,
             project_id=project_id,
             issue=issue,
             source=request.data.get("source", "in-app"),
         )
 
-        serializer = IssueSerializer(issue)
+        serializer = InboxIssueSerializer(inbox_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def patch(self, request, slug, project_id, inbox_id, pk):
-        inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+    def patch(self, request, slug, project_id, pk):
+        inbox = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+
+        project = Project.objects.get(
+            workspace__slug=slug,
+            pk=project_id,
         )
+
+        # Inbox view
+        if inbox is None and not project.inbox_view:
+            return Response(
+                {
+                    "error": "Inbox is not enabled for this project enable it through the project settings"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the inbox issue
+        inbox_issue = InboxIssue.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            inbox_id=inbox.id,
+        )
+
         # Get the project member
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,
@@ -145,6 +197,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             member=request.user,
             is_active=True,
         )
+
         # Only project members admins and created_by users can access this endpoint
         if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
             request.user.id
@@ -244,10 +297,33 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK
             )
 
-    def delete(self, request, slug, project_id, inbox_id, pk):
-        inbox_issue = InboxIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, inbox_id=inbox_id
+    def delete(self, request, slug, project_id, pk):
+        inbox = Inbox.objects.filter(
+            workspace__slug=slug, project_id=project_id
+        ).first()
+
+        project = Project.objects.get(
+            workspace__slug=slug,
+            pk=project_id,
         )
+
+        # Inbox view
+        if inbox is None and not project.inbox_view:
+            return Response(
+                {
+                    "error": "Inbox is not enabled for this project enable it through the project settings"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the inbox issue
+        inbox_issue = InboxIssue.objects.get(
+            pk=pk,
+            workspace__slug=slug,
+            project_id=project_id,
+            inbox_id=inbox.id,
+        )
+
         # Get the project member
         project_member = ProjectMember.objects.get(
             workspace__slug=slug,
@@ -256,6 +332,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             is_active=True,
         )
 
+        # Check the inbox issue created
         if project_member.role <= 10 and str(inbox_issue.created_by_id) != str(
             request.user.id
         ):
