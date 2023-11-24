@@ -7,8 +7,7 @@ import { Camera, User2 } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Button, Input } from "@plane/ui";
-import { OnboardingSidebar } from "components/onboarding/onboarding-sidebar";
-import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
+import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
 import { UserImageUploadModal } from "components/core";
 // types
 import { IUser } from "types";
