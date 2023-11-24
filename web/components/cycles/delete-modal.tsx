@@ -30,7 +30,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   // states
   const [loader, setLoader] = useState(false);
   const router = useRouter();
-  const { cycleId } = router.query;
+  const { cycleId, peekCycle } = router.query;
 
   const formSubmit = async () => {
     setLoader(true);
@@ -43,7 +43,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           message: "Cycle deleted successfully.",
         });
 
-        if (cycleId) router.replace(`/${workspaceSlug}/projects/${projectId}/cycles`);
+        if (cycleId || peekCycle) router.replace(`/${workspaceSlug}/projects/${projectId}/cycles`);
 
         handleClose();
       } catch (error) {
