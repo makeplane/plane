@@ -4,7 +4,7 @@ import { IssueBaseStore } from "store/issues";
 // services
 import { UserService } from "services/user.service";
 // types
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../types";
 import { RootStore } from "store/root";
 import { IIssue } from "types";
 
@@ -21,8 +21,8 @@ export interface IProfileIssuesStore {
   fetchIssues: (
     workspaceSlug: string,
     userId: string,
-    type: "assigned" | "created" | "subscribed",
-    loadType: TLoader
+    loadType: TLoader,
+    type?: "assigned" | "created" | "subscribed"
   ) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, userId: string, data: Partial<IIssue>) => Promise<IIssue | undefined>;
   updateIssue: (
@@ -38,6 +38,7 @@ export interface IProfileIssuesStore {
     issueId: string
   ) => Promise<IIssue | undefined>;
   quickAddIssue: (workspaceSlug: string, userId: string, data: IIssue) => Promise<IIssue | undefined>;
+  viewFlags: ViewFlags;
 }
 
 export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssuesStore {
@@ -49,6 +50,13 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   rootStore;
   // service
   userService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -78,7 +86,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       if (!workspaceSlug || !this.currentUserId || !this.currentUserIssueTab) return;
 
       const userFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, this.currentUserId, this.currentUserIssueTab, "mutation");
+      if (userFilters) this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
     });
   }
 
@@ -112,13 +120,13 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   fetchIssues = async (
     workspaceSlug: string,
     userId: string,
-    type: "assigned" | "created" | "subscribed",
-    loadType: TLoader = "init-loader"
+    loadType: TLoader = "init-loader",
+    type?: "assigned" | "created" | "subscribed"
   ) => {
     try {
       this.loader = loadType;
       this.currentUserId = userId;
-      this.currentUserIssueTab = type;
+      if (type) this.currentUserIssueTab = type;
 
       let params: any = this.rootStore?.workspaceProfileIssuesFilter?.appliedFilters;
       params = {
@@ -127,9 +135,12 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
         created_by: undefined,
         subscriber: undefined,
       };
-      if (type === "assigned") params = params ? { ...params, assignees: userId } : { assignees: userId };
-      else if (type === "created") params = params ? { ...params, created_by: userId } : { created_by: userId };
-      else if (type === "subscribed") params = params ? { ...params, subscriber: userId } : { subscriber: userId };
+      if (this.currentUserIssueTab === "assigned")
+        params = params ? { ...params, assignees: userId } : { assignees: userId };
+      else if (this.currentUserIssueTab === "created")
+        params = params ? { ...params, created_by: userId } : { created_by: userId };
+      else if (this.currentUserIssueTab === "subscribed")
+        params = params ? { ...params, subscriber: userId } : { subscriber: userId };
 
       const response = await this.userService.getV3UserProfileIssues(workspaceSlug, userId, params);
 
@@ -158,11 +169,11 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       let response = {} as IIssue;
       response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
 
-      if (moduleId)
-        response = await this.rootStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, response);
+      // if (moduleId)
+      //   response = await this.rootStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, response);
 
-      if (cycleId)
-        response = await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
+      // if (cycleId)
+      //   response = await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -175,7 +186,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
       throw error;
     }
   };
@@ -225,7 +236,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
       throw error;
     }
   };
@@ -245,7 +256,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
       throw error;
     }
   };
@@ -280,7 +291,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
       throw error;
     }
   };

@@ -4,18 +4,20 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 // emoji helper
 import { renderEmoji } from "helpers/emoji.helper";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IProjectHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
   disableIssueCreation?: boolean;
+  currentStore: EProjectStore;
 }
 
 const Icon = ({ emoji }: any) => <div className="w-6 h-6">{renderEmoji(emoji)}</div>;
 
 export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
-  const { column_value, issues_count, disableIssueCreation } = props;
+  const { column_value, issues_count, disableIssueCreation, currentStore } = props;
 
   const project = column_value ?? null;
 
@@ -28,6 +30,7 @@ export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
           count={issues_count}
           issuePayload={{ project: project?.id ?? "" }}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
     </>

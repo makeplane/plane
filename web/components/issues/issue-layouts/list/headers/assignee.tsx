@@ -4,18 +4,20 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 // ui
 import { Avatar } from "@plane/ui";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IAssigneesHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
   disableIssueCreation?: boolean;
+  currentStore: EProjectStore;
 }
 
 export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="md" />;
 
 export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
-  const { column_value, issues_count, disableIssueCreation } = props;
+  const { column_value, issues_count, disableIssueCreation, currentStore } = props;
 
   const assignee = column_value ?? null;
 
@@ -28,6 +30,7 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
           count={issues_count}
           issuePayload={{ assignees: [assignee?.member?.id] }}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
     </>

@@ -15,6 +15,7 @@ import useToast from "hooks/use-toast";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
+import { EProjectStore } from "store/command-palette.store";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -27,6 +28,7 @@ interface IHeaderGroupByCard {
   handleKanBanToggle: any;
   issuePayload: Partial<IIssue>;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 
 const moduleService = new ModuleService();
@@ -43,6 +45,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     handleKanBanToggle,
     issuePayload,
     disableIssueCreation,
+    currentStore,
   } = props;
   const verticalAlignPosition = kanBanToggle?.groupByHeaderMinMax.includes(column_id);
 
@@ -95,7 +98,12 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
   return (
     <>
-      <CreateUpdateIssueModal isOpen={isOpen} handleClose={() => setIsOpen(false)} prePopulateData={issuePayload} />
+      <CreateUpdateIssueModal
+        isOpen={isOpen}
+        handleClose={() => setIsOpen(false)}
+        prePopulateData={issuePayload}
+        currentStore={currentStore}
+      />
       {renderExistingIssueModal && (
         <ExistingIssuesListModal
           isOpen={openExistingIssueListModal}

@@ -13,6 +13,7 @@ import { getValueFromObject } from "constants/issue";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { EIssueActions } from "../types";
 import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IGroupByKanBan {
   issues: IIssueResponse;
@@ -41,6 +42,7 @@ export interface IGroupByKanBan {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
   isReadOnly: boolean;
 }
 
@@ -67,6 +69,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     viewId,
     disableIssueCreation,
     isReadOnly,
+    currentStore,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -91,6 +94,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
                   disableIssueCreation={disableIssueCreation}
+                  currentStore={currentStore}
                 />
               </div>
             )}
@@ -199,6 +203,7 @@ export interface IKanBan {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
   isReadOnly: boolean;
 }
 
@@ -228,6 +233,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     viewId,
     disableIssueCreation,
     isReadOnly,
+    currentStore,
   } = props;
 
   const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -258,6 +264,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
 
@@ -285,6 +292,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
 
@@ -312,6 +320,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
 
@@ -339,6 +348,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
 
@@ -366,6 +376,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
 
@@ -393,6 +404,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
 
@@ -420,6 +432,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           isReadOnly={isReadOnly}
+          currentStore={currentStore}
         />
       )}
     </div>

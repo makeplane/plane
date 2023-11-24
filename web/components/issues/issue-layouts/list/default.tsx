@@ -8,6 +8,7 @@ import { IIssueResponse, IGroupedIssues, TUnGroupedIssues, ViewFlags } from "sto
 import { EIssueActions } from "../types";
 // constants
 import { getValueFromObject } from "constants/issue";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IGroupByList {
   issueIds: IGroupedIssues | TUnGroupedIssues | any;
@@ -30,6 +31,7 @@ export interface IGroupByList {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   disableIssueCreation?: boolean;
+  currentStore: EProjectStore;
   viewId?: string;
 }
 
@@ -51,6 +53,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
+    currentStore,
   } = props;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
@@ -87,6 +90,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                         : issueIds?.[getValueFromObject(_list, listKey) as string]?.length || 0
                     }
                     disableIssueCreation={disableIssueCreation}
+                    currentStore={currentStore}
                   />
                 </div>
 
@@ -142,6 +146,7 @@ export interface IList {
   ) => Promise<IIssue | undefined>;
   viewId?: string;
   disableIssueCreation?: boolean;
+  currentStore: EProjectStore;
 }
 
 export const List: React.FC<IList> = (props) => {
@@ -164,6 +169,7 @@ export const List: React.FC<IList> = (props) => {
     labels,
     members,
     projects,
+    currentStore,
   } = props;
 
   return (
@@ -186,6 +192,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -206,6 +213,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -226,6 +234,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -246,6 +255,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -266,6 +276,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -286,6 +297,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -306,6 +318,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
 
@@ -326,6 +339,7 @@ export const List: React.FC<IList> = (props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
     </div>

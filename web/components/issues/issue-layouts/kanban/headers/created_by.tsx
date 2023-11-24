@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { Icon } from "./assignee";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface ICreatedByHeader {
   column_id: string;
@@ -15,6 +16,7 @@ export interface ICreatedByHeader {
   kanBanToggle: any;
   handleKanBanToggle: any;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 
 export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
@@ -28,6 +30,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
     kanBanToggle,
     handleKanBanToggle,
     disableIssueCreation,
+    currentStore,
   } = props;
 
   const createdBy = column_value ?? null;
@@ -56,6 +59,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ created_by: createdBy?.id }}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         ))}
     </>

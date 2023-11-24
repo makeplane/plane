@@ -10,6 +10,7 @@ import { CustomMenu } from "@plane/ui";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
+import { EProjectStore } from "store/command-palette.store";
 
 interface IHeaderGroupByCard {
   icon?: React.ReactNode;
@@ -17,10 +18,11 @@ interface IHeaderGroupByCard {
   count: number;
   issuePayload: Partial<IIssue>;
   disableIssueCreation?: boolean;
+  currentStore: EProjectStore;
 }
 
 export const HeaderGroupByCard = observer(
-  ({ icon, title, count, issuePayload, disableIssueCreation }: IHeaderGroupByCard) => {
+  ({ icon, title, count, issuePayload, disableIssueCreation, currentStore }: IHeaderGroupByCard) => {
     const router = useRouter();
     const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
@@ -112,6 +114,7 @@ export const HeaderGroupByCard = observer(
               console.log(data);
               return Promise.resolve();
             }}
+            currentStore={currentStore}
             prePopulateData={issuePayload}
           />
 

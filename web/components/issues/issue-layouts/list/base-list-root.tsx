@@ -11,6 +11,8 @@ import {
   ICycleIssuesStore,
   IModuleIssuesFilterStore,
   IModuleIssuesStore,
+  IProfileIssuesFilterStore,
+  IProfileIssuesStore,
   IProjectArchivedIssuesStore,
   IProjectDraftIssuesStore,
   IProjectIssuesFilterStore,
@@ -20,6 +22,7 @@ import {
 } from "store/issues";
 import { observer } from "mobx-react-lite";
 import { IIssueResponse } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
 
 enum EIssueActions {
   UPDATE = "update",
@@ -32,14 +35,16 @@ interface IBaseListRoot {
     | IProjectIssuesFilterStore
     | IModuleIssuesFilterStore
     | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   issueStore:
     | IProjectIssuesStore
     | IModuleIssuesStore
     | ICycleIssuesStore
     | IViewIssuesStore
     | IProjectArchivedIssuesStore
-    | IProjectDraftIssuesStore;
+    | IProjectDraftIssuesStore
+    | IProfileIssuesStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => void;
@@ -48,10 +53,11 @@ interface IBaseListRoot {
   };
   getProjects: (projectStore: IProjectStore) => IProject[] | null;
   viewId?: string;
+  currentStore: EProjectStore;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects, viewId } = props;
+  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects, viewId, currentStore } = props;
 
   const {
     project: projectStore,
@@ -60,8 +66,8 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     projectLabel: { projectLabels },
   } = useMobxStore();
 
-  const issueIds = issueStore.getIssuesIds || [];
-  const issues = issueStore.getIssues;
+  const issueIds = issueStore?.getIssuesIds || [];
+  const issues = issueStore?.getIssues;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
 
@@ -85,7 +91,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <>
-      {issueStore.loader === "mutation" ? (
+      {issueStore?.loader === "mutation" ? (
         <div className="w-full h-full flex justify-center items-center">
           <Spinner />
         </div>
@@ -119,10 +125,11 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             issueIds={issueIds}
             showEmptyGroup={showEmptyGroup}
             viewId={viewId}
-            quickAddCallback={issueStore.quickAddIssue}
+            quickAddCallback={issueStore?.quickAddIssue}
             enableIssueQuickAdd={!!enableQuickAdd}
             isReadonly={!enableInlineEditing}
             disableIssueCreation={!enableIssueCreation}
+            currentStore={currentStore}
           />
         </div>
       )}

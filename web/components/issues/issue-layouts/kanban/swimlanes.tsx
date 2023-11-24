@@ -10,6 +10,7 @@ import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } f
 // constants
 import { getValueFromObject } from "constants/issue";
 import { EIssueActions } from "../types";
+import { EProjectStore } from "store/command-palette.store";
 
 interface ISubGroupSwimlaneHeader {
   issues: IIssueResponse;
@@ -21,6 +22,7 @@ interface ISubGroupSwimlaneHeader {
   kanBanToggle: any;
   handleKanBanToggle: any;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   issueIds,
@@ -31,6 +33,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   kanBanToggle,
   handleKanBanToggle,
   disableIssueCreation,
+  currentStore,
 }) => {
   const calculateIssueCount = (column_id: string) => {
     let issueCount = 0;
@@ -56,6 +59,7 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
               kanBanToggle={kanBanToggle}
               handleKanBanToggle={handleKanBanToggle}
               disableIssueCreation={disableIssueCreation}
+              currentStore={currentStore}
             />
           </div>
         ))}
@@ -81,6 +85,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   handleKanBanToggle: any;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
   enableQuickIssueCreate: boolean;
   isReadOnly: boolean;
 }
@@ -194,6 +199,7 @@ export interface IKanBanSwimLanes {
   projects: IProject[] | null;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
   enableQuickIssueCreate: boolean;
   isReadOnly: boolean;
 }
@@ -221,6 +227,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     disableIssueCreation,
     enableQuickIssueCreate,
     isReadOnly,
+    currentStore,
   } = props;
 
   return (
@@ -237,6 +244,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         )}
 
@@ -251,6 +259,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         )}
 
@@ -265,6 +274,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         )}
 
@@ -278,6 +288,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            currentStore={currentStore}
           />
         )}
 
@@ -292,6 +303,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         )}
 
@@ -306,6 +318,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         )}
 
@@ -320,6 +333,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         )}
       </div>

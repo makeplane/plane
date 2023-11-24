@@ -9,6 +9,7 @@ import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IKanBanLayout {}
 
@@ -43,6 +44,7 @@ export const KanBanLayout: React.FC = observer(() => {
       kanbanViewStore={issueKanBanViewStore}
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
+      currentStore={EProjectStore.PROJECT}
     />
   );
 });

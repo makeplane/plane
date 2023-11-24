@@ -6,6 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
+import { EProjectStore } from "store/command-palette.store";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   const { commandPalette: commandPaletteStore } = useMobxStore();
@@ -19,7 +20,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
         primaryButton={{
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => commandPaletteStore.toggleCreateIssueModal(true),
+          onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT),
         }}
       />
     </div>

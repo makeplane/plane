@@ -11,7 +11,6 @@ import {
   ModuleListLayout,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
-  ProjectViewEmptyState,
   ProjectViewGanttLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
@@ -33,7 +32,7 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   useSWR(workspaceSlug && projectId && viewId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
     if (workspaceSlug && projectId && viewId) {
       await fetchFilters(workspaceSlug, projectId, viewId);
-      // await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
     }
   });
 
@@ -49,7 +48,6 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
         </div>
       ) : (
         <>
-          {/* {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 && <ProjectViewEmptyState />} */}
           <div className="w-full h-full relative overflow-auto">
             {activeLayout === "list" ? (
               <ModuleListLayout />

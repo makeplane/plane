@@ -7,6 +7,7 @@ import { AssigneesHeader } from "./assignee";
 import { PriorityHeader } from "./priority";
 import { LabelHeader } from "./label";
 import { CreatedByHeader } from "./created_by";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IKanBanSubGroupByHeaderRoot {
   column_id: string;
@@ -17,6 +18,7 @@ export interface IKanBanSubGroupByHeaderRoot {
   kanBanToggle: any;
   handleKanBanToggle: any;
   disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 
 export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> = observer((props) => {
@@ -29,6 +31,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
     kanBanToggle,
     handleKanBanToggle,
     disableIssueCreation,
+    currentStore,
   } = props;
 
   return (
@@ -44,6 +47,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
       {sub_group_by && sub_group_by === "state_detail.group" && (
@@ -57,6 +61,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
       {sub_group_by && sub_group_by === "priority" && (
@@ -70,6 +75,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
       {sub_group_by && sub_group_by === "labels" && (
@@ -83,6 +89,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
       {sub_group_by && sub_group_by === "assignees" && (
@@ -96,6 +103,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
       {sub_group_by && sub_group_by === "created_by" && (
@@ -109,6 +117,7 @@ export const KanBanSubGroupByHeaderRoot: React.FC<IKanBanSubGroupByHeaderRoot> =
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
     </>

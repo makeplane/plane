@@ -37,7 +37,6 @@ export const DraftIssueLayoutRoot: React.FC = observer(() => {
         </div>
       ) : (
         <>
-          {/* {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 && <ProjectEmptyState />} */}
           <div className="w-full h-full relative overflow-auto">
             {activeLayout === "list" ? (
               <DraftIssueListLayout />

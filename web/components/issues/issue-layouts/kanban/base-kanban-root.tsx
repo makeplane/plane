@@ -13,6 +13,8 @@ import {
   ICycleIssuesStore,
   IModuleIssuesFilterStore,
   IModuleIssuesStore,
+  IProfileIssuesFilterStore,
+  IProfileIssuesStore,
   IProjectDraftIssuesStore,
   IProjectIssuesFilterStore,
   IProjectIssuesStore,
@@ -26,6 +28,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -33,12 +36,14 @@ export interface IBaseKanBanLayout {
     | IModuleIssuesStore
     | ICycleIssuesStore
     | IViewIssuesStore
-    | IProjectDraftIssuesStore;
+    | IProjectDraftIssuesStore
+    | IProfileIssuesStore;
   issuesFilterStore:
     | IProjectIssuesFilterStore
     | IModuleIssuesFilterStore
     | ICycleIssuesFilterStore
-    | IViewIssuesFilterStore;
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   kanbanViewStore: IIssueKanBanViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -48,10 +53,20 @@ export interface IBaseKanBanLayout {
   };
   showLoader?: boolean;
   viewId?: string;
+  currentStore?: EProjectStore;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { issueStore, issuesFilterStore, kanbanViewStore, QuickActions, issueActions, showLoader, viewId } = props;
+  const {
+    issueStore,
+    issuesFilterStore,
+    kanbanViewStore,
+    QuickActions,
+    issueActions,
+    showLoader,
+    viewId,
+    currentStore,
+  } = props;
 
   const {
     project: { workspaceProjects },
@@ -166,10 +181,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
-              quickAddCallback={issueStore.quickAddIssue}
+              quickAddCallback={issueStore?.quickAddIssue}
               viewId={viewId}
               disableIssueCreation={!enableIssueCreation}
               isReadOnly={!enableInlineEditing}
+              currentStore={currentStore}
             />
           ) : (
             <KanBanSwimLanes
@@ -209,6 +225,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               disableIssueCreation={true}
               enableQuickIssueCreate={enableQuickAdd}
               isReadOnly={!enableInlineEditing}
+              currentStore={currentStore}
             />
           )}
         </DragDropContext>
