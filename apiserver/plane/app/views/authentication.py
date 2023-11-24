@@ -32,7 +32,7 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
-
+from plane.bgtasks.event_tracking_task import auth_events
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -148,30 +148,17 @@ class SignUpEndpoint(BaseAPIView):
         workspace_member_invites.delete()
         project_member_invites.delete()
 
-        try:
-            # Send Analytics
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": "email",
-                        },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
-                        },
-                        "event_type": "SIGN_UP",
-                    },
-                )
-        except RequestException as e:
-            capture_exception(e)
+        # Send event 
+        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium="EMAIL",
+                first_time=True
+            )
 
         access_token, refresh_token = get_tokens_for_user(user)
 
@@ -296,30 +283,17 @@ class SignInEndpoint(BaseAPIView):
         # Delete all the invites
         workspace_member_invites.delete()
         project_member_invites.delete()
-        try:
-            # Send Analytics
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": "email",
-                        },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
-                        },
-                        "event_type": "SIGN_IN",
-                    },
-                )
-        except RequestException as e:
-            capture_exception(e)
+        # Send event 
+        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium="EMAIL",
+                first_time=False
+            )
 
         access_token, refresh_token = get_tokens_for_user(user)
         data = {
@@ -450,30 +424,18 @@ class MagicSignInEndpoint(BaseAPIView):
                             },
                             status=status.HTTP_403_FORBIDDEN,
                         )
-                    try:
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                                },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
-                                    },
-                                    "event_type": "SIGN_IN",
-                                },
-                            )
-                    except RequestException as e:
-                        capture_exception(e)
+                    # Send event 
+                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                        auth_events.delay(
+                            user=user.id,
+                            email=email,
+                            user_agent=request.META.get("HTTP_USER_AGENT"),
+                            ip=request.META.get("REMOTE_ADDR"),
+                            event_name="SIGN_IN",
+                            medium="MAGIC_LINK",
+                            first_time=False
+                        )
+
                 else:
                     user = User.objects.create(
                         email=email,
@@ -481,30 +443,18 @@ class MagicSignInEndpoint(BaseAPIView):
                         password=make_password(uuid.uuid4().hex),
                         is_password_autoset=True,
                     )
-                    try:
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                                },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
-                                    },
-                                    "event_type": "SIGN_UP",
-                                },
-                            )
-                    except RequestException as e:
-                        capture_exception(e)
+
+                    # Send event 
+                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                        auth_events.delay(
+                            user=user.id,
+                            email=email,
+                            user_agent=request.META.get("HTTP_USER_AGENT"),
+                            ip=request.META.get("REMOTE_ADDR"),
+                            event_name="SIGN_IN",
+                            medium="MAGIC_LINK",
+                            first_time=True
+                        )
 
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
