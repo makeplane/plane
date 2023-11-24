@@ -60,7 +60,7 @@ export const WorkspaceSettingsSidebar = () => {
     {
       label: "API Tokens",
       href: `/${workspaceSlug}/settings/api-tokens`,
-      access: EUserWorkspaceRoles.GUEST,
+      access: EUserWorkspaceRoles.ADMIN,
     },
   ];
 
