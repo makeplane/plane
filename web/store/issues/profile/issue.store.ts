@@ -6,6 +6,7 @@ import { UserService } from "services/user.service";
 // types
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../types";
 import { RootStore } from "store/root";
+import { IIssue } from "types";
 
 export interface IProfileIssuesStore {
   // observable
@@ -23,6 +24,20 @@ export interface IProfileIssuesStore {
     type: "assigned" | "created" | "subscribed",
     loadType: TLoader
   ) => Promise<IIssueResponse>;
+  createIssue: (workspaceSlug: string, userId: string, data: Partial<IIssue>) => Promise<IIssue | undefined>;
+  updateIssue: (
+    workspaceSlug: string,
+    userId: string,
+    issueId: string,
+    data: Partial<IIssue>
+  ) => Promise<IIssue | undefined>;
+  removeIssue: (
+    workspaceSlug: string,
+    userId: string,
+    projectId: string,
+    issueId: string
+  ) => Promise<IIssue | undefined>;
+  quickAddIssue: (workspaceSlug: string, userId: string, data: IIssue) => Promise<IIssue | undefined>;
 }
 
 export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssuesStore {
@@ -49,6 +64,10 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       getIssuesIds: computed,
       // action
       fetchIssues: action,
+      createIssue: action,
+      updateIssue: action,
+      removeIssue: action,
+      quickAddIssue: action,
     });
 
     this.rootStore = _rootStore;
@@ -124,6 +143,144 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       return response;
     } catch (error) {
       this.loader = undefined;
+      throw error;
+    }
+  };
+
+  createIssue = async (workspaceSlug: string, userId: string, data: Partial<IIssue>) => {
+    try {
+      const projectId = data.project;
+      const moduleId = data.module_id;
+      const cycleId = data.cycle_id;
+
+      if (!projectId) return;
+
+      let response = {} as IIssue;
+      response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+
+      if (moduleId)
+        response = await this.rootStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, response);
+
+      if (cycleId)
+        response = await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
+
+      let _issues = this.issues;
+      if (!_issues) _issues = {};
+      if (!_issues[userId]) _issues[userId] = {};
+      _issues[userId] = { ..._issues[userId], ...{ [response.id]: response } };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      return response;
+    } catch (error) {
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      throw error;
+    }
+  };
+
+  updateIssue = async (workspaceSlug: string, userId: string, issueId: string, data: Partial<IIssue>) => {
+    try {
+      const projectId = data.project;
+      const moduleId = data.module_id;
+      const cycleId = data.cycle_id;
+
+      if (!projectId) return;
+
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[userId]) _issues[userId] = {};
+      _issues[projectId][userId] = { ..._issues[projectId][userId], ...data };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      let response = data as IIssue | undefined;
+      response = await this.rootStore.projectIssues.updateIssue(
+        workspaceSlug,
+        projectId,
+        data.id as keyof IIssue,
+        data
+      );
+
+      if (moduleId)
+        response = await this.rootStore.moduleIssues.updateIssue(
+          workspaceSlug,
+          projectId,
+          response.id as keyof IIssue,
+          response,
+          moduleId
+        );
+
+      if (cycleId)
+        response = await this.rootStore.cycleIssues.updateIssue(
+          workspaceSlug,
+          projectId,
+          data.id as keyof IIssue,
+          data,
+          cycleId
+        );
+
+      return response;
+    } catch (error) {
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      throw error;
+    }
+  };
+
+  removeIssue = async (workspaceSlug: string, userId: string, projectId: string, issueId: string) => {
+    try {
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[userId]) _issues[userId] = {};
+      delete _issues?.[userId]?.[issueId];
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+
+      return response;
+    } catch (error) {
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
+      throw error;
+    }
+  };
+
+  quickAddIssue = async (workspaceSlug: string, userId: string, data: IIssue) => {
+    try {
+      const projectId = data.project;
+
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[userId]) _issues[userId] = {};
+      _issues[userId] = { ..._issues[userId], ...{ [data.id as keyof IIssue]: data } };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
+
+      if (this.issues) {
+        delete this.issues[userId][data.id as keyof IIssue];
+
+        let _issues = { ...this.issues };
+        if (!_issues) _issues = {};
+        if (!_issues[userId]) _issues[userId] = {};
+        _issues[userId] = { ..._issues[userId], ...{ [response.id as keyof IIssue]: response } };
+
+        runInAction(() => {
+          this.issues = _issues;
+        });
+      }
+
+      return response;
+    } catch (error) {
+      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, this.currentUserIssueTab, "mutation");
       throw error;
     }
   };

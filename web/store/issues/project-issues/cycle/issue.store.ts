@@ -288,8 +288,6 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
   };
 
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => {
-    if (!cycleId) return undefined;
-
     try {
       const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
         issues: [data.id],

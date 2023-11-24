@@ -290,8 +290,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
   };
 
   addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => {
-    if (!moduleId) return undefined;
-
     try {
       const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
         issues: [data.id],
