@@ -94,8 +94,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
             .distinct()
         )
 
-    def get(self, request, slug, pk=None):
-        if pk is None:
+    def get(self, request, slug, project_id=None):
+        if project_id is None:
             sort_order_query = ProjectMember.objects.filter(
                 member=request.user,
                 project_id=OuterRef("pk"),
@@ -114,7 +114,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                         ).select_related("member"),
                     )
                 )
-                .order_by("sort_order", "name")
+                .order_by(request.GET.get("order_by", "sort_order"))
             )
             return self.paginate(
                 request=request,
@@ -123,15 +123,13 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                     projects, many=True, fields=self.fields, expand=self.expand,
                 ).data,
             )
-        else:
-            project = self.get_queryset().get(workspace__slug=slug, pk=pk)
-            serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+        project = self.get_queryset().get(workspace__slug=slug, pk=project_id)
+        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand,)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
-
             serializer = ProjectSerializer(
                 data={**request.data}, context={"workspace_id": workspace.id}
             )
@@ -236,10 +234,10 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 status=status.HTTP_410_GONE,
             )
 
-    def patch(self, request, slug, pk=None):
+    def patch(self, request, slug, project_id=None):
         try:
             workspace = Workspace.objects.get(slug=slug)
-            project = Project.objects.get(pk=pk)
+            project = Project.objects.get(pk=project_id)
 
             serializer = ProjectSerializer(
                 project,
@@ -260,7 +258,7 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                         name="Triage",
                         group="backlog",
                         description="Default state for managing all Inbox Issues",
-                        project_id=pk,
+                        project_id=project_id,
                         color="#ff7700",
                     )
 
@@ -283,3 +281,8 @@ class ProjectAPIEndpoint(WebhookMixin, BaseAPIView):
                 {"identifier": "The project identifier is already taken"},
                 status=status.HTTP_410_GONE,
             )
+
+    def delete(self, request, slug, project_id):
+        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

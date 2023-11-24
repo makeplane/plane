@@ -159,10 +159,10 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, data):
         if data.get("old_password") == data.get("new_password"):
-            raise serializers.ValidationError("New password cannot be same as old password.")
+            raise serializers.ValidationError({"error": "New password cannot be same as old password."})
 
         if data.get("new_password") != data.get("confirm_password"):
-            raise serializers.ValidationError("confirm password should be same as the new password.")
+            raise serializers.ValidationError({"error": "Confirm password should be same as the new password."})
 
         return data
 

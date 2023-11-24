@@ -51,9 +51,9 @@ class Module(ProjectBaseModel):
 
     def save(self, *args, **kwargs):
         if self._state.adding:
-            smallest_sort_order = Module.objects.filter(
-                project=self.project
-            ).aggregate(smallest=models.Min("sort_order"))["smallest"]
+            smallest_sort_order = Module.objects.filter(project=self.project).aggregate(
+                smallest=models.Min("sort_order")
+            )["smallest"]
 
             if smallest_sort_order is not None:
                 self.sort_order = smallest_sort_order - 10000

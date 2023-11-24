@@ -9,15 +9,13 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Button, Input } from "@plane/ui";
 import DummySidebar from "components/account/sidebar";
 import OnboardingStepIndicator from "components/account/step-indicator";
+import { UserImageUploadModal } from "components/core";
 // types
 import { IUser } from "types";
-// constants
-import { TIME_ZONES } from "constants/timezones";
 // services
 import { FileService } from "services/file.service";
 // assets
 import IssuesSvg from "public/onboarding/onboarding-issues.svg";
-import { ImageUploadModal } from "components/core";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
@@ -30,13 +28,7 @@ type Props = {
   setUserName: (name: string) => void;
 };
 
-// const timeZoneOptions = TIME_ZONES.map((timeZone) => ({
-//   value: timeZone.value,
-//   query: timeZone.label + " " + timeZone.value,
-//   content: timeZone.label,
-// }));
-
-const useCases = [
+const USE_CASES = [
   "Build Products",
   "Manage Feedbacks",
   "Service delivery",
@@ -44,7 +36,7 @@ const useCases = [
   "Code Repository Integration",
   "Bug Tracking",
   "Test Case Management",
-  "Rescource allocation",
+  "Resource allocation",
 ];
 
 const fileService = new FileService();
@@ -52,7 +44,6 @@ const fileService = new FileService();
 export const UserDetails: React.FC<Props> = observer((props) => {
   const { user, setUserName } = props;
   const [isRemoving, setIsRemoving] = useState(false);
-  // const [selectedUsecase, setSelectedUsecase] = useState<number | null>();
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const {
     user: userStore,
@@ -111,19 +102,22 @@ export const UserDetails: React.FC<Props> = observer((props) => {
           )}
         />
       </div>
-      <ImageUploadModal
-        isOpen={isImageUploadModalOpen}
-        onClose={() => setIsImageUploadModalOpen(false)}
-        isRemoving={isRemoving}
-        handleDelete={() => {
-          handleDelete(getValues("avatar"));
-        }}
-        onSuccess={(url) => {
-          setValue("avatar", url);
-          setIsImageUploadModalOpen(false);
-        }}
-        value={watch("avatar") !== "" ? watch("avatar") : undefined}
-        userImage
+      <Controller
+        control={control}
+        name="avatar"
+        render={({ field: { onChange, value } }) => (
+          <UserImageUploadModal
+            isOpen={isImageUploadModalOpen}
+            onClose={() => setIsImageUploadModalOpen(false)}
+            isRemoving={isRemoving}
+            handleDelete={() => handleDelete(getValues("avatar"))}
+            onSuccess={(url) => {
+              onChange(url);
+              setIsImageUploadModalOpen(false);
+            }}
+            value={value && value.trim() !== "" ? value : null}
+          />
+        )}
       />
       <div className="lg:w-2/3 w-full flex flex-col justify-between ml-auto ">
         <div className="flex lg:w-4/5 md:px-0 px-7 pt-3 mx-auto flex-col">
@@ -203,7 +197,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                 name="use_case"
                 render={({ field: { value, onChange } }) => (
                   <div className="flex flex-wrap break-all overflow-auto">
-                    {useCases.map((useCase) => (
+                    {USE_CASES.map((useCase) => (
                       <div
                         className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
                           value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
