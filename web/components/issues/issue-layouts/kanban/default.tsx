@@ -98,10 +98,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                 verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
               }`}
             >
-              <Droppable
-                droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}
-                isDropDisabled={isDragDisabled}
-              >
+              <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
                 {(provided: any, snapshot: any) => (
                   <div
                     className={`w-full h-full relative transition-all ${
@@ -152,7 +149,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               )}
             </div>
 
-            {isDragStarted && isDragDisabled && (
+            {/* {isDragStarted && isDragDisabled && (
               <div className="invisible group-hover:visible transition-all text-sm absolute top-12 bottom-10 left-0 right-0 bg-custom-background-100/40 text-center">
                 <div className="rounded inline-flex mt-80 h-8 px-3 justify-center items-center bg-custom-background-80 text-custom-text-100 font-medium">
                   {`This board is ordered by "${replaceUnderscoreIfSnakeCase(
@@ -160,7 +157,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   )}"`}
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         ))}
     </div>
