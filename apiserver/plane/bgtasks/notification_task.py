@@ -190,6 +190,7 @@ def notifications(type, issue_id, project_id, actor_id, subscriber, issue_activi
             issue_activities_created) if issue_activities_created is not None else None
     )
     if type not in [
+        "issue.activity.deleted",
         "cycle.activity.created",
         "cycle.activity.deleted",
         "module.activity.created",

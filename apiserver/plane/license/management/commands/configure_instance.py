@@ -30,9 +30,11 @@ class Command(BaseCommand):
             "EMAIL_USE_TLS": os.environ.get("EMAIL_USE_TLS", "1"),
             "EMAIL_USE_SSL": os.environ.get("EMAIL_USE_SSL", "0"),
             # Open AI Settings
-            "OPENAI_API_BASE": os.environ.get("", "https://api.openai.com/v1"),
-            "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY", "sk-"),
+            "OPENAI_API_BASE": os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
+            "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY", ""),
             "GPT_ENGINE": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+            # Unsplash Access Key
+            "UNSPLASH_ACCESS_KEY": os.environ.get("UNSPLASH_ACESS_KEY", "")
         }
 
         for key, value in config_keys.items():
