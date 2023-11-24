@@ -1,8 +1,10 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 // types
 import { RootStore } from "store/root";
-import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions } from "types";
+import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
 import { EFilterType } from "store/issues/types";
+import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
+import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
 
 interface IProjectIssuesFiltersOptions {
   filters: IIssueFilterOptions;
@@ -15,35 +17,49 @@ interface IProjectIssuesDisplayOptions {
   displayProperties: IIssueDisplayProperties;
 }
 
-export interface IIssuesFilterStore {
+interface IProjectIssuesFilters {
+  filters: IIssueFilterOptions | undefined;
+  displayFilters: IIssueDisplayFilterOptions | undefined;
+  displayProperties: IIssueDisplayProperties | undefined;
+}
+
+export interface IProfileIssuesFilterStore {
   // observables
-  projectIssueFilters: { [projectId: string]: IProjectIssuesDisplayOptions } | undefined;
+  projectIssueFilters: { [workspaceId: string]: IProjectIssuesDisplayOptions } | undefined;
   // computed
+  issueFilters: IProjectIssuesFilters | undefined;
+  appliedFilters: TIssueParams[] | undefined;
   // helpers
-  issueDisplayFilters: (projectId: string) => IProjectIssuesDisplayOptions | undefined;
+  issueDisplayFilters: (workspaceId: string) => IProjectIssuesDisplayOptions | undefined;
   // actions
-  fetchDisplayFilters: (workspaceSlug: string, projectId: string) => Promise<IProjectIssuesFiltersOptions>;
+  fetchDisplayFilters: (workspaceSlug: string) => Promise<IProjectIssuesFiltersOptions>;
   updateDisplayFilters: (
     workspaceSlug: string,
-    projectId: string,
     type: EFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions
   ) => Promise<IProjectIssuesFiltersOptions>;
-  fetchDisplayProperties: (workspaceSlug: string, projectId: string) => Promise<IIssueDisplayProperties>;
+  fetchDisplayProperties: (workspaceSlug: string) => Promise<IIssueDisplayProperties>;
   updateDisplayProperties: (
     workspaceSlug: string,
-    projectId: string,
     properties: IIssueDisplayProperties
   ) => Promise<IIssueDisplayProperties>;
+  fetchFilters: (workspaceSlug: string) => Promise<void>;
+  updateFilters: (
+    workspaceSlug: string,
+    filterType: EFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+  ) => Promise<void>;
 }
 
-export class IssuesFilterStore implements IIssuesFilterStore {
+export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IProfileIssuesFilterStore {
   // observables
   projectIssueFilters: { [projectId: string]: IProjectIssuesDisplayOptions } | undefined = undefined;
   // root store
   rootStore;
 
   constructor(_rootStore: RootStore) {
+    super(_rootStore);
+
     makeObservable(this, {
       // observables
       projectIssueFilters: observable.ref,
@@ -61,13 +77,13 @@ export class IssuesFilterStore implements IIssuesFilterStore {
   // computed
 
   // helpers
-  issueDisplayFilters = (projectId: string) => {
-    if (!projectId) return undefined;
-    return this.projectIssueFilters?.[projectId] || undefined;
+  issueDisplayFilters = (workspaceId: string) => {
+    if (!workspaceId) return undefined;
+    return this.projectIssueFilters?.[workspaceId] || undefined;
   };
 
   // actions
-  fetchDisplayFilters = async (workspaceSlug: string, projectId: string) => {
+  fetchDisplayFilters = async (workspaceSlug: string) => {
     try {
       const filters: IIssueFilterOptions = {
         assignees: null,
@@ -88,7 +104,7 @@ export class IssuesFilterStore implements IIssuesFilterStore {
           show_weekends: false,
           layout: "month",
         },
-        group_by: null,
+        group_by: "state_detail.group",
         sub_group_by: null,
         layout: "list",
         order_by: "-created_at",
@@ -105,10 +121,10 @@ export class IssuesFilterStore implements IIssuesFilterStore {
 
       let _projectIssueFilters = this.projectIssueFilters;
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId])
-        _projectIssueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[projectId] = {
-        ..._projectIssueFilters[projectId],
+      if (!_projectIssueFilters[workspaceSlug])
+        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
+      _projectIssueFilters[workspaceSlug] = {
+        ..._projectIssueFilters[workspaceSlug],
         ...issueFilters,
       };
 
@@ -124,19 +140,18 @@ export class IssuesFilterStore implements IIssuesFilterStore {
 
   updateDisplayFilters = async (
     workspaceSlug: string,
-    projectId: string,
     type: EFilterType,
     filters: IIssueFilterOptions | IIssueDisplayFilterOptions
   ) => {
     try {
       let _projectIssueFilters = { ...this.projectIssueFilters };
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId])
-        _projectIssueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
+      if (!_projectIssueFilters[workspaceSlug])
+        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
 
       const _filters = {
-        filters: { ..._projectIssueFilters[projectId].filters },
-        displayFilters: { ..._projectIssueFilters[projectId].displayFilters },
+        filters: { ..._projectIssueFilters[workspaceSlug].filters },
+        displayFilters: { ..._projectIssueFilters[workspaceSlug].displayFilters },
       };
 
       if (type === EFilterType.FILTERS) _filters.filters = { ..._filters.filters, ...filters };
@@ -157,10 +172,10 @@ export class IssuesFilterStore implements IIssuesFilterStore {
       if (_filters.displayFilters.layout === "kanban" && _filters.displayFilters.group_by === null)
         _filters.displayFilters.group_by = "state";
 
-      _projectIssueFilters[projectId] = {
+      _projectIssueFilters[workspaceSlug] = {
         filters: _filters.filters,
         displayFilters: _filters.displayFilters,
-        displayProperties: _projectIssueFilters[projectId].displayProperties,
+        displayProperties: _projectIssueFilters[workspaceSlug].displayProperties,
       };
 
       runInAction(() => {
@@ -169,12 +184,12 @@ export class IssuesFilterStore implements IIssuesFilterStore {
 
       return _filters;
     } catch (error) {
-      this.fetchDisplayFilters(workspaceSlug, projectId);
+      this.fetchDisplayFilters(workspaceSlug);
       throw error;
     }
   };
 
-  fetchDisplayProperties = async (workspaceSlug: string, projectId: string) => {
+  fetchDisplayProperties = async (workspaceSlug: string) => {
     try {
       const displayProperties: IIssueDisplayProperties = {
         assignee: false,
@@ -194,9 +209,12 @@ export class IssuesFilterStore implements IIssuesFilterStore {
 
       let _projectIssueFilters = { ...this.projectIssueFilters };
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[projectId])
-        _projectIssueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[projectId] = { ..._projectIssueFilters[projectId], displayProperties: displayProperties };
+      if (!_projectIssueFilters[workspaceSlug])
+        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
+      _projectIssueFilters[workspaceSlug] = {
+        ..._projectIssueFilters[workspaceSlug],
+        displayProperties: displayProperties,
+      };
 
       runInAction(() => {
         this.projectIssueFilters = _projectIssueFilters;
@@ -208,15 +226,15 @@ export class IssuesFilterStore implements IIssuesFilterStore {
     }
   };
 
-  updateDisplayProperties = async (workspaceSlug: string, projectId: string, properties: IIssueDisplayProperties) => {
+  updateDisplayProperties = async (workspaceSlug: string, properties: IIssueDisplayProperties) => {
     try {
       let _issueFilters = { ...this.projectIssueFilters };
       if (!_issueFilters) _issueFilters = {};
-      if (!_issueFilters[projectId])
-        _issueFilters[projectId] = { filters: {}, displayFilters: {}, displayProperties: {} };
+      if (!_issueFilters[workspaceSlug])
+        _issueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
 
-      const updatedDisplayProperties = { ..._issueFilters[projectId].displayProperties, ...properties };
-      _issueFilters[projectId] = { ..._issueFilters[projectId], displayProperties: updatedDisplayProperties };
+      const updatedDisplayProperties = { ..._issueFilters[workspaceSlug].displayProperties, ...properties };
+      _issueFilters[workspaceSlug] = { ..._issueFilters[workspaceSlug], displayProperties: updatedDisplayProperties };
 
       runInAction(() => {
         this.projectIssueFilters = _issueFilters;
@@ -224,7 +242,85 @@ export class IssuesFilterStore implements IIssuesFilterStore {
 
       return properties;
     } catch (error) {
-      this.fetchDisplayProperties(workspaceSlug, projectId);
+      this.fetchDisplayProperties(workspaceSlug);
+      throw error;
+    }
+  };
+
+  get issueFilters() {
+    const workspaceSlug = this.rootStore.workspace.workspaceSlug;
+    if (!workspaceSlug) return undefined;
+    const displayFilters = this.issueDisplayFilters(workspaceSlug);
+
+    const _filters: IProjectIssuesFilters = {
+      filters: displayFilters?.filters,
+      displayFilters: displayFilters?.displayFilters,
+      displayProperties: displayFilters?.displayProperties,
+    };
+
+    return _filters;
+  }
+
+  get appliedFilters() {
+    const userFilters = this.issueFilters;
+    if (!userFilters) return undefined;
+
+    let filteredRouteParams: any = {
+      priority: userFilters?.filters?.priority || undefined,
+      state_group: userFilters?.filters?.state_group || undefined,
+      state: userFilters?.filters?.state || undefined,
+      assignees: userFilters?.filters?.assignees || undefined,
+      mentions: userFilters?.filters?.mentions || undefined,
+      created_by: userFilters?.filters?.created_by || undefined,
+      labels: userFilters?.filters?.labels || undefined,
+      start_date: userFilters?.filters?.start_date || undefined,
+      target_date: userFilters?.filters?.target_date || undefined,
+      type: userFilters?.displayFilters?.type || undefined,
+      sub_issue: userFilters?.displayFilters?.sub_issue || true,
+      show_empty_groups: userFilters?.displayFilters?.show_empty_groups || true,
+      start_target_date: userFilters?.displayFilters?.start_target_date || true,
+    };
+
+    const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "profile_issues");
+    if (filteredParams) filteredRouteParams = this.computedFilter(filteredRouteParams, filteredParams);
+
+    if (userFilters?.displayFilters?.layout === "calendar") filteredRouteParams.group_by = "target_date";
+    if (userFilters?.displayFilters?.layout === "gantt_chart") filteredRouteParams.start_target_date = true;
+
+    return filteredRouteParams;
+  }
+
+  fetchFilters = async (workspaceSlug: string) => {
+    try {
+      await this.fetchDisplayFilters(workspaceSlug);
+      await this.fetchDisplayProperties(workspaceSlug);
+      return;
+    } catch (error) {
+      throw Error;
+    }
+  };
+
+  updateFilters = async (
+    workspaceSlug: string,
+
+    filterType: EFilterType,
+    filters: IIssueFilterOptions | IIssueDisplayFilterOptions | IIssueDisplayProperties
+  ) => {
+    try {
+      switch (filterType) {
+        case EFilterType.FILTERS:
+          await this.updateDisplayFilters(workspaceSlug, filterType, filters as IIssueFilterOptions);
+          break;
+        case EFilterType.DISPLAY_FILTERS:
+          await this.updateDisplayFilters(workspaceSlug, filterType, filters as IIssueDisplayFilterOptions);
+          break;
+        case EFilterType.DISPLAY_PROPERTIES:
+          await this.updateDisplayProperties(workspaceSlug, filters as IIssueDisplayProperties);
+          break;
+      }
+
+      return;
+    } catch (error) {
       throw error;
     }
   };

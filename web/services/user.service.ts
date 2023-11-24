@@ -13,6 +13,7 @@ import type {
 } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
+import { IIssueResponse } from "store/issues/types";
 
 export class UserService extends APIService {
   constructor() {
@@ -139,6 +140,14 @@ export class UserService extends APIService {
       });
   }
 
+  async changePassword(data: { old_password: string; new_password: string; confirm_password: string }): Promise<any> {
+    return this.post(`/api/users/me/change-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getUserProfileData(workspaceSlug: string, userId: string): Promise<IUserProfileData> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-stats/${userId}/`)
       .then((response) => response?.data)
@@ -177,6 +186,16 @@ export class UserService extends APIService {
     | IIssue[]
   > {
     return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
+      params,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getV3UserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<IIssueResponse> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
       params,
     })
       .then((response) => response?.data)

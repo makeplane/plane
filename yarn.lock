@@ -926,6 +926,13 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
+"@babel/runtime@^7.23.1":
+  version "7.23.4"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.4.tgz#36fa1d2b36db873d25ec631dcc4923fdc1cf2e2e"
+  integrity sha512-2Yv65nlWnWlSpe3fXEyX5i7fx5kIKo4Qbcj+hMO0odwaneFjfXw5fdum+4yL20O0QiaHpia0cYQ9xpNMqrBwHg==
+  dependencies:
+    regenerator-runtime "^0.14.0"
+
 "@babel/template@^7.22.15", "@babel/template@^7.22.5":
   version "7.22.15"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.22.15.tgz#09576efc3830f0430f4548ef971dde1350ef2f38"
@@ -2804,7 +2811,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@18.0.28", "@types/react@18.2.0", "@types/react@^18.2.35", "@types/react@^18.2.37", "@types/react@^18.2.5":
+"@types/react@*", "@types/react@18.2.0", "@types/react@18.2.35", "@types/react@^18.2.35", "@types/react@^18.2.37", "@types/react@^18.2.5":
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.0.tgz#15cda145354accfc09a18d2f2305f9fc099ada21"
   integrity sha512-0FLj93y5USLHdnhIhABk83rm8XEGA7kH3cr+YUlvxoUGp1xNt/DINUMvqPxLyOQMzLmZe8i4RTHbvb8MC7NmrA==
@@ -8170,6 +8177,13 @@ tailwind-merge@^1.14.0:
   version "1.14.0"
   resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-1.14.0.tgz#e677f55d864edc6794562c63f5001f45093cdb8b"
   integrity sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==
+
+tailwind-merge@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/tailwind-merge/-/tailwind-merge-2.0.0.tgz#a0f3a8c874ebae5feec5595614d08245a5f88a39"
+  integrity sha512-WO8qghn9yhsldLSg80au+3/gY9E4hFxIvQ3qOmlpXnqpDKoMruKfi/56BbbMg6fHTQJ9QD3cc79PoWqlaQE4rw==
+  dependencies:
+    "@babel/runtime" "^7.23.1"
 
 tailwindcss-animate@^1.0.6:
   version "1.0.7"

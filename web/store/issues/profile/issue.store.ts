@@ -2,7 +2,7 @@ import { action, observable, makeObservable, computed, runInAction, autorun } fr
 // base class
 import { IssueBaseStore } from "store/issues";
 // services
-import { IssueArchiveService } from "services/issue";
+import { UserService } from "services/user.service";
 // types
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../types";
 import { RootStore } from "store/root";
@@ -16,8 +16,6 @@ export interface IProfileIssuesStore {
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // actions
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
-  removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
-  removeIssueFromArchived: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 }
 
 export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssuesStore {
@@ -26,7 +24,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   // root store
   rootStore;
   // service
-  archivedIssueService;
+  userService;
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -40,19 +38,17 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       getIssuesIds: computed,
       // action
       fetchIssues: action,
-      removeIssue: action,
-      removeIssueFromArchived: action,
     });
 
     this.rootStore = _rootStore;
-    this.archivedIssueService = new IssueArchiveService();
+    this.userService = new UserService();
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
       const projectId = this.rootStore.project.projectId;
       if (!workspaceSlug || !projectId) return;
 
-      const userFilters = this.rootStore?.projectArchivedIssuesFilter?.issueFilters?.filters;
+      const userFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.filters;
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
     });
   }
@@ -66,7 +62,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
 
   get getIssuesIds() {
     const projectId = this.rootStore?.project.projectId;
-    const displayFilters = this.rootStore?.projectArchivedIssuesFilter?.issueFilters?.displayFilters;
+    const displayFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
     const groupBy = displayFilters?.group_by;
@@ -89,8 +85,8 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     try {
       this.loader = loadType;
 
-      const params = this.rootStore?.projectArchivedIssuesFilter?.appliedFilters;
-      const response = await this.archivedIssueService.getV3ArchivedIssues(workspaceSlug, projectId, params);
+      const params = this.rootStore?.workspaceProfileIssuesFilter?.appliedFilters;
+      const response = await this.userService.getV3UserProfileIssues(workspaceSlug, projectId, params);
 
       const _issues = { ...this.issues, [projectId]: { ...response } };
 
@@ -103,24 +99,6 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId);
       this.loader = undefined;
-      throw error;
-    }
-  };
-
-  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      await this.archivedIssueService.unarchiveIssue(workspaceSlug, projectId, issueId);
-      return;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  removeIssueFromArchived = async (workspaceSlug: string, projectId: string, issueId: string) => {
-    try {
-      await this.archivedIssueService.deleteArchivedIssue(workspaceSlug, projectId, issueId);
-      return;
-    } catch (error) {
       throw error;
     }
   };

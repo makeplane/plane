@@ -10,7 +10,7 @@ interface IApiTokenListItem {
   token: IApiToken;
 }
 
-export const ApiTokenListItem = ({ token, workspaceSlug }: IApiTokenListItem) => (
+export const APITokenListItem = ({ token, workspaceSlug }: IApiTokenListItem) => (
   <Link href={`/${workspaceSlug}/settings/api-tokens/${token.id}`} key={token.id}>
     <div className="border-b flex flex-col relative justify-center items-start border-custom-border-200 py-5 hover:cursor-pointer">
       <XCircle className="absolute right-5 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto justify-self-center stroke-custom-text-400 h-[15px] w-[15px]" />

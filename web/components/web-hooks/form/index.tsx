@@ -72,6 +72,7 @@ export const WebHookForm: FC<IWebHookForm> = observer((props) => {
     }
 
     reset({ ...getValues(), ...allWebhookOptions });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watch && watch(WEBHOOK_EVENTS)]);
 
   return (
