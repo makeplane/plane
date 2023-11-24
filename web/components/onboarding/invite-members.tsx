@@ -244,7 +244,13 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
         await nextStep();
       })
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: err?.error,
+        })
+      );
   };
 
   const appendField = () => {
