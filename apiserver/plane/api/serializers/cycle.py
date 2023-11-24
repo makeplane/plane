@@ -47,3 +47,10 @@ class CycleIssueSerializer(BaseSerializer):
             "project",
             "cycle",
         ]
+
+
+class CycleLiteSerializer(BaseSerializer):
+
+    class Meta:
+        model = Cycle
+        fields = "__all__"

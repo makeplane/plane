@@ -19,7 +19,7 @@ export const ProfileSettingsHeader: FC<IProfileSettingHeader> = (props) => {
               type="text"
               label="My Profile"
               icon={<Settings className="h-4 w-4 text-custom-text-300" />}
-              link={`/me/profile`}
+              link="/profile"
             />
             <Breadcrumbs.BreadcrumbItem type="text" label={title} />
           </Breadcrumbs>
