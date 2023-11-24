@@ -7,8 +7,8 @@ import { Camera, User2 } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Button, Input } from "@plane/ui";
-import DummySidebar from "components/account/sidebar";
-import OnboardingStepIndicator from "components/account/step-indicator";
+import { OnboardingSidebar } from "components/onboarding/onboarding-sidebar";
+import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 import { UserImageUploadModal } from "components/core";
 // types
 import { IUser } from "types";
@@ -94,7 +94,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
           control={control}
           name="first_name"
           render={({ field: { value } }) => (
-            <DummySidebar
+            <OnboardingSidebar
               userFullName={value.length === 0 ? undefined : value}
               showProject
               workspaceName={workspaceName}

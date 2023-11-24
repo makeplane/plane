@@ -89,7 +89,8 @@ type Props = {
 };
 var timer: number = 0;
 var lastWorkspaceName: string = "";
-const DummySidebar: React.FC<Props> = (props) => {
+
+export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
   const {
     workspace: workspaceStore,
@@ -292,5 +293,3 @@ const DummySidebar: React.FC<Props> = (props) => {
     </div>
   );
 };
-
-export default DummySidebar;
