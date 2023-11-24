@@ -7,6 +7,7 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { EIssueActions } from "../types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -16,8 +17,8 @@ type Props = {
   members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  quickActions: (issue: IIssue) => React.ReactNode;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -39,8 +40,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     members,
     labels,
     states,
-    handleIssueAction,
-    handleUpdateIssue,
+    quickActions,
+    handleIssues,
     quickAddCallback,
     viewId,
     disableUserActions,
@@ -110,7 +111,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                       expandedIssues={expandedIssues}
                       setExpandedIssues={setExpandedIssues}
                       properties={displayProperties}
-                      handleIssueAction={handleIssueAction}
+                      quickActions={quickActions}
                       disableUserActions={disableUserActions}
                       setIssuePeekOverView={setIssuePeekOverView}
                     />
@@ -124,7 +125,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 disableUserActions={disableUserActions}
                 expandedIssues={expandedIssues}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-                handleUpdateIssue={handleUpdateIssue}
+                handleUpdateIssue={(issue, data) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}
                 issues={issues}
                 members={members}
                 labels={labels}
@@ -185,7 +186,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           workspaceSlug={issuePeekOverview?.workspaceSlug}
           projectId={issuePeekOverview?.projectId}
           issueId={issuePeekOverview?.issueId}
-          handleIssue={(issueToUpdate: any) => handleUpdateIssue(issueToUpdate as IIssue, issueToUpdate)}
+          handleIssue={(issueToUpdate: any) => handleIssues(issueToUpdate, EIssueActions.UPDATE)}
         />
       )}
     </div>
