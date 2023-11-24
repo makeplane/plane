@@ -45,7 +45,7 @@ class Command(BaseCommand):
             # If the user does not exist create the user and add him to the database
             if user is None:
                 user = User.objects.create(email=admin_email, username=uuid.uuid4().hex)
-                user.set_password(uuid.uuid4().hex)
+                user.set_password(admin_email)
                 user.save()
 
             license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL")
@@ -88,13 +88,11 @@ class Command(BaseCommand):
 
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"Instance succesfully registered with owner: {instance.primary_owner.email}"
+                        f"Instance successfully registered with owner: {instance.primary_owner.email}"
                     )
                 )
                 return
-
-            self.stdout.write(self.style.WARNING("Instance could not be registered"))
-            return
+            raise CommandError("Instance could not be registered")
         else:
             self.stdout.write(
                 self.style.SUCCESS(

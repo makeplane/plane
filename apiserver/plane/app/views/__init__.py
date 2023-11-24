@@ -44,6 +44,7 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    WorkspaceUserProfileIssuesGroupedEndpoint
 )
 from .state import StateViewSet
 from .view import (
