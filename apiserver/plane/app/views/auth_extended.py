@@ -133,7 +133,7 @@ class ChangePasswordEndpoint(BaseAPIView):
         if serializer.is_valid():
             if not user.check_password(serializer.data.get("old_password")):
                 return Response(
-                    {"old_password": ["Wrong password."]},
+                    {"error": "Old password is not correct"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             # set_password also hashes the password that the user will get

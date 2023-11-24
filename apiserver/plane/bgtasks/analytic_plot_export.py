@@ -1,6 +1,7 @@
 # Python imports
 import csv
 import io
+import os
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -32,7 +33,7 @@ row_mapping = {
     "priority": "Priority",
     "estimate": "Estimate",
     "issue_cycle__cycle_id": "Cycle",
-    "issue_module__module_id": "Module"
+    "issue_module__module_id": "Module",
 }
 
 ASSIGNEE_ID = "assignees__id"
@@ -51,17 +52,48 @@ def send_export_email(email, slug, csv_buffer):
     csv_buffer.seek(0)
 
     # Configure email connection from the database
-    instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values("key", "value")
+    instance_configuration = InstanceConfiguration.objects.filter(
+        key__startswith="EMAIL_"
+    ).values("key", "value")
     connection = get_connection(
-        host=get_configuration_value(instance_configuration, "EMAIL_HOST"),
-        port=int(get_configuration_value(instance_configuration, "EMAIL_PORT", "587")),
-        username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
-        password=get_configuration_value(instance_configuration, "EMAIL_HOST_PASSWORD"),
-        use_tls=bool(get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")),
-        use_ssl=bool(get_configuration_value(instance_configuration, "EMAIL_USE_SSL", "0")),
+        host=get_configuration_value(
+            instance_configuration, "EMAIL_HOST", os.environ.get("EMAIL_HOST")
+        ),
+        port=int(
+            get_configuration_value(
+                instance_configuration, "EMAIL_PORT", os.environ.get("EMAIL_PORT")
+            )
+        ),
+        username=get_configuration_value(
+            instance_configuration,
+            "EMAIL_HOST_USER",
+            os.environ.get("EMAIL_HOST_USER"),
+        ),
+        password=get_configuration_value(
+            instance_configuration,
+            "EMAIL_HOST_PASSWORD",
+            os.environ.get("EMAIL_HOST_PASSWORD"),
+        ),
+        use_tls=bool(
+            get_configuration_value(
+                instance_configuration,
+                "EMAIL_USE_TLS",
+                os.environ.get("EMAIL_USE_TLS", "1"),
+            )
+        ),
     )
 
-    msg = EmailMultiAlternatives(subject=subject, body=text_content, from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"), to=[email], connection=connection)
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=text_content,
+        from_email=get_configuration_value(
+            instance_configuration,
+            "EMAIL_FROM",
+            os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
+        ),
+        to=[email],
+        connection=connection,
+    )
     msg.attach(f"{slug}-analytics.csv", csv_buffer.getvalue())
     msg.send(fail_silently=False)
 

@@ -92,17 +92,16 @@ export const DEFAULT_GLOBAL_VIEWS_LIST: {
 ];
 
 export const RESTRICTED_URLS = [
-  "api",
-  "installations",
   "404",
+  "accounts",
+  "api",
   "create-workspace",
   "error",
+  "god-mode",
+  "installations",
   "invitations",
-  "magic-sign-in",
   "onboarding",
   "profile",
-  "reset-password",
-  "sign-up",
   "spaces",
-  "workspace-member-invitation",
+  "workspace-invitations",
 ];
