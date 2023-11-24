@@ -112,13 +112,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const handleStartDateChange = async (date: string) => {
     setValue("start_date", date);
-    if (
-      watch("start_date") &&
-      watch("end_date") &&
-      watch("start_date") !== "" &&
-      watch("end_date") &&
-      watch("start_date") !== ""
-    ) {
+    if (watch("start_date") && watch("end_date") && watch("start_date") !== "" && watch("start_date") !== "") {
       if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
         setToastAlert({
           type: "error",
@@ -186,13 +180,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const handleEndDateChange = async (date: string) => {
     setValue("end_date", date);
 
-    if (
-      watch("start_date") &&
-      watch("end_date") &&
-      watch("start_date") !== "" &&
-      watch("end_date") &&
-      watch("start_date") !== ""
-    ) {
+    if (watch("start_date") && watch("end_date") && watch("start_date") !== "" && watch("start_date") !== "") {
       if (!isDateGreaterThanToday(`${watch("end_date")}`)) {
         setToastAlert({
           type: "error",
