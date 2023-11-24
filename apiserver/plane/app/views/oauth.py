@@ -143,19 +143,29 @@ class OauthEndpoint(BaseAPIView):
                 "key", "value"
             )
             if (
-                not get_configuration_value(
-                    instance_configuration,
-                    "GOOGLE_CLIENT_ID",
-                    os.environ.get("GOOGLE_CLIENT_ID"),
+                (
+                    not get_configuration_value(
+                        instance_configuration,
+                        "GOOGLE_CLIENT_ID",
+                        os.environ.get("GOOGLE_CLIENT_ID"),
+                    )
+                    or not get_configuration_value(
+                        instance_configuration,
+                        "GITHUB_CLIENT_ID",
+                        os.environ.get("GITHUB_CLIENT_ID"),
+                    )
                 )
-                or not get_configuration_value(
-                    instance_configuration,
-                    "GITHUB_CLIENT_ID",
-                    os.environ.get("GITHUB_CLIENT_ID"),
+                and not (
+                    get_configuration_value(
+                        instance_configuration,
+                        "ENABLE_SIGNUP",
+                        os.environ.get("ENABLE_SIGNUP", "0"),
+                    )
                 )
-            ) and not WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).exists():
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=request.user.email
+                ).exists()
+            ):
                 return Response(
                     {
                         "error": "New account creation is disabled. Please contact your site administrator"
@@ -309,6 +319,23 @@ class OauthEndpoint(BaseAPIView):
 
         except User.DoesNotExist:
             ## Signup Case
+
+            if (
+                get_configuration_value(
+                    instance_configuration,
+                    "ENABLE_SIGNUP",
+                    os.environ.get("ENABLE_SIGNUP", "0"),
+                )
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=request.user.email
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "New account creation is disabled. Please contact your site administrator"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             username = uuid.uuid4().hex
 

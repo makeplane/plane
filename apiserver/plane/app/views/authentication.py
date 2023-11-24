@@ -36,6 +36,7 @@ from plane.bgtasks.magic_link_code_task import magic_link
 from plane.license.models import InstanceConfiguration
 from plane.license.utils.instance_value import get_configuration_value
 
+
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     return (
@@ -152,7 +153,8 @@ class SignUpEndpoint(BaseAPIView):
                     else 15,
                     member=user,
                     created_by_id=project_member_invite.created_by_id,
-                ) for project_member_invite in project_member_invites
+                )
+                for project_member_invite in project_member_invites
             ],
             ignore_conflicts=True,
         )
@@ -294,7 +296,8 @@ class SignInEndpoint(BaseAPIView):
                     else 15,
                     member=user,
                     created_by_id=project_member_invite.created_by_id,
-                ) for project_member_invite in project_member_invites
+                )
+                for project_member_invite in project_member_invites
             ],
             ignore_conflicts=True,
         )
@@ -373,6 +376,13 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
                 "ENABLE_MAGIC_LINK_LOGIN",
                 os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
             )
+            and not (
+                get_configuration_value(
+                    instance_configuration,
+                    "ENABLE_SIGNUP",
+                    os.environ.get("ENABLE_SIGNUP", "0"),
+                )
+            )
             and not WorkspaceMemberInvite.objects.filter(
                 email=request.user.email
             ).exists()
@@ -434,8 +444,7 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-
-        current_site = request.META.get('HTTP_ORIGIN')
+        current_site = request.META.get("HTTP_ORIGIN")
         magic_link.delay(email, key, token, current_site)
 
         return Response({"key": key}, status=status.HTTP_200_OK)
@@ -484,7 +493,9 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "user": {"email": email, "id": str(user.id)},
                                     "device_ctx": {
                                         "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                        "user_agent": request.META.get(
+                                            "HTTP_USER_AGENT"
+                                        ),
                                     },
                                     "event_type": "SIGN_IN",
                                 },
@@ -515,7 +526,9 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "user": {"email": email, "id": str(user.id)},
                                     "device_ctx": {
                                         "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
+                                        "user_agent": request.META.get(
+                                            "HTTP_USER_AGENT"
+                                        ),
                                     },
                                     "event_type": "SIGN_UP",
                                 },
@@ -579,7 +592,8 @@ class MagicSignInEndpoint(BaseAPIView):
                             else 15,
                             member=user,
                             created_by_id=project_member_invite.created_by_id,
-                        ) for project_member_invite in project_member_invites
+                        )
+                        for project_member_invite in project_member_invites
                     ],
                     ignore_conflicts=True,
                 )
