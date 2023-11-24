@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { useDropzone } from "react-dropzone";
 import { Transition, Dialog } from "@headlessui/react";
@@ -7,89 +6,87 @@ import { Transition, Dialog } from "@headlessui/react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { FileService } from "services/file.service";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
 // icons
 import { UserCircle2 } from "lucide-react";
+// constants
+import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
-  value?: string | null;
-  onClose: () => void;
+  handleDelete?: () => void;
   isOpen: boolean;
-  onSuccess: (url: string) => void;
   isRemoving: boolean;
-  handleDelete: () => void;
-  userImage?: boolean;
+  onClose: () => void;
+  onSuccess: (url: string) => void;
+  value: string | null;
 };
 
 // services
 const fileService = new FileService();
 
-export const ImageUploadModal: React.FC<Props> = observer((props) => {
-  const { value, onSuccess, isOpen, onClose, isRemoving, handleDelete, userImage } = props;
-
+export const UserImageUploadModal: React.FC<Props> = observer((props) => {
+  const { value, onSuccess, isOpen, onClose, isRemoving, handleDelete } = props;
+  // states
   const [image, setImage] = useState<File | null>(null);
   const [isImageUploading, setIsImageUploading] = useState(false);
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { setToastAlert } = useToast();
 
-  const { workspace: workspaceStore } = useMobxStore();
-  const { currentWorkspace: workspaceDetails } = workspaceStore;
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setImage(acceptedFiles[0]);
-  }, []);
+  const onDrop = (acceptedFiles: File[]) => setImage(acceptedFiles[0]);
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
     onDrop,
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".svg", ".webp"],
     },
-    maxSize: 5 * 1024 * 1024,
+    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
+    multiple: false,
   });
 
+  const handleClose = () => {
+    setImage(null);
+    setIsImageUploading(false);
+    onClose();
+  };
+
   const handleSubmit = async () => {
-    if (!image || (!workspaceSlug && router.pathname != "/onboarding")) return;
+    console.log("Submit triggered");
+
+    if (!image) return;
+
+    console.log("Inside submit");
+
     setIsImageUploading(true);
+
     const formData = new FormData();
     formData.append("asset", image);
     formData.append("attributes", JSON.stringify({}));
 
-    if (userImage) {
-      fileService
-        .uploadUserFile(formData)
-        .then((res) => {
-          const imageUrl = res.asset;
+    fileService
+      .uploadUserFile(formData)
+      .then((res) => {
+        const imageUrl = res.asset;
 
-          onSuccess(imageUrl);
-          setIsImageUploading(false);
-          setImage(null);
+        onSuccess(imageUrl);
+        setImage(null);
 
-          if (value) fileService.deleteUserFile(value);
+        if (value) fileService.deleteUserFile(value);
+      })
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
         })
-        .catch((err) => {
-          console.error(err);
-        });
-    } else
-      fileService
-        .uploadFile(workspaceSlug as string, formData)
-        .then((res) => {
-          const imageUrl = res.asset;
-          onSuccess(imageUrl);
-          setIsImageUploading(false);
-          setImage(null);
-
-          if (value && workspaceDetails) fileService.deleteFile(workspaceDetails.id, value);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-  };
-
-  const handleClose = () => {
-    setImage(null);
-    onClose();
+      )
+      .finally(() => setIsImageUploading(false));
   };
 
   return (
@@ -172,11 +169,11 @@ export const ImageUploadModal: React.FC<Props> = observer((props) => {
                   File formats supported- .jpeg, .jpg, .png, .webp, .svg
                 </p>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center">
+                  {handleDelete && (
                     <Button variant="danger" size="sm" onClick={handleDelete} disabled={!value}>
                       {isRemoving ? "Removing..." : "Remove"}
                     </Button>
-                  </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>
                       Cancel
