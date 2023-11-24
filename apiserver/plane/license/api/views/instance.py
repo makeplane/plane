@@ -177,7 +177,7 @@ class InstanceAdminEndpoint(BaseAPIView):
     # Create an instance admin
     def post(self, request):
         email = request.data.get("email", False)
-        role = request.data.get("role", 15)
+        role = request.data.get("role", 20)
 
         if not email:
             return Response(
