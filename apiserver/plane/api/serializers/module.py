@@ -21,7 +21,6 @@ class ModuleSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
-    is_favorite = serializers.BooleanField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)
     cancelled_issues = serializers.IntegerField(read_only=True)
     completed_issues = serializers.IntegerField(read_only=True)
@@ -33,6 +32,7 @@ class ModuleSerializer(BaseSerializer):
         model = Module
         fields = "__all__"
         read_only_fields = [
+            "id",
             "workspace",
             "project",
             "created_by",
@@ -153,3 +153,10 @@ class ModuleLinkSerializer(BaseSerializer):
                 {"error": "URL already exists for this Issue"}
             )
         return ModuleLink.objects.create(**validated_data)
+    
+
+class ModuleLiteSerializer(BaseSerializer):
+
+    class Meta:
+        model = Module
+        fields = "__all__"

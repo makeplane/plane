@@ -112,7 +112,6 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
     appConfig: { envConfig },
   } = useMobxStore();
   const user = userStore.currentUser;
-  console.log("envConfig", envConfig);
   // hooks
   const editorSuggestion = useEditorSuggestions();
   const { setToastAlert } = useToast();
