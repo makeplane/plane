@@ -1,3 +1,6 @@
+# Python imports
+import os
+
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
@@ -32,9 +35,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         # The complete url including the domain
         abs_url = current_site + relative_link
 
-        # The email from
-        from_email_string = settings.EMAIL_FROM
-
         # Subject of the email
         subject = f"{user.first_name or user.display_name or user.email} invited you to join {workspace.name} on Plane"
 
@@ -58,23 +58,41 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             key__startswith="EMAIL_"
         ).values("key", "value")
         connection = get_connection(
-            host=get_configuration_value(instance_configuration, "EMAIL_HOST"),
-            port=int(
-                get_configuration_value(instance_configuration, "EMAIL_PORT", "587")
+            host=get_configuration_value(
+                instance_configuration, "EMAIL_HOST", os.environ.get("EMAIL_HOST")
             ),
-            username=get_configuration_value(instance_configuration, "EMAIL_HOST_USER"),
+            port=int(
+                get_configuration_value(
+                    instance_configuration, "EMAIL_PORT", os.environ.get("EMAIL_PORT")
+                )
+            ),
+            username=get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST_USER",
+                os.environ.get("EMAIL_HOST_USER"),
+            ),
             password=get_configuration_value(
-                instance_configuration, "EMAIL_HOST_PASSWORD"
+                instance_configuration,
+                "EMAIL_HOST_PASSWORD",
+                os.environ.get("EMAIL_HOST_PASSWORD"),
             ),
             use_tls=bool(
-                get_configuration_value(instance_configuration, "EMAIL_USE_TLS", "1")
+                get_configuration_value(
+                    instance_configuration,
+                    "EMAIL_USE_TLS",
+                    os.environ.get("EMAIL_USE_TLS", "1"),
+                )
             ),
         )
-        # Initiate email alternatives
+
         msg = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
-            from_email=get_configuration_value(instance_configuration, "EMAIL_FROM"),
+            from_email=get_configuration_value(
+                instance_configuration,
+                "EMAIL_FROM",
+                os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
+            ),
             to=[email],
             connection=connection,
         )

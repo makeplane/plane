@@ -39,12 +39,21 @@ export interface IssuesModalProps {
     | "cycle"
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
+  handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
 }
 
 const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
+  const {
+    data,
+    handleClose,
+    isOpen,
+    prePopulateData: prePopulateDataProps,
+    fieldsToShow = ["all"],
+    onSubmit,
+    handleSubmit,
+  } = props;
 
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -63,6 +72,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     cycleIssue: cycleIssueStore,
     moduleIssue: moduleIssueStore,
     user: userStore,
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
 
   const user = userStore.currentUser;
@@ -186,25 +196,40 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     await issueDetailStore
       .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
-        issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
+        if (handleSubmit) {
+          await handleSubmit(res);
+        } else {
+          issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
 
-        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
+          if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
 
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
-        });
-
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
-      })
-      .catch(() => {
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
+          postHogEventTracker(
+            "ISSUE_CREATE",
+            {
+              ...res,
+              state: "SUCCESS"
+            }
+          );
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        }
+      }).catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });
+        postHogEventTracker(
+          "ISSUE_CREATE",
+          {
+            state: "FAILED"
+          }
+        );
       });
 
     if (!createMore) onFormSubmitClose();
@@ -219,13 +244,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     await issueDraftService
       .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
-      .then(() => {
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Draft Issue created successfully.",
         });
-
         handleClose();
         setActiveProject(null);
         setFormDirtyState(null);
@@ -249,7 +273,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     await issueDetailStore
       .updateIssue(workspaceSlug.toString(), activeProject, data.id, payload)
-      .then(() => {
+      .then((res) => {
         if (!createMore) onFormSubmitClose();
 
         setToastAlert({
@@ -257,6 +281,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Success!",
           message: "Issue updated successfully.",
         });
+        postHogEventTracker(
+          "ISSUE_UPDATE",
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -264,6 +295,12 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Error!",
           message: "Issue could not be updated. Please try again.",
         });
+        postHogEventTracker(
+          "ISSUE_UPDATE",
+          {
+            state: "FAILED"
+          }
+        );
       });
   };
 

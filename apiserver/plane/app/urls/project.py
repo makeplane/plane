@@ -65,7 +65,7 @@ urlpatterns = [
         name="project-member-invite",
     ),
     path(
-        "users/me/invitations/projects/",
+        "users/me/workspaces/<str:slug>/projects/invitations/",
         UserProjectInvitationsViewset.as_view(
             {
                 "get": "list",
@@ -75,7 +75,7 @@ urlpatterns = [
         name="user-project-invitations",
     ),
     path(
-        "workspaces/<str:slug>/projects/join/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/join/<uuid:pk>/",
         ProjectJoinEndpoint.as_view(),
         name="project-join",
     ),

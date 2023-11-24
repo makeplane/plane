@@ -1,5 +1,6 @@
-import { action, makeAutoObservable, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import posthog from "posthog-js";
+import { RootStore } from "./root";
 
 export interface ITrackEventStore {
   trackElement: string;
@@ -13,13 +14,14 @@ export interface ITrackEventStore {
 
 export class TrackEventStore implements ITrackEventStore {
   trackElement: string = "";
-
-  constructor() {
+  rootStore;
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       trackElement: observable,
       setTrackElement: action,
       postHogEventTracker: action,
     });
+    this.rootStore = _rootStore;
   }
 
   setTrackElement = (element: string) => {
@@ -33,6 +35,24 @@ export class TrackEventStore implements ITrackEventStore {
   ) => {
     try {
       console.log("POSTHOG_EVENT: ", eventName);
+      let extras: any = {
+        workspace_name: this.rootStore.workspace.currentWorkspace?.name ?? "",
+        workspace_id: this.rootStore.workspace.currentWorkspace?.id ?? "",
+        workspace_slug: this.rootStore.workspace.currentWorkspace?.slug ?? "",
+        project_name: this.rootStore.project.currentProjectDetails?.name ?? "",
+        project_id: this.rootStore.project.currentProjectDetails?.id ?? "",
+        project_identifier: this.rootStore.project.currentProjectDetails?.identifier ?? "",
+      };
+      if (["PROJECT_CREATE", "PROJECT_UPDATE"].includes(eventName)) {
+        const project_details: any = payload as object;
+        extras = {
+          ...extras,
+          project_name: project_details?.name ?? "",
+          project_id: project_details?.id ?? "",
+          project_identifier: project_details?.identifier ?? "",
+        };
+      }
+
       // if (group!.isGrouping === true) {
       //     posthog?.group(group!.groupType, group!.gorupId, {
       //       name: "PostHog",
@@ -47,6 +67,7 @@ export class TrackEventStore implements ITrackEventStore {
       // } else {
       posthog?.capture(eventName, {
         ...payload,
+        extras: extras,
         element: this.trackElement ?? "",
       });
       // }

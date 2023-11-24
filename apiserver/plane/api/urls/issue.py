@@ -15,27 +15,27 @@ urlpatterns = [
         name="issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:pk>/",
         IssueAPIEndpoint.as_view(),
         name="issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/",
         LabelAPIEndpoint.as_view(),
         name="label",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issue-labels/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/labels/<uuid:pk>/",
         LabelAPIEndpoint.as_view(),
         name="label",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/",
         IssueLinkAPIEndpoint.as_view(),
         name="link",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-links/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/links/<uuid:pk>/",
         IssueLinkAPIEndpoint.as_view(),
         name="link",
     ),
@@ -50,12 +50,12 @@ urlpatterns = [
         name="comment",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activites/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/",
         IssueActivityAPIEndpoint.as_view(),
         name="activity",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activites/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/activities/<uuid:pk>/",
         IssueActivityAPIEndpoint.as_view(),
         name="activity",
     ),

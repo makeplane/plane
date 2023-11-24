@@ -17,6 +17,16 @@ export class IssueArchiveService extends APIService {
       });
   }
 
+  async getV3ArchivedIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<any> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/archived-issues/`, {
+      params: queries,
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async unarchiveIssue(workspaceSlug: string, projectId: string, issueId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/unarchive/${issueId}/`)
       .then((response) => response?.data)

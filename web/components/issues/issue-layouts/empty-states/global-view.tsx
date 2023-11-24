@@ -15,7 +15,7 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { commandPalette: commandPaletteStore, project: projectStore, trackEvent: {setTrackElement} } = useMobxStore();
+  const { commandPalette: commandPaletteStore, project: projectStore, trackEvent: { setTrackElement } } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
@@ -43,8 +43,7 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
           primaryButton={{
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-            onClick: () => 
-            {
+            onClick: () => {
               setTrackElement("ALL_ISSUES_EMPTY_STATE")
               commandPaletteStore.toggleCreateIssueModal(true)
             }

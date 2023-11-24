@@ -35,7 +35,10 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, trackEvent: { postHogEventTracker } } = useMobxStore();
+  const {
+    user: { leaveProject },
+    trackEvent: { postHogEventTracker }
+  } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
 
@@ -57,8 +60,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
     if (data) {
       if (data.projectName === project?.name) {
         if (data.confirmLeave === "Leave Project") {
-          return projectStore
-            .leaveProject(workspaceSlug.toString(), project.id)
+          return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);

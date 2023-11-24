@@ -12,9 +12,10 @@ import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
+// types
+import { TUserWorkspaceRole } from "types";
 // constants
 import { ROLE } from "constants/workspace";
-import { TUserWorkspaceRole } from "types";
 
 type Props = {
   member: {
@@ -40,7 +41,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
   // store
   const {
     workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
-    user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings },
+    user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings, leaveWorkspace },
   } = useMobxStore();
   const isAdmin = currentWorkspaceRole === 20;
   // states
@@ -48,49 +49,69 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
   // hooks
   const { setToastAlert } = useToast();
 
+  const handleLeaveWorkspace = async () => {
+    if (!workspaceSlug || !currentUserSettings) return;
+
+    await leaveWorkspace(workspaceSlug.toString())
+      .then(() => {
+        if (currentUserSettings.workspace?.invites > 0) router.push("/invitations");
+        else router.push("/create-workspace");
+      })
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error",
+          message: err?.error || "Something went wrong. Please try again.",
+        })
+      );
+  };
+
   const handleRemoveMember = async () => {
     if (!workspaceSlug) return;
 
-    if (member.member)
-      await removeMember(workspaceSlug.toString(), member.id)
-        .then(() => {
-          const memberId = member.memberId;
+    await removeMember(workspaceSlug.toString(), member.id).catch((err) =>
+      setToastAlert({
+        type: "error",
+        title: "Error",
+        message: err?.error || "Something went wrong. Please try again.",
+      })
+    );
+  };
 
-          if (memberId === currentUser?.id && currentUserSettings) {
-            if (currentUserSettings.workspace?.invites > 0) router.push("/invitations");
-            else router.push("/create-workspace");
-          }
-        })
-        .catch((err) => {
-          setToastAlert({
-            type: "error",
-            title: "Error",
-            message: err?.error || "Something went wrong",
-          });
-        });
-    else
-      await deleteWorkspaceInvitation(workspaceSlug.toString(), member.id)
-        .then(() => {
-          setToastAlert({
-            type: "success",
-            title: "Success",
-            message: "Member removed successfully",
-          });
-        })
-        .catch((err) => {
-          setToastAlert({
-            type: "error",
-            title: "Error",
-            message: err?.error || "Something went wrong",
-          });
-        })
-        .finally(() => {
-          mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`, (prevData: any) => {
-            if (!prevData) return prevData;
+  const handleRemoveInvitation = async () => {
+    if (!workspaceSlug) return;
 
-            return prevData.filter((item: any) => item.id !== member.id);
-          });
-        });
+    await deleteWorkspaceInvitation(workspaceSlug.toString(), member.id)
+      .then(() =>
+        setToastAlert({
+          type: "success",
+          title: "Success",
+          message: "Invitation removed successfully.",
+        })
+      )
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error",
+          message: err?.error || "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() =>
+        mutate(`WORKSPACE_INVITATIONS_${workspaceSlug.toString()}`, (prevData: any) => {
+          if (!prevData) return prevData;
+
+          return prevData.filter((item: any) => item.id !== member.id);
+        })
+      );
+  };
+
+  const handleRemove = async () => {
+    if (member.member) {
+      const memberId = member.memberId;
+
+      if (memberId === currentUser?.id) await handleLeaveWorkspace();
+      else await handleRemoveMember();
+    } else await handleRemoveInvitation();
   };
 
   if (!currentWorkspaceMemberInfo) return null;
@@ -101,7 +122,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
         isOpen={removeMemberModal}
         onClose={() => setRemoveMemberModal(false)}
         data={member}
-        onSubmit={handleRemoveMember}
+        onSubmit={handleRemove}
       />
       <div className="group flex items-center justify-between px-3 py-4 hover:bg-custom-background-90">
         <div className="flex items-center gap-x-4 gap-y-2">

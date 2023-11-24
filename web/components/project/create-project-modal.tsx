@@ -149,8 +149,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         handleClose();
       })
       .catch((err) => {
-        Object.keys(err.data).map((key) =>
-        {
+        Object.keys(err.data).map((key) => {
           setToastAlert({
             type: "error",
             title: "Error!",
@@ -387,7 +386,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <WorkspaceMemberSelect
-                              value={workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id ===value)[0]}
+                              value={workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]}
                               onChange={onChange}
                               options={workspaceMembers || []}
                               placeholder="Select Lead"

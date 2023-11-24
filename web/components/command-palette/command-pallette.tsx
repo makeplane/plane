@@ -4,7 +4,6 @@ import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
 import { BulkDeleteIssuesModal } from "components/core";
@@ -30,7 +29,12 @@ export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
   // store
-  const { commandPalette, theme: themeStore, trackEvent: {setTrackElement} } = useMobxStore();
+  const {
+    commandPalette,
+    theme: { toggleSidebar },
+    user: { currentUser },
+    trackEvent: { setTrackElement }
+  } = useMobxStore();
   const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,
@@ -52,9 +56,6 @@ export const CommandPalette: FC = observer(() => {
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
   } = commandPalette;
-  const { toggleSidebar } = themeStore;
-
-  const { user } = useUser();
 
   const { setToastAlert } = useToast();
 
@@ -155,7 +156,7 @@ export const CommandPalette: FC = observer(() => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  if (!user) return null;
+  if (!currentUser) return null;
 
   return (
     <>
@@ -225,7 +226,7 @@ export const CommandPalette: FC = observer(() => {
         onClose={() => {
           toggleBulkDeleteIssueModal(false);
         }}
-        user={user}
+        user={currentUser}
       />
       <CommandModal />
     </>

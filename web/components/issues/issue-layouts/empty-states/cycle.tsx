@@ -62,8 +62,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           primaryButton={{
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-            onClick: () => 
-            {
+            onClick: () => {
               setTrackElement("CYCLE_EMPTY_STATE")
               commandPaletteStore.toggleCreateIssueModal(true)
             }
