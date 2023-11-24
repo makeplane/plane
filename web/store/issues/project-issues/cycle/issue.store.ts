@@ -49,6 +49,7 @@ export interface ICycleIssuesStore {
     data: IIssue,
     cycleId?: string | undefined
   ) => Promise<IIssue | undefined>;
+  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => Promise<IIssue>;
   removeIssueFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -92,6 +93,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       updateIssue: action,
       removeIssue: action,
       quickAddIssue: action,
+      addIssueToCycle: action,
       removeIssueFromCycle: action,
     });
 
@@ -183,18 +185,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
-        issues: [response.id],
-      });
-
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      _issues[cycleId] = { ..._issues[cycleId], ...{ [response.id]: response } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      const issueToCycle = await this.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
 
       return issueToCycle;
     } catch (error) {
@@ -290,6 +281,30 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       }
 
       return response;
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      throw error;
+    }
+  };
+
+  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => {
+    if (!cycleId) return undefined;
+
+    try {
+      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: [data.id],
+      });
+
+      let _issues = this.issues;
+      if (!_issues) _issues = {};
+      if (!_issues[cycleId]) _issues[cycleId] = {};
+      _issues[cycleId] = { ..._issues[cycleId], ...{ [data.id]: data } };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      return issueToCycle;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;

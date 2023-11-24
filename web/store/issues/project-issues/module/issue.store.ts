@@ -49,6 +49,7 @@ export interface IModuleIssuesStore {
     data: IIssue,
     moduleId?: string | undefined
   ) => Promise<IIssue | undefined>;
+  addIssueToModule: (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => Promise<IIssue>;
   removeIssueFromModule: (
     workspaceSlug: string,
     projectId: string,
@@ -92,6 +93,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       updateIssue: action,
       removeIssue: action,
       quickAddIssue: action,
+      addIssueToModule: action,
       removeIssueFromModule: action,
     });
 
@@ -183,18 +185,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
-        issues: [response.id],
-      });
-
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[moduleId]) _issues[moduleId] = {};
-      _issues[moduleId] = { ..._issues[moduleId], ...{ [response.id]: response } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      const issueToModule = await this.addIssueToModule(workspaceSlug, projectId, moduleId, response);
 
       return issueToModule;
     } catch (error) {
@@ -292,6 +283,30 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       }
 
       return response;
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
+      throw error;
+    }
+  };
+
+  addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, data: IIssue) => {
+    if (!moduleId) return undefined;
+
+    try {
+      const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: [data.id],
+      });
+
+      let _issues = this.issues;
+      if (!_issues) _issues = {};
+      if (!_issues[moduleId]) _issues[moduleId] = {};
+      _issues[moduleId] = { ..._issues[moduleId], ...{ [data.id]: data } };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      return issueToModule;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
