@@ -9,6 +9,7 @@ import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 import { UserProfileHeader } from "components/headers";
 import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
 import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
+import { ProfileIssuesAppliedFiltersRoot } from "components/issues";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -28,14 +29,12 @@ const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
     workspaceProfileIssuesFilter: { issueFilters, fetchFilters },
   }: RootStore = useMobxStore();
 
-  useSWR(workspaceSlug ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}` : null, async () => {
-    if (workspaceSlug) {
+  useSWR(workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}` : null, async () => {
+    if (workspaceSlug && userId) {
       await fetchFilters(workspaceSlug);
-      // await fetchIssues(workspaceSlug, getIssues ? "mutation" : "init-loader");
+      await fetchIssues(workspaceSlug, userId, "assigned", getIssues ? "mutation" : "init-loader");
     }
   });
-
-  console.log("issueFilters", issueFilters);
 
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
@@ -46,13 +45,16 @@ const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
           <Spinner />
         </div>
       ) : (
-        <div className="w-full h-full relative overflow-auto -z-1">
-          {activeLayout === "list" ? (
-            <ProfileIssuesListLayout />
-          ) : activeLayout === "kanban" ? (
-            <ProfileIssuesKanBanLayout />
-          ) : null}
-        </div>
+        <>
+          <ProfileIssuesAppliedFiltersRoot />
+          <div className="w-full h-full relative overflow-auto -z-1">
+            {activeLayout === "list" ? (
+              <ProfileIssuesListLayout />
+            ) : activeLayout === "kanban" ? (
+              <ProfileIssuesKanBanLayout />
+            ) : null}
+          </div>
+        </>
       )}
     </>
   );
