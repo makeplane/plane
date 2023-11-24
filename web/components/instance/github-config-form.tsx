@@ -56,8 +56,8 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
   const originURL = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
-    <>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-col grid-cols-1 lg:grid-cols-3 justify-between gap-x-12 gap-y-8 w-full">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Client ID</h4>
           <Controller
@@ -72,11 +72,22 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.GITHUB_CLIENT_ID)}
-                placeholder="Github Client ID"
+                placeholder="70a44354520df8bd9bcd"
                 className="rounded-md font-medium w-full"
               />
             )}
           />
+          <p className="text-xs text-custom-text-400">
+            You will get this from your{" "}
+            <a
+              href="https://github.com/settings/applications/new"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              GitHub OAuth application settings.
+            </a>
+          </p>
         </div>
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Client Secret</h4>
@@ -92,14 +103,23 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.GITHUB_CLIENT_SECRET)}
-                placeholder="Github Client Secret"
+                placeholder="9b0050f94ec1b744e32ce79ea4ffacd40d4119cb"
                 className="rounded-md font-medium w-full"
               />
             )}
           />
+          <p className="text-xs text-custom-text-400">
+            Your client secret is also found in your{" "}
+            <a
+              href="https://github.com/settings/applications/new"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              GitHub OAuth application settings.
+            </a>
+          </p>
         </div>
-      </div>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Origin URL</h4>
           <Button
@@ -117,16 +137,26 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
             <p className="font-medium text-sm">{originURL}</p>
             <Copy size={18} color="#B9B9B9" />
           </Button>
-          <p className="text-xs text-custom-text-400/60">*paste this URL in your Github console.</p>
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center p-2">
-            <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
+          <p className="text-xs text-custom-text-400">
+            We will auto-generate this. Paste this into the Authorization callback URL field{" "}
+            <a
+              href="https://github.com/settings/applications/new"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              here.
+            </a>
+          </p>
         </div>
       </div>
-    </>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center">
+          <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save Changes"}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
