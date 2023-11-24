@@ -33,8 +33,8 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
 
   //viewData
   viewFlags = {
-    enableQuickAdd: true,
-    enableIssueCreation: true,
+    enableQuickAdd: false,
+    enableIssueCreation: false,
     enableInlineEditing: true,
   };
 
