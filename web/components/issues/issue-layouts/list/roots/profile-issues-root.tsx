@@ -13,7 +13,7 @@ import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
 import { EProjectStore } from "store/command-palette.store";
 
-export const ListLayout: FC = observer(() => {
+export const ProfileIssuesListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as { workspaceSlug: string; userId: string };
 

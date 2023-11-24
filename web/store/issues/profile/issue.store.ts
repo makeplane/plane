@@ -51,13 +51,6 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   // service
   userService;
 
-  //viewData
-  viewFlags = {
-    enableQuickAdd: true,
-    enableIssueCreation: true,
-    enableInlineEditing: true,
-  };
-
   constructor(_rootStore: RootStore) {
     super(_rootStore);
 
@@ -70,6 +63,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       // computed
       getIssues: computed,
       getIssuesIds: computed,
+      viewFlags: computed,
       // action
       fetchIssues: action,
       createIssue: action,
@@ -115,6 +109,22 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     }
 
     return issues;
+  }
+
+  get viewFlags() {
+    if (this.currentUserIssueTab === "subscribed") {
+      return {
+        enableQuickAdd: false,
+        enableIssueCreation: false,
+        enableInlineEditing: false,
+      };
+    }
+
+    return {
+      enableQuickAdd: true,
+      enableIssueCreation: true,
+      enableInlineEditing: true,
+    };
   }
 
   fetchIssues = async (

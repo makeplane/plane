@@ -7,57 +7,12 @@ import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
-import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
-import { ProfileIssuesAppliedFiltersRoot } from "components/issues";
-import { Spinner } from "@plane/ui";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 // types
 import { NextPageWithLayout } from "types/app";
+import { ProfileIssuesPage } from "components/profile/profile-issues";
 
 const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query as {
-    workspaceSlug: string;
-    userId: string;
-  };
-
-  const {
-    workspaceProfileIssues: { loader, getIssues, fetchIssues },
-    workspaceProfileIssuesFilter: { issueFilters, fetchFilters },
-  }: RootStore = useMobxStore();
-
-  useSWR(workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}` : null, async () => {
-    if (workspaceSlug && userId) {
-      await fetchFilters(workspaceSlug);
-      await fetchIssues(workspaceSlug, userId, "assigned", getIssues ? "mutation" : "init-loader");
-    }
-  });
-
-  const activeLayout = issueFilters?.displayFilters?.layout || undefined;
-
-  return (
-    <>
-      {loader === "init-loader" ? (
-        <div className="flex justify-center items-center w-full h-full">
-          <Spinner />
-        </div>
-      ) : (
-        <>
-          <ProfileIssuesAppliedFiltersRoot />
-          <div className="w-full h-full relative overflow-auto -z-1">
-            {activeLayout === "list" ? (
-              <ProfileIssuesListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ProfileIssuesKanBanLayout />
-            ) : null}
-          </div>
-        </>
-      )}
-    </>
-  );
+  return <ProfileIssuesPage type="assigned" />;
 });
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {

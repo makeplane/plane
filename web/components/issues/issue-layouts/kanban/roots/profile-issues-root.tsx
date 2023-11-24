@@ -13,7 +13,7 @@ import { EProjectStore } from "store/command-palette.store";
 
 export interface IKanBanLayout {}
 
-export const KanBanLayout: React.FC = observer(() => {
+export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as { workspaceSlug: string; userId: string };
 
