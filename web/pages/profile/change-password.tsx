@@ -87,7 +87,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
         envConfig?.github_client_id
       );
 
-    if (!enableEmailPassword) router.push("/me/profile");
+    if (!enableEmailPassword) router.push("/profile");
     else setIsPageLoading(false);
   }, [envConfig, router]);
 
