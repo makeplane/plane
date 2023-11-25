@@ -36,7 +36,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
         tokens.length > 0 ? (
           <section className="pr-9 py-8 w-full overflow-y-auto">
             <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200 mb-2">
-              <h3 className="text-xl font-medium">API Tokens</h3>
+              <h3 className="text-xl font-medium">API tokens</h3>
               <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
                 Add API token
               </Button>

@@ -127,6 +127,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   value: 255,
                   message: "Title should be less than 255 characters",
                 },
+                validate: (val) => val.trim() !== "" || "Title is required",
               }}
               render={({ field: { value, onChange } }) => (
                 <Input

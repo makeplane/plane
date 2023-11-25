@@ -21,7 +21,7 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
-      <div className="group border-b border-custom-border-200 flex flex-col relative justify-center items-start py-4 hover:cursor-pointer">
+      <div className="group relative border-b border-custom-border-200 flex flex-col justify-center py-3 px-4">
         <Tooltip tooltipContent="Delete token">
           <button
             onClick={() => setDeleteModalOpen(true)}
@@ -30,8 +30,8 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
             <XCircle className="h-4 w-4 text-custom-text-400 hover:text-red-500" />
           </button>
         </Tooltip>
-        <div className="flex items-center px-4">
-          <span className="text-sm font-medium leading-6">{token.label}</span>
+        <div className="flex items-center w-4/5">
+          <h5 className="text-sm font-medium truncate">{token.label}</h5>
           <span
             className={`${
               token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-custom-text-400"
@@ -40,9 +40,9 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
             {token.is_active ? "Active" : "Expired"}
           </span>
         </div>
-        <div className="flex items-center px-4 w-full">
+        <div className="flex flex-col justify-center w-full mt-1">
           {token.description.trim() !== "" && (
-            <p className="text-sm mb-1 mr-3 font-medium leading-6 truncate max-w-[50%]">{token.description}</p>
+            <p className="text-sm mb-1 break-words max-w-[70%]">{token.description}</p>
           )}
           <p className="text-xs mb-1 leading-6 text-custom-text-400">
             {token.is_active
