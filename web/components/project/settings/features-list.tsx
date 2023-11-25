@@ -51,8 +51,10 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
+    workspace: { currentWorkspace },
     project: { currentProjectDetails, updateProject },
     user: { currentUser, currentProjectRole },
+    trackEvent: { setTrackElement, postHogEventTracker },
   } = useMobxStore();
   const isAdmin = currentProjectRole === 20;
   // hooks
@@ -87,6 +89,16 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
           <ToggleSwitch
             value={currentProjectDetails?.[feature.property as keyof IProject]}
             onChange={() => {
+              console.log(currentProjectDetails?.[feature.property as keyof IProject]);
+              setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
+              postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
+                workspace_id: currentWorkspace?.id,
+                workspace_slug: currentWorkspace?.slug,
+                project_id: currentProjectDetails?.id,
+                project_name: currentProjectDetails?.name,
+                project_identifier: currentProjectDetails?.identifier,
+                enabled: !currentProjectDetails?.[feature.property as keyof IProject]
+              });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],
               });

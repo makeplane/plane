@@ -14,7 +14,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const { theme: themeStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { theme: themeStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
 
   const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
 
@@ -34,23 +34,24 @@ export const WorkspaceSidebarQuickAction = observer(() => {
       />
 
       <div
-        className={`flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${
-          isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
-        }`}
+        className={`flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
+          }`}
       >
         <div
-          className={`relative flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
-            isSidebarCollapsed
-              ? "px-2 hover:bg-custom-sidebar-background-80"
-              : "px-3 shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
-          }`}
+          className={`relative flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${isSidebarCollapsed
+            ? "px-2 hover:bg-custom-sidebar-background-80"
+            : "px-3 shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
+            }`}
         >
           <button
             type="button"
-            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none ${
-              isSidebarCollapsed ? "justify-center" : ""
-            }`}
-            onClick={() => commandPaletteStore.toggleCreateIssueModal(true)}
+            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none ${isSidebarCollapsed ? "justify-center" : ""
+              }`}
+            onClick={() => {
+              setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
+              commandPaletteStore.toggleCreateIssueModal(true);
+            }
+            }
           >
             <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
             {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}
@@ -62,9 +63,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
 
               <button
                 type="button"
-                className={`flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5 ${
-                  isSidebarCollapsed ? "hidden" : "block"
-                }`}
+                className={`flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5 ${isSidebarCollapsed ? "hidden" : "block"
+                  }`}
               >
                 <ChevronDown
                   size={16}
@@ -73,9 +73,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
               </button>
 
               <div
-                className={`fixed h-10 pt-2 w-[203px] left-4 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto ${
-                  isSidebarCollapsed ? "top-[5.5rem]" : "top-24"
-                }`}
+                className={`fixed h-10 pt-2 w-[203px] left-4 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto ${isSidebarCollapsed ? "top-[5.5rem]" : "top-24"
+                  }`}
               >
                 <div className="w-full h-full">
                   <button
@@ -92,11 +91,10 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         </div>
 
         <button
-          className={`flex items-center justify-center rounded flex-shrink-0 p-2 outline-none ${
-            isSidebarCollapsed
-              ? "hover:bg-custom-sidebar-background-80"
-              : "shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
-          }`}
+          className={`flex items-center justify-center rounded flex-shrink-0 p-2 outline-none ${isSidebarCollapsed
+            ? "hover:bg-custom-sidebar-background-80"
+            : "shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
+            }`}
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >
           <Search className="h-4 w-4 text-custom-sidebar-text-300" />

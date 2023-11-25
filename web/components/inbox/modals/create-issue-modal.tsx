@@ -46,7 +46,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxIssueDetails: inboxIssueDetailsStore } = useMobxStore();
+  const { inboxIssueDetails: inboxIssueDetailsStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const {
     control,
@@ -70,6 +70,21 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
           router.push(`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${res.issue_inbox[0].id}`);
           handleClose();
         } else reset(defaultValues);
+        postHogEventTracker(
+          "ISSUE_CREATE",
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        );
+      }).catch((error) => {
+        console.log(error);
+        postHogEventTracker(
+          "ISSUE_CREATE",
+          {
+            state: "FAILED"
+          }
+        );
       });
   };
 
@@ -172,7 +187,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                       onClick={() => setCreateMore((prevData) => !prevData)}
                     >
                       <span className="text-xs">Create more</span>
-                      <ToggleSwitch value={createMore} onChange={() => {}} size="md" />
+                      <ToggleSwitch value={createMore} onChange={() => { }} size="md" />
                     </div>
                     <div className="flex items-center gap-2">
                       <Button variant="neutral-primary" size="sm" onClick={() => handleClose()}>

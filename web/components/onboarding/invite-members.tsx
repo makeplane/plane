@@ -166,8 +166,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                         key={key}
                         value={parseInt(key)}
                         className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                            active || selected ? "bg-onboarding-background-400/40" : ""
+                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${active || selected ? "bg-onboarding-background-400/40" : ""
                           } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
                         }
                       >

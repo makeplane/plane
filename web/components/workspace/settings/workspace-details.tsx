@@ -40,6 +40,7 @@ export const WorkspaceDetails: FC = observer(() => {
   const {
     workspace: { currentWorkspace, updateWorkspace },
     user: { currentWorkspaceRole },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
   const isAdmin = currentWorkspaceRole === 20;
   // hooks
@@ -66,14 +67,28 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        trackEvent("UPDATE_WORKSPACE", res);
+        postHogEventTracker(
+          'WORKSPACE_UPDATE',
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        )
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
         });
-      })
-      .catch((err) => console.error(err));
+      }).catch((err) => {
+        postHogEventTracker(
+          'WORKSPACE_UPDATE',
+          {
+            state: "FAILED"
+          }
+        );
+        console.error(err)
+      }
+      );
   };
 
   const handleRemoveLogo = () => {
@@ -262,10 +277,9 @@ export const WorkspaceDetails: FC = observer(() => {
                     id="url"
                     name="url"
                     type="url"
-                    value={`${
-                      typeof window !== "undefined" &&
+                    value={`${typeof window !== "undefined" &&
                       window.location.origin.replace("http://", "").replace("https://", "")
-                    }/${currentWorkspace.slug}`}
+                      }/${currentWorkspace.slug}`}
                     onChange={onChange}
                     ref={ref}
                     hasError={Boolean(errors.url)}

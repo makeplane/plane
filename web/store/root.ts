@@ -160,6 +160,8 @@ import { ModuleIssueFiltersStore, IModuleIssueFiltersStore } from "store/module-
 import { IMentionsStore, MentionsStore } from "store/editor";
 // pages
 import { PageStore, IPageStore } from "store/page.store";
+// event tracking
+import { TrackEventStore, ITrackEventStore } from "./event-tracker.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -261,6 +263,8 @@ export class RootStore {
 
   page: IPageStore;
 
+  trackEvent: ITrackEventStore;
+
   constructor() {
     this.instance = new InstanceStore(this);
 
@@ -357,5 +361,7 @@ export class RootStore {
     this.moduleIssueFilters = new ModuleIssueFiltersStore(this);
 
     this.page = new PageStore(this);
+
+    this.trackEvent = new TrackEventStore(this);
   }
 }

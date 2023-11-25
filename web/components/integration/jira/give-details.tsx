@@ -16,7 +16,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const {
@@ -190,7 +190,10 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                 <div>
                   <button
                     type="button"
-                    onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}
+                    onClick={() => {
+                      setTrackElement("JIRA_IMPORT_DETAIL");
+                      commandPaletteStore.toggleCreateProjectModal(true)
+                    }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
                     <Plus className="h-4 w-4 text-custom-text-200" />

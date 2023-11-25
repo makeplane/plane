@@ -323,3 +323,7 @@ ANALYTICS_BASE_API = os.environ.get("ANALYTICS_BASE_API", False)
 
 # Use Minio settings
 USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
+
+# Posthog settings
+POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
+POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
