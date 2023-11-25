@@ -5,22 +5,30 @@ import useSWR from "swr";
 import { Spinner } from "@plane/ui";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
 }
 
-export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
+export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
   // store
   const {
-    user: { fetchCurrentUser, fetchCurrentUserInstanceAdminStatus, fetchCurrentUserSettings },
+    user: {
+      currentUser,
+      currentUserError,
+      fetchCurrentUser,
+      fetchCurrentUserInstanceAdminStatus,
+      fetchCurrentUserSettings,
+      
+    },
     workspace: { fetchWorkspaces },
   } = useMobxStore();
   // router
   const router = useRouter();
   // fetching user information
-  const { data: currentUser, error } = useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
+  useSWR("CURRENT_USER_DETAILS", () => fetchCurrentUser(), {
     shouldRetryOnError: false,
   });
   // fetching current user instance admin status
@@ -36,7 +44,7 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
     shouldRetryOnError: false,
   });
 
-  if (!currentUser && !error) {
+  if (!currentUser && !currentUserError) {
     return (
       <div className="h-screen grid place-items-center p-4 bg-custom-background-100">
         <div className="flex flex-col items-center gap-3 text-center">
@@ -46,11 +54,11 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = (props) => {
     );
   }
 
-  if (error) {
+  if (currentUserError) {
     const redirectTo = router.asPath;
     router.push(`/?next=${redirectTo}`);
     return null;
   }
 
   return <>{children}</>;
-};
+});

@@ -10,15 +10,11 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Button } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
-// services
-import { AuthService } from "services/auth.service";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
 };
-
-const authService = new AuthService();
 
 export const DeactivateAccountModal: React.FC<Props> = (props) => {
   const { isOpen, onClose } = props;
@@ -28,7 +24,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
   const [isDeactivating, setIsDeactivating] = useState(false);
 
   const {
-    user: { deactivateAccount },
+    user: { deactivateAccount, signOut },
   } = useMobxStore();
 
   const router = useRouter();
@@ -46,8 +42,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
   const handleSwitchAccount = async () => {
     setSwitchingAccount(true);
 
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");

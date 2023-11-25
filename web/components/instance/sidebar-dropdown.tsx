@@ -12,8 +12,6 @@ import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-// services
-import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Tooltip } from "@plane/ui";
 
@@ -27,15 +25,13 @@ const PROFILE_LINKS = [
   },
 ];
 
-const authService = new AuthService();
-
 export const InstanceSidebarDropdown = observer(() => {
   const router = useRouter();
   // store
   const {
     theme: { sidebarCollapsed },
     workspace: { workspaceSlug },
-    user: { currentUser, currentUserSettings },
+    user: { signOut, currentUser, currentUserSettings },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
@@ -49,8 +45,7 @@ export const InstanceSidebarDropdown = observer(() => {
     "";
 
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");

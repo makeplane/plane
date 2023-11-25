@@ -4,8 +4,6 @@ import { Menu, Transition } from "@headlessui/react";
 import { LogIn, LogOut, MoveLeft, Plus, User, UserPlus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Tooltip } from "@plane/ui";
 import { Fragment } from "react";
@@ -29,8 +27,6 @@ const SIDEBAR_LINKS = [
   },
 ];
 
-const authService = new AuthService();
-
 export const ProfileLayoutSidebar = observer(() => {
   const router = useRouter();
 
@@ -41,7 +37,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     workspace: { workspaces },
-    user: { currentUser, currentUserSettings, isUserInstanceAdmin },
+    user: { currentUser, currentUserSettings, isUserInstanceAdmin, signOut },
   } = useMobxStore();
 
   // redirect url for normal mode
@@ -51,8 +47,7 @@ export const ProfileLayoutSidebar = observer(() => {
     "";
 
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
