@@ -10,8 +10,6 @@ import { Check, ChevronDown, LogOut, Plus, Settings, UserCircle2 } from "lucide-
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-// services
-import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Loader } from "@plane/ui";
 // types
@@ -46,8 +44,6 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 
-const authService = new AuthService();
-
 export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -55,8 +51,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed },
     workspace: { workspaces, currentWorkspace: activeWorkspace },
-    user: { currentUser, updateCurrentUser, isUserInstanceAdmin },
-    trackEvent: { setTrackElement }
+    user: { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut },
+    trackEvent: { setTrackElement },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
@@ -79,8 +75,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
 
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
