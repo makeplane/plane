@@ -41,7 +41,7 @@ export const ProfileLayoutSidebar = observer(() => {
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     workspace: { workspaces },
-    user: { currentUser, currentUserSettings },
+    user: { currentUser, currentUserSettings, isUserInstanceAdmin },
   } = useMobxStore();
 
   // redirect url for normal mode
@@ -135,6 +135,17 @@ export const ProfileLayoutSidebar = observer(() => {
                     <LogOut className="h-4 w-4 stroke-[1.5]" />
                     Sign out
                   </Menu.Item>
+                  {isUserInstanceAdmin && (
+                    <div className="p-2 pb-0 border-t border-custom-border-100">
+                      <Menu.Item as="button" type="button" className="w-full">
+                        <Link href="/god-mode">
+                          <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                            Enter God Mode
+                          </a>
+                        </Link>
+                      </Menu.Item>
+                    </div>
+                  )}
                 </Menu.Items>
               </Transition>
             </Menu>
