@@ -44,7 +44,7 @@ export const SummaryPopover: React.FC<Props> = (props) => {
       </button>
       {!sidePeekVisible && (
         <div
-          className="hidden group-hover/summary-popover:block z-10 max-h-80 w-64 shadow-custom-shadow-rg rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3"
+          className="hidden group-hover/summary-popover:block z-10 max-h-80 w-64 shadow-custom-shadow-rg rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 p-3 overflow-y-auto"
           ref={setPopperElement}
           style={summaryPopoverStyles.popper}
           {...summaryPopoverAttributes.popper}

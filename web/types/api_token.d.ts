@@ -5,10 +5,10 @@ export interface IApiToken {
   label: string;
   description: string;
   is_active: boolean;
-  last_used?: string;
-  token: string;
+  last_used: string;
+  token?: string;
   user_type: number;
-  expired_at?: string;
+  expired_at: string | null;
   created_by: string;
   updated_by: string;
   user: string;
