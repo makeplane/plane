@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
-import { Disclosure, Transition } from "@headlessui/react";
+import { Disclosure, Popover, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
@@ -15,11 +15,17 @@ import { LinkModal, LinksList, SidebarProgressStats } from "components/core";
 import { DeleteModuleModal, SidebarLeadSelect, SidebarMembersSelect } from "components/modules";
 import ProgressChart from "components/core/sidebar/progress-chart";
 // ui
+import { CustomRangeDatePicker } from "components/ui";
 import { CustomMenu, Loader, LayersIcon, CustomSelect, ModuleStatusIcon } from "@plane/ui";
 // icon
-import { AlertCircle, ChevronDown, ChevronRight, Info, LinkIcon, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, ChevronDown, ChevronRight, Info, LinkIcon, MoveRight, Plus, Trash2 } from "lucide-react";
 // helpers
-import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper";
+import {
+  isDateGreaterThanToday,
+  renderDateFormat,
+  renderShortDate,
+  renderShortMonthDate,
+} from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { linkDetails, IModule, ModuleLink } from "types";
@@ -62,7 +68,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { reset, control } = useForm({
+  const { setValue, watch, reset, control } = useForm({
     defaultValues,
   });
 
@@ -176,6 +182,56 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
           message: "Some error occurred",
         });
       });
+  };
+
+  const handleStartDateChange = async (date: string) => {
+    setValue("start_date", date);
+
+    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
+      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Unable to create module in past date. Please enter a valid date.",
+        });
+        return;
+      }
+
+      submitChanges({
+        start_date: renderDateFormat(`${watch("start_date")}`),
+        target_date: renderDateFormat(`${watch("target_date")}`),
+      });
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Module updated successfully.",
+      });
+    }
+  };
+
+  const handleEndDateChange = async (date: string) => {
+    setValue("target_date", date);
+
+    if (watch("start_date") && watch("target_date") && watch("start_date") !== "" && watch("start_date") !== "") {
+      if (!isDateGreaterThanToday(`${watch("target_date")}`)) {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Unable to create module in past date. Please enter a valid date.",
+        });
+        return;
+      }
+
+      submitChanges({
+        start_date: renderDateFormat(`${watch("start_date")}`),
+        target_date: renderDateFormat(`${watch("target_date")}`),
+      });
+      setToastAlert({
+        type: "success",
+        title: "Success!",
+        message: "Module updated successfully.",
+      });
+    }
   };
 
   useEffect(() => {
@@ -301,10 +357,71 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               )}
             />
 
-            <span className="text-sm text-custom-text-300 font-mediu cursor-default">
-              {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")} -{" "}
-              {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
-            </span>
+            <div className="relative flex h-full w-52 items-center gap-2.5">
+              <Popover className="flex h-full items-center justify-center rounded-lg">
+                <Popover.Button className="text-sm text-custom-text-300 font-medium cursor-default">
+                  {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
+                </Popover.Button>
+
+                <Transition
+                  as={React.Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
+                    <CustomRangeDatePicker
+                      value={watch("start_date") ? watch("start_date") : moduleDetails?.start_date}
+                      onChange={(val) => {
+                        if (val) {
+                          handleStartDateChange(val);
+                        }
+                      }}
+                      startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                      endDate={watch("target_date") ? `${watch("target_date")}` : null}
+                      maxDate={new Date(`${watch("target_date")}`)}
+                      selectsStart
+                    />
+                  </Popover.Panel>
+                </Transition>
+              </Popover>
+              <MoveRight className="h-4 w-4 text-custom-text-300" />
+              <Popover className="flex h-full items-center justify-center rounded-lg">
+                <>
+                  <Popover.Button className="text-sm text-custom-text-300 font-medium cursor-default">
+                    {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
+                  </Popover.Button>
+
+                  <Transition
+                    as={React.Fragment}
+                    enter="transition ease-out duration-200"
+                    enterFrom="opacity-0 translate-y-1"
+                    enterTo="opacity-100 translate-y-0"
+                    leave="transition ease-in duration-150"
+                    leaveFrom="opacity-100 translate-y-0"
+                    leaveTo="opacity-0 translate-y-1"
+                  >
+                    <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
+                      <CustomRangeDatePicker
+                        value={watch("target_date") ? watch("target_date") : moduleDetails?.target_date}
+                        onChange={(val) => {
+                          if (val) {
+                            handleEndDateChange(val);
+                          }
+                        }}
+                        startDate={watch("start_date") ? `${watch("start_date")}` : null}
+                        endDate={watch("target_date") ? `${watch("target_date")}` : null}
+                        minDate={new Date(`${watch("start_date")}`)}
+                        selectsEnd
+                      />
+                    </Popover.Panel>
+                  </Transition>
+                </>
+              </Popover>
+            </div>
           </div>
         </div>
 
@@ -438,14 +555,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </Disclosure>
           </div>
 
-            <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
-              <Disclosure>
-                {({ open }) => (
-                  <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
-                    <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
-                      <div className="flex items-center justify-start gap-2 text-sm">
-                        <span className="font-medium text-custom-text-200">Links</span>
-                      </div>
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
+            <Disclosure>
+              {({ open }) => (
+                <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
+                  <Disclosure.Button className="flex w-full items-center justify-between gap-2 p-1.5">
+                    <div className="flex items-center justify-start gap-2 text-sm">
+                      <span className="font-medium text-custom-text-200">Links</span>
+                    </div>
 
                     <div className="flex items-center gap-2.5">
                       <ChevronDown className={`h-3.5 w-3.5 ${open ? "rotate-180 transform" : ""}`} aria-hidden="true" />
