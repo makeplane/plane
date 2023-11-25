@@ -76,10 +76,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const isLoading = isArchived ? archivedIssueDetailStore.loader : issueDetailStore.loader;
 
   const issueUpdate = (_data: Partial<IIssue>) => {
-    if (handleIssue) {
-      handleIssue(_data);
-      issueDetailStore.updateIssue(workspaceSlug, projectId, issueId, _data);
-    }
+    if (handleIssue) handleIssue(_data);
   };
 
   const issueReactionCreate = (reaction: string) =>

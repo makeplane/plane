@@ -139,7 +139,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         )}
       </div>
       <span>{errors.name ? errors.name.message : null}</span>
-      <RichTextEditor
+      {/* <RichTextEditor
         dragDropEnabled
         cancelUploadImage={fileService.cancelUpload}
         uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
@@ -152,7 +152,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         customClassName="mt-0"
         mentionSuggestions={editorSuggestions.mentionSuggestions}
         mentionHighlights={editorSuggestions.mentionHighlights}
-      />
+      /> */}
       <IssueReaction
         issueReactions={issueReactions}
         user={user}
