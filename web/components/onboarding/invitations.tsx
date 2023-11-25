@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
 // components
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 
 // helpers
 import { truncateText } from "helpers/string.helper";
@@ -24,7 +24,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-const Invitations: React.FC<Props> = (props) => {
+export const Invitations: React.FC<Props> = (props) => {
   const { handleNextStep, setTryDiffAccount } = props;
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -169,5 +169,3 @@ const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDi
     </p>
   </div>
 );
-
-export default Invitations;

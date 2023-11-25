@@ -7,8 +7,7 @@ import { Camera, User2 } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { Button, Input } from "@plane/ui";
-import DummySidebar from "components/account/sidebar";
-import OnboardingStepIndicator from "components/account/step-indicator";
+import { OnboardingSidebar, OnboardingStepIndicator } from "components/onboarding";
 import { UserImageUploadModal } from "components/core";
 // types
 import { IUser } from "types";
@@ -25,6 +24,7 @@ const defaultValues: Partial<IUser> = {
 
 type Props = {
   user?: IUser;
+  setUserName: (name: string) => void;
 };
 
 const USE_CASES = [
@@ -41,8 +41,7 @@ const USE_CASES = [
 const fileService = new FileService();
 
 export const UserDetails: React.FC<Props> = observer((props) => {
-  const { user } = props;
-  // states
+  const { user, setUserName } = props;
   const [isRemoving, setIsRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   const {
@@ -90,7 +89,17 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   return (
     <div className="w-full h-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
       <div className="h-full fixed hidden lg:block w-1/5 max-w-[320px]">
-        <DummySidebar showProject workspaceName={workspaceName} />
+        <Controller
+          control={control}
+          name="first_name"
+          render={({ field: { value } }) => (
+            <OnboardingSidebar
+              userFullName={value.length === 0 ? undefined : value}
+              showProject
+              workspaceName={workspaceName}
+            />
+          )}
+        />
       </div>
       <Controller
         control={control}
@@ -155,7 +164,10 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                       type="text"
                       value={value}
                       autoFocus={true}
-                      onChange={onChange}
+                      onChange={(event) => {
+                        setUserName(event.target.value);
+                        onChange(event);
+                      }}
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your full name..."
