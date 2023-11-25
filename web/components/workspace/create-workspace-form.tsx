@@ -51,7 +51,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
   const router = useRouter();
 
-  const { workspace: workspaceStore } = useMobxStore();
+  const { workspace: workspaceStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -73,15 +73,12 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await workspaceStore
             .createWorkspace(formData)
             .then(async (res) => {
-              const payload = {
-                name: formData.name,
-                slug: formData.slug,
-                workspace_url: formData.url,
-                organization_size: formData.organization_size
-              };
-              trackEvent(
-                "CREATE_WORKSPACE",
-                payload
+              postHogEventTracker(
+                "WORKSPACE_CREATE",
+                {
+                  ...res,
+                  state: "SUCCESS"
+                },
               )
               setToastAlert({
                 type: "success",
@@ -92,11 +89,19 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() =>
+            {
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               })
+              postHogEventTracker(
+                "WORKSPACE_CREATE",
+                {
+                  state: "FAILED"
+                },
+              )
+            }
             );
         } else setSlugError(true);
       })
@@ -106,6 +111,12 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
+        postHogEventTracker(
+          "WORKSPACE_CREATE",
+          {
+            state: "FAILED"
+          },
+        )
       });
   };
 

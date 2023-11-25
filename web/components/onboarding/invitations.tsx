@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { CheckCircle2, Search } from "lucide-react";
 import useSWR, { mutate } from "swr";
-import { trackEvent } from "helpers/event-tracker.helper";
 // components
 import { Button, Loader } from "@plane/ui";
 
@@ -17,6 +15,8 @@ import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-key
 import { ROLE } from "constants/workspace";
 // types
 import { IWorkspaceMemberInvitation } from "types";
+// icons
+import { CheckCircle2, Search } from "lucide-react";
 
 type Props = {
   handleNextStep: () => void;
@@ -32,6 +32,7 @@ const Invitations: React.FC<Props> = (props) => {
   const {
     workspace: workspaceStore,
     user: { currentUser, updateCurrentUser },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
 
   const {
@@ -63,14 +64,17 @@ const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        trackEvent("WORKSPACE_USER_INVITE_ACCEPT", res);
+        postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", { ...res, state: "SUCCESS" });
         await mutateInvitations();
         await workspaceStore.fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
         await handleNextStep();
       })
-      .finally(() => setIsJoiningWorkspaces(false));
+      .catch((error) => {
+        console.log(error);
+        postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", { state: "FAILED" });
+      }).finally(() => setIsJoiningWorkspaces(false));
   };
 
   return invitations && invitations.length > 0 ? (
@@ -85,11 +89,10 @@ const Invitations: React.FC<Props> = (props) => {
               return (
                 <div
                   key={invitation.id}
-                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${
-                    isSelected
-                      ? "border-custom-primary-100"
-                      : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
-                  }`}
+                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${isSelected
+                    ? "border-custom-primary-100"
+                    : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
+                    }`}
                   onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                 >
                   <div className="flex-shrink-0">

@@ -8,7 +8,7 @@ import { EmptyState } from "components/common";
 import emptyIssue from "public/empty-state/issue.svg";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
-  const { commandPalette: commandPaletteStore } = useMobxStore();
+  const { commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
 
   return (
     <div className="h-full w-full grid place-items-center">
@@ -19,7 +19,10 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
         primaryButton={{
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => commandPaletteStore.toggleCreateIssueModal(true),
+          onClick: () => {
+            setTrackElement("VIEW_EMPTY_STATE");
+            commandPaletteStore.toggleCreateIssueModal(true)
+          }
         }}
       />
     </div>

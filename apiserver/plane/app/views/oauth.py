@@ -29,6 +29,7 @@ from plane.db.models import (
     ProjectMemberInvite,
     ProjectMember,
 )
+from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
 from plane.license.models import InstanceConfiguration
 from plane.license.utils.instance_value import get_configuration_value
@@ -285,29 +286,18 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-            try:
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                        },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": f"oauth-{medium}",
-                            },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
-                            },
-                            "event_type": "SIGN_IN",
-                        },
-                    )
-            except RequestException as e:
-                capture_exception(e)
+             
+            # Send event 
+            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium=medium.upper(), 
+                    first_time=False
+                )
 
             access_token, refresh_token = get_tokens_for_user(user)
 
@@ -428,29 +418,17 @@ class OauthEndpoint(BaseAPIView):
             workspace_member_invites.delete()
             project_member_invites.delete()
 
-            try:
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                        },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": f"oauth-{medium}",
-                            },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
-                            },
-                            "event_type": "SIGN_UP",
-                        },
-                    )
-            except RequestException as e:
-                capture_exception(e)
+            # Send event 
+            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium=medium.upper(),
+                    first_time=True
+                )
 
             SocialLoginConnection.objects.update_or_create(
                 medium=medium,

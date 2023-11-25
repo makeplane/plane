@@ -24,7 +24,7 @@ interface ICycleDelete {
 export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
   const { isOpen, handleClose, cycle, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, trackEvent: { postHogEventTracker } } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // states
@@ -36,11 +36,25 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
     setLoader(true);
     if (cycle?.id)
       try {
-        await cycleStore.removeCycle(workspaceSlug, projectId, cycle?.id);
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Cycle deleted successfully.",
+        await cycleStore.removeCycle(workspaceSlug, projectId, cycle?.id).then((res) => {
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Cycle deleted successfully.",
+          });
+          postHogEventTracker(
+            "CYCLE_DELETE",
+            {
+              state: "SUCCESS"
+            }
+          );
+        }).catch((error) => {
+          postHogEventTracker(
+            "CYCLE_DELETE",
+            {
+              state: "FAILED"
+            }
+          );
         });
 
         if (cycleId) router.replace(`/${workspaceSlug}/projects/${projectId}/cycles`);
