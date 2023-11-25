@@ -149,38 +149,6 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: ${{ job.status == 'success'  }}
-        id: slackSuccess
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "repo_name": "${{ github.repository }}",
-              "redirect_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "action_name": "${{ github.workflow }}",
-              "job_name": "${{ github.job }}",
-              "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.pull_request.title }} "
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: ${{ job.status == 'failure'  }}
-        id: slackFailed
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "repo_name": "${{ github.repository }}",
-              "redirect_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "action_name": "${{ github.workflow }}",
-              "job_name": "${{ github.job }}",
-              "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.pull_request.title }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
   branch_build_push_backend:
     runs-on: ubuntu-20.04
     needs: [branch_build_and_push]
@@ -210,38 +178,6 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: ${{ job.status == 'success'  }}
-        id: slackSuccess
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "repo_name": "${{ github.repository }}",
-              "redirect_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "action_name": "${{ github.workflow }}",
-              "job_name": "${{ github.job }}",
-              "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.pull_request.title }} "
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: ${{ job.status == 'failure'  }}
-        id: slackFailed
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "repo_name": "${{ github.repository }}",
-              "redirect_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "action_name": "${{ github.workflow }}",
-              "job_name": "${{ github.job }}",
-              "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.pull_request.title }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
@@ -273,35 +209,3 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: ${{ job.status == 'success'  }}
-        id: slackSuccess
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "repo_name": "${{ github.repository }}",
-              "redirect_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "action_name": "${{ github.workflow }}",
-              "job_name": "${{ github.job }}",
-              "status": "✅ ${{ job.status }}",
-              "message": "${{ github.event.pull_request.title }} "
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
-      - name: Send GitHub Action trigger data to Slack workflow
-        if: ${{ job.status == 'failure'  }}
-        id: slackFailed
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "repo_name": "${{ github.repository }}",
-              "redirect_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-              "action_name": "${{ github.workflow }}",
-              "job_name": "${{ github.job }}",
-              "status": "❌ ${{ job.status }}",
-              "message": "${{ github.event.pull_request.title }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_GITHUB_BUILD_WEBHOOK }}
