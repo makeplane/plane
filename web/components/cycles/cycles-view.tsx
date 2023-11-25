@@ -10,6 +10,8 @@ import { Loader } from "@plane/ui";
 // types
 import { TCycleLayout } from "types";
 
+import dateSort from "./date-sort";
+
 export interface ICyclesView {
   filter: "all" | "current" | "upcoming" | "draft" | "completed" | "incomplete";
   layout: TCycleLayout;
@@ -32,12 +34,12 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
 
   const cyclesList =
     filter === "completed"
-      ? cycleStore.projectCompletedCycles
+      ? cycleStore.projectCompletedCycles.sort(dateSort)
       : filter === "draft"
-      ? cycleStore.projectDraftCycles
+      ? cycleStore.projectDraftCycles.sort(dateSort)
       : filter === "upcoming"
-      ? cycleStore.projectUpcomingCycles
-      : cycleStore.projectCycles;
+      ? cycleStore.projectUpcomingCycles.sort(dateSort)
+      : cycleStore.projectCycles.sort(dateSort);
 
   return (
     <>
