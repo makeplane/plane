@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
-import { BrainCog, Cog, Lock, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
@@ -11,26 +11,32 @@ const INSTANCE_ADMIN_LINKS = [
   {
     Icon: Cog,
     name: "General",
-    description: "General settings here",
+    description: "Identify your instances and get key details",
     href: `/god-mode`,
   },
   {
     Icon: Mail,
     name: "Email",
-    description: "Email related settings will go here",
+    description: "Set up emails to your users",
     href: `/god-mode/email`,
   },
   {
     Icon: Lock,
-    name: "Authorization",
-    description: "Autorization",
+    name: "SSO and OAuth",
+    description: "Configure your Google and GitHub SSOs",
     href: `/god-mode/authorization`,
   },
   {
     Icon: BrainCog,
-    name: "OpenAI",
-    description: "OpenAI configurations",
-    href: `/god-mode/openai`,
+    name: "Artificial intelligence",
+    description: "Configure your OpenAI creds",
+    href: `/god-mode/ai`,
+  },
+  {
+    Icon: Image,
+    name: "Images in Plane",
+    description: "Allow third-party image libraries",
+    href: `/god-mode/image`,
   },
 ];
 
@@ -68,7 +74,9 @@ export const InstanceAdminSidebarMenu = () => {
                         {item.name}
                       </span>
                       <span
-                        className={`text-xs ${isActive ? "text-custom-primary-100" : "text-custom-sidebar-text-300"}`}
+                        className={`text-[10px] ${
+                          isActive ? "text-custom-primary-100" : "text-custom-sidebar-text-300"
+                        }`}
                       >
                         {item.description}
                       </span>

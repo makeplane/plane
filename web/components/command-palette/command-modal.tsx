@@ -62,6 +62,7 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateIssueModal,
       toggleCreateProjectModal,
     },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
 
   // router
@@ -273,6 +274,7 @@ export const CommandModal: React.FC = observer(() => {
                           <Command.Item
                             onSelect={() => {
                               closePalette();
+                              setTrackElement("COMMAND_PALETTE");
                               toggleCreateIssueModal(true);
                             }}
                             className="focus:bg-custom-background-80"
@@ -290,6 +292,7 @@ export const CommandModal: React.FC = observer(() => {
                             <Command.Item
                               onSelect={() => {
                                 closePalette();
+                                setTrackElement("COMMAND_PALETTE");
                                 toggleCreateProjectModal(true);
                               }}
                               className="focus:outline-none"

@@ -58,6 +58,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const {
     user: { currentProjectRole },
     workspaceMember: { workspaceMembers },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
 
   const {
@@ -85,18 +86,30 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
 
     await projectMemberService
       .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
-      .then(() => {
+      .then((res) => {
         onSuccess();
         onClose();
-        trackEvent("PROJECT_MEMBER_INVITE");
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Member added successfully",
         });
+        postHogEventTracker(
+          'PROJECT_MEMBER_INVITE',
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        );
       })
       .catch((error) => {
         console.log(error);
+        postHogEventTracker(
+          'PROJECT_MEMBER_INVITE',
+          {
+            state: "FAILED",
+          }
+        );
       })
       .finally(() => {
         reset(defaultValues);

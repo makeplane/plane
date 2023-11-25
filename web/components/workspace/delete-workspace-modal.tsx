@@ -12,7 +12,6 @@ import useToast from "hooks/use-toast";
 import { Button, Input } from "@plane/ui";
 // types
 import type { IWorkspace } from "types";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -30,7 +29,7 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
 
   const router = useRouter();
 
-  const { workspace: workspaceStore } = useMobxStore();
+  const { workspace: workspaceStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -60,14 +59,16 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
       .deleteWorkspace(data.slug)
       .then((res) => {
         handleClose();
-        console.log('DELETE WORKPSACE', res);
         router.push("/");
         const payload = {
           slug: data.slug
         };
-        trackEvent(
-          'DELETE_WORKSPACE',
-          payload
+        postHogEventTracker(
+          'WORKSPACE_DELETE',
+          {
+            res,
+            state: "SUCCESS"
+          }
         );
         setToastAlert({
           type: "success",
@@ -76,11 +77,19 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
         });
       })
       .catch(() =>
+      {
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Something went wrong. Please try again later.",
         })
+        postHogEventTracker(
+          'WORKSPACE_DELETE',
+          {
+            state: "FAILED"
+          }
+        );
+      }
       );
   };
 

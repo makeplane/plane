@@ -85,12 +85,17 @@ type Props = {
   control?: Control<IWorkspace, any>;
   setValue?: UseFormSetValue<IWorkspace>;
   watch?: UseFormWatch<IWorkspace>;
+  userFullName?: string;
 };
 var timer: number = 0;
 var lastWorkspaceName: string = "";
-const DummySidebar: React.FC<Props> = (props) => {
-  const { workspaceName, showProject, control, setValue, watch } = props;
-  const { workspace: workspaceStore, user: userStore } = useMobxStore();
+
+export const OnboardingSidebar: React.FC<Props> = (props) => {
+  const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
+  const {
+    workspace: workspaceStore,
+    user: { currentUser },
+  } = useMobxStore();
   const workspace = workspaceStore.workspaces ? workspaceStore.workspaces[0] : null;
 
   const { resolvedTheme } = useTheme();
@@ -148,12 +153,12 @@ const DummySidebar: React.FC<Props> = (props) => {
                     >
                       <div className="flex flex-shrink-0">
                         <Avatar
-                          name={value.length > 0 ? value[0].toLocaleUpperCase() : "N"}
+                          name={value.length > 0 ? value : "New Workspace"}
                           src={""}
                           size={30}
                           shape="square"
                           fallbackBackgroundColor="black"
-                          className="!text-base"
+                          className="!text-base capitalize"
                         />
                       </div>
 
@@ -165,11 +170,12 @@ const DummySidebar: React.FC<Props> = (props) => {
                 <div className="flex transition-all w-full border border-transparent items-center gap-y-2 px-4 pt-6 truncate">
                   <div className="flex flex-shrink-0">
                     <Avatar
-                      name={value.length > 0 ? value : workspace ? workspace.name[0].toLocaleUpperCase() : "N"}
+                      name={value.length > 0 ? value : workspace ? workspace.name : "New Workspace"}
                       src={""}
                       size={24}
                       shape="square"
-                      className="!text-base"
+                      fallbackBackgroundColor="black"
+                      className="!text-base capitalize"
                     />
                   </div>
                   <div className="w-full mx-2 items-center flex justify-between flex-shrink truncate">
@@ -178,12 +184,12 @@ const DummySidebar: React.FC<Props> = (props) => {
                   </div>
                   <div className="flex flex-shrink-0">
                     <Avatar
-                      name={"N"}
-                      src={workspace && workspace.logo ? workspace.logo : ""}
+                      name={currentUser?.email}
+                      src={currentUser?.avatar}
                       size={24}
                       shape="square"
                       fallbackBackgroundColor="#FCBE1D"
-                      className="!text-base"
+                      className="!text-base capitalize"
                     />
                   </div>
                 </div>
@@ -194,11 +200,12 @@ const DummySidebar: React.FC<Props> = (props) => {
           <div className="flex transition-all w-full items-center gap-y-2 px-4 pt-6 truncate">
             <div className="flex flex-shrink-0">
               <Avatar
-                name={workspace ? workspace.name[0].toLocaleUpperCase() : "N"}
+                name={workspace ? workspace.name : "New Workspace"}
                 src={""}
                 size={24}
                 shape="square"
-                className="!text-base"
+                fallbackBackgroundColor="black"
+                className="!text-base capitalize"
               />
             </div>
             <div className="w-full mx-2 items-center flex justify-between flex-shrink truncate">
@@ -207,12 +214,12 @@ const DummySidebar: React.FC<Props> = (props) => {
             </div>
             <div className="flex flex-shrink-0">
               <Avatar
-                name={"N"}
-                src={workspace && workspace.logo ? workspace.logo : ""}
+                name={userFullName ?? currentUser?.email}
+                src={currentUser?.avatar}
                 size={24}
                 shape="square"
                 fallbackBackgroundColor="#FCBE1D"
-                className="!text-base"
+                className="!text-base capitalize"
               />
             </div>
           </div>
@@ -286,5 +293,3 @@ const DummySidebar: React.FC<Props> = (props) => {
     </div>
   );
 };
-
-export default DummySidebar;

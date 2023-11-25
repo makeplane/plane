@@ -30,6 +30,7 @@ export const ProjectSidebarList: FC = observer(() => {
     theme: { sidebarCollapsed },
     project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
     commandPalette: { toggleCreateProjectModal },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
   // router
   const router = useRouter();
@@ -111,9 +112,8 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={`h-full overflow-y-auto px-4 space-y-2 ${
-          isScrolled ? "border-t border-custom-sidebar-border-300" : ""
-        }`}
+        className={`h-full overflow-y-auto px-4 space-y-2 ${isScrolled ? "border-t border-custom-sidebar-border-300" : ""
+          }`}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
@@ -140,6 +140,7 @@ export const ProjectSidebarList: FC = observer(() => {
                             <button
                               className="group-hover:opacity-100 opacity-0"
                               onClick={() => {
+                                setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK")
                                 setIsFavoriteProjectCreate(true);
                                 setIsProjectModalOpen(true);
                               }}
@@ -262,7 +263,11 @@ export const ProjectSidebarList: FC = observer(() => {
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
-            onClick={() => toggleCreateProjectModal(true)}
+            onClick={() => {
+              setTrackElement("APP_SIDEBAR");
+              toggleCreateProjectModal(true)
+            }
+            }
           >
             <Plus className="h-5 w-5" />
             {!isCollapsed && "Add Project"}
