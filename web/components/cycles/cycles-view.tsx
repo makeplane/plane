@@ -32,14 +32,16 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     workspaceSlug && projectId && filter ? () => cycleStore.fetchCycles(workspaceSlug, projectId, filter) : null
   );
 
-  const cyclesList =
+  let cyclesList =
     filter === "completed"
-      ? cycleStore.projectCompletedCycles.sort(dateSort)
+      ? cycleStore.projectCompletedCycles
       : filter === "draft"
-      ? cycleStore.projectDraftCycles.sort(dateSort)
+      ? cycleStore.projectDraftCycles
       : filter === "upcoming"
-      ? cycleStore.projectUpcomingCycles.sort(dateSort)
-      : cycleStore.projectCycles.sort(dateSort);
+      ? cycleStore.projectUpcomingCycles
+      : cycleStore.projectCycles;
+
+  cyclesList = cyclesList.sort(dateSort);
 
   return (
     <>
