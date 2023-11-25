@@ -140,7 +140,7 @@ class UserStore implements IUserStore {
     this.workspaceService = new WorkspaceService();
     this.projectService = new ProjectService();
     this.projectMemberService = new ProjectMemberService();
-    this.authService= new AuthService();
+    this.authService = new AuthService();
   }
 
   get currentWorkspaceMemberInfo() {

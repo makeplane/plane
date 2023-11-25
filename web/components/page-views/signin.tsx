@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
 import { Lightbulb } from "lucide-react";
-import { mutate } from "swr";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -88,7 +87,6 @@ export const SignInView = observer(() => {
 
   const mutateUserInfo = useCallback(() => {
     fetchCurrentUser().then((user) => {
-      mutate("CURRENT_USER_DETAILS", user);
       handleLoginRedirection(user);
     });
   }, [fetchCurrentUser, handleLoginRedirection]);
