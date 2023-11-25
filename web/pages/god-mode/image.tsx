@@ -10,31 +10,29 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceGeneralForm } from "components/instance";
+import { InstanceImageConfigForm } from "components/instance/image-config-form";
 
-const InstanceAdminPage: NextPageWithLayout = observer(() => {
+const InstanceAdminImagePage: NextPageWithLayout = observer(() => {
   // store
   const {
-    instance: { fetchInstanceInfo, instance },
+    instance: { fetchInstanceConfigurations, formattedConfig },
   } = useMobxStore();
 
-  useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
+  useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
-    <div className="flex flex-col gap-8 my-8 mx-12">
+    <div className="flex flex-col gap-8 my-8 mx-12 w-4/5">
       <div className="pb-3 mb-2 border-b border-custom-border-100">
-        <div className="text-custom-text-100 font-medium text-xl pb-1">ID your instance easily</div>
+        <div className="text-custom-text-100 font-medium text-xl pb-1">Third-party image libraries</div>
         <div className="text-custom-text-300 font-normal text-sm">
-          Change the name of your instance and instance admin e-mail addresses. If you have a paid subscription, you
-          will find your license key here.
+          Let your users search and choose images from third-party libraries
         </div>
       </div>
-      {instance ? (
-        <InstanceGeneralForm instance={instance} />
+      {formattedConfig ? (
+        <InstanceImageConfigForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4">
           <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="50%" />
           <Loader.Item height="50px" width="25%" />
         </Loader>
       )}
@@ -42,8 +40,8 @@ const InstanceAdminPage: NextPageWithLayout = observer(() => {
   );
 });
 
-InstanceAdminPage.getLayout = function getLayout(page: ReactElement) {
+InstanceAdminImagePage.getLayout = function getLayout(page: ReactElement) {
   return <InstanceAdminLayout>{page}</InstanceAdminLayout>;
 };
 
-export default InstanceAdminPage;
+export default InstanceAdminImagePage;

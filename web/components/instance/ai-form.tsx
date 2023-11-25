@@ -9,17 +9,16 @@ import useToast from "hooks/use-toast";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 
-export interface IInstanceOpenAIForm {
+export interface IInstanceAIForm {
   config: IFormattedInstanceConfiguration;
 }
 
-export interface OpenAIFormValues {
-  OPENAI_API_BASE: string;
+export interface AIFormValues {
   OPENAI_API_KEY: string;
   GPT_ENGINE: string;
 }
 
-export const InstanceOpenAIForm: FC<IInstanceOpenAIForm> = (props) => {
+export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
   const { config } = props;
   // store
   const { instance: instanceStore } = useMobxStore();
@@ -30,16 +29,15 @@ export const InstanceOpenAIForm: FC<IInstanceOpenAIForm> = (props) => {
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<OpenAIFormValues>({
+  } = useForm<AIFormValues>({
     defaultValues: {
-      OPENAI_API_BASE: config["OPENAI_API_BASE"],
       OPENAI_API_KEY: config["OPENAI_API_KEY"],
       GPT_ENGINE: config["GPT_ENGINE"],
     },
   });
 
-  const onSubmit = async (formData: OpenAIFormValues) => {
-    const payload: Partial<OpenAIFormValues> = { ...formData };
+  const onSubmit = async (formData: AIFormValues) => {
+    const payload: Partial<AIFormValues> = { ...formData };
 
     await instanceStore
       .updateInstanceConfigurations(payload)
@@ -47,64 +45,15 @@ export const InstanceOpenAIForm: FC<IInstanceOpenAIForm> = (props) => {
         setToastAlert({
           title: "Success",
           type: "success",
-          message: "Open AI Settings updated successfully",
+          message: "AI Settings updated successfully",
         })
       )
       .catch((err) => console.error(err));
   };
 
   return (
-    <div className="flex flex-col gap-8 m-8 w-4/5">
-      <div className="pb-2 mb-2 border-b border-custom-border-100">
-        <div className="text-custom-text-100 font-medium text-lg">OpenAI</div>
-        <div className="text-custom-text-300 font-normal text-sm">
-          AI is everywhere make use it as much as you can! <a href="#" className="text-custom-primary-100">Learn more.</a>
-        </div>
-      </div>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
-        <div className="flex flex-col gap-1">
-          <h4 className="text-sm">OpenAI API Base</h4>
-          <Controller
-            control={control}
-            name="OPENAI_API_BASE"
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="OPENAI_API_BASE"
-                name="OPENAI_API_BASE"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.OPENAI_API_BASE)}
-                placeholder="OpenAI API Base"
-                className="rounded-md font-medium w-full"
-              />
-            )}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <h4 className="text-sm">OpenAI API Key</h4>
-          <Controller
-            control={control}
-            name="OPENAI_API_KEY"
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="OPENAI_API_KEY"
-                name="OPENAI_API_KEY"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.OPENAI_API_KEY)}
-                placeholder="OpenAI API Key"
-                className="rounded-md font-medium w-full"
-              />
-            )}
-          />
-        </div>
-      </div>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
+    <>
+      <div className="grid grid-col grid-cols-1 lg:grid-cols-3 items-center justify-between gap-x-16 gap-y-8 w-full">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">GPT Engine</h4>
           <Controller
@@ -119,11 +68,54 @@ export const InstanceOpenAIForm: FC<IInstanceOpenAIForm> = (props) => {
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.GPT_ENGINE)}
-                placeholder="GPT Engine"
+                placeholder="gpt-3.5-turbo"
                 className="rounded-md font-medium w-full"
               />
             )}
           />
+          <p className="text-xs text-custom-text-400">
+            Choose an OpenAI engine.{" "}
+            <a
+              href="https://platform.openai.com/docs/models/overview"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              Learn more
+            </a>
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <h4 className="text-sm">API Key</h4>
+          <Controller
+            control={control}
+            name="OPENAI_API_KEY"
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="OPENAI_API_KEY"
+                name="OPENAI_API_KEY"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.OPENAI_API_KEY)}
+                placeholder="sk-asddassdfasdefqsdfasd23das3dasdcasd"
+                className="rounded-md font-medium w-full"
+              />
+            )}
+          />
+          <p className="text-xs text-custom-text-400">
+            You will find your API key{" "}
+            <a
+              href="https://platform.openai.com/api-keys"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              here.
+            </a>
+          </p>
         </div>
       </div>
 
@@ -132,6 +124,6 @@ export const InstanceOpenAIForm: FC<IInstanceOpenAIForm> = (props) => {
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
       </div>
-    </div>
+    </>
   );
 };
