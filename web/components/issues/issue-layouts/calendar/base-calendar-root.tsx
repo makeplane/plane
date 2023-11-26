@@ -88,7 +88,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               }
               handleRemoveFromView={
                 issueActions[EIssueActions.REMOVE]
-                  ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.UPDATE)
+                  ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
                   : undefined
               }
             />
