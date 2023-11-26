@@ -15,19 +15,33 @@ import { APITokenService } from "services/api_token.service";
 import { NextPageWithLayout } from "types/app";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const apiTokenService = new APITokenService();
 
-const ApiTokensPage: NextPageWithLayout = () => {
+const ApiTokensPage: NextPageWithLayout = observer(() => {
   // states
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false);
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // mobx store
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
 
-  const { data: tokens } = useSWR(workspaceSlug ? API_TOKENS_LIST(workspaceSlug.toString()) : null, () =>
-    workspaceSlug ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
+  const { data: tokens } = useSWR(
+    workspaceSlug && currentWorkspaceRole === 20 ? API_TOKENS_LIST(workspaceSlug.toString()) : null,
+    () => (workspaceSlug && currentWorkspaceRole === 20 ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null)
   );
+
+  if (currentWorkspaceRole !== 20)
+    return (
+      <div className="h-full w-full flex justify-center mt-10 p-4">
+        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      </div>
+    );
 
   return (
     <>
@@ -59,7 +73,7 @@ const ApiTokensPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 ApiTokensPage.getLayout = function getLayout(page: React.ReactElement) {
   return (

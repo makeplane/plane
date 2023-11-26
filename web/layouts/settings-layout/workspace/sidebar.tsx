@@ -45,12 +45,12 @@ export const WorkspaceSettingsSidebar = () => {
     {
       label: "Imports",
       href: `/${workspaceSlug}/settings/imports`,
-      access: EUserWorkspaceRoles.GUEST,
+      access: EUserWorkspaceRoles.ADMIN,
     },
     {
       label: "Exports",
       href: `/${workspaceSlug}/settings/exports`,
-      access: EUserWorkspaceRoles.GUEST,
+      access: EUserWorkspaceRoles.ADMIN,
     },
     {
       label: "Webhooks",
@@ -58,9 +58,9 @@ export const WorkspaceSettingsSidebar = () => {
       access: EUserWorkspaceRoles.ADMIN,
     },
     {
-      label: "API Tokens",
+      label: "API tokens",
       href: `/${workspaceSlug}/settings/api-tokens`,
-      access: EUserWorkspaceRoles.GUEST,
+      access: EUserWorkspaceRoles.ADMIN,
     },
   ];
 
