@@ -79,7 +79,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
   // states
   const [step, setStep] = useState<TTourSteps>("welcome");
 
-  const { user: userStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { user: userStore, commandPalette: commandPaletteStore, trackEvent: {setTrackElement} } = useMobxStore();
   const user = userStore.currentUser;
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
@@ -157,6 +157,7 @@ export const TourRoot: React.FC<Props> = observer((props) => {
                     variant="primary"
                     onClick={() => {
                       onComplete();
+                      setTrackElement("ONBOARDING_TOUR")
                       commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                   >

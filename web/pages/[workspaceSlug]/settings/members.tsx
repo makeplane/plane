@@ -26,6 +26,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   // store
   const {
     workspaceMember: { inviteMembersToWorkspace },
+    trackEvent: { postHogEventTracker, setTrackElement }
   } = useMobxStore();
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -37,9 +38,9 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     if (!workspaceSlug) return;
 
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(async () => {
+      .then(async (res) => {
         setInviteModal(false);
-        trackEvent("WORKSPACE_USER_INVITE");
+        postHogEventTracker("WORKSPACE_USER_INVITE", { ...res, state: "SUCCESS" });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -47,7 +48,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         });
       })
       .catch((err) => {
-        trackEvent("WORKSPACE_USER_INVITE/FAIL");
+        postHogEventTracker("WORKSPACE_USER_INVITE", { state: "FAILED" });
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -78,7 +79,11 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
+          <Button variant="primary" size="sm" onClick={() => {
+            setTrackElement("WORKSPACE_SETTINGS_MEMBERS_PAGE_HEADER");
+            setInviteModal(true)
+          }
+          }>
             Add Member
           </Button>
         </div>

@@ -40,7 +40,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     projectLabel: { projectLabels },
     projectState: projectStateStore,
     commandPalette: commandPaletteStore,
-
+    trackEvent: { setTrackElement },
     cycleIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
@@ -191,7 +191,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
             Analytics
           </Button>
           <Button
-            onClick={() => commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE)}
+            onClick={() => {
+              setTrackElement("CYCLE_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+            }}
             size="sm"
             prependIcon={<Plus />}
           >

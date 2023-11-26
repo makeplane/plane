@@ -9,7 +9,10 @@ import emptyIssue from "public/empty-state/issue.svg";
 import { EProjectStore } from "store/command-palette.store";
 
 export const ProjectEmptyState: React.FC = observer(() => {
-  const { commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   return (
     <div className="h-full w-full grid place-items-center">
@@ -20,7 +23,10 @@ export const ProjectEmptyState: React.FC = observer(() => {
         primaryButton={{
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT),
+          onClick: () => {
+            setTrackElement("PROJECT_EMPTY_STATE");
+            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+          },
         }}
       />
     </div>

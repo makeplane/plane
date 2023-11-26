@@ -13,7 +13,10 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
   const router = useRouter();
   const { viewId } = router.query as { viewId: string };
 
-  const { commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   return (
     <div className="h-full w-full grid place-items-center">
@@ -24,7 +27,10 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
         primaryButton={{
           text: "New issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-          onClick: () => commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW),
+          onClick: () => {
+            setTrackElement("VIEW_EMPTY_STATE");
+            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+          },
         }}
       />
     </div>

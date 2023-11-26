@@ -32,6 +32,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     projectState: projectStateStore,
     inbox: inboxStore,
     commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
     // issue filters
     projectIssuesFilter: { issueFilters, updateFilters },
     projectIssues: {},
@@ -200,7 +201,10 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
             Analytics
           </Button>
           <Button
-            onClick={() => commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT)}
+            onClick={() => {
+              setTrackElement("PROJECT_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+            }}
             size="sm"
             prependIcon={<Plus />}
           >
