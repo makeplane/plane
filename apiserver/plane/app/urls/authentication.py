@@ -5,7 +5,6 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from plane.app.views import (
     # Authentication
-    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
@@ -29,7 +28,6 @@ urlpatterns = [
     #  Social Auth
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
     # Auth
-    path("sign-up/", SignUpEndpoint.as_view(), name="sign-up"),
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # Magic Sign In/Up
@@ -51,7 +49,7 @@ urlpatterns = [
         ChangePasswordEndpoint.as_view(),
         name="change-password",
     ),
-    path(
+    path(   
         "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
         name="password-reset",

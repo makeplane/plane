@@ -45,157 +45,6 @@ def get_tokens_for_user(user):
     )
 
 
-class SignUpEndpoint(BaseAPIView):
-    permission_classes = (AllowAny,)
-
-    def post(self, request):
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        if (
-            not get_configuration_value(
-                instance_configuration,
-                "ENABLE_SIGNUP",
-                os.environ.get("ENABLE_SIGNUP", "0"),
-            )
-            and not WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).exists()
-        ):
-            return Response(
-                {
-                    "error": "New account creation is disabled. Please contact your site administrator"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        email = request.data.get("email", False)
-        password = request.data.get("password", False)
-
-        ## Raise exception if any of the above are missing
-        if not email or not password:
-            return Response(
-                {"error": "Both email and password are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        email = email.strip().lower()
-
-        try:
-            validate_email(email)
-        except ValidationError as e:
-            return Response(
-                {"error": "Please provide a valid email address."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check if the user already exists
-        if User.objects.filter(email=email).exists():
-            return Response(
-                {"error": "User with this email already exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        user = User.objects.create(email=email, username=uuid.uuid4().hex)
-        user.set_password(password)
-
-        # settings last actives for the user
-        user.last_active = timezone.now()
-        user.last_login_time = timezone.now()
-        user.last_login_ip = request.META.get("REMOTE_ADDR")
-        user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-        user.token_updated_at = timezone.now()
-        user.save()
-
-        # Check if user has any accepted invites for workspace and add them to workspace
-        workspace_member_invites = WorkspaceMemberInvite.objects.filter(
-            email=user.email, accepted=True
-        )
-
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(
-                    workspace_id=workspace_member_invite.workspace_id,
-                    member=user,
-                    role=workspace_member_invite.role,
-                )
-                for workspace_member_invite in workspace_member_invites
-            ],
-            ignore_conflicts=True,
-        )
-
-        # Check if user has any project invites
-        project_member_invites = ProjectMemberInvite.objects.filter(
-            email=user.email, accepted=True
-        )
-
-        # Add user to workspace
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(
-                    workspace_id=project_member_invite.workspace_id,
-                    role=project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
-                    else 15,
-                    member=user,
-                    created_by_id=project_member_invite.created_by_id,
-                )
-                for project_member_invite in project_member_invites
-            ],
-            ignore_conflicts=True,
-        )
-
-        # Now add the users to project
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    workspace_id=project_member_invite.workspace_id,
-                    role=project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
-                    else 15,
-                    member=user,
-                    created_by_id=project_member_invite.created_by_id,
-                )
-                for project_member_invite in project_member_invites
-            ],
-            ignore_conflicts=True,
-        )
-        # Delete all the invites
-        workspace_member_invites.delete()
-        project_member_invites.delete()
-
-        try:
-            # Send Analytics
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": "email",
-                        },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
-                        },
-                        "event_type": "SIGN_UP",
-                    },
-                )
-        except RequestException as e:
-            capture_exception(e)
-
-        access_token, refresh_token = get_tokens_for_user(user)
-
-        data = {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-        }
-        return Response(data, status=status.HTTP_200_OK)
-
-
 class SignInEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
@@ -228,6 +77,14 @@ class SignInEndpoint(BaseAPIView):
                     "error": "Sorry, we could not find a user with the provided credentials. Please try again."
                 },
                 status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if not user.is_email_verified:
+            return Response(
+                {
+                    "error": "The email is not verified you can only login with password when your email is verified"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # Sign up Process
@@ -444,8 +301,10 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-        current_site = request.META.get("HTTP_ORIGIN")
-        magic_link.delay(email, key, token, current_site)
+        # current_site = request.META.get("HTTP_ORIGIN")
+        # magic_link.delay(email, key, token, current_site)
+
+        # Send the code to pcc to send the emails
 
         return Response({"key": key}, status=status.HTTP_200_OK)
 
@@ -533,10 +392,12 @@ class MagicSignInEndpoint(BaseAPIView):
                                     "event_type": "SIGN_UP",
                                 },
                             )
+                            # register
                     except RequestException as e:
                         capture_exception(e)
 
                 user.is_active = True
+                user.is_email_verified = True
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
                 user.last_login_ip = request.META.get("REMOTE_ADDR")

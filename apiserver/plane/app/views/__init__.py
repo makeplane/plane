@@ -95,7 +95,6 @@ from .auth_extended import (
 
 
 from .authentication import (
-    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
