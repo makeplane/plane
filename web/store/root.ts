@@ -158,6 +158,12 @@ import {
   // profile issues filter
   IProfileIssuesFilterStore,
   ProfileIssuesFilterStore,
+  // global issues
+  IGlobalIssuesStore,
+  GlobalIssuesStore,
+  // global issues filter
+  IGlobalIssuesFilterStore,
+  GlobalIssuesFilterStore,
 } from "store/issues";
 
 import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
@@ -265,6 +271,9 @@ export class RootStore {
 
   workspaceProfileIssues: IProfileIssuesStore;
   workspaceProfileIssuesFilter: IProfileIssuesFilterStore;
+
+  workspaceGlobalIssues: IGlobalIssuesStore;
+  workspaceGlobalIssuesFilter: IGlobalIssuesFilterStore;
   // project v3 issue and issue-filters ends
 
   cycleIssueFilters: ICycleIssueFiltersStore;
@@ -366,6 +375,9 @@ export class RootStore {
 
     this.workspaceProfileIssues = new ProfileIssuesStore(this);
     this.workspaceProfileIssuesFilter = new ProfileIssuesFilterStore(this);
+
+    this.workspaceGlobalIssues = new GlobalIssuesStore(this);
+    this.workspaceGlobalIssuesFilter = new GlobalIssuesFilterStore(this);
     // project v3 issue and issue-filters ends
 
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
