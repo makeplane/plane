@@ -14,7 +14,7 @@ interface IProfileIssueTabTypes {
   subscribed: IIssueResponse;
 }
 
-export interface IProfileIssuesStore {
+export interface IGlobalIssuesStore {
   // observable
   loader: TLoader;
   issues: { [user_id: string]: IProfileIssueTabTypes } | undefined;
@@ -47,7 +47,7 @@ export interface IProfileIssuesStore {
   viewFlags: ViewFlags;
 }
 
-export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssuesStore {
+export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesStore {
   loader: TLoader = "init-loader";
   issues: { [user_id: string]: IProfileIssueTabTypes } | undefined = undefined;
   currentUserId: string | null = null;

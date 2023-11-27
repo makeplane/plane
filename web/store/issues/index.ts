@@ -39,4 +39,6 @@ export * from "./profile/filter.store";
 /** profile issues and issue-filters ends */
 
 /** global issues and issue-filters starts */
+export * from "./global/issue.store";
+export * from "./global/filter.store";
 /** global issues and issue-filters ends */
