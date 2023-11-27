@@ -10,7 +10,7 @@ export class WebhookService extends APIService {
     super(API_BASE_URL);
   }
 
-  async getAll(workspaceSlug: string): Promise<IWebhook[]> {
+  async fetchWebhooksList(workspaceSlug: string): Promise<IWebhook[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/webhooks/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -18,15 +18,15 @@ export class WebhookService extends APIService {
       });
   }
 
-  async getById(workspaceSlug: string, webhook_id: string): Promise<IWebhook> {
-    return this.get(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/`)
+  async fetchWebhookDetails(workspaceSlug: string, webhookId: string): Promise<IWebhook> {
+    return this.get(`/api/workspaces/${workspaceSlug}/webhooks/${webhookId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async create(workspaceSlug: string, data: {}): Promise<IWebhook> {
+  async createWebhook(workspaceSlug: string, data: {}): Promise<IWebhook> {
     return this.post(`/api/workspaces/${workspaceSlug}/webhooks/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -34,24 +34,24 @@ export class WebhookService extends APIService {
       });
   }
 
-  async update(workspaceSlug: string, webhook_id: string, data: {}): Promise<IWebhook> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/`, data)
+  async updateWebhook(workspaceSlug: string, webhookId: string, data: {}): Promise<IWebhook> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/webhooks/${webhookId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async remove(workspaceSlug: string, webhook_id: string): Promise<void> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/`)
+  async deleteWebhook(workspaceSlug: string, webhookId: string): Promise<void> {
+    return this.delete(`/api/workspaces/${workspaceSlug}/webhooks/${webhookId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async regenerate(workspaceSlug: string, webhook_id: string): Promise<IWebhook> {
-    return this.post(`/api/workspaces/${workspaceSlug}/webhooks/${webhook_id}/regenerate/`)
+  async regenerateSecretKey(workspaceSlug: string, webhookId: string): Promise<IWebhook> {
+    return this.post(`/api/workspaces/${workspaceSlug}/webhooks/${webhookId}/regenerate/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

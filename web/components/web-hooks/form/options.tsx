@@ -1,54 +1,44 @@
-import { Control, Controller } from "react-hook-form";
-import { IExtendedWebhook, IWebhookOptions } from "types/webhook";
+// types
+import { TWebhookEventTypes } from "types";
 
-export enum WebhookTypes {
-  ALL = "all",
-  INDIVIDUAL = "individual",
-}
+type Props = {
+  value: string;
+  onChange: (value: TWebhookEventTypes) => void;
+};
 
-interface IWebHookOptionsProps {
-  control: Control<IExtendedWebhook, any>;
-}
-
-export const WEBHOOK_EVENTS = "webhook_events";
-
-const webhookOptions: IWebhookOptions[] = [
+const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; label: string }[] = [
   {
-    key: WebhookTypes.ALL,
-    label: "Send everything",
-    name: WEBHOOK_EVENTS,
+    key: "all",
+    label: "Send me everything",
   },
   {
-    key: WebhookTypes.INDIVIDUAL,
-    label: "Select Individual events",
-    name: WEBHOOK_EVENTS,
+    key: "individual",
+    label: "Select individual events",
   },
 ];
 
-export const WebHookOptions = ({ control }: IWebHookOptionsProps) => (
-  <>
-    <div className="text-sm font-medium">Which events do you like to trigger this webhook</div>
-    {webhookOptions.map(({ key, label, name }: IWebhookOptions) => (
-      <div className="flex items-center gap-2">
-        <Controller
-          control={control}
-          name={name}
-          key={key}
-          render={({ field: { onChange, value } }) => (
+export const WebhookOptions: React.FC<Props> = (props) => {
+  const { value, onChange } = props;
+
+  return (
+    <>
+      <h6 className="text-sm font-medium">Which events would you like to trigger this webhook?</h6>
+      <div className="space-y-3">
+        {WEBHOOK_EVENT_TYPES.map((option) => (
+          <div key={option.key} className="flex items-center gap-2">
             <input
-              id={key}
+              id={option.key}
               type="radio"
-              name={name}
-              value={key}
-              checked={value == key}
-              onChange={() => onChange(key)}
+              value={option.key}
+              checked={value == option.key}
+              onChange={() => onChange(option.key)}
             />
-          )}
-        />
-        <label className="text-sm" htmlFor={key}>
-          {label}
-        </label>
+            <label className="text-sm" htmlFor={option.key}>
+              {option.label}
+            </label>
+          </div>
+        ))}
       </div>
-    ))}
-  </>
-);
+    </>
+  );
+};

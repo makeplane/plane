@@ -1,30 +1,31 @@
 import React, { FC, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
-// icons
 import { AlertTriangle } from "lucide-react";
-// ui
-import { Button } from "@plane/ui";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { Button } from "@plane/ui";
 
 interface IDeleteWebhook {
   isOpen: boolean;
-  webhook_url: string;
   onClose: () => void;
 }
 
 export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   const { isOpen, onClose } = props;
-
+  // states
+  const [isDeleting, setIsDeleting] = useState(false);
+  // router
   const router = useRouter();
-
-  const { webhook: webhookStore } = useMobxStore();
-
+  // toast
   const { setToastAlert } = useToast();
-
-  const [deleting, setDelete] = useState(false);
+  // mobx store
+  const {
+    webhook: { removeWebhook },
+  } = useMobxStore();
 
   const { workspaceSlug, webhookId } = router.query;
 
@@ -33,29 +34,27 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   };
 
   const handleDelete = async () => {
-    setDelete(true);
     if (!workspaceSlug || !webhookId) return;
-    webhookStore
-      .remove(workspaceSlug.toString(), webhookId.toString())
+
+    setIsDeleting(true);
+
+    removeWebhook(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Successfully deleted",
+          title: "Success!",
+          message: "Webhook deleted successfully.",
         });
         router.replace(`/${workspaceSlug}/settings/webhooks/`);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((error) =>
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: error?.error,
-        });
-      })
-      .finally(() => {
-        setDelete(false);
-      });
+          title: "Error!",
+          message: error?.error ?? "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() => setIsDeleting(false));
   };
 
   return (
@@ -105,8 +104,8 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
                   <Button variant="neutral-primary" onClick={onClose}>
                     Cancel
                   </Button>
-                  <Button variant="danger" type="submit" onClick={handleDelete}>
-                    {deleting ? "Deleting..." : "Delete Webhook"}
+                  <Button variant="danger" onClick={handleDelete} loading={isDeleting}>
+                    {isDeleting ? "Deleting..." : "Delete Webhook"}
                   </Button>
                 </div>
               </Dialog.Panel>

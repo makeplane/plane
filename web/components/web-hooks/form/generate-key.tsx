@@ -1,136 +1,132 @@
 import { useState, FC } from "react";
 import { useRouter } from "next/router";
-import { Button } from "@plane/ui";
+import { Button, Tooltip } from "@plane/ui";
 import { Copy, Eye, EyeOff, RefreshCw } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
 import useToast from "hooks/use-toast";
 // store
-import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 import { csvDownload } from "helpers/download.helper";
 // utils
 import { getCurrentHookAsCSV } from "../utils";
-// enum
-import { WebHookFormTypes } from "./index";
+// types
+import { IWebhook } from "types";
 
-interface IGenerateKey {
-  type: WebHookFormTypes.CREATE | WebHookFormTypes.EDIT;
-}
+type Props = {
+  data: Partial<IWebhook>;
+};
 
-export const GenerateKey: FC<IGenerateKey> = observer((props) => {
-  const { type } = props;
+export const GenerateKey: FC<Props> = observer((props) => {
+  const { data } = props;
   // states
-  const [regenerating, setRegenerate] = useState(false);
+  const [isRegenerating, setIsRegenerating] = useState(false);
   const [shouldShowKey, setShouldShowKey] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, webhookId } = router.query as { workspaceSlug: string; webhookId: string };
+  const { workspaceSlug, webhookId } = router.query;
   // store
-  const { webhook: webhookStore, workspace: workspaceStore }: RootStore = useMobxStore();
+  const {
+    webhook: { currentWebhook, regenerateSecretKey, webhookSecretKey },
+    workspace: { currentWorkspace },
+  } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
 
-  const handleCopySecret = () => {
-    if (webhookStore?.webhookSecretKey) {
-      copyTextToClipboard(webhookStore.webhookSecretKey);
-      setToastAlert({
-        title: "Success",
-        type: "success",
-        message: "Secret key copied",
-      });
-    } else {
-      setToastAlert({
-        title: "Oops",
-        type: "error",
-        message: "Error occurred while copying secret key",
-      });
-    }
+  const handleCopySecretKey = () => {
+    if (!webhookSecretKey) return;
+
+    copyTextToClipboard(webhookSecretKey)
+      .then(() =>
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "Secret key copied to clipboard.",
+        })
+      )
+      .catch(() =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Error occurred while copying secret key.",
+        })
+      );
   };
 
-  function handleRegenerate() {
-    setRegenerate(true);
-    webhookStore
-      .regenerate(workspaceSlug, webhookId)
+  const handleRegenerateSecretKey = () => {
+    if (!workspaceSlug || !webhookId) return;
+
+    setIsRegenerating(true);
+
+    regenerateSecretKey(workspaceSlug.toString(), webhookId.toString())
       .then(() => {
         setToastAlert({
-          title: "Success",
           type: "success",
-          message: "Successfully regenerated",
+          title: "Success!",
+          message: "New key regenerated successfully.",
         });
 
-        const csvData = getCurrentHookAsCSV(
-          workspaceStore.currentWorkspace,
-          webhookStore.currentWebhook,
-          webhookStore.webhookSecretKey
-        );
-        csvDownload(csvData, `Secret-key-${Date.now()}`);
+        const csvData = getCurrentHookAsCSV(currentWorkspace, currentWebhook, webhookSecretKey);
+        csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
       })
-      .catch((err) => {
+      .catch((err) =>
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: err?.error,
-        });
-      })
-      .finally(() => {
-        setRegenerate(false);
-      });
-  }
-
-  const toggleShowKey = () => {
-    setShouldShowKey((prevState) => !prevState);
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() => setIsRegenerating(false));
   };
 
-  const icons = [
-    { Component: Copy, onClick: handleCopySecret, key: "copy" },
-    { Component: shouldShowKey ? EyeOff : Eye, onClick: toggleShowKey, key: "eye" },
+  const toggleShowKey = () => setShouldShowKey((prevState) => !prevState);
+
+  const SECRET_KEY_OPTIONS = [
+    { label: "View secret key", Icon: shouldShowKey ? EyeOff : Eye, onClick: toggleShowKey, key: "eye" },
+    { label: "Copy secret key", Icon: Copy, onClick: handleCopySecretKey, key: "copy" },
   ];
 
   return (
     <>
-      {(type === WebHookFormTypes.EDIT || (type === WebHookFormTypes.CREATE && webhookStore?.webhookSecretKey)) && (
+      {(data || webhookSecretKey) && (
         <div className="space-y-2">
-          <div className="text-sm font-medium">Secret Key</div>
-          <div className="text-sm text-neutral-400">Genarate a token to sign-in the webhook payload</div>
-
-          <div className="flex gap-5 items-center">
-            <div className="relative flex items-center p-2 rounded w-full border border-custom-border-200">
-              <div className="flex w-full overflow-hidden h-7 px-2 font-medium select-none">
-                {webhookStore?.webhookSecretKey && shouldShowKey ? (
-                  <div>{webhookStore?.webhookSecretKey}</div>
+          <div className="text-sm font-medium">Secret key</div>
+          <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
+          <div className="flex items-center gap-4">
+            <div className="self-stretch flex items-center justify-between py-1.5 px-2 rounded min-w-[30rem] max-w-lg border border-custom-border-200">
+              <div className="overflow-hidden font-medium select-none">
+                {shouldShowKey ? (
+                  <p className="text-xs">{webhookSecretKey}</p>
                 ) : (
                   <div className="flex items-center gap-1.5">
-                    {[...Array(41)].map((_, index) => (
-                      <div key={index} className="w-[4px] h-[4px] bg-gray-300 rounded-full" />
+                    {[...Array(30)].map((_, index) => (
+                      <div key={index} className="w-1 h-1 bg-custom-text-400 rounded-full" />
                     ))}
                   </div>
                 )}
               </div>
-              {webhookStore?.webhookSecretKey && (
-                <>
-                  {icons.map(({ Component, onClick, key }) => (
-                    <div
-                      className="w-7 h-7 flex-shrink-0 flex justify-center items-center cursor-pointer hover:bg-custom-background-80 rounded"
-                      onClick={onClick}
-                      key={key}
-                    >
-                      <Component className="text-custom-text-400 w-4 h-4" />
-                    </div>
+              {webhookSecretKey && (
+                <div className="flex items-center gap-2">
+                  {SECRET_KEY_OPTIONS.map((option) => (
+                    <Tooltip key={option.key} tooltipContent={option.label}>
+                      <button type="button" className="flex-shrink-0 grid place-items-center" onClick={option.onClick}>
+                        <option.Icon className="text-custom-text-400 h-3 w-3" />
+                      </button>
+                    </Tooltip>
                   ))}
-                </>
+                </div>
               )}
             </div>
-            <div>
-              {type != WebHookFormTypes.CREATE && (
-                <Button disabled={regenerating} onClick={handleRegenerate} variant="accent-primary" className="">
-                  <RefreshCw className={`h-3 w-3`} />
-                  {regenerating ? "Re-generating..." : "Re-genarate Key"}
+            {data && (
+              <div>
+                <Button onClick={handleRegenerateSecretKey} variant="accent-primary" loading={isRegenerating}>
+                  <RefreshCw className="h-3 w-3" />
+                  {isRegenerating ? "Re-generating..." : "Re-generate key"}
                 </Button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}

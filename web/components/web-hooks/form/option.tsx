@@ -1,66 +1,65 @@
 import { Control, Controller } from "react-hook-form";
-import { IWebhookIndividualOptions, IExtendedWebhook } from "types/webhook";
+import { IWebhook } from "types/webhook";
 
-export enum IndividualWebhookTypes {
-  PROJECTS = "Projects",
-  MODULES = "Modules",
-  CYCLES = "Cycles",
-  ISSUES = "Issues",
-  ISSUE_COMMENTS = "Issue Comments",
-}
-
-export const individualWebhookOptions: IWebhookIndividualOptions[] = [
+export const individualWebhookOptions: {
+  key: keyof IWebhook;
+  label: string;
+  description: string;
+}[] = [
   {
-    key: "project_toggle",
-    label: IndividualWebhookTypes.PROJECTS,
-    name: "project",
+    key: "project",
+    label: "Projects",
+    description: "Project created, updated or deleted.",
   },
   {
-    key: "cycle-toggle",
-    label: IndividualWebhookTypes.CYCLES,
-    name: "cycle",
+    key: "cycle",
+    label: "Cycles",
+    description: "Cycle created, updated or deleted.",
   },
   {
-    key: "issue_toggle",
-    label: IndividualWebhookTypes.ISSUES,
-    name: "issue",
+    key: "issue",
+    label: "Issues",
+    description: "Issue created, updated or deleted.",
   },
   {
-    key: "module_toggle",
-    label: IndividualWebhookTypes.MODULES,
-    name: "module",
+    key: "module",
+    label: "Modules",
+    description: "Module created, updated or deleted.",
   },
   {
-    key: "issue_comment_toggle",
-    label: IndividualWebhookTypes.ISSUE_COMMENTS,
-    name: "issue_comment",
+    key: "issue_comment",
+    label: "Issue comments",
+    description: "Comment posted, updated or deleted.",
   },
 ];
 
-interface IWebHookIndividualOptions {
-  control: Control<IExtendedWebhook, any>;
-}
+type Props = {
+  control: Control<IWebhook, any>;
+};
 
-export const WebHookIndividualOptions = ({ control }: IWebHookIndividualOptions) => (
+export const WebhookIndividualOptions = ({ control }: Props) => (
   <>
-    <div className="grid grid-cols-2 md:grid-cols-3 grid-flow-row gap-4 px-8 py-6 bg-custom-background-90">
-      {individualWebhookOptions.map(({ key, label, name }: IWebhookIndividualOptions) => (
+    <div className="grid grid-cols-2 gap-x-4 gap-y-8 px-6 mt-5">
+      {individualWebhookOptions.map((option) => (
         <Controller
+          key={option.key}
           control={control}
-          name={name}
-          key={key}
+          name={option.key}
           render={({ field: { onChange, value } }) => (
-            <div className="relative flex items-center gap-2">
-              <input
-                id={key}
-                onChange={() => onChange(!value)}
-                type="checkbox"
-                name="selectIndividualEvents"
-                checked={value == true}
-              />
-              <label className="text-sm" htmlFor={key}>
-                {label}
-              </label>
+            <div>
+              <div className="flex items-center gap-2">
+                <input
+                  id={option.key}
+                  onChange={() => onChange(!value)}
+                  type="checkbox"
+                  name="selectIndividualEvents"
+                  checked={value === true}
+                />
+                <label className="text-sm" htmlFor={option.key}>
+                  {option.label}
+                </label>
+              </div>
+              <p className="text-xs text-custom-text-300 ml-6 mt-0.5">{option.description}</p>
             </div>
           )}
         />

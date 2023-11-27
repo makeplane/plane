@@ -1,25 +1,24 @@
-import { FC } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
-import { Button } from "@plane/ui";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { WebhooksListItem } from "./webhooks-list-item";
+// ui
+import { Button } from "@plane/ui";
 
-interface IWebHookLists {
-  workspaceSlug: string;
-}
+export const WebhooksList = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
-export const WebhookLists: FC<IWebHookLists> = observer((props) => {
-  const { workspaceSlug } = props;
   const {
     webhook: { webhooks },
-  }: RootStore = useMobxStore();
+  } = useMobxStore();
 
   return (
     <>
-      <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-200">
+      <div className="flex items-center justify-between gap-4 pb-3.5 border-b border-custom-border-200">
         <div className="text-xl font-medium">Webhooks</div>
         <Link href={`/${workspaceSlug}/settings/webhooks/create`}>
           <Button variant="primary" size="sm">
@@ -28,9 +27,9 @@ export const WebhookLists: FC<IWebHookLists> = observer((props) => {
         </Link>
       </div>
 
-      <div className="divide-y divide-custom-border-200 overflow-y-scroll">
-        {Object.values(webhooks).map((item) => (
-          <WebhooksListItem workspaceSlug={workspaceSlug} webhook={item} key={item.id} />
+      <div className="overflow-y-scroll">
+        {Object.values(webhooks ?? {}).map((webhook) => (
+          <WebhooksListItem key={webhook.id} webhook={webhook} />
         ))}
       </div>
     </>
