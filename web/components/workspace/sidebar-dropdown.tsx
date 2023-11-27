@@ -97,11 +97,11 @@ export const WorkspaceSidebarDropdown = observer(() => {
           <>
             <Menu.Button className="group/menu-button text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
               <div
-                className={`flex items-center justify-between gap-x-2 rounded p-1 truncate ${
-                  sidebarCollapsed ? "justify-center" : ""
+                className={`flex items-center  gap-x-2 rounded p-1 truncate ${
+                  sidebarCollapsed ? "justify-center" : "justify-between"
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 truncate">
                   <div
                     className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
                       !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
