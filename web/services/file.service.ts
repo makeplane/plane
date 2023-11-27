@@ -75,13 +75,7 @@ export class FileService extends APIService {
   }
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
-    return this.patch(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`, {
-      headers: this.getHeaders(),
-      "Content-Type": "application/json",
-      data: {
-        is_deleted: true,
-      },
-    })
+    return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
@@ -89,12 +83,9 @@ export class FileService extends APIService {
   }
 
   async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
-    return this.patch(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`, {
+    return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
       headers: this.getHeaders(),
       "Content-Type": "application/json",
-      data: {
-        is_deleted: false,
-      },
     })
       .then((response) => response?.status)
       .catch((error) => {

@@ -23,7 +23,7 @@ export type IMentionSuggestion = {
 
 export type IMentionHighlight = string;
 
-interface IRichTextEditor {
+export type IRichTextEditor = {
   value: string;
   dragDropEnabled?: boolean;
   uploadFile: UploadImage;
@@ -43,9 +43,9 @@ interface IRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-}
+};
 
-interface RichTextEditorProps extends IRichTextEditor {
+export interface RichTextEditorProps extends IRichTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
