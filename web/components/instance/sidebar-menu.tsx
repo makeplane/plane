@@ -18,7 +18,7 @@ const INSTANCE_ADMIN_LINKS = [
     Icon: Mail,
     name: "Mail",
     description: "Set up emails to your users",
-    href: `/god-mode/email`,
+    href: `/god-mode/mail`,
   },
   {
     Icon: Lock,

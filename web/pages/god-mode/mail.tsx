@@ -12,7 +12,7 @@ import { Loader } from "@plane/ui";
 // components
 import { InstanceEmailForm } from "components/instance/email-form";
 
-const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
+const InstanceAdminMailPage: NextPageWithLayout = observer(() => {
   // store
   const {
     instance: { fetchInstanceConfigurations, formattedConfig },
@@ -47,8 +47,8 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   );
 });
 
-InstanceAdminEmailPage.getLayout = function getLayout(page: ReactElement) {
+InstanceAdminMailPage.getLayout = function getLayout(page: ReactElement) {
   return <InstanceAdminLayout>{page}</InstanceAdminLayout>;
 };
 
-export default InstanceAdminEmailPage;
+export default InstanceAdminMailPage;
