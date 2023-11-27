@@ -15,7 +15,7 @@ export const SummarySideBar = ({
 }: ISummarySideBarProps) => {
   return (
     <div
-      className={`h-full px-5 pt-5 transition-all duration-200 transform overflow-hidden ${
+      className={`h-full p-5 transition-all duration-200 transform overflow-hidden ${
         sidePeekVisible ? "translate-x-0" : "-translate-x-full"
       }`}
     >
