@@ -20,7 +20,7 @@ export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
             <InstanceAdminSidebar />
             <main className="relative flex flex-col h-full w-full overflow-hidden bg-custom-background-100">
               <InstanceAdminHeader />
-              <div className="h-full w-full overflow-hidden">
+              <div className="h-full w-full overflow-hidden px-10 py-12">
                 <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">
                   <>{children}</>
                 </div>
