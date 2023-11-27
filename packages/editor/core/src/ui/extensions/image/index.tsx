@@ -87,24 +87,9 @@ const ImageExtension = (
                 // if the node is not an image, then return as no point in checking
                 if (oldNode.type.name !== IMAGE_NODE_TYPE) return;
 
-                if (oldPos < 0 || oldPos > newState.doc.content.size) return;
-                const nodeExistsInNewStateAtOldPosition =
-                  newState.doc.resolve(oldPos).parent;
-
-                // when image deleted from the end of the document, then document
-                // closing tag is considered as the final node
-                if (!nodeExistsInNewStateAtOldPosition) return;
-
-                const currentNodeAtOldPosition = newState.doc.nodeAt(oldPos);
-
                 // Check if the node has been deleted or replaced
-                if (
-                  !currentNodeAtOldPosition ||
-                  currentNodeAtOldPosition.type.name !== IMAGE_NODE_TYPE
-                ) {
-                  if (!newImageSources.has(oldNode.attrs.src)) {
-                    removedImages.push(oldNode as ImageNode);
-                  }
+                if (!newImageSources.has(oldNode.attrs.src)) {
+                  removedImages.push(oldNode as ImageNode);
                 }
               });
 
