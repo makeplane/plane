@@ -6,7 +6,7 @@ import { IssueService } from "services/issue/issue.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IProjectIssuesStore {
@@ -22,6 +22,8 @@ export interface IProjectIssuesStore {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+
+  viewFlags: ViewFlags;
 }
 
 export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssuesStore {
@@ -31,6 +33,13 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
   rootStore;
   // service
   issueService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -85,15 +94,24 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
+      console.log("list");
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
       else issues = this.unGroupedIssues(orderBy, this.issues[projectId]);
     } else if (layout === "kanban" && groupBy && orderBy) {
+      console.log("kanban");
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
       else issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
-    } else if (layout === "calendar")
+      console.log("issues", issues);
+    } else if (layout === "calendar") {
+      console.log("calendar");
       issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[projectId], true);
-    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);
-    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[projectId]);
+    } else if (layout === "spreadsheet") {
+      console.log("spreadsheet");
+      issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);
+    } else if (layout === "gantt_chart") {
+      console.log("gantt_chart");
+      issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[projectId]);
+    }
 
     return issues;
   }
@@ -114,7 +132,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }

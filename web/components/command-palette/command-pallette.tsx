@@ -55,6 +55,8 @@ export const CommandPalette: FC = observer(() => {
     toggleBulkDeleteIssueModal,
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
+
+    createIssueStoreType,
   } = commandPalette;
 
   const isAnyModalOpen = Boolean(
@@ -224,6 +226,7 @@ export const CommandPalette: FC = observer(() => {
         prePopulateData={
           cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }
+        currentStore={createIssueStoreType}
       />
 
       {issueId && issueDetails && (

@@ -11,6 +11,7 @@ import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IModuleListLayout {}
 
@@ -48,6 +49,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       issueActions={issueActions}
       getProjects={getProjects}
       viewId={moduleId}
+      currentStore={EProjectStore.MODULE}
     />
   );
 });

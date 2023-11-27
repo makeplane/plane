@@ -10,7 +10,11 @@ import { EIssueActions } from "../../types";
 import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const CycleCalendarLayout: React.FC = observer(() => {
-  const { cycleIssues: cycleIssueStore, cycleIssueCalendarView: cycleIssueCalendarViewStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    cycleIssuesFilter: cycleIssueFilterStore,
+    cycleIssueCalendarView: cycleIssueCalendarViewStore,
+  } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
@@ -34,6 +38,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
   return (
     <BaseCalendarRoot
       issueStore={cycleIssueStore}
+      issuesFilterStore={cycleIssueFilterStore}
       calendarViewStore={cycleIssueCalendarViewStore}
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}

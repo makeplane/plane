@@ -26,12 +26,20 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
     projectIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
-  useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null, async () => {
-    if (workspaceSlug && projectId) {
-      await fetchFilters(workspaceSlug, projectId);
-      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUES_V3_${workspaceSlug}_${projectId}` : null,
+    async () => {
+      if (workspaceSlug && projectId) {
+        await fetchFilters(workspaceSlug, projectId);
+        await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+      }
+    },
+    {
+      onErrorRetry: (error) => {
+        if (error.status === 404) return;
+      },
     }
-  });
+  );
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 

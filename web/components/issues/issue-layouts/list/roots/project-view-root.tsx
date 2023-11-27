@@ -12,6 +12,7 @@ import { IIssue } from "types";
 // components
 import { BaseListRoot } from "../base-list-root";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IViewListLayout {}
 
@@ -44,6 +45,7 @@ export const ProjectViewListLayout: React.FC = observer(() => {
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
+      currentStore={EProjectStore.PROJECT_VIEW}
     />
   );
 });

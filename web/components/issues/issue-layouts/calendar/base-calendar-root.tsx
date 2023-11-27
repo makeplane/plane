@@ -7,14 +7,28 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CalendarChart } from "components/issues";
 // types
 import { IIssue } from "types";
-import { ICycleIssuesStore, IModuleIssuesStore, IProjectIssuesStore, IViewIssuesStore } from "store/issues";
-import { IIssueCalendarViewStore, IssueStore } from "store/issue";
+import {
+  ICycleIssuesFilterStore,
+  ICycleIssuesStore,
+  IModuleIssuesFilterStore,
+  IModuleIssuesStore,
+  IProjectIssuesFilterStore,
+  IProjectIssuesStore,
+  IViewIssuesFilterStore,
+  IViewIssuesStore,
+} from "store/issues";
+import { IIssueCalendarViewStore } from "store/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { IGroupedIssues } from "store/issues/types";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
   calendarViewStore: IIssueCalendarViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -26,10 +40,9 @@ interface IBaseCalendarRoot {
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, calendarViewStore, QuickActions, issueActions, viewId } = props;
-  const { projectIssuesFilter: issueFilterStore } = useMobxStore();
+  const { issueStore, issuesFilterStore, calendarViewStore, QuickActions, issueActions, viewId } = props;
 
-  const displayFilters = issueFilterStore.issueFilters?.displayFilters;
+  const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
   const issues = issueStore.getIssues;
   const groupedIssueIds = (issueStore.getIssuesIds ?? {}) as IGroupedIssues;
@@ -75,7 +88,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
               }
               handleRemoveFromView={
                 issueActions[EIssueActions.REMOVE]
-                  ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.UPDATE)
+                  ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
                   : undefined
               }
             />

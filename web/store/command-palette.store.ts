@@ -5,6 +5,19 @@ import { RootStore } from "./root";
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
 
+export enum EProjectStore {
+  PROJECT = "ProjectStore",
+  PROJECT_VIEW = "ProjectViewStore",
+  PROFILE = "ProfileStore",
+  MODULE = "ModuleStore",
+  CYCLE = "CycleStore",
+}
+
+export interface ModalData {
+  store: EProjectStore;
+  viewId: string;
+}
+
 export interface ICommandPaletteStore {
   isCommandPaletteOpen: boolean;
   isShortcutModalOpen: boolean;
@@ -23,10 +36,12 @@ export interface ICommandPaletteStore {
   toggleCreateCycleModal: (value?: boolean) => void;
   toggleCreateViewModal: (value?: boolean) => void;
   toggleCreatePageModal: (value?: boolean) => void;
-  toggleCreateIssueModal: (value?: boolean) => void;
+  toggleCreateIssueModal: (value?: boolean, storeType?: EProjectStore) => void;
   toggleCreateModuleModal: (value?: boolean) => void;
   toggleDeleteIssueModal: (value?: boolean) => void;
   toggleBulkDeleteIssueModal: (value?: boolean) => void;
+
+  createIssueStoreType: EProjectStore;
 }
 
 class CommandPaletteStore implements ICommandPaletteStore {
@@ -45,6 +60,8 @@ class CommandPaletteStore implements ICommandPaletteStore {
   // service
   projectService;
   pageService;
+
+  createIssueStoreType: EProjectStore = EProjectStore.PROJECT;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -127,11 +144,13 @@ class CommandPaletteStore implements ICommandPaletteStore {
     }
   };
 
-  toggleCreateIssueModal = (value?: boolean) => {
+  toggleCreateIssueModal = (value?: boolean, storeType?: EProjectStore) => {
     if (value) {
       this.isCreateIssueModalOpen = value;
+      this.createIssueStoreType = storeType || EProjectStore.PROJECT;
     } else {
       this.isCreateIssueModalOpen = !this.isCreateIssueModalOpen;
+      this.createIssueStoreType = EProjectStore.PROJECT;
     }
   };
 

@@ -6,9 +6,17 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
+import { EProjectStore } from "store/command-palette.store";
+import { useRouter } from "next/router";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
-  const { commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const router = useRouter();
+  const { viewId } = router.query as { viewId: string };
+
+  const {
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   return (
     <div className="h-full w-full grid place-items-center">
@@ -21,8 +29,8 @@ export const ProjectViewEmptyState: React.FC = observer(() => {
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
             setTrackElement("VIEW_EMPTY_STATE");
-            commandPaletteStore.toggleCreateIssueModal(true)
-          }
+            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+          },
         }}
       />
     </div>

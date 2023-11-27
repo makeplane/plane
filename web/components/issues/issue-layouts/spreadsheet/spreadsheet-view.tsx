@@ -7,6 +7,7 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
+import { EIssueActions } from "../types";
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -16,8 +17,8 @@ type Props = {
   members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  handleIssueAction: (issue: IIssue, action: "copy" | "delete" | "edit") => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  quickActions: (issue: IIssue) => React.ReactNode;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -39,8 +40,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     members,
     labels,
     states,
-    handleIssueAction,
-    handleUpdateIssue,
+    quickActions,
+    handleIssues,
     quickAddCallback,
     viewId,
     disableUserActions,
@@ -80,6 +81,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     };
   }, []);
 
+  console.log("spreadsheet issues", issues);
+
   return (
     <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-200">
       <div className="h-full w-full flex flex-col">
@@ -103,18 +106,20 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     <span className="flex items-center justify-center px-4 py-2.5 h-full w-full flex-grow">Issue</span>
                   </div>
 
-                  {issues.map((issue, index) => (
-                    <SpreadsheetIssuesColumn
-                      key={`${issue.id}_${index}`}
-                      issue={issue}
-                      expandedIssues={expandedIssues}
-                      setExpandedIssues={setExpandedIssues}
-                      properties={displayProperties}
-                      handleIssueAction={handleIssueAction}
-                      disableUserActions={disableUserActions}
-                      setIssuePeekOverView={setIssuePeekOverView}
-                    />
-                  ))}
+                  {issues.map((issue, index) =>
+                    issue ? (
+                      <SpreadsheetIssuesColumn
+                        key={`${issue?.id}_${index}`}
+                        issue={issue}
+                        expandedIssues={expandedIssues}
+                        setExpandedIssues={setExpandedIssues}
+                        properties={displayProperties}
+                        quickActions={quickActions}
+                        disableUserActions={disableUserActions}
+                        setIssuePeekOverView={setIssuePeekOverView}
+                      />
+                    ) : null
+                  )}
                 </div>
               </div>
 
@@ -124,7 +129,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 disableUserActions={disableUserActions}
                 expandedIssues={expandedIssues}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-                handleUpdateIssue={handleUpdateIssue}
+                handleUpdateIssue={(issue, data) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}
                 issues={issues}
                 members={members}
                 labels={labels}
@@ -185,7 +190,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           workspaceSlug={issuePeekOverview?.workspaceSlug}
           projectId={issuePeekOverview?.projectId}
           issueId={issuePeekOverview?.issueId}
-          handleIssue={(issueToUpdate: any) => handleUpdateIssue(issueToUpdate as IIssue, issueToUpdate)}
+          handleIssue={(issueToUpdate: any) => handleIssues(issueToUpdate, EIssueActions.UPDATE)}
         />
       )}
     </div>

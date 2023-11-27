@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { Popover2 } from "@blueprintjs/popover2";
-import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -16,8 +15,7 @@ type Props = {
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
+  quickActions: (issue: IIssue) => React.ReactNode;
   setIssuePeekOverView: React.Dispatch<
     React.SetStateAction<{
       workspaceSlug: string;
@@ -35,8 +33,7 @@ export const IssueColumn: React.FC<Props> = ({
   handleToggleExpand,
   setIssuePeekOverView,
   properties,
-  handleEditIssue,
-  handleDeleteIssue,
+  quickActions,
   disableUserActions,
   nestingLevel,
 }) => {
@@ -75,7 +72,7 @@ export const IssueColumn: React.FC<Props> = ({
 
   return (
     <>
-      <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
+      <div className="group flex items-center w-[28rem] text-sm h-11 top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
         {properties.key && (
           <div
             className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-min"
@@ -87,61 +84,7 @@ export const IssueColumn: React.FC<Props> = ({
               </span>
 
               {!disableUserActions && (
-                <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
-                  <Popover2
-                    isOpen={isOpen}
-                    canEscapeKeyClose
-                    onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
-                    content={
-                      <div className="flex flex-col whitespace-nowrap rounded-md border border-custom-border-100 p-1 text-xs shadow-lg focus:outline-none min-w-full bg-custom-background-100 space-y-0.5">
-                        <button
-                          type="button"
-                          className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
-                          onClick={() => {
-                            handleCopyText();
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Link className="h-3 w-3" />
-                            <span>Copy link</span>
-                          </div>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
-                          onClick={() => {
-                            handleEditIssue(issue);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Pencil className="h-3 w-3" />
-                            <span>Edit issue</span>
-                          </div>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="w-full select-none gap-2 rounded p-1 text-left text-red-500 hover:bg-custom-background-80"
-                          onClick={() => {
-                            handleDeleteIssue(issue);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Trash2 className="h-3 w-3" />
-                            <span>Delete issue</span>
-                          </div>
-                        </button>
-                      </div>
-                    }
-                    placement="bottom-start"
-                  >
-                    <MoreHorizontal className="h-5 w-5 text-custom-text-200" />
-                  </Popover2>
-                </div>
+                <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">{quickActions(issue)}</div>
               )}
             </div>
 

@@ -72,7 +72,7 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
                     <p className="text-sm text-custom-text-200">
                       Are you sure you want to delete issue{" "}
                       <span className="break-words font-medium text-custom-text-100">
-                        {data?.project_detail.identifier}-{data?.sequence_id}
+                        {data?.project_detail?.identifier}-{data?.sequence_id}
                       </span>
                       {""}? All of the data related to the issue will be permanently removed. This action cannot be
                       undone.

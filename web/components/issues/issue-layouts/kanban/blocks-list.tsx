@@ -14,6 +14,7 @@ interface IssueBlocksListProps {
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
+  isReadOnly: boolean;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
@@ -27,6 +28,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
     handleIssues,
     quickActions,
     displayProperties,
+    isReadOnly,
   } = props;
 
   return (
@@ -50,6 +52,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
                 columnId={columnId}
                 sub_group_id={sub_group_id}
                 isDragDisabled={isDragDisabled}
+                isReadOnly={isReadOnly}
               />
             );
           })}

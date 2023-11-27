@@ -102,17 +102,15 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
         <GlobalViewEmptyState />
       ) : (
         <div className="h-full w-full overflow-auto">
-          <SpreadsheetView
+          {/* <SpreadsheetView
             displayProperties={workspaceFilterStore.workspaceDisplayProperties}
             displayFilters={workspaceFilterStore.workspaceDisplayFilters}
             handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
             issues={issues}
             members={workspaceMembers?.map((m) => m.member)}
             labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
-            handleIssueAction={() => {}}
-            handleUpdateIssue={handleUpdateIssue}
             disableUserActions={false}
-          />
+          /> */}
         </div>
       )}
     </div>

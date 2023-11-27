@@ -9,14 +9,17 @@ import { ArchivedIssueListLayout, ArchivedIssueAppliedFiltersRoot } from "compon
 
 export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { archivedIssueFilters: archivedIssueFiltersStore, archivedIssues: archivedIssueStore } = useMobxStore();
+  const {
+    projectArchivedIssues: { getIssues, fetchIssues },
+    projectArchivedIssuesFilter: { fetchFilters },
+  } = useMobxStore();
 
   useSWR(workspaceSlug && projectId ? `ARCHIVED_FILTERS_AND_ISSUES_${projectId.toString()}` : null, async () => {
     if (workspaceSlug && projectId) {
-      await archivedIssueFiltersStore.fetchUserProjectFilters(workspaceSlug.toString(), projectId.toString());
-      await archivedIssueStore.fetchIssues(workspaceSlug.toString(), projectId.toString());
+      await fetchFilters(workspaceSlug, projectId);
+      await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
     }
   });
 

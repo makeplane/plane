@@ -1,67 +1,15 @@
 import React, { ReactElement } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/user-profile-layout";
 // components
 import { UserProfileHeader } from "components/headers";
-import { ProfileIssuesListLayout } from "components/issues/issue-layouts/list/roots/profile-issues-root";
-import { ProfileIssuesKanBanLayout } from "components/issues/issue-layouts/kanban/roots/profile-issues-root";
-import { Spinner } from "@plane/ui";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
 // types
 import { NextPageWithLayout } from "types/app";
+import { ProfileIssuesPage } from "components/profile/profile-issues";
 
-const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
-  const {
-    workspace: workspaceStore,
-    project: projectStore,
-    profileIssueFilters: profileIssueFiltersStore,
-    profileIssues: profileIssuesStore,
-  }: RootStore = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug, userId } = router.query as {
-    workspaceSlug: string;
-    userId: string;
-  };
-
-  const { isLoading } = useSWR(`PROFILE_ISSUES_${workspaceSlug}_${userId}`, async () => {
-    if (workspaceSlug && userId) {
-      // workspace labels
-      workspaceStore.setWorkspaceSlug(workspaceSlug);
-      await workspaceStore.fetchWorkspaceLabels(workspaceSlug);
-      await projectStore.fetchProjects(workspaceSlug);
-
-      //profile issues
-      await profileIssuesStore.fetchIssues(workspaceSlug, userId, "assigned");
-    }
-  });
-
-  const activeLayout = profileIssueFiltersStore.userDisplayFilters.layout;
-
-  return (
-    <>
-      {isLoading ? (
-        <div className="flex justify-center items-center w-full h-full">
-          <Spinner />
-        </div>
-      ) : (
-        <div className="w-full h-full relative overflow-auto -z-1">
-          {activeLayout === "list" ? (
-            <ProfileIssuesListLayout />
-          ) : activeLayout === "kanban" ? (
-            <ProfileIssuesKanBanLayout />
-          ) : null}
-        </div>
-      )}
-    </>
-  );
-});
+const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => <ProfileIssuesPage type="assigned" />);
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (

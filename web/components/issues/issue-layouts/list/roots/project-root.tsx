@@ -11,6 +11,7 @@ import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
+import { EProjectStore } from "store/command-palette.store";
 
 export const ListLayout: FC = observer(() => {
   const router = useRouter();
@@ -41,6 +42,7 @@ export const ListLayout: FC = observer(() => {
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       getProjects={getProjects}
+      currentStore={EProjectStore.PROJECT}
     />
   );
 });

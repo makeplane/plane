@@ -6,7 +6,7 @@ import { IssueService } from "services/issue/issue.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IViewIssuesStore {
@@ -22,6 +22,8 @@ export interface IViewIssuesStore {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+
+  viewFlags: ViewFlags;
 }
 
 export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore {
@@ -31,6 +33,13 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
   rootStore;
   // service
   issueService;
+
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -114,7 +123,7 @@ export class ViewIssuesStore extends IssueBaseStore implements IViewIssuesStore 
 
       return response;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId);
+      console.error(error);
       this.loader = undefined;
       throw error;
     }
