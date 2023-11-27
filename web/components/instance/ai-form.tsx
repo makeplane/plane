@@ -95,7 +95,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
               <Input
                 id="OPENAI_API_KEY"
                 name="OPENAI_API_KEY"
-                type="text"
+                type="password"
                 value={value}
                 onChange={onChange}
                 ref={ref}

@@ -98,7 +98,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
               <Input
                 id="GITHUB_CLIENT_SECRET"
                 name="GITHUB_CLIENT_SECRET"
-                type="text"
+                type="password"
                 value={value}
                 onChange={onChange}
                 ref={ref}

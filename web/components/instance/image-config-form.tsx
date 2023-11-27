@@ -61,7 +61,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
               <Input
                 id="UNSPLASH_ACCESS_KEY"
                 name="UNSPLASH_ACCESS_KEY"
-                type="text"
+                type="password"
                 value={value}
                 onChange={onChange}
                 ref={ref}

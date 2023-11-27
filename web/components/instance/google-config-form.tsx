@@ -98,7 +98,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
               <Input
                 id="GOOGLE_CLIENT_SECRET"
                 name="GOOGLE_CLIENT_SECRET"
-                type="text"
+                type="password"
                 value={value}
                 onChange={onChange}
                 ref={ref}
