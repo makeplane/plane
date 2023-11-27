@@ -7,6 +7,7 @@ import { Button } from "@plane/ui";
 import type { IProject } from "types";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 // type
 type TJoinProjectModalProps = {
@@ -22,8 +23,9 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store
   const {
+    project: projectStore,
     user: { joinProject },
-  } = useMobxStore();
+  }: RootStore = useMobxStore();
   // router
   const router = useRouter();
 
@@ -33,6 +35,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
     joinProject(workspaceSlug, [project.id])
       .then(() => {
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+        projectStore.fetchProjects(workspaceSlug);
         handleClose();
       })
       .finally(() => {
