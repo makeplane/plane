@@ -10,6 +10,7 @@ import { ProjectDraftIssueHeader } from "components/headers";
 import { X, PenSquare } from "lucide-react";
 // types
 import { NextPageWithLayout } from "types/app";
+import { DraftIssueLayoutRoot } from "components/issues/issue-layouts/roots/draft-issue-layout-root";
 
 const ProjectDraftIssuesPage: NextPageWithLayout = () => {
   const router = useRouter();
@@ -21,14 +22,14 @@ const ProjectDraftIssuesPage: NextPageWithLayout = () => {
         <button
           type="button"
           onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
-          className="flex items-center gap-1.5 rounded border border-custom-border-200 px-3 py-1.5 text-xs"
+          className="flex items-center gap-1.5 rounded-full border border-custom-border-200 px-3 py-1.5 text-xs"
         >
-          <PenSquare className="h-3 w-3 text-custom-text-300" />
+          <PenSquare className="h-4 w-4" />
           <span>Draft Issues</span>
-
           <X className="h-3 w-3" />
         </button>
       </div>
+      <DraftIssueLayoutRoot />
     </div>
   );
 };

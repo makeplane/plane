@@ -1,5 +1,4 @@
 import { FC, useCallback, useState } from "react";
-import { useRouter } from "next/router";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -9,7 +8,19 @@ import { Spinner } from "@plane/ui";
 // types
 import { IIssue } from "types";
 import { EIssueActions } from "../types";
-import { ICycleIssuesStore, IModuleIssuesStore, IProjectIssuesStore, IViewIssuesStore } from "store/issues";
+import {
+  ICycleIssuesFilterStore,
+  ICycleIssuesStore,
+  IModuleIssuesFilterStore,
+  IModuleIssuesStore,
+  IProfileIssuesFilterStore,
+  IProfileIssuesStore,
+  IProjectDraftIssuesStore,
+  IProjectIssuesFilterStore,
+  IProjectIssuesStore,
+  IViewIssuesFilterStore,
+  IViewIssuesStore,
+} from "store/issues";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IIssueKanBanViewStore } from "store/issue";
 // constants
@@ -17,9 +28,22 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IBaseKanBanLayout {
-  issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
+  issueStore:
+    | IProjectIssuesStore
+    | IModuleIssuesStore
+    | ICycleIssuesStore
+    | IViewIssuesStore
+    | IProjectDraftIssuesStore
+    | IProfileIssuesStore;
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore
+    | IProfileIssuesFilterStore;
   kanbanViewStore: IIssueKanBanViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
@@ -29,24 +53,33 @@ export interface IBaseKanBanLayout {
   };
   showLoader?: boolean;
   viewId?: string;
+  currentStore?: EProjectStore;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
-  const { issueStore, kanbanViewStore, QuickActions, issueActions, showLoader, viewId } = props;
+  const {
+    issueStore,
+    issuesFilterStore,
+    kanbanViewStore,
+    QuickActions,
+    issueActions,
+    showLoader,
+    viewId,
+    currentStore,
+  } = props;
 
   const {
     project: { workspaceProjects },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
-    projectIssuesFilter: issueFilterStore,
   } = useMobxStore();
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];
 
-  const displayFilters = issueFilterStore?.issueFilters?.displayFilters;
-  const displayProperties = issueFilterStore?.issueFilters?.displayProperties || null;
+  const displayFilters = issuesFilterStore?.issueFilters?.displayFilters;
+  const displayProperties = issuesFilterStore?.issueFilters?.displayProperties || null;
 
   const sub_group_by: string | null = displayFilters?.sub_group_by || null;
 
@@ -60,6 +93,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
 
+  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
   const onDragStart = () => {
     setIsDragStarted(true);
   };
@@ -103,7 +137,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   return (
     <>
-      {showLoader && issueStore?.loader === "mutation" && (
+      {showLoader && issueStore?.loader === "init-loader" && (
         <div className="fixed top-16 right-2 z-30 bg-custom-background-80 shadow-custom-shadow-sm w-10 h-10 rounded flex justify-center items-center">
           <Spinner className="w-5 h-5" />
         </div>
@@ -144,11 +178,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               labels={projectLabels}
               members={projectMembers?.map((m) => m.member) ?? null}
               projects={workspaceProjects}
-              enableQuickIssueCreate
+              enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
-              quickAddCallback={issueStore.quickAddIssue}
+              quickAddCallback={issueStore?.quickAddIssue}
               viewId={viewId}
+              disableIssueCreation={!enableIssueCreation}
+              isReadOnly={!enableInlineEditing}
+              currentStore={currentStore}
             />
           ) : (
             <KanBanSwimLanes
@@ -185,6 +222,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               projects={workspaceProjects}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
+              disableIssueCreation={true}
+              enableQuickIssueCreate={enableQuickAdd}
+              isReadOnly={!enableInlineEditing}
+              currentStore={currentStore}
             />
           )}
         </DragDropContext>

@@ -11,6 +11,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
+import { EProjectStore } from "store/command-palette.store";
 
 export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, handleRemoveFromView } = props;
@@ -55,6 +56,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         onSubmit={async (data) => {
           if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
         }}
+        currentStore={EProjectStore.CYCLE}
       />
       <CustomMenu placement="bottom-start" ellipsis>
         <CustomMenu.MenuItem

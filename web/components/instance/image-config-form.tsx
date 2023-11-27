@@ -52,7 +52,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
   return (
     <>
       <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 max-w-md">
           <h4 className="text-sm">Access key from your Unsplash account</h4>
           <Controller
             control={control}

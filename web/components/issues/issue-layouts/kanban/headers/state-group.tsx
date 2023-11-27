@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { StateGroupIcon } from "@plane/ui";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IStateGroupHeader {
   column_id: string;
@@ -14,6 +15,8 @@ export interface IStateGroupHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 
 export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
@@ -32,6 +35,8 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
+    currentStore,
   } = props;
 
   const stateGroup = column_value || null;
@@ -59,6 +64,8 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{}}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         ))}
     </>
