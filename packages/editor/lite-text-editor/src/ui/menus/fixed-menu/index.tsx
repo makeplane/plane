@@ -6,7 +6,9 @@ import {
   BulletListItem,
   cn,
   CodeItem,
+  findTableAncestor,
   ImageItem,
+  isCellSelection,
   ItalicItem,
   NumberedListItem,
   QuoteItem,
@@ -63,10 +65,38 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     CodeItem(props.editor),
   ];
 
-  const complexItems: BubbleMenuItem[] = [
-    TableItem(props.editor),
-    ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
-  ];
+  function getComplexItems(): BubbleMenuItem[] {
+    const items: BubbleMenuItem[] = [TableItem(props.editor)];
+
+    if (shouldShowImageItem()) {
+      items.push(
+        ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
+      );
+    }
+
+    return items;
+  }
+
+  const complexItems: BubbleMenuItem[] = getComplexItems();
+
+  function shouldShowImageItem(): boolean {
+    if (typeof window !== "undefined") {
+      const selectionRange: any = window?.getSelection();
+      const { selection } = props.editor.state;
+
+      if (selectionRange.rangeCount !== 0) {
+        const range = selectionRange.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          return false;
+        }
+        if (isCellSelection(selection)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
 
   const handleAccessChange = (accessKey: string) => {
     props.commentAccessSpecifier?.onAccessChange(accessKey);
