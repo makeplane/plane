@@ -58,7 +58,8 @@
     "sharp": "^0.32.1",
     "swr": "^2.1.3",
     "tailwind-merge": "^2.0.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "use-debounce": "^9.0.4"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.2",
