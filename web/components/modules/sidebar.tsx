@@ -470,7 +470,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
         <div className="flex flex-col">
           <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
-            <Disclosure>
+            <Disclosure defaultOpen>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
                   <Disclosure.Button
