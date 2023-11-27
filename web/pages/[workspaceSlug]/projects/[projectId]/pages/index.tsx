@@ -90,7 +90,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
           projectId={projectId.toString()}
         />
       )}
-      <div className="space-y-5 p-8 h-full overflow-hidden flex flex-col">
+      <div className="space-y-5 p-6 h-full overflow-hidden flex flex-col">
         <div className="flex gap-4 justify-between">
           <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
         </div>

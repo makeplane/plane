@@ -207,7 +207,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                                 : "text-custom-text-400 hover:text-custom-text-200"
                             }`}
                           >
-                            <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1 `} />
+                            <mode.icon className="h-4 w-4 flex-shrink-0 -my-1" />
                             {mode.title}
                           </div>
                         </CustomSelect.Option>
@@ -225,6 +225,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       size="sm"
                       prependIcon={<Bell className="h-3 w-3" />}
                       variant="outline-primary"
+                      className="hover:!bg-custom-primary-100/20"
                       onClick={() =>
                         issueSubscription && issueSubscription.subscribed
                           ? issueSubscriptionRemove()

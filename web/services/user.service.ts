@@ -13,6 +13,7 @@ import type {
 } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
+import { IIssueResponse } from "store/issues/types";
 
 export class UserService extends APIService {
   constructor() {
@@ -96,8 +97,8 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserWorkspaceActivity(workspaceSlug: string): Promise<IUserActivityResponse> {
-    return this.get(`/api/users/workspaces/${workspaceSlug}/activities/`)
+  async getUserActivity(): Promise<IUserActivityResponse> {
+    return this.get(`/api/users/me/activities/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -133,6 +134,14 @@ export class UserService extends APIService {
     }
   ): Promise<any> {
     return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async changePassword(data: { old_password: string; new_password: string; confirm_password: string }): Promise<any> {
+    return this.post(`/api/users/me/change-password/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -185,12 +194,45 @@ export class UserService extends APIService {
       });
   }
 
-  async deleteAccount(): Promise<void> {
-    return this.delete("/api/users/me/")
+  async getV3UserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<IIssueResponse> {
+    return this.get(`/api/v3/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
+      params,
+    })
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response;
+        throw error?.response?.data;
       });
   }
 
+  async deactivateAccount() {
+    return this.delete(`/api/users/me/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async leaveWorkspace(workspaceSlug: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/members/leave/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/invitations/`, { project_ids })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async leaveProject(workspaceSlug: string, projectId: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

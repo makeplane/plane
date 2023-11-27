@@ -1,7 +1,7 @@
-// react
 import React, { useState } from "react";
+import useSWR, { mutate } from "swr";
 // components
-import { Button, Loader } from "@plane/ui";
+import { Button } from "@plane/ui";
 
 // helpers
 import { truncateText } from "helpers/string.helper";
@@ -9,8 +9,7 @@ import { truncateText } from "helpers/string.helper";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// swr
-import useSWR, { mutate } from "swr";
+
 // contants
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
@@ -18,7 +17,6 @@ import { ROLE } from "constants/workspace";
 import { IWorkspaceMemberInvitation } from "types";
 // icons
 import { CheckCircle2, Search } from "lucide-react";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   handleNextStep: () => void;
@@ -26,7 +24,7 @@ type Props = {
 };
 const workspaceService = new WorkspaceService();
 
-const Invitations: React.FC<Props> = (props) => {
+export const Invitations: React.FC<Props> = (props) => {
   const { handleNextStep, setTryDiffAccount } = props;
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -34,6 +32,7 @@ const Invitations: React.FC<Props> = (props) => {
   const {
     workspace: workspaceStore,
     user: { currentUser, updateCurrentUser },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
 
   const {
@@ -65,14 +64,17 @@ const Invitations: React.FC<Props> = (props) => {
     await workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
-        trackEvent("WORKSPACE_USER_INVITE_ACCEPT", res);
+        postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", { ...res, state: "SUCCESS" });
         await mutateInvitations();
         await workspaceStore.fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
         await handleNextStep();
       })
-      .finally(() => setIsJoiningWorkspaces(false));
+      .catch((error) => {
+        console.log(error);
+        postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", { state: "FAILED" });
+      }).finally(() => setIsJoiningWorkspaces(false));
   };
 
   return invitations && invitations.length > 0 ? (
@@ -87,11 +89,10 @@ const Invitations: React.FC<Props> = (props) => {
               return (
                 <div
                   key={invitation.id}
-                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${
-                    isSelected
-                      ? "border-custom-primary-100"
-                      : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
-                  }`}
+                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${isSelected
+                    ? "border-custom-primary-100"
+                    : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
+                    }`}
                   onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                 >
                   <div className="flex-shrink-0">
@@ -147,11 +148,11 @@ const Invitations: React.FC<Props> = (props) => {
       </div>
     </div>
   ) : (
-    <EmptyInvitation email={currentUser!.email} />
+    <EmptyInvitation email={currentUser!.email} setTryDiffAccount={setTryDiffAccount} />
   );
 };
 
-const EmptyInvitation = ({ email }: { email: string }) => (
+const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDiffAccount: () => void }) => (
   <div className="items-center md:w-4/5 bg-onboarding-background-300/30 my-16 border-onboarding-border-200 py-5 px-10 rounded border justify-center ">
     <p className="text-lg text-onboarding-text-300 text-center font-semibold">Is your team already on Plane?</p>
     <p className="text-sm text-onboarding-text-300 mt-6 text-center">
@@ -159,7 +160,7 @@ const EmptyInvitation = ({ email }: { email: string }) => (
     </p>
     <div
       className="bg-onboarding-background-200 mt-6 py-3 text-center hover:cursor-pointer text-custom-text-200 rounded-md text-sm font-medium border border-custom-border-200"
-      onClick={() => {}}
+      onClick={setTryDiffAccount}
     >
       Try a different email address
     </div>
@@ -168,5 +169,3 @@ const EmptyInvitation = ({ email }: { email: string }) => (
     </p>
   </div>
 );
-
-export default Invitations;

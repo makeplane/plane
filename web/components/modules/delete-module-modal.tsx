@@ -24,7 +24,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
 
   const { module: moduleStore } = useMobxStore();
 
@@ -43,7 +43,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
     await moduleStore
       .deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
+        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();
         setToastAlert({
           type: "success",

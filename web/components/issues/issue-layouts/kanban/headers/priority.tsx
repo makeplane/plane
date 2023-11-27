@@ -7,6 +7,7 @@ import { HeaderSubGroupByCard } from "./sub-group-by-card";
 
 // Icons
 import { PriorityIcon } from "@plane/ui";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IPriorityHeader {
   column_id: string;
@@ -17,6 +18,8 @@ export interface IPriorityHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 
 export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
@@ -29,6 +32,8 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
+    currentStore,
   } = props;
 
   const priority = column_value || null;
@@ -56,6 +61,8 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ priority: priority?.key }}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
           />
         ))}
     </>

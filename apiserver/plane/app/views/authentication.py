@@ -1,4 +1,5 @@
 # Python imports
+import os
 import uuid
 import random
 import string
@@ -32,7 +33,9 @@ from plane.db.models import (
 )
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
-
+from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
+from plane.bgtasks.event_tracking_task import auth_events
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -46,7 +49,17 @@ class SignUpEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        if not settings.ENABLE_SIGNUP:
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        if (
+            not get_configuration_value(
+                instance_configuration,
+                "ENABLE_SIGNUP",
+                os.environ.get("ENABLE_SIGNUP", "0"),
+            )
+            and not WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).exists()
+        ):
             return Response(
                 {
                     "error": "New account creation is disabled. Please contact your site administrator"
@@ -140,7 +153,8 @@ class SignUpEndpoint(BaseAPIView):
                     else 15,
                     member=user,
                     created_by_id=project_member_invite.created_by_id,
-                ) for project_member_invite in project_member_invites
+                )
+                for project_member_invite in project_member_invites
             ],
             ignore_conflicts=True,
         )
@@ -148,30 +162,17 @@ class SignUpEndpoint(BaseAPIView):
         workspace_member_invites.delete()
         project_member_invites.delete()
 
-        try:
-            # Send Analytics
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": "email",
-                        },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
-                        },
-                        "event_type": "SIGN_UP",
-                    },
-                )
-        except RequestException as e:
-            capture_exception(e)
+        # Send event 
+        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium="EMAIL",
+                first_time=True
+            )
 
         access_token, refresh_token = get_tokens_for_user(user)
 
@@ -224,15 +225,9 @@ class SignInEndpoint(BaseAPIView):
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
-        if not user.is_active:
-            return Response(
-                {
-                    "error": "Your account has been deactivated. Please contact your site administrator."
-                },
-                status=status.HTTP_403_FORBIDDEN,
-            )
 
         # settings last active for the user
+        user.is_active = True
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
         user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -288,7 +283,8 @@ class SignInEndpoint(BaseAPIView):
                     else 15,
                     member=user,
                     created_by_id=project_member_invite.created_by_id,
-                ) for project_member_invite in project_member_invites
+                )
+                for project_member_invite in project_member_invites
             ],
             ignore_conflicts=True,
         )
@@ -296,30 +292,17 @@ class SignInEndpoint(BaseAPIView):
         # Delete all the invites
         workspace_member_invites.delete()
         project_member_invites.delete()
-        try:
-            # Send Analytics
-            if settings.ANALYTICS_BASE_API:
-                _ = requests.post(
-                    settings.ANALYTICS_BASE_API,
-                    headers={
-                        "Content-Type": "application/json",
-                        "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                    },
-                    json={
-                        "event_id": uuid.uuid4().hex,
-                        "event_data": {
-                            "medium": "email",
-                        },
-                        "user": {"email": email, "id": str(user.id)},
-                        "device_ctx": {
-                            "ip": request.META.get("REMOTE_ADDR"),
-                            "user_agent": request.META.get("HTTP_USER_AGENT"),
-                        },
-                        "event_type": "SIGN_IN",
-                    },
-                )
-        except RequestException as e:
-            capture_exception(e)
+        # Send event 
+        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium="EMAIL",
+                first_time=False
+            )
 
         access_token, refresh_token = get_tokens_for_user(user)
         data = {
@@ -359,6 +342,31 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
     def post(self, request):
         email = request.data.get("email", False)
+
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        if (
+            not get_configuration_value(
+                instance_configuration,
+                "ENABLE_MAGIC_LINK_LOGIN",
+                os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
+            )
+            and not (
+                get_configuration_value(
+                    instance_configuration,
+                    "ENABLE_SIGNUP",
+                    os.environ.get("ENABLE_SIGNUP", "0"),
+                )
+            )
+            and not WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).exists()
+        ):
+            return Response(
+                {
+                    "error": "New account creation is disabled. Please contact your site administrator"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if not email:
             return Response(
@@ -410,8 +418,7 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-
-        current_site = request.META.get('HTTP_ORIGIN')
+        current_site = request.META.get("HTTP_ORIGIN")
         magic_link.delay(email, key, token, current_site)
 
         return Response({"key": key}, status=status.HTTP_200_OK)
@@ -450,30 +457,18 @@ class MagicSignInEndpoint(BaseAPIView):
                             },
                             status=status.HTTP_403_FORBIDDEN,
                         )
-                    try:
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                                },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
-                                    },
-                                    "event_type": "SIGN_IN",
-                                },
-                            )
-                    except RequestException as e:
-                        capture_exception(e)
+                    # Send event 
+                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                        auth_events.delay(
+                            user=user.id,
+                            email=email,
+                            user_agent=request.META.get("HTTP_USER_AGENT"),
+                            ip=request.META.get("REMOTE_ADDR"),
+                            event_name="SIGN_IN",
+                            medium="MAGIC_LINK",
+                            first_time=False
+                        )
+
                 else:
                     user = User.objects.create(
                         email=email,
@@ -481,31 +476,20 @@ class MagicSignInEndpoint(BaseAPIView):
                         password=make_password(uuid.uuid4().hex),
                         is_password_autoset=True,
                     )
-                    try:
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                                },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get("HTTP_USER_AGENT"),
-                                    },
-                                    "event_type": "SIGN_UP",
-                                },
-                            )
-                    except RequestException as e:
-                        capture_exception(e)
 
+                    # Send event 
+                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                        auth_events.delay(
+                            user=user.id,
+                            email=email,
+                            user_agent=request.META.get("HTTP_USER_AGENT"),
+                            ip=request.META.get("REMOTE_ADDR"),
+                            event_name="SIGN_IN",
+                            medium="MAGIC_LINK",
+                            first_time=True
+                        )
+
+                user.is_active = True
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
                 user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -561,7 +545,8 @@ class MagicSignInEndpoint(BaseAPIView):
                             else 15,
                             member=user,
                             created_by_id=project_member_invite.created_by_id,
-                        ) for project_member_invite in project_member_invites
+                        )
+                        for project_member_invite in project_member_invites
                     ],
                     ignore_conflicts=True,
                 )

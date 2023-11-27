@@ -17,12 +17,13 @@ export interface IKanBanProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   showEmptyGroup: boolean;
+  isReadOnly: boolean;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, showEmptyGroup } = props;
+  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, isReadOnly } = props;
 
   const handleState = (state: IState) => {
     handleIssues(
@@ -87,9 +88,9 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {displayProperties && displayProperties?.state && (
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
-          value={issue?.state_detail || null}
+          value={issue?.state || null}
           onChange={handleState}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
@@ -99,39 +100,51 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
 
       {/* label */}
-      {displayProperties && displayProperties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
+      {displayProperties && displayProperties?.labels && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
           onChange={handleLabel}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
 
       {/* start date */}
-      {displayProperties && displayProperties?.start_date && (showEmptyGroup || issue?.start_date) && (
+      {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
-          disabled={false}
+          disabled={isReadOnly}
           placeHolder="Start date"
         />
       )}
 
       {/* target/due date */}
-      {displayProperties && displayProperties?.due_date && (showEmptyGroup || issue?.target_date) && (
+      {displayProperties && displayProperties?.due_date && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
-          disabled={false}
+          disabled={isReadOnly}
           placeHolder="Target date"
+        />
+      )}
+
+      {/* assignee */}
+      {displayProperties && displayProperties?.assignee && (
+        <IssuePropertyAssignee
+          projectId={issue?.project_detail?.id || null}
+          value={issue?.assignees || null}
+          hideDropdownArrow
+          onChange={handleAssignee}
+          disabled={isReadOnly}
+          multiple
         />
       )}
 
@@ -141,7 +154,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
           onChange={handleEstimate}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
@@ -175,18 +188,6 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
-      )}
-
-      {/* assignee */}
-      {displayProperties && displayProperties?.assignee && (showEmptyGroup || issue?.assignees.length > 0) && (
-        <IssuePropertyAssignee
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.assignees || null}
-          hideDropdownArrow
-          onChange={handleAssignee}
-          disabled={false}
-          multiple
-        />
       )}
     </div>
   );

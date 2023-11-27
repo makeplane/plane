@@ -29,7 +29,10 @@ from plane.db.models import (
     ProjectMemberInvite,
     ProjectMember,
 )
+from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
+from plane.license.models import InstanceConfiguration
+from plane.license.utils.instance_value import get_configuration_value
 
 
 def get_tokens_for_user(user):
@@ -137,6 +140,40 @@ class OauthEndpoint(BaseAPIView):
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
 
+            instance_configuration = InstanceConfiguration.objects.values(
+                "key", "value"
+            )
+            if (
+                (
+                    not get_configuration_value(
+                        instance_configuration,
+                        "GOOGLE_CLIENT_ID",
+                        os.environ.get("GOOGLE_CLIENT_ID"),
+                    )
+                    or not get_configuration_value(
+                        instance_configuration,
+                        "GITHUB_CLIENT_ID",
+                        os.environ.get("GITHUB_CLIENT_ID"),
+                    )
+                )
+                and not (
+                    get_configuration_value(
+                        instance_configuration,
+                        "ENABLE_SIGNUP",
+                        os.environ.get("ENABLE_SIGNUP", "0"),
+                    )
+                )
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=request.user.email
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "New account creation is disabled. Please contact your site administrator"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             if not medium or not id_token:
                 return Response(
                     {
@@ -174,15 +211,7 @@ class OauthEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            ## Login Case
-            if not user.is_active:
-                return Response(
-                    {
-                        "error": "Your account has been deactivated. Please contact your site administrator."
-                    },
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
+            user.is_active = True
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
             user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -239,7 +268,8 @@ class OauthEndpoint(BaseAPIView):
                         else 15,
                         member=user,
                         created_by_id=project_member_invite.created_by_id,
-                    ) for project_member_invite in project_member_invites
+                    )
+                    for project_member_invite in project_member_invites
                 ],
                 ignore_conflicts=True,
             )
@@ -256,29 +286,18 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-            try:
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                        },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": f"oauth-{medium}",
-                            },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
-                            },
-                            "event_type": "SIGN_IN",
-                        },
-                    )
-            except RequestException as e:
-                capture_exception(e)
+             
+            # Send event 
+            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium=medium.upper(), 
+                    first_time=False
+                )
 
             access_token, refresh_token = get_tokens_for_user(user)
 
@@ -290,6 +309,23 @@ class OauthEndpoint(BaseAPIView):
 
         except User.DoesNotExist:
             ## Signup Case
+
+            if (
+                get_configuration_value(
+                    instance_configuration,
+                    "ENABLE_SIGNUP",
+                    os.environ.get("ENABLE_SIGNUP", "0"),
+                )
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=request.user.email
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "New account creation is disabled. Please contact your site administrator"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             username = uuid.uuid4().hex
 
@@ -373,7 +409,8 @@ class OauthEndpoint(BaseAPIView):
                         else 15,
                         member=user,
                         created_by_id=project_member_invite.created_by_id,
-                    ) for project_member_invite in project_member_invites
+                    )
+                    for project_member_invite in project_member_invites
                 ],
                 ignore_conflicts=True,
             )
@@ -381,29 +418,17 @@ class OauthEndpoint(BaseAPIView):
             workspace_member_invites.delete()
             project_member_invites.delete()
 
-            try:
-                if settings.ANALYTICS_BASE_API:
-                    _ = requests.post(
-                        settings.ANALYTICS_BASE_API,
-                        headers={
-                            "Content-Type": "application/json",
-                            "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                        },
-                        json={
-                            "event_id": uuid.uuid4().hex,
-                            "event_data": {
-                                "medium": f"oauth-{medium}",
-                            },
-                            "user": {"email": email, "id": str(user.id)},
-                            "device_ctx": {
-                                "ip": request.META.get("REMOTE_ADDR"),
-                                "user_agent": request.META.get("HTTP_USER_AGENT"),
-                            },
-                            "event_type": "SIGN_UP",
-                        },
-                    )
-            except RequestException as e:
-                capture_exception(e)
+            # Send event 
+            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium=medium.upper(),
+                    first_time=True
+                )
 
             SocialLoginConnection.objects.update_or_create(
                 medium=medium,
