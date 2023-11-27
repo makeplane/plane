@@ -34,9 +34,11 @@ const InstanceAdminPage: NextPageWithLayout = observer(() => {
         <InstanceGeneralForm instance={instance} instanceAdmins={instanceAdmins} />
       ) : (
         <Loader className="space-y-4">
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
           <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="25%" />
         </Loader>
       )}
     </div>
