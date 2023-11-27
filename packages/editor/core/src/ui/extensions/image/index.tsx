@@ -110,12 +110,16 @@ const ImageExtension = (
       const imageSources = new Set<string>();
       this.editor.state.doc.descendants((node) => {
         if (node.type.name === IMAGE_NODE_TYPE) {
-          console.log(node.attrs.src, "image");
           imageSources.add(node.attrs.src);
         }
       });
       imageSources.forEach(async (src) => {
-        await onNodeRestored(src, restoreImage);
+        try {
+          const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
+          await restoreImage(assetUrlWithWorkspaceId);
+        } catch (error) {
+          console.error("Error restoring image: ", error);
+        }
       });
     },
 
