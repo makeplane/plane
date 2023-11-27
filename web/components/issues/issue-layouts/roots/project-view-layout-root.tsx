@@ -7,11 +7,11 @@ import useSWR from "swr";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import {
-  ModuleKanBanLayout,
-  ModuleListLayout,
   ProjectViewAppliedFiltersRoot,
   ProjectViewCalendarLayout,
   ProjectViewGanttLayout,
+  ProjectViewKanBanLayout,
+  ProjectViewListLayout,
   ProjectViewSpreadsheetLayout,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
@@ -50,9 +50,9 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
         <>
           <div className="w-full h-full relative overflow-auto">
             {activeLayout === "list" ? (
-              <ModuleListLayout />
+              <ProjectViewListLayout />
             ) : activeLayout === "kanban" ? (
-              <ModuleKanBanLayout />
+              <ProjectViewKanBanLayout />
             ) : activeLayout === "calendar" ? (
               <ProjectViewCalendarLayout />
             ) : activeLayout === "gantt_chart" ? (
