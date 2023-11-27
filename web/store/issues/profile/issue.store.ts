@@ -102,6 +102,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     const displayFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
+    const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
@@ -113,6 +114,15 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
       else issues = this.unGroupedIssues(orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
+    } else if (layout === "kanban" && groupBy && orderBy) {
+      if (subGroupBy)
+        issues = this.subGroupedIssues(
+          subGroupBy,
+          groupBy,
+          orderBy,
+          this.issues[currentUserId][this.currentUserIssueTab]
+        );
+      else issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
     }
 
     return issues;
