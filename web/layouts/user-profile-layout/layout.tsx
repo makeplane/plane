@@ -1,11 +1,8 @@
-import useSWR from "swr";
-import { useRouter } from "next/router";
-// services
-import { WorkspaceService } from "services/workspace.service";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
-// constants
-import { WORKSPACE_MEMBERS_ME } from "constants/fetch-keys";
 
 type Props = {
   children: React.ReactNode;
@@ -13,21 +10,18 @@ type Props = {
   showProfileIssuesFilter?: boolean;
 };
 
-// services
-const workspaceService = new WorkspaceService();
+const AUTHORIZED_ROLES = [20, 15, 10];
 
-export const ProfileAuthWrapper: React.FC<Props> = (props) => {
+export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   const { children, className, showProfileIssuesFilter } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
 
-  const { data: memberDetails } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS_ME(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => workspaceService.workspaceMemberMe(workspaceSlug.toString()) : null
-  );
+  if (!currentWorkspaceRole) return null;
 
-  const isAuthorized = memberDetails?.role === 20 || memberDetails?.role === 15 || memberDetails?.role === 10;
+  const isAuthorized = AUTHORIZED_ROLES.includes(currentWorkspaceRole);
 
   return (
     <div className="h-full w-full md:flex md:flex-row-reverse md:overflow-hidden">
@@ -44,4 +38,4 @@ export const ProfileAuthWrapper: React.FC<Props> = (props) => {
       </div>
     </div>
   );
-};
+});
