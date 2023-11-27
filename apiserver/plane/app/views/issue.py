@@ -387,8 +387,8 @@ class IssueListGroupedEndpoint(BaseAPIView):
                 )
             )
             .filter(**filters)
-            .filter(is_draft=draft)
-            .filter(~Q(archived_at__isnull=archive))
+            .filter(is_draft=bool(draft))
+            .filter(~Q(archived_at__isnull=bool(archive)))
             .filter(
                 models.Q(issue_inbox__status=1)
                 | models.Q(issue_inbox__status=-1)
