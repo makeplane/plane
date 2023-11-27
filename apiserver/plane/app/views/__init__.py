@@ -17,6 +17,7 @@ from .user import (
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
+    SetUserPasswordEndpoint,
 )
 
 from .oauth import OauthEndpoint

@@ -12,8 +12,6 @@ class InstanceSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
-            "primary_owner",
-            "primary_email",
             "instance_id",
             "license_key",
             "api_key",

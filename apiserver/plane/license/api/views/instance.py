@@ -2,13 +2,17 @@
 import json
 import os
 import requests
+import uuid
 
 # Django imports
 from django.utils import timezone
+from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Module imports
 from plane.app.views import BaseAPIView
@@ -23,11 +27,12 @@ from plane.license.api.permissions import (
 )
 from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
+from plane.settings.redis import redis_instance
 
 
 class InstanceEndpoint(BaseAPIView):
     permission_classes = [
-        InstanceAdminPermission,
+        AllowAny,
     ]
 
     def post(self, request):
@@ -70,8 +75,6 @@ class InstanceEndpoint(BaseAPIView):
                     license_key=data.get("license_key"),
                     api_key=data.get("api_key"),
                     version=data.get("version"),
-                    primary_email=data.get("email"),
-                    primary_owner=request.user,
                     last_checked_at=timezone.now(),
                 )
                 # Create instance admin
@@ -106,7 +109,6 @@ class InstanceEndpoint(BaseAPIView):
             return Response({"activated": False}, status=status.HTTP_400_BAD_REQUEST)
         # Return instance
         serializer = InstanceSerializer(instance)
-        serializer.data["activated"] = True
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
@@ -186,10 +188,13 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
         bulk_configurations = []
         for configuration in configurations:
-            value = request.data.get(
-                configuration.key, configuration.value
-            )
-            if value is not None and configuration.key in ["OPENAI_API_KEY", "GITHUB_CLIENT_SECRET", "EMAIL_HOST_PASSWORD", "UNSPLASH_ACESS_KEY"]:
+            value = request.data.get(configuration.key, configuration.value)
+            if value is not None and configuration.key in [
+                "OPENAI_API_KEY",
+                "GITHUB_CLIENT_SECRET",
+                "EMAIL_HOST_PASSWORD",
+                "UNSPLASH_ACESS_KEY",
+            ]:
                 configuration.value = encrypt_data(value)
             else:
                 configuration.value = value
@@ -201,3 +206,164 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
         serializer = InstanceConfigurationSerializer(configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+    return (
+        str(refresh.access_token),
+        str(refresh),
+    )
+
+
+class AdminSetupMagicSignInEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        instance = Instance.objects.first()
+        if instance is None:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+        if not license_engine_base_url:
+            return Response(
+                {"error": "License engine base url is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user_token = request.data.get("token", "").strip()
+        key = request.data.get("key", False).strip().lower()
+
+        if not key or user_token == "":
+            return Response(
+                {"error": "User token and key are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if InstanceAdmin.objects.first():
+            return Response(
+                {"error": "Admin for this instance is already registered"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        ri = redis_instance()
+        print(key)
+        if ri.exists(key):
+            data = json.loads(ri.get(key))
+
+            token = data["token"]
+            email = data["email"]
+
+            if str(token) == str(user_token):
+                user = User.objects.filter(email=email).first()
+                if user is None:
+                    # Sign In Case
+                    user = User.objects.create(
+                        email=email,
+                        username=uuid.uuid4().hex,
+                        password=make_password(uuid.uuid4().hex),
+                        is_password_autoset=True,
+                    )
+
+                user.is_active = True
+                user.is_email_verified = True
+                user.is_password_autoset = True
+                user.last_active = timezone.now()
+                user.last_login_time = timezone.now()
+                user.last_login_ip = request.META.get("REMOTE_ADDR")
+                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+                user.token_updated_at = timezone.now()
+                user.save()
+
+                # Make the setup flag True
+                instance.is_setup_done = True
+                instance.save()
+
+                # Save the user in control center
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-instance-id": instance.instance_id,
+                    "x-api-key": instance.api_key,
+                }
+                _ = requests.patch(
+                    f"{license_engine_base_url}/api/instances/",
+                    headers=headers,
+                    data=json.dumps({"is_setup_done": True}),
+                )
+
+                # Also register the user as admin
+                _ = requests.post(
+                    f"{license_engine_base_url}/api/instances/users/register/",
+                    headers=headers,
+                    data=json.dumps(
+                        {
+                            "email": str(user.email),
+                            "signup_mode": "MAGIC_CODE",
+                            "is_admin": True,
+                        }
+                    ),
+                )
+
+                # Register the user as an instance admin
+                _ = InstanceAdmin.objects.create(
+                    user=user,
+                    instance=instance,
+                )
+
+                access_token, refresh_token = get_tokens_for_user(user)
+                data = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                }
+
+                return Response(data, status=status.HTTP_200_OK)
+
+            else:
+                return Response(
+                    {"error": "Your login code was incorrect. Please try again."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        else:
+            return Response(
+                {"error": "The magic code/link has expired please try again"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
+class SignUpScreenVisitedEndpoint(BaseAPIView):
+    def post(self, request):
+        instance = Instance.objects.first()
+
+        if instance is None:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+
+        if not license_engine_base_url:
+            return Response(
+                {"error": "License engine base url is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        headers = {
+            "Content-Type": "application/json",
+            "x-instance-id": instance.instance_id,
+            "x-api-key": instance.api_key,
+        }
+
+        payload = {"is_signup_screen_visited": True}
+        response = requests.patch(
+            f"{license_engine_base_url}/api/instances/",
+            headers=headers,
+            data=json.dumps(payload),
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -25,6 +25,8 @@ class Instance(BaseModel):
     # telemetry and support
     is_telemetry_enabled = models.BooleanField(default=True)
     is_support_required = models.BooleanField(default=True)
+    # is setup done
+    is_setup_done = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Instance"

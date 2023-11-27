@@ -2,7 +2,7 @@
 import uuid
 import requests
 import os
-from requests.exceptions import RequestException
+import json
 
 # Django imports
 from django.utils import timezone
@@ -31,7 +31,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
-from plane.license.models import InstanceConfiguration
+from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -360,6 +360,38 @@ class OauthEndpoint(BaseAPIView):
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.token_updated_at = timezone.now()
             user.save()
+
+            instance = Instance.objects.first()
+            if instance is None:
+                return Response(
+                    {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+            if not license_engine_base_url:
+                return Response(
+                    {"error": "License engine base url is required"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Save the user in control center
+            headers = {
+                "Content-Type": "application/json",
+                "x-instance-id": instance.instance_id,
+                "x-api-key": instance.api_key,
+            }
+            # Also register the user as admin
+            _ = requests.post(
+                f"{license_engine_base_url}/api/instances/users/register/",
+                headers=headers,
+                data=json.dumps(
+                    {
+                        "email": str(user.email),
+                        "signup_mode": "MAGIC_CODE",
+                    }
+                ),
+            )
 
             # Check if user has any accepted invites for workspace and add them to workspace
             workspace_member_invites = WorkspaceMemberInvite.objects.filter(

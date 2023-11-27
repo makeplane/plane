@@ -20,7 +20,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from sentry_sdk import capture_exception, capture_message
+from sentry_sdk import capture_message
 
 # Module imports
 from . import BaseAPIView
@@ -32,8 +32,7 @@ from plane.db.models import (
     ProjectMember,
 )
 from plane.settings.redis import redis_instance
-from plane.bgtasks.magic_link_code_task import magic_link
-from plane.license.models import InstanceConfiguration
+from plane.license.models import InstanceConfiguration, InstanceAdmin, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
 
@@ -71,6 +70,7 @@ class SignInEndpoint(BaseAPIView):
 
         user = User.objects.filter(email=email).first()
 
+        # User is not present in db
         if user is None:
             return Response(
                 {
@@ -79,21 +79,22 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        if not user.is_email_verified:
-            return Response(
-                {
-                    "error": "The email is not verified you can only login with password when your email is verified"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Sign up Process
+        # Check user password
         if not user.check_password(password):
             return Response(
                 {
                     "error": "Sorry, we could not find a user with the provided credentials. Please try again."
                 },
                 status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Check if the user email verified
+        if not user.is_email_verified:
+            return Response(
+                {
+                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # settings last active for the user
@@ -288,10 +289,31 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-        # current_site = request.META.get("HTTP_ORIGIN")
-        # magic_link.delay(email, key, token, current_site)
+        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+        if not license_engine_base_url:
+            raise Response({"error": "License Engine url is not configured"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Send the code to pcc to send the emails
+        instance = Instance.objects.first()
+        if instance is None:
+            return Response({"error": "Instance is not configured"}, status=status.HTTP_400_BAD_REQUEST)
+
+        headers = {
+            "Content-Type": "application/json",
+            "x-instance-id": instance.instance_id,
+            "x-api-key": instance.api_key,
+        }
+
+        payload = {
+            "current_site": request.META.get("HTTP_ORIGIN"),
+            "code": token,
+            "email": email,
+        }
+
+        response = requests.post(
+            f"{license_engine_base_url}/api/instances/users/magic-code/",
+            headers=headers,
+            data=json.dumps(payload),
+        )
 
         return Response({"key": key}, status=status.HTTP_200_OK)
 
@@ -302,6 +324,22 @@ class MagicSignInEndpoint(BaseAPIView):
     ]
 
     def post(self, request):
+
+        instance = Instance.objects.first()
+        if instance is None:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+        if not license_engine_base_url:
+            return Response(
+                {"error": "License engine base url is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+
         user_token = request.data.get("token", "").strip()
         key = request.data.get("key", False).strip().lower()
 
@@ -342,42 +380,47 @@ class MagicSignInEndpoint(BaseAPIView):
                         )
 
                 else:
+                    # Registration case
                     user = User.objects.create(
                         email=email,
                         username=uuid.uuid4().hex,
                         password=make_password(uuid.uuid4().hex),
                         is_password_autoset=True,
                     )
-                    try:
-                        # Send event to Jitsu for tracking
-                        if settings.ANALYTICS_BASE_API:
-                            _ = requests.post(
-                                settings.ANALYTICS_BASE_API,
-                                headers={
-                                    "Content-Type": "application/json",
-                                    "X-Auth-Token": settings.ANALYTICS_SECRET_KEY,
-                                },
-                                json={
-                                    "event_id": uuid.uuid4().hex,
-                                    "event_data": {
-                                        "medium": "code",
-                                    },
-                                    "user": {"email": email, "id": str(user.id)},
-                                    "device_ctx": {
-                                        "ip": request.META.get("REMOTE_ADDR"),
-                                        "user_agent": request.META.get(
-                                            "HTTP_USER_AGENT"
-                                        ),
-                                    },
-                                    "event_type": "SIGN_UP",
-                                },
-                            )
-                            # register
-                    except RequestException as e:
-                        capture_exception(e)
+                    # Send event 
+                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                        auth_events.delay(
+                            user=user.id,
+                            email=email,
+                            user_agent=request.META.get("HTTP_USER_AGENT"),
+                            ip=request.META.get("REMOTE_ADDR"),
+                            event_name="SIGN_IN",
+                            medium="MAGIC_LINK",
+                            first_time=True
+                        )
+
+                    # Save the user in control center
+                    headers = {
+                        "Content-Type": "application/json",
+                        "x-instance-id": instance.instance_id,
+                        "x-api-key": instance.api_key,
+                    }
+                    # Also register the user as admin
+                    _ = requests.post(
+                        f"{license_engine_base_url}/api/instances/users/register/",
+                        headers=headers,
+                        data=json.dumps(
+                            {
+                                "email": str(user.email),
+                                "signup_mode": "MAGIC_CODE",
+                            }
+                        ),
+                    )
+
 
                 user.is_active = True
                 user.is_email_verified = True
+                user.is_password_autoset = True
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
                 user.last_login_ip = request.META.get("REMOTE_ADDR")
