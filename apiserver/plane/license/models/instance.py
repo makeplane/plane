@@ -7,8 +7,7 @@ from plane.db.models import BaseModel
 from plane.db.mixins import AuditModel
 
 ROLE_CHOICES = (
-    (20, "Owner"),
-    (15, "Admin"),
+    (20, "Admin"),
 )
 
 
@@ -20,14 +19,6 @@ class Instance(BaseModel):
     license_key = models.CharField(max_length=256, null=True, blank=True)
     api_key = models.CharField(max_length=16)
     version = models.CharField(max_length=10)
-    # User information
-    primary_email = models.CharField(max_length=256)
-    primary_owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name="instance_primary_owner",
-    )
     # Instnace specifics
     last_checked_at = models.DateTimeField()
     namespace = models.CharField(max_length=50, blank=True, null=True)
@@ -50,7 +41,7 @@ class InstanceAdmin(BaseModel):
         related_name="instance_owner",
     )
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
-    role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=15)
+    role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
 
     class Meta:
         unique_together = ["instance", "user"]
