@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Sparkle } from "lucide-react";
+import { observer } from "mobx-react-lite";
 // services
 import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
@@ -33,7 +34,7 @@ import { PAGE_DETAILS } from "constants/fetch-keys";
 const fileService = new FileService();
 const pageService = new PageService();
 
-const PageDetailsPage: NextPageWithLayout = () => {
+const PageDetailsPage: NextPageWithLayout = observer(() => {
   const editorRef = useRef<any>(null);
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -42,7 +43,6 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const {
     appConfig: { envConfig },
   } = useMobxStore();
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
@@ -177,10 +177,19 @@ const PageDetailsPage: NextPageWithLayout = () => {
   };
 
   const handleAiAssistance = async (response: string) => {
-    if (!workspaceSlug || !projectId) return;
+    if (!workspaceSlug || !projectId || !pageId) return;
 
-    setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
-    editorRef.current?.setEditorValue(`${watch("description_html")}`);
+    const newDescription = `${watch("description_html")}<p>${response}</p>`;
+    setValue("description_html", newDescription);
+    editorRef.current?.setEditorValue(newDescription);
+
+    pageService
+      .patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), {
+        description_html: newDescription,
+      })
+      .then(() => {
+        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
+      });
   };
 
   useEffect(() => {
@@ -318,7 +327,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
