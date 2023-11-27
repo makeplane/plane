@@ -1,5 +1,4 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon } from "lucide-react";
 
 import {
   BoldItem,
@@ -18,12 +17,18 @@ import {
 } from "@plane/editor-core";
 import { Tooltip } from "@plane/ui";
 import { UploadImage } from "../../";
+import type { SVGProps } from "react";
+interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
+  size?: string | number
+  absoluteStrokeWidth?: boolean
+}
 
+type LucideIcon = (props: LucideProps) => JSX.Element;
 export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIcon;
 }
 
 type EditorBubbleMenuProps = {

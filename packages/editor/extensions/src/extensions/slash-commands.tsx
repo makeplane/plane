@@ -10,6 +10,7 @@ import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
+import type { UploadImage } from "@plane/editor-types";
 import {
   Heading1,
   Heading2,
@@ -24,7 +25,6 @@ import {
   ImageIcon,
   Table,
 } from "lucide-react";
-import { UploadImage } from "../";
 import {
   cn,
   insertTableCommand,
@@ -156,6 +156,7 @@ const getSuggestionItems =
         searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
         icon: <MinusSquare size={18} />,
         command: ({ editor, range }: CommandProps) => {
+          // @ts-expect-error I have to move this to the core
           editor.chain().focus().deleteRange(range).setHorizontalRule().run();
         },
       },
@@ -191,6 +192,7 @@ const getSuggestionItems =
         searchTerms: ["codeblock"],
         icon: <Code size={18} />,
         command: ({ editor, range }: CommandProps) =>
+          // @ts-expect-error I have to move this to the core
           editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
       },
       {
@@ -381,5 +383,3 @@ export const SlashCommand = (
       render: renderItems,
     },
   });
-
-export default SlashCommand;
