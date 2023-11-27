@@ -43,7 +43,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
           message: "Cycle deleted successfully.",
         });
 
-        if (cycleId || peekCycle) router.replace(`/${workspaceSlug}/projects/${projectId}/cycles`);
+        if (cycleId || peekCycle) router.push(`/${workspaceSlug}/projects/${projectId}/cycles`);
 
         handleClose();
       } catch (error) {
