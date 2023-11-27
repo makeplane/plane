@@ -307,7 +307,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       handleClose={() => {
                         setGptModal(false);
                       }}
-                      inset="top-2 left-0"
+                      inset="top-9 right-[68px] !w-1/2 !max-h-[50%]"
                       content=""
                       onResponse={(response) => {
                         handleAiAssistance(response);
