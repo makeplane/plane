@@ -2,17 +2,20 @@ import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
+import { Sparkle } from "lucide-react";
 // services
 import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
 import { useDebouncedCallback } from "use-debounce";
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { PageDetailsHeader } from "components/headers/page-details";
 import { EmptyState } from "components/common";
+import { GptAssistantModal } from "components/core";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { Spinner } from "@plane/ui";
@@ -32,16 +35,22 @@ const pageService = new PageService();
 
 const PageDetailsPage: NextPageWithLayout = () => {
   const editorRef = useRef<any>(null);
-
+  // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [gptModalOpen, setGptModal] = useState(false);
+  // store
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
 
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId } = router.query;
 
   const { user } = useUser();
 
-  const { handleSubmit, reset, getValues, control } = useForm<IPage>({
-    defaultValues: { name: "" },
+  const { handleSubmit, reset, getValues, control, setValue, watch } = useForm<IPage>({
+    defaultValues: { name: "", description_html: "<p></p>" },
   });
 
   // =================== Fetching Page Details ======================
@@ -167,6 +176,13 @@ const PageDetailsPage: NextPageWithLayout = () => {
     }
   };
 
+  const handleAiAssistance = async (response: string) => {
+    if (!workspaceSlug || !projectId) return;
+
+    setValue("description_html", `${watch("description_html")}<p>${response}</p>`);
+    editorRef.current?.setEditorValue(`${watch("description_html")}`);
+  };
+
   useEffect(() => {
     if (!pageDetails) return;
 
@@ -227,45 +243,71 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 }
               />
             ) : (
-              <Controller
-                name="description_html"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <DocumentEditorWithRef
-                    documentDetails={{
-                      title: pageDetails.name,
-                      created_by: pageDetails.created_by,
-                      created_on: pageDetails.created_at,
-                      last_updated_at: pageDetails.updated_at,
-                      last_updated_by: pageDetails.updated_by,
-                    }}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    deleteFile={fileService.deleteImage}
-                    ref={editorRef}
-                    debouncedUpdatesEnabled={false}
-                    setIsSubmitting={setIsSubmitting}
-                    value={!value || value === "" ? "<p></p>" : value}
-                    customClassName="tracking-tight self-center px-0 h-full w-full"
-                    onChange={(_description_json: Object, description_html: string) => {
-                      onChange(description_html);
-                      setIsSubmitting("submitting");
-                      debouncedFormSave();
-                    }}
-                    duplicationConfig={{ action: duplicate_page }}
-                    pageArchiveConfig={
-                      user && pageDetails.owned_by === user.id
-                        ? {
-                            is_archived: pageDetails.archived_at ? true : false,
-                            action: pageDetails.archived_at ? unArchivePage : archivePage,
-                          }
-                        : undefined
-                    }
-                    pageLockConfig={
-                      user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
-                    }
-                  />
+              <div className="relative">
+                <Controller
+                  name="description_html"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <DocumentEditorWithRef
+                      documentDetails={{
+                        title: pageDetails.name,
+                        created_by: pageDetails.created_by,
+                        created_on: pageDetails.created_at,
+                        last_updated_at: pageDetails.updated_at,
+                        last_updated_by: pageDetails.updated_by,
+                      }}
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      deleteFile={fileService.deleteImage}
+                      ref={editorRef}
+                      debouncedUpdatesEnabled={false}
+                      setIsSubmitting={setIsSubmitting}
+                      value={!value || value === "" ? "<p></p>" : value}
+                      customClassName="tracking-tight self-center px-0 h-full w-full"
+                      onChange={(_description_json: Object, description_html: string) => {
+                        onChange(description_html);
+                        setIsSubmitting("submitting");
+                        debouncedFormSave();
+                      }}
+                      duplicationConfig={{ action: duplicate_page }}
+                      pageArchiveConfig={
+                        user && pageDetails.owned_by === user.id
+                          ? {
+                              is_archived: pageDetails.archived_at ? true : false,
+                              action: pageDetails.archived_at ? unArchivePage : archivePage,
+                            }
+                          : undefined
+                      }
+                      pageLockConfig={
+                        user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
+                      }
+                    />
+                  )}
+                />
+                {projectId && envConfig?.has_openai_configured && (
+                  <>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-3 right-[68px]"
+                      onClick={() => setGptModal((prevData) => !prevData)}
+                    >
+                      <Sparkle className="h-4 w-4" />
+                      AI
+                    </button>
+                    <GptAssistantModal
+                      isOpen={gptModalOpen}
+                      handleClose={() => {
+                        setGptModal(false);
+                      }}
+                      inset="top-2 left-0"
+                      content=""
+                      onResponse={(response) => {
+                        handleAiAssistance(response);
+                      }}
+                      projectId={projectId.toString()}
+                    />
+                  </>
                 )}
-              />
+              </div>
             )}
           </div>
         </div>
