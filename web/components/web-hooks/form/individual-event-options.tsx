@@ -19,7 +19,7 @@ export const individualWebhookOptions: {
   {
     key: "issue",
     label: "Issues",
-    description: "Issue created, updated or deleted.",
+    description: "Issue created, updated, deleted, added to a cycle or module.",
   },
   {
     key: "module",
@@ -37,9 +37,9 @@ type Props = {
   control: Control<IWebhook, any>;
 };
 
-export const WebhookIndividualOptions = ({ control }: Props) => (
+export const WebhookIndividualEventOptions = ({ control }: Props) => (
   <>
-    <div className="grid grid-cols-2 gap-x-4 gap-y-8 px-6 mt-5">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-8 px-6 mt-5">
       {individualWebhookOptions.map((option) => (
         <Controller
           key={option.key}

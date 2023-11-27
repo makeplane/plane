@@ -8,10 +8,10 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // components
 import {
-  GenerateKey,
-  WebhookIndividualOptions,
+  WebhookIndividualEventOptions,
   WebhookInput,
   WebhookOptions,
+  WebhookSecretKey,
   WebhookToggle,
   getCurrentHookAsCSV,
 } from "components/web-hooks";
@@ -156,8 +156,8 @@ export const WebhookForm: FC<Props> = observer((props) => {
         <div className="space-y-3">
           <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
         </div>
-        {webhookEventType === "individual" && <WebhookIndividualOptions control={control} />}
-        {data && <GenerateKey data={data} />}
+        {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
+        {data && <WebhookSecretKey data={data} />}
         <Button type="submit" loading={isSubmitting}>
           {data ? (isSubmitting ? "Updating..." : "Update") : isSubmitting ? "Creating..." : "Create"}
         </Button>

@@ -19,7 +19,7 @@ type Props = {
   data: Partial<IWebhook>;
 };
 
-export const GenerateKey: FC<Props> = observer((props) => {
+export const WebhookSecretKey: FC<Props> = observer((props) => {
   const { data } = props;
   // states
   const [isRegenerating, setIsRegenerating] = useState(false);

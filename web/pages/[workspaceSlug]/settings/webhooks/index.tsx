@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
@@ -11,7 +12,7 @@ import { WorkspaceSettingLayout } from "layouts/settings-layout";
 import { WorkspaceSettingHeader } from "components/headers";
 import { WebhooksList, WebhooksEmptyState } from "components/web-hooks";
 // ui
-import { Spinner } from "@plane/ui";
+import { Button, Spinner } from "@plane/ui";
 // types
 import { NextPageWithLayout } from "types/app";
 
@@ -46,9 +47,19 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
     );
 
   return (
-    <div className="w-full overflow-y-auto py-8 pr-9">
+    <div className="h-full w-full py-8 pr-9 overflow-hidden">
       {Object.keys(webhooks).length > 0 ? (
-        <WebhooksList />
+        <div className="h-full w-full flex flex-col">
+          <div className="flex items-center justify-between gap-4 pb-3.5 border-b border-custom-border-200">
+            <div className="text-xl font-medium">Webhooks</div>
+            <Link href={`/${workspaceSlug}/settings/webhooks/create`}>
+              <Button variant="primary" size="sm">
+                Add webhook
+              </Button>
+            </Link>
+          </div>
+          <WebhooksList />
+        </div>
       ) : (
         <div className="mx-auto">
           <WebhooksEmptyState />

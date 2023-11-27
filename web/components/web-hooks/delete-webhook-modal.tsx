@@ -89,23 +89,21 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
                     <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                   </span>
                   <span className="flex items-center justify-start">
-                    <h3 className="text-xl font-medium 2xl:text-2xl">Delete Webhook</h3>
+                    <h3 className="text-xl font-medium 2xl:text-2xl">Delete webhook</h3>
                   </span>
                 </div>
 
-                <span>
-                  <p className="text-sm leading-7 text-custom-text-200">
-                    Are you sure you want to delete workspace <span className="break-words font-semibold" />? All of the
-                    data related to the workspace will be permanently removed. This action cannot be undone.
-                  </p>
-                </span>
+                <p className="text-sm text-custom-text-200 mt-4">
+                  Are you sure you want to delete this webhook? Future events will not be delivered to this webhook.
+                  This action cannot be undone.
+                </p>
 
                 <div className="flex justify-end gap-2">
                   <Button variant="neutral-primary" onClick={onClose}>
                     Cancel
                   </Button>
                   <Button variant="danger" onClick={handleDelete} loading={isDeleting}>
-                    {isDeleting ? "Deleting..." : "Delete Webhook"}
+                    {isDeleting ? "Deleting..." : "Delete webhook"}
                   </Button>
                 </div>
               </Dialog.Panel>
