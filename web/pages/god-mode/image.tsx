@@ -10,7 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceImageConfigForm } from "components/instance/image-config-form";
+import { InstanceImageConfigForm } from "components/instance";
 
 const InstanceAdminImagePage: NextPageWithLayout = observer(() => {
   // store

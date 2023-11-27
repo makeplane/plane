@@ -12,7 +12,7 @@ import { Loader } from "@plane/ui";
 // icons
 import { Lightbulb } from "lucide-react";
 // components
-import { InstanceAIForm } from "components/instance/ai-form";
+import { InstanceAIForm } from "components/instance";
 
 const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
   // store

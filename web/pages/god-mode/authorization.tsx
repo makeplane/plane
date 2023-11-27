@@ -13,8 +13,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
-import { InstanceGoogleConfigForm } from "components/instance/google-config-form";
-import { InstanceGithubConfigForm } from "components/instance/github-config-form";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
 
 const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   // store

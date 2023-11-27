@@ -10,7 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceEmailForm } from "components/instance/email-form";
+import { InstanceEmailForm } from "components/instance";
 
 const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   // store
