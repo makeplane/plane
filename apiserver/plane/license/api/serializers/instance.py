@@ -2,7 +2,7 @@
 from plane.license.models import Instance, InstanceAdmin, InstanceConfiguration
 from plane.app.serializers import BaseSerializer
 from plane.app.serializers import UserAdminLiteSerializer
-
+from plane.license.utils.encryption import decrypt_data
 
 class InstanceSerializer(BaseSerializer):
     primary_owner_details = UserAdminLiteSerializer(source="primary_owner", read_only=True)
@@ -40,3 +40,11 @@ class InstanceConfigurationSerializer(BaseSerializer):
     class Meta:
         model = InstanceConfiguration
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # Decrypt secrets value
+        if instance.key in ["OPENAI_API_KEY", "GITHUB_CLIENT_SECRET", "EMAIL_HOST_PASSWORD", "UNSPLASH_ACESS_KEY"] and instance.value is not None:
+            data["value"] = decrypt_data(instance.value)
+
+        return data

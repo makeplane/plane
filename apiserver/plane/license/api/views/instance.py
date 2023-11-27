@@ -19,23 +19,16 @@ from plane.license.api.serializers import (
     InstanceConfigurationSerializer,
 )
 from plane.license.api.permissions import (
-    InstanceOwnerPermission,
     InstanceAdminPermission,
 )
 from plane.db.models import User
+from plane.license.utils.encryption import encrypt_data
 
 
 class InstanceEndpoint(BaseAPIView):
-    def get_permissions(self):
-        if self.request.method in ["POST", "PATCH"]:
-            self.permission_classes = [
-                InstanceOwnerPermission,
-            ]
-        else:
-            self.permission_classes = [
-                InstanceAdminPermission,
-            ]
-        return super(InstanceEndpoint, self).get_permissions()
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
 
     def post(self, request):
         # Check if the instance is registered
@@ -126,53 +119,10 @@ class InstanceEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class TransferPrimaryOwnerEndpoint(BaseAPIView):
-    permission_classes = [
-        InstanceOwnerPermission,
-    ]
-
-    # Transfer the owner of the instance
-    def post(self, request):
-        instance = Instance.objects.first()
-
-        # Get the email of the new user
-        email = request.data.get("email", False)
-        if not email:
-            return Response(
-                {"error": "User is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Get users
-        user = User.objects.get(email=email)
-
-        # Save the instance user
-        instance.primary_owner = user
-        instance.primary_email = user.email
-        instance.save(update_fields=["owner", "email"])
-
-        # Add the user to admin
-        _ = InstanceAdmin.objects.get_or_create(
-            instance=instance,
-            user=user,
-            role=20,
-        )
-
-        return Response(
-            {"message": "Owner successfully updated"}, status=status.HTTP_200_OK
-        )
-
-
 class InstanceAdminEndpoint(BaseAPIView):
-    def get_permissions(self):
-        if self.request.method in ["POST", "DELETE"]:
-            self.permission_classes = [
-                InstanceOwnerPermission,
-            ]
-        else:
-            self.permission_classes = [
-                InstanceAdminPermission,
-            ]
-        return super(InstanceAdminEndpoint, self).get_permissions()
+    permission_classes = [
+        InstanceAdminPermission,
+    ]
 
     # Create an instance admin
     def post(self, request):
@@ -230,17 +180,23 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request):
-        configurations = InstanceConfiguration.objects.filter(key__in=request.data.keys())
+        configurations = InstanceConfiguration.objects.filter(
+            key__in=request.data.keys()
+        )
 
         bulk_configurations = []
         for configuration in configurations:
-            configuration.value = request.data.get(configuration.key, configuration.value)
+            value = request.data.get(
+                configuration.key, configuration.value
+            )
+            if value is not None and configuration.key in ["OPENAI_API_KEY", "GITHUB_CLIENT_SECRET", "EMAIL_HOST_PASSWORD", "UNSPLASH_ACESS_KEY"]:
+                configuration.value = encrypt_data(value)
+            else:
+                configuration.value = value
             bulk_configurations.append(configuration)
 
         InstanceConfiguration.objects.bulk_update(
-            bulk_configurations,
-            ["value"],
-            batch_size=100
+            bulk_configurations, ["value"], batch_size=100
         )
 
         serializer = InstanceConfigurationSerializer(configurations, many=True)

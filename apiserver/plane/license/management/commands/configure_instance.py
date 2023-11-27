@@ -16,7 +16,6 @@ class Command(BaseCommand):
         config_keys = {
             # Authentication Settings
             "GOOGLE_CLIENT_ID": os.environ.get("GOOGLE_CLIENT_ID"),
-            "GOOGLE_CLIENT_SECRET": encrypt_data(os.environ.get("GOOGLE_CLIENT_SECRET")) if os.environ.get("GOOGLE_CLIENT_SECRET", None) else None,
             "GITHUB_CLIENT_ID": os.environ.get("GITHUB_CLIENT_ID"),
             "GITHUB_CLIENT_SECRET": encrypt_data(os.environ.get("GITHUB_CLIENT_SECRET")) if os.environ.get("GITHUB_CLIENT_SECRET")  else None,
             "ENABLE_SIGNUP": os.environ.get("ENABLE_SIGNUP", "1"),
@@ -32,7 +31,7 @@ class Command(BaseCommand):
             "EMAIL_USE_SSL": os.environ.get("EMAIL_USE_SSL", "0"),
             # Open AI Settings
             "OPENAI_API_BASE": os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
-            "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY", ""),
+            "OPENAI_API_KEY": encrypt_data(os.environ.get("OPENAI_API_KEY")) if os.environ.get("OPENAI_API_KEY") else None,
             "GPT_ENGINE": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
             # Unsplash Access Key
             "UNSPLASH_ACCESS_KEY": encrypt_data(os.environ.get("UNSPLASH_ACESS_KEY", "")) if os.environ.get("UNSPLASH_ACESS_KEY") else None,

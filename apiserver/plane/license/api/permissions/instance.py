@@ -5,20 +5,6 @@ from rest_framework.permissions import BasePermission
 from plane.license.models import Instance, InstanceAdmin
 
 
-class InstanceOwnerPermission(BasePermission):
-    def has_permission(self, request, view):
-
-        if request.user.is_anonymous:
-            return False
-    
-        instance = Instance.objects.first()
-        return InstanceAdmin.objects.filter(
-            role=20,
-            instance=instance,
-            user=request.user,
-        ).exists()
-
-
 class InstanceAdminPermission(BasePermission):
     def has_permission(self, request, view):
 

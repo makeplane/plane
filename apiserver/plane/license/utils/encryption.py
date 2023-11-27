@@ -13,9 +13,10 @@ def derive_key(secret_key):
 def encrypt_data(data):
     cipher_suite = Fernet(derive_key(settings.SECRET_KEY))
     encrypted_data = cipher_suite.encrypt(data.encode())
-    return encrypted_data
+    return encrypted_data.decode()  # Convert bytes to string
+
 
 def decrypt_data(encrypted_data):
     cipher_suite = Fernet(derive_key(settings.SECRET_KEY))
-    decrypted_data = cipher_suite.decrypt(encrypted_data).decode()
-    return decrypted_data
+    decrypted_data = cipher_suite.decrypt(encrypted_data.encode())  # Convert string back to bytes
+    return decrypted_data.decode()

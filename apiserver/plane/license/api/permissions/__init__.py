@@ -1,1 +1,1 @@
-from .instance import InstanceOwnerPermission, InstanceAdminPermission
+from .instance import InstanceAdminPermission
