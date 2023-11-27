@@ -64,7 +64,7 @@ export const InstanceSidebarDropdown = observer(() => {
     <div className="flex items-center gap-x-2 gap-y-2 px-4 pt-3 pb-2 mb-2 border border-custom-sidebar-border-200">
       <div className="w-full h-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
+          className={`flex flex-grow items-center gap-x-2 rounded py-1 truncate ${
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
