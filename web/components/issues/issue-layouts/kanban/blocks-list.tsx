@@ -1,21 +1,20 @@
 // components
 import { KanbanIssueBlock } from "components/issues";
 import { IIssueDisplayProperties, IIssue } from "types";
+import { EIssueActions } from "../types";
+import { IIssueResponse } from "store/issues/types";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
   columnId: string;
-  issues: IIssue[];
+  issues: IIssueResponse;
+  issueIds: string[];
   isDragDisabled: boolean;
   showEmptyGroup: boolean;
-  handleIssues: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
+  isReadOnly: boolean;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
@@ -23,31 +22,40 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
     sub_group_id,
     columnId,
     issues,
+    issueIds,
     showEmptyGroup,
     isDragDisabled,
     handleIssues,
     quickActions,
     displayProperties,
+    isReadOnly,
   } = props;
 
   return (
     <>
-      {issues && issues.length > 0 ? (
+      {issueIds && issueIds.length > 0 ? (
         <>
-          {issues.map((issue, index) => (
-            <KanbanIssueBlock
-              key={`kanban-issue-block-${issue.id}`}
-              index={index}
-              issue={issue}
-              showEmptyGroup={showEmptyGroup}
-              handleIssues={handleIssues}
-              quickActions={quickActions}
-              displayProperties={displayProperties}
-              columnId={columnId}
-              sub_group_id={sub_group_id}
-              isDragDisabled={isDragDisabled}
-            />
-          ))}
+          {issueIds.map((issueId, index) => {
+            if (!issues[issueId]) return null;
+
+            const issue = issues[issueId];
+
+            return (
+              <KanbanIssueBlock
+                key={`kanban-issue-block-${issue.id}`}
+                index={index}
+                issue={issue}
+                showEmptyGroup={showEmptyGroup}
+                handleIssues={handleIssues}
+                quickActions={quickActions}
+                displayProperties={displayProperties}
+                columnId={columnId}
+                sub_group_id={sub_group_id}
+                isDragDisabled={isDragDisabled}
+                isReadOnly={isReadOnly}
+              />
+            );
+          })}
         </>
       ) : (
         !isDragDisabled && (

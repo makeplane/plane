@@ -53,7 +53,7 @@ export interface ICreateProjectForm {
   description: string;
   emoji_and_icon: string;
   network: number;
-  project_lead_member: IWorkspaceMember;
+  project_lead_member: string;
   project_lead: string;
   cover_image: string;
   icon_prop: any;
@@ -66,6 +66,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const {
     project: projectStore,
     workspaceMember: { workspaceMembers },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -124,11 +125,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     if (typeof formData.emoji_and_icon === "object") payload.icon_prop = formData.emoji_and_icon;
     else payload.emoji = formData.emoji_and_icon;
 
-    payload.project_lead = formData.project_lead_member?.member.id;
+    payload.project_lead = formData.project_lead_member;
 
     return projectStore
       .createProject(workspaceSlug.toString(), payload)
       .then((res) => {
+        const newPayload = {
+          ...res,
+          state: "SUCCESS"
+        }
+        postHogEventTracker(
+          "PROJECT_CREATE",
+          newPayload,
+        )
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -140,12 +149,19 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         handleClose();
       })
       .catch((err) => {
-        Object.keys(err.data).map((key) =>
+        Object.keys(err.data).map((key) => {
           setToastAlert({
             type: "error",
             title: "Error!",
             message: err.data[key],
-          })
+          });
+          postHogEventTracker(
+            "PROJECT_CREATE",
+            {
+              state: "FAILED"
+            },
+          )
+        }
         );
       });
   };
@@ -211,7 +227,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                   )}
 
                   <div className="absolute right-2 top-2 p-2">
-                    <button type="button" onClick={handleClose}>
+                    <button data-posthog="PROJECT_MODAL_CLOSE" type="button" onClick={handleClose}>
                       <X className="h-5 w-5 text-white" />
                     </button>
                   </div>
@@ -370,7 +386,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <WorkspaceMemberSelect
-                              value={value}
+                              value={workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]}
                               onChange={onChange}
                               options={workspaceMembers || []}
                               placeholder="Select Lead"

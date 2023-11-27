@@ -14,6 +14,8 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
+// events
+import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;
@@ -49,7 +51,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
   const router = useRouter();
 
-  const { workspace: workspaceStore } = useMobxStore();
+  const { workspace: workspaceStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -71,6 +73,13 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await workspaceStore
             .createWorkspace(formData)
             .then(async (res) => {
+              postHogEventTracker(
+                "WORKSPACE_CREATE",
+                {
+                  ...res,
+                  state: "SUCCESS"
+                },
+              )
               setToastAlert({
                 type: "success",
                 title: "Success!",
@@ -80,11 +89,19 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
               if (onSubmit) await onSubmit(res);
             })
             .catch(() =>
+            {
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
               })
+              postHogEventTracker(
+                "WORKSPACE_CREATE",
+                {
+                  state: "FAILED"
+                },
+              )
+            }
             );
         } else setSlugError(true);
       })
@@ -94,6 +111,12 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
+        postHogEventTracker(
+          "WORKSPACE_CREATE",
+          {
+            state: "FAILED"
+          },
+        )
       });
   };
 
@@ -161,7 +184,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
-                  placeholder="Enter workspace name..."
+                  placeholder="Enter workspace url..."
                   className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
                 />
               )}

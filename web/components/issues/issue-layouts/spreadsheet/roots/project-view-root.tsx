@@ -1,71 +1,39 @@
-import React, { useCallback } from "react";
-import { useRouter } from "next/router";
+import React from "react";
 import { observer } from "mobx-react-lite";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { SpreadsheetView } from "components/issues";
-// types
-import { IIssue, IIssueDisplayFilterOptions } from "types";
-// constants
-import { IIssueUnGroupedStructure } from "store/issue";
+import { BaseSpreadsheetRoot } from "../base-spreadsheet-root";
+import { EIssueActions } from "../../types";
+import { IIssue } from "types";
+import { useRouter } from "next/router";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 
 export const ProjectViewSpreadsheetLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query as { workspaceSlug: string };
 
-  const {
-    issueFilter: issueFilterStore,
-    projectViewIssues: projectViewIssueStore,
-    issueDetail: issueDetailStore,
-    project: projectStore,
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-  } = useMobxStore();
+  const { viewIssues: projectViewIssuesStore, viewIssuesFilter: projectViewIssueFiltersStore } = useMobxStore();
 
-  const issues = projectViewIssueStore.getIssues;
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
 
-  const handleDisplayFiltersUpdate = useCallback(
-    (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      await projectViewIssuesStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
     },
-    [issueFilterStore, projectId, workspaceSlug]
-  );
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
 
-  const handleUpdateIssue = useCallback(
-    (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug || !projectId) return;
-
-      const payload = {
-        ...issue,
-        ...data,
-      };
-
-      projectViewIssueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
+      await projectViewIssuesStore.removeIssue(workspaceSlug, issue.project, issue.id);
     },
-    [issueDetailStore, projectViewIssueStore, projectId, workspaceSlug]
-  );
+  };
 
   return (
-    <SpreadsheetView
-      displayProperties={issueFilterStore.userDisplayProperties}
-      displayFilters={issueFilterStore.userDisplayFilters}
-      handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
-      issues={issues as IIssueUnGroupedStructure}
-      members={projectMembers?.map((m) => m.member)}
-      labels={projectId ? projectStore.labels?.[projectId.toString()] ?? undefined : undefined}
-      states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
-      handleIssueAction={() => {}}
-      handleUpdateIssue={handleUpdateIssue}
-      disableUserActions={false}
+    <BaseSpreadsheetRoot
+      issueStore={projectViewIssuesStore}
+      issueFiltersStore={projectViewIssueFiltersStore}
+      issueActions={issueActions}
+      QuickActions={ProjectIssueQuickActions}
     />
   );
 });

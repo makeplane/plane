@@ -1,38 +1,16 @@
 from django.urls import path
 
-
-from plane.api.views import StateViewSet
-
+from plane.api.views import StateAPIEndpoint
 
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/states/",
-        StateViewSet.as_view(
-            {
-                "get": "list",
-                "post": "create",
-            }
-        ),
-        name="project-states",
+        StateAPIEndpoint.as_view(),
+        name="states",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/",
-        StateViewSet.as_view(
-            {
-                "get": "retrieve",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-        name="project-state",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:pk>/mark-default/",
-        StateViewSet.as_view(
-            {
-                "post": "mark_as_default",
-            }
-        ),
-        name="project-state",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/states/<uuid:state_id>/",
+        StateAPIEndpoint.as_view(),
+        name="states",
     ),
 ]

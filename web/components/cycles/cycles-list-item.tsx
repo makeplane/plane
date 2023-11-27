@@ -38,7 +38,7 @@ type TCyclesListItem = {
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, trackEvent: { setTrackElement } } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // states
@@ -119,6 +119,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     setDeleteModal(true);
+    setTrackElement("CYCLE_PAGE_LIST_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {

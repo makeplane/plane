@@ -67,7 +67,7 @@ def archive_old_issues():
                     issues_to_update.append(issue)
 
                 # Bulk Update the issues and log the activity
-                if issues_to_update: 
+                if issues_to_update:
                     Issue.objects.bulk_update(
                         issues_to_update, ["archived_at"], batch_size=100
                     )
@@ -80,7 +80,7 @@ def archive_old_issues():
                             project_id=project_id,
                             current_instance=json.dumps({"archived_at": None}),
                             subscriber=False,
-                            epoch=int(timezone.now().timestamp())
+                            epoch=int(timezone.now().timestamp()),
                         )
                         for issue in issues_to_update
                     ]
@@ -142,17 +142,21 @@ def close_old_issues():
 
                 # Bulk Update the issues and log the activity
                 if issues_to_update:
-                    Issue.objects.bulk_update(issues_to_update, ["state"], batch_size=100)
+                    Issue.objects.bulk_update(
+                        issues_to_update, ["state"], batch_size=100
+                    )
                     [
                         issue_activity.delay(
                             type="issue.activity.updated",
-                            requested_data=json.dumps({"closed_to": str(issue.state_id)}),
+                            requested_data=json.dumps(
+                                {"closed_to": str(issue.state_id)}
+                            ),
                             actor_id=str(project.created_by_id),
                             issue_id=issue.id,
                             project_id=project_id,
                             current_instance=None,
                             subscriber=False,
-                            epoch=int(timezone.now().timestamp())
+                            epoch=int(timezone.now().timestamp()),
                         )
                         for issue in issues_to_update
                     ]

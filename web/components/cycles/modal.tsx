@@ -24,21 +24,30 @@ const cycleService = new CycleService();
 export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, trackEvent: { postHogEventTracker } } = useMobxStore();
   // states
   const [activeProject, setActiveProject] = useState<string>(projectId);
   // toast
   const { setToastAlert } = useToast();
 
-  const createCycle = async (payload: Partial<ICycle>) =>
-    cycleStore
-      .createCycle(workspaceSlug, projectId, payload)
-      .then(() => {
+  const createCycle = async (payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .createCycle(workspaceSlug, selectedProjectId, payload)
+      .then((res) => {
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Cycle created successfully.",
         });
+        postHogEventTracker(
+          "CYCLE_CREATE",
+          {
+            ...res,
+            state: "SUCCESS",
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -46,11 +55,20 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Error!",
           message: "Error in creating cycle. Please try again.",
         });
+        postHogEventTracker(
+          "CYCLE_CREATE",
+          {
+            state: "FAILED",
+          }
+        );
       });
+  };
 
-  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) =>
-    cycleStore
-      .patchCycle(workspaceSlug, projectId, cycleId, payload)
+  const updateCycle = async (cycleId: string, payload: Partial<ICycle>) => {
+    if (!workspaceSlug || !projectId) return;
+    const selectedProjectId = payload.project ?? projectId.toString();
+    await cycleStore
+      .patchCycle(workspaceSlug, selectedProjectId, cycleId, payload)
       .then(() => {
         setToastAlert({
           type: "success",
@@ -65,6 +83,7 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Error in updating cycle. Please try again.",
         });
       });
+  };
 
   const dateChecker = async (payload: CycleDateCheckData) => {
     let status = false;

@@ -14,6 +14,8 @@ import { SendWorkspaceInvitationModal, WorkspaceMembersList } from "components/w
 import { Button } from "@plane/ui";
 // icons
 import { Search } from "lucide-react";
+// helpers
+import { trackEvent } from "helpers/event-tracker.helper";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IWorkspaceBulkInviteFormData } from "types";
@@ -24,6 +26,7 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
   // store
   const {
     workspaceMember: { inviteMembersToWorkspace },
+    trackEvent: { postHogEventTracker, setTrackElement }
   } = useMobxStore();
   // states
   const [inviteModal, setInviteModal] = useState(false);
@@ -35,21 +38,23 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
     if (!workspaceSlug) return;
 
     return inviteMembersToWorkspace(workspaceSlug.toString(), data)
-      .then(async () => {
+      .then(async (res) => {
         setInviteModal(false);
+        postHogEventTracker("WORKSPACE_USER_INVITE", { ...res, state: "SUCCESS" });
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Invitations sent successfully.",
         });
       })
-      .catch((err) =>
+      .catch((err) => {
+        postHogEventTracker("WORKSPACE_USER_INVITE", { state: "FAILED" });
         setToastAlert({
           type: "error",
           title: "Error!",
           message: `${err.error ?? "Something went wrong. Please try again."}`,
-        })
-      );
+        });
+      });
   };
 
   return (
@@ -64,17 +69,21 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
       <section className="pr-9 py-8 w-full overflow-y-auto">
         <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-100">
           <h4 className="text-xl font-medium">Members</h4>
-          <div className="flex gap-1 items-center justify-start ml-auto text-custom-text-400 rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
-            <Search className="h-3.5 w-3.5" />
+          <div className="flex items-center gap-1.5 ml-auto rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
+            <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
-              className="max-w-[234px] w-full border-none bg-transparent text-sm focus:outline-none"
-              placeholder="Search"
+              className="max-w-[234px] w-full border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+              placeholder="Search..."
               value={searchQuery}
-              autoFocus={true}
+              autoFocus
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button variant="primary" size="sm" onClick={() => setInviteModal(true)}>
+          <Button variant="primary" size="sm" onClick={() => {
+            setTrackElement("WORKSPACE_SETTINGS_MEMBERS_PAGE_HEADER");
+            setInviteModal(true)
+          }
+          }>
             Add Member
           </Button>
         </div>

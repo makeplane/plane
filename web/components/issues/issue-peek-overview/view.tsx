@@ -207,7 +207,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                                 : "text-custom-text-400 hover:text-custom-text-200"
                             }`}
                           >
-                            <mode.icon className={`h-4 w-4 flex-shrink-0 -my-1 `} />
+                            <mode.icon className="h-4 w-4 flex-shrink-0 -my-1" />
                             {mode.title}
                           </div>
                         </CustomSelect.Option>
@@ -225,6 +225,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       size="sm"
                       prependIcon={<Bell className="h-3 w-3" />}
                       variant="outline-primary"
+                      className="hover:!bg-custom-primary-100/20"
                       onClick={() =>
                         issueSubscription && issueSubscription.subscribed
                           ? issueSubscriptionRemove()
@@ -247,9 +248,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
             {/* content */}
             <div className="relative w-full h-full overflow-hidden overflow-y-auto">
-              {isArchived && (
-                <div className="absolute top-0 left-0 h-full w-full z-[999] flex items-center justify-center bg-custom-background-100 opacity-60" />
-              )}
               {isLoading && !issue ? (
                 <div className="h-full w-full flex items-center justify-center">
                   <Spinner />
@@ -258,7 +256,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="flex flex-col gap-3 py-5 px-8">
+                      <div className="relative flex flex-col gap-3 py-5 px-8">
+                        {isArchived && (
+                          <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
+                        )}
                         <PeekOverviewIssueDetails
                           workspaceSlug={workspaceSlug}
                           issue={issue}
@@ -290,33 +291,39 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         />
                       </div>
                     ) : (
-                      <div className="w-full h-full flex">
-                        <div className="w-full h-full space-y-6 p-4 py-5">
-                          <PeekOverviewIssueDetails
-                            workspaceSlug={workspaceSlug}
-                            issue={issue}
-                            issueReactions={issueReactions}
-                            issueUpdate={issueUpdate}
-                            user={user}
-                            issueReactionCreate={issueReactionCreate}
-                            issueReactionRemove={issueReactionRemove}
-                          />
+                      <div className={`overflow-auto w-full h-full flex ${isArchived ? "opacity-60" : ""}`}>
+                        <div className="relative w-full h-full space-y-6 p-4 py-5 overflow-auto">
+                          <div className={isArchived ? "pointer-events-none" : ""}>
+                            <PeekOverviewIssueDetails
+                              workspaceSlug={workspaceSlug}
+                              issue={issue}
+                              issueReactions={issueReactions}
+                              issueUpdate={issueUpdate}
+                              user={user}
+                              issueReactionCreate={issueReactionCreate}
+                              issueReactionRemove={issueReactionRemove}
+                            />
 
-                          <IssueComment
-                            workspaceSlug={workspaceSlug}
-                            projectId={projectId}
-                            issueId={issueId}
-                            user={user}
-                            issueComments={issueComments}
-                            issueCommentCreate={issueCommentCreate}
-                            issueCommentUpdate={issueCommentUpdate}
-                            issueCommentRemove={issueCommentRemove}
-                            issueCommentReactionCreate={issueCommentReactionCreate}
-                            issueCommentReactionRemove={issueCommentReactionRemove}
-                            showCommentAccessSpecifier={showCommentAccessSpecifier}
-                          />
+                            <IssueComment
+                              workspaceSlug={workspaceSlug}
+                              projectId={projectId}
+                              issueId={issueId}
+                              user={user}
+                              issueComments={issueComments}
+                              issueCommentCreate={issueCommentCreate}
+                              issueCommentUpdate={issueCommentUpdate}
+                              issueCommentRemove={issueCommentRemove}
+                              issueCommentReactionCreate={issueCommentReactionCreate}
+                              issueCommentReactionRemove={issueCommentReactionRemove}
+                              showCommentAccessSpecifier={showCommentAccessSpecifier}
+                            />
+                          </div>
                         </div>
-                        <div className="flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5">
+                        <div
+                          className={`flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5 ${
+                            isArchived ? "pointer-events-none" : ""
+                          }`}
+                        >
                           <PeekOverviewProperties
                             issue={issue}
                             issueUpdate={issueUpdate}

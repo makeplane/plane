@@ -15,7 +15,7 @@ type Props = {
 export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIssues }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project, issue.id, isExpanded);
 
   return (
     <>

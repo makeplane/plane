@@ -56,7 +56,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
   const issueCount = module
-    ? moduleTotalIssues === 0
+    ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
       ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
@@ -148,7 +148,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               <div className="flex items-center gap-2">
                 {moduleStatus && (
                   <span
-                    className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                    className="flex items-center justify-center text-xs text-center h-6 w-20 rounded-sm"
+                    style={{
+                      color: moduleStatus.color,
+                      backgroundColor: `${moduleStatus.color}20`,
+                    }}
                   >
                     {moduleStatus.label}
                   </span>

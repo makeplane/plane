@@ -1,6 +1,6 @@
 {
   "name": "@plane/rich-text-editor",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Rich Text Editor that powers Plane",
   "private": true,
   "main": "./dist/index.mjs",
@@ -30,14 +30,11 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
-    "@tiptap/extension-code-block-lowlight": "^2.1.11",
     "@tiptap/extension-horizontal-rule": "^2.1.11",
     "@tiptap/extension-placeholder": "^2.1.11",
     "@tiptap/suggestion": "^2.1.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
-    "highlight.js": "^11.8.0",
-    "lowlight": "^3.0.0",
     "lucide-react": "^0.244.0"
   },
   "devDependencies": {

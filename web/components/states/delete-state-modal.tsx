@@ -28,7 +28,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   // store
-  const { projectState: projectStateStore } = useMobxStore();
+  const { projectState: projectStateStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -47,7 +47,13 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
 
     await projectStateStore
       .deleteState(workspaceSlug.toString(), data.project, data.id)
-      .then(() => {
+      .then((res) => {
+        postHogEventTracker(
+          'STATE_DELETE',
+          {
+            state: "SUCCESS"
+          }
+        );
         handleClose();
       })
       .catch((err) => {
@@ -64,6 +70,12 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
+        postHogEventTracker(
+          'STATE_DELETE',
+          {
+            state: "FAILED"
+          }
+        )
       })
       .finally(() => {
         setIsDeleteLoading(false);

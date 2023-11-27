@@ -4,8 +4,7 @@ import { RootStore } from "../root";
 import { IState } from "types";
 // services
 import { ProjectService, ProjectStateService } from "services/project";
-import { groupBy, orderArrayBy, groupByField } from "helpers/array.helper";
-import { orderStateGroups } from "helpers/state.helper";
+import { groupByField } from "helpers/array.helper";
 
 export interface IProjectStateStore {
   loader: boolean;
@@ -16,6 +15,8 @@ export interface IProjectStateStore {
   };
   groupedProjectStates: { [groupId: string]: IState[] } | null;
   projectStates: IState[] | null;
+
+  projectStateIds: () => string[];
 
   fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
   createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
@@ -79,6 +80,11 @@ export class ProjectStateStore implements IProjectStateStore {
     return states;
   }
 
+  projectStateIds = () => {
+    if (!this.projectStates) return [];
+    return (this.projectStates ?? []).map((state) => state.id);
+  };
+
   fetchProjectStates = async (workspaceSlug: string, projectId: string) => {
     try {
       const states = await this.stateService.getStates(workspaceSlug, projectId);
@@ -104,12 +110,7 @@ export class ProjectStateStore implements IProjectStateStore {
 
   createState = async (workspaceSlug: string, projectId: string, data: Partial<IState>) => {
     try {
-      const response = await this.stateService.createState(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.stateService.createState(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.states = {
@@ -143,13 +144,7 @@ export class ProjectStateStore implements IProjectStateStore {
         };
       });
 
-      const response = await this.stateService.patchState(
-        workspaceSlug,
-        projectId,
-        stateId,
-        data,
-        this.rootStore.user.currentUser!
-      );
+      const response = await this.stateService.patchState(workspaceSlug, projectId, stateId, data);
 
       return response;
     } catch (error) {
@@ -179,7 +174,7 @@ export class ProjectStateStore implements IProjectStateStore {
       });
 
       // deleting using api
-      await this.stateService.deleteState(workspaceSlug, projectId, stateId, this.rootStore.user.currentUser!);
+      await this.stateService.deleteState(workspaceSlug, projectId, stateId);
     } catch (error) {
       console.log("Failed to delete state from project store");
       // reverting back to original label list
@@ -259,13 +254,7 @@ export class ProjectStateStore implements IProjectStateStore {
         };
       });
 
-      await this.stateService.patchState(
-        workspaceSlug,
-        projectId,
-        stateId,
-        { sequence: newSequence },
-        this.rootStore.user.currentUser!
-      );
+      await this.stateService.patchState(workspaceSlug, projectId, stateId, { sequence: newSequence });
     } catch (err) {
       console.log("Failed to move state position");
       // reverting back to old state group if api fails

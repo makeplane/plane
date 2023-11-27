@@ -1,11 +1,10 @@
-
 name: Branch Build
 
 on:
   pull_request:
-    types: 
+    types:
       - closed
-    branches: 
+    branches:
       - master
       - release
       - qa
@@ -23,7 +22,7 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
-        
+
       # - name: Set Target Branch Name on PR close
       #   if: ${{ github.event_name == 'pull_request' && github.event.action =='closed' }}
       #   run: echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
@@ -31,7 +30,7 @@ jobs:
       # - name: Set Target Branch Name on other than PR close
       #   if: ${{ github.event_name == 'push' }}
       #   run: echo "TARGET_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-      
+
       - uses: ASzc/change-string-case-action@v2
         id: gh_branch_upper_lower
         with:
@@ -41,22 +40,22 @@ jobs:
         id: gh_branch_replace_slash
         with:
           source: ${{ steps.gh_branch_upper_lower.outputs.lowercase }}
-          find: '/'        
-          replace: '-'
+          find: "/"
+          replace: "-"
 
       - uses: mad9000/actions-find-and-replace-string@2
         id: gh_branch_replace_dot
         with:
           source: ${{ steps.gh_branch_replace_slash.outputs.value }}
-          find: '.'        
-          replace: ''
-          
+          find: "."
+          replace: ""
+
       - uses: mad9000/actions-find-and-replace-string@2
         id: gh_branch_clean
         with:
           source: ${{ steps.gh_branch_replace_dot.outputs.value }}
-          find: '_'
-          replace: ''
+          find: "_"
+          replace: ""
       - name: Uploading Proxy Source
         uses: actions/upload-artifact@v3
         with:
@@ -77,7 +76,6 @@ jobs:
             !./nginx
             !./deploy
             !./space
-      
       - name: Uploading Space Source
         uses: actions/upload-artifact@v3
         with:
@@ -89,11 +87,11 @@ jobs:
             !./deploy
             !./web
     outputs:
-        gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
+      gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
 
   branch_build_push_frontend:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_and_push]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
@@ -123,7 +121,7 @@ jobs:
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_and_push]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
@@ -153,7 +151,7 @@ jobs:
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_and_push]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
@@ -183,7 +181,7 @@ jobs:
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_and_push]
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0

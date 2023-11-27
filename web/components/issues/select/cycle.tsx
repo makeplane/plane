@@ -55,9 +55,9 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = selectedCycle ? (
-    <div className="flex items-center gap-1 text-custom-text-200">
-      <ContrastIcon className="h-3 w-3" />
-      <div className="truncate">{selectedCycle.name}</div>
+    <div className="flex items-center w-full gap-1 text-custom-text-200">
+      <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+      <div className="truncate max-w-[160px]">{selectedCycle.name}</div>
     </div>
   ) : (
     <div className="flex items-center gap-1 text-custom-text-300">
