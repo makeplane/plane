@@ -82,5 +82,8 @@ export function CoreEditorProps(
       }
       return false;
     },
+    transformPastedHTML(html) {
+      return html.replace(/<img.*?>/g, "");
+    },
   };
 }
