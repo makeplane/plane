@@ -2,7 +2,6 @@
 import json
 import os
 import requests
-import uuid
 
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
