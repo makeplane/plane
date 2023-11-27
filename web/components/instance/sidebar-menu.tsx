@@ -16,9 +16,9 @@ const INSTANCE_ADMIN_LINKS = [
   },
   {
     Icon: Mail,
-    name: "Mail",
+    name: "Email",
     description: "Set up emails to your users",
-    href: `/god-mode/mail`,
+    href: `/god-mode/email`,
   },
   {
     Icon: Lock,
@@ -28,7 +28,7 @@ const INSTANCE_ADMIN_LINKS = [
   },
   {
     Icon: BrainCog,
-    name: "OpenAI",
+    name: "Artificial intelligence",
     description: "Configure your OpenAI creds",
     href: `/god-mode/ai`,
   },

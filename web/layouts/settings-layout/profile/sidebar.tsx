@@ -119,7 +119,7 @@ export const ProfileLayoutSidebar = observer(() => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute left-0 z-20 mt-1 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 shadow-custom-shadow-rg text-xs space-y-2 outline-none">
+                <Menu.Items className="absolute left-0 z-20 mt-1 w-52 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 shadow-custom-shadow-rg text-xs space-y-2 outline-none">
                   <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
                   <Menu.Item
                     as="button"

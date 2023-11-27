@@ -90,7 +90,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
           </p>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Origin URL</h4>
+          <h4 className="text-sm">JavaScript origin URL</h4>
           <Button
             variant="neutral-primary"
             className="py-2 flex justify-between items-center"
@@ -122,7 +122,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
       <div className="flex flex-col gap-1">
         <div className="flex items-center">
           <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save Changes"}
+            {isSubmitting ? "Saving..." : "Save changes"}
           </Button>
         </div>
       </div>

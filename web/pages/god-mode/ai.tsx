@@ -12,7 +12,7 @@ import { Loader } from "@plane/ui";
 // icons
 import { Lightbulb } from "lucide-react";
 // components
-import { InstanceAIForm } from "components/instance/ai-form";
+import { InstanceAIForm } from "components/instance";
 
 const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
   // store
@@ -46,9 +46,11 @@ const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <Loader className="space-y-4">
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="25%" />
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
+          <Loader.Item height="50px" />
         </Loader>
       )}
     </div>

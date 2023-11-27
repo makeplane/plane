@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // icons
-import { Copy } from "lucide-react";
+import { Copy, Eye, EyeOff } from "lucide-react";
 
 export interface IInstanceGithubConfigForm {
   config: IFormattedInstanceConfiguration;
@@ -22,6 +22,8 @@ export interface GithubConfigFormValues {
 
 export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) => {
   const { config } = props;
+  // states
+  const [showPassword, setShowPassword] = useState(false);
   // store
   const { instance: instanceStore } = useMobxStore();
   // toast
@@ -90,24 +92,42 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
           </p>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Client Secret</h4>
-          <Controller
-            control={control}
-            name="GITHUB_CLIENT_SECRET"
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="GITHUB_CLIENT_SECRET"
-                name="GITHUB_CLIENT_SECRET"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.GITHUB_CLIENT_SECRET)}
-                placeholder="9b0050f94ec1b744e32ce79ea4ffacd40d4119cb"
-                className="rounded-md font-medium w-full"
-              />
+          <h4 className="text-sm">Client secret</h4>
+          <div className="relative">
+            <Controller
+              control={control}
+              name="GITHUB_CLIENT_SECRET"
+              render={({ field: { value, onChange, ref } }) => (
+                <Input
+                  id="GITHUB_CLIENT_SECRET"
+                  name="GITHUB_CLIENT_SECRET"
+                  type={showPassword ? "text" : "password"}
+                  value={value}
+                  onChange={onChange}
+                  ref={ref}
+                  hasError={Boolean(errors.GITHUB_CLIENT_SECRET)}
+                  placeholder="9b0050f94ec1b744e32ce79ea4ffacd40d4119cb"
+                  className="rounded-md font-medium w-full !pr-10"
+                />
+              )}
+            />
+            {showPassword ? (
+              <button
+                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                onClick={() => setShowPassword(false)}
+              >
+                <EyeOff className="h-4 w-4" />
+              </button>
+            ) : (
+              <button
+                className="absolute right-3 top-2.5 flex items-center justify-center text-custom-text-400"
+                onClick={() => setShowPassword(true)}
+              >
+                <Eye className="h-4 w-4" />
+              </button>
             )}
-          />
+          </div>
+
           <p className="text-xs text-custom-text-400">
             Your client secret is also found in your{" "}
             <a
@@ -153,7 +173,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
       <div className="flex flex-col gap-1">
         <div className="flex items-center">
           <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save Changes"}
+            {isSubmitting ? "Saving..." : "Save changes"}
           </Button>
         </div>
       </div>

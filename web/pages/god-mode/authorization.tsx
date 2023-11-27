@@ -13,8 +13,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
-import { InstanceGoogleConfigForm } from "components/instance/google-config-form";
-import { InstanceGithubConfigForm } from "components/instance/github-config-form";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
 
 const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   // store
@@ -168,13 +167,11 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <Loader className="space-y-4">
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="50%" />
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
           <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
         </Loader>
       )}
     </div>
