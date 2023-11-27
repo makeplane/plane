@@ -61,7 +61,7 @@ export const InstanceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex items-center gap-x-5 gap-y-2 px-4 py-3 border-b border-custom-sidebar-border-200">
+    <div className="flex items-center gap-x-5 gap-y-2 px-4 py-3.5 max-h-[3.75rem] border-b border-custom-sidebar-border-200">
       <div className="w-full h-full truncate">
         <div
           className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
