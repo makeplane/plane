@@ -1,7 +1,8 @@
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 
 type Props = {
   children: React.ReactNode;
