@@ -87,7 +87,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
 
       <div className="flex items-center py-1">
         <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
     </>

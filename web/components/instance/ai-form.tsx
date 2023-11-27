@@ -55,7 +55,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
     <>
       <div className="grid grid-col grid-cols-1 lg:grid-cols-3 items-center justify-between gap-x-16 gap-y-8 w-full">
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">GPT Engine</h4>
+          <h4 className="text-sm">GPT_ENGINE</h4>
           <Controller
             control={control}
             name="GPT_ENGINE"
@@ -87,7 +87,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">API Key</h4>
+          <h4 className="text-sm">API key</h4>
           <Controller
             control={control}
             name="OPENAI_API_KEY"
@@ -121,7 +121,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
 
       <div className="flex items-center py-1">
         <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
     </>

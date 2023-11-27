@@ -75,20 +75,20 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Admin Email</h4>
+          <h4 className="text-sm">Email</h4>
           <Input
             id="primary_email"
             name="primary_email"
             type="email"
             value={instance.primary_email}
-            placeholder="Admin Email"
+            placeholder="Email"
             className="w-full cursor-not-allowed !text-custom-text-400"
             disabled
           />
         </div>
 
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Instance Id</h4>
+          <h4 className="text-sm">Instance ID</h4>
           <Input
             id="instance_id"
             name="instance_id"
@@ -118,7 +118,7 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
 
       <div className="flex items-center py-1">
         <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-          {isSubmitting ? "Saving..." : "Save Changes"}
+          {isSubmitting ? "Saving..." : "Save changes"}
         </Button>
       </div>
     </>

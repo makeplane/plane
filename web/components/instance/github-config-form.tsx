@@ -90,7 +90,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
           </p>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Client Secret</h4>
+          <h4 className="text-sm">Client secret</h4>
           <Controller
             control={control}
             name="GITHUB_CLIENT_SECRET"
@@ -153,7 +153,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
       <div className="flex flex-col gap-1">
         <div className="flex items-center">
           <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-            {isSubmitting ? "Saving..." : "Save Changes"}
+            {isSubmitting ? "Saving..." : "Save changes"}
           </Button>
         </div>
       </div>
