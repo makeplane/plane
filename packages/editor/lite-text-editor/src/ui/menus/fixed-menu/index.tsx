@@ -1,12 +1,13 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon } from "lucide-react";
 
 import {
   BoldItem,
   BulletListItem,
   cn,
   CodeItem,
+  findTableAncestor,
   ImageItem,
+  isCellSelection,
   ItalicItem,
   NumberedListItem,
   QuoteItem,
@@ -16,12 +17,18 @@ import {
 } from "@plane/editor-core";
 import { Tooltip } from "@plane/ui";
 import { UploadImage } from "../../";
+import type { SVGProps } from "react";
+interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
+  size?: string | number
+  absoluteStrokeWidth?: boolean
+}
 
+type LucideIcon = (props: LucideProps) => JSX.Element;
 export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIcon;
 }
 
 type EditorBubbleMenuProps = {
@@ -63,10 +70,38 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     CodeItem(props.editor),
   ];
 
-  const complexItems: BubbleMenuItem[] = [
-    TableItem(props.editor),
-    ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
-  ];
+  function getComplexItems(): BubbleMenuItem[] {
+    const items: BubbleMenuItem[] = [TableItem(props.editor)];
+
+    if (shouldShowImageItem()) {
+      items.push(
+        ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
+      );
+    }
+
+    return items;
+  }
+
+  const complexItems: BubbleMenuItem[] = getComplexItems();
+
+  function shouldShowImageItem(): boolean {
+    if (typeof window !== "undefined") {
+      const selectionRange: any = window?.getSelection();
+      const { selection } = props.editor.state;
+
+      if (selectionRange.rangeCount !== 0) {
+        const range = selectionRange.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          return false;
+        }
+        if (isCellSelection(selection)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
 
   const handleAccessChange = (accessKey: string) => {
     props.commentAccessSpecifier?.onAccessChange(accessKey);
