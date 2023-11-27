@@ -87,9 +87,8 @@ export class IssueBaseStore implements IIssueBaseStore {
 
       for (const subGroup of subGroupArray) {
         for (const group of groupArray) {
-          if (subGroup && group && issues[subGroup]) {
-            _issues[subGroup][group].push(_issue.id);
-          }
+          if (subGroup && group && _issues[subGroup][group]) _issues[subGroup][group].push(_issue.id);
+          else if (subGroup && group) _issues[subGroup][group] = [_issue.id];
         }
       }
     }

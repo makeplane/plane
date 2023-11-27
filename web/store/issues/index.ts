@@ -34,7 +34,11 @@ export * from "./project-issues/draft/filter.store";
 /** project issues and issue-filters ends */
 
 /** profile issues and issue-filters starts */
+export * from "./profile/issue.store";
+export * from "./profile/filter.store";
 /** profile issues and issue-filters ends */
 
 /** global issues and issue-filters starts */
+export * from "./global/issue.store";
+export * from "./global/filter.store";
 /** global issues and issue-filters ends */

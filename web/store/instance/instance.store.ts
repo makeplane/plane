@@ -2,7 +2,7 @@ import { observable, action, computed, makeObservable, runInAction } from "mobx"
 // store
 import { RootStore } from "../root";
 // types
-import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration } from "types/instance";
+import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IInstanceAdmin } from "types/instance";
 // services
 import { InstanceService } from "services/instance.service";
 
@@ -11,11 +11,13 @@ export interface IInstanceStore {
   error: any | null;
   // issues
   instance: IInstance | null;
+  instanceAdmins: IInstanceAdmin[] | null;
   configurations: IInstanceConfiguration[] | null;
   // computed
   formattedConfig: IFormattedInstanceConfiguration | null;
   // action
   fetchInstanceInfo: () => Promise<IInstance>;
+  fetchInstanceAdmins: () => Promise<IInstanceAdmin[]>;
   updateInstanceInfo: (data: Partial<IInstance>) => Promise<IInstance>;
   fetchInstanceConfigurations: () => Promise<any>;
   updateInstanceConfigurations: (data: Partial<IFormattedInstanceConfiguration>) => Promise<IInstanceConfiguration[]>;
@@ -25,6 +27,7 @@ export class InstanceStore implements IInstanceStore {
   loader: boolean = false;
   error: any | null = null;
   instance: IInstance | null = null;
+  instanceAdmins: IInstanceAdmin[] | null = null;
   configurations: IInstanceConfiguration[] | null = null;
   // service
   instanceService;
@@ -36,11 +39,13 @@ export class InstanceStore implements IInstanceStore {
       loader: observable.ref,
       error: observable.ref,
       instance: observable.ref,
+      instanceAdmins: observable.ref,
       configurations: observable.ref,
       // computed
       formattedConfig: computed,
       // actions
       fetchInstanceInfo: action,
+      fetchInstanceAdmins: action,
       updateInstanceInfo: action,
       fetchInstanceConfigurations: action,
       updateInstanceConfigurations: action,
@@ -75,6 +80,22 @@ export class InstanceStore implements IInstanceStore {
       return instance;
     } catch (error) {
       console.log("Error while fetching the instance info");
+      throw error;
+    }
+  };
+
+  /**
+   * fetch instance admins from API
+   */
+  fetchInstanceAdmins = async () => {
+    try {
+      const instanceAdmins = await this.instanceService.getInstanceAdmins();
+      runInAction(() => {
+        this.instanceAdmins = instanceAdmins;
+      });
+      return instanceAdmins;
+    } catch (error) {
+      console.log("Error while fetching the instance admins");
       throw error;
     }
   };

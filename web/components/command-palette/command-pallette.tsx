@@ -33,7 +33,7 @@ export const CommandPalette: FC = observer(() => {
     commandPalette,
     theme: { toggleSidebar },
     user: { currentUser },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
   const {
     toggleCommandPaletteModal,
@@ -55,7 +55,21 @@ export const CommandPalette: FC = observer(() => {
     toggleBulkDeleteIssueModal,
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
+
+    createIssueStoreType,
   } = commandPalette;
+
+  const isAnyModalOpen = Boolean(
+    isCreateIssueModalOpen ||
+      isCreateCycleModalOpen ||
+      isCreatePageModalOpen ||
+      isCreateProjectModalOpen ||
+      isCreateModuleModalOpen ||
+      isCreateViewModalOpen ||
+      isShortcutModalOpen ||
+      isBulkDeleteIssueModalOpen ||
+      isDeleteIssueModalOpen
+  );
 
   const { setToastAlert } = useToast();
 
@@ -111,7 +125,7 @@ export const CommandPalette: FC = observer(() => {
           e.preventDefault();
           toggleSidebar();
         }
-      } else {
+      } else if (!isAnyModalOpen) {
         if (keyPressed === "c") {
           setTrackElement("SHORTCUT_KEY");
           toggleCreateIssueModal(true);
@@ -148,6 +162,7 @@ export const CommandPalette: FC = observer(() => {
       toggleCreateIssueModal,
       projectId,
       workspaceSlug,
+      isAnyModalOpen,
     ]
   );
 
@@ -211,6 +226,7 @@ export const CommandPalette: FC = observer(() => {
         prePopulateData={
           cycleId ? { cycle: cycleId.toString() } : moduleId ? { module: moduleId.toString() } : undefined
         }
+        currentStore={createIssueStoreType}
       />
 
       {issueId && issueDetails && (
