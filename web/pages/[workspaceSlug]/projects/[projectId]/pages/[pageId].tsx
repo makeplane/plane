@@ -243,7 +243,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 }
               />
             ) : (
-              <div className="relative">
+              <div className="h-full w-full relative overflow-hidden">
                 <Controller
                   name="description_html"
                   control={control}

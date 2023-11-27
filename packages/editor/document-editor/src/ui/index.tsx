@@ -134,7 +134,7 @@ const DocumentEditor = ({
             sidePeekVisible={sidePeekVisible}
           />
         </div>
-        <div className="h-full w-full">
+        <div className="h-full w-full overflow-x-hidden">
           <PageRenderer
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
