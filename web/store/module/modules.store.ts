@@ -218,7 +218,7 @@ export class ModuleStore implements IModuleStore {
         this.loader = false;
         this.error = null;
       });
-
+      this.fetchModules(workspaceSlug, projectId);
       return response;
     } catch (error) {
       console.error("Failed to create module in module store", error);

@@ -102,7 +102,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       .then(() => {
         setToastAlert({
           type: "success",
-          title: "Cycle link copied to clipboard",
+          title: "Link Copied!",
+          message: "Cycle link copied to clipboard.",
         });
       })
       .catch(() => {

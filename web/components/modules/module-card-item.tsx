@@ -56,7 +56,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
   const issueCount = module
-    ? moduleTotalIssues === 0
+    ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
       ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
