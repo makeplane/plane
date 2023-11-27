@@ -46,11 +46,29 @@ export const ShortcutsModal: FC<Props> = (props) => {
     setQuery("");
   };
 
+  const doesSearchQueryExist = (text: string, searchQuery: string): boolean => {
+    try {
+      let searchIndex = 0;
+
+      for (let i = 0; i < text.length; i++) {
+        if (text[i].toLowerCase() === searchQuery[searchIndex]?.toLowerCase()) searchIndex++;
+
+        // All characters of searchQuery found in order
+        if (searchIndex === searchQuery.length) return true;
+      }
+
+      // Not all characters of searchQuery found in order
+      return false;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const filteredShortcuts = KEYBOARD_SHORTCUTS.map((category) => {
     const newCategory = { ...category };
 
     newCategory.shortcuts = newCategory.shortcuts.filter((shortcut) =>
-      shortcut.description.toLowerCase().includes(query.trim().toLowerCase())
+      doesSearchQueryExist(shortcut.description, query)
     );
 
     return newCategory;
@@ -73,89 +91,89 @@ export const ShortcutsModal: FC<Props> = (props) => {
           <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-              enterTo="opacity-100 translate-y-0 sm:scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-              leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-            >
-              <Dialog.Panel className="h-full w-full grid place-items-center">
-                <div className="relative flex flex-col rounded-lg bg-custom-background-100  shadow-custom-shadow-md transition-all p-5 space-y-4 h-[70vh] w-[28rem] overflow-hidden">
+        <div className="fixed h-full w-full inset-0 z-20 overflow-y-auto">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+            enterTo="opacity-100 translate-y-0 sm:scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          >
+            <Dialog.Panel className="h-full w-full">
+              <div className="h-full w-full grid place-items-center p-5">
+                <div className="flex flex-col rounded-lg bg-custom-background-100  shadow-custom-shadow-md transition-all p-5 space-y-4 h-[61vh] w-full sm:w-[28rem] overflow-hidden">
                   <Dialog.Title as="h3" className="flex justify-between">
-                    <span className="text-lg font-medium">Keyboard Shortcuts</span>
+                    <span className="text-lg font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>
                       <X className="h-4 w-4 text-custom-text-200 hover:text-custom-text-100" aria-hidden="true" />
                     </button>
                   </Dialog.Title>
-                  <div>
-                    <div className="flex w-full items-center justify-start rounded border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
-                      <Search className="h-3.5 w-3.5 text-custom-text-200" />
-                      <Input
-                        id="search"
-                        name="search"
-                        type="text"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search for shortcuts"
-                        className="w-full border-none bg-transparent py-1 text-xs text-custom-text-200 focus:outline-none"
-                        autoFocus
-                        tabIndex={1}
-                      />
-                    </div>
+                  <div className="flex w-full items-center rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-2">
+                    <Search className="h-3.5 w-3.5 text-custom-text-200" />
+                    <Input
+                      id="search"
+                      name="search"
+                      type="text"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Search for shortcuts"
+                      className="w-full border-none bg-transparent py-1 text-xs text-custom-text-200 outline-none"
+                      autoFocus
+                      tabIndex={1}
+                    />
                   </div>
                   <div className="flex flex-col gap-y-3 overflow-y-auto">
                     {!isShortcutsEmpty ? (
-                      filteredShortcuts.map((category) => (
-                        <div key={category.key}>
-                          <h5 className="text-left text-sm font-medium">{category.title}</h5>
-                          <div className="space-y-3 px-1">
-                            {category.shortcuts.map((shortcut) => (
-                              <div key={shortcut.keys} className="mt-1">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="text-xs text-custom-text-200">{shortcut.description}</h4>
-                                  <div className="flex items-center gap-x-1.5">
-                                    {shortcut.keys.split(",").map((key) => (
-                                      <div key={key} className="flex items-center gap-1">
-                                        {key === "Ctrl" ? (
-                                          <div className="grid place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 h-6 min-w-[1.5rem] px-1.5">
-                                            <Command className="h-2.5 w-2.5 text-custom-text-200" />
-                                          </div>
-                                        ) : (
-                                          <kbd className="grid place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 h-6 min-w-[1.5rem] px-1.5 text-[10px] text-custom-text-200">
-                                            {key}
-                                          </kbd>
-                                        )}
-                                      </div>
-                                    ))}
+                      filteredShortcuts.map((category) => {
+                        if (category.shortcuts.length === 0) return;
+
+                        return (
+                          <div key={category.key}>
+                            <h5 className="text-left text-sm font-medium">{category.title}</h5>
+                            <div className="space-y-3 px-1">
+                              {category.shortcuts.map((shortcut) => (
+                                <div key={shortcut.keys} className="mt-1">
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="text-xs text-custom-text-200">{shortcut.description}</h4>
+                                    <div className="flex items-center gap-x-1.5">
+                                      {shortcut.keys.split(",").map((key) => (
+                                        <div key={key} className="flex items-center gap-1">
+                                          {key === "Ctrl" ? (
+                                            <div className="grid place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 h-6 min-w-[1.5rem] px-1.5">
+                                              <Command className="h-2.5 w-2.5 text-custom-text-200" />
+                                            </div>
+                                          ) : (
+                                            <kbd className="grid place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 h-6 min-w-[1.5rem] px-1.5 text-[10px] text-custom-text-200">
+                                              {key}
+                                            </kbd>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        );
+                      })
                     ) : (
-                      <div className="flex flex-col gap-y-3">
-                        <p className="text-sm text-custom-text-200">
-                          No shortcuts found for{" "}
-                          <span className="font-semibold italic">
-                            {`"`}
-                            {query}
-                            {`"`}
-                          </span>
-                        </p>
-                      </div>
+                      <p className="flex justify-center text-center text-sm text-custom-text-200">
+                        No shortcuts found for{" "}
+                        <span className="font-semibold italic">
+                          {`"`}
+                          {query}
+                          {`"`}
+                        </span>
+                      </p>
                     )}
                   </div>
                 </div>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+              </div>
+            </Dialog.Panel>
+          </Transition.Child>
         </div>
       </Dialog>
     </Transition.Root>
