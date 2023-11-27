@@ -91,7 +91,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
 
   return (
     <>
-      {issueStore?.loader === "mutation" ? (
+      {issueStore?.loader === "init-loader" ? (
         <div className="w-full h-full flex justify-center items-center">
           <Spinner />
         </div>

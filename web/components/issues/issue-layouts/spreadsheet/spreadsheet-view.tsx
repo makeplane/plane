@@ -81,6 +81,8 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     };
   }, []);
 
+  console.log("spreadsheet issues", issues);
+
   return (
     <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-200">
       <div className="h-full w-full flex flex-col">
@@ -104,18 +106,20 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                     <span className="flex items-center justify-center px-4 py-2.5 h-full w-full flex-grow">Issue</span>
                   </div>
 
-                  {issues.map((issue, index) => (
-                    <SpreadsheetIssuesColumn
-                      key={`${issue?.id}_${index}`}
-                      issue={issue}
-                      expandedIssues={expandedIssues}
-                      setExpandedIssues={setExpandedIssues}
-                      properties={displayProperties}
-                      quickActions={quickActions}
-                      disableUserActions={disableUserActions}
-                      setIssuePeekOverView={setIssuePeekOverView}
-                    />
-                  ))}
+                  {issues.map((issue, index) =>
+                    issue ? (
+                      <SpreadsheetIssuesColumn
+                        key={`${issue?.id}_${index}`}
+                        issue={issue}
+                        expandedIssues={expandedIssues}
+                        setExpandedIssues={setExpandedIssues}
+                        properties={displayProperties}
+                        quickActions={quickActions}
+                        disableUserActions={disableUserActions}
+                        setIssuePeekOverView={setIssuePeekOverView}
+                      />
+                    ) : null
+                  )}
                 </div>
               </div>
 

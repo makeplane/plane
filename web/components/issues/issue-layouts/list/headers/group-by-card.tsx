@@ -110,10 +110,6 @@ export const HeaderGroupByCard = observer(
           <CreateUpdateIssueModal
             isOpen={isOpen}
             handleClose={() => setIsOpen(false)}
-            handleSubmit={(data: Partial<IIssue>) => {
-              console.log(data);
-              return Promise.resolve();
-            }}
             currentStore={currentStore}
             prePopulateData={issuePayload}
           />

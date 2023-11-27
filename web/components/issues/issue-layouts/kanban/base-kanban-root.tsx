@@ -137,7 +137,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   return (
     <>
-      {showLoader && issueStore?.loader === "mutation" && (
+      {showLoader && issueStore?.loader === "init-loader" && (
         <div className="fixed top-16 right-2 z-30 bg-custom-background-80 shadow-custom-shadow-sm w-10 h-10 rounded flex justify-center items-center">
           <Spinner className="w-5 h-5" />
         </div>

@@ -53,17 +53,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const issuesResponse = issueStore.getIssues;
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
 
-  const issues = issueIds?.map((id) => issuesResponse?.[id]);
-
-  const handleIssueAction = async (issue: IIssue, action: "copy" | "delete" | "edit") => {
-    if (!workspaceSlug || !projectId || !user) return;
-
-    if (action === "delete") {
-      issueStore.removeIssue(workspaceSlug, projectId, issue.id, viewId);
-    } else if (action === "edit") {
-      issueStore.updateIssue(workspaceSlug, projectId, issue.id, issue, viewId);
-    }
-  };
+  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
 
   const handleIssues = useCallback(
     async (issue: IIssue, action: EIssueActions) => {
