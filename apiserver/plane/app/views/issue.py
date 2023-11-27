@@ -368,6 +368,8 @@ class IssueListGroupedEndpoint(BaseAPIView):
 
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
+        archive = request.GET.get("archived", False)
+        draft = request.GET.get("draft", False)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
         issue_queryset = (
@@ -385,6 +387,8 @@ class IssueListGroupedEndpoint(BaseAPIView):
                 )
             )
             .filter(**filters)
+            .filter(is_draft=draft)
+            .filter(~Q(archived_at__isnull=archive))
             .filter(
                 models.Q(issue_inbox__status=1)
                 | models.Q(issue_inbox__status=-1)
