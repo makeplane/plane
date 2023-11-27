@@ -16,9 +16,9 @@ const INSTANCE_ADMIN_LINKS = [
   },
   {
     Icon: Mail,
-    name: "Email",
+    name: "Mail",
     description: "Set up emails to your users",
-    href: `/god-mode/email`,
+    href: `/god-mode/mail`,
   },
   {
     Icon: Lock,
@@ -28,7 +28,7 @@ const INSTANCE_ADMIN_LINKS = [
   },
   {
     Icon: BrainCog,
-    name: "Artificial intelligence",
+    name: "OpenAI",
     description: "Configure your OpenAI creds",
     href: `/god-mode/ai`,
   },
@@ -48,7 +48,7 @@ export const InstanceAdminSidebarMenu = () => {
   const router = useRouter();
 
   return (
-    <div className="h-full overflow-y-auto w-full cursor-pointer space-y-3 p-4">
+    <div className="flex flex-col gap-2.5 py-6 px-4 h-full w-full overflow-y-auto">
       {INSTANCE_ADMIN_LINKS.map((item, index) => {
         const isActive = item.name === "Settings" ? router.asPath.includes(item.href) : router.asPath === item.href;
 
@@ -75,7 +75,7 @@ export const InstanceAdminSidebarMenu = () => {
                       </span>
                       <span
                         className={`text-[10px] ${
-                          isActive ? "text-custom-primary-100" : "text-custom-sidebar-text-300"
+                          isActive ? "text-custom-primary-90" : "text-custom-sidebar-text-400"
                         }`}
                       >
                         {item.description}

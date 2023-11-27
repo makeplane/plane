@@ -90,37 +90,6 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
           </p>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Client Secret</h4>
-          <Controller
-            control={control}
-            name="GOOGLE_CLIENT_SECRET"
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="GOOGLE_CLIENT_SECRET"
-                name="GOOGLE_CLIENT_SECRET"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.GOOGLE_CLIENT_SECRET)}
-                placeholder="GOCShX-ADp4cI0kPqav1gGCBg5bE02E"
-                className="rounded-md font-medium w-full"
-              />
-            )}
-          />
-          <p className="text-xs text-custom-text-400">
-            Your client secret should also be in your Google API Console.{" "}
-            <a
-              href="https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid"
-              target="_blank"
-              className="text-custom-primary-100 hover:underline"
-              rel="noreferrer"
-            >
-              Learn more
-            </a>
-          </p>
-        </div>
-        <div className="flex flex-col gap-1">
           <h4 className="text-sm">Origin URL</h4>
           <Button
             variant="neutral-primary"

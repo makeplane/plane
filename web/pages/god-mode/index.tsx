@@ -15,13 +15,14 @@ import { InstanceGeneralForm } from "components/instance";
 const InstanceAdminPage: NextPageWithLayout = observer(() => {
   // store
   const {
-    instance: { fetchInstanceInfo, instance },
+    instance: { fetchInstanceInfo, instance, fetchInstanceAdmins, instanceAdmins },
   } = useMobxStore();
 
   useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
+  useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins());
 
   return (
-    <div className="flex flex-col gap-8 my-8 mx-12">
+    <div className="flex flex-col gap-8 h-full w-full">
       <div className="pb-3 mb-2 border-b border-custom-border-100">
         <div className="text-custom-text-100 font-medium text-xl pb-1">ID your instance easily</div>
         <div className="text-custom-text-300 font-normal text-sm">
@@ -29,8 +30,8 @@ const InstanceAdminPage: NextPageWithLayout = observer(() => {
           will find your license key here.
         </div>
       </div>
-      {instance ? (
-        <InstanceGeneralForm instance={instance} />
+      {instance && instanceAdmins ? (
+        <InstanceGeneralForm instance={instance} instanceAdmins={instanceAdmins} />
       ) : (
         <Loader className="space-y-4">
           <Loader.Item height="50px" />
