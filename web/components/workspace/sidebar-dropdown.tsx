@@ -101,7 +101,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   sidebarCollapsed ? "justify-center" : ""
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 truncate">
                   <div
                     className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
                       !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
