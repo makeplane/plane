@@ -3,13 +3,14 @@ import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input, ToggleSwitch } from "@plane/ui";
 // types
-import { IInstance } from "types/instance";
+import { IInstance, IInstanceAdmin } from "types/instance";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IInstanceGeneralForm {
   instance: IInstance;
+  instanceAdmins: IInstanceAdmin[];
 }
 
 export interface GeneralFormValues {
@@ -18,7 +19,7 @@ export interface GeneralFormValues {
 }
 
 export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
-  const { instance } = props;
+  const { instance, instanceAdmins } = props;
   // store
   const { instance: instanceStore } = useMobxStore();
   // toast
@@ -77,10 +78,10 @@ export const InstanceGeneralForm: FC<IInstanceGeneralForm> = (props) => {
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Admin email</h4>
           <Input
-            id="primary_email"
-            name="primary_email"
+            id="email"
+            name="email"
             type="email"
-            value={instance.primary_email}
+            value={instanceAdmins[0].user_detail.email ?? ""}
             placeholder="Admin email"
             className="w-full cursor-not-allowed !text-custom-text-400"
             disabled
