@@ -13,7 +13,7 @@ urlpatterns = [
         name="cycles",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:pk>/",
         CycleAPIEndpoint.as_view(),
         name="cycles",
     ),
@@ -23,7 +23,7 @@ urlpatterns = [
         name="cycle-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/cycles/<uuid:cycle_id>/cycle-issues/<uuid:issue_id>/",
         CycleIssueAPIEndpoint.as_view(),
         name="cycle-issues",
     ),

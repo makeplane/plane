@@ -1,17 +1,14 @@
 export const csvDownload = (data: Array<Array<string>> | { [key: string]: string }, name: string) => {
-  let rows = [];
+  const rows = Array.isArray(data) ? [...data] : [Object.keys(data), Object.values(data)];
 
-  if (Array.isArray(data)) {
-    rows = [...data];
-  } else {
-    rows = [Object.keys(data), Object.values(data)];
-  }
+  const csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
+  const encodedUri = encodeURI(csvContent);
 
-  let csvContent = "data:text/csv;charset=utf-8," + rows.map((e) => e.join(",")).join("\n");
-  var encodedUri = encodeURI(csvContent);
-  var link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `${name}.csv`);
+  const link = document.createElement("a");
+  link.href = encodedUri;
+  link.download = `${name}.csv`;
+
   document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link); // Cleanup after the download link is clicked
 };

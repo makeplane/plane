@@ -112,9 +112,68 @@ import {
 } from "store/inbox";
 import { IWebhookStore, WebhookStore } from "./webhook.store";
 
+import {
+  // global
+  IIssuesFilterStore,
+  IssuesFilterStore,
+  // project issues
+  IProjectIssuesStore,
+  ProjectIssuesStore,
+  // project issues filter
+  IProjectIssuesFilterStore,
+  ProjectIssuesFilterStore,
+  // module issues
+  IModuleIssuesStore,
+  ModuleIssuesStore,
+  // module issues filter
+  IModuleIssuesFilterStore,
+  ModuleIssuesFilterStore,
+  // cycle issues
+  ICycleIssuesStore,
+  CycleIssuesStore,
+  // cycle issues filter
+  ICycleIssuesFilterStore,
+  CycleIssuesFilterStore,
+  // project view issues
+  IViewIssuesStore,
+  ViewIssuesStore,
+  // project view issues filter
+  IViewIssuesFilterStore,
+  ViewIssuesFilterStore,
+  // archived issues
+  IProjectArchivedIssuesStore,
+  ProjectArchivedIssuesStore,
+  // archived issues filter
+  IProjectArchivedIssuesFilterStore,
+  ProjectArchivedIssuesFilterStore,
+  // draft issues
+  IProjectDraftIssuesStore,
+  ProjectDraftIssuesStore,
+  // draft issues filter
+  IProjectDraftIssuesFilterStore,
+  ProjectDraftIssuesFilterStore,
+  // profile issues
+  IProfileIssuesStore,
+  ProfileIssuesStore,
+  // profile issues filter
+  IProfileIssuesFilterStore,
+  ProfileIssuesFilterStore,
+  // global issues
+  IGlobalIssuesStore,
+  GlobalIssuesStore,
+  // global issues filter
+  IGlobalIssuesFilterStore,
+  GlobalIssuesFilterStore,
+} from "store/issues";
+
+import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
+import { ModuleIssueFiltersStore, IModuleIssueFiltersStore } from "store/module-issues";
+
 import { IMentionsStore, MentionsStore } from "store/editor";
 // pages
 import { PageStore, IPageStore } from "store/page.store";
+// event tracking
+import { TrackEventStore, ITrackEventStore } from "./event-tracker.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -157,6 +216,7 @@ export class RootStore {
   projectViewIssueCalendarView: IProjectViewIssueCalendarViewStore;
 
   issueFilter: IIssueFilterStore;
+
   issueDetail: IIssueDetailStore;
   issueKanBanView: IIssueKanBanViewStore;
   issueCalendarView: IIssueCalendarViewStore;
@@ -188,7 +248,40 @@ export class RootStore {
 
   mentionsStore: IMentionsStore;
 
+  // project v3 issue and issue-filters starts
+  issuesFilter: IIssuesFilterStore;
+
+  projectIssues: IProjectIssuesStore;
+  projectIssuesFilter: IProjectIssuesFilterStore;
+
+  moduleIssues: IModuleIssuesStore;
+  moduleIssuesFilter: IModuleIssuesFilterStore;
+
+  cycleIssues: ICycleIssuesStore;
+  cycleIssuesFilter: ICycleIssuesFilterStore;
+
+  viewIssues: IViewIssuesStore;
+  viewIssuesFilter: IViewIssuesFilterStore;
+
+  projectArchivedIssues: IProjectArchivedIssuesStore;
+  projectArchivedIssuesFilter: IProjectArchivedIssuesFilterStore;
+
+  projectDraftIssues: IProjectDraftIssuesStore;
+  projectDraftIssuesFilter: IProjectDraftIssuesFilterStore;
+
+  workspaceProfileIssues: IProfileIssuesStore;
+  workspaceProfileIssuesFilter: IProfileIssuesFilterStore;
+
+  workspaceGlobalIssues: IGlobalIssuesStore;
+  workspaceGlobalIssuesFilter: IGlobalIssuesFilterStore;
+  // project v3 issue and issue-filters ends
+
+  cycleIssueFilters: ICycleIssueFiltersStore;
+  moduleIssueFilters: IModuleIssueFiltersStore;
+
   page: IPageStore;
+
+  trackEvent: ITrackEventStore;
 
   constructor() {
     this.instance = new InstanceStore(this);
@@ -259,6 +352,40 @@ export class RootStore {
 
     this.mentionsStore = new MentionsStore(this);
 
+    // project v3 issue and issue-filters starts
+    this.issuesFilter = new IssuesFilterStore(this);
+
+    this.projectIssues = new ProjectIssuesStore(this);
+    this.projectIssuesFilter = new ProjectIssuesFilterStore(this);
+
+    this.moduleIssues = new ModuleIssuesStore(this);
+    this.moduleIssuesFilter = new ModuleIssuesFilterStore(this);
+
+    this.cycleIssues = new CycleIssuesStore(this);
+    this.cycleIssuesFilter = new CycleIssuesFilterStore(this);
+
+    this.viewIssues = new ViewIssuesStore(this);
+    this.viewIssuesFilter = new ViewIssuesFilterStore(this);
+
+    this.projectArchivedIssues = new ProjectArchivedIssuesStore(this);
+    this.projectArchivedIssuesFilter = new ProjectArchivedIssuesFilterStore(this);
+
+    this.projectDraftIssues = new ProjectDraftIssuesStore(this);
+    this.projectDraftIssuesFilter = new ProjectDraftIssuesFilterStore(this);
+
+    this.workspaceProfileIssues = new ProfileIssuesStore(this);
+    this.workspaceProfileIssuesFilter = new ProfileIssuesFilterStore(this);
+
+    this.workspaceGlobalIssues = new GlobalIssuesStore(this);
+    this.workspaceGlobalIssuesFilter = new GlobalIssuesFilterStore(this);
+    // project v3 issue and issue-filters ends
+
+    this.cycleIssueFilters = new CycleIssueFiltersStore(this);
+
+    this.moduleIssueFilters = new ModuleIssueFiltersStore(this);
+
     this.page = new PageStore(this);
+
+    this.trackEvent = new TrackEventStore(this);
   }
 }

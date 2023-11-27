@@ -388,7 +388,7 @@ class ProjectInvitationsViewset(BaseViewSet):
                 {"error": "You cannot invite a user with higher role"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         workspace = Workspace.objects.get(slug=slug)
 
         project_invitations = []
@@ -424,7 +424,7 @@ class ProjectInvitationsViewset(BaseViewSet):
         project_invitations = ProjectMemberInvite.objects.bulk_create(
             project_invitations, batch_size=10, ignore_conflicts=True
         )
-        current_site = request.META.get('HTTP_ORIGIN')
+        current_site = request.META.get("HTTP_ORIGIN")
 
         # Send invitations
         for invitation in project_invitations:
@@ -468,6 +468,13 @@ class UserProjectInvitationsViewset(BaseViewSet):
 
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
+
+        # If the user was already part of workspace
+        _ = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id__in=project_ids,
+            member=request.user,
+        ).update(is_active=True)
 
         ProjectMember.objects.bulk_create(
             [
@@ -975,7 +982,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         )
         params = {
-            "Bucket": settings.AWS_S3_BUCKET_NAME,
+            "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
             "Prefix": "static/project-cover/",
         }
 
@@ -987,7 +994,7 @@ class ProjectPublicCoverImagesEndpoint(BaseAPIView):
                     "/"
                 ):  # This line ensures we're only getting files, not "sub-folders"
                     files.append(
-                        f"https://{settings.AWS_S3_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
+                        f"https://{settings.AWS_STORAGE_BUCKET_NAME}.s3.{settings.AWS_REGION}.amazonaws.com/{content['Key']}"
                     )
 
         return Response(files, status=status.HTTP_200_OK)

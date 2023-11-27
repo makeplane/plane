@@ -1,33 +1,29 @@
 import { Fragment } from "react";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { mutate } from "swr";
+// components
 import { Menu, Transition } from "@headlessui/react";
-import { Cog, LogIn, LogOut, Settings, UserCircle2 } from "lucide-react";
+// icons
+import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-// services
-import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Tooltip } from "@plane/ui";
 
 // Static Data
-const profileLinks = (workspaceSlug: string, userId: string) => [
+const PROFILE_LINKS = [
   {
-    name: "View profile",
-    icon: UserCircle2,
-    link: `/${workspaceSlug}/profile/${userId}`,
-  },
-  {
+    key: "settings",
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: `/profile`,
   },
 ];
-
-const authService = new AuthService();
 
 export const InstanceSidebarDropdown = observer(() => {
   const router = useRouter();
@@ -35,10 +31,11 @@ export const InstanceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed },
     workspace: { workspaceSlug },
-    user: { currentUser, currentUserSettings },
+    user: { signOut, currentUser, currentUserSettings },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
+  const { setTheme } = useTheme();
 
   // redirect url for normal mode
   const redirectWorkspaceSlug =
@@ -48,9 +45,10 @@ export const InstanceSidebarDropdown = observer(() => {
     "";
 
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
       })
       .catch(() =>
@@ -63,28 +61,21 @@ export const InstanceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex items-center gap-x-3 gap-y-2 px-4 py-4">
+    <div className="flex items-center gap-x-5 gap-y-2 px-4 py-3.5 max-h-[3.75rem] border-b border-custom-sidebar-border-200">
       <div className="w-full h-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
+          className={`flex flex-grow items-center gap-x-2 rounded py-1 truncate ${
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <div className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}>
-            <Cog className="h-5 w-5 text-custom-text-200" />
+          <div className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded bg-custom-sidebar-background-80">
+            <UserCog2 className="h-5 w-5 text-custom-text-200" />
           </div>
 
           {!sidebarCollapsed && (
-            <h4 className="text-custom-text-200 font-medium text-base truncate">Instance Admin</h4>
-          )}
-        </div>
-      </div>
-
-      {!sidebarCollapsed && (
-        <Menu as="div" className="relative flex-shrink-0">
-          <Menu.Button className="flex gap-4 place-items-center outline-none">
-            {!sidebarCollapsed && (
-              <Tooltip position="bottom-left" tooltipContent="Go back to your workspace">
+            <div className="flex w-full gap-2">
+              <h4 className="grow text-custom-text-200 font-medium text-base truncate">Instance admin</h4>
+              <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
                 <div className="flex-shrink-0">
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <a>
@@ -93,7 +84,14 @@ export const InstanceSidebarDropdown = observer(() => {
                   </Link>
                 </div>
               </Tooltip>
-            )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {!sidebarCollapsed && (
+        <Menu as="div" className="relative flex-shrink-0">
+          <Menu.Button className="grid place-items-center outline-none">
             <Avatar
               name={currentUser?.display_name}
               src={currentUser?.avatar}
@@ -113,13 +111,13 @@ export const InstanceSidebarDropdown = observer(() => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52  origin-top-left rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-200 shadow-lg text-xs outline-none"
+              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52 rounded-md
+          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-100 shadow-lg text-xs outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
-                  <Menu.Item key={index} as="button" type="button">
+                {PROFILE_LINKS.map((link) => (
+                  <Menu.Item key={link.key} as="button" type="button">
                     <Link href={link.link}>
                       <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
@@ -144,8 +142,8 @@ export const InstanceSidebarDropdown = observer(() => {
               <div className="p-2 pb-0">
                 <Menu.Item as="button" type="button" className="w-full">
                   <Link href={`/${redirectWorkspaceSlug}`}>
-                    <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-10 hover:bg-custom-primary-20">
-                      Normal Mode
+                    <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                      Exit God Mode
                     </a>
                   </Link>
                 </Menu.Item>

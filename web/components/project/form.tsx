@@ -16,7 +16,6 @@ import { ProjectService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -29,7 +28,7 @@ const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, trackEvent: { postHogEventTracker } } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // form data
@@ -63,9 +62,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     return projectStore
       .updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
-        trackEvent(
-          'UPDATE_PROJECT',
-          res
+        postHogEventTracker(
+          'PROJECT_UPDATE',
+          {...res, state: "SUCCESS"}
         );
         setToastAlert({
           type: "success",
@@ -74,8 +73,11 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       })
       .catch((error) => {
-        trackEvent(
-          'UPDATE_PROJECT/FAIL',
+        postHogEventTracker(
+          'PROJECT_UPDATE',
+          {
+            state: "FAILED"
+          }
         );
         setToastAlert({
           type: "error",
@@ -261,7 +263,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   value={value}
                   onChange={onChange}
                   label={selectedNetwork?.label ?? "Select network"}
-                  className="!border-custom-border-200 !shadow-none font-medium"
+                  buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
                   input
                   disabled={!isAdmin}
                   optionsClassName="w-full"

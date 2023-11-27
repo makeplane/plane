@@ -23,6 +23,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
   const {
     project: { workspaceProjects },
     commandPalette: { toggleCreateProjectModal },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
 
   return (
@@ -35,11 +36,10 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
                 <Tab
                   key={tab.key}
                   className={({ selected }) =>
-                    `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${
-                      selected ? "bg-custom-background-80" : ""
+                    `rounded-3xl border border-custom-border-200 px-4 py-2 text-xs hover:bg-custom-background-80 ${selected ? "bg-custom-background-80" : ""
                     }`
                   }
-                  onClick={() => {}}
+                  onClick={() => { }}
                 >
                   {tab.title}
                 </Tab>
@@ -64,7 +64,10 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
               text: "New Project",
-              onClick: () => toggleCreateProjectModal(true),
+              onClick: () => {
+                setTrackElement("ANALYTICS_EMPTY_STATE");
+                toggleCreateProjectModal(true)
+              }
             }}
           />
         </>

@@ -283,9 +283,12 @@ class ModuleViewSet(WebhookMixin, BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueViewSet(BaseViewSet):
+class ModuleIssueViewSet(WebhookMixin, BaseViewSet):
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
+    webhook_event = "module_issue"
+    bulk = True
+
 
     filterset_fields = [
         "issue__labels__id",
@@ -461,7 +464,6 @@ class ModuleIssueViewSet(BaseViewSet):
         module_issue = ModuleIssue.objects.get(
             workspace__slug=slug, project_id=project_id, module_id=module_id, pk=pk
         )
-        module_issue.delete()
         issue_activity.delay(
             type="module.activity.deleted",
             requested_data=json.dumps(
@@ -471,11 +473,12 @@ class ModuleIssueViewSet(BaseViewSet):
                 }
             ),
             actor_id=str(request.user.id),
-            issue_id=str(pk),
+            issue_id=str(module_issue.issue_id),
             project_id=str(project_id),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
         )
+        module_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

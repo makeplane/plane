@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { cn, getEditorClassNames, useEditor } from "@plane/editor-core";
+import { getEditorClassNames, useEditor } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "./extensions";
 import {
   IDuplicationConfig,
@@ -70,7 +70,7 @@ const DocumentEditor = ({
 }: IDocumentEditor) => {
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
-  const [sidePeakVisible, setSidePeakVisible] = useState(true);
+  const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const router = useRouter();
 
   const editor = useEditor({
@@ -111,46 +111,38 @@ const DocumentEditor = ({
   if (!editor) return null;
 
   return (
-    <div className="flex flex-col">
-      <div className="top-0 sticky z-10 bg-custom-background-100">
-        <EditorHeader
-          readonly={false}
-          KanbanMenuOptions={KanbanMenuOptions}
-          editor={editor}
-          sidePeakVisible={sidePeakVisible}
-          setSidePeakVisible={setSidePeakVisible}
-          markings={markings}
-          uploadFile={uploadFile}
-          setIsSubmitting={setIsSubmitting}
-          isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
-          isArchived={
-            !pageArchiveConfig ? false : pageArchiveConfig.is_archived
-          }
-          archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
-          documentDetails={documentDetails}
-        />
-      </div>
-      <div className="self-center items-stretch w-full max-md:max-w-full h-full">
-        <div
-          className={cn(
-            "gap-5 flex max-md:flex-col max-md:items-stretch max-md:gap-0 h-full",
-            { "justify-center": !sidePeakVisible },
-          )}
-        >
+    <div className="h-full w-full flex flex-col overflow-hidden">
+      <EditorHeader
+        readonly={false}
+        KanbanMenuOptions={KanbanMenuOptions}
+        editor={editor}
+        sidePeekVisible={sidePeekVisible}
+        setSidePeekVisible={(val) => setSidePeekVisible(val)}
+        markings={markings}
+        uploadFile={uploadFile}
+        setIsSubmitting={setIsSubmitting}
+        isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
+        isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
+        archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
+        documentDetails={documentDetails}
+      />
+      <div className="h-full w-full flex overflow-y-auto">
+        <div className="flex-shrink-0 h-full w-56 lg:w-72 sticky top-0">
           <SummarySideBar
             editor={editor}
             markings={markings}
-            sidePeakVisible={sidePeakVisible}
+            sidePeekVisible={sidePeekVisible}
           />
+        </div>
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
             editorClassNames={editorClassNames}
-            sidePeakVisible={sidePeakVisible}
             documentDetails={documentDetails}
           />
-          {/* Page Element */}
         </div>
+        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-72" />
       </div>
     </div>
   );

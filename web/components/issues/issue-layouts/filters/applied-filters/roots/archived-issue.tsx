@@ -7,23 +7,24 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
+import { EFilterType } from "store/issues/types";
 
 export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    archivedIssueFilters: archivedIssueFiltersStore,
+    projectArchivedIssuesFilter: { issueFilters, updateFilters },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
   } = useMobxStore();
 
-  const userFilters = archivedIssueFiltersStore.userFilters;
+  const userFilters = issueFilters?.filters;
 
   // filters whose value not null or empty array
   const appliedFilters: IIssueFilterOptions = {};
-  Object.entries(userFilters).forEach(([key, value]) => {
+  Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
 
     if (Array.isArray(value) && value.length === 0) return;
@@ -36,22 +37,18 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
 
     // remove all values of the key if value is null
     if (!value) {
-      archivedIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: null,
-        },
+      updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+        [key]: null,
       });
       return;
     }
 
     // remove the passed value from the key
-    let newValues = archivedIssueFiltersStore.userFilters?.[key] ?? [];
+    let newValues = issueFilters?.filters?.[key] ?? [];
     newValues = newValues.filter((val) => val !== value);
 
-    archivedIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: {
-        [key]: newValues,
-      },
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      [key]: newValues,
     });
   };
 
@@ -59,12 +56,12 @@ export const ArchivedIssueAppliedFiltersRoot: React.FC = observer(() => {
     if (!workspaceSlug || !projectId) return;
 
     const newFilters: IIssueFilterOptions = {};
-    Object.keys(userFilters).forEach((key) => {
+    Object.keys(userFilters ?? {}).forEach((key) => {
       newFilters[key as keyof IIssueFilterOptions] = null;
     });
 
-    archivedIssueFiltersStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      filters: { ...newFilters },
+    updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.FILTERS, {
+      ...newFilters,
     });
   };
 

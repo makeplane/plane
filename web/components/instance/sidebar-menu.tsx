@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 // icons
-import { BrainCog, Cog, Lock, Mail } from "lucide-react";
+import { Image, BrainCog, Cog, Lock, Mail } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
@@ -11,26 +11,32 @@ const INSTANCE_ADMIN_LINKS = [
   {
     Icon: Cog,
     name: "General",
-    description: "General settings here",
-    href: `/admin`,
+    description: "Identify your instances and get key details",
+    href: `/god-mode`,
   },
   {
     Icon: Mail,
     name: "Email",
-    description: "Email related settings will go here",
-    href: `/admin/email`,
+    description: "Set up emails to your users",
+    href: `/god-mode/email`,
   },
   {
     Icon: Lock,
-    name: "Authorization",
-    description: "Autorization",
-    href: `/admin/authorization`,
+    name: "SSO and OAuth",
+    description: "Configure your Google and GitHub SSOs",
+    href: `/god-mode/authorization`,
   },
   {
     Icon: BrainCog,
-    name: "OpenAI",
-    description: "OpenAI configurations",
-    href: `/admin/openai`,
+    name: "Artificial intelligence",
+    description: "Configure your OpenAI creds",
+    href: `/god-mode/ai`,
+  },
+  {
+    Icon: Image,
+    name: "Images in Plane",
+    description: "Allow third-party image libraries",
+    href: `/god-mode/image`,
   },
 ];
 
@@ -42,7 +48,7 @@ export const InstanceAdminSidebarMenu = () => {
   const router = useRouter();
 
   return (
-    <div className="h-full overflow-y-auto w-full cursor-pointer space-y-3 p-4">
+    <div className="flex flex-col gap-2.5 py-6 px-4 h-full w-full overflow-y-auto">
       {INSTANCE_ADMIN_LINKS.map((item, index) => {
         const isActive = item.name === "Settings" ? router.asPath.includes(item.href) : router.asPath === item.href;
 
@@ -68,7 +74,9 @@ export const InstanceAdminSidebarMenu = () => {
                         {item.name}
                       </span>
                       <span
-                        className={`text-xs ${isActive ? "text-custom-primary-100" : "text-custom-sidebar-text-300"}`}
+                        className={`text-[10px] ${
+                          isActive ? "text-custom-primary-90" : "text-custom-sidebar-text-400"
+                        }`}
                       >
                         {item.description}
                       </span>

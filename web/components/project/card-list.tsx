@@ -4,10 +4,10 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectCard } from "components/project";
-import { EmptyState } from "components/common";
+import { EmptyState } from "components/project/empty-state";
 import { Loader } from "@plane/ui";
 // images
-import emptyProject from "public/empty-state/project.svg";
+import emptyProject from "public/empty-state/Project_full_screen.svg";
 // icons
 import { Plus } from "lucide-react";
 
@@ -18,7 +18,7 @@ export interface IProjectCardList {
 export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   const { workspaceSlug } = props;
   // store
-  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
@@ -52,12 +52,15 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
       ) : (
         <EmptyState
           image={emptyProject}
-          title="No projects yet"
-          description="Get started by creating your first project"
+          title="Why no fly 😔"
+          description="Let’s take off, cap’n!"
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
-            text: "New Project",
-            onClick: () => commandPaletteStore.toggleCreateProjectModal(true),
+            text: "Start something new",
+            onClick: () => {
+              setTrackElement("PROJECTS_EMPTY_STATE");
+              commandPaletteStore.toggleCreateProjectModal(true)
+            }
           }}
         />
       )}

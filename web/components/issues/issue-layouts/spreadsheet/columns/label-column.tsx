@@ -20,12 +20,12 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
       <IssuePropertyLabels
-        projectId={issue.project_detail.id ?? null}
+        projectId={issue.project_detail?.id ?? null}
         value={issue.labels}
         onChange={(data) => onChange({ labels: data })}
         className="h-full w-full"

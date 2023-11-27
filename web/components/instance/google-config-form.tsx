@@ -56,8 +56,8 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
   const originURL = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
-    <>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
+    <div className="flex flex-col gap-8">
+      <div className="grid grid-col grid-cols-1 lg:grid-cols-3 justify-between gap-x-12 gap-y-8 w-full">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Client ID</h4>
           <Controller
@@ -72,36 +72,25 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
                 onChange={onChange}
                 ref={ref}
                 hasError={Boolean(errors.GOOGLE_CLIENT_ID)}
-                placeholder="Google Client ID"
+                placeholder="840195096245-0p2tstej9j5nc4l8o1ah2dqondscqc1g.apps.googleusercontent.com"
                 className="rounded-md font-medium w-full"
               />
             )}
           />
+          <p className="text-xs text-custom-text-400">
+            Your client ID lives in your Google API Console.{" "}
+            <a
+              href="https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#creatingcred"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              Learn more
+            </a>
+          </p>
         </div>
         <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Client Secret</h4>
-          <Controller
-            control={control}
-            name="GOOGLE_CLIENT_SECRET"
-            render={({ field: { value, onChange, ref } }) => (
-              <Input
-                id="GOOGLE_CLIENT_SECRET"
-                name="GOOGLE_CLIENT_SECRET"
-                type="text"
-                value={value}
-                onChange={onChange}
-                ref={ref}
-                hasError={Boolean(errors.GOOGLE_CLIENT_SECRET)}
-                placeholder="Google Client Secret"
-                className="rounded-md font-medium w-full"
-              />
-            )}
-          />
-        </div>
-      </div>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
-        <div className="flex flex-col gap-1">
-          <h4 className="text-sm">Origin URL</h4>
+          <h4 className="text-sm">JavaScript origin URL</h4>
           <Button
             variant="neutral-primary"
             className="py-2 flex justify-between items-center"
@@ -117,16 +106,26 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
             <p className="font-medium text-sm">{originURL}</p>
             <Copy size={18} color="#B9B9B9" />
           </Button>
-          <p className="text-xs text-custom-text-400/60">*paste this URL in your Google developer console.</p>
-        </div>
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center p-2">
-            <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
+          <p className="text-xs text-custom-text-400">
+            We will auto-generate this. Paste this into your Authorized JavaScript origins field. For this OAuth client{" "}
+            <a
+              href="https://console.cloud.google.com/apis/credentials/oauthclient"
+              target="_blank"
+              className="text-custom-primary-100 hover:underline"
+              rel="noreferrer"
+            >
+              here.
+            </a>
+          </p>
         </div>
       </div>
-    </>
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center">
+          <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save changes"}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -29,17 +29,9 @@ const VerticalDropdownItem = ({
   action,
 }: IVerticalDropdownItemProps) => {
   return (
-    <CustomMenu.MenuItem>
-      <Button
-        variant={"neutral-primary"}
-        onClick={action}
-        className="flex flex-row border-none items-center m-1 max-md:pr-5 cursor-pointer"
-      >
-        <Icon size={16} />
-        <div className="text-custom-text-300 ml-2 mr-2 leading-5 tracking-tight whitespace-nowrap self-start text-md">
-          {label}
-        </div>
-      </Button>
+    <CustomMenu.MenuItem onClick={action} className="flex items-center gap-2">
+      <Icon className="h-3 w-3" />
+      <div className="text-custom-text-300">{label}</div>
     </CustomMenu.MenuItem>
   );
 };
@@ -53,7 +45,7 @@ export const VerticalDropdownMenu = ({ items }: IVerticalDropdownMenuProps) => {
       optionsClassName={
         "border-custom-border border-r border-solid transition-all duration-200 ease-in-out "
       }
-      customButton={<MoreVertical size={18} />}
+      customButton={<MoreVertical size={14} />}
     >
       {items.map((item, index) => (
         <VerticalDropdownItem

@@ -44,6 +44,7 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
+    WorkspaceUserProfileIssuesGroupedEndpoint
 )
 from .state import StateViewSet
 from .view import (
@@ -60,7 +61,7 @@ from .cycle import (
     TransferCycleIssueEndpoint,
     CycleIssueGroupedEndpoint,
 )
-from .asset import FileAssetEndpoint, UserAssetsEndpoint
+from .asset import FileAssetEndpoint, UserAssetsEndpoint, FileAssetViewSet
 from .issue import (
     IssueViewSet,
     IssueListEndpoint,

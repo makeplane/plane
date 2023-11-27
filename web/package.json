@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next export"
+    "export": "next export",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
     "@blueprintjs/popover2": "^1.13.3",
@@ -24,16 +25,19 @@
     "@nivo/scatterplot": "0.80.0",
     "@plane/lite-text-editor": "*",
     "@plane/rich-text-editor": "*",
+    "@plane/document-editor": "*",
     "@plane/ui": "*",
     "@popperjs/core": "^2.11.8",
     "@sentry/nextjs": "^7.36.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/react-datepicker": "^4.8.0",
     "axios": "^1.1.3",
+    "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
+    "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lucide-react": "^0.274.0",
     "mobx": "^6.10.0",
@@ -53,7 +57,9 @@
     "react-popper": "^2.3.0",
     "sharp": "^0.32.1",
     "swr": "^2.1.3",
-    "uuid": "^9.0.0"
+    "tailwind-merge": "^2.0.0",
+    "uuid": "^9.0.0",
+    "use-debounce": "^9.0.4"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.2",

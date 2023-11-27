@@ -40,21 +40,21 @@ export const getMenuOptions = ({
       type: "copy_markdown",
       Icon: ClipboardIcon,
       action: () => copyMarkdownToClipboard(editor),
-      label: "Copy Markdown",
+      label: "Copy markdown",
     },
-    {
-      key: 2,
-      type: "close_page",
-      Icon: XCircle,
-      action: () => router.back(),
-      label: "Close the page",
-    },
+    // {
+    //   key: 2,
+    //   type: "close_page",
+    //   Icon: XCircle,
+    //   action: () => router.back(),
+    //   label: "Close page",
+    // },
     {
       key: 3,
       type: "copy_page_link",
       Icon: Link,
       action: () => CopyPageLink(),
-      label: "Copy Page Link",
+      label: "Copy page link",
     },
   ];
 
@@ -74,7 +74,7 @@ export const getMenuOptions = ({
       key: KanbanMenuOptions.length++,
       type: pageLockConfig.is_locked ? "unlock_page" : "lock_page",
       Icon: pageLockConfig.is_locked ? Unlock : Lock,
-      label: pageLockConfig.is_locked ? "Unlock Page" : "Lock Page",
+      label: pageLockConfig.is_locked ? "Unlock page" : "Lock page",
       action: pageLockConfig.action,
     });
   }
@@ -85,7 +85,7 @@ export const getMenuOptions = ({
       key: KanbanMenuOptions.length++,
       type: pageArchiveConfig.is_archived ? "unarchive_page" : "archive_page",
       Icon: pageArchiveConfig.is_archived ? ArchiveRestoreIcon : Archive,
-      label: pageArchiveConfig.is_archived ? "Restore Page" : "Archive Page",
+      label: pageArchiveConfig.is_archived ? "Restore page" : "Archive page",
       action: pageArchiveConfig.action,
     });
   }
