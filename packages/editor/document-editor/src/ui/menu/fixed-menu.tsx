@@ -4,6 +4,7 @@ import { BoldIcon } from "lucide-react";
 import {
   BoldItem,
   BulletListItem,
+  isCellSelection,
   cn,
   CodeItem,
   ImageItem,
@@ -16,6 +17,7 @@ import {
   HeadingOneItem,
   HeadingTwoItem,
   HeadingThreeItem,
+  findTableAncestor,
 } from "@plane/editor-core";
 import { UploadImage } from "..";
 
@@ -57,10 +59,36 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     CodeItem(editor),
   ];
 
-  const complexItems: BubbleMenuItem[] = [
-    TableItem(editor),
-    ImageItem(editor, uploadFile, setIsSubmitting),
-  ];
+  function getComplexItems(): BubbleMenuItem[] {
+    const items: BubbleMenuItem[] = [TableItem(editor)];
+
+    if (shouldShowImageItem()) {
+      items.push(ImageItem(editor, uploadFile, setIsSubmitting));
+    }
+
+    return items;
+  }
+
+  const complexItems: BubbleMenuItem[] = getComplexItems();
+
+  function shouldShowImageItem(): boolean {
+    if (typeof window !== "undefined") {
+      const selectionRange: any = window?.getSelection();
+      const { selection } = props.editor.state;
+
+      if (selectionRange.rangeCount !== 0) {
+        const range = selectionRange.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          return false;
+        }
+        if (isCellSelection(selection)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
 
   return (
     <div className="flex items-center divide-x divide-custom-border-200">

@@ -30,8 +30,7 @@ export type AuthType = "sign-in" | "sign-up";
 const authService = new AuthService();
 
 export const SignInView = observer(() => {
-  // states
-  const [authType, setAuthType] = useState<AuthType>("sign-up");
+  // store
   const {
     user: { fetchCurrentUser, fetchCurrentUserSettings },
     appConfig: { envConfig },
@@ -41,6 +40,7 @@ export const SignInView = observer(() => {
   const { next: next_url } = router.query as { next: string };
   // states
   const [isLoading, setLoading] = useState(false);
+  const [authType, setAuthType] = useState<AuthType>("sign-in");
   // toast
   const { setToastAlert } = useToast();
   const { resolvedTheme } = useTheme();
@@ -196,7 +196,7 @@ export const SignInView = observer(() => {
               <span className="font-semibold text-2xl sm:text-3xl">Plane</span>
             </div>
 
-            <div className="">
+            {/* <div className="">
               {authType === "sign-in" && (
                 <div className="mx-auto text-right text-onboarding-text-300 text-sm">
                   New to Plane?{" "}
@@ -210,7 +210,7 @@ export const SignInView = observer(() => {
                   </p>
                 </div>
               )}
-            </div>
+            </div> */}
           </div>
 
           <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
@@ -259,7 +259,7 @@ export const SignInView = observer(() => {
                         />
                       )}
                     </div>
-                    {authType === "sign-up" && (
+                    {/* {authType === "sign-up" && (
                       <div className="sm:w-96 text-center mx-auto mt-6 text-onboarding-text-400 text-sm">
                         Already using Plane?{" "}
                         <span
@@ -271,7 +271,7 @@ export const SignInView = observer(() => {
                           Sign in
                         </span>
                       </div>
-                    )}
+                    )} */}
                   </>
                   <div
                     className={`flex py-2 bg-onboarding-background-100 border border-onboarding-border-200 mx-auto rounded-[3.5px] sm:w-96 mt-16`}

@@ -10,7 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceEmailForm } from "components/instance/email-form";
+import { InstanceEmailForm } from "components/instance";
 
 const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   // store
@@ -21,7 +21,7 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
-    <div className="flex flex-col gap-8 my-8 mx-12 w-4/5">
+    <div className="flex flex-col gap-8">
       <div className="pb-3 mb-2 border-b border-custom-border-100">
         <div className="text-custom-text-100 font-medium text-xl pb-1">Secure emails from your own instance</div>
         <div className="text-custom-text-300 font-normal text-sm">
@@ -36,11 +36,11 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
         <InstanceEmailForm config={formattedConfig} />
       ) : (
         <Loader className="space-y-4">
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
           <Loader.Item height="50px" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" width="25%" />
         </Loader>
       )}
     </div>
