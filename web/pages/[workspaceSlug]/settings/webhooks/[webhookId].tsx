@@ -1,77 +1,76 @@
-import type { NextPage } from "next";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// layout
+import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
-import { WebHookForm } from "components/web-hooks";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-// types
-import { RootStore } from "store/root";
-import { IExtendedWebhook, IWebhook } from "types";
+import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "components/web-hooks";
+// ui
 import { Spinner } from "@plane/ui";
-import { useEffect } from "react";
-import { WebHookFormTypes } from "components/web-hooks/form";
+// types
+import { NextPageWithLayout } from "types/app";
 
-const Webhooks: NextPage = observer(() => {
+const WebhookDetailsPage: NextPageWithLayout = observer(() => {
+  // states
+  const [deleteWebhookModal, setDeleteWebhookModal] = useState(false);
+  // router
   const router = useRouter();
-  const { workspaceSlug, webhookId, isCreated } = router.query as {
-    workspaceSlug: string;
-    webhookId: string;
-    isCreated: string;
-  };
-
-  const { webhook: webhookStore }: RootStore = useMobxStore();
+  const { workspaceSlug, webhookId, isCreated } = router.query;
+  // mobx store
+  const {
+    webhook: { currentWebhook, clearSecretKey, fetchWebhookById },
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
 
   useEffect(() => {
-    if (isCreated !== "true") {
-      webhookStore.clearSecretKey();
-    }
-  }, []);
+    if (isCreated !== "true") clearSecretKey();
+  }, [clearSecretKey, isCreated]);
 
-  const { isLoading } = useSWR(
-    workspaceSlug && webhookId ? `WEBHOOKS_DETAIL_${workspaceSlug}_${webhookId}` : null,
-    workspaceSlug && webhookId
-      ? async () => {
-          await webhookStore.fetchById(workspaceSlug, webhookId);
-        }
+  const isAdmin = currentWorkspaceRole === 20;
+
+  useSWR(
+    workspaceSlug && webhookId && isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
+    workspaceSlug && webhookId && isAdmin
+      ? () => fetchWebhookById(workspaceSlug.toString(), webhookId.toString())
       : null
   );
 
-  const onSubmit = (data: IExtendedWebhook): Promise<IWebhook> => {
-    const payload = {
-      url: data?.url,
-      is_active: data?.is_active,
-      project: data?.project,
-      cycle: data?.cycle,
-      module: data?.module,
-      issue: data?.issue,
-      issue_comment: data?.issue_comment,
-    };
-    return webhookStore.update(workspaceSlug, webhookId, payload);
-  };
+  if (!isAdmin)
+    return (
+      <div className="h-full w-full flex justify-center mt-10 p-4">
+        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      </div>
+    );
 
-  const initialPayload = webhookStore.currentWebhook as IWebhook;
+  if (!currentWebhook)
+    return (
+      <div className="h-full w-full grid place-items-center p-4">
+        <Spinner />
+      </div>
+    );
 
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
-      <WorkspaceSettingLayout>
-        <div className="w-full overflow-y-auto py-3 pr-4">
-          {isLoading ? (
-            <div className="flex w-full h-full items-center justify-center">
-              <Spinner />
-            </div>
-          ) : (
-            <WebHookForm type={WebHookFormTypes.EDIT} initialData={initialPayload} onSubmit={onSubmit} />
-          )}
-        </div>
-      </WorkspaceSettingLayout>
-    </AppLayout>
+    <>
+      <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
+      <div className="w-full overflow-y-auto py-8 pr-9 space-y-8">
+        <WebhookForm data={currentWebhook} />
+        {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
+      </div>
+    </>
   );
 });
 
-export default Webhooks;
+WebhookDetailsPage.getLayout = function getLayout(page: React.ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="Webhook settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default WebhookDetailsPage;

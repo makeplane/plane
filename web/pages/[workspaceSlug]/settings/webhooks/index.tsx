@@ -1,56 +1,80 @@
 import React from "react";
-import type { NextPage } from "next";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// layout
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
 // components
 import { WorkspaceSettingHeader } from "components/headers";
-import { WebhookLists, EmptyWebhooks } from "components/web-hooks";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { WebhooksList, WebhooksEmptyState } from "components/web-hooks";
+// ui
+import { Button, Spinner } from "@plane/ui";
 // types
-import { RootStore } from "store/root";
-import { Spinner } from "@plane/ui";
+import { NextPageWithLayout } from "types/app";
 
-const WebhooksPage: NextPage = observer(() => {
+const WebhooksListPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
+  const { workspaceSlug } = router.query;
 
   const {
-    webhook: { fetchWebhooks, webhooks, loader },
-  }: RootStore = useMobxStore();
+    webhook: { fetchWebhooks, webhooks },
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
+
+  const isAdmin = currentWorkspaceRole === 20;
 
   useSWR(
-    workspaceSlug ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchWebhooks(workspaceSlug) : null
+    workspaceSlug && isAdmin ? `WEBHOOKS_LIST_${workspaceSlug}` : null,
+    workspaceSlug && isAdmin ? () => fetchWebhooks(workspaceSlug.toString()) : null
   );
 
+  if (!isAdmin)
+    return (
+      <div className="h-full w-full flex justify-center mt-10 p-4">
+        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      </div>
+    );
+
+  if (!webhooks)
+    return (
+      <div className="h-full w-full grid place-items-center p-4">
+        <Spinner />
+      </div>
+    );
+
   return (
-    <AppLayout header={<WorkspaceSettingHeader title="Webhook Settings" />}>
-      <WorkspaceSettingLayout>
-        <div className="w-full overflow-y-auto py-3 pr-9">
-          {loader ? (
-            <div className="flex h-full w-ful items-center justify-center">
-              <Spinner />
-            </div>
-          ) : (
-            <>
-              {Object.keys(webhooks).length > 0 ? (
-                <WebhookLists workspaceSlug={workspaceSlug} />
-              ) : (
-                <div className="py-5 mx-auto">
-                  <EmptyWebhooks />
-                </div>
-              )}
-            </>
-          )}
+    <div className="h-full w-full py-8 pr-9 overflow-hidden">
+      {Object.keys(webhooks).length > 0 ? (
+        <div className="h-full w-full flex flex-col">
+          <div className="flex items-center justify-between gap-4 pb-3.5 border-b border-custom-border-200">
+            <div className="text-xl font-medium">Webhooks</div>
+            <Link href={`/${workspaceSlug}/settings/webhooks/create`}>
+              <Button variant="primary" size="sm">
+                Add webhook
+              </Button>
+            </Link>
+          </div>
+          <WebhooksList />
         </div>
-      </WorkspaceSettingLayout>
-    </AppLayout>
+      ) : (
+        <div className="mx-auto">
+          <WebhooksEmptyState />
+        </div>
+      )}
+    </div>
   );
 });
 
-export default WebhooksPage;
+WebhooksListPage.getLayout = function getLayout(page: React.ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="Webhook settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
+  );
+};
+
+export default WebhooksListPage;

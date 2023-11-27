@@ -16,7 +16,7 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
   const { children } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId, globalViewId, viewId, inboxId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId, globalViewId, viewId, inboxId, webhookId } = router.query;
   // store
   const {
     theme: { sidebarCollapsed, toggleSidebar },
@@ -28,6 +28,7 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
     globalViews: { setGlobalViewId },
     projectViews: { setViewId },
     inbox: { setInboxId },
+    webhook: { setCurrentWebhookId },
     appConfig: { fetchAppConfig },
   } = useMobxStore();
   // fetching application Config
@@ -74,6 +75,7 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
     setGlobalViewId(globalViewId?.toString() ?? null);
     setViewId(viewId?.toString() ?? null);
     setInboxId(inboxId?.toString() ?? null);
+    setCurrentWebhookId(webhookId?.toString() ?? undefined);
   }, [
     workspaceSlug,
     projectId,
@@ -82,6 +84,7 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
     globalViewId,
     viewId,
     inboxId,
+    webhookId,
     setWorkspaceSlug,
     setProjectId,
     setCycleId,
@@ -89,6 +92,7 @@ const StoreWrapper: FC<IStoreWrapper> = observer((props) => {
     setGlobalViewId,
     setViewId,
     setInboxId,
+    setCurrentWebhookId,
   ]);
 
   return <>{children}</>;

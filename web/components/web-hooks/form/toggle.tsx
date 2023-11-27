@@ -1,14 +1,16 @@
 import { Control, Controller } from "react-hook-form";
-import { IExtendedWebhook } from "types/webhook";
+// ui
 import { ToggleSwitch } from "@plane/ui";
+// types
+import { IWebhook } from "types/webhook";
 
 interface IWebHookToggle {
-  control: Control<IExtendedWebhook, any>;
+  control: Control<IWebhook, any>;
 }
 
-export const WebHookToggle = ({ control }: IWebHookToggle) => (
+export const WebhookToggle = ({ control }: IWebHookToggle) => (
   <div className="flex gap-6">
-    <div className="text-sm"> Enable webhook </div>
+    <div className="text-sm font-medium">Enable webhook</div>
     <Controller
       control={control}
       name="is_active"

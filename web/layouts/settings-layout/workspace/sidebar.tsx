@@ -50,7 +50,7 @@ export const WorkspaceSettingsSidebar = () => {
     {
       label: "Exports",
       href: `/${workspaceSlug}/settings/exports`,
-      access: EUserWorkspaceRoles.ADMIN,
+      access: EUserWorkspaceRoles.MEMBER,
     },
     {
       label: "Webhooks",
