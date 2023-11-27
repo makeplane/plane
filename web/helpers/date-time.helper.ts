@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export const addDays = ({ date, days }: { date: Date; days: number }): Date => {
   date.setDate(date.getDate() + days);
   return date;
@@ -457,4 +459,40 @@ export const getFirstDateOfWeek = (date: Date): Date => {
   firstDateOfWeek.setDate(firstDateOfWeek.getDate() - dayOfWeek); // Move back to Sunday
 
   return firstDateOfWeek;
+};
+
+/**
+ * @returns {string} formatted date in the format of MMM dd, yyyy
+ * @description Returns date in the formatted format
+ * @param {Date | string} date
+ * @example renderFormattedDate("2023-01-01") // Jan 01, 2023
+ */
+export const renderFormattedDate = (date: string | Date): string => {
+  if (!date) return "";
+
+  date = new Date(date);
+
+  const formattedDate = format(date, "MMM dd, yyyy");
+
+  return formattedDate;
+};
+
+/**
+ * @returns {string | null} formatted date in the format of yyyy-mm-dd to be used in payload
+ * @description Returns date in the formatted format to be used in payload
+ * @param {Date | string} date
+ * @example renderFormattedPayloadDate("2023-01-01") // "2023-01-01"
+ */
+export const renderFormattedPayloadDate = (date: Date | string): string | null => {
+  if (!date) return null;
+
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
 };
