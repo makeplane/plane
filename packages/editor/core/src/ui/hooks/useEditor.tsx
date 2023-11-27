@@ -8,27 +8,28 @@ import { useInitializedContent } from "./useInitializedContent";
 import {
   DeleteImage,
   IMentionSuggestion,
+  RestoreImage,
   UploadImage,
 } from "@plane/editor-types";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
+  restoreFile: RestoreImage;
+  deleteFile: DeleteImage;
+  cancelUploadImage?: () => any;
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   value: string;
-  deleteFile: DeleteImage;
   debouncedUpdatesEnabled?: boolean;
   onStart?: (json: any, html: string) => void;
-  restoreImage?: any;
   onChange?: (json: any, html: string) => void;
   extensions?: any;
   editorProps?: EditorProps;
   forwardedRef?: any;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-  cancelUploadImage?: () => any;
 }
 
 export const useEditor = ({
@@ -42,7 +43,7 @@ export const useEditor = ({
   onChange,
   setIsSubmitting,
   forwardedRef,
-  restoreImage,
+  restoreFile,
   setShouldShowAlert,
   mentionHighlights,
   mentionSuggestions,
@@ -60,8 +61,8 @@ export const useEditor = ({
             mentionHighlights: mentionHighlights ?? [],
           },
           deleteFile,
+          restoreFile,
           cancelUploadImage,
-          restoreImage,
         ),
         ...extensions,
       ],

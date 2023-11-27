@@ -11,12 +11,15 @@ import {
   UploadImage,
   DeleteImage,
   IMentionSuggestion,
+  RestoreImage,
 } from "@plane/editor-types";
 
 interface ILiteTextEditor {
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
+  restoreFile: RestoreImage;
+
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
@@ -65,6 +68,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     value,
     uploadFile,
     deleteFile,
+    restoreFile,
     noBorder,
     borderOnFocus,
     customClassName,
@@ -85,6 +89,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     value,
     uploadFile,
     deleteFile,
+    restoreFile,
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
     mentionHighlights,

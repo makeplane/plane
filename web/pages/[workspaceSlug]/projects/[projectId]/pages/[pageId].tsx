@@ -267,6 +267,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                       }}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
+                      restoreFile={fileService.restoreImage}
                       ref={editorRef}
                       debouncedUpdatesEnabled={false}
                       setIsSubmitting={setIsSubmitting}

@@ -144,6 +144,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         cancelUploadImage={fileService.cancelUpload}
         uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
         deleteFile={fileService.deleteImage}
+        restoreFile={fileService.restoreImage}
         value={issue?.description_html}
         debouncedUpdatesEnabled={false}
         onChange={(description: Object, description_html: string) => {

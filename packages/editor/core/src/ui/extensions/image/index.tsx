@@ -3,7 +3,7 @@ import { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import UploadImagesPlugin from "../../plugins/upload-image";
 import ImageExt from "@tiptap/extension-image";
 import { onNodeDeleted, onNodeRestored } from "../../plugins/delete-image";
-import { DeleteImage } from "@plane/editor-types";
+import { DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface ImageNode extends ProseMirrorNode {
   attrs: {
@@ -17,8 +17,8 @@ const IMAGE_NODE_TYPE = "image";
 
 const ImageExtension = (
   deleteImage: DeleteImage,
+  restoreFile: RestoreImage,
   cancelUploadImage?: () => any,
-  restoreImage?: any,
 ) =>
   ImageExt.extend({
     addProseMirrorPlugins() {
@@ -96,7 +96,7 @@ const ImageExtension = (
                 if (wasDeleted === undefined) {
                   this.storage.images.set(image.attrs.src, false);
                 } else if (wasDeleted === true) {
-                  await onNodeRestored(image.attrs.src, restoreImage);
+                  await onNodeRestored(image.attrs.src, restoreFile);
                 }
               });
             });
@@ -116,7 +116,7 @@ const ImageExtension = (
       imageSources.forEach(async (src) => {
         try {
           const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
-          await restoreImage(assetUrlWithWorkspaceId);
+          await restoreFile(assetUrlWithWorkspaceId);
         } catch (error) {
           console.error("Error restoring image: ", error);
         }

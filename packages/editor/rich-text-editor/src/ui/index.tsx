@@ -11,6 +11,7 @@ import { RichTextEditorExtensions } from "./extensions";
 import {
   DeleteImage,
   IMentionSuggestion,
+  RestoreImage,
   UploadImage,
 } from "@plane/editor-types";
 
@@ -18,7 +19,7 @@ export type IRichTextEditor = {
   value: string;
   dragDropEnabled?: boolean;
   uploadFile: UploadImage;
-  restoreImage?: any;
+  restoreFile: RestoreImage;
   deleteFile: DeleteImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
@@ -59,7 +60,7 @@ const RichTextEditor = ({
   cancelUploadImage,
   borderOnFocus,
   customClassName,
-  restoreImage,
+  restoreFile,
   forwardedRef,
   mentionHighlights,
   mentionSuggestions,
@@ -73,6 +74,7 @@ const RichTextEditor = ({
     uploadFile,
     cancelUploadImage,
     deleteFile,
+    restoreFile,
     forwardedRef,
     extensions: RichTextEditorExtensions(
       uploadFile,
@@ -80,7 +82,6 @@ const RichTextEditor = ({
       dragDropEnabled,
     ),
     mentionHighlights,
-    restoreImage,
     mentionSuggestions,
   });
 
