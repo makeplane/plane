@@ -4,6 +4,7 @@ import random
 from itertools import chain
 
 # Django imports
+from django.db import models
 from django.utils import timezone
 from django.db.models import (
     Prefetch,
@@ -384,6 +385,12 @@ class IssueListGroupedEndpoint(BaseAPIView):
                 )
             )
             .filter(**filters)
+            .filter(
+                models.Q(issue_inbox__status=1)
+                | models.Q(issue_inbox__status=-1)
+                | models.Q(issue_inbox__status=2)
+                | models.Q(issue_inbox__isnull=True)
+            )
             .annotate(cycle_id=F("issue_cycle__cycle_id"))
             .annotate(module_id=F("issue_module__module_id"))
             .annotate(
