@@ -1,61 +1,71 @@
-//react
 import { useState, Fragment, FC } from "react";
-//next
 import { useRouter } from "next/router";
-//ui
-import { Button } from "@plane/ui";
-//hooks
-import useToast from "hooks/use-toast";
-//services
-import { APITokenService } from "services/api_token.service";
-//headless ui
+import { mutate } from "swr";
 import { Dialog, Transition } from "@headlessui/react";
+// services
+import { APITokenService } from "services/api_token.service";
+// hooks
+import useToast from "hooks/use-toast";
+// ui
+import { Button } from "@plane/ui";
+// types
+import { IApiToken } from "types/api_token";
+// fetch-keys
+import { API_TOKENS_LIST } from "constants/fetch-keys";
 
 type Props = {
   isOpen: boolean;
-  handleClose: () => void;
-  tokenId?: string;
+  onClose: () => void;
+  tokenId: string;
 };
 
 const apiTokenService = new APITokenService();
 
-export const DeleteTokenModal: FC<Props> = (props) => {
-  const { isOpen, handleClose, tokenId } = props;
+export const DeleteApiTokenModal: FC<Props> = (props) => {
+  const { isOpen, onClose, tokenId } = props;
   // states
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
   // hooks
   const { setToastAlert } = useToast();
   // router
   const router = useRouter();
-  const { workspaceSlug, tokenId: tokenIdFromQuery } = router.query;
+  const { workspaceSlug } = router.query;
+
+  const handleClose = () => {
+    onClose();
+    setDeleteLoading(false);
+  };
 
   const handleDeletion = () => {
-    if (!workspaceSlug || (!tokenIdFromQuery && !tokenId)) return;
-
-    const token = tokenId || tokenIdFromQuery;
+    if (!workspaceSlug) return;
 
     setDeleteLoading(true);
+
     apiTokenService
-      .deleteApiToken(workspaceSlug.toString(), token!.toString())
+      .deleteApiToken(workspaceSlug.toString(), tokenId)
       .then(() => {
         setToastAlert({
-          message: "Token deleted successfully",
           type: "success",
-          title: "Success",
+          title: "Success!",
+          message: "Token deleted successfully.",
         });
-        router.replace(`/${workspaceSlug}/settings/api-tokens/`);
+
+        mutate<IApiToken[]>(
+          API_TOKENS_LIST(workspaceSlug.toString()),
+          (prevData) => (prevData ?? []).filter((token) => token.id !== tokenId),
+          false
+        );
+
+        handleClose();
       })
-      .catch((err) => {
+      .catch((err) =>
         setToastAlert({
-          message: err?.message,
           type: "error",
           title: "Error",
-        });
-      })
-      .finally(() => {
-        setDeleteLoading(false);
-        handleClose();
-      });
+          message: err?.message ?? "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() => setDeleteLoading(false));
   };
 
   return (
@@ -85,22 +95,24 @@ export const DeleteTokenModal: FC<Props> = (props) => {
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
-                <div className="flex flex-col gap-3 p-6">
+                <div className="flex flex-col gap-3 p-4">
                   <div className="flex w-full items-center justify-start">
-                    <h3 className="text-xl font-semibold 2xl:text-2xl">Are you sure you want to revoke access?</h3>
+                    <h3 className="text-lg font-medium leading-6 text-custom-text-100">
+                      Are you sure you want to delete the token?
+                    </h3>
                   </div>
                   <span>
-                    <p className="text-base font-normal text-custom-text-400">
-                      Any applications Using this developer key will no longer have the access to Plane Data. This
-                      Action cannot be undone.
+                    <p className="text-sm text-custom-text-400">
+                      Any application using this token will no longer have the access to Plane data. This action cannot
+                      be undone.
                     </p>
                   </span>
                   <div className="flex justify-end mt-2 gap-2">
-                    <Button variant="neutral-primary" onClick={handleClose} disabled={deleteLoading}>
+                    <Button variant="neutral-primary" onClick={handleClose} size="sm">
                       Cancel
                     </Button>
-                    <Button variant="primary" onClick={handleDeletion} loading={deleteLoading} disabled={deleteLoading}>
-                      {deleteLoading ? "Revoking..." : "Revoke"}
+                    <Button variant="danger" onClick={handleDeletion} loading={deleteLoading} size="sm">
+                      {deleteLoading ? "Deleting..." : "Delete"}
                     </Button>
                   </div>
                 </div>
