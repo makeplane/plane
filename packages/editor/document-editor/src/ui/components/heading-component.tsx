@@ -7,7 +7,7 @@ export const HeadingComp = ({
 }) => (
   <h3
     onClick={onClick}
-    className="ml-4 mt-3 cursor-pointer text-sm font-bold font-medium leading-[125%] tracking-tight hover:text-custom-primary max-md:ml-2.5"
+    className="ml-4 mt-3 cursor-pointer text-sm font-medium leading-[125%] tracking-tight hover:text-custom-primary max-md:ml-2.5"
     role="button"
   >
     {heading}

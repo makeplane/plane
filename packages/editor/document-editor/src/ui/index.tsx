@@ -127,14 +127,14 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
       />
       <div className="h-full w-full flex overflow-y-auto">
-        <div className="flex-shrink-0 h-full w-56 lg:w-80 sticky top-0">
+        <div className="flex-shrink-0 h-full w-56 lg:w-72 sticky top-0">
           <SummarySideBar
             editor={editor}
             markings={markings}
             sidePeekVisible={sidePeekVisible}
           />
         </div>
-        <div className="h-full w-full">
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
@@ -142,7 +142,7 @@ const DocumentEditor = ({
             documentDetails={documentDetails}
           />
         </div>
-        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-80" />
+        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-72" />
       </div>
     </div>
   );
