@@ -1,41 +1,40 @@
 import { FC } from "react";
-import { ToggleSwitch } from "@plane/ui";
 import Link from "next/link";
-import { RootStore } from "store/root";
+import { useRouter } from "next/router";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { ToggleSwitch } from "@plane/ui";
 // types
 import { IWebhook } from "types";
 
 interface IWebhookListItem {
-  workspaceSlug: string;
   webhook: IWebhook;
 }
 
 export const WebhooksListItem: FC<IWebhookListItem> = (props) => {
-  const { workspaceSlug, webhook } = props;
+  const { webhook } = props;
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
 
-  const { webhook: webhookStore }: RootStore = useMobxStore();
+  const {
+    webhook: { updateWebhook },
+  } = useMobxStore();
 
   const handleToggle = () => {
-    if (webhook.id) {
-      webhookStore.update(workspaceSlug, webhook.id, { ...webhook, is_active: !webhook.is_active }).catch(() => {});
-    }
+    if (!workspaceSlug || !webhook.id) return;
+
+    updateWebhook(workspaceSlug.toString(), webhook.id, { is_active: !webhook.is_active });
   };
 
   return (
-    <div>
+    <div className="border-b border-custom-border-200">
       <Link href={`/${workspaceSlug}/settings/webhooks/${webhook?.id}`}>
-        <div className="flex cursor-pointer justify-between px-3.5 py-[18px]">
-          <div>
-            <div className="text-base font-medium">{webhook?.url || "Webhook URL"}</div>
-            {/* <div className="text-base text-neutral-700">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-          </div> */}
-          </div>
-          <div className="flex gap-4 items-center">
-            <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
-          </div>
-        </div>
+        <a className="flex items-center justify-between gap-4 px-3.5 py-[18px]">
+          <h5 className="text-base font-medium truncate">{webhook.url}</h5>
+          <ToggleSwitch value={webhook.is_active} onChange={handleToggle} />
+        </a>
       </Link>
     </div>
   );

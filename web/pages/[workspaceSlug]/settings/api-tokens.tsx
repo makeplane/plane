@@ -31,12 +31,13 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     user: { currentWorkspaceRole },
   } = useMobxStore();
 
-  const { data: tokens } = useSWR(
-    workspaceSlug && currentWorkspaceRole === 20 ? API_TOKENS_LIST(workspaceSlug.toString()) : null,
-    () => (workspaceSlug && currentWorkspaceRole === 20 ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null)
+  const isAdmin = currentWorkspaceRole === 20;
+
+  const { data: tokens } = useSWR(workspaceSlug && isAdmin ? API_TOKENS_LIST(workspaceSlug.toString()) : null, () =>
+    workspaceSlug && isAdmin ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
   );
 
-  if (currentWorkspaceRole !== 20)
+  if (!isAdmin)
     return (
       <div className="h-full w-full flex justify-center mt-10 p-4">
         <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
