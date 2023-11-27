@@ -10,9 +10,7 @@ import { UserProfileHeader } from "components/headers";
 import { NextPageWithLayout } from "types/app";
 import { ProfileIssuesPage } from "components/profile/profile-issues";
 
-const ProfileSubscribedIssuesPage: NextPageWithLayout = () => {
-  return <ProfileIssuesPage type="subscribed" />;
-};
+const ProfileSubscribedIssuesPage: NextPageWithLayout = () => <ProfileIssuesPage type="subscribed" />;
 
 ProfileSubscribedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (

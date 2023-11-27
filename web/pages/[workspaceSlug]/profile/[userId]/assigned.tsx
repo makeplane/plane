@@ -1,6 +1,4 @@
 import React, { ReactElement } from "react";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -11,9 +9,7 @@ import { UserProfileHeader } from "components/headers";
 import { NextPageWithLayout } from "types/app";
 import { ProfileIssuesPage } from "components/profile/profile-issues";
 
-const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => {
-  return <ProfileIssuesPage type="assigned" />;
-});
+const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => <ProfileIssuesPage type="assigned" />);
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (

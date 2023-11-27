@@ -11,8 +11,6 @@ import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
 
-export interface IKanBanLayout {}
-
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as { workspaceSlug: string; userId: string };

@@ -28,7 +28,7 @@ export interface IProfileIssuesStore {
     workspaceSlug: string,
     userId: string,
     loadType: TLoader,
-    type: "assigned" | "created" | "subscribed"
+    type?: "assigned" | "created" | "subscribed"
   ) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, userId: string, data: Partial<IIssue>) => Promise<IIssue | undefined>;
   updateIssue: (
@@ -138,7 +138,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     workspaceSlug: string,
     userId: string,
     loadType: TLoader = "init-loader",
-    type: "assigned" | "created" | "subscribed"
+    type?: "assigned" | "created" | "subscribed"
   ) => {
     try {
       this.loader = loadType;
