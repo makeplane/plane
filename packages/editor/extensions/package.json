@@ -1,7 +1,8 @@
 {
-  "name": "@plane/document-editor",
+  "name": "@plane/editor-extensions",
   "version": "0.1.0",
-  "description": "Package that powers Plane's Pages Editor",
+  "description": "Package that powers Plane's Editor with extensions",
+  "private": true,
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
@@ -27,19 +28,21 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@plane/ui": "*",
-    "@plane/editor-core": "*",
-    "@plane/editor-extensions": "*",
+    "@tiptap/react": "^2.1.7",
     "@tiptap/core": "^2.1.7",
-    "@tiptap/extension-placeholder": "^2.1.11",
-    "@types/node": "18.15.3",
-    "@types/react": "^18.2.5",
-    "@types/react-dom": "18.0.11",
+    "@tiptap/suggestion": "^2.0.4",
+    "@plane/editor-types": "*",
+    "@plane/editor-core": "*",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
-    "react-popper": "^2.3.0"
+    "lucide-react": "^0.244.0",
+    "tippy.js": "^6.3.7",
+    "@tiptap/pm": "^2.1.7"
   },
   "devDependencies": {
+    "@types/node": "18.15.3",
+    "@types/react": "^18.2.35",
+    "@types/react-dom": "^18.2.14",
     "eslint": "^7.32.0",
     "postcss": "^8.4.29",
     "tailwind-config-custom": "*",

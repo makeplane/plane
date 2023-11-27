@@ -22,8 +22,13 @@
   ],
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "dist/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "dist/**"
+      ]
     },
     "web#develop": {
       "cache": false,
@@ -65,20 +70,32 @@
     },
     "@plane/lite-text-editor#build": {
       "cache": true,
-      "dependsOn": ["@plane/editor-core#build"]
+      "dependsOn": [
+        "@plane/editor-core#build",
+        "@plane/editor-extensions#build",
+        "@plane/editor-types#build"
+      ]
     },
     "@plane/rich-text-editor#build": {
       "cache": true,
-      "dependsOn": ["@plane/editor-core#build"]
+      "dependsOn": [
+        "@plane/editor-core#build",
+        "@plane/editor-extensions#build",
+        "@plane/editor-types#build"
+      ]
     },
     "@plane/document-editor#build": {
       "cache": true,
       "dependsOn": [
-        "@plane/editor-core#build"
+        "@plane/editor-core#build",
+        "@plane/editor-extensions#build",
+        "@plane/editor-types#build"
       ]
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": []
     },
     "lint": {

@@ -974,13 +974,6 @@
   dependencies:
     tslib "~2.5.0"
 
-"@blueprintjs/colors@^5.0.5":
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/colors/-/colors-5.0.5.tgz#3a8faa640dd2877aa4fd00b886cf8e58daf5f868"
-  integrity sha512-UcCsBxE8GTF6GW1oHBb+cuhPpKiJFWbIRkemwcRkp9HvXXQHxEaXlFFC6jAx5pf3JmRwde5/ck3r+lJFP1YqzA==
-  dependencies:
-    tslib "~2.6.2"
-
 "@blueprintjs/core@^4.16.3", "@blueprintjs/core@^4.20.2":
   version "4.20.2"
   resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-4.20.2.tgz#ae1bbaf13bd1bf887b506760c478cc940f6d6e20"
@@ -998,20 +991,6 @@
     react-transition-group "^4.4.5"
     tslib "~2.5.0"
 
-"@blueprintjs/core@^5.6.0":
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/core/-/core-5.6.0.tgz#915b708a8c2d7e916d30dae704829e2d948301d9"
-  integrity sha512-NtQL/iu8P8DhHUCWCstc9Ps+JkRZCPRJ2ZoxubOt21pfxN50CN0sKHkDETHUQyZ73RviveVIIK+m32mT5Wwdqg==
-  dependencies:
-    "@blueprintjs/colors" "^5.0.5"
-    "@blueprintjs/icons" "^5.3.0"
-    "@popperjs/core" "^2.11.7"
-    classnames "^2.3.1"
-    normalize.css "^8.0.1"
-    react-popper "^2.3.0"
-    react-transition-group "^4.4.5"
-    tslib "~2.6.2"
-
 "@blueprintjs/icons@^4.16.0":
   version "4.16.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-4.16.0.tgz#47f9e8abe64d84fc18721080b8f191d8aac075d8"
@@ -1020,15 +999,6 @@
     change-case "^4.1.2"
     classnames "^2.3.1"
     tslib "~2.5.0"
-
-"@blueprintjs/icons@^5.3.0":
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-5.3.0.tgz#9c9498df415bf7e028ceac15f90228d0ffd9a521"
-  integrity sha512-PGZHbWZ41b/SDOENlZQE1pAab4eluzf/hZ6sHB5nPrQNJuGNr94yaPp6u//Tu24iqVFFP20Soi3+ckhf/o3V/g==
-  dependencies:
-    change-case "^4.1.2"
-    classnames "^2.3.1"
-    tslib "~2.6.2"
 
 "@blueprintjs/popover2@^1.13.3":
   version "1.14.11"
@@ -1042,15 +1012,6 @@
     dom4 "^2.1.5"
     react-popper "^2.3.0"
     tslib "~2.5.0"
-
-"@blueprintjs/popover2@^2.0.10":
-  version "2.0.17"
-  resolved "https://registry.yarnpkg.com/@blueprintjs/popover2/-/popover2-2.0.17.tgz#ed1fd3a6fbb0a7ae623ccb649b150a7f22a09534"
-  integrity sha512-sJTlLD9ihKUITC8xEm1lzae4IumXkwoTEu/ajUTgd3GlLyQsUSC5CdlBihX7LlA60WbuyVSE3Jbazhqw2Fud2w==
-  dependencies:
-    "@blueprintjs/core" "^5.6.0"
-    classnames "^2.3.1"
-    tslib "~2.6.2"
 
 "@cfcs/core@^0.0.6":
   version "0.0.6"
@@ -2356,7 +2317,7 @@
     lodash.merge "^4.6.2"
     postcss-selector-parser "6.0.10"
 
-"@tiptap/core@^2.1.12", "@tiptap/core@^2.1.7":
+"@tiptap/core@^2.1.11", "@tiptap/core@^2.1.12", "@tiptap/core@^2.1.7":
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/@tiptap/core/-/core-2.1.12.tgz#904fdf147e91b5e60561c76e7563c1b5a32f54ab"
   integrity sha512-ZGc3xrBJA9KY8kln5AYTj8y+GDrKxi7u95xIl2eccrqTY5CQeRu6HRNM1yT4mAjuSaG9jmazyjGRlQuhyxCKxQ==
@@ -2383,7 +2344,7 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-bullet-list/-/extension-bullet-list-2.1.12.tgz#7c905a577ce30ef2cb335870a23f9d24fd26f6aa"
   integrity sha512-vtD8vWtNlmAZX8LYqt2yU9w3mU9rPCiHmbp4hDXJs2kBnI0Ju/qAyXFx6iJ3C3XyuMnMbJdDI9ee0spAvFz7cQ==
 
-"@tiptap/extension-code-block-lowlight@^2.1.11", "@tiptap/extension-code-block-lowlight@^2.1.12":
+"@tiptap/extension-code-block-lowlight@^2.1.12":
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block-lowlight/-/extension-code-block-lowlight-2.1.12.tgz#ccbca5d0d92bee373dc8e2e2ae6c27f62f66437c"
   integrity sha512-dtIbpI9QrWa9TzNO4v5q/zf7+d83wpy5i9PEccdJAVtRZ0yOI8JIZAWzG5ex3zAoCA0CnQFdsPSVykYSDdxtDA==
@@ -2440,7 +2401,7 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-history/-/extension-history-2.1.12.tgz#03bcb9422e8ea2b82dc45207d1a1b0bc0241b055"
   integrity sha512-6b7UFVkvPjq3LVoCTrYZAczt5sQrQUaoDWAieVClVZoFLfjga2Fwjcfgcie8IjdPt8YO2hG/sar/c07i9vM0Sg==
 
-"@tiptap/extension-horizontal-rule@^2.1.11", "@tiptap/extension-horizontal-rule@^2.1.12":
+"@tiptap/extension-horizontal-rule@^2.1.12":
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-horizontal-rule/-/extension-horizontal-rule-2.1.12.tgz#2191d4ff68ed39381d65971ad8e2aa1be43e6d6b"
   integrity sha512-RRuoK4KxrXRrZNAjJW5rpaxjiP0FJIaqpi7nFbAua2oHXgsCsG8qbW2Y0WkbIoS8AJsvLZ3fNGsQ8gpdliuq3A==
@@ -2462,7 +2423,7 @@
   dependencies:
     linkifyjs "^4.1.0"
 
-"@tiptap/extension-list-item@^2.1.11", "@tiptap/extension-list-item@^2.1.12":
+"@tiptap/extension-list-item@^2.1.12":
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-list-item/-/extension-list-item-2.1.12.tgz#3eb28dc998490a98f14765783770b3cf6587d39e"
   integrity sha512-Gk7hBFofAPmNQ8+uw8w5QSsZOMEGf7KQXJnx5B022YAUJTYYxO3jYVuzp34Drk9p+zNNIcXD4kc7ff5+nFOTrg==
@@ -2599,7 +2560,7 @@
     "@tiptap/extension-strike" "^2.1.12"
     "@tiptap/extension-text" "^2.1.12"
 
-"@tiptap/suggestion@^2.0.4", "@tiptap/suggestion@^2.1.7":
+"@tiptap/suggestion@^2.0.4":
   version "2.1.12"
   resolved "https://registry.yarnpkg.com/@tiptap/suggestion/-/suggestion-2.1.12.tgz#a13782d1e625ec03b3f61b6839ecc95b6b685d3f"
   integrity sha512-rhlLWwVkOodBGRMK0mAmE34l2a+BqM2Y7q1ViuQRBhs/6sZ8d83O4hARHKVwqT5stY4i1l7d7PoemV3uAGI6+g==
@@ -4840,11 +4801,6 @@ esutils@^2.0.2:
   resolved "https://registry.yarnpkg.com/esutils/-/esutils-2.0.3.tgz#74d2eb4de0b8da1293711910d50775b9b710ef64"
   integrity sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==
 
-eventsource-parser@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/eventsource-parser/-/eventsource-parser-0.1.0.tgz#4a6b84751ca8e704040e6f7f50e7d77344fa1b7c"
-  integrity sha512-M9QjFtEIkwytUarnx113HGmgtk52LSn3jNAtnWKi3V+b9rqSfQeVdLsaD5AG/O4IrGQwmAAHBIsqbmURPTd2rA==
-
 execa@^5.0.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/execa/-/execa-5.1.1.tgz#f80ad9cbf4298f7bd1d4c9555c21e93741c411dd"
@@ -6509,7 +6465,7 @@ mz@^2.7.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nanoid@^3.1.30, nanoid@^3.3.4, nanoid@^3.3.6:
+nanoid@^3.3.4, nanoid@^3.3.6:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
   integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
@@ -7083,13 +7039,6 @@ property-information@^6.0.0:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/property-information/-/property-information-6.4.0.tgz#6bc4c618b0c2d68b3bb8b552cbb97f8e300a0f82"
   integrity sha512-9t5qARVofg2xQqKtytzt+lZ4d1Qvj8t5B8fEwXK6qOfgRLgH/b13QlgEyDh033NOS31nXeFbYv7CLUDG1CeifQ==
-
-prosemirror-async-query@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/prosemirror-async-query/-/prosemirror-async-query-0.0.4.tgz#4fedbee082692e659ab1f472645aac7765133b1d"
-  integrity sha512-eliJ722n+fVuChcvoZeS3pE/mpN/TJnqMkhIfVSTAH8Vd9S7aGfT9t31idD+mwnptgIc7OUPy56UdYN+ph++TQ==
-  dependencies:
-    nanoid "^3.1.30"
 
 prosemirror-changeset@^2.2.0:
   version "2.2.1"
@@ -8408,7 +8357,7 @@ tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.0, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.4.0, tslib@~2.6.2:
+tslib@^2.0.0, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.4.0:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.6.2.tgz#703ac29425e7b37cd6fd456e92404d46d1f3e4ae"
   integrity sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==
