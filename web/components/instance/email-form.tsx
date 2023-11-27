@@ -25,6 +25,7 @@ export interface EmailFormValues {
 
 export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   const { config } = props;
+  // states
   const [showPassword, setShowPassword] = useState(false);
   // store
   const { instance: instanceStore } = useMobxStore();
@@ -145,7 +146,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
                   ref={ref}
                   hasError={Boolean(errors.EMAIL_HOST_PASSWORD)}
                   placeholder="Password"
-                  className="rounded-md font-medium w-full"
+                  className="rounded-md font-medium w-full !pr-10"
                 />
               )}
             />
