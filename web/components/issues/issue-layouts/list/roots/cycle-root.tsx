@@ -11,6 +11,7 @@ import { IIssue } from "types";
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
 import { EIssueActions } from "../../types";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface ICycleListLayout {}
 
@@ -47,6 +48,7 @@ export const CycleListLayout: React.FC = observer(() => {
       issueActions={issueActions}
       getProjects={getProjects}
       viewId={cycleId}
+      currentStore={EProjectStore.CYCLE}
     />
   );
 });

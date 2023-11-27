@@ -19,10 +19,11 @@ export interface IKanBanProperties {
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
   displayProperties: IIssueDisplayProperties | null;
   showEmptyGroup: boolean;
+  isReadOnly: boolean;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, showEmptyGroup } = props;
+  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, isReadOnly } = props;
 
   const handleState = (state: IState) => {
     handleIssues(
@@ -89,7 +90,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           projectId={issue?.project_detail?.id || null}
           value={issue?.state || null}
           onChange={handleState}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
@@ -99,7 +100,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
@@ -110,7 +111,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
           onChange={handleLabel}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
@@ -120,7 +121,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
-          disabled={false}
+          disabled={isReadOnly}
           placeHolder="Start date"
         />
       )}
@@ -130,7 +131,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
-          disabled={false}
+          disabled={isReadOnly}
           placeHolder="Target date"
         />
       )}
@@ -142,7 +143,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           value={issue?.assignees || null}
           hideDropdownArrow
           onChange={handleAssignee}
-          disabled={false}
+          disabled={isReadOnly}
           multiple
         />
       )}
@@ -153,7 +154,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
           onChange={handleEstimate}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}

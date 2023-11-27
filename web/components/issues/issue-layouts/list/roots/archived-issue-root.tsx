@@ -11,18 +11,20 @@ import { IIssue } from "types";
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
 import { EIssueActions } from "../../types";
+import { EProjectStore } from "store/command-palette.store";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
-  const { archivedIssues: archivedIssueStore, archivedIssueFilters: archivedIssueFiltersStore } = useMobxStore();
+  const { projectArchivedIssues: archivedIssueStore, projectArchivedIssuesFilter: archivedIssueFiltersStore } =
+    useMobxStore();
 
   const issueActions = {
     [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
-      archivedIssueStore.deleteArchivedIssue(group_by, null, issue);
+      archivedIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
     },
   };
 
@@ -31,15 +33,14 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     return projectStore?.projects[workspaceSlug.toString()] || null;
   };
 
-  return null;
-
-  // return (
-  //   <BaseListRoot
-  //     issueFilterStore={archivedIssueFiltersStore}
-  //     issueStore={archivedIssueStore}
-  //     QuickActions={ArchivedIssueQuickActions}
-  //     issueActions={issueActions}
-  //     getProjects={getProjects}
-  //   />
-  // );
+  return (
+    <BaseListRoot
+      issueFilterStore={archivedIssueFiltersStore}
+      issueStore={archivedIssueStore}
+      QuickActions={ArchivedIssueQuickActions}
+      issueActions={issueActions}
+      getProjects={getProjects}
+      currentStore={EProjectStore.PROJECT}
+    />
+  );
 });
