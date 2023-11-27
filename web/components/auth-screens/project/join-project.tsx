@@ -28,11 +28,11 @@ export const JoinProject: React.FC = () => {
     setIsJoiningProject(true);
 
     joinProject(workspaceSlug.toString(), [projectId.toString()])
-      .finally(() => {
-        setIsJoiningProject(false);
-      })
       .then(() => {
         projectStore.fetchProjects(workspaceSlug.toString());
+      })
+      .finally(() => {
+        setIsJoiningProject(false);
       });
   };
 
