@@ -1,6 +1,6 @@
 import { IIssueUnGroupedStructure } from "store/issue";
 import { SpreadsheetView } from "./spreadsheet-view";
-import { useCallback } from "react";
+import { FC, useCallback } from "react";
 import { IIssue, IIssueDisplayFilterOptions } from "types";
 import { useRouter } from "next/router";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -16,6 +16,8 @@ import {
 } from "store/issues";
 import { observer } from "mobx-react-lite";
 import { EFilterType, TUnGroupedIssues } from "store/issues/types";
+import { EIssueActions } from "../types";
+import { IQuickActionProps } from "../list/list-view-types";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore:
@@ -25,16 +27,21 @@ interface IBaseSpreadsheetRoot {
     | IProjectIssuesFilterStore;
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   viewId?: string;
+  QuickActions: FC<IQuickActionProps>;
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: IIssue) => void;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => void;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => void;
+  };
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { issueFiltersStore, issueStore, viewId } = props;
+  const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    issueDetail: issueDetailStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
     projectLabel: { projectLabels },
@@ -46,19 +53,16 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   const issuesResponse = issueStore.getIssues;
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
 
-  const issues = issueIds?.map((id) => issuesResponse?.[id]);
+  const issues = issueIds?.filter((id) => id && issuesResponse?.[id]).map((id) => issuesResponse?.[id]);
 
-  const handleIssueAction = async (issue: IIssue, action: "copy" | "delete" | "edit") => {
-    if (!workspaceSlug || !projectId || !user) return;
-
-    if (action === "delete") {
-      issueDetailStore.deleteIssue(workspaceSlug.toString(), projectId.toString(), issue.id);
-      // issueStore.removeIssueFromStructure(null, null, issue);
-    } else if (action === "edit") {
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, issue);
-      // issueStore.updateIssueStructure(null, null, issue);
-    }
-  };
+  const handleIssues = useCallback(
+    async (issue: IIssue, action: EIssueActions) => {
+      if (issueActions[action]) {
+        issueActions[action]!(issue);
+      }
+    },
+    [issueStore]
+  );
 
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
@@ -77,33 +81,28 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     [issueFiltersStore, projectId, workspaceSlug]
   );
 
-  const handleUpdateIssue = useCallback(
-    (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug || !projectId || !user) return;
-
-      const payload = {
-        ...issue,
-        ...data,
-      };
-
-      // TODO: add update logic from the new store
-      // issueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
-    },
-    [issueDetailStore, projectId, user, workspaceSlug]
-  );
-
   return (
     <SpreadsheetView
       displayProperties={issueFiltersStore.issueFilters?.displayProperties ?? {}}
       displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
+      quickActions={(issue) => (
+        <QuickActions
+          issue={issue}
+          handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+          handleUpdate={
+            issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
+          }
+          handleRemoveFromView={
+            issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
+          }
+        />
+      )}
       members={projectMembers?.map((m) => m.member)}
       labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
-      handleIssueAction={handleIssueAction}
-      handleUpdateIssue={handleUpdateIssue}
+      handleIssues={handleIssues}
       disableUserActions={false}
       quickAddCallback={issueStore.quickAddIssue}
       viewId={viewId}

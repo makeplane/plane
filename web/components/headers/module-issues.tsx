@@ -20,6 +20,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EFilterType } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -33,7 +34,6 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
 
   const {
     module: moduleStore,
-    projectIssuesFilter: projectIssueFiltersStore,
     project: projectStore,
     projectMember: { projectMembers },
     projectState: projectStateStore,
@@ -191,11 +191,14 @@ export const ModuleIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button onClick={() => {
-            setTrackElement("MODULE_PAGE_HEADER")
-            commandPaletteStore.toggleCreateIssueModal(true)
-          }
-          } size="sm" prependIcon={<Plus />}>
+          <Button
+            onClick={() => {
+              setTrackElement("MODULE_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.MODULE);
+            }}
+            size="sm"
+            prependIcon={<Plus />}
+          >
             Add Issue
           </Button>
           <button

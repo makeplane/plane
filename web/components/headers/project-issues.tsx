@@ -17,6 +17,7 @@ import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 import { EFilterType } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -199,11 +200,14 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button onClick={() => {
-            setTrackElement("PROJECT_PAGE_HEADER");
-            commandPaletteStore.toggleCreateIssueModal(true)
-          }
-          } size="sm" prependIcon={<Plus />}>
+          <Button
+            onClick={() => {
+              setTrackElement("PROJECT_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+            }}
+            size="sm"
+            prependIcon={<Plus />}
+          >
             Add Issue
           </Button>
         </div>

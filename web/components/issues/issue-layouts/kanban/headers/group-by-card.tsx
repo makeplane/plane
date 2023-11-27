@@ -15,6 +15,7 @@ import useToast from "hooks/use-toast";
 import { observer } from "mobx-react-lite";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
+import { EProjectStore } from "store/command-palette.store";
 
 interface IHeaderGroupByCard {
   sub_group_by: string | null;
@@ -26,13 +27,26 @@ interface IHeaderGroupByCard {
   kanBanToggle: any;
   handleKanBanToggle: any;
   issuePayload: Partial<IIssue>;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
 }
 
 const moduleService = new ModuleService();
 const issueService = new IssueService();
 
 export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
-  const { sub_group_by, column_id, icon, title, count, kanBanToggle, handleKanBanToggle, issuePayload } = props;
+  const {
+    sub_group_by,
+    column_id,
+    icon,
+    title,
+    count,
+    kanBanToggle,
+    handleKanBanToggle,
+    issuePayload,
+    disableIssueCreation,
+    currentStore,
+  } = props;
   const verticalAlignPosition = kanBanToggle?.groupByHeaderMinMax.includes(column_id);
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -84,7 +98,12 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
   return (
     <>
-      <CreateUpdateIssueModal isOpen={isOpen} handleClose={() => setIsOpen(false)} prePopulateData={issuePayload} />
+      <CreateUpdateIssueModal
+        isOpen={isOpen}
+        handleClose={() => setIsOpen(false)}
+        prePopulateData={issuePayload}
+        currentStore={currentStore}
+      />
       {renderExistingIssueModal && (
         <ExistingIssuesListModal
           isOpen={openExistingIssueListModal}
@@ -126,30 +145,31 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           </div>
         )}
 
-        {renderExistingIssueModal ? (
-          <CustomMenu
-            width="auto"
-            customButton={
-              <span className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
-                <Plus height={14} width={14} strokeWidth={2} />
-              </span>
-            }
-          >
-            <CustomMenu.MenuItem onClick={() => setIsOpen(true)}>
-              <span className="flex items-center justify-start gap-2">Create issue</span>
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem onClick={() => setOpenExistingIssueListModal(true)}>
-              <span className="flex items-center justify-start gap-2">Add an existing issue</span>
-            </CustomMenu.MenuItem>
-          </CustomMenu>
-        ) : (
-          <div
-            className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
-            onClick={() => setIsOpen(true)}
-          >
-            <Plus width={14} strokeWidth={2} />
-          </div>
-        )}
+        {!disableIssueCreation &&
+          (renderExistingIssueModal ? (
+            <CustomMenu
+              width="auto"
+              customButton={
+                <span className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+                  <Plus height={14} width={14} strokeWidth={2} />
+                </span>
+              }
+            >
+              <CustomMenu.MenuItem onClick={() => setIsOpen(true)}>
+                <span className="flex items-center justify-start gap-2">Create issue</span>
+              </CustomMenu.MenuItem>
+              <CustomMenu.MenuItem onClick={() => setOpenExistingIssueListModal(true)}>
+                <span className="flex items-center justify-start gap-2">Add an existing issue</span>
+              </CustomMenu.MenuItem>
+            </CustomMenu>
+          ) : (
+            <div
+              className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+              onClick={() => setIsOpen(true)}
+            >
+              <Plus width={14} strokeWidth={2} />
+            </div>
+          ))}
       </div>
     </>
   );
