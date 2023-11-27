@@ -1,5 +1,5 @@
+import { UploadImage } from "@plane/editor-types";
 import { Editor, Range } from "@tiptap/core";
-import { UploadImage } from "../types/upload-image";
 import { startImageUpload } from "../ui/plugins/upload-image";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {

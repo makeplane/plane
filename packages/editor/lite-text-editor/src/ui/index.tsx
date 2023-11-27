@@ -7,19 +7,11 @@ import {
 } from "@plane/editor-core";
 import { FixedMenu } from "./menus/fixed-menu";
 import { LiteTextEditorExtensions } from "./extensions";
-
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
-export type IMentionSuggestion = {
-  id: string;
-  type: string;
-  avatar: string;
-  title: string;
-  subtitle: string;
-  redirect_uri: string;
-};
-
-export type IMentionHighlight = string;
+import {
+  UploadImage,
+  DeleteImage,
+  IMentionSuggestion,
+} from "@plane/editor-types";
 
 interface ILiteTextEditor {
   value: string;

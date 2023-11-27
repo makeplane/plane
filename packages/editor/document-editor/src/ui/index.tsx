@@ -14,9 +14,7 @@ import { DocumentDetails } from "./types/editor-types";
 import { PageRenderer } from "./components/page-renderer";
 import { getMenuOptions } from "./utils/menu-options";
 import { useRouter } from "next/router";
-
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
+import { UploadImage, DeleteImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
   documentDetails: DocumentDetails;

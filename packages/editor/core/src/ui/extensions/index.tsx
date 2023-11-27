@@ -15,14 +15,13 @@ import HorizontalRule from "./horizontal-rule";
 
 import ImageExtension from "./image";
 
-import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
 
 import { CustomKeymap } from "./keymap";
 import { CustomCodeBlock } from "./code";
 import { ListKeymap } from "./custom-list-keymap";
+import { IMentionSuggestion, DeleteImage } from "@plane/editor-types";
 
 export const CoreEditorExtensions = (
   mentionConfig: {

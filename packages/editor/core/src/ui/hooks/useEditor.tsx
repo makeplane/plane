@@ -1,13 +1,15 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject } from "react";
-import { DeleteImage } from "../../types/delete-image";
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
-import { UploadImage } from "../../types/upload-image";
 import { useInitializedContent } from "./useInitializedContent";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
+import {
+  DeleteImage,
+  IMentionSuggestion,
+  UploadImage,
+} from "@plane/editor-types";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
