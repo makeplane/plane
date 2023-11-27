@@ -1,11 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-// next
 import Image from "next/image";
 import { useTheme } from "next-themes";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
-// react-hook-form
 import { Control, Controller, FieldArrayWithId, UseFieldArrayRemove, useFieldArray, useForm } from "react-hook-form";
+import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // hooks
@@ -13,11 +11,9 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
-import OnboardingStepIndicator from "components/account/step-indicator";
+import { OnboardingStepIndicator } from "components/onboarding/step-indicator";
 // hooks
 import useDynamicDropdownPosition from "hooks/use-dynamic-dropdown";
-// icons
-import { Check, ChevronDown, Plus, User2, XCircle } from "lucide-react";
 // types
 import { IUser, IWorkspace, TOnboardingSteps, TUserWorkspaceRole } from "types";
 // constants
@@ -166,8 +162,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                         key={key}
                         value={parseInt(key)}
                         className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                            active || selected ? "bg-onboarding-background-400/40" : ""
+                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${active || selected ? "bg-onboarding-background-400/40" : ""
                           } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
                         }
                       >

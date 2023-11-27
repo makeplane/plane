@@ -4,6 +4,7 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 
 export interface IAppConfig {
   email_password_login: boolean;
+  file_size_limit: number;
   google_client_id: string | null;
   github_app_name: string | null;
   github_client_id: string | null;

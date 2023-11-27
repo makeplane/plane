@@ -10,8 +10,6 @@ import { Check, ChevronDown, LogOut, Plus, Settings, UserCircle2 } from "lucide-
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-// services
-import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Loader } from "@plane/ui";
 // types
@@ -46,8 +44,6 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   },
 ];
 
-const authService = new AuthService();
-
 export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -55,7 +51,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed },
     workspace: { workspaces, currentWorkspace: activeWorkspace },
-    user: { currentUser, updateCurrentUser, isUserInstanceAdmin },
+    user: { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut },
+    trackEvent: { setTrackElement },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
@@ -78,8 +75,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
 
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
         setTheme("system");
@@ -148,10 +144,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items
-                className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md
-              border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none"
-              >
+              <Menu.Items className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none">
                 <div className="flex flex-col items-start justify-start gap-3 p-3">
                   <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
                   {workspaces ? (
@@ -206,6 +199,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                         as="button"
                         type="button"
                         onClick={() => {
+                          setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
                           router.push("/create-workspace");
                         }}
                         className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
@@ -306,8 +300,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <div className="p-2 pb-0">
                   <Menu.Item as="button" type="button" className="w-full">
                     <Link href="/god-mode">
-                      <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-10 hover:bg-custom-primary-20">
-                        God Mode
+                      <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                        Enter God Mode
                       </a>
                     </Link>
                   </Menu.Item>

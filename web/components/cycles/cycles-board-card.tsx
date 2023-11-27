@@ -33,7 +33,7 @@ export interface ICyclesBoardCard {
 export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore, trackEvent: { setTrackElement } } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // states
@@ -119,6 +119,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     setDeleteModal(true);
+    setTrackElement("CYCLE_PAGE_BOARD_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {
@@ -252,7 +253,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                       <CustomMenu.MenuItem onClick={handleDeleteCycle}>
                         <span className="flex items-center justify-start gap-2">
                           <Trash2 className="h-3 w-3" />
-                          <span>Delete module</span>
+                          <span>Delete cycle</span>
                         </span>
                       </CustomMenu.MenuItem>
                     </>

@@ -4,6 +4,7 @@ from django.urls import path
 from plane.app.views import (
     FileAssetEndpoint,
     UserAssetsEndpoint,
+    FileAssetViewSet,
 )
 
 
@@ -27,5 +28,14 @@ urlpatterns = [
         "users/file-assets/<str:asset_key>/",
         UserAssetsEndpoint.as_view(),
         name="user-file-assets",
+    ),
+    path(
+        "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/restore/",
+        FileAssetViewSet.as_view(
+            {
+                "post": "restore",
+            }
+        ),
+        name="file-assets-restore",
     ),
 ]

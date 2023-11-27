@@ -33,6 +33,7 @@ export const CommandPalette: FC = observer(() => {
     commandPalette,
     theme: { toggleSidebar },
     user: { currentUser },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
   const {
     toggleCommandPaletteModal,
@@ -112,8 +113,10 @@ export const CommandPalette: FC = observer(() => {
         }
       } else {
         if (keyPressed === "c") {
+          setTrackElement("SHORTCUT_KEY");
           toggleCreateIssueModal(true);
         } else if (keyPressed === "p") {
+          setTrackElement("SHORTCUT_KEY");
           toggleCreateProjectModal(true);
         } else if (keyPressed === "h") {
           toggleShortcutModal(true);
