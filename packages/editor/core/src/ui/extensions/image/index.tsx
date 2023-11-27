@@ -23,44 +23,6 @@ const ImageExtension = (
   ImageExt.extend({
     addProseMirrorPlugins() {
       return [
-        new Plugin({
-          key: new PluginKey("imageValidation"),
-          appendTransaction: (
-            transactions: readonly Transaction[],
-            oldState: EditorState,
-            newState: EditorState,
-          ) => {
-            const oldImageSources = new Set<string>();
-            oldState.doc.descendants((node) => {
-              if (node.type.name === IMAGE_NODE_TYPE) {
-                oldImageSources.add(node.attrs.src);
-              }
-            });
-
-            transactions.forEach((transaction) => {
-              if (!transaction.docChanged) return;
-
-              const addedImages: ImageNode[] = [];
-
-              newState.doc.descendants((node, pos) => {
-                if (node.type.name !== IMAGE_NODE_TYPE) return;
-                if (pos < 0 || pos > newState.doc.content.size) return;
-                if (oldImageSources.has(node.attrs.src)) return;
-                addedImages.push(node as ImageNode);
-              });
-
-              addedImages.forEach(async (image) => {
-                const wasDeleted = this.storage.images.get(image.attrs.src);
-                if (wasDeleted === undefined) {
-                  this.storage.images.set(image.attrs.src, false);
-                } else if (wasDeleted === true) {
-                  await onNodeRestored(image.attrs.src, restoreImage);
-                }
-              });
-            });
-            return null;
-          },
-        }),
         UploadImagesPlugin(cancelUploadImage),
         new Plugin({
           key: deleteKey,
@@ -103,7 +65,58 @@ const ImageExtension = (
             return null;
           },
         }),
+        new Plugin({
+          key: new PluginKey("imageRestoration"),
+          appendTransaction: (
+            transactions: readonly Transaction[],
+            oldState: EditorState,
+            newState: EditorState,
+          ) => {
+            const oldImageSources = new Set<string>();
+            oldState.doc.descendants((node) => {
+              if (node.type.name === IMAGE_NODE_TYPE) {
+                oldImageSources.add(node.attrs.src);
+              }
+            });
+
+            transactions.forEach((transaction) => {
+              if (!transaction.docChanged) return;
+
+              const addedImages: ImageNode[] = [];
+
+              newState.doc.descendants((node, pos) => {
+                if (node.type.name !== IMAGE_NODE_TYPE) return;
+                if (pos < 0 || pos > newState.doc.content.size) return;
+                if (oldImageSources.has(node.attrs.src)) return;
+                addedImages.push(node as ImageNode);
+              });
+
+              addedImages.forEach(async (image) => {
+                const wasDeleted = this.storage.images.get(image.attrs.src);
+                if (wasDeleted === undefined) {
+                  this.storage.images.set(image.attrs.src, false);
+                } else if (wasDeleted === true) {
+                  await onNodeRestored(image.attrs.src, restoreImage);
+                }
+              });
+            });
+            return null;
+          },
+        }),
       ];
+    },
+
+    onCreate(this) {
+      const imageSources = new Set<string>();
+      this.editor.state.doc.descendants((node) => {
+        if (node.type.name === IMAGE_NODE_TYPE) {
+          console.log(node.attrs.src, "image");
+          imageSources.add(node.attrs.src);
+        }
+      });
+      imageSources.forEach(async (src) => {
+        await onNodeRestored(src, restoreImage);
+      });
     },
 
     // storage to keep track of image states Map<src, isDeleted>
