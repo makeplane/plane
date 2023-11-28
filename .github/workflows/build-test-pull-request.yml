@@ -24,9 +24,7 @@ jobs:
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
-          cmd: |
-              corepack enable
-              install # will run `yarn install` command
+          cmd: corepack enable && install # will run `yarn install` command
 
       - name: Get changed files
         id: changed-files
