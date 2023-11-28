@@ -67,6 +67,16 @@ export class AuthService extends APIService {
     throw response.response.data;
   }
 
+  async instanceMagicSignIn(data: any): Promise<any> {
+    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data, { headers: {} });
+    if (response?.status === 200) {
+      this.setAccessToken(response?.data?.access_token);
+      this.setRefreshToken(response?.data?.refresh_token);
+      return response?.data;
+    }
+    throw response.response.data;
+  }
+
   async signOut(): Promise<any> {
     return this.post("/api/sign-out/", { refresh_token: this.getRefreshToken() })
       .then((response) => {
