@@ -83,7 +83,9 @@ class UserMeSettingsSerializer(BaseSerializer):
         if (
             obj.last_workspace_id is not None
             and Workspace.objects.filter(
-                pk=obj.last_workspace_id, workspace_member__member=obj.id
+                pk=obj.last_workspace_id,
+                workspace_member__member=obj.id,
+                workspace_member__is_active=True,
             ).exists()
         ):
             workspace = Workspace.objects.filter(
