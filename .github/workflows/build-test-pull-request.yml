@@ -25,7 +25,7 @@ jobs:
         uses: borales/actions-yarn@v4
         with:
           cmd: |
-              npm i -g yarn@3.6.4
+              corepack enable
               install # will run `yarn install` command
 
       - name: Get changed files
