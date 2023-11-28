@@ -10,6 +10,7 @@ import { TourRoot } from "components/onboarding";
 import { UserGreetingsView } from "components/user";
 import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "components/workspace";
 import { Button } from "@plane/ui";
+import { DashboardScreenEmptyState } from "components/project/dashboard-empty-state";
 // images
 import emptyDashboard from "public/empty-state/dashboard.svg";
 
@@ -19,7 +20,12 @@ export const WorkspaceDashboardView = observer(() => {
   const { workspaceSlug } = router.query;
   // store
 
-  const { user: userStore, project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    user: userStore,
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
@@ -65,22 +71,15 @@ export const WorkspaceDashboardView = observer(() => {
               </div>
             </div>
           ) : (
-            <div className="bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
-              <div className="p-5 md:p-8 pr-0">
-                <h5 className="text-xl font-semibold">Create a project</h5>
-                <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
-                <Button variant="primary" size="sm" onClick={() => {
-                    setTrackElement("DASHBOARD_PAGE");
-                    commandPaletteStore.toggleCreateProjectModal(true)
-                  }
-                }>
-                  Create Project
-                </Button>
-              </div>
-              <div className="hidden md:block self-end overflow-hidden pt-8">
-                <Image src={emptyDashboard} alt="Empty Dashboard" />
-              </div>
-            </div>
+            <DashboardScreenEmptyState
+              primaryButton={{
+                text: "Start something new",
+                onClick: () => {
+                  setTrackElement("PROJECTS_EMPTY_STATE");
+                  commandPaletteStore.toggleCreateProjectModal(true);
+                },
+              }}
+            />
           )
         ) : null}
       </div>
