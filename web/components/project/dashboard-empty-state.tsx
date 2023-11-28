@@ -35,7 +35,7 @@ export const DashboardScreenEmptyState: React.FC<Props> = ({ primaryButton, disa
           onClick={primaryButton.onClick}
           disabled={disabled}
         >
-          Start your first project
+          Build your first project
         </Button>
         <div className="flex max-w-md absolute top-0 left-1/2 ml-28 pb-5">
           <div className="relative w-0 h-0 border-t-[11px] mt-5 border-custom-border-200 border-b-[11px] border-r-[11px] border-y-transparent">
