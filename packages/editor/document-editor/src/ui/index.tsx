@@ -16,15 +16,14 @@ import { PageRenderer } from "./components/page-renderer";
 import { getMenuOptions } from "./utils/menu-options";
 import { useRouter } from "next/router";
 import { IEmbedConfig } from "./extensions/widgets/types";
-
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
+import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
   documentDetails: DocumentDetails;
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
+  restoreFile: RestoreImage;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
@@ -65,6 +64,7 @@ const DocumentEditor = ({
   value,
   uploadFile,
   deleteFile,
+  restoreFile,
   customClassName,
   forwardedRef,
   duplicationConfig,
@@ -86,6 +86,7 @@ const DocumentEditor = ({
       updateMarkings(json);
     },
     debouncedUpdatesEnabled,
+    restoreFile,
     setIsSubmitting,
     setShouldShowAlert,
     value,
@@ -134,15 +135,15 @@ const DocumentEditor = ({
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
         documentDetails={documentDetails}
       />
-      <div className="h-full w-full flex overflow-y-auto overflow-x-hidden">
-        <div className={'w-[20%] flex-shrink-0 h-full sticky top-0'}>
+      <div className="h-full w-full flex overflow-y-auto">
+        <div className="flex-shrink-0 h-full w-56 lg:w-72 sticky top-0">
           <SummarySideBar
             editor={editor}
             markings={markings}
             sidePeekVisible={sidePeekVisible}
           />
         </div>
-        <div className={'h-full transition-all duration-200 transform w-[80%] -translate-x'}>
+        <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
@@ -150,7 +151,7 @@ const DocumentEditor = ({
             documentDetails={documentDetails}
           />
         </div>
-        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-80" />
+        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-72" />
       </div>
     </div>
   );

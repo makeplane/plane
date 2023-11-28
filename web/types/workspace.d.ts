@@ -1,4 +1,4 @@
-import type { IProjectMember, IUser, IUserLite, IUserMemberLite, IWorkspaceViewProps } from "types";
+import type { IProjectMember, IUser, IUserLite, IWorkspaceViewProps } from "types";
 
 export type TUserWorkspaceRole = 5 | 10 | 15 | 20;
 

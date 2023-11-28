@@ -14,12 +14,12 @@ import { DeleteWorkspaceModal } from "components/workspace";
 import { WorkspaceImageUploadModal } from "components/core";
 // ui
 import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
+// helpers
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
 // constants
-import { ORGANIZATION_SIZE } from "constants/workspace";
-import { trackEvent } from "helpers/event-tracker.helper";
-import { copyUrlToClipboard } from "helpers/string.helper";
+import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -40,8 +40,9 @@ export const WorkspaceDetails: FC = observer(() => {
   const {
     workspace: { currentWorkspace, updateWorkspace },
     user: { currentWorkspaceRole },
+    trackEvent: { postHogEventTracker },
   } = useMobxStore();
-  const isAdmin = currentWorkspaceRole === 20;
+
   // hooks
   const { setToastAlert } = useToast();
   // form info
@@ -66,14 +67,22 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        trackEvent("UPDATE_WORKSPACE", res);
+        postHogEventTracker("WORKSPACE_UPDATE", {
+          ...res,
+          state: "SUCCESS",
+        });
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
         });
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        postHogEventTracker("WORKSPACE_UPDATE", {
+          state: "FAILED",
+        });
+        console.error(err);
+      });
   };
 
   const handleRemoveLogo = () => {
@@ -120,6 +129,8 @@ export const WorkspaceDetails: FC = observer(() => {
   useEffect(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
+
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   if (!currentWorkspace)
     return (
@@ -177,11 +188,10 @@ export const WorkspaceDetails: FC = observer(() => {
             <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
-            <div className="flex item-center gap-2.5">
+            {isAdmin && (
               <button
                 className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
                 onClick={() => setIsImageUploadModalOpen(true)}
-                disabled={!isAdmin}
               >
                 {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                   <>
@@ -192,14 +202,14 @@ export const WorkspaceDetails: FC = observer(() => {
                   "Upload logo"
                 )}
               </button>
-            </div>
+            )}
           </div>
         </div>
 
         <div className="flex flex-col gap-8 my-10">
           <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
-            <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Workspace Name</h4>
+            <div className="flex flex-col gap-1">
+              <h4 className="text-sm">Workspace name</h4>
               <Controller
                 control={control}
                 name="name"
@@ -228,7 +238,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Company Size</h4>
+              <h4 className="text-sm">Company size</h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -277,11 +287,13 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between py-2">
-            <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
-              {isSubmitting ? "Updating..." : "Update Workspace"}
-            </Button>
-          </div>
+          {isAdmin && (
+            <div className="flex items-center justify-between py-2">
+              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Workspace"}
+              </Button>
+            </div>
+          )}
         </div>
         {isAdmin && (
           <Disclosure as="div" className="border-t border-custom-border-100">

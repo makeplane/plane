@@ -152,6 +152,18 @@ import {
   // draft issues filter
   IProjectDraftIssuesFilterStore,
   ProjectDraftIssuesFilterStore,
+  // profile issues
+  IProfileIssuesStore,
+  ProfileIssuesStore,
+  // profile issues filter
+  IProfileIssuesFilterStore,
+  ProfileIssuesFilterStore,
+  // global issues
+  IGlobalIssuesStore,
+  GlobalIssuesStore,
+  // global issues filter
+  IGlobalIssuesFilterStore,
+  GlobalIssuesFilterStore,
 } from "store/issues";
 
 import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
@@ -160,6 +172,8 @@ import { ModuleIssueFiltersStore, IModuleIssueFiltersStore } from "store/module-
 import { IMentionsStore, MentionsStore } from "store/editor";
 // pages
 import { PageStore, IPageStore } from "store/page.store";
+// event tracking
+import { TrackEventStore, ITrackEventStore } from "./event-tracker.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -254,12 +268,20 @@ export class RootStore {
 
   projectDraftIssues: IProjectDraftIssuesStore;
   projectDraftIssuesFilter: IProjectDraftIssuesFilterStore;
+
+  workspaceProfileIssues: IProfileIssuesStore;
+  workspaceProfileIssuesFilter: IProfileIssuesFilterStore;
+
+  workspaceGlobalIssues: IGlobalIssuesStore;
+  workspaceGlobalIssuesFilter: IGlobalIssuesFilterStore;
   // project v3 issue and issue-filters ends
 
   cycleIssueFilters: ICycleIssueFiltersStore;
   moduleIssueFilters: IModuleIssueFiltersStore;
 
   page: IPageStore;
+
+  trackEvent: ITrackEventStore;
 
   constructor() {
     this.instance = new InstanceStore(this);
@@ -350,6 +372,12 @@ export class RootStore {
 
     this.projectDraftIssues = new ProjectDraftIssuesStore(this);
     this.projectDraftIssuesFilter = new ProjectDraftIssuesFilterStore(this);
+
+    this.workspaceProfileIssues = new ProfileIssuesStore(this);
+    this.workspaceProfileIssuesFilter = new ProfileIssuesFilterStore(this);
+
+    this.workspaceGlobalIssues = new GlobalIssuesStore(this);
+    this.workspaceGlobalIssuesFilter = new GlobalIssuesFilterStore(this);
     // project v3 issue and issue-filters ends
 
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
@@ -357,5 +385,7 @@ export class RootStore {
     this.moduleIssueFilters = new ModuleIssueFiltersStore(this);
 
     this.page = new PageStore(this);
+
+    this.trackEvent = new TrackEventStore(this);
   }
 }

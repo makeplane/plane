@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // layouts
-import { InstanceAdminHeader, InstanceAdminLayout } from "layouts/admin-layout";
+import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
 import { NextPageWithLayout } from "types/app";
 // store
@@ -10,7 +10,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 // components
-import { InstanceEmailForm } from "components/instance/email-form";
+import { InstanceEmailForm } from "components/instance";
 
 const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   // store
@@ -21,16 +21,26 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
+      <div className="pb-3 mb-2 border-b border-custom-border-100">
+        <div className="text-custom-text-100 font-medium text-xl pb-1">Secure emails from your own instance</div>
+        <div className="text-custom-text-300 font-normal text-sm">
+          Plane can send useful emails to you and your users from your own instance without talking to the Internet.
+        </div>
+        <div className="text-custom-text-300 font-normal text-sm">
+          Set it up below and please test your settings before you save them.{" "}
+          <span className="text-red-400">Misconfigs can lead to email bounces and errors.</span>
+        </div>
+      </div>
       {formattedConfig ? (
         <InstanceEmailForm config={formattedConfig} />
       ) : (
-        <Loader className="space-y-4 m-8">
+        <Loader className="space-y-4">
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
           <Loader.Item height="50px" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" width="25%" />
         </Loader>
       )}
     </div>
@@ -38,7 +48,7 @@ const InstanceAdminEmailPage: NextPageWithLayout = observer(() => {
 });
 
 InstanceAdminEmailPage.getLayout = function getLayout(page: ReactElement) {
-  return <InstanceAdminLayout header={<InstanceAdminHeader title="Email" />}>{page}</InstanceAdminLayout>;
+  return <InstanceAdminLayout>{page}</InstanceAdminLayout>;
 };
 
 export default InstanceAdminEmailPage;

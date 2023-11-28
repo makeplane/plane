@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 // ui
 import { Button } from "@plane/ui";
 // icons
@@ -14,8 +15,9 @@ export const JoinProject: React.FC = () => {
   const [isJoiningProject, setIsJoiningProject] = useState(false);
 
   const {
+    project: projectStore,
     user: { joinProject },
-  } = useMobxStore();
+  }: RootStore = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -25,9 +27,13 @@ export const JoinProject: React.FC = () => {
 
     setIsJoiningProject(true);
 
-    joinProject(workspaceSlug.toString(), [projectId.toString()]).finally(() => {
-      setIsJoiningProject(false);
-    });
+    joinProject(workspaceSlug.toString(), [projectId.toString()])
+      .then(() => {
+        projectStore.fetchProjects(workspaceSlug.toString());
+      })
+      .finally(() => {
+        setIsJoiningProject(false);
+      });
   };
 
   return (

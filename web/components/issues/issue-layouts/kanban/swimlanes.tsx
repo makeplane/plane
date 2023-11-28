@@ -10,6 +10,7 @@ import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } f
 // constants
 import { getValueFromObject } from "constants/issue";
 import { EIssueActions } from "../types";
+import { EProjectStore } from "store/command-palette.store";
 
 interface ISubGroupSwimlaneHeader {
   issues: IIssueResponse;
@@ -20,9 +21,11 @@ interface ISubGroupSwimlaneHeader {
   listKey: string;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
-  issues,
   issueIds,
   sub_group_by,
   group_by,
@@ -30,6 +33,9 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   listKey,
   kanBanToggle,
   handleKanBanToggle,
+  disableIssueCreation,
+  currentStore,
+  addIssuesToView,
 }) => {
   const calculateIssueCount = (column_id: string) => {
     let issueCount = 0;
@@ -54,6 +60,9 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
               issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
               kanBanToggle={kanBanToggle}
               handleKanBanToggle={handleKanBanToggle}
+              disableIssueCreation={disableIssueCreation}
+              currentStore={currentStore}
+              addIssuesToView={addIssuesToView}
             />
           </div>
         ))}
@@ -78,6 +87,10 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   kanBanToggle: any;
   handleKanBanToggle: any;
   isDragStarted?: boolean;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  enableQuickIssueCreate: boolean;
+  isReadOnly: boolean;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -101,6 +114,10 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     members,
     projects,
     isDragStarted,
+    disableIssueCreation,
+    enableQuickIssueCreate,
+    isReadOnly,
+    addIssuesToView,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -128,6 +145,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
+                  disableIssueCreation={disableIssueCreation}
+                  addIssuesToView={addIssuesToView}
                 />
               </div>
               <div className="w-full border-b border-custom-border-400 border-dashed" />
@@ -153,8 +172,10 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   labels={labels}
                   members={members}
                   projects={projects}
-                  enableQuickIssueCreate
+                  enableQuickIssueCreate={enableQuickIssueCreate}
                   isDragStarted={isDragStarted}
+                  isReadOnly={isReadOnly}
+                  addIssuesToView={addIssuesToView}
                 />
               </div>
             )}
@@ -183,6 +204,11 @@ export interface IKanBanSwimLanes {
   members: IUserLite[] | null;
   projects: IProject[] | null;
   isDragStarted?: boolean;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  enableQuickIssueCreate: boolean;
+  isReadOnly: boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -205,6 +231,11 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     members,
     projects,
     isDragStarted,
+    disableIssueCreation,
+    enableQuickIssueCreate,
+    isReadOnly,
+    currentStore,
+    addIssuesToView,
   } = props;
 
   return (
@@ -220,6 +251,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
@@ -233,6 +267,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
@@ -246,6 +283,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
@@ -259,6 +299,8 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
@@ -272,6 +314,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
@@ -285,6 +330,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
@@ -298,6 +346,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
       </div>
@@ -324,6 +375,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -349,6 +403,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -374,6 +431,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -399,6 +459,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -424,6 +487,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -449,6 +515,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -474,6 +543,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
 
@@ -499,6 +571,9 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          isReadOnly={isReadOnly}
         />
       )}
     </div>

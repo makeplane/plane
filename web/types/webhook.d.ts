@@ -1,31 +1,15 @@
 export interface IWebhook {
-  id?: string;
-  secret_key?: string;
-  url: string;
-  created_at?: string;
-  updated_at?: string;
-  is_active: boolean;
-  project: boolean;
+  created_at: string;
   cycle: boolean;
-  module: boolean;
+  id: string;
+  is_active: boolean;
   issue: boolean;
-  issue_comment?: boolean;
-  workspace?: string;
+  issue_comment: boolean;
+  module: boolean;
+  project: boolean;
+  secret_key?: string;
+  updated_at: string;
+  url: string;
 }
 
-// this interface is used to handle the webhook form state
-interface IExtendedWebhook extends IWebhook {
-  webhook_events: string;
-}
-
-export interface IWebhookIndividualOptions {
-  key: string;
-  label: string;
-  name: "project" | "cycle" | "module" | "issue" | "issue_comment";
-}
-
-export interface IWebhookOptions {
-  key: string;
-  label: string;
-  name: "webhook_events";
-}
+export type TWebhookEventTypes = "all" | "individual";

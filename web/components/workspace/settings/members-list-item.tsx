@@ -1,7 +1,9 @@
 import { useState, FC } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
+import { ChevronDown, Dot, XCircle } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -10,12 +12,10 @@ import useToast from "hooks/use-toast";
 import { ConfirmWorkspaceMemberRemove } from "components/workspace";
 // ui
 import { CustomSelect, Tooltip } from "@plane/ui";
-// icons
-import { ChevronDown, Dot, XCircle } from "lucide-react";
 // types
 import { TUserWorkspaceRole } from "types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   member: {
@@ -33,7 +33,7 @@ type Props = {
   };
 };
 
-export const WorkspaceMembersListItem: FC<Props> = (props) => {
+export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const { member } = props;
   // router
   const router = useRouter();
@@ -43,7 +43,6 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
     workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
     user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings, leaveWorkspace },
   } = useMobxStore();
-  const isAdmin = currentWorkspaceRole === 20;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // hooks
@@ -53,10 +52,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
     if (!workspaceSlug || !currentUserSettings) return;
 
     await leaveWorkspace(workspaceSlug.toString())
-      .then(() => {
-        if (currentUserSettings.workspace?.invites > 0) router.push("/invitations");
-        else router.push("/create-workspace");
-      })
+      .then(() => router.push("/profile"))
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -113,6 +109,20 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
       else await handleRemoveMember();
     } else await handleRemoveInvitation();
   };
+
+  // is the member current logged in user
+  const isCurrentUser = member.memberId === currentWorkspaceMemberInfo?.member;
+  // is the current logged in user admin
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+  // role change access-
+  // 1. user cannot change their own role
+  // 2. only admin or member can change role
+  // 3. user cannot change role of higher role
+  const hasRoleChangeAccess =
+    currentWorkspaceRole &&
+    !isCurrentUser &&
+    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole) &&
+    member.role <= currentWorkspaceRole;
 
   if (!currentWorkspaceMemberInfo) return null;
 
@@ -180,12 +190,12 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
               <div className="flex item-center gap-1 px-2 py-0.5 rounded">
                 <span
                   className={`flex items-center text-xs font-medium rounded ${
-                    member.memberId !== currentWorkspaceMemberInfo.member ? "" : "text-custom-sidebar-text-400"
+                    hasRoleChangeAccess ? "" : "text-custom-sidebar-text-400"
                   }`}
                 >
                   {ROLE[member.role as keyof typeof ROLE]}
                 </span>
-                {member.memberId !== currentWorkspaceMemberInfo.member && (
+                {hasRoleChangeAccess && (
                   <span className="grid place-items-center">
                     <ChevronDown className="h-3 w-3" />
                   </span>
@@ -206,11 +216,7 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
                 });
               });
             }}
-            disabled={
-              member.memberId === currentWorkspaceMemberInfo.member ||
-              !member.status ||
-              Boolean(currentWorkspaceRole && currentWorkspaceRole !== 20 && currentWorkspaceRole < member.role)
-            }
+            disabled={!hasRoleChangeAccess}
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
@@ -224,23 +230,24 @@ export const WorkspaceMembersListItem: FC<Props> = (props) => {
               );
             })}
           </CustomSelect>
-          {isAdmin && (
-            <Tooltip
-              tooltipContent={
-                member.memberId === currentWorkspaceMemberInfo.member ? "Leave workspace" : "Remove member"
+          <Tooltip
+            tooltipContent={isCurrentUser ? "Leave workspace" : "Remove member"}
+            disabled={!isAdmin && !isCurrentUser}
+          >
+            <button
+              type="button"
+              onClick={() => setRemoveMemberModal(true)}
+              className={
+                isAdmin || isCurrentUser
+                  ? "opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                  : "opacity-0 pointer-events-none"
               }
             >
-              <button
-                type="button"
-                onClick={() => setRemoveMemberModal(true)}
-                className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
-              >
-                <XCircle className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={2} />
-              </button>
-            </Tooltip>
-          )}
+              <XCircle className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={2} />
+            </button>
+          </Tooltip>
         </div>
       </div>
     </>
   );
-};
+});

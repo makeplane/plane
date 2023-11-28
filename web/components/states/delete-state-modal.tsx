@@ -13,7 +13,6 @@ import useToast from "hooks/use-toast";
 import { Button } from "@plane/ui";
 // types
 import type { IState } from "types";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   isOpen: boolean;
@@ -29,7 +28,7 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
 
   // store
-  const { projectState: projectStateStore } = useMobxStore();
+  const { projectState: projectStateStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -49,9 +48,12 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
     await projectStateStore
       .deleteState(workspaceSlug.toString(), data.project, data.id)
       .then((res) => {
-        trackEvent(
+        postHogEventTracker(
           'STATE_DELETE',
-        )
+          {
+            state: "SUCCESS"
+          }
+        );
         handleClose();
       })
       .catch((err) => {
@@ -68,6 +70,12 @@ export const DeleteStateModal: React.FC<Props> = observer((props) => {
             title: "Error!",
             message: "State could not be deleted. Please try again.",
           });
+        postHogEventTracker(
+          'STATE_DELETE',
+          {
+            state: "FAILED"
+          }
+        )
       })
       .finally(() => {
         setIsDeleteLoading(false);

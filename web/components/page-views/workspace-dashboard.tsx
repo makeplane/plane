@@ -19,7 +19,7 @@ export const WorkspaceDashboardView = observer(() => {
   const { workspaceSlug } = router.query;
   // store
 
-  const { user: userStore, project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const { user: userStore, project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
 
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
@@ -69,7 +69,11 @@ export const WorkspaceDashboardView = observer(() => {
               <div className="p-5 md:p-8 pr-0">
                 <h5 className="text-xl font-semibold">Create a project</h5>
                 <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
-                <Button variant="primary" size="sm" onClick={() => commandPaletteStore.toggleCreateProjectModal(true)}>
+                <Button variant="primary" size="sm" onClick={() => {
+                    setTrackElement("DASHBOARD_PAGE");
+                    commandPaletteStore.toggleCreateProjectModal(true)
+                  }
+                }>
                   Create Project
                 </Button>
               </div>

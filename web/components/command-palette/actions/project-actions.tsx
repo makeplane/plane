@@ -14,6 +14,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
 
   const {
     commandPalette: { toggleCreateCycleModal, toggleCreateModuleModal, toggleCreatePageModal, toggleCreateViewModal },
+    trackEvent: { setTrackElement }
   } = useMobxStore();
 
   return (
@@ -22,6 +23,7 @@ export const CommandPaletteProjectActions: React.FC<Props> = (props) => {
         <Command.Item
           onSelect={() => {
             closePalette();
+            setTrackElement("COMMAND_PALETTE")
             toggleCreateCycleModal(true);
           }}
           className="focus:outline-none"

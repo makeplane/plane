@@ -37,11 +37,13 @@ export const RecentPagesList: FC = observer(() => {
       {Object.keys(recentProjectPages).length > 0 && !isEmpty ? (
         <>
           {Object.keys(recentProjectPages).map((key) => {
-            if (recentProjectPages[key].length === 0) return null;
+            if (recentProjectPages[key]?.length === 0) return null;
 
             return (
-              <div key={key} className="overflow-hidden">
-                <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
+              <div key={key}>
+                <h2 className="sticky top-0 bg-custom-background-100 z-[1] text-xl font-semibold capitalize mb-2">
+                  {replaceUnderscoreIfSnakeCase(key)}
+                </h2>
                 <PagesListView pages={recentProjectPages[key]} />
               </div>
             );

@@ -1,18 +1,12 @@
-import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Placeholder from "@tiptap/extension-placeholder";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { common, createLowlight } from "lowlight";
-import { InputRule } from "@tiptap/core";
 
-import ts from "highlight.js/lib/languages/typescript";
-
-import SlashCommand from "./slash-command";
-import { UploadImage } from "../";
 import { IssueWidgetExtension } from "./widgets";
 import { IIssueEmbedConfig } from "./widgets/types";
 
-const lowlight = createLowlight(common);
-lowlight.register("ts", ts);
+import { SlashCommand } from "@plane/editor-extensions";
+
+import { UploadImage } from "@plane/editor-types";
+import { DragAndDrop } from "@plane/editor-extensions";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
@@ -21,33 +15,9 @@ export const DocumentEditorExtensions = (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void,
 ) => [
-  HorizontalRule.extend({
-    addInputRules() {
-      return [
-        new InputRule({
-          find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-          handler: ({ state, range, commands }) => {
-            commands.splitBlock();
 
-            const attributes = {};
-            const { tr } = state;
-            const start = range.from;
-            const end = range.to;
-            // @ts-ignore
-            tr.replaceWith(start - 1, end, this.type.create(attributes));
-          },
-        }),
-      ];
-    },
-  }).configure({
-    HTMLAttributes: {
-      class: "mb-6 border-t border-custom-border-300",
-    },
-  }),
   SlashCommand(uploadFile, setIsSubmitting),
-  CodeBlockLowlight.configure({
-    lowlight,
-  }),
+  DragAndDrop,
   Placeholder.configure({
     placeholder: ({ node }) => {
       if (node.type.name === "heading") {
