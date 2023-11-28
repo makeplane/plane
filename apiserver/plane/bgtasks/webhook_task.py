@@ -90,17 +90,6 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             else None
         )
 
-        # Use HMAC for generating signature
-        if webhook.secret_key:
-            event_data_json = json.dumps(event_data) if event_data is not None else "{}"
-            hmac_signature = hmac.new(
-                webhook.secret_key.encode("utf-8"),
-                event_data_json.encode("utf-8"),
-                hashlib.sha256,
-            )
-            signature = hmac_signature.hexdigest()
-            headers["X-Plane-Signature"] = signature
-
         action = {
             "POST": "create",
             "PATCH": "update",
@@ -115,6 +104,16 @@ def webhook_task(self, webhook, slug, event, event_data, action):
             "workspace_id": str(webhook.workspace_id),
             "data": event_data,
         }
+
+        # Use HMAC for generating signature
+        if webhook.secret_key:
+            hmac_signature = hmac.new(
+                webhook.secret_key.encode("utf-8"),
+                json.dumps(payload, sort_keys=True).encode("utf-8"),
+                hashlib.sha256,
+            )
+            signature = hmac_signature.hexdigest()
+            headers["X-Plane-Signature"] = signature
 
         # Send the webhook event
         response = requests.post(
