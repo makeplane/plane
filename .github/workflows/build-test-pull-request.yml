@@ -19,9 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: "yarn"
-        env:
-          yarn: 3.6.4
+          # cache: "yarn"
 
       - name: Run install
         uses: borales/actions-yarn@v4
