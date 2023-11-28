@@ -30,12 +30,12 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
-    <section className="pr-9 py-8 w-full overflow-y-auto">
+    <section className="h-full w-full lg:w-3/5 mx-auto p-8 flex flex-col overflow-hidden">
       <div className="flex items-center py-3.5 border-b border-custom-border-100">
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (
-        <div className="flex flex-col gap-2 pb-4 w-full">
+        <div className="flex flex-col gap-2 h-full w-full overflow-y-auto">
           <ul role="list" className="-mb-4">
             {userActivity.results.map((activityItem: any) => {
               if (activityItem.field === "comment") {
