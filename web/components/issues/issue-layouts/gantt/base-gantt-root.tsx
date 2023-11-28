@@ -1,8 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
-import useProjectDetails from "hooks/use-project-details";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { IssueGanttBlock, IssuePeekOverview } from "components/issues";
 import {
@@ -41,8 +41,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
-
-  const { projectDetails } = useProjectDetails();
 
   const {
     user: { currentProjectRole },

@@ -17,6 +17,8 @@ import {
   SidebarPrioritySelect,
   SidebarStateSelect,
 } from "../sidebar-select";
+// services
+import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -24,10 +26,10 @@ import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
 import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
+// fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-// services
-import { IssueService } from "services/issue";
-import { EUserWorkspaceRoles } from "layouts/settings-layout";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
