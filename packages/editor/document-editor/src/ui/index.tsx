@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { getEditorClassNames, useEditor } from "@plane/editor-core";
+import { cn, getEditorClassNames, useEditor } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "./extensions";
 import {
   IDuplicationConfig,
@@ -14,6 +15,7 @@ import { DocumentDetails } from "./types/editor-types";
 import { PageRenderer } from "./components/page-renderer";
 import { getMenuOptions } from "./utils/menu-options";
 import { useRouter } from "next/router";
+import { IEmbedConfig } from "./extensions/widgets/types";
 
 export type UploadImage = (file: File) => Promise<string>;
 export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
@@ -35,6 +37,7 @@ interface IDocumentEditor {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
+  embedConfig?: IEmbedConfig;
 }
 interface DocumentEditorProps extends IDocumentEditor {
   forwardedRef?: React.Ref<EditorHandle>;
@@ -67,6 +70,7 @@ const DocumentEditor = ({
   duplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
+  embedConfig,
 }: IDocumentEditor) => {
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
@@ -88,7 +92,11 @@ const DocumentEditor = ({
     uploadFile,
     deleteFile,
     forwardedRef,
-    extensions: DocumentEditorExtensions(uploadFile, setIsSubmitting),
+    extensions: DocumentEditorExtensions(
+      uploadFile,
+      embedConfig?.issueEmbedConfig,
+      setIsSubmitting,
+    ),
   });
 
   if (!editor) {
