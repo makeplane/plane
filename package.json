@@ -34,5 +34,8 @@
   "resolutions": {
     "@types/react": "^18.2.39"
   },
+  "engines": {
+    "yarn": "1.22.21"
+  },
   "packageManager": "yarn@3.6.4"
 }
