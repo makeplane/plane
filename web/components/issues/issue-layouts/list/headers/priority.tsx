@@ -3,11 +3,14 @@ import { observer } from "mobx-react-lite";
 import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IPriorityHeader {
   column_id: string;
   column_value: any;
   issues_count: number;
+  disableIssueCreation?: boolean;
+  currentStore: EProjectStore;
 }
 
 const Icon = ({ priority }: any) => (
@@ -37,7 +40,7 @@ const Icon = ({ priority }: any) => (
 );
 
 export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
-  const { column_id, column_value, issues_count } = props;
+  const { column_id, column_value, issues_count, disableIssueCreation, currentStore } = props;
 
   const priority = column_value ?? null;
 
@@ -49,6 +52,8 @@ export const PriorityHeader: FC<IPriorityHeader> = observer((props) => {
           title={priority?.title || ""}
           count={issues_count}
           issuePayload={{ priority: priority?.key }}
+          disableIssueCreation={disableIssueCreation}
+          currentStore={currentStore}
         />
       )}
     </>

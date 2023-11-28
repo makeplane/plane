@@ -3,10 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 // hooks
 import useUser from "hooks/use-user";
 // components
-import Invitations from "./invitations";
-import DummySidebar from "components/account/sidebar";
-import OnboardingStepIndicator from "components/account/step-indicator";
-import { Workspace } from "./workspace";
+import { Invitations, OnboardingSidebar, OnboardingStepIndicator, Workspace } from "components/onboarding";
 // types
 import { IWorkspace, TOnboardingSteps } from "types";
 
@@ -44,7 +41,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
           control={control}
           name="name"
           render={({ field: { value } }) => (
-            <DummySidebar
+            <OnboardingSidebar
               watch={watch}
               setValue={setValue}
               control={control}

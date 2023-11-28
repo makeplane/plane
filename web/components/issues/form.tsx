@@ -228,7 +228,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
       ...defaultValues,
       ...initialData,
     });
-  }, [setFocus, initialData, reset]);
+  }, [setFocus, reset]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
@@ -379,6 +379,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
+                        restoreFile={fileService.restoreImage}
                         ref={editorRef}
                         debouncedUpdatesEnabled={false}
                         value={

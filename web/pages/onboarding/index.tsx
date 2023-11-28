@@ -1,8 +1,12 @@
 import { useEffect, useState, ReactElement, Fragment } from "react";
 import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import { useTheme } from "next-themes";
+import { ChevronDown } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
+import { Controller, useForm } from "react-hook-form";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
@@ -13,7 +17,8 @@ import useUserAuth from "hooks/use-user-auth";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // components
-import { InviteMembers, JoinWorkspaces, UserDetails, Workspace } from "components/onboarding";
+import { InviteMembers, JoinWorkspaces, UserDetails } from "components/onboarding";
+import { DeactivateAccountModal } from "components/account";
 // ui
 import { Avatar, Spinner } from "@plane/ui";
 // images
@@ -21,10 +26,6 @@ import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
 // types
 import { IUser, TOnboardingSteps } from "types";
 import { NextPageWithLayout } from "types/app";
-import { ChevronDown } from "lucide-react";
-import { Menu, Transition } from "@headlessui/react";
-import { DeactivateAccountModal } from "components/account";
-import { useRouter } from "next/router";
 
 // services
 const workspaceService = new WorkspaceService();
@@ -45,6 +46,12 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const { setTheme } = useTheme();
 
   const {} = useUserAuth("onboarding");
+
+  const { control, setValue } = useForm<{ full_name: string }>({
+    defaultValues: {
+      full_name: "",
+    },
+  });
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
     workspaceService.userWorkspaceInvitations()
@@ -111,51 +118,70 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                 Plane
               </div>
 
-              <div className="pr-4 flex gap-x-2 items-center">
-                {step != 1 && (
-                  <Avatar
-                    name={workspaces ? workspaces[0].name : "N"}
-                    size={35}
-                    shape="square"
-                    fallbackBackgroundColor="#FCBE1D"
-                    className="!text-base"
-                  />
-                )}
-                <div>
-                  {step != 1 && (
-                    <p className="text-sm text-custom-text-200 font-medium">
-                      {currentUser?.first_name} {currentUser?.last_name}
-                    </p>
-                  )}
+              <div>
+                <Controller
+                  control={control}
+                  name="full_name"
+                  render={({ field: { value } }) => (
+                    <div className="pr-4 flex gap-x-2 items-center">
+                      {step != 1 && (
+                        <Avatar
+                          name={
+                            currentUser?.first_name
+                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
+                              : value.length > 0
+                              ? value
+                              : currentUser?.email
+                          }
+                          src={currentUser?.avatar}
+                          size={35}
+                          shape="square"
+                          fallbackBackgroundColor="#FCBE1D"
+                          className="!text-base capitalize"
+                        />
+                      )}
+                      <div>
+                        {step != 1 && (
+                          <p className="text-sm text-custom-text-200 font-medium">
+                            {currentUser?.first_name
+                              ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
+                              : value.length > 0
+                              ? value
+                              : null}
+                          </p>
+                        )}
 
-                  <Menu>
-                    <Menu.Button className={"flex items-center gap-x-2"}>
-                      <span className="text-base font-medium">{user.email}</span>
-                      <ChevronDown className="h-4 w-4 text-custom-text-300" />
-                    </Menu.Button>
-                    <Transition
-                      enter="transition duration-100 ease-out"
-                      enterFrom="transform scale-95 opacity-0"
-                      enterTo="transform scale-100 opacity-100"
-                      leave="transition duration-75 ease-out"
-                      leaveFrom="transform scale-100 opacity-100"
-                      leaveTo="transform scale-95 opacity-0"
-                    >
-                      <Menu.Items className={"absolute translate-x-full"}>
-                        <Menu.Item>
-                          <div
-                            className="absolute pr-28 hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md text-custom-text-300 text-base font-normal p-3 shadow-sm border border-custom-border-200"
-                            onClick={() => {
-                              setShowDeleteModal(true);
-                            }}
+                        <Menu>
+                          <Menu.Button className={"flex items-center gap-x-2"}>
+                            <span className="text-base font-medium">{user.email}</span>
+                            <ChevronDown className="h-4 w-4 text-custom-text-300" />
+                          </Menu.Button>
+                          <Transition
+                            enter="transition duration-100 ease-out"
+                            enterFrom="transform scale-95 opacity-0"
+                            enterTo="transform scale-100 opacity-100"
+                            leave="transition duration-75 ease-out"
+                            leaveFrom="transform scale-100 opacity-100"
+                            leaveTo="transform scale-95 opacity-0"
                           >
-                            Delete
-                          </div>
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-                </div>
+                            <Menu.Items className={"absolute translate-x-full"}>
+                              <Menu.Item>
+                                <div
+                                  className="absolute pr-28 hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md text-custom-text-300 text-base font-normal p-3 shadow-sm border border-custom-border-200"
+                                  onClick={() => {
+                                    setShowDeleteModal(true);
+                                  }}
+                                >
+                                  Delete
+                                </div>
+                              </Menu.Item>
+                            </Menu.Items>
+                          </Transition>
+                        </Menu>
+                      </div>
+                    </div>
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -170,7 +196,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                   stepChange={stepChange}
                 />
               ) : step === 2 ? (
-                <UserDetails user={user} />
+                <UserDetails setUserName={(value) => setValue("full_name", value)} user={user} />
               ) : (
                 <InviteMembers
                   finishOnboarding={finishOnboarding}

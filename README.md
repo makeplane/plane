@@ -57,10 +57,6 @@ Setting up local environment is extremely easy and straight forward. Follow the 
 1. Review the `.env` files available in various folders. Visit [Environment Setup](./ENV_SETUP.md) to know about various environment variables used in system
 1. Run the docker command to initiate various services `docker compose -f docker-compose-local.yml up -d`
 
-```bash
-./setup.sh
-```
-
 You are ready to make changes to the code. Do not forget to refresh the browser (in case id does not auto-reload)
 
 Thats it!

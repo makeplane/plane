@@ -10,6 +10,7 @@ import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IModuleKanBanLayout {}
 
@@ -20,8 +21,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
   // store
   const {
     moduleIssues: moduleIssueStore,
+    moduleIssuesFilter: moduleIssueFilterStore,
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
-    issueDetail: issueDetailStore,
   } = useMobxStore();
 
   // const handleIssues = useCallback(
@@ -58,17 +59,19 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
-      moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, issue.id, moduleId, issue.bridge_id);
+      moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
     },
   };
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
       issueStore={moduleIssueStore}
+      issuesFilterStore={moduleIssueFilterStore}
       kanbanViewStore={moduleIssueKanBanViewStore}
       showLoader={true}
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId}
+      currentStore={EProjectStore.MODULE}
     />
   );
 });

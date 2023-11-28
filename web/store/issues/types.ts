@@ -25,3 +25,9 @@ export interface IIssueResponse {
 }
 
 export type TLoader = "init-loader" | "mutation" | undefined;
+
+export interface ViewFlags {
+  enableQuickAdd: boolean;
+  enableIssueCreation: boolean;
+  enableInlineEditing: boolean;
+}

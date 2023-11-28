@@ -59,6 +59,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
+  if (!value) return null;
+
   const options = (projectLabels ? projectLabels : []).map((label) => ({
     value: label.id,
     query: label.name,

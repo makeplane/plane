@@ -15,25 +15,26 @@ export const CalendarLayout: React.FC = observer(() => {
   const {
     projectIssues: issueStore,
     issueCalendarView: issueCalendarViewStore,
-    issueDetail: issueDetailStore,
+    projectIssuesFilter: projectIssueFiltersStore,
   } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
+      issueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
     },
   };
 
   return (
     <BaseCalendarRoot
       issueStore={issueStore}
+      issuesFilterStore={projectIssueFiltersStore}
       calendarViewStore={issueCalendarViewStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
