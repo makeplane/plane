@@ -169,12 +169,7 @@ export class IssueDetailStore implements IIssueDetailStore {
 
       const issue = this.rootStore.projectIssues.issues?.[projectId]?.[peekId];
 
-      if (issue && issue.id) {
-        // let updatedIssues: any = { ...this.issues };
-        // if (!updatedIssues) updatedIssues = {};
-        // if (!updatedIssues[issue.id]) updatedIssues[issue.id] = {};
-        // updatedIssues[issue.id] = { ...updatedIssues[issue.id], ...issue };
-
+      if (issue && issue.id)
         runInAction(() => {
           this.issues = {
             ...this.issues,
@@ -184,7 +179,6 @@ export class IssueDetailStore implements IIssueDetailStore {
             },
           };
         });
-      }
     });
 
     this.rootStore = _rootStore;
