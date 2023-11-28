@@ -10,7 +10,7 @@ import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import type { UploadImage } from "@plane/editor-types";
+import type { UploadImage, ISlashCommandItem, CommandProps  } from "@plane/editor-types";
 import {
   Heading1,
   Heading2,
@@ -42,11 +42,6 @@ interface CommandItemProps {
   title: string;
   description: string;
   icon: ReactNode;
-}
-
-interface CommandProps {
-  editor: Editor;
-  range: Range;
 }
 
 const Command = Extension.create({
@@ -88,134 +83,146 @@ const getSuggestionItems =
     setIsSubmitting?: (
       isSubmitting: "submitting" | "submitted" | "saved",
     ) => void,
+    additonalOptions?: Array<ISlashCommandItem>
   ) =>
-  ({ query }: { query: string }) =>
-    [
-      {
-        title: "Text",
-        description: "Just start typing with plain text.",
-        searchTerms: ["p", "paragraph"],
-        icon: <Text size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          editor
-            .chain()
-            .focus()
-            .deleteRange(range)
-            .toggleNode("paragraph", "paragraph")
-            .run();
+    ({ query }: { query: string }) => {
+      let slashCommands: ISlashCommandItem[] = [
+        {
+          title: "Text",
+          description: "Just start typing with plain text.",
+          searchTerms: ["p", "paragraph"],
+          icon: <Text size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            editor
+              .chain()
+              .focus()
+              .deleteRange(range)
+              .toggleNode("paragraph", "paragraph")
+              .run();
+          },
         },
-      },
-      {
-        title: "Heading 1",
-        description: "Big section heading.",
-        searchTerms: ["title", "big", "large"],
-        icon: <Heading1 size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          toggleHeadingOne(editor, range);
+        {
+          title: "Heading 1",
+          description: "Big section heading.",
+          searchTerms: ["title", "big", "large"],
+          icon: <Heading1 size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            toggleHeadingOne(editor, range);
+          },
         },
-      },
-      {
-        title: "Heading 2",
-        description: "Medium section heading.",
-        searchTerms: ["subtitle", "medium"],
-        icon: <Heading2 size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          toggleHeadingTwo(editor, range);
+        {
+          title: "Heading 2",
+          description: "Medium section heading.",
+          searchTerms: ["subtitle", "medium"],
+          icon: <Heading2 size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            toggleHeadingTwo(editor, range);
+          },
         },
-      },
-      {
-        title: "Heading 3",
-        description: "Small section heading.",
-        searchTerms: ["subtitle", "small"],
-        icon: <Heading3 size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          toggleHeadingThree(editor, range);
+        {
+          title: "Heading 3",
+          description: "Small section heading.",
+          searchTerms: ["subtitle", "small"],
+          icon: <Heading3 size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            toggleHeadingThree(editor, range);
+          },
         },
-      },
-      {
-        title: "To-do List",
-        description: "Track tasks with a to-do list.",
-        searchTerms: ["todo", "task", "list", "check", "checkbox"],
-        icon: <CheckSquare size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          toggleTaskList(editor, range);
+        {
+          title: "To-do List",
+          description: "Track tasks with a to-do list.",
+          searchTerms: ["todo", "task", "list", "check", "checkbox"],
+          icon: <CheckSquare size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            toggleTaskList(editor, range);
+          },
         },
-      },
-      {
-        title: "Bullet List",
-        description: "Create a simple bullet list.",
-        searchTerms: ["unordered", "point"],
-        icon: <List size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          toggleBulletList(editor, range);
+        {
+          title: "Bullet List",
+          description: "Create a simple bullet list.",
+          searchTerms: ["unordered", "point"],
+          icon: <List size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            toggleBulletList(editor, range);
+          },
         },
-      },
-      {
-        title: "Divider",
-        description: "Visually divide blocks",
-        searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
-        icon: <MinusSquare size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          // @ts-expect-error I have to move this to the core
-          editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+        {
+          title: "Divider",
+          description: "Visually divide blocks",
+          searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
+          icon: <MinusSquare size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            // @ts-expect-error I have to move this to the core
+            editor.chain().focus().deleteRange(range).setHorizontalRule().run();
+          },
         },
-      },
-      {
-        title: "Table",
-        description: "Create a Table",
-        searchTerms: ["table", "cell", "db", "data", "tabular"],
-        icon: <Table size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          insertTableCommand(editor, range);
+        {
+          title: "Table",
+          description: "Create a Table",
+          searchTerms: ["table", "cell", "db", "data", "tabular"],
+          icon: <Table size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            insertTableCommand(editor, range);
+          },
         },
-      },
-      {
-        title: "Numbered List",
-        description: "Create a list with numbering.",
-        searchTerms: ["ordered"],
-        icon: <ListOrdered size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          toggleOrderedList(editor, range);
+        {
+          title: "Numbered List",
+          description: "Create a list with numbering.",
+          searchTerms: ["ordered"],
+          icon: <ListOrdered size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            toggleOrderedList(editor, range);
+          },
         },
-      },
-      {
-        title: "Quote",
-        description: "Capture a quote.",
-        searchTerms: ["blockquote"],
-        icon: <TextQuote size={18} />,
-        command: ({ editor, range }: CommandProps) =>
-          toggleBlockquote(editor, range),
-      },
-      {
-        title: "Code",
-        description: "Capture a code snippet.",
-        searchTerms: ["codeblock"],
-        icon: <Code size={18} />,
-        command: ({ editor, range }: CommandProps) =>
-          // @ts-expect-error I have to move this to the core
-          editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
-      },
-      {
-        title: "Image",
-        description: "Upload an image from your computer.",
-        searchTerms: ["photo", "picture", "media"],
-        icon: <ImageIcon size={18} />,
-        command: ({ editor, range }: CommandProps) => {
-          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
+        {
+          title: "Quote",
+          description: "Capture a quote.",
+          searchTerms: ["blockquote"],
+          icon: <TextQuote size={18} />,
+          command: ({ editor, range }: CommandProps) =>
+            toggleBlockquote(editor, range),
         },
-      },
-    ].filter((item) => {
-      if (typeof query === "string" && query.length > 0) {
-        const search = query.toLowerCase();
-        return (
-          item.title.toLowerCase().includes(search) ||
-          item.description.toLowerCase().includes(search) ||
-          (item.searchTerms &&
-            item.searchTerms.some((term: string) => term.includes(search)))
-        );
+        {
+          title: "Code",
+          description: "Capture a code snippet.",
+          searchTerms: ["codeblock"],
+          icon: <Code size={18} />,
+          command: ({ editor, range }: CommandProps) =>
+            // @ts-expect-error I have to move this to the core
+            editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+        },
+        {
+          title: "Image",
+          description: "Upload an image from your computer.",
+          searchTerms: ["photo", "picture", "media"],
+          icon: <ImageIcon size={18} />,
+          command: ({ editor, range }: CommandProps) => {
+            insertImageCommand(editor, uploadFile, setIsSubmitting, range);
+          },
+        },
+      ]
+
+      if (additonalOptions) {
+        additonalOptions.map(item => {
+          slashCommands.push(item)
+        })
       }
-      return true;
-    });
+
+      slashCommands = slashCommands.filter((item) => {
+        if (typeof query === "string" && query.length > 0) {
+          const search = query.toLowerCase();
+          return (
+            item.title.toLowerCase().includes(search) ||
+            item.description.toLowerCase().includes(search) ||
+            (item.searchTerms &&
+              item.searchTerms.some((term: string) => term.includes(search)))
+          );
+        }
+        return true;
+      })
+
+      return slashCommands
+    };
 
 export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   const containerHeight = container.offsetHeight;
@@ -376,10 +383,11 @@ export const SlashCommand = (
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void,
+  additonalOptions?: Array<ISlashCommandItem>,
 ) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, setIsSubmitting),
+      items: getSuggestionItems(uploadFile, setIsSubmitting, additonalOptions),
       render: renderItems,
     },
   });
