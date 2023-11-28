@@ -1,14 +1,16 @@
 "use client";
 import * as React from "react";
 import { Extension } from "@tiptap/react";
-import { UploadImage } from "../types/upload-image";
-import { DeleteImage } from "../types/delete-image";
 import { getEditorClassNames } from "../lib/utils";
 import { EditorProps } from "@tiptap/pm/view";
 import { useEditor } from "./hooks/useEditor";
 import { EditorContainer } from "../ui/components/editor-container";
 import { EditorContentWrapper } from "../ui/components/editor-content";
-import { IMentionSuggestion } from "../types/mention-suggestion";
+import {
+  UploadImage,
+  DeleteImage,
+  IMentionSuggestion,
+} from "@plane/editor-types";
 
 interface ICoreEditor {
   value: string;

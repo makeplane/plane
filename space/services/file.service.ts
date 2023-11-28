@@ -1,4 +1,6 @@
+// services
 import APIService from "services/api.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
 import axios from "axios";
 
@@ -33,6 +35,7 @@ class FileService extends APIService {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
     this.deleteImage = this.deleteImage.bind(this);
+    this.restoreImage = this.restoreImage.bind(this);
     this.cancelUpload = this.cancelUpload.bind(this);
   }
 
@@ -50,6 +53,7 @@ class FileService extends APIService {
         if (axios.isCancel(error)) {
           console.log(error.message);
         } else {
+          console.log(error);
           throw error?.response?.data;
         }
       });
@@ -58,6 +62,7 @@ class FileService extends APIService {
   cancelUpload() {
     this.cancelSource.cancel("Upload cancelled");
   }
+
   getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
     return async (file: File) => {
       const formData = new FormData();
@@ -71,6 +76,17 @@ class FileService extends APIService {
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
+    return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
+      headers: this.getHeaders(),
+      "Content-Type": "application/json",
+    })
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;

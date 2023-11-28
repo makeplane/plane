@@ -155,6 +155,7 @@ export const CreateInboxIssueModal: React.FC<Props> = observer((props) => {
                                 cancelUploadImage={fileService.cancelUpload}
                                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                                 deleteFile={fileService.deleteImage}
+                                restoreFile={fileService.restoreImage}
                                 ref={editorRef}
                                 debouncedUpdatesEnabled={false}
                                 value={!value || value === "" ? "<p></p>" : value}

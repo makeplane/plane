@@ -79,6 +79,7 @@ export const AddComment: React.FC<Props> = observer((props) => {
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspace_slug as string)}
               deleteFile={fileService.deleteImage}
+              restoreFile={fileService.restoreImage}
               ref={editorRef}
               value={
                 !value || value === "" || (typeof value === "object" && Object.keys(value).length === 0)

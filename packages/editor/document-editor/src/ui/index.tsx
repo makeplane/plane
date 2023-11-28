@@ -14,15 +14,14 @@ import { DocumentDetails } from "./types/editor-types";
 import { PageRenderer } from "./components/page-renderer";
 import { getMenuOptions } from "./utils/menu-options";
 import { useRouter } from "next/router";
-
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
+import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
   documentDetails: DocumentDetails;
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
+  restoreFile: RestoreImage;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
@@ -62,6 +61,7 @@ const DocumentEditor = ({
   value,
   uploadFile,
   deleteFile,
+  restoreFile,
   customClassName,
   forwardedRef,
   duplicationConfig,
@@ -82,6 +82,7 @@ const DocumentEditor = ({
       updateMarkings(json);
     },
     debouncedUpdatesEnabled,
+    restoreFile,
     setIsSubmitting,
     setShouldShowAlert,
     value,

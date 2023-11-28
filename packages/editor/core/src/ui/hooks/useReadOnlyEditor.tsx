@@ -8,7 +8,7 @@ import {
 import { CoreReadOnlyEditorExtensions } from "../../ui/read-only/extensions";
 import { CoreReadOnlyEditorProps } from "../../ui/read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
+import { IMentionSuggestion } from "@plane/editor-types";
 
 interface CustomReadOnlyEditorProps {
   value: string;

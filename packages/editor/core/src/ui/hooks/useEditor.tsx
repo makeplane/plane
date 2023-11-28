@@ -1,22 +1,27 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
 import { useImperativeHandle, useRef, MutableRefObject } from "react";
-import { DeleteImage } from "../../types/delete-image";
 import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
-import { UploadImage } from "../../types/upload-image";
 import { useInitializedContent } from "./useInitializedContent";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
+import {
+  DeleteImage,
+  IMentionSuggestion,
+  RestoreImage,
+  UploadImage,
+} from "@plane/editor-types";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
+  restoreFile: RestoreImage;
+  deleteFile: DeleteImage;
+  cancelUploadImage?: () => any;
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   value: string;
-  deleteFile: DeleteImage;
   debouncedUpdatesEnabled?: boolean;
   onStart?: (json: any, html: string) => void;
   onChange?: (json: any, html: string) => void;
@@ -25,7 +30,6 @@ interface CustomEditorProps {
   forwardedRef?: any;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-  cancelUploadImage?: () => any;
 }
 
 export const useEditor = ({
@@ -39,6 +43,7 @@ export const useEditor = ({
   onChange,
   setIsSubmitting,
   forwardedRef,
+  restoreFile,
   setShouldShowAlert,
   mentionHighlights,
   mentionSuggestions,
@@ -56,6 +61,7 @@ export const useEditor = ({
             mentionHighlights: mentionHighlights ?? [],
           },
           deleteFile,
+          restoreFile,
           cancelUploadImage,
         ),
         ...extensions,
@@ -63,7 +69,7 @@ export const useEditor = ({
       content:
         typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
       onCreate: async ({ editor }) => {
-        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()))
+        onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
       onUpdate: async ({ editor }) => {
         // for instant feedback loop

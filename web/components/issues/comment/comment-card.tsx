@@ -108,6 +108,7 @@ export const CommentCard: React.FC<Props> = ({
                 cancelUploadImage={fileService.cancelUpload}
                 uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                 deleteFile={fileService.deleteImage}
+                restoreFile={fileService.restoreImage}
                 ref={editorRef}
                 value={watch("comment_html")}
                 debouncedUpdatesEnabled={false}

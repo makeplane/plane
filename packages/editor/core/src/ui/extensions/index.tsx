@@ -15,14 +15,17 @@ import HorizontalRule from "./horizontal-rule";
 
 import ImageExtension from "./image";
 
-import { DeleteImage } from "../../types/delete-image";
 import { isValidHttpUrl } from "../../lib/utils";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
 import { Mentions } from "../mentions";
 
 import { CustomKeymap } from "./keymap";
 import { CustomCodeBlock } from "./code";
 import { ListKeymap } from "./custom-list-keymap";
+import {
+  IMentionSuggestion,
+  DeleteImage,
+  RestoreImage,
+} from "@plane/editor-types";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -30,6 +33,7 @@ export const CoreEditorExtensions = (
     mentionHighlights: string[];
   },
   deleteFile: DeleteImage,
+  restoreFile: RestoreImage,
   cancelUploadImage?: () => any,
 ) => [
   StarterKit.configure({
@@ -71,7 +75,7 @@ export const CoreEditorExtensions = (
         "text-custom-primary-300 underline underline-offset-[3px] hover:text-custom-primary-500 transition-colors cursor-pointer",
     },
   }),
-  ImageExtension(deleteFile, cancelUploadImage).configure({
+  ImageExtension(deleteFile, restoreFile, cancelUploadImage).configure({
     HTMLAttributes: {
       class: "rounded-lg border border-custom-border-300",
     },

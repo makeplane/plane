@@ -35,6 +35,7 @@ export class FileService extends APIService {
     super(API_BASE_URL);
     this.uploadFile = this.uploadFile.bind(this);
     this.deleteImage = this.deleteImage.bind(this);
+    this.restoreImage = this.restoreImage.bind(this);
     this.cancelUpload = this.cancelUpload.bind(this);
   }
 
@@ -75,6 +76,17 @@ export class FileService extends APIService {
 
   async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
     return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
+      .then((response) => response?.status)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
+    return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
+      headers: this.getHeaders(),
+      "Content-Type": "application/json",
+    })
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;

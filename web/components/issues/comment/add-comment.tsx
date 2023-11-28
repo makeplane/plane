@@ -87,6 +87,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
+                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={!commentValue || commentValue === "" ? "<p></p>" : commentValue}
                     customClassName="p-2 h-full"

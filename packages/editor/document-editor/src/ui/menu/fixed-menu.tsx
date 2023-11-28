@@ -19,7 +19,7 @@ import {
   HeadingThreeItem,
   findTableAncestor,
 } from "@plane/editor-core";
-import { UploadImage } from "..";
+import { UploadImage } from "@plane/editor-types";
 
 export interface BubbleMenuItem {
   name: string;
