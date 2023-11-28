@@ -19,7 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          cache: "pnpm"
+
+      - name: Install Pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.11.0
 
       - name: Get changed files
         id: changed-files
