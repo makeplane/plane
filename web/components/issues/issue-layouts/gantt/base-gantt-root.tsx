@@ -25,7 +25,6 @@ import {
   IViewIssuesFilterStore,
   IViewIssuesStore,
 } from "store/issues";
-import { EUserWorkspaceRoles } from "layouts/settings-layout/workspace/sidebar";
 import { TUnGroupedIssues } from "store/issues/types";
 
 interface IBaseGanttRoot {
@@ -45,6 +44,10 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
 
   const { projectDetails } = useProjectDetails();
+
+  const {
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const appliedDisplayFilters = issueFiltersStore.issueFilters?.displayFilters;
 
@@ -69,7 +72,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
     );
   };
 
-  const isAllowed = (projectDetails?.member_role || 0) >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = currentProjectRole && currentProjectRole >= 15;
 
   return (
     <>

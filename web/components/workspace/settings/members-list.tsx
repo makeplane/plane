@@ -9,18 +9,14 @@ import { WorkspaceMembersListItem } from "components/workspace";
 // ui
 import { Loader } from "@plane/ui";
 
-export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer(({ searchQuery }) => {
+export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer((props) => {
+  const { searchQuery } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
   const {
-    workspaceMember: {
-      workspaceMembers,
-      workspaceMembersWithInvitations,
-      workspaceMemberInvitations,
-      fetchWorkspaceMemberInvitations,
-    },
-    user: { currentWorkspaceMemberInfo },
+    workspaceMember: { workspaceMembersWithInvitations, fetchWorkspaceMemberInvitations },
   } = useMobxStore();
   // fetching workspace invitations
   useSWR(
@@ -36,12 +32,7 @@ export const WorkspaceMembersList: FC<{ searchQuery: string }> = observer(({ sea
     return `${email}${displayName}${fullName}`.includes(searchQuery.toLowerCase());
   });
 
-  if (
-    !workspaceMembers ||
-    !workspaceMemberInvitations ||
-    !workspaceMembersWithInvitations ||
-    !currentWorkspaceMemberInfo
-  )
+  if (!workspaceMembersWithInvitations)
     return (
       <Loader className="space-y-5">
         <Loader.Item height="40px" />
