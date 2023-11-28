@@ -22,6 +22,7 @@ jobs:
           cache: "yarn"
       - run: |
           corepack enable
+          yarn set version 3.6.4
 
       - name: Get changed files
         id: changed-files
