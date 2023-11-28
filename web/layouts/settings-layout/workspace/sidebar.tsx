@@ -6,6 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 export enum EUserWorkspaceRoles {
   GUEST = 5,
+  VIEWER = 10,
   MEMBER = 15,
   ADMIN = 20,
 }

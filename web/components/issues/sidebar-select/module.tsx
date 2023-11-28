@@ -1,14 +1,15 @@
 import React from "react";
 import { useRouter } from "next/router";
-import useSWR, { mutate } from "swr";
-// services
-import { ModuleService } from "services/module.service";
+import { observer } from "mobx-react-lite";
+import { mutate } from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { CustomSearchSelect, DiceIcon, Tooltip } from "@plane/ui";
 // types
 import { IIssue } from "types";
 // fetch-keys
-import { ISSUE_DETAILS, MODULE_ISSUES, MODULE_LIST } from "constants/fetch-keys";
+import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
@@ -16,24 +17,23 @@ type Props = {
   disabled?: boolean;
 };
 
-const moduleService = new ModuleService();
-
-export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModuleChange, disabled = false }) => {
+export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
+  const { issueDetail, handleModuleChange, disabled = false } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+  // mobx store
+  const {
+    module: { projectModules },
+    moduleIssues: { removeIssueFromModule },
+  } = useMobxStore();
 
-  const { data: modules } = useSWR(
-    workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => moduleService.getModules(workspaceSlug as string, projectId as string) : null
-  );
+  const handleRemoveIssueFromModule = (bridgeId: string, moduleId: string) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
 
-  const removeIssueFromModule = (bridgeId: string, moduleId: string) => {
-    if (!workspaceSlug || !projectId) return;
-
-    moduleService
-      .removeIssueFromModule(workspaceSlug as string, projectId as string, moduleId, bridgeId)
+    removeIssueFromModule(workspaceSlug.toString(), projectId.toString(), moduleId, issueDetail.id, bridgeId)
       .then(() => {
-        mutate(ISSUE_DETAILS(issueId as string));
+        mutate(ISSUE_DETAILS(issueDetail.id));
 
         mutate(MODULE_ISSUES(moduleId));
       })
@@ -42,7 +42,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModule
       });
   };
 
-  const options = modules?.map((module) => ({
+  const options = projectModules?.map((module) => ({
     value: module.id,
     query: module.name,
     content: (
@@ -62,7 +62,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModule
       value={issueModule?.module_detail.id}
       onChange={(value: any) => {
         value === issueModule?.module_detail.id
-          ? removeIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
+          ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
           : handleModuleChange(value);
       }}
       options={options}
@@ -70,7 +70,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModule
         <div>
           <Tooltip
             position="left"
-            tooltipContent={`${modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`}
+            tooltipContent={`${projectModules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}`}
           >
             <button
               type="button"
@@ -85,7 +85,7 @@ export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModule
               >
                 <span className="flex-shrink-0">{issueModule && <DiceIcon className="h-3.5 w-3.5" />}</span>
                 <span className="truncate">
-                  {modules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
+                  {projectModules?.find((m) => m.id === issueModule?.module)?.name ?? "No module"}
                 </span>
               </span>
             </button>
@@ -97,4 +97,4 @@ export const SidebarModuleSelect: React.FC<Props> = ({ issueDetail, handleModule
       disabled={disabled}
     />
   );
-};
+});
