@@ -63,13 +63,11 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      {workspaceSlug && (
-        <SendWorkspaceInvitationModal
-          isOpen={inviteModal}
-          onClose={() => setInviteModal(false)}
-          onSubmit={handleWorkspaceInvite}
-        />
-      )}
+      <SendWorkspaceInvitationModal
+        isOpen={inviteModal}
+        onClose={() => setInviteModal(false)}
+        onSubmit={handleWorkspaceInvite}
+      />
       <section className="pr-9 py-8 w-full overflow-y-auto">
         <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-100">
           <h4 className="text-xl font-medium">Members</h4>
