@@ -231,7 +231,7 @@ const activityDetails: {
       if (activity.verb === "created")
         return (
           <>
-            <span className="flex-shrink-0">added this issue to the cycle</span>
+            <span className="flex-shrink-0">added this issue to the cycle </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"

@@ -2,8 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
-import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetQuickAddIssueForm } from "components/issues";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import {
+  IssuePeekOverview,
+  SpreadsheetColumnsList,
+  SpreadsheetIssuesColumn,
+  SpreadsheetQuickAddIssueForm,
+} from "components/issues";
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";

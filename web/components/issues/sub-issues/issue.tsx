@@ -1,9 +1,7 @@
 import React from "react";
-
-// lucide icons
 import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // components
-import { IssuePeekOverview } from "../issue-peek-overview";
+import { IssuePeekOverview } from "components/issues";
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
 // ui
@@ -11,7 +9,6 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 // types
 import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-// fetch keys
 
 export interface ISubIssues {
   workspaceSlug: string;

@@ -1,11 +1,13 @@
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
+import { IssuePeekOverview } from "components/issues";
+// ui
 import { Tooltip } from "@plane/ui";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 import { EIssueActions } from "../types";
+import { useRouter } from "next/router";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -34,13 +36,20 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
     isReadOnly,
   } = props;
 
+  const router = useRouter();
+  const { peekIssueId } = router.query;
+
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
   };
 
   return (
     <>
-      <Draggable draggableId={issue.id} index={index}>
+      <Draggable
+        draggableId={issue.id}
+        index={index}
+        isDragDisabled={Boolean(peekIssueId && issue.id === peekIssueId.toString())}
+      >
         {(provided, snapshot) => (
           <div
             className="group/kanban-block relative p-1.5 hover:cursor-default"

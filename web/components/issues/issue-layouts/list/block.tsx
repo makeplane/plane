@@ -1,6 +1,6 @@
 // components
 import { ListProperties } from "./properties";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { IssuePeekOverview } from "components/issues";
 // ui
 import { Spinner, Tooltip } from "@plane/ui";
 // types

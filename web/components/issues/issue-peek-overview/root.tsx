@@ -1,18 +1,17 @@
 import { FC, Fragment, ReactNode } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// components
-import { IssueView } from "./view";
-// hooks
+import useSWR from "swr";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// types
-import { IIssue } from "types";
-import { RootStore } from "store/root";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { IssueView } from "./view";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
+// types
+import { IIssue } from "types";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
@@ -27,7 +26,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { workspaceSlug, projectId, issueId, handleIssue, children, isArchived = false } = props;
 
   const router = useRouter();
-  const { peekIssueId } = router.query as { peekIssueId: string };
+  const { peekIssueId } = router.query;
 
   const {
     user: userStore,
@@ -36,7 +35,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     archivedIssueDetail: archivedIssueDetailStore,
     archivedIssues: archivedIssuesStore,
     project: projectStore,
-  }: RootStore = useMobxStore();
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -45,9 +44,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       ? `ISSUE_PEEK_OVERVIEW_${workspaceSlug}_${projectId}_${peekIssueId}`
       : null,
     async () => {
-      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        if (isArchived) await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
-        else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
+      if (workspaceSlug && projectId && issueId && issueId === peekIssueId) {
+        if (isArchived) await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
+        else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
       }
     }
   );

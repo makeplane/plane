@@ -1,11 +1,12 @@
+// components
+import { IssuePeekOverview } from "components/issues";
 // ui
 import { Tooltip, StateGroupIcon } from "@plane/ui";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
-import { IBlockUpdateData } from "components/gantt-chart";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
+import { IBlockUpdateData } from "components/gantt-chart";
 
 export const IssueGanttBlock = ({
   data,
