@@ -148,7 +148,7 @@ export const ProfileLayoutSidebar = observer(() => {
           )}
           {workspaces && workspaces.length > 0 && (
             <div className="space-y-1.5 mt-2 h-full overflow-y-auto">
-              {[...workspaces, ...workspaces, ...workspaces, ...workspaces].map((workspace) => (
+              {workspaces.map((workspace) => (
                 <Link
                   key={workspace.id}
                   href={`/${workspace.slug}`}
@@ -203,7 +203,7 @@ export const ProfileLayoutSidebar = observer(() => {
             ))}
           </div>
         </div>
-        <div className="flex-shrink-0 lex-grow flex items-end px-6 py-2">
+        <div className="flex-shrink-0 flex-grow flex items-end px-6 py-2">
           <div
             className={`flex w-full ${
               sidebarCollapsed ? "flex-col justify-center gap-2" : "items-center justify-between gap-2"
