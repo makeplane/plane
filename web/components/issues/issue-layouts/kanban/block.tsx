@@ -1,7 +1,6 @@
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
-import { IssuePeekOverview } from "components/issues";
 // ui
 import { Tooltip } from "@plane/ui";
 // types
@@ -35,27 +34,32 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
     displayProperties,
     isReadOnly,
   } = props;
-
+  // router
   const router = useRouter();
-  const { peekIssueId } = router.query;
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
   };
 
+  const handleIssuePeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+    });
+  };
+
   return (
     <>
-      <Draggable
-        draggableId={issue.id}
-        index={index}
-        isDragDisabled={Boolean(peekIssueId && issue.id === peekIssueId.toString())}
-      >
+      <Draggable draggableId={issue.id} index={index}>
         {(provided, snapshot) => (
           <div
             className="group/kanban-block relative p-1.5 hover:cursor-default"
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             ref={provided.innerRef}
+            onClick={handleIssuePeekOverview}
           >
             {issue.tempId !== undefined && (
               <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
@@ -77,23 +81,9 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                   {issue.project_detail.identifier}-{issue.sequence_id}
                 </div>
               )}
-              <IssuePeekOverview
-                workspaceSlug={issue?.workspace_detail?.slug}
-                projectId={issue?.project_detail?.id}
-                issueId={issue?.id}
-                handleIssue={(issueToUpdate) => {
-                  handleIssues(
-                    !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-                    !columnId && columnId === "null" ? null : columnId,
-                    { ...issue, ...issueToUpdate },
-                    EIssueActions.UPDATE
-                  );
-                }}
-              >
-                <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                  <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
-                </Tooltip>
-              </IssuePeekOverview>
+              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+                <div className="line-clamp-2 text-sm font-medium text-custom-text-100">{issue.name}</div>
+              </Tooltip>
               <div>
                 <KanBanProperties
                   sub_group_id={sub_group_id}

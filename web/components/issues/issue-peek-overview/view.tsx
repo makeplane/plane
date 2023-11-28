@@ -101,7 +101,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       const { query } = router;
       router.push({
         pathname: router.pathname,
-        query: { ...query, peekIssueId: issueId },
+        query: { ...query, peekIssueId: issueId, peekProjectId: projectId },
       });
     }
   };
@@ -110,6 +110,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     if (query.peekIssueId) {
       issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
+      delete query.peekProjectId;
       router.push({
         pathname: router.pathname,
         query: { ...query },

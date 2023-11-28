@@ -110,6 +110,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (query.peekIssueId) {
       issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
+      delete query.peekProjectId;
       router.push({
         pathname: router.pathname,
         query: { ...query },

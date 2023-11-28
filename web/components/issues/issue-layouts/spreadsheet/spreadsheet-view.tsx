@@ -51,22 +51,14 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     disableUserActions,
     enableQuickCreateIssue,
   } = props;
-
+  // states
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
-  const [issuePeekOverview, setIssuePeekOverView] = useState<{
-    workspaceSlug: string;
-    projectId: string;
-    issueId: string;
-  } | null>(null);
-
   const [isScrolled, setIsScrolled] = useState(false);
-
+  // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  // router
   const router = useRouter();
-  const { cycleId, moduleId } = router.query;
-
-  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const handleScroll = () => {
     if (!containerRef.current) return;
@@ -120,7 +112,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                         properties={displayProperties}
                         quickActions={quickActions}
                         disableUserActions={disableUserActions}
-                        setIssuePeekOverView={setIssuePeekOverView}
                       />
                     ) : null
                   )}
@@ -189,11 +180,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             ))} */}
         </div>
       </div>
-      {issuePeekOverview && (
+      {workspaceSlug && peekIssueId && peekProjectId && (
         <IssuePeekOverview
-          workspaceSlug={issuePeekOverview?.workspaceSlug}
-          projectId={issuePeekOverview?.projectId}
-          issueId={issuePeekOverview?.issueId}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
           handleIssue={(issueToUpdate: any) => handleIssues(issueToUpdate, EIssueActions.UPDATE)}
         />
       )}

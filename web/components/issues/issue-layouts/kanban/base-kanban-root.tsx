@@ -29,6 +29,8 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store/command-palette.store";
+import { IssuePeekOverview } from "components/issues";
+import { useRouter } from "next/router";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -69,7 +71,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     currentStore,
     addIssuesToView,
   } = props;
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  // mobx store
   const {
     project: { workspaceProjects },
     projectLabel: { projectLabels },
@@ -126,7 +131,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         issueActions[action]!(issue);
       }
     },
-    [issueStore]
+    [issueActions]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
@@ -238,6 +243,17 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           )}
         </DragDropContext>
       </div>
+
+      {workspaceSlug && peekIssueId && peekProjectId && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={(issueToUpdate) =>
+            handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, EIssueActions.UPDATE)
+          }
+        />
+      )}
     </>
   );
 });
