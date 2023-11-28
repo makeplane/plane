@@ -16,13 +16,10 @@ jobs:
         uses: actions/checkout@v3.3.0
 
       - name: Setup Node.js 18.x
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 18.x
           cache: "yarn"
-      - run: |
-          corepack enable
-          yarn set version 3.6.4
 
       - name: Get changed files
         id: changed-files
