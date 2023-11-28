@@ -11,6 +11,8 @@ import "styles/nprogress.css";
 import "styles/react-datepicker.css";
 // contexts
 import { ToastContextProvider } from "contexts/toast.context";
+// layouts
+import InstanceLayout from "layouts/instance-layout";
 // constants
 import { THEMES } from "constants/themes";
 import { SITE_TITLE } from "constants/seo-variables";
@@ -36,7 +38,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <MobxStoreProvider {...pageProps}>
         <ThemeProvider themes={THEMES} defaultTheme="system">
           <ToastContextProvider>
-            <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+            <InstanceLayout>
+              <AppProvider>{getLayout(<Component {...pageProps} />)}</AppProvider>
+            </InstanceLayout>
           </ToastContextProvider>
         </ThemeProvider>
       </MobxStoreProvider>
