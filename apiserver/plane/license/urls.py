@@ -5,6 +5,7 @@ from plane.license.api.views import (
     InstanceAdminEndpoint,
     InstanceConfigurationEndpoint,
     AdminSetupMagicSignInEndpoint,
+    SignUpScreenVisitedEndpoint,
 )
 
 urlpatterns = [
@@ -32,5 +33,10 @@ urlpatterns = [
         "instances/admins/magic-sign-in/",
         AdminSetupMagicSignInEndpoint.as_view(),
         name="instance-admins",
+    ),
+    path(
+        "instances/admins/sign-up-screen-visited/",
+        SignUpScreenVisitedEndpoint.as_view(),
+        name="instance-sign-up",
     ),
 ]

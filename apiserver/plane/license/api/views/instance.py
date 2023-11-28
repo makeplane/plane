@@ -31,9 +31,14 @@ from plane.settings.redis import redis_instance
 
 
 class InstanceEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [
+                InstanceAdminPermission(),
+            ]
+        return [
+            AllowAny(),
+        ]
 
     def post(self, request):
         # Check if the instance is registered
@@ -56,12 +61,13 @@ class InstanceEndpoint(BaseAPIView):
             headers = {"Content-Type": "application/json"}
 
             payload = {
-                "email": request.user.email,
+                "instance_key": os.environ.get("INSTANCE_KEY"),
                 "version": data.get("version", 0.1),
+                "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
             }
 
             response = requests.post(
-                f"{license_engine_base_url}/api/instances",
+                f"{license_engine_base_url}/api/instances/",
                 headers=headers,
                 data=json.dumps(payload),
             )
@@ -77,17 +83,8 @@ class InstanceEndpoint(BaseAPIView):
                     version=data.get("version"),
                     last_checked_at=timezone.now(),
                 )
-                # Create instance admin
-                _ = InstanceAdmin.objects.create(
-                    user=request.user,
-                    instance=instance,
-                    role=20,
-                )
-
                 return Response(
-                    {
-                        "message": f"Instance succesfully registered with owner: {instance.primary_owner.email}"
-                    },
+                    {"message": "Instance succesfully registered"},
                     status=status.HTTP_201_CREATED,
                 )
             return Response(
@@ -96,9 +93,7 @@ class InstanceEndpoint(BaseAPIView):
             )
         else:
             return Response(
-                {
-                    "message": f"Instance already registered with instance owner: {instance.primary_owner.email}"
-                },
+                {"message": "Instance already registered"},
                 status=status.HTTP_200_OK,
             )
 
@@ -106,10 +101,15 @@ class InstanceEndpoint(BaseAPIView):
         instance = Instance.objects.first()
         # get the instance
         if instance is None:
-            return Response({"activated": False}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"is_activated": False, "is_setup_done": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         # Return instance
         serializer = InstanceSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = serializer.data
+        data["is_activated"] = True
+        return Response(data, status=status.HTTP_200_OK)
 
     def patch(self, request):
         # Get the instance
@@ -337,6 +337,10 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
     def post(self, request):
         instance = Instance.objects.first()
 

@@ -35,6 +35,7 @@ class Command(BaseCommand):
             "GPT_ENGINE": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
             # Unsplash Access Key
             "UNSPLASH_ACCESS_KEY": encrypt_data(os.environ.get("UNSPLASH_ACESS_KEY", "")) if os.environ.get("UNSPLASH_ACESS_KEY") else None,
+            "ENABLE_EMAIL_AUTOMATION": "1",
         }
 
         for key, value in config_keys.items():

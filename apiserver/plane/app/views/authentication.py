@@ -35,6 +35,7 @@ from plane.settings.redis import redis_instance
 from plane.license.models import InstanceConfiguration, InstanceAdmin, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
+from plane.bgtasks.magic_link_code_task import magic_link
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -163,7 +164,7 @@ class SignInEndpoint(BaseAPIView):
         # Delete all the invites
         workspace_member_invites.delete()
         project_member_invites.delete()
-        # Send event 
+        # Send event
         if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
             auth_events.delay(
                 user=user.id,
@@ -172,7 +173,7 @@ class SignInEndpoint(BaseAPIView):
                 ip=request.META.get("REMOTE_ADDR"),
                 event_name="SIGN_IN",
                 medium="EMAIL",
-                first_time=False
+                first_time=False,
             )
 
         access_token, refresh_token = get_tokens_for_user(user)
@@ -289,31 +290,46 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-        if not license_engine_base_url:
-            raise Response({"error": "License Engine url is not configured"}, status=status.HTTP_400_BAD_REQUEST)
+        if get_configuration_value(
+            instance_configuration,
+            "ENABLE_EMAIL_AUTOMATION",
+            os.environ.get("ENABLE_EMAIL_AUTOMATION"),
+        ) == "1":
 
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response({"error": "Instance is not configured"}, status=status.HTTP_400_BAD_REQUEST)
+            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+            if not license_engine_base_url:
+                raise Response(
+                    {"error": "License Engine url is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        headers = {
-            "Content-Type": "application/json",
-            "x-instance-id": instance.instance_id,
-            "x-api-key": instance.api_key,
-        }
+            instance = Instance.objects.first()
+            if instance is None:
+                return Response(
+                    {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
-        payload = {
-            "current_site": request.META.get("HTTP_ORIGIN"),
-            "code": token,
-            "email": email,
-        }
+            headers = {
+                "Content-Type": "application/json",
+                "x-instance-id": instance.instance_id,
+                "x-api-key": instance.api_key,
+            }
 
-        response = requests.post(
-            f"{license_engine_base_url}/api/instances/users/magic-code/",
-            headers=headers,
-            data=json.dumps(payload),
-        )
+            payload = {
+                "current_site": request.META.get("HTTP_ORIGIN"),
+                "code": token,
+                "email": email,
+            }
+
+            response = requests.post(
+                f"{license_engine_base_url}/api/instances/users/magic-code/",
+                headers=headers,
+                data=json.dumps(payload),
+            )
+        else:
+            current_site = request.META.get('HTTP_ORIGIN')
+            magic_link.delay(email, key, token, current_site)
 
         return Response({"key": key}, status=status.HTTP_200_OK)
 
@@ -324,7 +340,6 @@ class MagicSignInEndpoint(BaseAPIView):
     ]
 
     def post(self, request):
-
         instance = Instance.objects.first()
         if instance is None:
             return Response(
@@ -338,7 +353,6 @@ class MagicSignInEndpoint(BaseAPIView):
                 {"error": "License engine base url is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
 
         user_token = request.data.get("token", "").strip()
         key = request.data.get("key", False).strip().lower()
@@ -367,7 +381,7 @@ class MagicSignInEndpoint(BaseAPIView):
                             },
                             status=status.HTTP_403_FORBIDDEN,
                         )
-                    # Send event 
+                    # Send event
                     if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                         auth_events.delay(
                             user=user.id,
@@ -376,7 +390,7 @@ class MagicSignInEndpoint(BaseAPIView):
                             ip=request.META.get("REMOTE_ADDR"),
                             event_name="SIGN_IN",
                             medium="MAGIC_LINK",
-                            first_time=False
+                            first_time=False,
                         )
 
                 else:
@@ -387,7 +401,7 @@ class MagicSignInEndpoint(BaseAPIView):
                         password=make_password(uuid.uuid4().hex),
                         is_password_autoset=True,
                     )
-                    # Send event 
+                    # Send event
                     if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                         auth_events.delay(
                             user=user.id,
@@ -396,7 +410,7 @@ class MagicSignInEndpoint(BaseAPIView):
                             ip=request.META.get("REMOTE_ADDR"),
                             event_name="SIGN_IN",
                             medium="MAGIC_LINK",
-                            first_time=True
+                            first_time=True,
                         )
 
                     # Save the user in control center
@@ -416,7 +430,6 @@ class MagicSignInEndpoint(BaseAPIView):
                             }
                         ),
                     )
-
 
                 user.is_active = True
                 user.is_email_verified = True

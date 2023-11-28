@@ -19,8 +19,11 @@ from plane.license.utils.instance_value import get_configuration_value
 @shared_task
 def magic_link(email, key, token, current_site):
     try:
-        realtivelink = f"/magic-sign-in/?password={token}&key={key}"
-        abs_url = current_site + realtivelink
+        if current_site:
+            realtivelink = f"/magic-sign-in/?password={token}&key={key}"
+            abs_url = current_site + realtivelink
+        else:
+            abs_url = ""
 
         subject = "Login for Plane"
 
