@@ -32,7 +32,7 @@ from plane.db.models import (
     ProjectMember,
 )
 from plane.settings.redis import redis_instance
-from plane.license.models import InstanceConfiguration, InstanceAdmin, Instance
+from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
 from plane.bgtasks.magic_link_code_task import magic_link
