@@ -78,13 +78,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleAddIssueToCycle = async (cycleId: string) => {
     if (!workspaceSlug || !issue || !cycleId) return;
 
-    addIssueToCycle(workspaceSlug.toString(), issue.project_detail.id, cycleId, issue);
+    addIssueToCycle(workspaceSlug.toString(), cycleId, [issue.id]);
   };
 
   const handleAddIssueToModule = async (moduleId: string) => {
     if (!workspaceSlug || !issue || !moduleId) return;
 
-    addIssueToModule(workspaceSlug.toString(), issue.project_detail.id, moduleId, issue);
+    addIssueToModule(workspaceSlug.toString(), moduleId, [issue.id]);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
