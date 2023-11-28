@@ -37,6 +37,18 @@ export class AuthService extends APIService {
       });
   }
 
+  async setAdminInstancePassword(data: any): Promise<any> {
+    return this.post("/api/users/me/set-password/", data, { headers: {} })
+      .then((response) => {
+        this.setAccessToken(response?.data?.access_token);
+        this.setRefreshToken(response?.data?.refresh_token);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async socialAuth(data: any): Promise<ILoginTokenResponse> {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
