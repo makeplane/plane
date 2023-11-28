@@ -126,15 +126,15 @@ const DocumentEditor = ({
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
         documentDetails={documentDetails}
       />
-      <div className="h-full w-full flex overflow-y-auto">
-        <div className="flex-shrink-0 h-full w-56 lg:w-80 sticky top-0">
+      <div className="h-full w-full flex overflow-y-auto overflow-x-hidden">
+        <div className={'w-[20%] flex-shrink-0 h-full sticky top-0'}>
           <SummarySideBar
             editor={editor}
             markings={markings}
             sidePeekVisible={sidePeekVisible}
           />
         </div>
-        <div className="h-full w-full">
+        <div className={'h-full transition-all duration-200 transform w-[80%] -translate-x'}>
           <PageRenderer
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
