@@ -5,6 +5,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EFilterType } from "store/issues/types";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
+import isEmpty from "lodash/isEmpty";
 
 interface IProjectIssuesFiltersOptions {
   filters: IIssueFilterOptions;
@@ -121,12 +122,18 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
 
       let _projectIssueFilters = this.projectIssueFilters;
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[workspaceSlug])
-        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[workspaceSlug] = {
-        ..._projectIssueFilters[workspaceSlug],
-        ...issueFilters,
-      };
+      if (!_projectIssueFilters[workspaceSlug]) {
+        _projectIssueFilters[workspaceSlug] = { displayProperties: {} } as IProjectIssuesDisplayOptions;
+      }
+      if (
+        isEmpty(_projectIssueFilters[workspaceSlug].filters) ||
+        isEmpty(_projectIssueFilters[workspaceSlug].displayFilters)
+      ) {
+        _projectIssueFilters[workspaceSlug] = {
+          ..._projectIssueFilters[workspaceSlug],
+          ...issueFilters,
+        };
+      }
 
       runInAction(() => {
         this.projectIssueFilters = _projectIssueFilters;
@@ -184,7 +191,6 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
 
       return _filters;
     } catch (error) {
-      this.fetchDisplayFilters(workspaceSlug);
       throw error;
     }
   };
@@ -192,12 +198,12 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
   fetchDisplayProperties = async (workspaceSlug: string) => {
     try {
       const displayProperties: IIssueDisplayProperties = {
-        assignee: false,
+        assignee: true,
         start_date: false,
         due_date: false,
-        labels: false,
-        key: false,
-        priority: false,
+        labels: true,
+        key: true,
+        priority: true,
         state: false,
         sub_issue_count: false,
         link: false,
@@ -209,12 +215,15 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
 
       let _projectIssueFilters = { ...this.projectIssueFilters };
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[workspaceSlug])
-        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[workspaceSlug] = {
-        ..._projectIssueFilters[workspaceSlug],
-        displayProperties: displayProperties,
-      };
+      if (!_projectIssueFilters[workspaceSlug]) {
+        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {} } as IProjectIssuesDisplayOptions;
+      }
+      if (isEmpty(_projectIssueFilters[workspaceSlug].displayProperties)) {
+        _projectIssueFilters[workspaceSlug] = {
+          ..._projectIssueFilters[workspaceSlug],
+          displayProperties: displayProperties,
+        };
+      }
 
       runInAction(() => {
         this.projectIssueFilters = _projectIssueFilters;
@@ -242,7 +251,6 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
 
       return properties;
     } catch (error) {
-      this.fetchDisplayProperties(workspaceSlug);
       throw error;
     }
   };
