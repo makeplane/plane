@@ -16,11 +16,12 @@ import {
   UnderLineItem,
 } from "@plane/editor-core";
 import { Tooltip } from "@plane/ui";
-import { UploadImage } from "../../";
 import type { SVGProps } from "react";
+import { UploadImage } from "@plane/editor-types";
+
 interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
-  size?: string | number
-  absoluteStrokeWidth?: boolean
+  size?: string | number;
+  absoluteStrokeWidth?: boolean;
 }
 
 type LucideIcon = (props: LucideProps) => JSX.Element;

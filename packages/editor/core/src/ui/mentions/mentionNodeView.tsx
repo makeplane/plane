@@ -3,7 +3,7 @@
 import { NodeViewWrapper } from "@tiptap/react";
 import { cn } from "../../lib/utils";
 import { useRouter } from "next/router";
-import { IMentionHighlight } from "../../types/mention-suggestion";
+import { IMentionHighlight } from "@plane/editor-types";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (props) => {

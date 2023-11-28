@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
     "next": "12.3.2",
@@ -29,7 +30,8 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
-    "@plane/ui": "*"
+    "@plane/ui": "*",
+    "@plane/editor-types": "*"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
