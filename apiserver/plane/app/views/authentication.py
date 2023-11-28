@@ -4,8 +4,6 @@ import uuid
 import random
 import string
 import json
-import requests
-from requests.exceptions import RequestException
 
 # Django imports
 from django.utils import timezone
@@ -44,6 +42,67 @@ def get_tokens_for_user(user):
         str(refresh.access_token),
         str(refresh),
     )
+
+
+class SignUpEndpoint(BaseAPIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+
+        if not settings.ENABLE_SIGNUP:
+            return Response(
+                {
+                    "error": "New account creation is disabled. Please contact your site administrator"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = request.data.get("email", False)
+        password = request.data.get("password", False)
+
+        ## Raise exception if any of the above are missing
+        if not email or not password:
+            return Response(
+                {"error": "Both email and password are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = email.strip().lower()
+
+        try:
+            validate_email(email)
+        except ValidationError as e:
+            return Response(
+                {"error": "Please provide a valid email address."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the user already exists
+        if User.objects.filter(email=email).exists():
+            return Response(
+                {"error": "User with this email already exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.create(email=email, username=uuid.uuid4().hex)
+        user.set_password(password)
+
+        # settings last actives for the user
+        user.last_active = timezone.now()
+        user.last_login_time = timezone.now()
+        user.last_login_ip = request.META.get("REMOTE_ADDR")
+        user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+        user.token_updated_at = timezone.now()
+        user.save()
+
+        access_token, refresh_token = get_tokens_for_user(user)
+
+        data = {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class SignInEndpoint(BaseAPIView):
