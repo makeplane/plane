@@ -24,7 +24,9 @@ jobs:
       - name: Run install
         uses: borales/actions-yarn@v4
         with:
-          cmd: install # will run `yarn install` command
+          cmd: |
+              npm i -g yarn@3.6.4
+              install # will run `yarn install` command
 
       - name: Get changed files
         id: changed-files
