@@ -5,8 +5,9 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { EmptyState } from "components/common";
 // assets
-import emptyIssue from "public/empty-state/issue.svg";
+import emptyIssue from "public/empty-state/empty_issues.webp";
 import { EProjectStore } from "store/command-palette.store";
+import { NewEmptyState } from "components/common/new-empty-state";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   const {
@@ -16,12 +17,18 @@ export const ProjectEmptyState: React.FC = observer(() => {
 
   return (
     <div className="h-full w-full grid place-items-center">
-      <EmptyState
-        title="Project issues will appear here"
-        description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."
+      <NewEmptyState
+        title="Create an issue and assign it to someone, even yourself"
+        description="Think of issues as jobs, tasks, work, or JTBD. Which we like.An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal."
         image={emptyIssue}
+        comicBox={{
+          title: "Issues are building blocks in Plane.",
+          direction: "left",
+          description:
+            "Redesign the Plane UI, Rebrand the company, or Launch the new fuel injection system are examples of issues that likely have sub-issues.",
+        }}
         primaryButton={{
-          text: "New issue",
+          text: "Create your first issue",
           icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
           onClick: () => {
             setTrackElement("PROJECT_EMPTY_STATE");

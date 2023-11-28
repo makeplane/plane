@@ -7,9 +7,10 @@ import { ProjectCard } from "components/project";
 import { EmptyState } from "components/project/empty-state";
 import { Loader } from "@plane/ui";
 // images
-import emptyProject from "public/empty-state/Project_full_screen.svg";
+import emptyProject from "public/empty-state/empty_project.webp";
 // icons
 import { Plus } from "lucide-react";
+import { NewEmptyState } from "components/common/new-empty-state";
 
 export interface IProjectCardList {
   workspaceSlug: string;
@@ -18,7 +19,11 @@ export interface IProjectCardList {
 export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   const { workspaceSlug } = props;
   // store
-  const { project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
@@ -50,17 +55,21 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
           )}
         </div>
       ) : (
-        <EmptyState
+        <NewEmptyState
           image={emptyProject}
-          title="Why no fly 😔"
-          description="Let’s take off, cap’n!"
+          title="Start a Project"
+          description="Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal."
+          comicBox={{
+            title: "Everything starts with a project in Plane",
+            direction: "right",
+            description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+          }}
           primaryButton={{
-            icon: <Plus className="h-4 w-4" />,
-            text: "Start something new",
+            text: "Start your first project",
             onClick: () => {
               setTrackElement("PROJECTS_EMPTY_STATE");
-              commandPaletteStore.toggleCreateProjectModal(true)
-            }
+              commandPaletteStore.toggleCreateProjectModal(true);
+            },
           }}
         />
       )}

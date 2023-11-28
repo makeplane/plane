@@ -68,20 +68,23 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           </div>
         ) : (
           <>
-            {/* <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} /> */}
-            <div className="h-full w-full overflow-auto">
-              {activeLayout === "list" ? (
-                <CycleListLayout />
-              ) : activeLayout === "kanban" ? (
-                <CycleKanBanLayout />
-              ) : activeLayout === "calendar" ? (
-                <CycleCalendarLayout />
-              ) : activeLayout === "gantt_chart" ? (
-                <CycleGanttLayout />
-              ) : activeLayout === "spreadsheet" ? (
-                <CycleSpreadsheetLayout />
-              ) : null}
-            </div>
+            {Object.keys(getIssues ?? {}).length == 0 ? (
+              <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
+            ) : (
+              <div className="h-full w-full overflow-auto">
+                {activeLayout === "list" ? (
+                  <CycleListLayout />
+                ) : activeLayout === "kanban" ? (
+                  <CycleKanBanLayout />
+                ) : activeLayout === "calendar" ? (
+                  <CycleCalendarLayout />
+                ) : activeLayout === "gantt_chart" ? (
+                  <CycleGanttLayout />
+                ) : activeLayout === "spreadsheet" ? (
+                  <CycleSpreadsheetLayout />
+                ) : null}
+              </div>
+            )}
           </>
         )}
       </div>
