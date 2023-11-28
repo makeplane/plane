@@ -196,7 +196,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if isinstance(e, ValidationError):
                 return Response(
-                    {"error": "Please provide valid detail", "e": str(e)},
+                    {"error": "Please provide valid detail"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -213,7 +213,7 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 print(e)
             capture_exception(e)
-            return Response({"error": "Something went wrong please try again later", "e": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Something went wrong please try again later"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
     def dispatch(self, request, *args, **kwargs):

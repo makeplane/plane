@@ -80,7 +80,12 @@ class UserMeSettingsSerializer(BaseSerializer):
         workspace_invites = WorkspaceMemberInvite.objects.filter(
             email=obj.email
         ).count()
-        if obj.last_workspace_id is not None:
+        if (
+            obj.last_workspace_id is not None
+            and Workspace.objects.filter(
+                pk=obj.last_workspace_id, workspace_member__member=obj.id
+            ).exists()
+        ):
             workspace = Workspace.objects.filter(
                 pk=obj.last_workspace_id,
                 workspace_member__member=obj.id,
