@@ -253,7 +253,7 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
             )
 
         ri = redis_instance()
-        print(key)
+
         if ri.exists(key):
             data = json.loads(ri.get(key))
 

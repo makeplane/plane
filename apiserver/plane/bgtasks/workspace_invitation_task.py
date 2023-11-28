@@ -1,5 +1,7 @@
 # Python imports
 import os
+import requests
+import json
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -15,7 +17,7 @@ from slack_sdk.errors import SlackApiError
 
 # Module imports
 from plane.db.models import Workspace, WorkspaceMemberInvite, User
-from plane.license.models import InstanceConfiguration
+from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -35,12 +37,58 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         # The complete url including the domain
         abs_url = current_site + relative_link
 
+        # Send the email if the users don't have smtp configured
+        if not (
+            get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST_USER",
+                os.environ.get("EMAIL_HOST_USER", None),
+            )
+            and get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST_PASSWORD",
+                os.environ.get("EMAIL_HOST_PASSWORD", None),
+            )
+            and get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST",
+                os.environ.get("EMAIL_HOST", None),
+            )
+        ):
+            # Check the instance registration
+            instance = Instance.objects.first()
+
+            # send the emails through control center
+            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+            if not license_engine_base_url:
+                raise Exception("License engine base url is required")
+
+            headers = {
+                "Content-Type": "application/json",
+                "x-instance-id": instance.instance_id,
+                "x-api-key": instance.api_key,
+            }
+
+            payload = {
+                "user": user.first_name or user.display_name or user.email,
+                "workspace_name": workspace.name,
+                "invitation_url": abs_url,
+                "email": email,
+            }
+            _ = requests.post(
+                f"{license_engine_base_url}/api/instances/users/workspace-invitation/",
+                headers=headers,
+                data=json.dumps(payload),
+            )
+
+            return
+
         # Subject of the email
         subject = f"{user.first_name or user.display_name or user.email} invited you to join {workspace.name} on Plane"
 
         context = {
             "email": email,
-            "first_name": invitor,
+            "first_name": user.first_name or user.display_name or user.email,
             "workspace_name": workspace.name,
             "invitation_url": abs_url,
         }

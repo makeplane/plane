@@ -291,60 +291,27 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-        if (
-            get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_USER",
-                os.environ.get("EMAIL_HOST_USER", None),
-            )
-            and get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_PASSWORD",
-                os.environ.get("EMAIL_HOST_PASSWORD", None),
-            )
-            and get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST",
-                os.environ.get("EMAIL_HOST", None),
-            )
-        ):
-            # If the smtp is configured send through here
-            current_site = request.META.get("HTTP_ORIGIN")
-            magic_link.delay(email, key, token, current_site)
-        else:
-            # Check the instance registration
-            instance = Instance.objects.first()
-            if instance is None:
-                return Response(
-                    {"error": "Instance is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
-            # send the emails through control center
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-            if not license_engine_base_url:
-                raise Response(
-                    {"error": "License Engine url is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        # If the smtp is configured send through here
+        current_site = request.META.get("HTTP_ORIGIN")
+        magic_link.delay(email, key, token, current_site)
 
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-
-            payload = {
-                "current_site": request.META.get("HTTP_ORIGIN"),
-                "code": token,
-                "email": email,
-            }
-
-            response = requests.post(
-                f"{license_engine_base_url}/api/instances/users/magic-code/",
-                headers=headers,
-                data=json.dumps(payload),
+        # Check the instance registration
+        instance = Instance.objects.first()
+        if instance is None:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # send the emails through control center
+        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+        if not license_engine_base_url:
+            raise Response(
+                {"error": "License Engine url is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         return Response({"key": key}, status=status.HTTP_200_OK)
 
 
