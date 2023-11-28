@@ -13,7 +13,7 @@ export const useEditorMarkings = () => {
     let h2Sequence: number = 0
     if (nodes) {
       nodes.forEach((node) => {
-        if (node.type === "heading" && (node.attrs.level === 1 || node.attrs.level === 2) && node.content) {
+        if (node.type === "heading" && (node.attrs.level === 1 || node.attrs.level === 2 || node.attrs.level === 3) && node.content) {
           tempMarkings.push({
             type: "heading",
             level: node.attrs.level,
@@ -26,8 +26,8 @@ export const useEditorMarkings = () => {
     setMarkings(tempMarkings)
   }
 
-	return {
-		updateMarkings,
-		markings,
-	}
+  return {
+    updateMarkings,
+    markings,
+  }
 }
