@@ -220,13 +220,13 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    cycleIssueStore.addIssueToCycle(workspaceSlug, activeProject, cycleId, issue);
+    cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, [issue.id]);
   };
 
   const addIssueToModule = async (issue: IIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    moduleIssueStore.addIssueToModule(workspaceSlug, activeProject, moduleId, issue);
+    moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, [issue.id]);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
@@ -240,7 +240,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         if (handleSubmit) {
           await handleSubmit(res);
         } else {
-          currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation");
+          currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
           if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res, payload.cycle);
           if (payload.module && payload.module !== "") await addIssueToModule(res, payload.module);

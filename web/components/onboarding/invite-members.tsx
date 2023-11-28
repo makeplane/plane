@@ -2,7 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { Listbox, Transition } from "@headlessui/react";
-import { Control, Controller, FieldArrayWithId, UseFieldArrayRemove, useFieldArray, useForm } from "react-hook-form";
+import {
+  Control,
+  Controller,
+  FieldArrayWithId,
+  UseFieldArrayRemove,
+  UseFormGetValues,
+  UseFormSetValue,
+  UseFormWatch,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { Check, ChevronDown, Plus, XCircle } from "lucide-react";
 // services
 import { WorkspaceService } from "services/workspace.service";
@@ -34,6 +44,7 @@ type Props = {
 type EmailRole = {
   email: string;
   role: TUserWorkspaceRole;
+  role_active: boolean;
 };
 
 type FormValues = {
@@ -44,6 +55,9 @@ type InviteMemberFormProps = {
   index: number;
   remove: UseFieldArrayRemove;
   control: Control<FormValues, any>;
+  setValue: UseFormSetValue<FormValues>;
+  getValues: UseFormGetValues<FormValues>;
+  watch: UseFormWatch<FormValues>;
   field: FieldArrayWithId<FormValues, "emails", "id">;
   fields: FieldArrayWithId<FormValues, "emails", "id">[];
   errors: any;
@@ -53,9 +67,33 @@ type InviteMemberFormProps = {
 
 // services
 const workspaceService = new WorkspaceService();
+const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
+const placeholderEmails = [
+  "charlie.taylor@frstflit.com",
+  "octave.chanute@frstflit.com",
+  "george.spratt@frstflit.com",
+  "frank.coffyn@frstflit.com",
+  "amos.root@frstflit.com",
+  "edward.deeds@frstflit.com",
+  "charles.m.manly@frstflit.com",
+  "glenn.curtiss@frstflit.com",
+  "thomas.selfridge@frstflit.com",
+  "albert.zahm@frstflit.com",
+];
 const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
-  const { control, index, fields, remove, errors, isInvitationDisabled, setIsInvitationDisabled } = props;
+  const {
+    control,
+    index,
+    fields,
+    remove,
+    errors,
+    isInvitationDisabled,
+    setIsInvitationDisabled,
+    setValue,
+    getValues,
+    watch,
+  } = props;
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -64,131 +102,159 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 
   useDynamicDropdownPosition(isDropdownOpen, () => setIsDropdownOpen(false), buttonRef, dropdownRef);
 
+  const email = watch(`emails.${index}.email`);
+
+  const emailOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value === "") {
+      const validEmail = fields.map((_, i) => emailRegex.test(getValues(`emails.${i}.email`))).includes(true);
+      if (validEmail) {
+        setIsInvitationDisabled(false);
+      } else {
+        setIsInvitationDisabled(true);
+      }
+
+      if (getValues(`emails.${index}.role_active`)) {
+        setValue(`emails.${index}.role_active`, false);
+      }
+    } else {
+      if (!getValues(`emails.${index}.role_active`)) {
+        setValue(`emails.${index}.role_active`, true);
+      }
+      if (isInvitationDisabled && emailRegex.test(event.target.value)) {
+        setIsInvitationDisabled(false);
+      } else if (!isInvitationDisabled && !emailRegex.test(event.target.value)) {
+        setIsInvitationDisabled(true);
+      }
+    }
+  };
+
   return (
-    <div className="group relative grid grid-cols-11 gap-4">
-      <div className="col-span-7 bg-onboarding-background-200 rounded-md">
-        <Controller
-          control={control}
-          name={`emails.${index}.email`}
-          rules={{
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "Invalid Email ID",
-            },
-          }}
-          render={({ field: { value, onChange, ref } }) => (
-            <Input
-              id={`emails.${index}.email`}
-              name={`emails.${index}.email`}
-              type="text"
-              value={value}
-              onChange={(event) => {
-                if (event.target.value === "") {
-                  const validEmail = !fields
-                    .filter((ele) => {
-                      ele.id !== `emails.${index}.email`;
-                    })
-                    .map((ele) => ele.email)
-                    .includes("");
-                  if (validEmail) {
-                    setIsInvitationDisabled(false);
-                  } else {
-                    setIsInvitationDisabled(true);
-                  }
-                } else if (
-                  isInvitationDisabled &&
-                  /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(event.target.value)
-                ) {
-                  setIsInvitationDisabled(false);
-                } else if (
-                  !isInvitationDisabled &&
-                  !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(event.target.value)
-                ) {
-                  setIsInvitationDisabled(true);
-                }
-                onChange(event);
-              }}
-              ref={ref}
-              hasError={Boolean(errors.emails?.[index]?.email)}
-              placeholder="Enter their email..."
-              className="text-xs sm:text-sm w-full h-12 placeholder:text-onboarding-text-400 border-onboarding-border-100"
-            />
-          )}
-        />
-      </div>
-      <div className="col-span-3 bg-onboarding-background-200 rounded-md border items-center flex border-onboarding-border-100">
-        <Controller
-          control={control}
-          name={`emails.${index}.role`}
-          rules={{ required: true }}
-          render={({ field: { value, onChange } }) => (
-            <Listbox
-              as="div"
-              value={value}
-              onChange={(val) => {
-                onChange(val);
-                setIsDropdownOpen(false);
-              }}
-              className="flex-shrink-0 text-left w-full"
-            >
-              <Listbox.Button
-                type="button"
-                ref={buttonRef}
-                onClick={() => setIsDropdownOpen((prev) => !prev)}
-                className="flex items-center px-2.5 h-11 py-2 text-xs justify-between gap-1 w-full rounded-md duration-300"
+    <div>
+      <div className="group relative grid grid-cols-11 gap-4">
+        <div className="col-span-7 bg-onboarding-background-200 rounded-md">
+          <Controller
+            control={control}
+            name={`emails.${index}.email`}
+            rules={{
+              pattern: {
+                value: emailRegex,
+                message: "Invalid Email ID",
+              },
+            }}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id={`emails.${index}.email`}
+                name={`emails.${index}.email`}
+                type="text"
+                value={value}
+                onChange={(event) => {
+                  emailOnChange(event);
+                  onChange(event);
+                }}
+                ref={ref}
+                hasError={Boolean(errors.emails?.[index]?.email)}
+                placeholder={placeholderEmails[index % placeholderEmails.length]}
+                className="text-xs sm:text-sm w-full h-12 placeholder:text-onboarding-text-400 border-onboarding-border-100"
+              />
+            )}
+          />
+        </div>
+        <div className="col-span-3 bg-onboarding-background-200 rounded-md border items-center flex border-onboarding-border-100">
+          <Controller
+            control={control}
+            name={`emails.${index}.role`}
+            rules={{ required: true }}
+            render={({ field: { value, onChange } }) => (
+              <Listbox
+                as="div"
+                value={value}
+                onChange={(val) => {
+                  onChange(val);
+                  setIsDropdownOpen(false);
+                  setValue(`emails.${index}.role_active`, true);
+                }}
+                className="flex-shrink-0 text-left w-full"
               >
-                <span className="text-xs text-onboarding-text-400 sm:text-sm">{ROLE[value]}</span>
-
-                <ChevronDown className="h-4 w-4 stroke-onboarding-text-400" />
-              </Listbox.Button>
-
-              <Transition
-                show={isDropdownOpen}
-                as={React.Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Listbox.Options
-                  ref={dropdownRef}
-                  className="fixed w-36 z-10 border border-onboarding-border-100 mt-1 overflow-y-auto rounded-md bg-onboarding-background-200 text-xs shadow-lg focus:outline-none max-h-48"
+                <Listbox.Button
+                  type="button"
+                  ref={buttonRef}
+                  onClick={() => setIsDropdownOpen((prev) => !prev)}
+                  className="flex items-center px-2.5 h-11 py-2 text-xs justify-between gap-1 w-full rounded-md duration-300"
                 >
-                  <div className="space-y-1 p-2">
-                    {Object.entries(ROLE).map(([key, value]) => (
-                      <Listbox.Option
-                        key={key}
-                        value={parseInt(key)}
-                        className={({ active, selected }) =>
-                          `cursor-pointer select-none truncate rounded px-1 py-1.5 ${active || selected ? "bg-onboarding-background-400/40" : ""
-                          } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
-                        }
-                      >
-                        {({ selected }) => (
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">{value}</div>
-                            {selected && <Check className="h-4 w-4 flex-shrink-0" />}
-                          </div>
-                        )}
-                      </Listbox.Option>
-                    ))}
-                  </div>
-                </Listbox.Options>
-              </Transition>
-            </Listbox>
-          )}
-        />
+                  <span
+                    className={`text-xs ${
+                      !getValues(`emails.${index}.role_active`)
+                        ? "text-onboarding-text-400"
+                        : "text-onboarding-text-100"
+                    } sm:text-sm`}
+                  >
+                    {ROLE[value]}
+                  </span>
+
+                  <ChevronDown
+                    className={`h-4 w-4 ${
+                      !getValues(`emails.${index}.role_active`)
+                        ? "stroke-onboarding-text-400"
+                        : "stroke-onboarding-text-100"
+                    }`}
+                  />
+                </Listbox.Button>
+
+                <Transition
+                  show={isDropdownOpen}
+                  as={React.Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Listbox.Options
+                    ref={dropdownRef}
+                    className="fixed w-36 z-10 border border-onboarding-border-100 mt-1 overflow-y-auto rounded-md bg-onboarding-background-200 text-xs shadow-lg focus:outline-none max-h-48"
+                  >
+                    <div className="space-y-1 p-2">
+                      {Object.entries(ROLE).map(([key, value]) => (
+                        <Listbox.Option
+                          key={key}
+                          value={parseInt(key)}
+                          className={({ active, selected }) =>
+                            `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                              active || selected ? "bg-onboarding-background-400/40" : ""
+                            } ${selected ? "text-onboarding-text-100" : "text-custom-text-200"}`
+                          }
+                        >
+                          {({ selected }) => (
+                            <div className="flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-2">{value}</div>
+                              {selected && <Check className="h-4 w-4 flex-shrink-0" />}
+                            </div>
+                          )}
+                        </Listbox.Option>
+                      ))}
+                    </div>
+                  </Listbox.Options>
+                </Transition>
+              </Listbox>
+            )}
+          />
+        </div>
+        {fields.length > 1 && (
+          <button
+            type="button"
+            className="hidden group-hover:grid self-center place-items-center rounded ml-3"
+            onClick={() => remove(index)}
+          >
+            <XCircle className="h-3.5 w-3.5 text-custom-text-400" />
+          </button>
+        )}
       </div>
-      {fields.length > 1 && (
-        <button
-          type="button"
-          className="hidden group-hover:grid self-center place-items-center rounded ml-3"
-          onClick={() => remove(index)}
-        >
-          <XCircle className="h-3.5 w-3.5 text-custom-text-400" />
-        </button>
+      {email && !emailRegex.test(email) && (
+        <div className="">
+          <span className="text-sm">🤥</span>{" "}
+          <span className="text-xs text-red-500 mt-1">That doesn{"'"}t look like an email address.</span>
+        </div>
       )}
     </div>
   );
@@ -204,6 +270,9 @@ export const InviteMembers: React.FC<Props> = (props) => {
 
   const {
     control,
+    watch,
+    getValues,
+    setValue,
     handleSubmit,
     formState: { isSubmitting, errors, isValid },
   } = useForm<FormValues>();
@@ -229,7 +298,12 @@ export const InviteMembers: React.FC<Props> = (props) => {
     payload = { emails: payload.emails.filter((email) => email.email !== "") };
 
     await workspaceService
-      .inviteWorkspace(workspace.slug, payload)
+      .inviteWorkspace(workspace.slug, {
+        emails: payload.emails.map((email) => ({
+          email: email.email,
+          role: email.role,
+        })),
+      })
       .then(async () => {
         setToastAlert({
           type: "success",
@@ -249,16 +323,16 @@ export const InviteMembers: React.FC<Props> = (props) => {
   };
 
   const appendField = () => {
-    append({ email: "", role: 15 });
+    append({ email: "", role: 15, role_active: false });
   };
 
   useEffect(() => {
     if (fields.length === 0) {
       append(
         [
-          { email: "", role: 15 },
-          { email: "", role: 15 },
-          { email: "", role: 15 },
+          { email: "", role: 15, role_active: false },
+          { email: "", role: 15, role_active: false },
+          { email: "", role: 15, role_active: false },
         ],
         {
           focusIndex: 0,
@@ -325,6 +399,9 @@ export const InviteMembers: React.FC<Props> = (props) => {
             <div className="space-y-3 sm:space-y-4 mb-3">
               {fields.map((field, index) => (
                 <InviteMemberForm
+                  watch={watch}
+                  getValues={getValues}
+                  setValue={setValue}
                   isInvitationDisabled={isInvitationDisabled}
                   setIsInvitationDisabled={(value: boolean) => setIsInvitationDisabled(value)}
                   control={control}

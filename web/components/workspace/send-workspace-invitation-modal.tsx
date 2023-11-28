@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
+import { Plus, X } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
-// icons
-import { Plus, X } from "lucide-react";
 // types
 import { IWorkspaceBulkInviteFormData, TUserWorkspaceRole } from "types";
 // constants
@@ -34,9 +36,12 @@ const defaultValues: FormValues = {
   ],
 };
 
-export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
+export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) => {
   const { isOpen, onClose, onSubmit } = props;
-
+  // mobx store
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
   // form info
   const {
     control,
@@ -58,30 +63,6 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
       clearTimeout(timeout);
     }, 350);
   };
-
-  // const onSubmit = async (formData: FormValues) => {
-  //   if (!workspaceSlug) return;
-
-  //   return workspaceService
-  //     .inviteWorkspace(workspaceSlug, formData, user)
-
-  //     .then(async () => {
-  //       if (onSuccess) await onSuccess();
-  //       handleClose();
-  //       setToastAlert({
-  //         type: "success",
-  //         title: "Success!",
-  //         message: "Invitations sent successfully.",
-  //       });
-  //     })
-  //     .catch((err) =>
-  //       setToastAlert({
-  //         type: "error",
-  //         title: "Error!",
-  //         message: `${err.error ?? "Something went wrong. Please try again."}`,
-  //       })
-  //     );
-  // };
 
   const appendField = () => {
     append({ email: "", role: 15 });
@@ -181,11 +162,14 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
                                   width="w-full"
                                   input
                                 >
-                                  {Object.entries(ROLE).map(([key, value]) => (
-                                    <CustomSelect.Option key={key} value={parseInt(key)}>
-                                      {value}
-                                    </CustomSelect.Option>
-                                  ))}
+                                  {Object.entries(ROLE).map(([key, value]) => {
+                                    if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
+                                      return (
+                                        <CustomSelect.Option key={key} value={parseInt(key)}>
+                                          {value}
+                                        </CustomSelect.Option>
+                                      );
+                                  })}
                                 </CustomSelect>
                               )}
                             />
@@ -230,4 +214,4 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = (props) => {
       </Dialog>
     </Transition.Root>
   );
-};
+});

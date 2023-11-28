@@ -19,7 +19,7 @@ export interface IProfileIssuesStore {
   loader: TLoader;
   issues: { [user_id: string]: IProfileIssueTabTypes } | undefined;
   currentUserId: string | null;
-  currentUserIssueTab: "assigned" | "created" | "subscribed" | null;
+  currentUserIssueTab: "assigned" | "created" | "subscribed" | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
@@ -28,6 +28,7 @@ export interface IProfileIssuesStore {
     workspaceSlug: string,
     userId: string,
     loadType: TLoader,
+    _?: string,
     type?: "assigned" | "created" | "subscribed"
   ) => Promise<IIssueResponse>;
   createIssue: (workspaceSlug: string, userId: string, data: Partial<IIssue>) => Promise<IIssue | undefined>;
@@ -51,7 +52,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   loader: TLoader = "init-loader";
   issues: { [user_id: string]: IProfileIssueTabTypes } | undefined = undefined;
   currentUserId: string | null = null;
-  currentUserIssueTab: "assigned" | "created" | "subscribed" | null = null;
+  currentUserIssueTab: "assigned" | "created" | "subscribed" | undefined = undefined;
   // root store
   rootStore;
   // service
@@ -86,7 +87,9 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       if (!workspaceSlug || !this.currentUserId || !this.currentUserIssueTab) return;
 
       const userFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
+      if (userFilters) {
+        this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
+      }
     });
   }
 
@@ -102,6 +105,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     const displayFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
+    const subGroupBy = displayFilters?.sub_group_by;
     const groupBy = displayFilters?.group_by;
     const orderBy = displayFilters?.order_by;
     const layout = displayFilters?.layout;
@@ -113,6 +117,15 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     if (layout === "list" && orderBy) {
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
       else issues = this.unGroupedIssues(orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
+    } else if (layout === "kanban" && groupBy && orderBy) {
+      if (subGroupBy)
+        issues = this.subGroupedIssues(
+          subGroupBy,
+          groupBy,
+          orderBy,
+          this.issues[currentUserId][this.currentUserIssueTab]
+        );
+      else issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
     }
 
     return issues;
@@ -138,6 +151,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     workspaceSlug: string,
     userId: string,
     loadType: TLoader = "init-loader",
+    _?: string,
     type?: "assigned" | "created" | "subscribed"
   ) => {
     try {
@@ -186,19 +200,11 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   createIssue = async (workspaceSlug: string, userId: string, data: Partial<IIssue>) => {
     try {
       const projectId = data.project;
-      const moduleId = data.module_id;
-      const cycleId = data.cycle_id;
 
       if (!projectId) return;
 
       let response = {} as IIssue;
       response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-
-      // if (moduleId)
-      //   response = await this.rootStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, response);
-
-      // if (cycleId)
-      //   response = await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -227,8 +233,8 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
       if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[projectId][this.currentUserIssueTab][userId] = {
-        ..._issues[projectId][this.currentUserIssueTab][userId],
+      _issues[userId][this.currentUserIssueTab][userId] = {
+        ..._issues[userId][this.currentUserIssueTab][userId],
         ...data,
       };
 

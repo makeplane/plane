@@ -54,10 +54,20 @@ interface IBaseListRoot {
   getProjects: (projectStore: IProjectStore) => IProject[] | null;
   viewId?: string;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects, viewId, currentStore } = props;
+  const {
+    issueFilterStore,
+    issueStore,
+    QuickActions,
+    issueActions,
+    getProjects,
+    viewId,
+    currentStore,
+    addIssuesToView,
+  } = props;
 
   const {
     project: projectStore,
@@ -130,6 +140,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             isReadonly={!enableInlineEditing}
             disableIssueCreation={!enableIssueCreation}
             currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         </div>
       )}

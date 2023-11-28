@@ -117,38 +117,41 @@ export const GptAssistantModal: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
+      className={`absolute ${inset} z-20 w-full flex flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow overflow-hidden ${
         isOpen ? "block" : "hidden"
       }`}
     >
-      {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
-        <div className="text-sm">
-          Content:
-          <RichReadOnlyEditorWithRef
-            value={htmlContent ?? `<p>${content}</p>`}
-            customClassName="-m-3"
-            noBorder
-            borderOnFocus={false}
-            ref={editorRef}
-          />
-        </div>
-      )}
-      {response !== "" && (
-        <div className="page-block-section text-sm">
-          Response:
-          <RichReadOnlyEditor
-            value={`<p>${response}</p>`}
-            customClassName="-mx-3 -my-3"
-            noBorder
-            borderOnFocus={false}
-          />
-        </div>
-      )}
-      {invalidResponse && (
-        <div className="text-sm text-red-500">
-          No response could be generated. This may be due to insufficient content or task information. Please try again.
-        </div>
-      )}
+      <div className="max-h-72 overflow-y-auto space-y-4 vertical-scroll-enable">
+        {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
+          <div className="text-sm">
+            Content:
+            <RichReadOnlyEditorWithRef
+              value={htmlContent ?? `<p>${content}</p>`}
+              customClassName="-m-3"
+              noBorder
+              borderOnFocus={false}
+              ref={editorRef}
+            />
+          </div>
+        )}
+        {response !== "" && (
+          <div className="page-block-section text-sm">
+            Response:
+            <RichReadOnlyEditor
+              value={`<p>${response}</p>`}
+              customClassName="-mx-3 -my-3"
+              noBorder
+              borderOnFocus={false}
+            />
+          </div>
+        )}
+        {invalidResponse && (
+          <div className="text-sm text-red-500">
+            No response could be generated. This may be due to insufficient content or task information. Please try
+            again.
+          </div>
+        )}
+      </div>
       <Controller
         control={control}
         name="task"

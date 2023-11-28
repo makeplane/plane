@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useTheme } from "next-themes";
+import { observer } from "mobx-react-lite";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
@@ -30,14 +31,22 @@ import type { IWorkspaceMemberInvitation } from "types";
 import { ROLE } from "constants/workspace";
 // components
 import { EmptyState } from "components/common";
+// mobx-store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
 
-const UserInvitationsPage: NextPageWithLayout = () => {
+const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
+
+  // store
+  const {
+    workspace: { workspaceSlug },
+    user: { currentUserSettings },
+  } = useMobxStore();
 
   const router = useRouter();
 
@@ -50,6 +59,12 @@ const UserInvitationsPage: NextPageWithLayout = () => {
   const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>("USER_WORKSPACE_INVITATIONS", () =>
     workspaceService.userWorkspaceInvitations()
   );
+
+  const redirectWorkspaceSlug =
+    workspaceSlug ||
+    currentUserSettings?.workspace?.last_workspace_slug ||
+    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    "";
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
@@ -180,7 +195,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
                 >
                   Accept & Join
                 </Button>
-                <Link href="/">
+                <Link href={`/${redirectWorkspaceSlug}`}>
                   <a>
                     <Button variant="neutral-primary" size="md">
                       Go Home
@@ -197,8 +212,8 @@ const UserInvitationsPage: NextPageWithLayout = () => {
               description="You can see here if someone invites you to a workspace."
               image={emptyInvitation}
               primaryButton={{
-                text: "Back to Dashboard",
-                onClick: () => router.push("/"),
+                text: "Back to dashboard",
+                onClick: () => router.push(`/${redirectWorkspaceSlug}`),
               }}
             />
           </div>
@@ -206,7 +221,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
       ) : null}
     </div>
   );
-};
+});
 
 UserInvitationsPage.getLayout = function getLayout(page: ReactElement) {
   return (
