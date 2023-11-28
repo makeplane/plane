@@ -8,3 +8,4 @@ export * from "./github-config-form";
 export * from "./google-config-form";
 export * from "./image-config-form";
 export * from "./instance-admin-restriction";
+export * from "./instance-not-ready";
