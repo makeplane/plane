@@ -29,10 +29,8 @@ interface IHeaderGroupByCard {
   issuePayload: Partial<IIssue>;
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
-
-const moduleService = new ModuleService();
-const issueService = new IssueService();
 
 export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const {
@@ -46,6 +44,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
     issuePayload,
     disableIssueCreation,
     currentStore,
+    addIssuesToView,
   } = props;
   const verticalAlignPosition = kanBanToggle?.groupByHeaderMinMax.includes(column_id);
 
@@ -60,34 +59,13 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const renderExistingIssueModal = moduleId || cycleId;
   const ExistingIssuesListModalPayload = moduleId ? { module: true } : { cycle: true };
 
-  const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
+  const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;
 
-    const payload = {
-      issues: data.map((i) => i.id),
-    };
+    const issues = data.map((i) => i.id);
 
-    await moduleService
-      .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId as string, payload)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the module. Please try again.",
-        })
-      );
-  };
-
-  const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
-    if (!workspaceSlug || !projectId) return;
-
-    const payload = {
-      issues: data.map((i) => i.id),
-    };
-
-    await issueService
-      .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
-      .catch(() => {
+    addIssuesToView &&
+      addIssuesToView(issues)?.catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -109,7 +87,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
           isOpen={openExistingIssueListModal}
           handleClose={() => setOpenExistingIssueListModal(false)}
           searchParams={ExistingIssuesListModalPayload}
-          handleOnSubmit={moduleId ? handleAddIssuesToModule : handleAddIssuesToCycle}
+          handleOnSubmit={handleAddIssuesToView}
         />
       )}
       <div

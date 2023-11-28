@@ -50,6 +50,7 @@ export const ModuleListLayout: React.FC = observer(() => {
       getProjects={getProjects}
       viewId={moduleId}
       currentStore={EProjectStore.MODULE}
+      addIssuesToView={(issues: string[]) => moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, issues)}
     />
   );
 });

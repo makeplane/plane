@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface ILabelHeader {
   column_id: string;
@@ -16,6 +17,7 @@ export interface ILabelHeader {
   handleKanBanToggle: any;
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 const Icon = ({ color }: any) => (
@@ -34,6 +36,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
     handleKanBanToggle,
     disableIssueCreation,
     currentStore,
+    addIssuesToView,
   } = props;
 
   const label = column_value ?? null;
@@ -63,6 +66,7 @@ export const LabelHeader: FC<ILabelHeader> = observer((props) => {
             issuePayload={{ labels: [label?.id] }}
             disableIssueCreation={disableIssueCreation}
             currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         ))}
     </>

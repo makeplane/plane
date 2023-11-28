@@ -5,6 +5,7 @@ import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { Icon } from "./assignee";
 import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface ICreatedByHeader {
   column_id: string;
@@ -17,6 +18,7 @@ export interface ICreatedByHeader {
   handleKanBanToggle: any;
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
@@ -31,6 +33,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
     handleKanBanToggle,
     disableIssueCreation,
     currentStore,
+    addIssuesToView,
   } = props;
 
   const createdBy = column_value ?? null;
@@ -60,6 +63,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
             issuePayload={{ created_by: createdBy?.id }}
             disableIssueCreation={disableIssueCreation}
             currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         ))}
     </>

@@ -72,6 +72,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId}
       currentStore={EProjectStore.MODULE}
+      addIssuesToView={(issues: string[]) => moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, issues)}
     />
   );
 });

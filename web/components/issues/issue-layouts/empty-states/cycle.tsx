@@ -28,7 +28,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
 
   const {
-    cycleIssue: cycleIssueStore,
+    cycleIssues: cycleIssueStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
   } = useMobxStore();
@@ -40,15 +40,13 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await cycleIssueStore
-      .addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
+    await cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), cycleId.toString(), issueIds).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the cycle. Please try again.",
       });
+    });
   };
 
   return (

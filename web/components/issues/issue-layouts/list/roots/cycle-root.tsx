@@ -49,6 +49,7 @@ export const CycleListLayout: React.FC = observer(() => {
       getProjects={getProjects}
       viewId={cycleId}
       currentStore={EProjectStore.CYCLE}
+      addIssuesToView={(issues: string[]) => cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, issues)}
     />
   );
 });

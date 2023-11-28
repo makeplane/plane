@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface IEmptyHeader {
   column_id: string;
@@ -9,10 +10,11 @@ export interface IEmptyHeader {
   issues_count: number;
   disableIssueCreation?: boolean;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const EmptyHeader: React.FC<IEmptyHeader> = observer((props) => {
-  const { column_id, column_value, issues_count, disableIssueCreation, currentStore } = props;
+  const { column_id, column_value, issues_count, disableIssueCreation, currentStore, addIssuesToView } = props;
 
   return (
     <HeaderGroupByCard
@@ -21,6 +23,7 @@ export const EmptyHeader: React.FC<IEmptyHeader> = observer((props) => {
       issuePayload={{}}
       disableIssueCreation={disableIssueCreation}
       currentStore={currentStore}
+      addIssuesToView={addIssuesToView}
     />
   );
 });

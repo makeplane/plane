@@ -32,6 +32,7 @@ export interface IGroupByList {
   ) => Promise<IIssue | undefined>;
   disableIssueCreation?: boolean;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   viewId?: string;
 }
 
@@ -54,6 +55,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     viewId,
     disableIssueCreation,
     currentStore,
+    addIssuesToView,
   } = props;
 
   const prePopulateQuickAddData = (groupByKey: string | null, value: any) => {
@@ -91,6 +93,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     }
                     disableIssueCreation={disableIssueCreation}
                     currentStore={currentStore}
+                    addIssuesToView={addIssuesToView}
                   />
                 </div>
 
@@ -147,6 +150,7 @@ export interface IList {
   viewId?: string;
   disableIssueCreation?: boolean;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const List: React.FC<IList> = (props) => {
@@ -170,6 +174,7 @@ export const List: React.FC<IList> = (props) => {
     members,
     projects,
     currentStore,
+    addIssuesToView,
   } = props;
 
   return (
@@ -193,6 +198,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -214,6 +220,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -235,6 +242,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -256,6 +264,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -277,6 +286,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -298,6 +308,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -319,6 +330,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -340,6 +352,7 @@ export const List: React.FC<IList> = (props) => {
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
     </div>
