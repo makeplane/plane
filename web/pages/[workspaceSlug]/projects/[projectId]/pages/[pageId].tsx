@@ -15,28 +15,36 @@ import { PageDetailsHeader } from "components/headers/page-details";
 import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner } from "@plane/ui";
+import { Spinner, Tooltip } from "@plane/ui";
 // assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { NextPageWithLayout } from "types/app";
-import { IPage } from "types";
+import { IPage, IIssue } from "types";
 // fetch-keys
 import { PAGE_DETAILS } from "constants/fetch-keys";
+import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { IssueService } from "services/issue";
+import { EIssueActions } from "components/issues/issue-layouts/types";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const fileService = new FileService();
 const pageService = new PageService();
+const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = () => {
+
+  const { issueDetail: issueDetailStore } = useMobxStore();
+
   const editorRef = useRef<any>(null);
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
   const router = useRouter();
-  const { workspaceSlug, projectId, pageId } = router.query;
+  const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
 
   const { user } = useUser();
 
@@ -56,6 +64,31 @@ const PageDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
+
+  const handleUpdateIssue = (issueId: string, data: Partial<IIssue>) => {
+    if (!workspaceSlug || !projectId || !user) return;
+
+    issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
+  }
+
+  const fetchIssue = async (issueId: string) => {
+    const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
+    return issue as IIssue
+  }
+
+  const issueWidgetClickAction = (issueId: string, issueTitle: string) => {
+    const url = new URL(router.asPath, window.location.origin);
+    const params = new URLSearchParams(url.search);
+
+    if (params.has('peekIssueId')) {
+      params.set('peekIssueId', issueId);
+    } else {
+      params.append('peekIssueId', issueId);
+    }
+
+    // Replace the current URL with the new one
+    router.replace(`${url.pathname}?${params.toString()}`, undefined, { shallow: true });
+  }
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -201,7 +234,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
               <DocumentReadOnlyEditorWithRef
                 ref={editorRef}
                 value={pageDetails.description_html}
-                customClassName={"tracking-tight self-center w-full max-w-full px-0"}
+                customClassName={"tracking-tight w-full px-0"}
                 borderOnFocus={false}
                 noBorder
                 documentDetails={{
@@ -219,10 +252,10 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 pageArchiveConfig={
                   user && pageDetails.owned_by === user.id
                     ? {
-                        action: pageDetails.archived_at ? unArchivePage : archivePage,
-                        is_archived: pageDetails.archived_at ? true : false,
-                        archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
-                      }
+                      action: pageDetails.archived_at ? unArchivePage : archivePage,
+                      is_archived: pageDetails.archived_at ? true : false,
+                      archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
+                    }
                     : undefined
                 }
               />
@@ -245,7 +278,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     debouncedUpdatesEnabled={false}
                     setIsSubmitting={setIsSubmitting}
                     value={!value || value === "" ? "<p></p>" : value}
-                    customClassName="tracking-tight self-center px-0 h-full w-full"
+                    customClassName="tracking-tight px-0 h-full w-full"
                     onChange={(_description_json: Object, description_html: string) => {
                       onChange(description_html);
                       setIsSubmitting("submitting");
@@ -255,19 +288,38 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     pageArchiveConfig={
                       user && pageDetails.owned_by === user.id
                         ? {
-                            is_archived: pageDetails.archived_at ? true : false,
-                            action: pageDetails.archived_at ? unArchivePage : archivePage,
-                          }
+                          is_archived: pageDetails.archived_at ? true : false,
+                          action: pageDetails.archived_at ? unArchivePage : archivePage,
+                        }
                         : undefined
                     }
                     pageLockConfig={
                       user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
+                    }
+                    embedConfig={
+                      {
+                        issueEmbedConfig: {
+                          fetchIssue: fetchIssue,
+                          clickAction: issueWidgetClickAction
+                        }
+                      }
                     }
                   />
                 )}
               />
             )}
           </div>
+          <IssuePeekOverview
+            workspaceSlug={workspaceSlug as string}
+            projectId={projectId as string}
+            issueId={peekIssueId ? peekIssueId as string : ""}
+            isArchived={false}
+            handleIssue={(issueToUpdate) => {
+              if (peekIssueId && typeof peekIssueId === 'string') {
+                handleUpdateIssue(peekIssueId, issueToUpdate)
+              }
+            }}
+          />
         </div>
       ) : (
         <div className="h-full w-full grid place-items-center">
