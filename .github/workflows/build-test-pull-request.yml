@@ -19,16 +19,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
-          # cache: "yarn"
+          cache: "yarn"
 
       - name: Enabling Corepack
         run: corepack enable
-      
-      # - name: Run install
-      #   uses: borales/actions-yarn@v4
-      #   with:
-      #     cmd: install # will run `yarn install` command
-      
+            
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v38
