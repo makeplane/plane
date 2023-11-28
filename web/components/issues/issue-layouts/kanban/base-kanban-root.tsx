@@ -54,6 +54,14 @@ export interface IBaseKanBanLayout {
   showLoader?: boolean;
   viewId?: string;
   currentStore?: EProjectStore;
+  handleDragDrop?: (
+    source: any,
+    destination: any,
+    subGroupBy: string | null,
+    groupBy: string | null,
+    issues: any,
+    issueWithIds: any
+  ) => void;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
@@ -66,6 +74,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     showLoader,
     viewId,
     currentStore,
+    handleDragDrop,
   } = props;
 
   const {
@@ -113,9 +122,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     )
       return;
 
-    currentKanBanView === "default"
-      ? kanbanViewStore?.handleDragDrop(result.source, result.destination)
-      : kanbanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
+    if (handleDragDrop) handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds);
   };
 
   const handleIssues = useCallback(

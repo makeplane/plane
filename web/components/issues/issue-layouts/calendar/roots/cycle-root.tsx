@@ -40,7 +40,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
     },
   };
 
-  const handleDragDrop = (source: any, destination: any, issues: IIssue[], groupedIssueIds: any) => {
+  const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
     if (calendarHelperStore.handleDragDrop)
       calendarHelperStore.handleDragDrop(
         source,
@@ -49,7 +49,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
         projectId,
         cycleIssueStore,
         issues,
-        groupedIssueIds,
+        issueWithIds,
         cycleId
       );
   };

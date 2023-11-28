@@ -19,7 +19,7 @@ export class CalendarHelpers implements ICalendarHelpers {
     source: any,
     destination: any,
     workspaceSlug: string,
-    projectId: string, // projectId for all views or user id in profile issues
+    projectId: string,
     store: any,
     issues: any,
     issueWithIds: any,
@@ -29,7 +29,7 @@ export class CalendarHelpers implements ICalendarHelpers {
       const sourceColumnId = source?.droppableId || null;
       const destinationColumnId = destination?.droppableId || null;
 
-      if (!workspaceSlug || !projectId || !sourceColumnId || !destinationColumnId) return null;
+      if (!workspaceSlug || !projectId || !sourceColumnId || !destinationColumnId) return;
 
       if (sourceColumnId === destinationColumnId) return;
 
@@ -49,7 +49,5 @@ export class CalendarHelpers implements ICalendarHelpers {
         else store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
       }
     }
-
-    return;
   };
 }

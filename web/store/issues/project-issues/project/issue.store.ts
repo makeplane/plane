@@ -99,7 +99,6 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
     } else if (layout === "kanban" && groupBy && orderBy) {
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
       else issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
-      console.log("issues", issues);
     } else if (layout === "calendar")
       issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[projectId], true);
     else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);

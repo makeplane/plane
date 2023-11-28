@@ -2,7 +2,7 @@
 
 // helpers
 export * from "./base-issue-calendar-helper.store";
-// export * from "./issue-calendar-helpers";
+export * from "./base-issue-kanban-helper.store";
 
 // issue and filter helpers
 export * from "./project-issues/base-issue.store";
