@@ -4,8 +4,10 @@ import os
 # Django imports
 from django.core.management.base import BaseCommand
 from django.conf import settings
+
 # Module imports
 from plane.license.models import InstanceConfiguration
+
 
 class Command(BaseCommand):
     help = "Configure instance variables"
@@ -13,38 +15,107 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from plane.license.utils.encryption import encrypt_data
 
-        config_keys = {
+        config_keys = [
             # Authentication Settings
-            "GOOGLE_CLIENT_ID": os.environ.get("GOOGLE_CLIENT_ID"),
-            "GITHUB_CLIENT_ID": os.environ.get("GITHUB_CLIENT_ID"),
-            "GITHUB_CLIENT_SECRET": encrypt_data(os.environ.get("GITHUB_CLIENT_SECRET")) if os.environ.get("GITHUB_CLIENT_SECRET")  else None,
-            "ENABLE_SIGNUP": os.environ.get("ENABLE_SIGNUP", "1"),
-            "ENABLE_EMAIL_PASSWORD": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
-            "ENABLE_MAGIC_LINK_LOGIN": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "0"),
-            # Email Settings
-            "EMAIL_HOST": os.environ.get("EMAIL_HOST", ""),
-            "EMAIL_HOST_USER": os.environ.get("EMAIL_HOST_USER", ""),
-            "EMAIL_HOST_PASSWORD": encrypt_data(os.environ.get("EMAIL_HOST_PASSWORD")) if os.environ.get("EMAIL_HOST_PASSWORD") else None,
-            "EMAIL_PORT": os.environ.get("EMAIL_PORT", "587"),
-            "EMAIL_FROM": os.environ.get("EMAIL_FROM", ""),
-            "EMAIL_USE_TLS": os.environ.get("EMAIL_USE_TLS", "1"),
-            "EMAIL_USE_SSL": os.environ.get("EMAIL_USE_SSL", "0"),
-            # Open AI Settings
-            "OPENAI_API_BASE": os.environ.get("OPENAI_API_BASE", "https://api.openai.com/v1"),
-            "OPENAI_API_KEY": encrypt_data(os.environ.get("OPENAI_API_KEY")) if os.environ.get("OPENAI_API_KEY") else None,
-            "GPT_ENGINE": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
-            # Unsplash Access Key
-            "UNSPLASH_ACCESS_KEY": encrypt_data(os.environ.get("UNSPLASH_ACESS_KEY", "")) if os.environ.get("UNSPLASH_ACESS_KEY") else None,
-            "ENABLE_EMAIL_AUTOMATION": "1",
-        }
+            {
+                "key": "ENABLE_SIGNUP",
+                "value": os.environ.get("ENABLE_SIGNUP", "1"),
+                "category": "AUTHENTICATION",
+            },
+            {
+                "key": "ENABLE_EMAIL_PASSWORD",
+                "value": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
+                "category": "AUTHENTICATION",
+            },
+            {
+                "key": "ENABLE_MAGIC_LINK_LOGIN",
+                "value": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "0"),
+                "category": "AUTHENTICATION",
+            },
+            {
+                "key": "GOOGLE_CLIENT_ID",
+                "value": os.environ.get("GOOGLE_CLIENT_ID"),
+                "category": "GOOGLE",
+            },
+            {
+                "key": "GITHUB_CLIENT_ID",
+                "value": os.environ.get("GITHUB_CLIENT_ID"),
+                "category": "GITHUB",
+            },
+            {
+                "key": "GITHUB_CLIENT_SECRET",
+                "value": encrypt_data(os.environ.get("GITHUB_CLIENT_SECRET"))
+                if os.environ.get("GITHUB_CLIENT_SECRET")
+                else None,
+                "category": "GITHUB",
+            },
+            {
+                "key": "EMAIL_HOST",
+                "value": os.environ.get("EMAIL_HOST", ""),
+                "category": "SMTP",
+            },
+            {
+                "key": "EMAIL_HOST_USER",
+                "value": os.environ.get("EMAIL_HOST_USER", ""),
+                "category": "SMTP",
+            },
+            {
+                "key": "EMAIL_HOST_PASSWORD",
+                "value": encrypt_data(os.environ.get("EMAIL_HOST_PASSWORD"))
+                if os.environ.get("EMAIL_HOST_PASSWORD")
+                else None,
+                "category": "SMTP",
+            },
+            {
+                "key": "EMAIL_PORT",
+                "value": os.environ.get("EMAIL_PORT", "587"),
+                "category": "SMTP",
+            },
+            {
+                "key": "EMAIL_FROM",
+                "value": os.environ.get("EMAIL_FROM", ""),
+                "category": "SMTP",
+            },
+            {
+                "key": "EMAIL_USE_TLS",
+                "value": os.environ.get("EMAIL_USE_TLS", "1"),
+                "category": "SMTP",
+            },
+            {
+                "key": "OPENAI_API_KEY",
+                "value": encrypt_data(os.environ.get("OPENAI_API_KEY"))
+                if os.environ.get("OPENAI_API_KEY")
+                else None,
+                "category": "OPENAI",
+            },
+            {
+                "key": "GPT_ENGINE",
+                "value": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                "category": "SMTP",
+            },
+            {
+                "key": "UNSPLASH_ACCESS_KEY",
+                "value": encrypt_data(os.environ.get("UNSPLASH_ACESS_KEY", ""))
+                if os.environ.get("UNSPLASH_ACESS_KEY")
+                else None,
+                "category": "UNSPLASH",
+            },
+        ]
 
-        for key, value in config_keys.items():
+        for item in config_keys:
             obj, created = InstanceConfiguration.objects.get_or_create(
-                key=key
+                key=item.get("key")
             )
             if created:
-                obj.value = value
+                obj.value = item.get("value")
+                obj.category = item.get("category")
                 obj.save()
-                self.stdout.write(self.style.SUCCESS(f"{key} loaded with value from environment variable."))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"{obj.key} loaded with value from environment variable."
+                    )
+                )
             else:
-                self.stdout.write(self.style.WARNING(f"{key} configuration already exists"))
+                self.stdout.write(
+                    self.style.WARNING(f"{obj.key} configuration already exists")
+                )

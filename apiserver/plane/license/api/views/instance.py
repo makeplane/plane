@@ -64,6 +64,7 @@ class InstanceEndpoint(BaseAPIView):
                 "instance_key": os.environ.get("INSTANCE_KEY"),
                 "version": data.get("version", 0.1),
                 "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
+                "user_count": User.objects.count(),
             }
 
             response = requests.post(

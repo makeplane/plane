@@ -60,6 +60,8 @@ class UserMeSerializer(BaseSerializer):
             "theme",
             "last_workspace_id",
             "use_case",
+            "is_password_autoset",
+            "is_email_verified",
         ]
         read_only_fields = fields
 

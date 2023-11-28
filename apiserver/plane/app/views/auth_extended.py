@@ -108,6 +108,7 @@ class ResetPasswordEndpoint(BaseAPIView):
             if serializer.is_valid():
                 # set_password also hashes the password that the user will get
                 user.set_password(serializer.data.get("new_password"))
+                user.is_password_autoset = False
                 user.save()
                 response = {
                     "status": "success",
@@ -138,6 +139,7 @@ class ChangePasswordEndpoint(BaseAPIView):
                 )
             # set_password also hashes the password that the user will get
             user.set_password(serializer.data.get("new_password"))
+            user.is_password_autoset = False
             user.save()
             return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

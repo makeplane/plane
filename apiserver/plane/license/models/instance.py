@@ -4,7 +4,6 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
-from plane.db.mixins import AuditModel
 
 ROLE_CHOICES = (
     (20, "Admin"),
@@ -57,6 +56,7 @@ class InstanceConfiguration(BaseModel):
     # The instance configuration variables
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField(null=True, blank=True, default=None)
+    category = models.TextField()
 
     class Meta:
         verbose_name = "Instance Configuration"

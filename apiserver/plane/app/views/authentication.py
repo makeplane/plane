@@ -37,6 +37,7 @@ from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
 from plane.bgtasks.magic_link_code_task import magic_link
 
+
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     return (
@@ -69,6 +70,15 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Check if the instance setup is done or not
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the user
         user = User.objects.filter(email=email).first()
 
         # User is not present in db
@@ -87,15 +97,6 @@ class SignInEndpoint(BaseAPIView):
                     "error": "Sorry, we could not find a user with the provided credentials. Please try again."
                 },
                 status=status.HTTP_403_FORBIDDEN,
-            )
-
-        # Check if the user email verified
-        if not user.is_email_verified:
-            return Response(
-                {
-                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # settings last active for the user
@@ -290,23 +291,40 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
 
             ri.set(key, json.dumps(value), ex=expiry)
 
-        if get_configuration_value(
-            instance_configuration,
-            "ENABLE_EMAIL_AUTOMATION",
-            os.environ.get("ENABLE_EMAIL_AUTOMATION"),
-        ) == "1":
-
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-            if not license_engine_base_url:
-                raise Response(
-                    {"error": "License Engine url is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
+        if (
+            get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST_USER",
+                os.environ.get("EMAIL_HOST_USER", None),
+            )
+            and get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST_PASSWORD",
+                os.environ.get("EMAIL_HOST_PASSWORD", None),
+            )
+            and get_configuration_value(
+                instance_configuration,
+                "EMAIL_HOST",
+                os.environ.get("EMAIL_HOST", None),
+            )
+        ):
+            # If the smtp is configured send through here
+            current_site = request.META.get("HTTP_ORIGIN")
+            magic_link.delay(email, key, token, current_site)
+        else:
+            # Check the instance registration
             instance = Instance.objects.first()
             if instance is None:
                 return Response(
                     {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # send the emails through control center
+            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+            if not license_engine_base_url:
+                raise Response(
+                    {"error": "License Engine url is not configured"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -327,10 +345,6 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
                 headers=headers,
                 data=json.dumps(payload),
             )
-        else:
-            current_site = request.META.get('HTTP_ORIGIN')
-            magic_link.delay(email, key, token, current_site)
-
         return Response({"key": key}, status=status.HTTP_200_OK)
 
 
@@ -341,16 +355,9 @@ class MagicSignInEndpoint(BaseAPIView):
 
     def post(self, request):
         instance = Instance.objects.first()
-        if instance is None:
+        if instance is None or not instance.is_setup_done:
             return Response(
                 {"error": "Instance is not configured"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-        if not license_engine_base_url:
-            return Response(
-                {"error": "License engine base url is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -412,24 +419,6 @@ class MagicSignInEndpoint(BaseAPIView):
                             medium="MAGIC_LINK",
                             first_time=True,
                         )
-
-                    # Save the user in control center
-                    headers = {
-                        "Content-Type": "application/json",
-                        "x-instance-id": instance.instance_id,
-                        "x-api-key": instance.api_key,
-                    }
-                    # Also register the user as admin
-                    _ = requests.post(
-                        f"{license_engine_base_url}/api/instances/users/register/",
-                        headers=headers,
-                        data=json.dumps(
-                            {
-                                "email": str(user.email),
-                                "signup_mode": "MAGIC_CODE",
-                            }
-                        ),
-                    )
 
                 user.is_active = True
                 user.is_email_verified = True

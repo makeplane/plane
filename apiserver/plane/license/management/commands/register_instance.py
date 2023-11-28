@@ -9,7 +9,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.license.models import Instance
-
+from plane.db.models import User
 
 class Command(BaseCommand):
     help = "Check if instance in registered else register"
@@ -50,6 +50,7 @@ class Command(BaseCommand):
                 "instance_key": instance_key,
                 "version": data.get("version", 0.1),
                 "machine_signature": machine_signature,
+                "user_count": User.objects.count()
             }
 
             response = requests.post(

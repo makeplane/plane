@@ -2,7 +2,6 @@
 import uuid
 import requests
 import os
-import json
 
 # Django imports
 from django.utils import timezone
@@ -136,6 +135,14 @@ class OauthEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
+            # Check if instance is registered or not
+            instance = Instance.objects.first()
+            if instance is None and not instance.is_setup_done:
+                return Response(
+                    {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             medium = request.data.get("medium", False)
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
@@ -286,8 +293,8 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-             
-            # Send event 
+
+            # Send event
             if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                 auth_events.delay(
                     user=user.id,
@@ -295,8 +302,8 @@ class OauthEndpoint(BaseAPIView):
                     user_agent=request.META.get("HTTP_USER_AGENT"),
                     ip=request.META.get("REMOTE_ADDR"),
                     event_name="SIGN_IN",
-                    medium=medium.upper(), 
-                    first_time=False
+                    medium=medium.upper(),
+                    first_time=False,
                 )
 
             access_token, refresh_token = get_tokens_for_user(user)
@@ -309,6 +316,14 @@ class OauthEndpoint(BaseAPIView):
 
         except User.DoesNotExist:
             ## Signup Case
+            # Check if instance is registered or not
+            instance = Instance.objects.first()
+            if instance is None and not instance.is_setup_done:
+                return Response(
+                    {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
 
             if (
                 get_configuration_value(
@@ -360,38 +375,6 @@ class OauthEndpoint(BaseAPIView):
             user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
             user.token_updated_at = timezone.now()
             user.save()
-
-            instance = Instance.objects.first()
-            if instance is None:
-                return Response(
-                    {"error": "Instance is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-            if not license_engine_base_url:
-                return Response(
-                    {"error": "License engine base url is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            # Save the user in control center
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-            # Also register the user as admin
-            _ = requests.post(
-                f"{license_engine_base_url}/api/instances/users/register/",
-                headers=headers,
-                data=json.dumps(
-                    {
-                        "email": str(user.email),
-                        "signup_mode": "MAGIC_CODE",
-                    }
-                ),
-            )
 
             # Check if user has any accepted invites for workspace and add them to workspace
             workspace_member_invites = WorkspaceMemberInvite.objects.filter(
@@ -450,7 +433,7 @@ class OauthEndpoint(BaseAPIView):
             workspace_member_invites.delete()
             project_member_invites.delete()
 
-            # Send event 
+            # Send event
             if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                 auth_events.delay(
                     user=user.id,
@@ -459,7 +442,7 @@ class OauthEndpoint(BaseAPIView):
                     ip=request.META.get("REMOTE_ADDR"),
                     event_name="SIGN_IN",
                     medium=medium.upper(),
-                    first_time=True
+                    first_time=True,
                 )
 
             SocialLoginConnection.objects.update_or_create(
