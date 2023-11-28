@@ -102,7 +102,11 @@ export const ProfileLayoutSidebar = observer(() => {
       } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
       <div className="h-full w-full flex flex-col gap-y-4">
-        <div className="flex-shrink-0 flex items-center gap-2 px-4 pt-4 truncate">
+        <div
+          className={`flex-shrink-0 flex items-center gap-2 px-4 pt-4 truncate ${
+            sidebarCollapsed ? "justify-center" : ""
+          }`}
+        >
           <Link href={`/${redirectWorkspaceSlug}`}>
             <a className="flex-shrink-0 grid place-items-center h-5 w-5">
               <ChevronLeft className="h-5 w-5" strokeWidth={1} />
