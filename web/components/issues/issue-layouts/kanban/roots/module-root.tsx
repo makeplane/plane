@@ -101,6 +101,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       viewId={moduleId}
       currentStore={EProjectStore.MODULE}
       handleDragDrop={handleDragDrop}
+      addIssuesToView={(issues: string[]) => moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, issues)}
     />
   );
 });

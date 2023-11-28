@@ -62,6 +62,7 @@ export interface IBaseKanBanLayout {
     issues: any,
     issueWithIds: any
   ) => void;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
@@ -75,6 +76,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     viewId,
     currentStore,
     handleDragDrop,
+    addIssuesToView,
   } = props;
 
   const {
@@ -193,6 +195,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               disableIssueCreation={!enableIssueCreation}
               isReadOnly={!enableInlineEditing}
               currentStore={currentStore}
+              addIssuesToView={addIssuesToView}
             />
           ) : (
             <KanBanSwimLanes
@@ -233,6 +236,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               enableQuickIssueCreate={enableQuickAdd}
               isReadOnly={!enableInlineEditing}
               currentStore={currentStore}
+              addIssuesToView={(issues) => {
+                console.log("kanban existingIds", issues);
+
+                return Promise.resolve({} as IIssue);
+              }}
             />
           )}
         </DragDropContext>
