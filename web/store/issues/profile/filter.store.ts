@@ -5,7 +5,6 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EFilterType } from "store/issues/types";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
-import { isEmpty } from "lodash";
 
 interface IProjectIssuesFiltersOptions {
   filters: IIssueFilterOptions;
@@ -203,6 +202,10 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
         due_date: true,
         labels: false,
         key: false,
+        start_date: false,
+        due_date: false,
+        labels: true,
+        key: true,
         priority: true,
         state: false,
         sub_issue_count: true,
