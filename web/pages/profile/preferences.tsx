@@ -50,7 +50,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {currentUser ? (
-        <div className="pr-9 py-8 w-full overflow-y-auto">
+        <div className="h-full w-full lg:w-3/5 mx-auto p-8 overflow-y-auto">
           <div className="flex items-center py-3.5 border-b border-custom-border-100">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>
