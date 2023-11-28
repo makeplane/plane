@@ -3,15 +3,6 @@
   "version": "0.13.2",
   "license": "AGPL-3.0",
   "private": true,
-  "workspaces": [
-    "web",
-    "space",
-    "packages/editor/*",
-    "packages/eslint-config-custom",
-    "packages/tailwind-config-custom",
-    "packages/tsconfig",
-    "packages/ui"
-  ],
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
@@ -34,5 +25,8 @@
   "resolutions": {
     "@types/react": "^18.2.39"
   },
-  "packageManager": "yarn@3.6.4"
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@8.11.0"
 }

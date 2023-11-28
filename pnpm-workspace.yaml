@@ -1,0 +1,8 @@
+packages:
+  - "web"
+  - "space"
+  - "packages/editor/*"
+  - "packages/eslint-config-custom"
+  - "packages/tailwind-config-custom"
+  - "packages/tsconfig"
+  - "packages/ui"

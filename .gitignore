@@ -72,17 +72,15 @@ package-lock.json
 # yarn
 .yarn
 .yarnrc.yml
+yarn.lock
 
-# lock files
-package-lock.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
-
+# secrets
 .npmrc
 .secrets
 
+# temp 
 tmp/
+.temp/
 
 ## packages
 dist
-.temp/
