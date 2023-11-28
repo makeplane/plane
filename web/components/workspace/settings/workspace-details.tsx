@@ -43,9 +43,6 @@ export const WorkspaceDetails: FC = observer(() => {
     trackEvent: { postHogEventTracker },
   } = useMobxStore();
 
-  const hasEditAccess =
-    currentWorkspaceRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole);
-  const hasDeleteAccess = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
   // form info
@@ -133,6 +130,8 @@ export const WorkspaceDetails: FC = observer(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
 
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
   if (!currentWorkspace)
     return (
       <div className="grid place-items-center h-full w-full px-4 sm:px-0">
@@ -165,10 +164,10 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`pr-9 py-8 w-full overflow-y-auto ${hasEditAccess ? "" : "opacity-60"}`}>
+      <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 items-center pb-7 border-b border-custom-border-100">
           <div className="flex flex-col gap-1">
-            <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!hasEditAccess}>
+            <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                 <div className="relative mx-auto flex h-14 w-14">
                   <img
@@ -189,7 +188,7 @@ export const WorkspaceDetails: FC = observer(() => {
             <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
             }/${currentWorkspace.slug}`}</button>
-            {hasEditAccess && (
+            {isAdmin && (
               <button
                 className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
                 onClick={() => setIsImageUploadModalOpen(true)}
@@ -232,7 +231,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     hasError={Boolean(errors.name)}
                     placeholder="Name"
                     className="rounded-md font-medium w-full"
-                    disabled={!hasEditAccess}
+                    disabled={!isAdmin}
                   />
                 )}
               />
@@ -251,7 +250,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     width="w-full"
                     buttonClassName="!border-[0.5px] !border-custom-border-200 !shadow-none"
                     input
-                    disabled={!hasEditAccess}
+                    disabled={!isAdmin}
                   >
                     {ORGANIZATION_SIZE.map((item) => (
                       <CustomSelect.Option key={item} value={item}>
@@ -288,7 +287,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
           </div>
 
-          {hasEditAccess && (
+          {isAdmin && (
             <div className="flex items-center justify-between py-2">
               <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
                 {isSubmitting ? "Updating..." : "Update Workspace"}
@@ -296,7 +295,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
           )}
         </div>
-        {hasDeleteAccess && (
+        {isAdmin && (
           <Disclosure as="div" className="border-t border-custom-border-100">
             {({ open }) => (
               <div className="w-full">
