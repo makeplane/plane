@@ -24,13 +24,15 @@ const workspaceService = new WorkspaceService();
 const WorkspaceInvitationPage: NextPageWithLayout = () => {
   const router = useRouter();
 
-  const { invitation_id, email } = router.query;
+  const { invitation_id, email, slug } = router.query;
 
   const { user } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
-    invitation_id && WORKSPACE_INVITATION(invitation_id.toString()),
-    () => (invitation_id ? workspaceService.getWorkspaceInvitation(invitation_id as string) : null)
+    invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
+    invitation_id && slug
+      ? () => workspaceService.getWorkspaceInvitation(slug.toString(), invitation_id.toString())
+      : null
   );
 
   const handleAccept = () => {
