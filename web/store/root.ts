@@ -164,6 +164,9 @@ import {
   // global issues filter
   IGlobalIssuesFilterStore,
   GlobalIssuesFilterStore,
+  // helpers
+  ICalendarHelpers,
+  CalendarHelpers,
 } from "store/issues";
 
 import { CycleIssueFiltersStore, ICycleIssueFiltersStore } from "store/cycle-issues";
@@ -274,6 +277,8 @@ export class RootStore {
 
   workspaceGlobalIssues: IGlobalIssuesStore;
   workspaceGlobalIssuesFilter: IGlobalIssuesFilterStore;
+
+  calendarHelpers: ICalendarHelpers;
   // project v3 issue and issue-filters ends
 
   cycleIssueFilters: ICycleIssueFiltersStore;
@@ -378,6 +383,8 @@ export class RootStore {
 
     this.workspaceGlobalIssues = new GlobalIssuesStore(this);
     this.workspaceGlobalIssuesFilter = new GlobalIssuesFilterStore(this);
+
+    this.calendarHelpers = new CalendarHelpers();
     // project v3 issue and issue-filters ends
 
     this.cycleIssueFilters = new CycleIssueFiltersStore(this);
