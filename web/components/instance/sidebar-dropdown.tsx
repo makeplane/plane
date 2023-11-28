@@ -7,7 +7,7 @@ import { mutate } from "swr";
 // components
 import { Menu, Transition } from "@headlessui/react";
 // icons
-import { Cog, LogIn, LogOut, Settings } from "lucide-react";
+import { LogIn, LogOut, Settings, UserCog2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -64,12 +64,12 @@ export const InstanceSidebarDropdown = observer(() => {
     <div className="flex items-center gap-x-5 gap-y-2 px-4 py-3.5 max-h-[3.75rem] border-b border-custom-sidebar-border-200">
       <div className="w-full h-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
+          className={`flex flex-grow items-center gap-x-2 rounded py-1 truncate ${
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <div className="flex-shrink-0 flex items-center justify-center h-7 w-7  rounded bg-custom-sidebar-background-80">
-            <Cog className="h-5 w-5 text-custom-text-200" />
+          <div className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded bg-custom-sidebar-background-80">
+            <UserCog2 className="h-5 w-5 text-custom-text-200" />
           </div>
 
           {!sidebarCollapsed && (

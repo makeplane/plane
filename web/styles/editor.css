@@ -23,6 +23,8 @@
 /* Custom image styles */
 
 .ProseMirror img {
+  min-width: 100px;
+  min-height: 100px;
   transition: filter 0.1s ease-in-out;
 
   &:hover {

@@ -106,6 +106,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                     cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
                     deleteFile={fileService.deleteImage}
+                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
