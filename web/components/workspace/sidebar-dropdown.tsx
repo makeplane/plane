@@ -145,7 +145,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none">
-                <div className="flex flex-col items-start justify-start gap-3 p-3">
+                <div className="flex flex-col items-start justify-start gap-3 p-3 max-h-96 overflow-y-scroll">
                   <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
                   {workspaces ? (
                     <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
