@@ -5,6 +5,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EFilterType } from "store/issues/types";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
+import { isEmpty } from "lodash";
 
 interface IProjectIssuesFiltersOptions {
   filters: IIssueFilterOptions;
@@ -121,12 +122,18 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
 
       let _projectIssueFilters = this.projectIssueFilters;
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[workspaceSlug])
-        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[workspaceSlug] = {
-        ..._projectIssueFilters[workspaceSlug],
-        ...issueFilters,
-      };
+      if (!_projectIssueFilters[workspaceSlug]) {
+        _projectIssueFilters[workspaceSlug] = { displayProperties: {} } as IProjectIssuesDisplayOptions;
+      }
+      if (
+        isEmpty(_projectIssueFilters[workspaceSlug].filters) ||
+        isEmpty(_projectIssueFilters[workspaceSlug].displayFilters)
+      ) {
+        _projectIssueFilters[workspaceSlug] = {
+          ..._projectIssueFilters[workspaceSlug],
+          ...issueFilters,
+        };
+      }
 
       runInAction(() => {
         this.projectIssueFilters = _projectIssueFilters;
@@ -192,15 +199,15 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
   fetchDisplayProperties = async (workspaceSlug: string) => {
     try {
       const displayProperties: IIssueDisplayProperties = {
-        assignee: false,
-        start_date: false,
-        due_date: false,
+        assignee: true,
+        start_date: true,
+        due_date: true,
         labels: false,
         key: false,
-        priority: false,
+        priority: true,
         state: false,
-        sub_issue_count: false,
-        link: false,
+        sub_issue_count: true,
+        link: true,
         attachment_count: false,
         estimate: false,
         created_on: false,
@@ -209,12 +216,15 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
 
       let _projectIssueFilters = { ...this.projectIssueFilters };
       if (!_projectIssueFilters) _projectIssueFilters = {};
-      if (!_projectIssueFilters[workspaceSlug])
-        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {}, displayProperties: {} };
-      _projectIssueFilters[workspaceSlug] = {
-        ..._projectIssueFilters[workspaceSlug],
-        displayProperties: displayProperties,
-      };
+      if (!_projectIssueFilters[workspaceSlug]) {
+        _projectIssueFilters[workspaceSlug] = { filters: {}, displayFilters: {} } as IProjectIssuesDisplayOptions;
+      }
+      if (isEmpty(_projectIssueFilters[workspaceSlug].displayProperties)) {
+        _projectIssueFilters[workspaceSlug] = {
+          ..._projectIssueFilters[workspaceSlug],
+          displayProperties: displayProperties,
+        };
+      }
 
       runInAction(() => {
         this.projectIssueFilters = _projectIssueFilters;
