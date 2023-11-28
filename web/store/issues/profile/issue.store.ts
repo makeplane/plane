@@ -19,7 +19,7 @@ export interface IProfileIssuesStore {
   loader: TLoader;
   issues: { [user_id: string]: IProfileIssueTabTypes } | undefined;
   currentUserId: string | null;
-  currentUserIssueTab: "assigned" | "created" | "subscribed" | null;
+  currentUserIssueTab: "assigned" | "created" | "subscribed" | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
@@ -51,7 +51,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   loader: TLoader = "init-loader";
   issues: { [user_id: string]: IProfileIssueTabTypes } | undefined = undefined;
   currentUserId: string | null = null;
-  currentUserIssueTab: "assigned" | "created" | "subscribed" | null = null;
+  currentUserIssueTab: "assigned" | "created" | "subscribed" | undefined = undefined;
   // root store
   rootStore;
   // service
@@ -86,7 +86,9 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       if (!workspaceSlug || !this.currentUserId || !this.currentUserIssueTab) return;
 
       const userFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
+      if (userFilters) {
+        this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
+      }
     });
   }
 
@@ -196,19 +198,11 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
   createIssue = async (workspaceSlug: string, userId: string, data: Partial<IIssue>) => {
     try {
       const projectId = data.project;
-      const moduleId = data.module_id;
-      const cycleId = data.cycle_id;
 
       if (!projectId) return;
 
       let response = {} as IIssue;
       response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-
-      // if (moduleId)
-      //   response = await this.rootStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, response);
-
-      // if (cycleId)
-      //   response = await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -237,8 +231,8 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
       if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[projectId][this.currentUserIssueTab][userId] = {
-        ..._issues[projectId][this.currentUserIssueTab][userId],
+      _issues[userId][this.currentUserIssueTab][userId] = {
+        ..._issues[userId][this.currentUserIssueTab][userId],
         ...data,
       };
 
