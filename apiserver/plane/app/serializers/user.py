@@ -80,9 +80,18 @@ class UserMeSettingsSerializer(BaseSerializer):
         workspace_invites = WorkspaceMemberInvite.objects.filter(
             email=obj.email
         ).count()
-        if obj.last_workspace_id is not None:
+        if (
+            obj.last_workspace_id is not None
+            and Workspace.objects.filter(
+                pk=obj.last_workspace_id,
+                workspace_member__member=obj.id,
+                workspace_member__is_active=True,
+            ).exists()
+        ):
             workspace = Workspace.objects.filter(
-                pk=obj.last_workspace_id, workspace_member__member=obj.id
+                pk=obj.last_workspace_id,
+                workspace_member__member=obj.id,
+                workspace_member__is_active=True,
             ).first()
             return {
                 "last_workspace_id": obj.last_workspace_id,
@@ -95,7 +104,9 @@ class UserMeSettingsSerializer(BaseSerializer):
             }
         else:
             fallback_workspace = (
-                Workspace.objects.filter(workspace_member__member_id=obj.id)
+                Workspace.objects.filter(
+                    workspace_member__member_id=obj.id, workspace_member__is_active=True
+                )
                 .order_by("created_at")
                 .first()
             )
@@ -159,10 +170,14 @@ class ChangePasswordSerializer(serializers.Serializer):
 
     def validate(self, data):
         if data.get("old_password") == data.get("new_password"):
-            raise serializers.ValidationError({"error": "New password cannot be same as old password."})
+            raise serializers.ValidationError(
+                {"error": "New password cannot be same as old password."}
+            )
 
         if data.get("new_password") != data.get("confirm_password"):
-            raise serializers.ValidationError({"error": "Confirm password should be same as the new password."})
+            raise serializers.ValidationError(
+                {"error": "Confirm password should be same as the new password."}
+            )
 
         return data
 

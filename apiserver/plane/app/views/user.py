@@ -113,6 +113,15 @@ class UserEndpoint(BaseViewSet):
 
         # Deactivate the user
         user.is_active = False
+        user.last_workspace_id = None
+        user.is_tour_completed = False
+        user.is_onboarded = False
+        user.onboarding_step = {
+            "workspace_join": False,
+            "profile_complete": False,
+            "workspace_create": False,
+            "workspace_invite": False,
+        }
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -135,9 +144,9 @@ class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
 class UserActivityEndpoint(BaseAPIView, BasePaginator):
     def get(self, request):
-        queryset = IssueActivity.objects.filter(
-            actor=request.user
-        ).select_related("actor", "workspace", "issue", "project")
+        queryset = IssueActivity.objects.filter(actor=request.user).select_related(
+            "actor", "workspace", "issue", "project"
+        )
 
         return self.paginate(
             request=request,
