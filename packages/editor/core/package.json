@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
     "next": "12.3.2",
@@ -28,6 +29,7 @@
   },
   "dependencies": {
     "@tiptap/core": "^2.1.7",
+    "@plane/editor-types": "*",
     "@tiptap/extension-code-block-lowlight": "^2.1.12",
     "@tiptap/extension-color": "^2.1.11",
     "@tiptap/extension-image": "^2.1.7",

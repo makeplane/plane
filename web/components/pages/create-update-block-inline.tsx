@@ -271,6 +271,7 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
                       cancelUploadImage={fileService.cancelUpload}
                       uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                       deleteFile={fileService.deleteImage}
+                      restoreFile={fileService.restoreImage}
                       ref={editorRef}
                       value={"<p></p>"}
                       debouncedUpdatesEnabled={false}
@@ -293,6 +294,7 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
                     cancelUploadImage={fileService.cancelUpload}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     deleteFile={fileService.deleteImage}
+                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={
                       value && value !== "" && Object.keys(value).length > 0

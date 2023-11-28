@@ -48,25 +48,27 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     <>
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       {tokens ? (
-        tokens.length > 0 ? (
-          <section className="pr-9 py-8 w-full overflow-y-auto">
-            <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200 mb-2">
-              <h3 className="text-xl font-medium">API tokens</h3>
-              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                Add API token
-              </Button>
+        <section className="pr-9 py-8 w-full overflow-y-auto">
+          {tokens.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200 mb-2">
+                <h3 className="text-xl font-medium">API tokens</h3>
+                <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
+                  Add API token
+                </Button>
+              </div>
+              <div>
+                {tokens.map((token) => (
+                  <ApiTokenListItem key={token.id} token={token} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="mx-auto">
+              <ApiTokenEmptyState onClick={() => setIsCreateTokenModalOpen(true)} />
             </div>
-            <div>
-              {tokens.map((token) => (
-                <ApiTokenListItem key={token.id} token={token} />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <div className="mx-auto py-8">
-            <ApiTokenEmptyState onClick={() => setIsCreateTokenModalOpen(true)} />
-          </div>
-        )
+          )}
+        </section>
       ) : (
         <div className="h-full w-full grid place-items-center p-4">
           <Spinner />
