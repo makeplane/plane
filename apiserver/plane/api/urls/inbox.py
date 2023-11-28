@@ -10,7 +10,7 @@ urlpatterns = [
         name="inbox-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:issue_id>/",
         InboxIssueAPIEndpoint.as_view(),
         name="inbox-issue",
     ),
