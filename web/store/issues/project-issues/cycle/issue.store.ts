@@ -5,7 +5,7 @@ import { IssueBaseStore } from "store/issues";
 import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // types
-import { TIssueGroupByOptions } from "types";
+import { CycleIssueResponse, TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
@@ -49,7 +49,12 @@ export interface ICycleIssuesStore {
     data: IIssue,
     cycleId?: string | undefined
   ) => Promise<IIssue | undefined>;
-  addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => Promise<IIssue>;
+  addIssueToCycle: (
+    workspaceSlug: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAfterAddition?: boolean
+  ) => Promise<IIssue>;
   removeIssueFromCycle: (
     workspaceSlug: string,
     projectId: string,
@@ -69,6 +74,9 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
   // service
   cycleService;
   issueService;
+
+  //projectId
+  currentProjectId: string | undefined;
 
   //viewData
   viewFlags = {
@@ -157,6 +165,8 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
     try {
       this.loader = loadType;
 
+      this.currentProjectId = projectId;
+
       const params = this.rootStore?.cycleIssuesFilter?.appliedFilters;
       const response = await this.cycleService.getV3CycleIssues(workspaceSlug, projectId, cycleId, params);
 
@@ -185,7 +195,16 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToCycle = await this.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
+      const issueToCycle = await this.addIssueToCycle(workspaceSlug, cycleId, [response.id], false);
+
+      let _issues = this.issues;
+      if (!_issues) _issues = {};
+      if (!_issues[cycleId]) _issues[cycleId] = {};
+      _issues[cycleId] = { ..._issues[cycleId], ...{ [response.id]: response } };
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
 
       return issueToCycle;
     } catch (error) {
@@ -287,24 +306,19 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
     }
   };
 
-  addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, data: IIssue) => {
+  addIssueToCycle = async (workspaceSlug: string, cycleId: string, issueIds: string[], fetchAfterAddition = true) => {
+    if (!this.currentProjectId) return;
+
     try {
-      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
-        issues: [data.id],
+      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, this.currentProjectId, cycleId, {
+        issues: issueIds,
       });
 
-      let _issues = this.issues;
-      if (!_issues) _issues = {};
-      if (!_issues[cycleId]) _issues[cycleId] = {};
-      _issues[cycleId] = { ..._issues[cycleId], ...{ [data.id]: data } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
+      if (fetchAfterAddition) this.fetchIssues(workspaceSlug, this.currentProjectId, "mutation", cycleId);
 
       return issueToCycle;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      this.fetchIssues(workspaceSlug, this.currentProjectId, "mutation", cycleId);
       throw error;
     }
   };

@@ -50,6 +50,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId}
       currentStore={EProjectStore.CYCLE}
+      addIssuesToView={(issues: string[]) => cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, issues)}
     />
   );
 });
