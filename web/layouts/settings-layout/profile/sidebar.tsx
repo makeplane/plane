@@ -1,16 +1,18 @@
+import { Fragment, useEffect, useRef, useState } from "react";
+import { mutate } from "swr";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
+// icons
 import { LogIn, LogOut, MoveLeft, Plus, User, UserPlus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Avatar, Tooltip } from "@plane/ui";
-import { Fragment } from "react";
-import { mutate } from "swr";
-import { useRouter } from "next/router";
+// hooks
 import useToast from "hooks/use-toast";
-import { useTheme } from "next-themes";
 
 const SIDEBAR_LINKS = [
   {
@@ -28,6 +30,11 @@ const SIDEBAR_LINKS = [
 ];
 
 export const ProfileLayoutSidebar = observer(() => {
+  // states
+  const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
+  // refs
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   const router = useRouter();
 
   const { setTheme } = useTheme();
@@ -61,6 +68,27 @@ export const ProfileLayoutSidebar = observer(() => {
         })
       );
   };
+
+  /**
+   * Implementing scroll animation styles based on the scroll length of the container
+   */
+  useEffect(() => {
+    const handleScroll = () => {
+      if (containerRef.current) {
+        const scrollTop = containerRef.current.scrollTop;
+        setIsScrolled(scrollTop > 0);
+      }
+    };
+    const currentContainerRef = containerRef.current;
+    if (currentContainerRef) {
+      currentContainerRef.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      if (currentContainerRef) {
+        currentContainerRef.removeEventListener("scroll", handleScroll);
+      }
+    };
+  }, []);
 
   return (
     <div
@@ -166,11 +194,16 @@ export const ProfileLayoutSidebar = observer(() => {
           ))}
         </div>
         {workspaces && workspaces.length > 0 && (
-          <div className="flex flex-col px-4 flex-shrink-0">
+          <div className="flex flex-col h-full overflow-x-hidden px-4">
             {!sidebarCollapsed && (
               <div className="rounded text-custom-sidebar-text-400 px-1.5 text-sm font-semibold">Your workspaces</div>
             )}
-            <div className="space-y-2 mt-2">
+            <div
+              ref={containerRef}
+              className={`space-y-2 mt-2 pt-2 h-full overflow-y-auto ${
+                isScrolled ? "border-t border-custom-sidebar-border-300" : ""
+              }`}
+            >
               {workspaces.map((workspace) => (
                 <Link
                   key={workspace.id}
@@ -208,7 +241,7 @@ export const ProfileLayoutSidebar = observer(() => {
             </div>
           </div>
         )}
-        <div className="flex-grow flex items-end px-4 py-2">
+        <div className="flex-grow flex items-end px-4 py-2 border-t border-custom-border-200">
           <button
             type="button"
             className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"

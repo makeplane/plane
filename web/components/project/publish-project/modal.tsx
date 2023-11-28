@@ -119,7 +119,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
       reset({ ...updatedData });
     }
-  }, [reset, projectPublishStore.projectPublishSettings]);
+  }, [reset, projectPublishStore.projectPublishSettings, isOpen]);
 
   // fetch publish settings
   useEffect(() => {

@@ -14,7 +14,7 @@ export const ApiTokenEmptyState: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={`flex items-center justify-center mx-auto rounded-sm border border-custom-border-200 bg-custom-background-90 py-10 px-16 w-full`}
+      className={`flex items-center justify-center mx-auto rounded-sm border border-custom-border-200 bg-custom-background-90 py-10 px-16 w-full lg:w-3/4`}
     >
       <div className="text-center flex flex-col items-center w-full">
         <Image src={emptyApiTokens} className="w-52 sm:w-60" alt="empty" />
