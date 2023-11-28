@@ -53,20 +53,24 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
         </div>
       ) : (
         <>
+          {Object.keys(getIssues ?? {}).length == 0 ? (
+            <ModuleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
+          ) : (
+            <div className="h-full w-full overflow-auto">
+              {activeLayout === "list" ? (
+                <ModuleListLayout />
+              ) : activeLayout === "kanban" ? (
+                <ModuleKanBanLayout />
+              ) : activeLayout === "calendar" ? (
+                <ModuleCalendarLayout />
+              ) : activeLayout === "gantt_chart" ? (
+                <ModuleGanttLayout />
+              ) : activeLayout === "spreadsheet" ? (
+                <ModuleSpreadsheetLayout />
+              ) : null}
+            </div>
+          )}
           {/* <ModuleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} /> */}
-          <div className="h-full w-full overflow-auto">
-            {activeLayout === "list" ? (
-              <ModuleListLayout />
-            ) : activeLayout === "kanban" ? (
-              <ModuleKanBanLayout />
-            ) : activeLayout === "calendar" ? (
-              <ModuleCalendarLayout />
-            ) : activeLayout === "gantt_chart" ? (
-              <ModuleGanttLayout />
-            ) : activeLayout === "spreadsheet" ? (
-              <ModuleSpreadsheetLayout />
-            ) : null}
-          </div>
         </>
       )}
     </div>
