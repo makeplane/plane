@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -15,8 +18,7 @@ import { APITokenService } from "services/api_token.service";
 import { NextPageWithLayout } from "types/app";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const apiTokenService = new APITokenService();
 
@@ -31,7 +33,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     user: { currentWorkspaceRole },
   } = useMobxStore();
 
-  const isAdmin = currentWorkspaceRole === 20;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   const { data: tokens } = useSWR(workspaceSlug && isAdmin ? API_TOKENS_LIST(workspaceSlug.toString()) : null, () =>
     workspaceSlug && isAdmin ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
