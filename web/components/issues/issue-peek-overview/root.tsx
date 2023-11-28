@@ -41,7 +41,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   useSWR(
     workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_PEEK_OVERVIEW_${workspaceSlug}_${projectId}_${peekIssueId}`
+      ? `ISSUE_DETAILS_${workspaceSlug}_${projectId}_${peekIssueId}`
       : null,
     async () => {
       if (workspaceSlug && projectId && issueId && issueId === peekIssueId) {

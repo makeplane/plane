@@ -1,10 +1,9 @@
 import { FC, useCallback } from "react";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarChart } from "components/issues";
+import { CalendarChart, IssuePeekOverview } from "components/issues";
 // types
 import { IIssue } from "types";
 import {
@@ -41,8 +40,11 @@ interface IBaseCalendarRoot {
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, calendarViewStore, QuickActions, issueActions, viewId, handleDragDrop } =
-    props;
+  const { issueStore, issuesFilterStore, QuickActions, issueActions, viewId, handleDragDrop } = props;
+
+  // router
+  const router = useRouter();
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
@@ -67,38 +69,49 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
         issueActions[action]!(issue);
       }
     },
-    [issueStore]
+    [issueActions]
   );
 
   return (
-    <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart
-          issues={issues}
-          groupedIssueIds={groupedIssueIds}
-          layout={displayFilters?.calendar?.layout}
-          showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-          handleIssues={handleIssues}
-          quickActions={(issue) => (
-            <QuickActions
-              issue={issue}
-              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
-              handleUpdate={
-                issueActions[EIssueActions.UPDATE]
-                  ? async (data) => handleIssues(issue.target_date ?? "", data, EIssueActions.UPDATE)
-                  : undefined
-              }
-              handleRemoveFromView={
-                issueActions[EIssueActions.REMOVE]
-                  ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
-                  : undefined
-              }
-            />
-          )}
-          quickAddCallback={issueStore.quickAddIssue}
-          viewId={viewId}
+    <>
+      <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <CalendarChart
+            issues={issues}
+            groupedIssueIds={groupedIssueIds}
+            layout={displayFilters?.calendar?.layout}
+            showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+            quickActions={(issue) => (
+              <QuickActions
+                issue={issue}
+                handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
+                handleUpdate={
+                  issueActions[EIssueActions.UPDATE]
+                    ? async (data) => handleIssues(issue.target_date ?? "", data, EIssueActions.UPDATE)
+                    : undefined
+                }
+                handleRemoveFromView={
+                  issueActions[EIssueActions.REMOVE]
+                    ? async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.REMOVE)
+                    : undefined
+                }
+              />
+            )}
+            quickAddCallback={issueStore.quickAddIssue}
+            viewId={viewId}
+          />
+        </DragDropContext>
+      </div>
+      {workspaceSlug && peekIssueId && peekProjectId && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={(issueToUpdate) =>
+            handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, EIssueActions.UPDATE)
+          }
         />
-      </DragDropContext>
-    </div>
+      )}
+    </>
   );
 });
