@@ -11,7 +11,6 @@ import useToast from "hooks/use-toast";
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, UserImageUploadModal } from "components/core";
-import { ProfileSettingsHeader } from "components/headers";
 import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
@@ -169,7 +168,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
         )}
       />
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-      <div className="h-full w-full lg:w-3/5 mx-auto flex flex-col p-8 space-y-10 overflow-y-auto">
+      <div className="h-full w-full lg:w-3/5 mx-auto flex flex-col px-8 pb-8 mt-16 space-y-10 overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-8 w-full">
             <div className="relative h-44 w-full">
@@ -400,7 +399,6 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
             <>
               <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
                 <span className="text-lg tracking-tight">Deactivate account</span>
-                {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
                 <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
               </Disclosure.Button>
 
@@ -437,7 +435,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 };
 
 ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Settings" />}>{page}</ProfileSettingsLayout>;
+  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfileSettingsPage;

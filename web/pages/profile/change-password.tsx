@@ -10,8 +10,6 @@ import { UserService } from "services/user.service";
 import useToast from "hooks/use-toast";
 // layout
 import { ProfileSettingsLayout } from "layouts/settings-layout";
-// components
-import { ProfileSettingsHeader } from "components/headers";
 // ui
 import { Button, Input, Spinner } from "@plane/ui";
 // types
@@ -101,8 +99,9 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   return (
     <form
       onSubmit={handleSubmit(handleChangePassword)}
-      className="flex flex-col gap-8 h-full w-full lg:w-3/5 mx-auto p-8"
+      className="flex flex-col gap-8 h-full w-full lg:w-3/5 mx-auto px-8 pb-8 mt-16"
     >
+      <h3 className="text-xl font-medium">Change password</h3>
       <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
         <div className="flex flex-col gap-1 ">
           <h4 className="text-sm">Current password</h4>
@@ -184,9 +183,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
 });
 
 ChangePasswordPage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <ProfileSettingsLayout header={<ProfileSettingsHeader title="Change Password" />}>{page}</ProfileSettingsLayout>
-  );
+  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
 };
 
 export default ChangePasswordPage;
