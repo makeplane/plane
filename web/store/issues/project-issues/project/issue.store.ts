@@ -94,24 +94,15 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
     let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
 
     if (layout === "list" && orderBy) {
-      console.log("list");
       if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
       else issues = this.unGroupedIssues(orderBy, this.issues[projectId]);
     } else if (layout === "kanban" && groupBy && orderBy) {
-      console.log("kanban");
       if (subGroupBy) issues = this.subGroupedIssues(subGroupBy, groupBy, orderBy, this.issues[projectId]);
       else issues = this.groupedIssues(groupBy, orderBy, this.issues[projectId]);
-      console.log("issues", issues);
-    } else if (layout === "calendar") {
-      console.log("calendar");
+    } else if (layout === "calendar")
       issues = this.groupedIssues("target_date" as TIssueGroupByOptions, "target_date", this.issues[projectId], true);
-    } else if (layout === "spreadsheet") {
-      console.log("spreadsheet");
-      issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);
-    } else if (layout === "gantt_chart") {
-      console.log("gantt_chart");
-      issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[projectId]);
-    }
+    else if (layout === "spreadsheet") issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[projectId]);
+    else if (layout === "gantt_chart") issues = this.unGroupedIssues(orderBy ?? "sort_order", this.issues[projectId]);
 
     return issues;
   }
