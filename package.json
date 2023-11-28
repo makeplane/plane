@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:web": "turbo run build --filter=web",
+    "build:space": "turbo run build --filter=space",
     "dev": "turbo run dev",
     "dev:web": "turbo run dev --filter=web",
     "dev:space": "turbo run dev --filter=space",
