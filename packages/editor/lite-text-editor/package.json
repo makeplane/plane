@@ -29,19 +29,19 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@plane/editor-core": "*",
-    "@plane/ui": "*",
-    "@plane/editor-types": "*"
+    "@plane/editor-core": "workspace:*",
+    "@plane/editor-types": "workspace:*",
+    "@plane/ui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "18.15.3",
     "@types/react": "^18.2.35",
     "@types/react-dom": "^18.2.14",
     "eslint": "^7.32.0",
-    "postcss": "^8.4.29",
-    "tailwind-config-custom": "*",
-    "eslint-config-custom": "*",
-    "tsconfig": "*",
+    "eslint-config-custom": "workspace:*",
+    "postcss": "^8.4.31",
+    "tailwind-config-custom": "workspace:*",
+    "tsconfig": "workspace:*",
     "tsup": "^7.2.0",
     "typescript": "4.9.5"
   },

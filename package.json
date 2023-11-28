@@ -15,6 +15,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:space": "turbo run dev --filter=space",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "clean": "turbo run clean",
@@ -22,15 +24,15 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.15",
-    "eslint-config-custom": "*",
-    "postcss": "^8.4.29",
+    "eslint-config-custom": "workspace:*",
+    "postcss": "^8.4.31",
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^3.3.5",
     "turbo": "^1.10.16"
   },
   "resolutions": {
-    "@types/react": "18.2.0"
+    "@types/react": "^18.2.39"
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@3.6.4"
 }

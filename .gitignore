@@ -69,6 +69,10 @@ package-lock.json
 # Sentry
 .sentryclirc
 
+# yarn
+.yarn
+.yarnrc.yml
+
 # lock files
 package-lock.json
 pnpm-lock.yaml
@@ -76,7 +80,9 @@ pnpm-workspace.yaml
 
 .npmrc
 .secrets
+
 tmp/
+
 ## packages
 dist
 .temp/
