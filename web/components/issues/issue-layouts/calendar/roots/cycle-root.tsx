@@ -14,10 +14,15 @@ export const CycleCalendarLayout: React.FC = observer(() => {
     cycleIssues: cycleIssueStore,
     cycleIssuesFilter: cycleIssueFilterStore,
     cycleIssueCalendarView: cycleIssueCalendarViewStore,
+    calendarHelpers: calendarHelperStore,
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -35,6 +40,20 @@ export const CycleCalendarLayout: React.FC = observer(() => {
     },
   };
 
+  const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
+    if (calendarHelperStore.handleDragDrop)
+      calendarHelperStore.handleDragDrop(
+        source,
+        destination,
+        workspaceSlug,
+        projectId,
+        cycleIssueStore,
+        issues,
+        issueWithIds,
+        cycleId
+      );
+  };
+
   return (
     <BaseCalendarRoot
       issueStore={cycleIssueStore}
@@ -43,6 +62,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
       viewId={cycleId}
+      handleDragDrop={handleDragDrop}
     />
   );
 });

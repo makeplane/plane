@@ -14,10 +14,11 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
     viewIssues: projectViewIssuesStore,
     viewIssuesFilter: projectIssueViewFiltersStore,
     projectViewIssueCalendarView: projectViewIssueCalendarViewStore,
+    calendarHelpers: calendarHelperStore,
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -32,6 +33,19 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
     },
   };
 
+  const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
+    if (calendarHelperStore.handleDragDrop)
+      calendarHelperStore.handleDragDrop(
+        source,
+        destination,
+        workspaceSlug,
+        projectId,
+        projectViewIssuesStore,
+        issues,
+        issueWithIds
+      );
+  };
+
   return (
     <BaseCalendarRoot
       issueStore={projectViewIssuesStore}
@@ -39,6 +53,7 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
       calendarViewStore={projectViewIssueCalendarViewStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
+      handleDragDrop={handleDragDrop}
     />
   );
 });

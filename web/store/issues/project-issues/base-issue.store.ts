@@ -1,4 +1,8 @@
-import _ from "lodash";
+import sortBy from "lodash/sortBy";
+import get from "lodash/get";
+import indexOf from "lodash/indexOf";
+import reverse from "lodash/reverse";
+import values from "lodash/values";
 // types
 import { IIssue, TIssueGroupByOptions, TIssueOrderByOptions } from "types";
 import { RootStore } from "store/root";
@@ -51,7 +55,7 @@ export class IssueBaseStore implements IIssueBaseStore {
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
-      const groupArray = this.getGroupArray(_.get(_issue, groupBy as keyof IIssue), isCalendarIssues);
+      const groupArray = this.getGroupArray(get(_issue, groupBy as keyof IIssue), isCalendarIssues);
 
       for (const group of groupArray) {
         if (group && _issues[group]) _issues[group].push(_issue.id);
@@ -82,8 +86,8 @@ export class IssueBaseStore implements IIssueBaseStore {
 
     for (const issue in projectIssues) {
       const _issue = projectIssues[issue];
-      const subGroupArray = this.getGroupArray(_.get(_issue, subGroupBy as keyof IIssue));
-      const groupArray = this.getGroupArray(_.get(_issue, groupBy as keyof IIssue));
+      const subGroupArray = this.getGroupArray(get(_issue, subGroupBy as keyof IIssue));
+      const groupArray = this.getGroupArray(get(_issue, groupBy as keyof IIssue));
 
       for (const subGroup of subGroupArray) {
         for (const group of groupArray) {
@@ -121,22 +125,22 @@ export class IssueBaseStore implements IIssueBaseStore {
   };
 
   issuesSortWithOrderBy = (issueObject: IIssueResponse, key: Partial<TIssueOrderByOptions>): IIssue[] => {
-    let array = _.values(issueObject);
-    array = _.sortBy(array, "created_at");
+    let array = values(issueObject);
+    array = sortBy(array, "created_at");
     switch (key) {
       case "sort_order":
-        return _.sortBy(array, "sort_order");
+        return sortBy(array, "sort_order");
       case "-created_at":
-        return _.reverse(_.sortBy(array, "created_at"));
+        return reverse(sortBy(array, "created_at"));
       case "-updated_at":
-        return _.reverse(_.sortBy(array, "updated_at"));
+        return reverse(sortBy(array, "updated_at"));
       case "start_date":
-        return _.sortBy(array, "start_date");
+        return sortBy(array, "start_date");
       case "target_date":
-        return _.sortBy(array, "target_date");
+        return sortBy(array, "target_date");
       case "priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
-        return _.sortBy(array, (_issue: IIssue) => _.indexOf(sortArray, _issue.priority));
+        return sortBy(array, (_issue: IIssue) => indexOf(sortArray, _issue.priority));
       }
       default:
         return array;

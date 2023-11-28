@@ -1,11 +1,11 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
+import isEmpty from "lodash/isEmpty";
 // types
 import { RootStore } from "store/root";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
 import { EFilterType } from "store/issues/types";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
-import isEmpty from "lodash/isEmpty";
 
 interface IProjectIssuesFiltersOptions {
   filters: IIssueFilterOptions;
@@ -199,14 +199,14 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
     try {
       const displayProperties: IIssueDisplayProperties = {
         assignee: true,
-        start_date: false,
-        due_date: false,
+        start_date: true,
+        due_date: true,
         labels: true,
         key: true,
         priority: true,
         state: false,
-        sub_issue_count: false,
-        link: false,
+        sub_issue_count: true,
+        link: true,
         attachment_count: false,
         estimate: false,
         created_on: false,

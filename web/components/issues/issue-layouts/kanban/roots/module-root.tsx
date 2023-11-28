@@ -16,13 +16,18 @@ export interface IModuleKanBanLayout {}
 
 export const ModuleKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, moduleId } = router.query as { workspaceSlug: string; moduleId: string };
+  const { workspaceSlug, projectId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    moduleId: string;
+  };
 
   // store
   const {
     moduleIssues: moduleIssueStore,
     moduleIssuesFilter: moduleIssueFilterStore,
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
+    kanBanHelpers: kanBanHelperStore,
   } = useMobxStore();
 
   // const handleIssues = useCallback(
@@ -62,6 +67,29 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
     },
   };
+
+  const handleDragDrop = (
+    source: any,
+    destination: any,
+    subGroupBy: string | null,
+    groupBy: string | null,
+    issues: IIssue[],
+    issueWithIds: any
+  ) => {
+    if (kanBanHelperStore.handleDragDrop)
+      kanBanHelperStore.handleDragDrop(
+        source,
+        destination,
+        workspaceSlug,
+        projectId,
+        moduleIssueStore,
+        subGroupBy,
+        groupBy,
+        issues,
+        issueWithIds,
+        moduleId
+      );
+  };
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -72,6 +100,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
       QuickActions={ModuleIssueQuickActions}
       viewId={moduleId}
       currentStore={EProjectStore.MODULE}
+      handleDragDrop={handleDragDrop}
       addIssuesToView={(issues: string[]) => moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, issues)}
     />
   );
