@@ -119,8 +119,17 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
 
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      await this.archivedIssueService.unarchiveIssue(workspaceSlug, projectId, issueId);
-      return;
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[projectId]) _issues[projectId] = {};
+      delete _issues?.[projectId]?.[issueId];
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      const response = await this.archivedIssueService.deleteArchivedIssue(workspaceSlug, projectId, issueId);
+      return response;
     } catch (error) {
       throw error;
     }
@@ -128,8 +137,17 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
 
   removeIssueFromArchived = async (workspaceSlug: string, projectId: string, issueId: string) => {
     try {
-      await this.archivedIssueService.deleteArchivedIssue(workspaceSlug, projectId, issueId);
-      return;
+      let _issues = { ...this.issues };
+      if (!_issues) _issues = {};
+      if (!_issues[projectId]) _issues[projectId] = {};
+      delete _issues?.[projectId]?.[issueId];
+
+      runInAction(() => {
+        this.issues = _issues;
+      });
+
+      const response = await this.archivedIssueService.unarchiveIssue(workspaceSlug, projectId, issueId);
+      return response;
     } catch (error) {
       throw error;
     }

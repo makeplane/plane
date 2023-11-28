@@ -18,6 +18,7 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
   const {
     workspace: { workspaceLabels },
     workspaceProfileIssuesFilter: { issueFilters, updateFilters },
+    projectMember: { projectMembers },
   } = useMobxStore();
 
   const userFilters = issueFilters?.filters;
@@ -64,7 +65,7 @@ export const ProfileIssuesAppliedFiltersRoot: React.FC = observer(() => {
         handleClearAllFilters={handleClearAllFilters}
         handleRemoveFilter={handleRemoveFilter}
         labels={workspaceLabels ?? []}
-        members={[]}
+        members={projectMembers?.map((m) => m.member)}
         states={[]}
       />
     </div>
