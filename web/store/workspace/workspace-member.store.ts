@@ -88,7 +88,8 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * computed value provides the members information including the invitations.
    */
   get workspaceMembersWithInvitations() {
-    if (!this.workspaceMembers || !this.workspaceMemberInvitations) return null;
+    if (!this.workspaceMembers) return null;
+
     return [
       ...(this.workspaceMemberInvitations?.map((item) => ({
         id: item.id,
