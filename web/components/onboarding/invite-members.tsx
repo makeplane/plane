@@ -106,11 +106,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
 
   const emailOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === "") {
-      const validEmail = fields
-        .map((_, i) => {
-          return emailRegex.test(getValues(`emails.${i}.email`));
-        })
-        .includes(true);
+      const validEmail = fields.map((_, i) => emailRegex.test(getValues(`emails.${i}.email`))).includes(true);
       if (validEmail) {
         setIsInvitationDisabled(false);
       } else {
