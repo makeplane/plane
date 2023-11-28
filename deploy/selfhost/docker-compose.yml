@@ -102,7 +102,6 @@ services:
 
   worker:
     <<: *app-env
-    container_name: bgworker
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
@@ -114,7 +113,6 @@ services:
 
   beat-worker:
     <<: *app-env
-    container_name: beatworker
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
@@ -126,7 +124,6 @@ services:
 
   plane-db:
     <<: *app-env
-    container_name: plane-db
     image: postgres:15.2-alpine
     restart: unless-stopped
     command: postgres -c 'max_connections=1000'
@@ -135,7 +132,6 @@ services:
     
   plane-redis:
     <<: *app-env
-    container_name: plane-redis
     image: redis:6.2.7-alpine
     restart: unless-stopped
     volumes:
@@ -143,7 +139,6 @@ services:
 
   plane-minio:
     <<: *app-env
-    container_name: plane-minio
     image: minio/minio
     restart: unless-stopped
     command: server /export --console-address ":9090"
@@ -153,7 +148,6 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     <<: *app-env
-    container_name: proxy
     platform: linux/amd64
     image: makeplane/plane-proxy:${APP_RELEASE:-latest}
     ports:
