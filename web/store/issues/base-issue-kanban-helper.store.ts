@@ -78,67 +78,82 @@ export class KanBanHelpers implements IKanBanHelpers {
 
       if (!workspaceSlug || !projectId || !groupBy || !sourceGroupByColumnId || !destinationGroupByColumnId) return;
 
-      const sourceIssues = subGroupBy
-        ? issueWithIds[sourceSubGroupByColumnId][sourceGroupByColumnId]
-        : issueWithIds[sourceGroupByColumnId];
-      const destinationIssues = subGroupBy
-        ? issueWithIds[sourceSubGroupByColumnId][destinationGroupByColumnId]
-        : issueWithIds[destinationGroupByColumnId];
+      if (destinationGroupByColumnId === "issue-trash-box") {
+        const sourceIssues = subGroupBy
+          ? issueWithIds[sourceSubGroupByColumnId][sourceGroupByColumnId]
+          : issueWithIds[sourceGroupByColumnId];
 
-      const [removed] = sourceIssues.splice(source.index, 1);
-      const removedIssueDetail = issues[removed];
+        const [removed] = sourceIssues.splice(source.index, 1);
 
-      if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
-        updateIssue = {
-          id: removedIssueDetail?.id,
-        };
+        console.log("removed", removed);
 
-        // for both horizontal and vertical dnd
-        updateIssue = {
-          ...updateIssue,
-          ...this.handleSortOrder(destinationIssues, destination.index, issues),
-        };
+        if (removed) {
+          if (viewId) store?.removeIssue(workspaceSlug, projectId, removed, viewId);
+          else store?.removeIssue(workspaceSlug, projectId, removed);
+        }
+      } else {
+        const sourceIssues = subGroupBy
+          ? issueWithIds[sourceSubGroupByColumnId][sourceGroupByColumnId]
+          : issueWithIds[sourceGroupByColumnId];
+        const destinationIssues = subGroupBy
+          ? issueWithIds[sourceSubGroupByColumnId][destinationGroupByColumnId]
+          : issueWithIds[destinationGroupByColumnId];
 
-        if (sourceSubGroupByColumnId === destinationSubGroupByColumnId) {
-          if (sourceGroupByColumnId != destinationGroupByColumnId) {
+        const [removed] = sourceIssues.splice(source.index, 1);
+        const removedIssueDetail = issues[removed];
+
+        if (subGroupBy && sourceSubGroupByColumnId && destinationSubGroupByColumnId) {
+          updateIssue = {
+            id: removedIssueDetail?.id,
+          };
+
+          // for both horizontal and vertical dnd
+          updateIssue = {
+            ...updateIssue,
+            ...this.handleSortOrder(destinationIssues, destination.index, issues),
+          };
+
+          if (sourceSubGroupByColumnId === destinationSubGroupByColumnId) {
+            if (sourceGroupByColumnId != destinationGroupByColumnId) {
+              if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
+              if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
+            }
+          } else {
+            if (subGroupBy === "state")
+              updateIssue = {
+                ...updateIssue,
+                state: destinationSubGroupByColumnId,
+                priority: destinationGroupByColumnId,
+              };
+            if (subGroupBy === "priority")
+              updateIssue = {
+                ...updateIssue,
+                state: destinationGroupByColumnId,
+                priority: destinationSubGroupByColumnId,
+              };
+          }
+        } else {
+          updateIssue = {
+            id: removedIssueDetail?.id,
+          };
+
+          // for both horizontal and vertical dnd
+          updateIssue = {
+            ...updateIssue,
+            ...this.handleSortOrder(destinationIssues, destination.index, issues),
+          };
+
+          // for horizontal dnd
+          if (sourceColumnId != destinationColumnId) {
             if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
             if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
           }
-        } else {
-          if (subGroupBy === "state")
-            updateIssue = {
-              ...updateIssue,
-              state: destinationSubGroupByColumnId,
-              priority: destinationGroupByColumnId,
-            };
-          if (subGroupBy === "priority")
-            updateIssue = {
-              ...updateIssue,
-              state: destinationGroupByColumnId,
-              priority: destinationSubGroupByColumnId,
-            };
         }
-      } else {
-        updateIssue = {
-          id: removedIssueDetail?.id,
-        };
 
-        // for both horizontal and vertical dnd
-        updateIssue = {
-          ...updateIssue,
-          ...this.handleSortOrder(destinationIssues, destination.index, issues),
-        };
-
-        // for horizontal dnd
-        if (sourceColumnId != destinationColumnId) {
-          if (groupBy === "state") updateIssue = { ...updateIssue, state: destinationGroupByColumnId };
-          if (groupBy === "priority") updateIssue = { ...updateIssue, priority: destinationGroupByColumnId };
+        if (updateIssue && updateIssue?.id) {
+          if (viewId) store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue, viewId);
+          else store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
         }
-      }
-
-      if (updateIssue && updateIssue?.id) {
-        if (viewId) store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue, viewId);
-        else store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
       }
     }
   };

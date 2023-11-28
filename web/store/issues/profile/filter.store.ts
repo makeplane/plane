@@ -1,4 +1,5 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
+import isEmpty from "lodash/isEmpty";
 // types
 import { RootStore } from "store/root";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueParams } from "types";
@@ -200,10 +201,6 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
         assignee: true,
         start_date: true,
         due_date: true,
-        labels: false,
-        key: false,
-        start_date: false,
-        due_date: false,
         labels: true,
         key: true,
         priority: true,
