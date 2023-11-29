@@ -55,7 +55,6 @@ def magic_link(email, key, token, current_site):
             }
 
             payload = {
-                "abs_url": abs_url,
                 "token": token,
                 "email": email,
             }
