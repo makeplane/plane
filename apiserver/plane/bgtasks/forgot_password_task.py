@@ -24,7 +24,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
         relative_link = (
             f"/accounts/password/?uidb64={uidb64}&token={token}&email={email}"
         )
-        abs_url = current_site + relative_link
+        abs_url = str(current_site) + relative_link
 
         instance_configuration = InstanceConfiguration.objects.filter(
             key__startswith="EMAIL_"
