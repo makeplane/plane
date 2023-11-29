@@ -25,7 +25,7 @@ export interface IKanBanHelpers {
     groupBy: string | null,
     issues: IIssueResponse | undefined,
     issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined,
-    viewId: string | null
+    viewId?: string | null
   ) => void;
 }
 
