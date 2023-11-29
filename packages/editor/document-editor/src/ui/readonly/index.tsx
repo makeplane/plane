@@ -4,6 +4,8 @@ import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "../components/editor-header";
 import { PageRenderer } from "../components/page-renderer";
 import { SummarySideBar } from "../components/summary-side-bar";
+import { IssueWidgetExtension } from "../extensions/widgets/IssueEmbedWidget";
+import { IEmbedConfig } from "../extensions/widgets/IssueEmbedWidget/types";
 import { useEditorMarkings } from "../hooks/use-editor-markings";
 import { DocumentDetails } from "../types/editor-types";
 import {
@@ -22,6 +24,7 @@ interface IDocumentReadOnlyEditor {
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
   pageDuplicationConfig?: IDuplicationConfig;
+  embedConfig?: IEmbedConfig;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -43,7 +46,9 @@ const DocumentReadOnlyEditor = ({
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
+  embedConfig
 }: DocumentReadOnlyEditorProps) => {
+
   const router = useRouter();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const { markings, updateMarkings } = useEditorMarkings();
@@ -51,6 +56,9 @@ const DocumentReadOnlyEditor = ({
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
+    extensions: [
+      IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig }),
+    ]
   });
 
   useEffect(() => {
@@ -101,6 +109,8 @@ const DocumentReadOnlyEditor = ({
         </div>
         <div className="h-full w-full">
           <PageRenderer
+            updatePageTitle={() => Promise.resolve()}
+            readonly={true}
             editor={editor}
             editorClassNames={editorClassNames}
             documentDetails={documentDetails}

@@ -19,16 +19,16 @@ import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
 
-	// document info
+  // document info
   documentDetails: DocumentDetails;
   value: string;
 
-	// file operations
+  // file operations
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   restoreFile: RestoreImage;
 
-	// editor state managers
+  // editor state managers
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
@@ -40,7 +40,7 @@ interface IDocumentEditor {
   updatePageTitle: (title: string) => Promise<void>;
   debouncedUpdatesEnabled?: boolean;
 
-	// embed configuration 
+  // embed configuration 
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
@@ -79,7 +79,7 @@ const DocumentEditor = ({
   pageLockConfig,
   pageArchiveConfig,
   embedConfig,
-	updatePageTitle,
+  updatePageTitle,
 }: IDocumentEditor) => {
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
@@ -154,11 +154,12 @@ const DocumentEditor = ({
         </div>
         <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
+            readonly={false}
             editor={editor}
             editorContentCustomClassNames={editorContentCustomClassNames}
             editorClassNames={editorClassNames}
             documentDetails={documentDetails}
-						updatePageTitle={updatePageTitle}
+            updatePageTitle={updatePageTitle}
           />
         </div>
         <div className="hidden lg:block flex-shrink-0 w-56 lg:w-72" />

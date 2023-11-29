@@ -5,8 +5,8 @@ import { IIssueEmbedConfig } from "./widgets/IssueEmbedWidget/types";
 
 import { SlashCommand, DragAndDrop } from "@plane/editor-extensions";
 import { ISlashCommandItem, UploadImage } from "@plane/editor-types";
-import { CaretUpIcon } from "@radix-ui/react-icons";
 import { IssueSuggestions } from "./widgets/IssueEmbedSuggestionList";
+import { LayersIcon } from "@plane/ui";
 
 export const DocumentEditorExtensions = (
   uploadFile: UploadImage,
@@ -17,10 +17,10 @@ export const DocumentEditorExtensions = (
 ) => {
 
   const additonalOptions: ISlashCommandItem[] = [{
-    title: "IssueEmbed",
-    description: "Embed an issue",
+    title: "Issue Embed",
+    description: "Embed an issue from the project",
     searchTerms: ["Issue", "Iss"],
-    icon: <CaretUpIcon size={18} />,
+    icon: <LayersIcon height={"20px"} width={"20px"}/>,
     command: ({ editor, range }) => {
       editor.chain().blur().insertContentAt(range, "<p class='text-sm bg-gray-300 w-fit pl-3 pr-3 pt-1 pb-1 rounded shadow-sm'>#issue_</p>").run()
     }
