@@ -2,8 +2,9 @@
 import { BarDatum } from "@nivo/bar";
 // components
 import { CustomTooltip } from "./custom-tooltip";
+import { Tooltip } from "@plane/ui";
 // ui
-import { BarGraph, Tooltip } from "components/ui";
+import { BarGraph } from "components/ui";
 // helpers
 import { findStringWithMostCharacters } from "helpers/array.helper";
 import { generateBarColor, generateDisplayName } from "helpers/analytics.helper";
