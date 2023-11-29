@@ -1,9 +1,10 @@
 import React from "react";
 import Image from "next/image";
-
-import type { Props } from "./types";
+// image
 import HtmlFileIcon from "public/attachment/html-icon.png";
+// type
+import type { ImageIconPros } from "./types";
 
-export const HtmlIcon: React.FC<Props> = ({ width, height }) => (
+export const HtmlIcon: React.FC<ImageIconPros> = ({ width, height }) => (
   <Image src={HtmlFileIcon} height={height} width={width} alt="HtmlFileIcon" />
 );
