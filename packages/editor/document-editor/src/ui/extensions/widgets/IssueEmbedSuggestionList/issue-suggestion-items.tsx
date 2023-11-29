@@ -8,15 +8,6 @@ export const getIssueSuggestionItems =
       const filteredSuggestions = issueSuggestions.filter((item) => {
         if (typeof query === "string" && query.length > 0) {
           const search = query.toLowerCase();
-          console.log(
-            item.title,
-            item.priority,
-            search,
-            item.title.toLowerCase().includes(search),
-            item.identifier.toLowerCase().includes(search),
-            item.priority.toLowerCase().includes(search)
-          )
-
 
           return (
             item.title.toLowerCase().includes(search) ||

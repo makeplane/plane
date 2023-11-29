@@ -37,8 +37,6 @@ export const IssueSuggestions = (suggestions: any[]) => {
     }
   })
 
-	console.log(mappedSuggestions)
-
   return IssueEmbedSuggestions.configure({
     suggestion: {
       items: getIssueSuggestionItems(mappedSuggestions),
