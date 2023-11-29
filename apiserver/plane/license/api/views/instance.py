@@ -116,7 +116,7 @@ class InstanceEndpoint(BaseAPIView):
         if instance is None:
             return Response(
                 {"is_activated": False, "is_setup_done": False},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
         # Return instance
         serializer = InstanceSerializer(instance)
