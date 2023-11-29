@@ -1,8 +1,8 @@
 #!/bin/bash
 
-BRANCH=master
+BRANCH=develop
 SCRIPT_DIR=$PWD
-PLANE_INSTALL_DIR=$PWD/plane-app
+PLANE_INSTALL_DIR=$PWD/plane-app-private
 
 function install(){
     echo 
@@ -27,14 +27,15 @@ function download(){
         mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
     fi
 
-    if [ "$BRANCH" != "master" ];
-    then
-        cp $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/temp.yaml 
-        sed -e 's@${APP_RELEASE:-latest}@'"$BRANCH"'@g' \
-            $PLANE_INSTALL_DIR/temp.yaml > $PLANE_INSTALL_DIR/docker-compose.yaml
+    cp $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/temp.yaml 
+    sed -e 's@plane-frontend:@plane-frontend-private:@g' \
+        -e 's@plane-space:@plane-space-private:@g' \
+        -e 's@plane-backend:@plane-backend-private:@g' \
+        -e 's@plane-proxy:@plane-proxy-private:@g' \
+        -e 's@${APP_RELEASE:-latest}@'"$BRANCH"'@g' \
+        $PLANE_INSTALL_DIR/temp.yaml > $PLANE_INSTALL_DIR/docker-compose.yaml
 
-        rm $PLANE_INSTALL_DIR/temp.yaml
-    fi
+    rm $PLANE_INSTALL_DIR/temp.yaml
     
     echo ""
     echo "Latest version is now available for you to use"
@@ -117,7 +118,7 @@ function askForAction(){
 
 if [ "$BRANCH" != "master" ];
 then
-    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
+    PLANE_INSTALL_DIR=$PWD/plane-app-private-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
 fi
 mkdir -p $PLANE_INSTALL_DIR/archive
 
