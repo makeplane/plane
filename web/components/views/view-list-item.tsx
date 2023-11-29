@@ -57,7 +57,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
       <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
         <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-          <a className="flex items-center justify-between relative rounded p-4 w-full">
+          <span className="flex items-center justify-between relative rounded p-4 w-full">
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-4 overflow-hidden">
                 <div className="grid place-items-center flex-shrink-0 h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
@@ -128,7 +128,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                 </div>
               </div>
             </div>
-          </a>
+          </span>
         </Link>
       </div>
     </>

@@ -226,10 +226,10 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               {/* <Link href={`/profile/${myProfile.id}`}>
-                <a className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
+                <span className="flex item-center gap-1 text-sm text-custom-primary-100 underline font-medium">
                   <ExternalLink className="h-4 w-4" />
                   Activity Overview
-                </a>
+                </span>
               </Link> */}
             </div>
 

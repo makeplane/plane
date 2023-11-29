@@ -157,7 +157,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} data={page} />
       <li>
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
-          <a>
+          <span>
             <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
               <div className="flex items-center justify-between">
                 <div className="flex overflow-hidden items-center gap-2">
@@ -295,7 +295,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 </div>
               </div>
             </div>
-          </a>
+          </span>
         </Link>
       </li>
     </>

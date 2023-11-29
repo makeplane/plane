@@ -4,3 +4,8 @@ export type Props = {
   height?: string | number;
   color?: string;
 };
+
+export type ImageIconPros = {
+  width?: number;
+  height?: number;
+};

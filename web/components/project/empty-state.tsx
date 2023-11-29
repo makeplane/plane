@@ -28,7 +28,7 @@ export const EmptyState: React.FC<Props> = ({
 }) => (
   <div className="flex items-center lg:p-20 md:px-10 px-5 justify-center h-full w-full">
     <div className="relative h-full w-full max-w-6xl">
-      <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text} layout="fill" />
+      <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text ?? ""} layout="fill" />
     </div>
     <div className="absolute pt-[30vh] md:pt-[35vh] lg:pt-[45vh] text-center flex flex-col items-center w-full">
       <h6 className="text-xl font-semibold mt-6">{title}</h6>

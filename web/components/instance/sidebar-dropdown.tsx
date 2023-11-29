@@ -78,9 +78,9 @@ export const InstanceSidebarDropdown = observer(() => {
               <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
                 <div className="flex-shrink-0">
                   <Link href={`/${redirectWorkspaceSlug}`}>
-                    <a>
+                    <span>
                       <LogIn className="h-5 w-5 text-custom-text-200 rotate-180" />
-                    </a>
+                    </span>
                   </Link>
                 </div>
               </Tooltip>
@@ -119,10 +119,10 @@ export const InstanceSidebarDropdown = observer(() => {
                 {PROFILE_LINKS.map((link) => (
                   <Menu.Item key={link.key} as="button" type="button">
                     <Link href={link.link}>
-                      <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
-                      </a>
+                      </span>
                     </Link>
                   </Menu.Item>
                 ))}
@@ -142,9 +142,9 @@ export const InstanceSidebarDropdown = observer(() => {
               <div className="p-2 pb-0">
                 <Menu.Item as="button" type="button" className="w-full">
                   <Link href={`/${redirectWorkspaceSlug}`}>
-                    <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                    <span className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
                       Exit God Mode
-                    </a>
+                    </span>
                   </Link>
                 </Menu.Item>
               </div>

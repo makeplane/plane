@@ -29,7 +29,10 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
 
   const router = useRouter();
 
-  const { workspace: workspaceStore, trackEvent: { postHogEventTracker } } = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -60,37 +63,26 @@ export const DeleteWorkspaceModal: React.FC<Props> = observer((props) => {
       .then((res) => {
         handleClose();
         router.push("/");
-        const payload = {
-          slug: data.slug
-        };
-        postHogEventTracker(
-          'WORKSPACE_DELETE',
-          {
-            res,
-            state: "SUCCESS"
-          }
-        );
+        postHogEventTracker("WORKSPACE_DELETE", {
+          res,
+          state: "SUCCESS",
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Workspace deleted successfully.",
         });
       })
-      .catch(() =>
-      {
+      .catch(() => {
         setToastAlert({
           type: "error",
           title: "Error!",
           message: "Something went wrong. Please try again later.",
-        })
-        postHogEventTracker(
-          'WORKSPACE_DELETE',
-          {
-            state: "FAILED"
-          }
-        );
-      }
-      );
+        });
+        postHogEventTracker("WORKSPACE_DELETE", {
+          state: "FAILED",
+        });
+      });
   };
 
   return (

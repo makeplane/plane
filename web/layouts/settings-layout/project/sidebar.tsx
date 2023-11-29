@@ -50,7 +50,7 @@ export const ProjectSettingsSidebar = () => {
         <div className="flex flex-col gap-1 w-full">
           {projectLinks.map((link) => (
             <Link key={link.href} href={link.href}>
-              <a>
+              <span>
                 <div
                   className={`px-4 py-2 text-sm font-medium rounded-md ${
                     (link.label === "Import" ? router.asPath.includes(link.href) : router.asPath === link.href)
@@ -60,7 +60,7 @@ export const ProjectSettingsSidebar = () => {
                 >
                   {link.label}
                 </div>
-              </a>
+              </span>
             </Link>
           ))}
         </div>

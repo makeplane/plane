@@ -16,7 +16,11 @@ export const JiraGetImportDetail: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
   const {
@@ -31,10 +35,8 @@ export const JiraGetImportDetail: React.FC = observer(() => {
           <h3 className="font-semibold">Jira Personal Access Token</h3>
           <p className="text-sm text-custom-text-200">
             Get to know your access token by navigating to{" "}
-            <Link href="https://id.atlassian.com/manage-profile/security/api-tokens">
-              <a className="text-custom-primary underline" target="_blank" rel="noreferrer">
-                Atlassian Settings
-              </a>
+            <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
+              <span className="text-custom-primary underline">Atlassian Settings</span>
             </Link>
           </p>
         </div>
@@ -192,7 +194,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     type="button"
                     onClick={() => {
                       setTrackElement("JIRA_IMPORT_DETAIL");
-                      commandPaletteStore.toggleCreateProjectModal(true)
+                      commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >

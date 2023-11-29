@@ -17,7 +17,6 @@ import emptyAnalytics from "public/empty-state/analytics.svg";
 import { ANALYTICS_TABS } from "constants/analytics";
 // type
 import { NextPageWithLayout } from "types/app";
-import { NewEmptyState } from "components/common/new-empty-state";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
   // store
