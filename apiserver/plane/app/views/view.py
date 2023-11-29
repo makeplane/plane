@@ -95,6 +95,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -177,73 +178,6 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
-        issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-        ## Grouping the results
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
-        if sub_group_by and sub_group_by == group_by:
-            return Response(
-                {"error": "Group by and sub group by cannot be same"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if group_by:
-            grouped_results = group_results(issues, group_by, sub_group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(issues, status=status.HTTP_200_OK)
-
-
-class GlobalViewIssuesGroupedEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
-    def get(self, request, slug):
-        filters = issue_filters(request.query_params, "GET")
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-
-        issue_queryset = (
-            Issue.issue_objects.annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project__project_projectmember__member=self.request.user)
-            .filter(**filters)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-        )
 
         issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
@@ -251,6 +185,7 @@ class GlobalViewIssuesGroupedEndpoint(BaseAPIView):
             issue_dict,
             status=status.HTTP_200_OK,
         )
+
 
 class IssueViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
