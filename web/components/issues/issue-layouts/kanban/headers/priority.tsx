@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";

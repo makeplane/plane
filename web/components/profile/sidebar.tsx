@@ -68,9 +68,9 @@ export const ProfileSidebar = () => {
             {user?.id === userId && (
               <div className="absolute top-3.5 right-3.5 h-5 w-5 bg-white rounded grid place-items-center">
                 <Link href="/profile">
-                  <a className="grid place-items-center text-black">
+                  <span className="grid place-items-center text-black">
                     <Pencil className="h-3 w-3" />
-                  </a>
+                  </span>
                 </Link>
               </div>
             )}

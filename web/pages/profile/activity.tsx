@@ -101,9 +101,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                   <span className="text-custom-text-200">
                     created{" "}
                     <Link href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}>
-                      <a className="inline-flex items-center hover:underline">
+                      <span className="inline-flex items-center hover:underline">
                         this issue. <ExternalLinkIcon className="ml-1 h-3.5 w-3.5" />
-                      </a>
+                      </span>
                     </Link>
                   </span>
                 ) : activityItem.field ? (
@@ -157,7 +157,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                 </span>
                               ) : (
                                 <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
-                                  <a className="text-gray font-medium">{activityItem.actor_detail.display_name}</a>
+                                  <span className="text-gray font-medium">{activityItem.actor_detail.display_name}</span>
                                 </Link>
                               )}{" "}
                               <div className="flex gap-1 truncate">

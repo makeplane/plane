@@ -196,11 +196,11 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                   Accept & Join
                 </Button>
                 <Link href={`/${redirectWorkspaceSlug}`}>
-                  <a>
+                  <span>
                     <Button variant="neutral-primary" size="md">
                       Go Home
                     </Button>
-                  </a>
+                  </span>
                 </Link>
               </div>
             </div>

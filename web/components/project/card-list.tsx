@@ -4,12 +4,10 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectCard } from "components/project";
-import { EmptyState } from "components/project/empty-state";
 import { Loader } from "@plane/ui";
 // images
 import emptyProject from "public/empty-state/empty_project.webp";
 // icons
-import { Plus } from "lucide-react";
 import { NewEmptyState } from "components/common/new-empty-state";
 
 export interface IProjectCardList {

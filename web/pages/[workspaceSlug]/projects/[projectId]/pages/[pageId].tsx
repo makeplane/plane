@@ -9,7 +9,7 @@ import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
-import { useDebouncedCallback } from "use-debounce";
+import debounce from "lodash/debounce";
 import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -200,7 +200,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     });
   }, [reset, pageDetails]);
 
-  const debouncedFormSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = debounce(async () => {
     handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 

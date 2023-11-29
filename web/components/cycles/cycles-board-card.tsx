@@ -152,7 +152,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
       />
 
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-        <a className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
+        <span className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-3 truncate">
               <span className="flex-shrink-0">
@@ -268,7 +268,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
               </div>
             </div>
           </div>
-        </a>
+        </span>
       </Link>
     </div>
   );

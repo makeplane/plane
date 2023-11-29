@@ -77,7 +77,9 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
           <div className="text-right text-xs">
             {isSignUpPage ? (
               <Link href="/">
-                <a className="text-custom-text-200 hover:text-custom-primary-100">Already have an account? Sign in.</a>
+                <span className="text-custom-text-200 hover:text-custom-primary-100">
+                  Already have an account? Sign in.
+                </span>
               </Link>
             ) : (
               <button
@@ -100,9 +102,9 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
             </PrimaryButton>
             {!isSignUpPage && (
               <Link href="/sign-up">
-                <a className="block text-custom-text-200 hover:text-custom-primary-100 text-xs mt-4">
+                <span className="block text-custom-text-200 hover:text-custom-primary-100 text-xs mt-4">
                   Don{"'"}t have an account? Sign up.
-                </a>
+                </span>
               </Link>
             )}
           </div>

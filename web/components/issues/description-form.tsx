@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { useDebouncedCallback } from "use-debounce";
+import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
@@ -93,7 +93,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     });
   }, [issue, reset]);
 
-  const debouncedFormSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 

@@ -32,14 +32,12 @@ export const Invitations: React.FC<Props> = (props) => {
   const {
     workspace: workspaceStore,
     user: { currentUser, updateCurrentUser },
-    trackEvent: { postHogEventTracker }
+    trackEvent: { postHogEventTracker },
   } = useMobxStore();
 
-  const {
-    data: invitations,
-    mutate: mutateInvitations,
-    isLoading,
-  } = useSWR(USER_WORKSPACE_INVITATIONS, () => workspaceService.userWorkspaceInvitations());
+  const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
+    workspaceService.userWorkspaceInvitations()
+  );
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
@@ -74,7 +72,8 @@ export const Invitations: React.FC<Props> = (props) => {
       .catch((error) => {
         console.log(error);
         postHogEventTracker("WORKSPACE_USER_INVITE_ACCEPT", { state: "FAILED" });
-      }).finally(() => setIsJoiningWorkspaces(false));
+      })
+      .finally(() => setIsJoiningWorkspaces(false));
   };
 
   return invitations && invitations.length > 0 ? (
@@ -89,10 +88,11 @@ export const Invitations: React.FC<Props> = (props) => {
               return (
                 <div
                   key={invitation.id}
-                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${isSelected
-                    ? "border-custom-primary-100"
-                    : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
-                    }`}
+                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${
+                    isSelected
+                      ? "border-custom-primary-100"
+                      : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
+                  }`}
                   onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                 >
                   <div className="flex-shrink-0">

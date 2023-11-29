@@ -41,7 +41,7 @@ const PosthogWrapper: FC<IPosthogWrapper> = (props) => {
         api_host: posthogHost || "https://app.posthog.com",
         // Enable debug mode in development
         loaded: (posthog) => {
-          // if (process.env.NODE_ENV === "development") posthog.debug();
+          if (process.env.NODE_ENV === "development") posthog.debug();
         },
         autocapture: false,
         capture_pageview: false, // Disable automatic pageview capture, as we capture manually

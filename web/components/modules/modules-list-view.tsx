@@ -7,7 +7,6 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
-import { EmptyState } from "components/common";
 // ui
 import { Loader } from "@plane/ui";
 // assets

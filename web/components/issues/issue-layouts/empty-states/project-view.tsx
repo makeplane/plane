@@ -7,12 +7,8 @@ import { EmptyState } from "components/common";
 // assets
 import emptyIssue from "public/empty-state/issue.svg";
 import { EProjectStore } from "store/command-palette.store";
-import { useRouter } from "next/router";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
-  const router = useRouter();
-  const { viewId } = router.query as { viewId: string };
-
   const {
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },

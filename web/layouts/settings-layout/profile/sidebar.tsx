@@ -160,7 +160,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     sidebarCollapsed ? "justify-center" : `justify-between`
                   }`}
                 >
-                  <a
+                  <span
                     className={`flex items-center flex-grow w-full truncate gap-x-2 px-3 py-1 hover:bg-custom-sidebar-background-80 rounded-md ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
@@ -183,7 +183,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     {!sidebarCollapsed && (
                       <p className="truncate text-custom-sidebar-text-200 text-sm">{workspace.name}</p>
                     )}
-                  </a>
+                  </span>
                 </Link>
               ))}
             </div>

@@ -280,7 +280,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
     await issueDraftService
       .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
-      .then((res) => {
+      .then(() => {
         setToastAlert({
           type: "success",
           title: "Success!",

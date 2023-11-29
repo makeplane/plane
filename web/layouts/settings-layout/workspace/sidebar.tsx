@@ -26,7 +26,7 @@ export const WorkspaceSettingsSidebar = () => {
             (link) =>
               workspaceMemberInfo >= link.access && (
                 <Link key={link.href} href={`/${workspaceSlug}/${link.href}`}>
-                  <a>
+                  <span>
                     <div
                       className={`px-4 py-2 text-sm font-medium rounded-md ${
                         router.pathname.split("/")?.[3] === link.href.split("/")?.[2]
@@ -36,7 +36,7 @@ export const WorkspaceSettingsSidebar = () => {
                     >
                       {link.label}
                     </div>
-                  </a>
+                  </span>
                 </Link>
               )
           )}

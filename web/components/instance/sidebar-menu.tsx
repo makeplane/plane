@@ -54,7 +54,7 @@ export const InstanceAdminSidebarMenu = () => {
 
         return (
           <Link key={index} href={item.href}>
-            <a className="block w-full">
+            <span className="block w-full">
               <Tooltip tooltipContent={item.name} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                 <div
                   className={`group flex w-full items-center gap-3 rounded-md px-3 py-2 outline-none ${
@@ -84,7 +84,7 @@ export const InstanceAdminSidebarMenu = () => {
                   )}
                 </div>
               </Tooltip>
-            </a>
+            </span>
           </Link>
         );
       })}

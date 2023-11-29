@@ -65,7 +65,7 @@
     "postcss": "^8.4.29",
     "eslint-config-next": "13.2.4",
     "@types/node": "18.15.3",
-    "@types/react": "^18.2.5",
+    "@types/react": "^18.2.39",
     "@types/react-dom": "18.0.11",
     "tailwind-config-custom": "*",
     "tsconfig": "*",

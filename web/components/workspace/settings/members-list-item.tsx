@@ -138,27 +138,27 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
         <div className="flex items-center gap-x-4 gap-y-2">
           {member.avatar && member.avatar !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-              <a className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
                 <img
                   src={member.avatar}
                   className="absolute top-0 left-0 h-full w-full object-cover rounded"
                   alt={member.display_name || member.email}
                 />
-              </a>
+              </span>
             </Link>
           ) : (
             <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-              <a className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize bg-gray-700 text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize bg-gray-700 text-white">
                 {(member.email ?? member.display_name ?? "?")[0]}
-              </a>
+              </span>
             </Link>
           )}
           <div>
             {member.member ? (
               <Link href={`/${workspaceSlug}/profile/${member.memberId}`}>
-                <a className="text-sm font-medium">
+                <span className="text-sm font-medium">
                   {member.first_name} {member.last_name}
-                </a>
+                </span>
               </Link>
             ) : (
               <h4 className="text-sm cursor-default">{member.display_name || member.email}</h4>

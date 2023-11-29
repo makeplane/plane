@@ -3,11 +3,10 @@ import { PlusIcon } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { EmptyState } from "components/common";
+import { NewEmptyState } from "components/common/new-empty-state";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
 import { EProjectStore } from "store/command-palette.store";
-import { NewEmptyState } from "components/common/new-empty-state";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   const {

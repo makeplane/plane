@@ -12,8 +12,6 @@ import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 import { ProjectMemberService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
-// helpers
-import { trackEvent } from "helpers/event-tracker.helper";
 // types
 import { IProjectMember, TUserProjectRole } from "types";
 // constants
@@ -58,7 +56,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   const {
     user: { currentProjectRole },
     workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker }
+    trackEvent: { postHogEventTracker },
   } = useMobxStore();
 
   const {
@@ -94,22 +92,16 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: "success",
           message: "Member added successfully",
         });
-        postHogEventTracker(
-          'PROJECT_MEMBER_INVITE',
-          {
-            ...res,
-            state: "SUCCESS"
-          }
-        );
+        postHogEventTracker("PROJECT_MEMBER_INVITE", {
+          ...res,
+          state: "SUCCESS",
+        });
       })
       .catch((error) => {
         console.log(error);
-        postHogEventTracker(
-          'PROJECT_MEMBER_INVITE',
-          {
-            state: "FAILED",
-          }
-        );
+        postHogEventTracker("PROJECT_MEMBER_INVITE", {
+          state: "FAILED",
+        });
       })
       .finally(() => {
         reset(defaultValues);

@@ -59,8 +59,8 @@ export const IssueAttachments = () => {
             key={file.id}
             className="flex h-[60px] items-center justify-between gap-1 rounded-md border-[2px] border-custom-border-200 bg-custom-background-100 px-4 py-2 text-sm"
           >
-            <Link href={file.asset}>
-              <a target="_blank">
+            <Link href={file.asset} target="_blank">
+              <span>
                 <div className="flex items-center gap-3">
                   <div className="h-7 w-7">{getFileIcon(getFileExtension(file.asset))}</div>
                   <div className="flex flex-col gap-1">
@@ -85,7 +85,7 @@ export const IssueAttachments = () => {
                     </div>
                   </div>
                 </div>
-              </a>
+              </span>
             </Link>
 
             <button

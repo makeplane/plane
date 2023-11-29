@@ -6,7 +6,7 @@ import { RichTextEditor } from "@plane/rich-text-editor";
 import { TextArea } from "@plane/ui";
 import { IssueReaction } from "./reactions";
 // hooks
-import { useDebouncedCallback } from "use-debounce";
+import debounce from "lodash/debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 // types
@@ -74,7 +74,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     }
   }, [issueTitleCurrentValue, localTitleValue]);
 
-  const debouncedFormSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 

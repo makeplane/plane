@@ -119,7 +119,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
             {GLOBAL_VIEW_LAYOUTS.map((layout) => (
               <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
-                <a>
+                <span>
                   <Tooltip tooltipContent={layout.title}>
                     <div
                       className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
@@ -133,7 +133,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
                       />
                     </div>
                   </Tooltip>
-                </a>
+                </span>
               </Link>
             ))}
           </div>

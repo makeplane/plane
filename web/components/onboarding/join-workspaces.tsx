@@ -20,7 +20,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
     control,
     setValue,
     watch,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
     defaultValues: {
       name: "",

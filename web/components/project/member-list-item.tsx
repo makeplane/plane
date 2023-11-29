@@ -76,27 +76,27 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-x-4 gap-y-2">
           {memberDetails.avatar && memberDetails.avatar !== "" ? (
             <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
-              <a className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize text-white">
                 <img
                   src={memberDetails.avatar}
                   alt={memberDetails.display_name || memberDetails.email}
                   className="absolute top-0 left-0 h-full w-full object-cover rounded"
                 />
-              </a>
+              </span>
             </Link>
           ) : (
             <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
-              <a className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize bg-gray-700 text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize bg-gray-700 text-white">
                 {(memberDetails.display_name ?? memberDetails.email ?? "?")[0]}
-              </a>
+              </span>
             </Link>
           )}
 
           <div>
             <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
-              <a className="text-sm font-medium">
+              <span className="text-sm font-medium">
                 {memberDetails.first_name} {memberDetails.last_name}
-              </a>
+              </span>
             </Link>
             <div className="flex items-center">
               <p className="text-xs text-custom-text-300">{memberDetails.display_name}</p>
