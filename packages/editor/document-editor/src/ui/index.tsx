@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { getEditorClassNames, useEditor } from "@plane/editor-core";
-import { cn, getEditorClassNames, useEditor } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "./extensions";
 import {
   IDuplicationConfig,
@@ -15,7 +14,7 @@ import { DocumentDetails } from "./types/editor-types";
 import { PageRenderer } from "./components/page-renderer";
 import { getMenuOptions } from "./utils/menu-options";
 import { useRouter } from "next/router";
-import { IEmbedConfig } from "./extensions/widgets/types";
+import { IEmbedConfig } from "./extensions/widgets/IssueEmbedWidget/types";
 import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
