@@ -1,6 +1,6 @@
 import { FC, useCallback, useState } from "react";
+import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -89,7 +89,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    user: userStore,
   } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];
@@ -114,7 +118,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     setIsDragStarted(true);
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     setIsDragStarted(false);
 
     if (!result) return;
@@ -159,7 +163,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
       <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-          <div className={`fixed left-1/2 -translate-x-1/2 z-40 w-72 top-3 flex items-center justify-center mx-3`}>
+          <div
+            className={`fixed left-1/2 -translate-x-1/2 ${
+              isDragStarted ? "z-40" : ""
+            } w-72 top-3 flex items-center justify-center mx-3`}
+          >
             <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
               {(provided, snapshot) => (
                 <div
@@ -216,7 +224,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               quickAddCallback={issueStore?.quickAddIssue}
               viewId={viewId}
               disableIssueCreation={!enableIssueCreation}
-              isReadOnly={!enableInlineEditing}
+              isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
               addIssuesToView={addIssuesToView}
             />
@@ -257,7 +265,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               isDragStarted={isDragStarted}
               disableIssueCreation={true}
               enableQuickIssueCreate={enableQuickAdd}
-              isReadOnly={!enableInlineEditing}
+              isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
               addIssuesToView={(issues) => {
                 console.log("kanban existingIds", issues);
