@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -15,8 +18,7 @@ import { APITokenService } from "services/api_token.service";
 import { NextPageWithLayout } from "types/app";
 // constants
 import { API_TOKENS_LIST } from "constants/fetch-keys";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const apiTokenService = new APITokenService();
 
@@ -31,7 +33,7 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     user: { currentWorkspaceRole },
   } = useMobxStore();
 
-  const isAdmin = currentWorkspaceRole === 20;
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   const { data: tokens } = useSWR(workspaceSlug && isAdmin ? API_TOKENS_LIST(workspaceSlug.toString()) : null, () =>
     workspaceSlug && isAdmin ? apiTokenService.getApiTokens(workspaceSlug.toString()) : null
@@ -48,25 +50,27 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
     <>
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       {tokens ? (
-        tokens.length > 0 ? (
-          <section className="pr-9 py-8 w-full overflow-y-auto">
-            <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200 mb-2">
-              <h3 className="text-xl font-medium">API tokens</h3>
-              <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
-                Add API token
-              </Button>
+        <section className="pr-9 py-8 w-full overflow-y-auto">
+          {tokens.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between py-3.5 border-b border-custom-border-200 mb-2">
+                <h3 className="text-xl font-medium">API tokens</h3>
+                <Button variant="primary" onClick={() => setIsCreateTokenModalOpen(true)}>
+                  Add API token
+                </Button>
+              </div>
+              <div>
+                {tokens.map((token) => (
+                  <ApiTokenListItem key={token.id} token={token} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="mx-auto">
+              <ApiTokenEmptyState onClick={() => setIsCreateTokenModalOpen(true)} />
             </div>
-            <div>
-              {tokens.map((token) => (
-                <ApiTokenListItem key={token.id} token={token} />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <div className="mx-auto py-8">
-            <ApiTokenEmptyState onClick={() => setIsCreateTokenModalOpen(true)} />
-          </div>
-        )
+          )}
+        </section>
       ) : (
         <div className="h-full w-full grid place-items-center p-4">
           <Spinner />

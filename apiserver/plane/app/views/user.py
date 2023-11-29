@@ -112,6 +112,15 @@ class UserEndpoint(BaseViewSet):
 
         # Deactivate the user
         user.is_active = False
+        user.last_workspace_id = None
+        user.is_tour_completed = False
+        user.is_onboarded = False
+        user.onboarding_step = {
+            "workspace_join": False,
+            "profile_complete": False,
+            "workspace_create": False,
+            "workspace_invite": False,
+        }
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

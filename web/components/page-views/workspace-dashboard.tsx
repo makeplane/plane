@@ -12,6 +12,8 @@ import { CompletedIssuesGraph, IssuesList, IssuesPieChart, IssuesStats } from "c
 import { Button } from "@plane/ui";
 // images
 import emptyDashboard from "public/empty-state/dashboard.svg";
+import { NewEmptyState } from "components/common/new-empty-state";
+import emptyProject from "public/empty-state/dashboard_empty_project.webp";
 
 export const WorkspaceDashboardView = observer(() => {
   // router
@@ -19,7 +21,12 @@ export const WorkspaceDashboardView = observer(() => {
   const { workspaceSlug } = router.query;
   // store
 
-  const { user: userStore, project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    user: userStore,
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
@@ -65,22 +72,23 @@ export const WorkspaceDashboardView = observer(() => {
               </div>
             </div>
           ) : (
-            <div className="bg-custom-primary-100/5 flex justify-between gap-5 md:gap-8">
-              <div className="p-5 md:p-8 pr-0">
-                <h5 className="text-xl font-semibold">Create a project</h5>
-                <p className="mt-2 mb-5">Manage your projects by creating issues, cycles, modules, views and pages.</p>
-                <Button variant="primary" size="sm" onClick={() => {
-                    setTrackElement("DASHBOARD_PAGE");
-                    commandPaletteStore.toggleCreateProjectModal(true)
-                  }
-                }>
-                  Create Project
-                </Button>
-              </div>
-              <div className="hidden md:block self-end overflow-hidden pt-8">
-                <Image src={emptyDashboard} alt="Empty Dashboard" />
-              </div>
-            </div>
+            <NewEmptyState
+              image={emptyProject}
+              title="Overview of your projects, activity, and metrics"
+              description="When you have created a project and have issues assigned, you will see metrics, activity, and things you care about here. This is personalized to your role in projects, so project admins will see more than members."
+              comicBox={{
+                title: "Everything starts with a project in Plane",
+                direction: "right",
+                description: "A project could be a product’s roadmap, a marketing campaign, or launching a new car.",
+              }}
+              primaryButton={{
+                text: "Build your first project",
+                onClick: () => {
+                  setTrackElement("DASHBOARD_PAGE");
+                  commandPaletteStore.toggleCreateProjectModal(true);
+                },
+              }}
+            />
           )
         ) : null}
       </div>

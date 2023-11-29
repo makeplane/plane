@@ -7,24 +7,19 @@ import {
 } from "@plane/editor-core";
 import { FixedMenu } from "./menus/fixed-menu";
 import { LiteTextEditorExtensions } from "./extensions";
-
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
-export type IMentionSuggestion = {
-  id: string;
-  type: string;
-  avatar: string;
-  title: string;
-  subtitle: string;
-  redirect_uri: string;
-};
-
-export type IMentionHighlight = string;
+import {
+  UploadImage,
+  DeleteImage,
+  IMentionSuggestion,
+  RestoreImage,
+} from "@plane/editor-types";
 
 interface ILiteTextEditor {
   value: string;
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
+  restoreFile: RestoreImage;
+
   noBorder?: boolean;
   borderOnFocus?: boolean;
   customClassName?: string;
@@ -73,6 +68,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     value,
     uploadFile,
     deleteFile,
+    restoreFile,
     noBorder,
     borderOnFocus,
     customClassName,
@@ -93,6 +89,7 @@ const LiteTextEditor = (props: LiteTextEditorProps) => {
     value,
     uploadFile,
     deleteFile,
+    restoreFile,
     forwardedRef,
     extensions: LiteTextEditorExtensions(onEnterKeyPress),
     mentionHighlights,

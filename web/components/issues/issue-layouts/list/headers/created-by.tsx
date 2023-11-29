@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 import { Icon } from "./assignee";
 import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface ICreatedByHeader {
   column_id: string;
@@ -11,10 +12,11 @@ export interface ICreatedByHeader {
   issues_count: number;
   disableIssueCreation?: boolean;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
-  const { column_value, issues_count, disableIssueCreation, currentStore } = props;
+  const { column_value, issues_count, disableIssueCreation, currentStore, addIssuesToView } = props;
 
   const createdBy = column_value ?? null;
 
@@ -28,6 +30,7 @@ export const CreatedByHeader: FC<ICreatedByHeader> = observer((props) => {
           issuePayload={{ created_by: createdBy?.member?.id }}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
     </>

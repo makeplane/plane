@@ -15,7 +15,6 @@ import {
   CodeIcon,
 } from "lucide-react";
 import { Editor } from "@tiptap/react";
-import { UploadImage } from "../../../types/upload-image";
 import {
   insertImageCommand,
   insertTableCommand,
@@ -32,6 +31,7 @@ import {
   toggleTaskList,
   toggleUnderline,
 } from "../../../lib/editor-commands";
+import { UploadImage } from "@plane/editor-types";
 
 export interface EditorMenuItem {
   name: string;

@@ -46,7 +46,7 @@ export const EditorHeader = (props: IEditorHeader) => {
 
   return (
     <div className="flex items-center border-b border-custom-border-200 py-2 px-5">
-      <div className="flex-shrink-0 w-56 lg:w-80">
+      <div className="flex-shrink-0 w-56 lg:w-72">
         <SummaryPopover
           editor={editor}
           markings={markings}
