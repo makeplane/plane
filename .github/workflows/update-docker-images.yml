@@ -29,7 +29,7 @@ jobs:
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:test
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private
           tags: |
             type=ref,event=tag
       
@@ -37,7 +37,7 @@ jobs:
         id: metaBackend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:test
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private
           tags: |
             type=ref,event=tag
 
@@ -45,7 +45,7 @@ jobs:
         id: metaSpace
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:test
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private
           tags: |
             type=ref,event=tag
 
@@ -53,7 +53,7 @@ jobs:
         id: metaProxy
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:test
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private
           tags: |
             type=ref,event=tag
 
