@@ -18,11 +18,17 @@ import { IEmbedConfig } from "./extensions/widgets/IssueEmbedWidget/types";
 import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
+
+	// document info
   documentDetails: DocumentDetails;
   value: string;
+
+	// file operations
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   restoreFile: RestoreImage;
+
+	// editor state managers
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
@@ -31,7 +37,10 @@ interface IDocumentEditor {
   ) => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
+  updatePageTitle: (title: string) => Promise<void>;
   debouncedUpdatesEnabled?: boolean;
+
+	// embed configuration 
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
@@ -70,6 +79,7 @@ const DocumentEditor = ({
   pageLockConfig,
   pageArchiveConfig,
   embedConfig,
+	updatePageTitle,
 }: IDocumentEditor) => {
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
@@ -148,6 +158,7 @@ const DocumentEditor = ({
             editorContentCustomClassNames={editorContentCustomClassNames}
             editorClassNames={editorClassNames}
             documentDetails={documentDetails}
+						updatePageTitle={updatePageTitle}
           />
         </div>
         <div className="hidden lg:block flex-shrink-0 w-56 lg:w-72" />

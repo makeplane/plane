@@ -49,7 +49,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const { user } = useUser();
 
   const { handleSubmit, reset, getValues, control } = useForm<IPage>({
-    defaultValues: { name: "" },
+    defaultValues: { name: "", description_html: "" },
   });
 
 
@@ -113,23 +113,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
       });
   };
 
-  const createPage = async (payload: Partial<IPage>) => {
-    if (!workspaceSlug || !projectId) return;
 
-    await pageService.createPage(workspaceSlug.toString(), projectId.toString(), payload);
-  };
-
-  // ================ Page Menu Actions ==================
-  const duplicate_page = async () => {
-    const currentPageValues = getValues();
-    const formData: Partial<IPage> = {
-      name: "Copy of " + currentPageValues.name,
-      description_html: currentPageValues.description_html,
-    };
-    await createPage(formData);
-  };
-
-  const archivePage = async () => {
+  const updatePageTitle = async (title: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
     try {
@@ -138,204 +123,240 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
         return {
           ...prevData,
-          archived_at: renderDateFormat(new Date()),
-        };
-      }, true);
-
-      await pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
-    } catch (e) {
-      mutatePageDetails();
-    }
-  };
-
-  const unArchivePage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
-
-        return {
-          ...prevData,
-          archived_at: null,
+          name: title,
         };
       }, false);
 
-      await pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
+      await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), { name: title })
     } catch (e) {
       mutatePageDetails();
     }
   };
 
-  // ========================= Page Lock ==========================
-  const lockPage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
+const createPage = async (payload: Partial<IPage>) => {
+  if (!workspaceSlug || !projectId) return;
 
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
+  await pageService.createPage(workspaceSlug.toString(), projectId.toString(), payload);
+};
 
-        return {
-          ...prevData,
-          is_locked: true,
-        };
-      }, false);
-
-      await pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
-    } catch (e) {
-      mutatePageDetails();
-    }
+// ================ Page Menu Actions ==================
+const duplicate_page = async () => {
+  const currentPageValues = getValues();
+  const formData: Partial<IPage> = {
+    name: "Copy of " + currentPageValues.name,
+    description_html: currentPageValues.description_html,
   };
+  await createPage(formData);
+};
 
-  const unlockPage = async () => {
-    if (!workspaceSlug || !projectId || !pageId) return;
+const archivePage = async () => {
+  if (!workspaceSlug || !projectId || !pageId) return;
 
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
+  try {
+    mutatePageDetails((prevData) => {
+      if (!prevData) return;
 
-        return {
-          ...prevData,
-          is_locked: false,
-        };
-      }, false);
+      return {
+        ...prevData,
+        archived_at: renderDateFormat(new Date()),
+      };
+    }, true);
 
-      await pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
-    } catch (e) {
-      mutatePageDetails();
-    }
-  };
+    await pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
+  } catch (e) {
+    mutatePageDetails();
+  }
+};
 
-  useEffect(() => {
-    if (!pageDetails) return;
+const unArchivePage = async () => {
+  if (!workspaceSlug || !projectId || !pageId) return;
 
-    reset({
-      ...pageDetails,
-    });
-  }, [reset, pageDetails]);
+  try {
+    mutatePageDetails((prevData) => {
+      if (!prevData) return;
 
-  const debouncedFormSave = useDebouncedCallback(async () => {
-    handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+      return {
+        ...prevData,
+        archived_at: null,
+      };
+    }, false);
 
-  if (error)
-    return (
-      <EmptyState
-        image={emptyPage}
-        title="Page does not exist"
-        description="The page you are looking for does not exist or has been deleted."
-        primaryButton={{
-          text: "View other pages",
-          onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
-        }}
-      />
-    );
+    await pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
+  } catch (e) {
+    mutatePageDetails();
+  }
+};
 
+// ========================= Page Lock ==========================
+const lockPage = async () => {
+  if (!workspaceSlug || !projectId || !pageId) return;
+
+  try {
+    mutatePageDetails((prevData) => {
+      if (!prevData) return;
+
+      return {
+        ...prevData,
+        is_locked: true,
+      };
+    }, false);
+
+    await pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
+  } catch (e) {
+    mutatePageDetails();
+  }
+};
+
+const unlockPage = async () => {
+  if (!workspaceSlug || !projectId || !pageId) return;
+
+  try {
+    mutatePageDetails((prevData) => {
+      if (!prevData) return;
+
+      return {
+        ...prevData,
+        is_locked: false,
+      };
+    }, false);
+
+    await pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
+  } catch (e) {
+    mutatePageDetails();
+  }
+};
+
+useEffect(() => {
+  if (!pageDetails) return;
+
+  reset({
+    ...pageDetails,
+  });
+}, [reset, pageDetails]);
+
+const debouncedFormSave = useDebouncedCallback(async () => {
+  handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
+}, 1500);
+
+if (error)
   return (
-    <>
-      {pageDetails && issues ? (
-        <div className="flex h-full flex-col justify-between">
-          <div className="h-full w-full overflow-hidden">
-            {pageDetails.is_locked || pageDetails.archived_at ? (
-              <DocumentReadOnlyEditorWithRef
-                ref={editorRef}
-                value={pageDetails.description_html}
-                customClassName={"tracking-tight w-full px-0"}
-                borderOnFocus={false}
-                noBorder
-                documentDetails={{
-                  title: pageDetails.name,
-                  created_by: pageDetails.created_by,
-                  created_on: pageDetails.created_at,
-                  last_updated_at: pageDetails.updated_at,
-                  last_updated_by: pageDetails.updated_by,
-                }}
-                pageLockConfig={
-                  !pageDetails.archived_at && user && pageDetails.owned_by === user.id
-                    ? { action: unlockPage, is_locked: pageDetails.is_locked }
-                    : undefined
-                }
-                pageArchiveConfig={
-                  user && pageDetails.owned_by === user.id
-                    ? {
-                      action: pageDetails.archived_at ? unArchivePage : archivePage,
-                      is_archived: pageDetails.archived_at ? true : false,
-                      archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
-                    }
-                    : undefined
-                }
-              />
-            ) : (
-              <Controller
-                name="description_html"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <DocumentEditorWithRef
-                    documentDetails={{
-                      title: pageDetails.name,
-                      created_by: pageDetails.created_by,
-                      created_on: pageDetails.created_at,
-                      last_updated_at: pageDetails.updated_at,
-                      last_updated_by: pageDetails.updated_by,
-                    }}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-										restoreFile={fileService.restoreImage}
-                    deleteFile={fileService.deleteImage}
-                    ref={editorRef}
-                    debouncedUpdatesEnabled={false}
-                    setIsSubmitting={setIsSubmitting}
-                    value={!value || value === "" ? "<p></p>" : value}
-                    customClassName="tracking-tight px-0 h-full w-full"
-                    onChange={(_description_json: Object, description_html: string) => {
-                      onChange(description_html);
-                      setIsSubmitting("submitting");
-                      debouncedFormSave();
-                    }}
-                    duplicationConfig={{ action: duplicate_page }}
-                    pageArchiveConfig={
-                      user && pageDetails.owned_by === user.id
-                        ? {
-                          is_archived: pageDetails.archived_at ? true : false,
-                          action: pageDetails.archived_at ? unArchivePage : archivePage,
-                        }
-                        : undefined
-                    }
-                    pageLockConfig={
-                      user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
-                    }
-                    embedConfig={
-                      {
-                        issueEmbedConfig: {
-													issues: issues ? issues : [],
-                          fetchIssue: fetchIssue,
-                          clickAction: issueWidgetClickAction
-                        }
+    <EmptyState
+      image={emptyPage}
+      title="Page does not exist"
+      description="The page you are looking for does not exist or has been deleted."
+      primaryButton={{
+        text: "View other pages",
+        onClick: () => router.push(`/${workspaceSlug}/projects/${projectId}/pages`),
+      }}
+    />
+  );
+
+return (
+  <>
+    {pageDetails && issues ? (
+      <div className="flex h-full flex-col justify-between">
+        <div className="h-full w-full overflow-hidden">
+          {pageDetails.is_locked || pageDetails.archived_at ? (
+            <DocumentReadOnlyEditorWithRef
+              ref={editorRef}
+              value={pageDetails.description_html}
+              customClassName={"tracking-tight w-full px-0"}
+              borderOnFocus={false}
+              noBorder
+              documentDetails={{
+                title: pageDetails.name,
+                created_by: pageDetails.created_by,
+                created_on: pageDetails.created_at,
+                last_updated_at: pageDetails.updated_at,
+                last_updated_by: pageDetails.updated_by,
+              }}
+              pageLockConfig={
+                !pageDetails.archived_at && user && pageDetails.owned_by === user.id
+                  ? { action: unlockPage, is_locked: pageDetails.is_locked }
+                  : undefined
+              }
+              pageArchiveConfig={
+                user && pageDetails.owned_by === user.id
+                  ? {
+                    action: pageDetails.archived_at ? unArchivePage : archivePage,
+                    is_archived: pageDetails.archived_at ? true : false,
+                    archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
+                  }
+                  : undefined
+              }
+            />
+          ) : (
+            <Controller
+              name="description_html"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <DocumentEditorWithRef
+                  documentDetails={{
+                    title: pageDetails.name,
+                    created_by: pageDetails.created_by,
+                    created_on: pageDetails.created_at,
+                    last_updated_at: pageDetails.updated_at,
+                    last_updated_by: pageDetails.updated_by,
+                  }}
+                  uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                  restoreFile={fileService.restoreImage}
+                  deleteFile={fileService.deleteImage}
+                  ref={editorRef}
+                  debouncedUpdatesEnabled={false}
+									updatePageTitle={updatePageTitle}
+                  setIsSubmitting={setIsSubmitting}
+                  value={!value || value === "" ? "<p></p>" : value}
+                  customClassName="tracking-tight px-0 h-full w-full"
+                  onChange={(_description_json: Object, description_html: string) => {
+                    onChange(description_html);
+                    setIsSubmitting("submitting");
+                    debouncedFormSave();
+                  }}
+                  duplicationConfig={{ action: duplicate_page }}
+                  pageArchiveConfig={
+                    user && pageDetails.owned_by === user.id
+                      ? {
+                        is_archived: pageDetails.archived_at ? true : false,
+                        action: pageDetails.archived_at ? unArchivePage : archivePage,
+                      }
+                      : undefined
+                  }
+                  pageLockConfig={
+                    user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
+                  }
+                  embedConfig={
+                    {
+                      issueEmbedConfig: {
+                        issues: issues ? issues : [],
+                        fetchIssue: fetchIssue,
+                        clickAction: issueWidgetClickAction
                       }
                     }
-                  />
-                )}
-              />
-            )}
-          </div>
-          <IssuePeekOverview
-            workspaceSlug={workspaceSlug as string}
-            projectId={projectId as string}
-            issueId={peekIssueId ? peekIssueId as string : ""}
-            isArchived={false}
-            handleIssue={(issueToUpdate) => {
-              if (peekIssueId && typeof peekIssueId === 'string') {
-                handleUpdateIssue(peekIssueId, issueToUpdate)
-              }
-            }}
-          />
+                  }
+                />
+              )}
+            />
+          )}
         </div>
-      ) : (
-        <div className="h-full w-full grid place-items-center">
-          <Spinner />
-        </div>
-      )}
-    </>
-  );
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug as string}
+          projectId={projectId as string}
+          issueId={peekIssueId ? peekIssueId as string : ""}
+          isArchived={false}
+          handleIssue={(issueToUpdate) => {
+            if (peekIssueId && typeof peekIssueId === 'string') {
+              handleUpdateIssue(peekIssueId, issueToUpdate)
+            }
+          }}
+        />
+      </div>
+    ) : (
+      <div className="h-full w-full grid place-items-center">
+        <Spinner />
+      </div>
+    )}
+  </>
+);
 };
 
 PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
