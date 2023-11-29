@@ -3,20 +3,24 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { AuthService } from "services/auth.service";
+import { UserService } from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { GithubLoginButton, GoogleLoginButton } from "components/account";
+import { ESignInSteps, GithubLoginButton, GoogleLoginButton } from "components/account";
 
 type Props = {
+  updateEmail: (email: string) => void;
+  handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
 // services
 const authService = new AuthService();
+const userService = new UserService();
 
 export const OAuthOptions: React.FC<Props> = observer((props) => {
-  const { handleSignInRedirection } = props;
+  const { updateEmail, handleStepChange, handleSignInRedirection } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // mobx store
@@ -33,7 +37,15 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
           clientId,
         };
         const response = await authService.socialAuth(socialAuthPayload);
-        if (response) handleSignInRedirection();
+
+        if (response) {
+          const currentUser = await userService.currentUser();
+
+          updateEmail(currentUser.email);
+
+          if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
+          else handleSignInRedirection();
+        }
       } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
@@ -53,7 +65,15 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
           clientId: envConfig.github_client_id,
         };
         const response = await authService.socialAuth(socialAuthPayload);
-        if (response) handleSignInRedirection();
+
+        if (response) {
+          const currentUser = await userService.currentUser();
+
+          updateEmail(currentUser.email);
+
+          if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
+          else handleSignInRedirection();
+        }
       } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({

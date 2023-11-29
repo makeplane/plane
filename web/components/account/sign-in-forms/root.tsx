@@ -73,7 +73,11 @@ export const SignInRoot: React.FC<Props> = (props) => {
         )}
       </div>
       {signInStep !== ESignInSteps.OPTIONAL_SET_PASSWORD && (
-        <OAuthOptions handleSignInRedirection={handleSignInRedirection} />
+        <OAuthOptions
+          updateEmail={(newEmail) => setEmail(newEmail)}
+          handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
+          handleSignInRedirection={handleSignInRedirection}
+        />
       )}
     </>
   );
