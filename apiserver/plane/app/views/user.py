@@ -17,7 +17,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 
 
-from django.db.models import Q, F, Count, Case, When, Value, IntegerField
+from django.db.models import Q, F, Count, Case, When, IntegerField
 
 
 class UserEndpoint(BaseViewSet):
@@ -112,6 +112,15 @@ class UserEndpoint(BaseViewSet):
 
         # Deactivate the user
         user.is_active = False
+        user.last_workspace_id = None
+        user.is_tour_completed = False
+        user.is_onboarded = False
+        user.onboarding_step = {
+            "workspace_join": False,
+            "profile_complete": False,
+            "workspace_create": False,
+            "workspace_invite": False,
+        }
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -145,32 +154,4 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
-
-
-class SetUserPasswordEndpoint(BaseAPIView):
-    def post(self, request):
-        user = User.objects.get(pk=request.user.id)
-        password = request.data.get("password", False)
-        
-        # If the user password is not autoset then return error
-        if not user.is_password_autoset:
-            return Response(
-                {
-                    "error": "Your password is already set please change your password from profile"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check password validation
-        if not password and len(str(password)) < 8:
-            return Response(
-                {"error": "Password is not valid"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Set the user password
-        user.set_password(password)
-        user.is_password_autoset = False
-        user.save()
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 

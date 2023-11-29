@@ -26,6 +26,8 @@ class Instance(BaseModel):
     is_support_required = models.BooleanField(default=True)
     # is setup done
     is_setup_done = models.BooleanField(default=False)
+    # users
+    user_count = models.PositiveBigIntegerField(default=0)
 
     class Meta:
         verbose_name = "Instance"

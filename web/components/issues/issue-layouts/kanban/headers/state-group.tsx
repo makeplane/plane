@@ -5,6 +5,7 @@ import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { StateGroupIcon } from "@plane/ui";
 import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface IStateGroupHeader {
   column_id: string;
@@ -17,6 +18,7 @@ export interface IStateGroupHeader {
   handleKanBanToggle: any;
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
@@ -37,6 +39,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
     handleKanBanToggle,
     disableIssueCreation,
     currentStore,
+    addIssuesToView,
   } = props;
 
   const stateGroup = column_value || null;
@@ -66,6 +69,7 @@ export const StateGroupHeader: FC<IStateGroupHeader> = observer((props) => {
             issuePayload={{}}
             disableIssueCreation={disableIssueCreation}
             currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         ))}
     </>

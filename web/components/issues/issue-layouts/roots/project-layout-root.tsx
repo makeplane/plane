@@ -53,20 +53,23 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
         </div>
       ) : (
         <>
-          {/* {(activeLayout === "list" || activeLayout === "spreadsheet") && issueCount === 0 && <ProjectEmptyState />} */}
-          <div className="w-full h-full relative overflow-auto">
-            {activeLayout === "list" ? (
-              <ListLayout />
-            ) : activeLayout === "kanban" ? (
-              <KanBanLayout />
-            ) : activeLayout === "calendar" ? (
-              <CalendarLayout />
-            ) : activeLayout === "gantt_chart" ? (
-              <GanttLayout />
-            ) : activeLayout === "spreadsheet" ? (
-              <ProjectSpreadsheetLayout />
-            ) : null}
-          </div>
+          {Object.keys(getIssues ?? {}).length == 0 ? (
+            <ProjectEmptyState />
+          ) : (
+            <div className="w-full h-full relative overflow-auto">
+              {activeLayout === "list" ? (
+                <ListLayout />
+              ) : activeLayout === "kanban" ? (
+                <KanBanLayout />
+              ) : activeLayout === "calendar" ? (
+                <CalendarLayout />
+              ) : activeLayout === "gantt_chart" ? (
+                <GanttLayout />
+              ) : activeLayout === "spreadsheet" ? (
+                <ProjectSpreadsheetLayout />
+              ) : null}
+            </div>
+          )}
         </>
       )}
     </div>

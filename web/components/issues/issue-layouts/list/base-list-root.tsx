@@ -23,6 +23,8 @@ import {
 import { observer } from "mobx-react-lite";
 import { IIssueResponse } from "store/issues/types";
 import { EProjectStore } from "store/command-palette.store";
+import { IssuePeekOverview } from "components/issues";
+import { useRouter } from "next/router";
 
 enum EIssueActions {
   UPDATE = "update",
@@ -54,11 +56,24 @@ interface IBaseListRoot {
   getProjects: (projectStore: IProjectStore) => IProject[] | null;
   viewId?: string;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
-  const { issueFilterStore, issueStore, QuickActions, issueActions, getProjects, viewId, currentStore } = props;
-
+  const {
+    issueFilterStore,
+    issueStore,
+    QuickActions,
+    issueActions,
+    getProjects,
+    viewId,
+    currentStore,
+    addIssuesToView,
+  } = props;
+  // router
+  const router = useRouter();
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  // mobx store
   const {
     project: projectStore,
     projectMember: { projectMembers },
@@ -130,8 +145,18 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             isReadonly={!enableInlineEditing}
             disableIssueCreation={!enableIssueCreation}
             currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         </div>
+      )}
+
+      {workspaceSlug && peekIssueId && peekProjectId && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={(issueToUpdate) => handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
+        />
       )}
     </>
   );

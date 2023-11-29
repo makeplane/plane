@@ -55,7 +55,6 @@ class ModuleSerializer(BaseSerializer):
             raise serializers.ValidationError("Start date cannot exceed target date")
 
         if data.get("members", []):
-            print(data.get("members"))
             data["members"] = ProjectMember.objects.filter(
                 project_id=self.context.get("project_id"),
                 member_id__in=data["members"],

@@ -1,6 +1,6 @@
+import { useRouter } from "next/router";
 // components
 import { ListProperties } from "./properties";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 // ui
 import { Spinner, Tooltip } from "@plane/ui";
 // types
@@ -19,9 +19,19 @@ interface IssueBlockProps {
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
   const { columnId, issue, handleIssues, quickActions, displayProperties, isReadonly } = props;
-
+  // router
+  const router = useRouter();
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
     handleIssues(issueToUpdate, EIssueActions.UPDATE);
+  };
+
+  const handleIssuePeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
+    });
   };
 
   return (
@@ -36,20 +46,14 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
         {issue?.tempId !== undefined && (
           <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
         )}
-
-        <IssuePeekOverview
-          workspaceSlug={issue?.workspace_detail?.slug}
-          projectId={issue?.project_detail?.id}
-          issueId={issue?.id}
-          isArchived={issue?.archived_at !== null}
-          handleIssue={(issueToUpdate) => {
-            handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE);
-          }}
-        >
-          <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-            <div className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full">{issue.name}</div>
-          </Tooltip>
-        </IssuePeekOverview>
+        <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+          <div
+            className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full cursor-pointer"
+            onClick={handleIssuePeekOverview}
+          >
+            {issue.name}
+          </div>
+        </Tooltip>
 
         <div className="ml-auto flex-shrink-0 flex items-center gap-2">
           {!issue?.tempId ? (

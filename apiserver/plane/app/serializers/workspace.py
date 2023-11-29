@@ -34,6 +34,7 @@ class WorkSpaceSerializer(BaseSerializer):
             "profile",
             "spaces",
             "workspace-invitations",
+            "password",
         ]:
             raise serializers.ValidationError({"slug": "Slug is not valid"})
 

@@ -76,7 +76,7 @@ export class ProjectViewIssueCalendarViewStore implements IProjectViewIssueCalen
         this.rootStore.projectViewIssues.viewIssues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,

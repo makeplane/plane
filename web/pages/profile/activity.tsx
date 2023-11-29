@@ -9,7 +9,6 @@ import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { RichReadOnlyEditor } from "@plane/rich-text-editor";
-import { ProfileSettingsHeader } from "components/headers";
 // icons
 import { History, MessageSquare } from "lucide-react";
 // ui
@@ -30,12 +29,12 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
-    <section className="pr-9 py-8 w-full overflow-y-auto">
-      <div className="flex items-center py-3.5 border-b border-custom-border-100">
+    <section className="h-full w-full lg:w-3/5 mx-auto px-8 pb-8 mt-16 flex flex-col overflow-hidden">
+      <div className="flex items-center pb-3.5 border-b border-custom-border-100">
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (
-        <div className="flex flex-col gap-2 pb-4 w-full">
+        <div className="flex flex-col gap-2 h-full w-full overflow-y-auto">
           <ul role="list" className="-mb-4">
             {userActivity.results.map((activityItem: any) => {
               if (activityItem.field === "comment") {
@@ -191,7 +190,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
 };
 
 ProfileActivityPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Activity" />}>{page}</ProfileSettingsLayout>;
+  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfileActivityPage;

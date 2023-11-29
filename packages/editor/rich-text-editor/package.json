@@ -19,10 +19,10 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "peerDependencies": {
-    "@tiptap/core": "^2.1.11",
     "next": "12.3.2",
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
@@ -30,11 +30,10 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
-    "@tiptap/extension-horizontal-rule": "^2.1.11",
+    "@tiptap/core": "^2.1.11",
+    "@plane/editor-types": "*",
+    "@plane/editor-extensions": "*",
     "@tiptap/extension-placeholder": "^2.1.11",
-    "@tiptap/suggestion": "^2.1.7",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^1.2.1",
     "lucide-react": "^0.244.0"
   },
   "devDependencies": {

@@ -75,10 +75,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    "DEFAULT_THROTTLE_CLASSES": ("plane.api.rate_limit.ApiKeyRateThrottle",),
-    "DEFAULT_THROTTLE_RATES": {
-        "api_key": "60/minute",
-    },
 }
 
 # Django Auth Backend
@@ -189,6 +185,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Password reset time the number of seconds the uniquely generated uid will be valid
+PASSWORD_RESET_TIMEOUT = 3600
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static-assets", "collected-static")
@@ -240,7 +239,7 @@ if AWS_S3_ENDPOINT_URL:
 
 # JWT Auth Configuration
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10080),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=43200),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=43200),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -310,7 +309,6 @@ if bool(os.environ.get("SENTRY_DSN", False)):
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
-ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

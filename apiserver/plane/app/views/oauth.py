@@ -32,6 +32,7 @@ from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
 from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
+from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
 def get_tokens_for_user(user):
@@ -150,24 +151,17 @@ class OauthEndpoint(BaseAPIView):
             instance_configuration = InstanceConfiguration.objects.values(
                 "key", "value"
             )
-            if (
-                (
-                    not get_configuration_value(
-                        instance_configuration,
-                        "GOOGLE_CLIENT_ID",
-                        os.environ.get("GOOGLE_CLIENT_ID"),
-                    )
-                    or not get_configuration_value(
-                        instance_configuration,
-                        "GITHUB_CLIENT_ID",
-                        os.environ.get("GITHUB_CLIENT_ID"),
-                    )
-                )
+            if not get_configuration_value(
+                instance_configuration,
+                "GOOGLE_CLIENT_ID",
+                os.environ.get("GOOGLE_CLIENT_ID"),
+            ) or not get_configuration_value(
+                instance_configuration,
+                "GITHUB_CLIENT_ID",
+                os.environ.get("GITHUB_CLIENT_ID"),
             ):
                 return Response(
-                    {
-                        "error": "Github or Google login is not configured"
-                    },
+                    {"error": "Github or Google login is not configured"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -305,26 +299,10 @@ class OauthEndpoint(BaseAPIView):
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
+            ## Signup Case
             instance_configuration = InstanceConfiguration.objects.values(
                 "key", "value"
             )
-            if (
-                not bool(
-                    get_configuration_value(
-                        instance_configuration,
-                        "ENABLE_SIGNUP",
-                        os.environ.get("ENABLE_SIGNUP", "0"),
-                    )
-                )
-                and not WorkspaceMemberInvite.objects.filter(
-                    email=request.user.email
-                ).exists()
-            ):
-                return Response(
-                    {"error": "New account creation is disabled. Please contact your site administrator"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            ## Signup Case
             # Check if instance is registered or not
             instance = Instance.objects.first()
             if instance is None and not instance.is_setup_done:
@@ -339,8 +317,9 @@ class OauthEndpoint(BaseAPIView):
                     "ENABLE_SIGNUP",
                     os.environ.get("ENABLE_SIGNUP", "0"),
                 )
+                == "0"
                 and not WorkspaceMemberInvite.objects.filter(
-                    email=request.user.email
+                    email=email,
                 ).exists()
             ):
                 return Response(
@@ -364,7 +343,7 @@ class OauthEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            user = User(
+            user = User.objects.create(
                 username=username,
                 email=email,
                 mobile_number=mobile_number,
@@ -375,7 +354,6 @@ class OauthEndpoint(BaseAPIView):
             )
 
             user.set_password(uuid.uuid4().hex)
-            user.is_password_autoset = True
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
             user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -468,4 +446,7 @@ class OauthEndpoint(BaseAPIView):
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             }
+
+            # Update the user count
+            update_user_instance_user_count.delay()
             return Response(data, status=status.HTTP_201_CREATED)

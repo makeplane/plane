@@ -15,7 +15,7 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.license.models import InstanceConfiguration, Instance
-from plane.license.utils.instance_value import get_configuration_value
+from plane.license.utils.instance_value import get_email_configuration
 
 
 @shared_task
@@ -27,24 +27,21 @@ def magic_link(email, key, token, current_site):
         else:
             abs_url = ""
 
+        instance_configuration = InstanceConfiguration.objects.filter(
+            key__startswith="EMAIL_"
+        ).values("key", "value")
+
+        (
+            EMAIL_HOST,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            EMAIL_PORT,
+            EMAIL_USE_TLS,
+            EMAIL_FROM,
+        ) = get_email_configuration(instance_configuration=instance_configuration)
+
         # Send the email if the users don't have smtp configured
-        if not (
-            get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_USER",
-                os.environ.get("EMAIL_HOST_USER", None),
-            )
-            and get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_PASSWORD",
-                os.environ.get("EMAIL_HOST_PASSWORD", None),
-            )
-            and get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST",
-                os.environ.get("EMAIL_HOST", None),
-            )
-        ):
+        if not EMAIL_HOST or not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
             # Check the instance registration
             instance = Instance.objects.first()
 
@@ -58,7 +55,6 @@ def magic_link(email, key, token, current_site):
             }
 
             payload = {
-                "abs_url": abs_url,
                 "token": token,
                 "email": email,
             }
@@ -71,53 +67,25 @@ def magic_link(email, key, token, current_site):
 
             return
 
-
         # Send the mail
-        subject = "Login for Plane"
-        context = {"magic_url": abs_url, "code": token}
+        subject = f"Your unique Plane login code is {token}"
+        context = {"code": token}
 
         html_content = render_to_string("emails/auth/magic_signin.html", context)
         text_content = strip_tags(html_content)
 
-        instance_configuration = InstanceConfiguration.objects.filter(
-            key__startswith="EMAIL_"
-        ).values("key", "value")
         connection = get_connection(
-            host=get_configuration_value(
-                instance_configuration, "EMAIL_HOST", os.environ.get("EMAIL_HOST")
-            ),
-            port=int(
-                get_configuration_value(
-                    instance_configuration, "EMAIL_PORT", os.environ.get("EMAIL_PORT")
-                )
-            ),
-            username=get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_USER",
-                os.environ.get("EMAIL_HOST_USER"),
-            ),
-            password=get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_PASSWORD",
-                os.environ.get("EMAIL_HOST_PASSWORD"),
-            ),
-            use_tls=bool(
-                get_configuration_value(
-                    instance_configuration,
-                    "EMAIL_USE_TLS",
-                    os.environ.get("EMAIL_USE_TLS", "1"),
-                )
-            ),
+            host=EMAIL_HOST,
+            port=int(EMAIL_PORT),
+            username=EMAIL_HOST_USER,
+            password=EMAIL_HOST_PASSWORD,
+            use_tls=bool(EMAIL_USE_TLS),
         )
 
         msg = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
-            from_email=get_configuration_value(
-                instance_configuration,
-                "EMAIL_FROM",
-                os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
-            ),
+            from_email=EMAIL_FROM,
             to=[email],
             connection=connection,
         )

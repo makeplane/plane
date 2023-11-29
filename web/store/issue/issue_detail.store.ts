@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, runInAction, computed } from "mobx";
+import { observable, action, makeObservable, runInAction, computed, autorun } from "mobx";
 // services
 import { IssueService, IssueReactionService, IssueCommentService } from "services/issue";
 import { NotificationService } from "services/notification.service";
@@ -7,8 +7,6 @@ import { RootStore } from "../root";
 import { IIssue } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
-// uuid
-import { v4 as uuidv4 } from "uuid";
 
 export interface IIssueDetailStore {
   loader: boolean;
@@ -44,11 +42,6 @@ export interface IIssueDetailStore {
 
   // fetch issue details
   fetchIssueDetails: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
-  // creating issue
-  createIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  optimisticallyCreateIssue: (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => Promise<IIssue>;
-  // updating issue
-  updateIssue: (workspaceId: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   // deleting issue
   deleteIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
 
@@ -146,9 +139,6 @@ export class IssueDetailStore implements IIssueDetailStore {
       setPeekId: action,
 
       fetchIssueDetails: action,
-      createIssue: action,
-      optimisticallyCreateIssue: action,
-      updateIssue: action,
       deleteIssue: action,
 
       fetchPeekIssueDetails: action,
@@ -169,6 +159,26 @@ export class IssueDetailStore implements IIssueDetailStore {
       fetchIssueSubscription: action,
       createIssueSubscription: action,
       removeIssueSubscription: action,
+    });
+
+    autorun(() => {
+      const projectId = this.rootStore?.project.projectId;
+      const peekId = this.peekId;
+
+      if (!projectId || !peekId) return;
+
+      const issue = this.rootStore.projectIssues.issues?.[projectId]?.[peekId];
+
+      if (issue && issue.id)
+        runInAction(() => {
+          this.issues = {
+            ...this.issues,
+            [issue.id]: {
+              ...this.issues[issue.id],
+              ...issue,
+            },
+          };
+        });
     });
 
     this.rootStore = _rootStore;
@@ -235,111 +245,6 @@ export class IssueDetailStore implements IIssueDetailStore {
       });
 
       throw error;
-    }
-  };
-
-  optimisticallyCreateIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
-    const tempId = data?.id || uuidv4();
-
-    runInAction(() => {
-      this.loader = true;
-      this.error = null;
-      this.issues = {
-        ...this.issues,
-        [tempId]: data as IIssue,
-      };
-    });
-
-    try {
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = null;
-        this.issues = {
-          ...this.issues,
-          [response.id]: response,
-        };
-      });
-
-      return response;
-    } catch (error) {
-      this.loader = false;
-      this.error = error;
-
-      throw error;
-    }
-  };
-
-  createIssue = async (workspaceSlug: string, projectId: string, data: Partial<IIssue>) => {
-    try {
-      runInAction(() => {
-        this.loader = true;
-        this.error = null;
-      });
-
-      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = null;
-        this.issues = {
-          ...this.issues,
-          [response.id]: response,
-        };
-      });
-
-      return response;
-    } catch (error) {
-      this.loader = false;
-      this.error = error;
-
-      throw error;
-    }
-  };
-
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => {
-    const newIssues = { ...this.issues };
-    newIssues[issueId] = {
-      ...newIssues[issueId],
-      ...data,
-    };
-
-    try {
-      runInAction(() => {
-        this.loader = true;
-        this.error = null;
-        this.issues = newIssues;
-      });
-
-      const user = this.rootStore.user.currentUser;
-
-      if (!user) return;
-
-      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = null;
-        this.issues = {
-          ...this.issues,
-          [issueId]: {
-            ...this.issues[issueId],
-            ...response,
-          },
-        };
-      });
-
-      return response;
-    } catch (error) {
-      this.fetchIssueDetails(workspaceSlug, projectId, issueId);
-
-      runInAction(() => {
-        this.loader = false;
-        this.error = error;
-      });
-
-      return error;
     }
   };
 
