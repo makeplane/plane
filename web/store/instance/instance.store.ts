@@ -17,6 +17,7 @@ export interface IInstanceStore {
   formattedConfig: IFormattedInstanceConfiguration | null;
   // action
   fetchInstanceInfo: () => Promise<IInstance>;
+  createInstance: () => Promise<IInstance>;
   fetchInstanceAdmins: () => Promise<IInstanceAdmin[]>;
   updateInstanceInfo: (data: Partial<IInstance>) => Promise<IInstance>;
   fetchInstanceConfigurations: () => Promise<any>;
@@ -45,6 +46,7 @@ export class InstanceStore implements IInstanceStore {
       formattedConfig: computed,
       // actions
       fetchInstanceInfo: action,
+      createInstance: action,
       fetchInstanceAdmins: action,
       updateInstanceInfo: action,
       fetchInstanceConfigurations: action,
@@ -80,6 +82,22 @@ export class InstanceStore implements IInstanceStore {
       return instance;
     } catch (error) {
       console.log("Error while fetching the instance info");
+      throw error;
+    }
+  };
+
+  /**
+   * Creating new Instance In case of no instance found
+   */
+  createInstance = async () => {
+    try {
+      const instance = await this.instanceService.createInstance();
+      runInAction(() => {
+        this.instance = instance;
+      });
+      return instance;
+    } catch (error) {
+      console.log("Error while creating the instance");
       throw error;
     }
   };

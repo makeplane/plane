@@ -3,8 +3,15 @@ import dynamic from "next/dynamic";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { observer } from "mobx-react-lite";
+import { ThemeProvider } from "next-themes";
 // mobx store provider
 import { useMobxStore } from "lib/mobx/store-provider";
+// constants
+import { THEMES } from "constants/themes";
+// layouts
+import InstanceLayout from "layouts/instance-layout";
+// contexts
+import { ToastContextProvider } from "contexts/toast.context";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
 const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
@@ -29,18 +36,24 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
   } = useMobxStore();
 
   return (
-    <StoreWrapper>
-      <CrispWrapper user={currentUser}>
-        <PosthogWrapper
-          user={currentUser}
-          workspaceRole={currentWorkspaceRole}
-          projectRole={currentProjectRole}
-          posthogAPIKey={envConfig?.posthog_api_key || null}
-          posthogHost={envConfig?.posthog_host || null}
-        >
-          {children}
-        </PosthogWrapper>
-      </CrispWrapper>
-    </StoreWrapper>
+    <ThemeProvider themes={THEMES} defaultTheme="system">
+      <ToastContextProvider>
+        <InstanceLayout>
+          <StoreWrapper>
+            <CrispWrapper user={currentUser}>
+              <PosthogWrapper
+                user={currentUser}
+                workspaceRole={currentWorkspaceRole}
+                projectRole={currentProjectRole}
+                posthogAPIKey={envConfig?.posthog_api_key || null}
+                posthogHost={envConfig?.posthog_host || null}
+              >
+                {children}
+              </PosthogWrapper>
+            </CrispWrapper>
+          </StoreWrapper>
+        </InstanceLayout>
+      </ToastContextProvider>
+    </ThemeProvider>
   );
 });

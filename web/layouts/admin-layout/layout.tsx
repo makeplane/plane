@@ -4,6 +4,9 @@ import { AdminAuthWrapper, UserAuthWrapper } from "layouts/auth-layout";
 // components
 import { InstanceAdminSidebar } from "./sidebar";
 import { InstanceAdminHeader } from "./header";
+import { InstanceSetupView } from "components/instance";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IInstanceAdminLayout {
   children: ReactNode;
@@ -11,6 +14,18 @@ export interface IInstanceAdminLayout {
 
 export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
   const { children } = props;
+  // store
+  const {
+    instance: { instance },
+    user: { currentUser },
+  } = useMobxStore();
+  // fetch
+
+  console.log("instance", instance);
+
+  if (instance?.is_setup_done === false) {
+    return <InstanceSetupView />;
+  }
 
   return (
     <>

@@ -31,7 +31,7 @@ export const SignInRoot: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className="mx-auto flex flex-col divide-y divide-custom-border-200">
+      <div className="mx-auto flex flex-col">
         {signInStep === ESignInSteps.EMAIL && (
           <EmailForm
             handleStepChange={(step: ESignInSteps) => setSignInStep(step)}

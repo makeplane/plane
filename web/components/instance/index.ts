@@ -8,3 +8,7 @@ export * from "./github-config-form";
 export * from "./google-config-form";
 export * from "./image-config-form";
 export * from "./instance-admin-restriction";
+export * from "./not-ready-view";
+export * from "./setup-view";
+export * from "./setup-done-view";
+export * from "./setup-form";
