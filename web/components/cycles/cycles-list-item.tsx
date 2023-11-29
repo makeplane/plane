@@ -38,7 +38,10 @@ type TCyclesListItem = {
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    cycle: cycleStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // states
@@ -161,6 +164,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     ) : (
                       <span className="text-sm text-custom-primary-100">{`!`}</span>
                     )
+                  ) : progress === 100 ? (
+                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
