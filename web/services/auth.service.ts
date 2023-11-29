@@ -80,6 +80,18 @@ export class AuthService extends APIService {
       });
   }
 
+  async setInstanceAdminPassword(data: any): Promise<any> {
+    return this.post("/api/licenses/instances/admins/set-password/", data)
+      .then((response) => {
+        this.setAccessToken(response?.data?.access_token);
+        this.setRefreshToken(response?.data?.refresh_token);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async socialAuth(data: any): Promise<ILoginTokenResponse> {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
@@ -100,6 +112,14 @@ export class AuthService extends APIService {
       });
   }
 
+  async instanceAdminEmailCode(data: any): Promise<any> {
+    return this.post("/api/licenses/instances/admins/magic-generate/", data, { headers: {} })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async magicSignIn(data: IMagicSignInData): Promise<any> {
     return await this.post("/api/magic-sign-in/", data, { headers: {} })
       .then((response) => {
@@ -112,6 +132,16 @@ export class AuthService extends APIService {
       .catch((error) => {
         throw error?.response?.data;
       });
+  }
+
+  async instanceMagicSignIn(data: any): Promise<any> {
+    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data);
+    if (response?.status === 200) {
+      this.setAccessToken(response?.data?.access_token);
+      this.setRefreshToken(response?.data?.refresh_token);
+      return response?.data;
+    }
+    throw response.response.data;
   }
 
   async signOut(): Promise<any> {
