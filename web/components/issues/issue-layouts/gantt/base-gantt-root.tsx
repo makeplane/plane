@@ -1,10 +1,10 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// hooks
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { IssueGanttBlock } from "components/issues";
+import { IssueGanttBlock, IssuePeekOverview } from "components/issues";
 import {
   GanttChartRoot,
   IBlockUpdateData,
@@ -40,7 +40,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
   const { issueFiltersStore, issueStore, viewId } = props;
 
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const {
     user: { currentProjectRole },
@@ -58,7 +58,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
     //Todo fix sort order in the structure
     issueStore.updateIssue(
-      workspaceSlug,
+      workspaceSlug.toString(),
       issue.project,
       issue.id,
       {
@@ -80,7 +80,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
           blockUpdateHandler={updateIssue}
-          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} handleIssue={updateIssue} />}
+          blockToRender={(data: IIssue) => <IssueGanttBlock data={data} />}
           sidebarToRender={(props) => (
             <IssueGanttSidebar
               {...props}
@@ -95,6 +95,17 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
         />
       </div>
+      {workspaceSlug && peekIssueId && peekProjectId && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={(issueToUpdate) => {
+            // TODO: update the logic here
+            updateIssue(issueToUpdate as IIssue, {});
+          }}
+        />
+      )}
     </>
   );
 });

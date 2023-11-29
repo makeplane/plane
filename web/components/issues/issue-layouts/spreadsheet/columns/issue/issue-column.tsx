@@ -12,13 +12,6 @@ type Props = {
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
   quickActions: (issue: IIssue) => React.ReactNode;
-  setIssuePeekOverView: React.Dispatch<
-    React.SetStateAction<{
-      workspaceSlug: string;
-      projectId: string;
-      issueId: string;
-    } | null>
-  >;
   disableUserActions: boolean;
   nestingLevel: number;
 };
@@ -27,24 +20,20 @@ export const IssueColumn: React.FC<Props> = ({
   issue,
   expanded,
   handleToggleExpand,
-  setIssuePeekOverView,
   properties,
   quickActions,
   disableUserActions,
   nestingLevel,
 }) => {
+  // router
   const router = useRouter();
 
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
-    setIssuePeekOverView({
-      workspaceSlug: issue?.workspace_detail?.slug,
-      projectId: issue?.project_detail?.id,
-      issueId: issue?.id,
-    });
+
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
 

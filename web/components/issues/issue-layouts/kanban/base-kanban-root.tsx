@@ -1,5 +1,6 @@
 import { FC, useCallback, useState } from "react";
-import { DragDropContext } from "@hello-pangea/dnd";
+import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
+import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -29,6 +30,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store/command-palette.store";
+import { IssuePeekOverview } from "components/issues";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -54,6 +56,14 @@ export interface IBaseKanBanLayout {
   showLoader?: boolean;
   viewId?: string;
   currentStore?: EProjectStore;
+  handleDragDrop?: (
+    source: any,
+    destination: any,
+    subGroupBy: string | null,
+    groupBy: string | null,
+    issues: any,
+    issueWithIds: any
+  ) => void;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
@@ -67,15 +77,23 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     showLoader,
     viewId,
     currentStore,
+    handleDragDrop,
     addIssuesToView,
   } = props;
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  // mobx store
   const {
     project: { workspaceProjects },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    user: userStore,
   } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];
@@ -93,14 +111,14 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const currentKanBanView: "swimlanes" | "default" = sub_group_by ? "swimlanes" : "default";
 
-  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
-
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
+
+  const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
   const onDragStart = () => {
     setIsDragStarted(true);
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     setIsDragStarted(false);
 
     if (!result) return;
@@ -115,9 +133,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     )
       return;
 
-    currentKanBanView === "default"
-      ? kanbanViewStore?.handleDragDrop(result.source, result.destination)
-      : kanbanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
+    if (handleDragDrop) handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds);
   };
 
   const handleIssues = useCallback(
@@ -126,7 +142,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         issueActions[action]!(issue);
       }
     },
-    [issueStore]
+    [issueActions]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
@@ -147,6 +163,28 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
       <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+          <div
+            className={`fixed left-1/2 -translate-x-1/2 ${
+              isDragStarted ? "z-40" : ""
+            } w-72 top-3 flex items-center justify-center mx-3`}
+          >
+            <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
+              {(provided, snapshot) => (
+                <div
+                  className={`${
+                    isDragStarted ? `opacity-100` : `opacity-0`
+                  } w-full flex items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+                    snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
+                  } transition duration-300`}
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                >
+                  Drop here to delete the issue.
+                </div>
+              )}
+            </Droppable>
+          </div>
+
           {currentKanBanView === "default" ? (
             <KanBan
               issues={issues}
@@ -186,7 +224,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               quickAddCallback={issueStore?.quickAddIssue}
               viewId={viewId}
               disableIssueCreation={!enableIssueCreation}
-              isReadOnly={!enableInlineEditing}
+              isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
               addIssuesToView={addIssuesToView}
             />
@@ -227,7 +265,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               isDragStarted={isDragStarted}
               disableIssueCreation={true}
               enableQuickIssueCreate={enableQuickAdd}
-              isReadOnly={!enableInlineEditing}
+              isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
               addIssuesToView={(issues) => {
                 console.log("kanban existingIds", issues);
@@ -238,6 +276,17 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           )}
         </DragDropContext>
       </div>
+
+      {workspaceSlug && peekIssueId && peekProjectId && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={(issueToUpdate) =>
+            handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, EIssueActions.UPDATE)
+          }
+        />
+      )}
     </>
   );
 });
