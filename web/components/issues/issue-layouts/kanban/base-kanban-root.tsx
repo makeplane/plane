@@ -154,7 +154,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
       <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
-          <div className={`fixed left-1/2 -translate-x-1/2 z-40 w-72 top-3 flex items-center justify-center mx-3`}>
+          <div
+            className={`fixed left-1/2 -translate-x-1/2 ${
+              isDragStarted ? "z-40" : ""
+            } w-72 top-3 flex items-center justify-center mx-3`}
+          >
             <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
               {(provided, snapshot) => (
                 <div
