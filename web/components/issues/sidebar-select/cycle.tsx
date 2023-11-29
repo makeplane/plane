@@ -1,11 +1,9 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
-
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // ui
 import { ContrastIcon, CustomSearchSelect, Tooltip } from "@plane/ui";
@@ -21,12 +19,17 @@ type Props = {
 };
 
 // services
-const issueService = new IssueService();
 const cycleService = new CycleService();
 
-export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleChange, disabled = false }) => {
+export const SidebarCycleSelect: React.FC<Props> = (props) => {
+  const { issueDetail, handleCycleChange, disabled = false } = props;
+  // router
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
+  // mobx store
+  const {
+    cycleIssues: { removeIssueFromCycle },
+  } = useMobxStore();
 
   const { data: incompleteCycles } = useSWR(
     workspaceSlug && projectId ? INCOMPLETE_CYCLES_LIST(projectId as string) : null,
@@ -35,13 +38,12 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
       : null
   );
 
-  const removeIssueFromCycle = (bridgeId: string, cycleId: string) => {
-    if (!workspaceSlug || !projectId) return;
+  const handleRemoveIssueFromCycle = (bridgeId: string, cycleId: string) => {
+    if (!workspaceSlug || !projectId || !issueDetail) return;
 
-    issueService
-      .removeIssueFromCycle(workspaceSlug as string, projectId as string, cycleId, bridgeId)
+    removeIssueFromCycle(workspaceSlug.toString(), projectId.toString(), cycleId, issueDetail.id, bridgeId)
       .then(() => {
-        mutate(ISSUE_DETAILS(issueId as string));
+        mutate(ISSUE_DETAILS(issueDetail.id));
 
         mutate(CYCLE_ISSUES(cycleId));
       })
@@ -70,7 +72,7 @@ export const SidebarCycleSelect: React.FC<Props> = ({ issueDetail, handleCycleCh
       value={issueCycle?.cycle_detail.id}
       onChange={(value: any) => {
         value === issueCycle?.cycle_detail.id
-          ? removeIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
+          ? handleRemoveIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
           : handleCycleChange(value);
       }}
       options={options}

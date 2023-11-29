@@ -8,25 +8,18 @@ import {
 } from "@plane/editor-core";
 import { EditorBubbleMenu } from "./menus/bubble-menu";
 import { RichTextEditorExtensions } from "./extensions";
+import {
+  DeleteImage,
+  IMentionSuggestion,
+  RestoreImage,
+  UploadImage,
+} from "@plane/editor-types";
 
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
-
-export type IMentionSuggestion = {
-  id: string;
-  type: string;
-  avatar: string;
-  title: string;
-  subtitle: string;
-  redirect_uri: string;
-};
-
-export type IMentionHighlight = string;
-
-interface IRichTextEditor {
+export type IRichTextEditor = {
   value: string;
   dragDropEnabled?: boolean;
   uploadFile: UploadImage;
+  restoreFile: RestoreImage;
   deleteFile: DeleteImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
@@ -42,9 +35,9 @@ interface IRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-}
+};
 
-interface RichTextEditorProps extends IRichTextEditor {
+export interface RichTextEditorProps extends IRichTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -67,6 +60,7 @@ const RichTextEditor = ({
   cancelUploadImage,
   borderOnFocus,
   customClassName,
+  restoreFile,
   forwardedRef,
   mentionHighlights,
   mentionSuggestions,
@@ -80,6 +74,7 @@ const RichTextEditor = ({
     uploadFile,
     cancelUploadImage,
     deleteFile,
+    restoreFile,
     forwardedRef,
     extensions: RichTextEditorExtensions(
       uploadFile,

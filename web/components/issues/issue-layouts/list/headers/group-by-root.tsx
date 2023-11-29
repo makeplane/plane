@@ -10,6 +10,7 @@ import { CreatedByHeader } from "./created-by";
 // mobx
 import { observer } from "mobx-react-lite";
 import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface IListGroupByHeaderRoot {
   column_id: string;
@@ -18,10 +19,12 @@ export interface IListGroupByHeaderRoot {
   issues_count: number;
   disableIssueCreation?: boolean;
   currentStore: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
 export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer((props) => {
-  const { column_id, column_value, group_by, issues_count, disableIssueCreation, currentStore } = props;
+  const { column_id, column_value, group_by, issues_count, disableIssueCreation, currentStore, addIssuesToView } =
+    props;
 
   return (
     <>
@@ -32,6 +35,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
       {group_by && group_by === "project" && (
@@ -41,6 +45,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
 
@@ -51,6 +56,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
       {group_by && group_by === "state_detail.group" && (
@@ -60,6 +66,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
       {group_by && group_by === "priority" && (
@@ -69,6 +76,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
       {group_by && group_by === "labels" && (
@@ -78,6 +86,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
       {group_by && group_by === "assignees" && (
@@ -87,6 +96,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
       {group_by && group_by === "created_by" && (
@@ -96,6 +106,7 @@ export const ListGroupByHeaderRoot: React.FC<IListGroupByHeaderRoot> = observer(
           issues_count={issues_count}
           disableIssueCreation={disableIssueCreation}
           currentStore={currentStore}
+          addIssuesToView={addIssuesToView}
         />
       )}
     </>

@@ -153,7 +153,7 @@ export const EmailCodeForm: React.FC<Props> = (Props) => {
               <p className="text-center text-sm text-onboarding-text-200 mt-1">Promise!</p>
             </div>
           ) : (
-            <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
+            <p className="text-center text-sm text-onboarding-text-200 px-10 sm:px-20 mt-3">
               Sign in with the email you used to sign up for Plane
             </p>
           )}

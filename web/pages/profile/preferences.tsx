@@ -8,7 +8,6 @@ import useToast from "hooks/use-toast";
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { CustomThemeSelector, ThemeSwitch } from "components/core";
-import { ProfileSettingsHeader } from "components/headers";
 // ui
 import { Spinner } from "@plane/ui";
 // constants
@@ -50,8 +49,8 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
   return (
     <>
       {currentUser ? (
-        <div className="pr-9 py-8 w-full overflow-y-auto">
-          <div className="flex items-center py-3.5 border-b border-custom-border-100">
+        <div className="h-full w-full lg:w-3/5 mx-auto px-8 pb-8 mt-16 overflow-y-auto">
+          <div className="flex items-center pb-3.5 border-b border-custom-border-100">
             <h3 className="text-xl font-medium">Preferences</h3>
           </div>
           <div className="grid grid-cols-12 gap-4 sm:gap-16 py-6">
@@ -75,7 +74,7 @@ const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
 });
 
 ProfilePreferencesPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Preferences" />}>{page}</ProfileSettingsLayout>;
+  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfilePreferencesPage;
