@@ -3,7 +3,6 @@ export * from "./date";
 export * from "./datepicker";
 export * from "./empty-space";
 export * from "./labels-list";
-export * from "./linear-progress-indicator";
 export * from "./multi-level-dropdown";
 export * from "./multi-level-select";
 export * from "./markdown-to-component";
