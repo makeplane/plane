@@ -2,6 +2,7 @@ import { Editor, Range } from "@tiptap/react";
 import { IssueEmbedSuggestions } from "./issue-suggestion-extension";
 import { getIssueSuggestionItems } from "./issue-suggestion-items";
 import { IssueListRenderer } from "./issue-suggestion-renderer";
+import { v4 as uuidv4 } from 'uuid';
 
 export type CommandProps = {
   editor: Editor;
@@ -20,6 +21,7 @@ export interface IIssueListSuggestion {
 export const IssueSuggestions = (suggestions: any[]) => {
 
   const mappedSuggestions: IIssueListSuggestion[] = suggestions.map((suggestion): IIssueListSuggestion => {
+		let transactionId = uuidv4();
     return {
       title: suggestion.name,
 			priority: suggestion.priority,
@@ -27,10 +29,15 @@ export const IssueSuggestions = (suggestions: any[]) => {
       searchTerms: [suggestion.name],
 			state: suggestion.state_detail.name,
       command: (({ editor, range }) => {
-        editor.chain().focus().insertContentAt(range, {
+        editor.chain().insertContentAt(range, {
           type: "issue-embed-component",
           attrs: {
-						entity_identifier: suggestion.id
+						entity_identifier: suggestion.id,
+						id: transactionId,
+						title: suggestion.name,
+						project_identifier: suggestion.project_detail.identifier,
+						sequence_id: suggestion.sequence_id,
+						entity_name: "issue"
           }
         }).run()
       })
