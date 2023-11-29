@@ -125,17 +125,18 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
               <span className="text-right">Request new code in {timer}s</span>
             ) : isSubmitting ? (
               "Sending new code..."
-            ) : null}
-          </div>
-          <div className="flex justify-end w-full">
-            <button
-              type="button"
-              className="w-fit pb-2 mt-[-20px] text-xs outline-none cursor-pointer text-custom-primary-100"
-              onClick={resendMagicCode}
-              disabled={isResendDisabled}
-            >
-              <span className="font-medium">Resend</span>
-            </button>
+            ) : (
+              <div className="flex justify-end w-full">
+                <button
+                  type="button"
+                  className="w-fit pb-2 text-xs outline-none cursor-pointer text-custom-primary-100"
+                  onClick={resendMagicCode}
+                  disabled={isResendDisabled}
+                >
+                  <span className="font-medium">Resend</span>
+                </button>
+              </div>
+            )}
           </div>
           <Controller
             name="token"

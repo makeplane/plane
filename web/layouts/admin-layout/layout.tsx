@@ -23,7 +23,7 @@ export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
 
   console.log("instance", instance);
 
-  if (!currentUser) {
+  if (instance?.is_setup_done === false) {
     return <InstanceSetupView />;
   }
 

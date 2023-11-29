@@ -80,8 +80,8 @@ export class AuthService extends APIService {
       });
   }
 
-  async setAdminInstancePassword(data: any): Promise<any> {
-    return this.post("/api/licenses/instances/admins/set-password/", data, { headers: {} })
+  async setInstanceAdminPassword(data: any): Promise<any> {
+    return this.post("/api/licenses/instances/admins/set-password/", data)
       .then((response) => {
         this.setAccessToken(response?.data?.access_token);
         this.setRefreshToken(response?.data?.refresh_token);

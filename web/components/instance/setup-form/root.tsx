@@ -4,6 +4,7 @@ import { InstanceSetupEmailCodeForm } from "./email-code-form";
 import { InstanceSetupEmailForm } from "./email-form";
 import { InstanceSetupPasswordForm } from "./password-form";
 import { LatestFeatureBlock } from "components/common";
+import { InstanceSetupDone } from "components/instance";
 
 export enum EInstanceSetupSteps {
   EMAIL = "EMAIL",
@@ -19,9 +20,13 @@ export const InstanceSetupFormRoot = () => {
 
   return (
     <>
-      <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
-        <div className={`px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-24 pb-56 rounded-t-md overflow-auto`}>
-          <>
+      {setupStep === EInstanceSetupSteps.DONE ? (
+        <div>
+          <InstanceSetupDone />
+        </div>
+      ) : (
+        <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
+          <div className={`px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-24 pb-56 rounded-t-md overflow-auto`}>
             <div className="sm:w-96 mx-auto flex flex-col divide-y divide-custom-border-200">
               {setupStep === EInstanceSetupSteps.EMAIL && (
                 <InstanceSetupEmailForm
@@ -57,9 +62,9 @@ export const InstanceSetupFormRoot = () => {
               )}
             </div>
             <LatestFeatureBlock />
-          </>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

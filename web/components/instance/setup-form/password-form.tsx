@@ -36,7 +36,7 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
   });
 
   const handlePasswordSubmit = (formData: InstanceSetupPasswordFormValues) =>
-    authService.setPassword({ password: formData.password }).then(() => {
+    authService.setInstanceAdminPassword({ password: formData.password }).then(() => {
       onNextStep();
     });
 
@@ -44,10 +44,10 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
     <form onSubmit={handleSubmit(handlePasswordSubmit)}>
       <div className="pb-2">
         <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
-          Let’s secure your instance
+          Moving to the runway
         </h1>
         <p className="text-center text-sm text-onboarding-text-200 mt-3">
-          Explore privacy options. Get AI features. Secure access. <br /> Takes 2 minutes.
+          {"Let's set a password so you can do away with codes."}
         </p>
 
         <div className="relative mt-10 w-full sm:w-[360px] mx-auto">
@@ -107,7 +107,9 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
               )}
             />
           </div>
-
+          <p className="text-xs mt-2 text-onboarding-text-200">
+            {"Whatever you choose now will be your account's password"}
+          </p>
           <Button variant="primary" className="w-full mt-4" size="xl" type="submit" loading={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Next Step"}
           </Button>
