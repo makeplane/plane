@@ -1,50 +1,73 @@
-import { Fragment, useEffect, useRef, useState } from "react";
 import { mutate } from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
-import { Menu, Transition } from "@headlessui/react";
-// icons
-import { LogIn, LogOut, MoveLeft, Plus, User, UserPlus } from "lucide-react";
+import { Activity, ChevronLeft, CircleUser, KeyRound, LogOut, MoveLeft, Plus, Settings2, UserPlus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { Avatar, Tooltip } from "@plane/ui";
+import { Tooltip } from "@plane/ui";
 // hooks
 import useToast from "hooks/use-toast";
+import { useState } from "react";
 
-const SIDEBAR_LINKS = [
+const PROFILE_ACTION_LINKS = [
+  {
+    key: "profile",
+    label: "Profile",
+    href: `/profile`,
+    Icon: CircleUser,
+  },
+  {
+    key: "change-password",
+    label: "Change password",
+    href: `/profile/change-password`,
+    Icon: KeyRound,
+  },
+  {
+    key: "activity",
+    label: "Activity",
+    href: `/profile/activity`,
+    Icon: Activity,
+  },
+  {
+    key: "preferences",
+    label: "Preferences",
+    href: `/profile/preferences`,
+    Icon: Settings2,
+  },
+];
+
+const WORKSPACE_ACTION_LINKS = [
   {
     key: "create-workspace",
     Icon: Plus,
-    name: "Create workspace",
+    label: "Create workspace",
     href: "/create-workspace",
   },
   {
     key: "invitations",
     Icon: UserPlus,
-    name: "Invitations",
+    label: "Invitations",
     href: "/invitations",
   },
 ];
 
 export const ProfileLayoutSidebar = observer(() => {
   // states
-  const [isScrolled, setIsScrolled] = useState(false); // scroll animation state
-  // refs
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  // router
   const router = useRouter();
-
+  // next themes
   const { setTheme } = useTheme();
-
+  // toast
   const { setToastAlert } = useToast();
 
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     workspace: { workspaces },
-    user: { currentUser, currentUserSettings, isUserInstanceAdmin, signOut },
+    user: { currentUser, currentUserSettings, signOut },
   } = useMobxStore();
 
   // redirect url for normal mode
@@ -54,6 +77,8 @@ export const ProfileLayoutSidebar = observer(() => {
     "";
 
   const handleSignOut = async () => {
+    setIsSigningOut(true);
+
     await signOut()
       .then(() => {
         mutate("CURRENT_USER_DETAILS", null);
@@ -66,29 +91,9 @@ export const ProfileLayoutSidebar = observer(() => {
           title: "Error!",
           message: "Failed to sign out. Please try again.",
         })
-      );
+      )
+      .finally(() => setIsSigningOut(false));
   };
-
-  /**
-   * Implementing scroll animation styles based on the scroll length of the container
-   */
-  useEffect(() => {
-    const handleScroll = () => {
-      if (containerRef.current) {
-        const scrollTop = containerRef.current.scrollTop;
-        setIsScrolled(scrollTop > 0);
-      }
-    };
-    const currentContainerRef = containerRef.current;
-    if (currentContainerRef) {
-      currentContainerRef.addEventListener("scroll", handleScroll);
-    }
-    return () => {
-      if (currentContainerRef) {
-        currentContainerRef.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, []);
 
   return (
     <div
@@ -96,114 +101,57 @@ export const ProfileLayoutSidebar = observer(() => {
         sidebarCollapsed ? "" : "md:w-[280px]"
       } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
-      <div className="h-full w-full flex flex-col">
-        <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
-          <div className="w-full h-full truncate">
-            <div
-              className={`flex flex-grow items-center gap-x-2 rounded p-1 truncate ${
-                sidebarCollapsed ? "justify-center" : ""
-              }`}
-            >
-              <div
-                className={`flex-shrink-0 flex items-center justify-center h-6 w-6 bg-custom-sidebar-background-80 rounded`}
-              >
-                <User className="h-5 w-5 text-custom-text-200" />
-              </div>
-
-              {!sidebarCollapsed && <h4 className="text-custom-text-200 font-medium text-base truncate">My Profile</h4>}
-            </div>
-          </div>
+      <div className="h-full w-full flex flex-col gap-y-4">
+        <div
+          className={`flex-shrink-0 flex items-center gap-2 px-4 pt-4 truncate ${
+            sidebarCollapsed ? "justify-center" : ""
+          }`}
+        >
+          <Link href={`/${redirectWorkspaceSlug}`}>
+            <a className="flex-shrink-0 grid place-items-center h-5 w-5">
+              <ChevronLeft className="h-5 w-5" strokeWidth={1} />
+            </a>
+          </Link>
 
           {!sidebarCollapsed && (
-            <Tooltip position="bottom-left" tooltipContent="Go back to your workspace">
-              <div className="flex-shrink-0">
-                <Link href={`/${redirectWorkspaceSlug}`}>
-                  <a>
-                    <LogIn className="h-5 w-5 text-custom-text-200 rotate-180" />
+            <h4 className="text-custom-text-200 font-semibold text-lg truncate">Profile settings</h4>
+          )}
+        </div>
+        <div className="flex-shrink-0 flex flex-col overflow-x-hidden px-4">
+          {!sidebarCollapsed && (
+            <h6 className="rounded text-custom-sidebar-text-400 px-1.5 text-sm font-semibold">Your account</h6>
+          )}
+          <div className="space-y-1.5 mt-2 h-full overflow-y-auto">
+            {PROFILE_ACTION_LINKS.map((link) => {
+              if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
+
+              return (
+                <Link key={link.key} href={link.href}>
+                  <a className="block w-full">
+                    <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                      <div
+                        className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
+                          router.pathname === link.href
+                            ? "bg-custom-primary-100/10 text-custom-primary-100"
+                            : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        } ${sidebarCollapsed ? "justify-center" : ""}`}
+                      >
+                        {<link.Icon className="h-4 w-4" />}
+                        {!sidebarCollapsed && link.label}
+                      </div>
+                    </Tooltip>
                   </a>
                 </Link>
-              </div>
-            </Tooltip>
-          )}
-
+              );
+            })}
+          </div>
+        </div>
+        <div className="flex flex-col overflow-x-hidden px-4">
           {!sidebarCollapsed && (
-            <Menu as="div" className="relative flex-shrink-0 ">
-              <Menu.Button className="flex gap-4 place-items-center outline-none">
-                <Avatar
-                  name={currentUser?.display_name}
-                  src={currentUser?.avatar}
-                  size={24}
-                  shape="square"
-                  className="!text-base"
-                />
-              </Menu.Button>
-
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute left-0 z-20 mt-1 w-52 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 shadow-custom-shadow-rg text-xs space-y-2 outline-none">
-                  <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
-                  <Menu.Item
-                    as="button"
-                    type="button"
-                    className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80"
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="h-4 w-4 stroke-[1.5]" />
-                    Sign out
-                  </Menu.Item>
-                  {isUserInstanceAdmin && (
-                    <div className="p-2 pb-0 border-t border-custom-border-100">
-                      <Menu.Item as="button" type="button" className="w-full">
-                        <Link href="/god-mode">
-                          <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
-                            Enter God Mode
-                          </a>
-                        </Link>
-                      </Menu.Item>
-                    </div>
-                  )}
-                </Menu.Items>
-              </Transition>
-            </Menu>
+            <h6 className="rounded text-custom-sidebar-text-400 px-1.5 text-sm font-semibold">Workspaces</h6>
           )}
-        </div>
-
-        <div className="w-full cursor-pointer space-y-1 p-4 flex-shrink-0">
-          {SIDEBAR_LINKS.map((link) => (
-            <Link key={link.key} href={link.href}>
-              <a className="block w-full">
-                <Tooltip tooltipContent={link.name} position="right" className="ml-2" disabled={!sidebarCollapsed}>
-                  <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
-                      sidebarCollapsed ? "justify-center" : ""
-                    }`}
-                  >
-                    {<link.Icon className="h-4 w-4" />}
-                    {!sidebarCollapsed && link.name}
-                  </div>
-                </Tooltip>
-              </a>
-            </Link>
-          ))}
-        </div>
-        {workspaces && workspaces.length > 0 && (
-          <div className="flex flex-col h-full overflow-x-hidden px-4">
-            {!sidebarCollapsed && (
-              <div className="rounded text-custom-sidebar-text-400 px-1.5 text-sm font-semibold">Your workspaces</div>
-            )}
-            <div
-              ref={containerRef}
-              className={`space-y-2 mt-2 pt-2 h-full overflow-y-auto ${
-                isScrolled ? "border-t border-custom-sidebar-border-300" : ""
-              }`}
-            >
+          {workspaces && workspaces.length > 0 && (
+            <div className="space-y-1.5 mt-2 h-full overflow-y-auto">
               {workspaces.map((workspace) => (
                 <Link
                   key={workspace.id}
@@ -213,7 +161,7 @@ export const ProfileLayoutSidebar = observer(() => {
                   }`}
                 >
                   <a
-                    className={`flex items-center flex-grow w-full truncate gap-x-2 px-2 py-1 hover:bg-custom-sidebar-background-80 rounded-md ${
+                    className={`flex items-center flex-grow w-full truncate gap-x-2 px-3 py-1 hover:bg-custom-sidebar-background-80 rounded-md ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -239,25 +187,58 @@ export const ProfileLayoutSidebar = observer(() => {
                 </Link>
               ))}
             </div>
+          )}
+          <div className="mt-1.5">
+            {WORKSPACE_ACTION_LINKS.map((link) => (
+              <Link key={link.key} href={link.href}>
+                <a className="block w-full">
+                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                    <div
+                      className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
+                        sidebarCollapsed ? "justify-center" : ""
+                      }`}
+                    >
+                      {<link.Icon className="h-4 w-4" />}
+                      {!sidebarCollapsed && link.label}
+                    </div>
+                  </Tooltip>
+                </a>
+              </Link>
+            ))}
           </div>
-        )}
-        <div className="flex-grow flex items-end px-4 py-2 border-t border-custom-border-200">
-          <button
-            type="button"
-            className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
-            onClick={() => toggleSidebar()}
-          >
-            <MoveLeft className="h-3.5 w-3.5" />
-          </button>
-          <button
-            type="button"
-            className={`hidden md:grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ml-auto ${
-              sidebarCollapsed ? "w-full" : ""
+        </div>
+        <div className="flex-shrink-0 flex-grow flex items-end px-6 py-2">
+          <div
+            className={`flex w-full ${
+              sidebarCollapsed ? "flex-col justify-center gap-2" : "items-center justify-between gap-2"
             }`}
-            onClick={() => toggleSidebar()}
           >
-            <MoveLeft className={`h-3.5 w-3.5 duration-300 ${sidebarCollapsed ? "rotate-180" : ""}`} />
-          </button>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="text-sm text-red-500 flex items-center justify-center gap-2 font-medium"
+              disabled={isSigningOut}
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              {!sidebarCollapsed && <span>{isSigningOut ? "Signing out..." : "Sign out"}</span>}
+            </button>
+            <button
+              type="button"
+              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
+              onClick={() => toggleSidebar()}
+            >
+              <MoveLeft className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              className={`hidden md:grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ml-auto ${
+                sidebarCollapsed ? "w-full" : ""
+              }`}
+              onClick={() => toggleSidebar()}
+            >
+              <MoveLeft className={`h-3.5 w-3.5 duration-300 ${sidebarCollapsed ? "rotate-180" : ""}`} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
