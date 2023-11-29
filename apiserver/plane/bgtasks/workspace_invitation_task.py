@@ -87,7 +87,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             "email": email,
             "first_name": user.first_name or user.display_name or user.email,
             "workspace_name": workspace.name,
-            "invitation_url": abs_url,
         }
 
         html_content = render_to_string(

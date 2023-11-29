@@ -4,7 +4,9 @@ from plane.license.api.views import (
     InstanceEndpoint,
     InstanceAdminEndpoint,
     InstanceConfigurationEndpoint,
+    AdminMagicSignInGenerateEndpoint,
     AdminSetupMagicSignInEndpoint,
+    AdminSetUserPasswordEndpoint,
     SignUpScreenVisitedEndpoint,
 )
 
@@ -30,8 +32,18 @@ urlpatterns = [
         name="instance-configuration",
     ),
     path(
+        "instances/admins/magic-generate/",
+        AdminMagicSignInGenerateEndpoint.as_view(),
+        name="instance-admins",
+    ),
+    path(
         "instances/admins/magic-sign-in/",
         AdminSetupMagicSignInEndpoint.as_view(),
+        name="instance-admins",
+    ),
+    path(
+        "instances/admins/set-password/",
+        AdminSetUserPasswordEndpoint.as_view(),
         name="instance-admins",
     ),
     path(

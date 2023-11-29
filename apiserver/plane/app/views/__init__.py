@@ -98,7 +98,6 @@ from .authentication import (
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
-    MagicSignInGenerateEndpoint,
 )
 
 from .module import (

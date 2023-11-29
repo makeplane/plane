@@ -3,10 +3,14 @@ import json
 import os
 import requests
 import uuid
+import random
+import string
 
 # Django imports
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 
 # Third party imports
 from rest_framework import status
@@ -22,13 +26,16 @@ from plane.license.api.serializers import (
     InstanceAdminSerializer,
     InstanceConfigurationSerializer,
 )
+from plane.app.serializers import UserSerializer
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
 from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
 from plane.settings.redis import redis_instance
-from plane.bgtasks.user_count_task import update_user_instance_user_count
+from plane.bgtasks.magic_link_code_task import magic_link
+from plane.license.utils.instance_value import get_configuration_value
+
 
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
@@ -222,12 +229,15 @@ def get_tokens_for_user(user):
     )
 
 
-class AdminSetupMagicSignInEndpoint(BaseAPIView):
+class AdminMagicSignInGenerateEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
+        email = request.data.get("email", False)
+
+        # Check the instance registration
         instance = Instance.objects.first()
         if instance is None:
             return Response(
@@ -235,15 +245,88 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-        if not license_engine_base_url:
+        if InstanceAdmin.objects.first():
             return Response(
-                {"error": "License engine base url is required"},
+                {"error": "Admin for this instance is already registered"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+
+        if not email:
+            return Response(
+                {"error": "Please provide a valid email address"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Clean up
+        email = email.strip().lower()
+        validate_email(email)
+
+        # check if the email exists
+        if not User.objects.filter(email=email).exists():
+            # Create a user
+            _ = User.objects.create(
+                email=email,
+                username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+                is_password_autoset=True,
+            )
+
+        ## Generate a random token
+        token = (
+            "".join(random.choices(string.ascii_lowercase, k=4))
+            + "-"
+            + "".join(random.choices(string.ascii_lowercase, k=4))
+            + "-"
+            + "".join(random.choices(string.ascii_lowercase, k=4))
+        )
+
+        ri = redis_instance()
+
+        key = "magic_" + str(email)
+
+        # Check if the key already exists in python
+        if ri.exists(key):
+            data = json.loads(ri.get(key))
+
+            current_attempt = data["current_attempt"] + 1
+
+            if data["current_attempt"] > 2:
+                return Response(
+                    {"error": "Max attempts exhausted. Please try again later."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            value = {
+                "current_attempt": current_attempt,
+                "email": email,
+                "token": token,
+            }
+            expiry = 600
+
+            ri.set(key, json.dumps(value), ex=expiry)
+
+        else:
+            value = {"current_attempt": 0, "email": email, "token": token}
+            expiry = 600
+
+            ri.set(key, json.dumps(value), ex=expiry)
+
+        # If the smtp is configured send through here
+        current_site = request.META.get("HTTP_ORIGIN")
+        magic_link.delay(email, key, token, current_site)
+
+        return Response({"key": key}, status=status.HTTP_200_OK)
+
+
+class AdminSetupMagicSignInEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
         user_token = request.data.get("token", "").strip()
-        key = request.data.get("key", False).strip().lower()
+        key = request.data.get("key", "").strip().lower()
 
         if not key or user_token == "":
             return Response(
@@ -266,16 +349,9 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
             email = data["email"]
 
             if str(token) == str(user_token):
-                user = User.objects.filter(email=email).first()
-                if user is None:
-                    # Sign In Case
-                    user = User.objects.create(
-                        email=email,
-                        username=uuid.uuid4().hex,
-                        password=make_password(uuid.uuid4().hex),
-                        is_password_autoset=True,
-                    )
-
+                # get the user
+                user = User.objects.get(email=email)
+                # get the email
                 user.is_active = True
                 user.is_email_verified = True
                 user.last_active = timezone.now()
@@ -284,41 +360,6 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
                 user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
                 user.token_updated_at = timezone.now()
                 user.save()
-
-                # Make the setup flag True
-                instance.is_setup_done = True
-                instance.save()
-
-                # Save the user in control center
-                headers = {
-                    "Content-Type": "application/json",
-                    "x-instance-id": instance.instance_id,
-                    "x-api-key": instance.api_key,
-                }
-                _ = requests.patch(
-                    f"{license_engine_base_url}/api/instances/",
-                    headers=headers,
-                    data=json.dumps({"is_setup_done": True}),
-                )
-
-                # Also register the user as admin
-                _ = requests.post(
-                    f"{license_engine_base_url}/api/instances/users/register/",
-                    headers=headers,
-                    data=json.dumps(
-                        {
-                            "email": str(user.email),
-                            "signup_mode": "MAGIC_CODE",
-                            "is_admin": True,
-                        }
-                    ),
-                )
-
-                # Register the user as an instance admin
-                _ = InstanceAdmin.objects.create(
-                    user=user,
-                    instance=instance,
-                )
 
                 access_token, refresh_token = get_tokens_for_user(user)
                 data = {
@@ -339,6 +380,82 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
                 {"error": "The magic code/link has expired please try again"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class AdminSetUserPasswordEndpoint(BaseAPIView):
+    def post(self, request):
+        user = User.objects.get(pk=request.user.id)
+        password = request.data.get("password", False)
+
+        # If the user password is not autoset then return error
+        if not user.is_password_autoset:
+            return Response(
+                {
+                    "error": "Your password is already set please change your password from profile"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check password validation
+        if not password and len(str(password)) < 8:
+            return Response(
+                {"error": "Password is not valid"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        instance = Instance.objects.first()
+        if instance is None:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+        if not license_engine_base_url:
+            return Response(
+                {"error": "License engine base url is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Save the user in control center
+        headers = {
+            "Content-Type": "application/json",
+            "x-instance-id": instance.instance_id,
+            "x-api-key": instance.api_key,
+        }
+        _ = requests.patch(
+            f"{license_engine_base_url}/api/instances/",
+            headers=headers,
+            data=json.dumps({"is_setup_done": True}),
+        )
+
+        # Also register the user as admin
+        _ = requests.post(
+            f"{license_engine_base_url}/api/instances/users/register/",
+            headers=headers,
+            data=json.dumps(
+                {
+                    "email": str(user.email),
+                    "signup_mode": "MAGIC_CODE",
+                    "is_admin": True,
+                }
+            ),
+        )
+
+        # Register the user as an instance admin
+        _ = InstanceAdmin.objects.create(
+            user=user,
+            instance=instance,
+        )
+        # Make the setup flag True
+        instance.is_setup_done = True
+        instance.save()
+
+        # Set the user password
+        user.set_password(password)
+        user.is_password_autoset = False
+        user.save()
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):
