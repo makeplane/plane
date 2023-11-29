@@ -1,12 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { ChevronRight } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
@@ -16,13 +12,6 @@ type Props = {
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
   quickActions: (issue: IIssue) => React.ReactNode;
-  setIssuePeekOverView: React.Dispatch<
-    React.SetStateAction<{
-      workspaceSlug: string;
-      projectId: string;
-      issueId: string;
-    } | null>
-  >;
   disableUserActions: boolean;
   nestingLevel: number;
 };
@@ -31,40 +20,20 @@ export const IssueColumn: React.FC<Props> = ({
   issue,
   expanded,
   handleToggleExpand,
-  setIssuePeekOverView,
   properties,
   quickActions,
   disableUserActions,
   nestingLevel,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+  // router
   const router = useRouter();
-
-  const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const handleCopyText = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
 
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
-    setIssuePeekOverView({
-      workspaceSlug: issue?.workspace_detail?.slug,
-      projectId: issue?.project_detail?.id,
-      issueId: issue?.id,
-    });
+
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
 

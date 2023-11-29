@@ -39,7 +39,7 @@
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
-    "lucide-react": "^0.274.0",
+    "lucide-react": "^0.293.0",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "next": "12.3.2",

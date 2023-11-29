@@ -40,14 +40,8 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
           router.push(`/${userWorkspaces[0].slug}`);
           return;
         } else {
-          const invitations = await workspaceService.userWorkspaceInvitations();
-          if (invitations.length > 0) {
-            router.push(`/invitations`);
-            return;
-          } else {
-            router.push(`/create-workspace`);
-            return;
-          }
+          router.push(`/profile`);
+          return;
         }
       });
     };
