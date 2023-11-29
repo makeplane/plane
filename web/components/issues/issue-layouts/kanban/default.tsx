@@ -102,7 +102,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
             )}
 
             <div
-              className={`min-h-[150px] h-full ${
+              className={`min-h-[150px] ${
                 verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
               }`}
             >
