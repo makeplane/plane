@@ -22,7 +22,7 @@ export const DocumentEditorExtensions = (
     searchTerms: ["Issue", "Iss"],
     icon: <CaretUpIcon size={18} />,
     command: ({ editor, range }) => {
-      editor.chain().focus().insertContentAt(range, "<p class='text-sm bg-gray-300 w-fit pl-3 pr-3 pt-1 pb-1 rounded shadow-sm'>#issue_</p>").run()
+      editor.chain().blur().insertContentAt(range, "<p class='text-sm bg-gray-300 w-fit pl-3 pr-3 pt-1 pb-1 rounded shadow-sm'>#issue_</p>").run()
     }
   }]
 

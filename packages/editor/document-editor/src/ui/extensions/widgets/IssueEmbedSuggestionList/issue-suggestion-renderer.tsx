@@ -15,14 +15,14 @@ const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   if (top < container.scrollTop) {
     // container.scrollTop = top - containerHeight;
     item.scrollIntoView({
-			behavior: "smooth",
-			block: "center"
+      behavior: "smooth",
+      block: "center"
     })
   } else if (bottom > containerHeight + container.scrollTop) {
     // container.scrollTop = bottom - containerHeight;
     item.scrollIntoView({
-			behavior: "smooth",
-			block: "center",
+      behavior: "smooth",
+      block: "center",
     })
   }
 };
@@ -36,6 +36,7 @@ interface IssueSuggestionProps {
 const IssueSuggestionList = ({
   items,
   command,
+	editor
 }: {
   items: IssueSuggestionProps[];
   command: any;
@@ -48,6 +49,11 @@ const IssueSuggestionList = ({
   const [displayedItems, setDisplayedItems] = useState<{ [key: string]: IssueSuggestionProps[] }>({});
 
   useEffect(() => {
+
+    if (editor) {
+			editor.chain().blur()
+    }
+
     let newDisplayedItems: { [key: string]: IssueSuggestionProps[] } = {};
     sections.forEach(section => {
       newDisplayedItems[section] = items.filter(item => item.state === section).slice(0, 5);
@@ -128,7 +134,7 @@ const IssueSuggestionList = ({
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
         return sectionItems && sectionItems.length > 0 ? (
-          <div id={`${section}-container`}>
+          <div key={`${section}-container`} id={`${section}-container`}>
             <p className={"sticky text-xs --color-text-300 p-2"}>{section}</p>
             <div key={section} id={section} className={"max-h-[140px] overflow-y-scroll"}>
               {sectionItems.map((item: IssueSuggestionProps, index: number) => (
