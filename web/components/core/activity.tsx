@@ -226,31 +226,12 @@ const activityDetails: {
     },
     icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
   },
-  duplicate: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked this issue as duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed this issue as a duplicate of{" "}
-            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <CopyPlus size={12} color="#6b7280" />,
-  },
   cycles: {
     message: (activity, showIssue, workspaceSlug) => {
       if (activity.verb === "created")
         return (
           <>
-            <span className="flex-shrink-0">added this issue to the cycle</span>
+            <span className="flex-shrink-0">added this issue to the cycle </span>
             <a
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
@@ -294,6 +275,25 @@ const activityDetails: {
         );
     },
     icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
+  },
+  duplicate: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked this issue as duplicate of{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed this issue as a duplicate of{" "}
+            <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <CopyPlus size={12} color="#6b7280" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -354,7 +354,7 @@ const activityDetails: {
         return (
           <>
             added a new label{" "}
-            <span className="flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
+            <span className="inline-flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.new_value}</span>
             </span>
@@ -370,7 +370,7 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
+            <span className="inline-flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
               <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.old_value}</span>
             </span>

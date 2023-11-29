@@ -12,7 +12,6 @@ import { DeleteIssueModal } from "../delete-issue-modal";
 import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
 // types
 import { IIssue } from "types";
-import { RootStore } from "store/root";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 
@@ -90,7 +89,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const router = useRouter();
   const { peekIssueId } = router.query as { peekIssueId: string };
 
-  const { user: userStore, issueDetail: issueDetailStore }: RootStore = useMobxStore();
+  const { user: userStore, issueDetail: issueDetailStore } = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -101,7 +100,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       const { query } = router;
       router.push({
         pathname: router.pathname,
-        query: { ...query, peekIssueId: issueId },
+        query: { ...query, peekIssueId: issueId, peekProjectId: projectId },
       });
     }
   };
@@ -110,6 +109,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     if (query.peekIssueId) {
       issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
+      delete query.peekProjectId;
       router.push({
         pathname: router.pathname,
         query: { ...query },

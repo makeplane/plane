@@ -30,7 +30,7 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
 
   const {
     commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
-    issueDetail: { updateIssue },
+    projectIssues: { updateIssue },
     user: { currentUser },
   } = useMobxStore();
 
