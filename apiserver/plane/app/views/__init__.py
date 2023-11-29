@@ -82,20 +82,18 @@ from .issue import (
 )
 
 from .auth_extended import (
-    VerifyEmailEndpoint,
-    RequestEmailVerificationEndpoint,
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
+    SetUserPasswordEndpoint,
+    EmailCheckEndpoint,
 )
 
 
 from .authentication import (
-    SignUpEndpoint,
     SignInEndpoint,
     SignOutEndpoint,
     MagicSignInEndpoint,
-    MagicSignInGenerateEndpoint,
 )
 
 from .module import (
@@ -164,4 +162,8 @@ from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
 
-from .webhook import WebhookEndpoint, WebhookLogsEndpoint, WebhookSecretRegenerateEndpoint
+from .webhook import (
+    WebhookEndpoint,
+    WebhookLogsEndpoint,
+    WebhookSecretRegenerateEndpoint,
+)

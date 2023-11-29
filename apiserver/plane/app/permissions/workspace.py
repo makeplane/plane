@@ -99,7 +99,6 @@ class WorkspaceViewerPermission(BasePermission):
         return WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=view.workspace_slug,
-            role__gte=10,
             is_active=True,
         ).exists()
 

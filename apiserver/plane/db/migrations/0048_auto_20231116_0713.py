@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(db_index=True, default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
                 ('transaction', models.UUIDField(default=uuid.uuid4)),
                 ('entity_identifier', models.UUIDField(null=True)),
-                ('entity_name', models.CharField(choices=[('to_do', 'To Do'), ('issue', 'issue'), ('image', 'Image'), ('video', 'Video'), ('file', 'File'), ('link', 'Link'), ('cycle', 'Cycle'), ('module', 'Module'), ('back_link', 'Back Link'), ('forward_link', 'Forward Link'), ('mention', 'Mention')], max_length=30, verbose_name='Transaction Type')),
+                ('entity_name', models.CharField(choices=[('to_do', 'To Do'), ('issue', 'issue'), ('image', 'Image'), ('video', 'Video'), ('file', 'File'), ('link', 'Link'), ('cycle', 'Cycle'), ('module', 'Module'), ('back_link', 'Back Link'), ('forward_link', 'Forward Link'), ('page_mention', 'Page Mention'), ('user_mention', 'User Mention')], max_length=30, verbose_name='Transaction Type')),
                 ('created_by', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='%(class)s_created_by', to=settings.AUTH_USER_MODEL, verbose_name='Created By')),
                 ('page', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='page_log', to='db.page')),
                 ('project', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='project_%(class)s', to='db.project')),

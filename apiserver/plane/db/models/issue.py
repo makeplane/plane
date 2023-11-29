@@ -7,7 +7,6 @@ from django.db import models
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 
@@ -141,8 +140,10 @@ class Issue(ProjectBaseModel):
             )["largest"]
             # aggregate can return None! Check it first.
             # If it isn't none, just use the last ID specified (which should be the greatest) and add one to it
-            if last_id is not None:
+            if last_id:
                 self.sequence_id = last_id + 1
+            else:
+                self.sequence_id = 1
 
             largest_sort_order = Issue.objects.filter(
                 project=self.project, state=self.state

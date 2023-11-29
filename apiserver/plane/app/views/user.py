@@ -17,7 +17,7 @@ from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
 
 
-from django.db.models import Q, F, Count, Case, When, Value, IntegerField
+from django.db.models import Q, F, Count, Case, When, IntegerField
 
 
 class UserEndpoint(BaseViewSet):
@@ -52,7 +52,6 @@ class UserEndpoint(BaseViewSet):
         projects_to_deactivate = []
         workspaces_to_deactivate = []
 
-        
         projects = ProjectMember.objects.filter(
             member=request.user, is_active=True
         ).annotate(
@@ -155,3 +154,4 @@ class UserActivityEndpoint(BaseAPIView, BasePaginator):
                 issue_activities, many=True
             ).data,
         )
+
