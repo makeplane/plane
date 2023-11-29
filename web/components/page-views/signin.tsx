@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { observer } from "mobx-react-lite";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -10,13 +11,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { AuthService } from "services/auth.service";
 // components
-import {
-  GoogleLoginButton,
-  GithubLoginButton,
-  EmailCodeForm,
-  EmailPasswordForm,
-  EmailPasswordFormValues,
-} from "components/account";
+import { GoogleLoginButton, GithubLoginButton, SignInRoot } from "components/account";
 // ui
 import { Loader, Spinner } from "@plane/ui";
 // images
@@ -40,24 +35,12 @@ export const SignInView = observer(() => {
   const { next: next_url } = router.query as { next: string };
   // states
   const [isLoading, setLoading] = useState(false);
-  const [authType, setAuthType] = useState<AuthType>("sign-in");
   // toast
   const { setToastAlert } = useToast();
   const { resolvedTheme } = useTheme();
 
-  // computed.
-  const enableEmailPassword =
-    envConfig &&
-    (envConfig?.email_password_login ||
-      !(
-        envConfig?.email_password_login ||
-        envConfig?.magic_login ||
-        envConfig?.google_client_id ||
-        envConfig?.github_client_id
-      ));
-
-  const handleLoginRedirection = useCallback(
-    (user: IUser) => {
+  const handleSignInRedirection = useCallback(
+    async (user: IUser) => {
       // if the user is not onboarded, redirect them to the onboarding page
       if (!user.is_onboarded) {
         router.push("/onboarding");
@@ -70,7 +53,7 @@ export const SignInView = observer(() => {
       }
 
       // if the user is onboarded, fetch their last workspace details
-      fetchCurrentUserSettings()
+      await fetchCurrentUserSettings()
         .then((userSettings: IUserSettings) => {
           const workspaceSlug =
             userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
@@ -85,11 +68,11 @@ export const SignInView = observer(() => {
     [fetchCurrentUserSettings, router, next_url]
   );
 
-  const mutateUserInfo = useCallback(() => {
-    fetchCurrentUser().then((user) => {
-      handleLoginRedirection(user);
+  const mutateUserInfo = useCallback(async () => {
+    await fetchCurrentUser().then(async (user) => {
+      await handleSignInRedirection(user);
     });
-  }, [fetchCurrentUser, handleLoginRedirection]);
+  }, [fetchCurrentUser, handleSignInRedirection]);
 
   useEffect(() => {
     mutateUserInfo();
@@ -105,9 +88,7 @@ export const SignInView = observer(() => {
           clientId,
         };
         const response = await authService.socialAuth(socialAuthPayload);
-        if (response) {
-          mutateUserInfo();
-        }
+        if (response) mutateUserInfo();
       } else {
         setLoading(false);
         throw Error("Cant find credentials");
@@ -149,39 +130,6 @@ export const SignInView = observer(() => {
     }
   };
 
-  const handlePasswordSignIn = (formData: EmailPasswordFormValues) => {
-    setLoading(true);
-    return authService
-      .emailLogin(formData)
-      .then(() => {
-        mutateUserInfo();
-      })
-      .catch((err) => {
-        setLoading(false);
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error || "Something went wrong. Please try again later or contact the support team.",
-        });
-      });
-  };
-
-  const handleEmailCodeSignIn = async (response: any) => {
-    try {
-      setLoading(true);
-      if (response) {
-        mutateUserInfo();
-      }
-    } catch (err: any) {
-      setLoading(false);
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.error || "Something went wrong. Please try again later or contact the support team.",
-      });
-    }
-  };
-
   return (
     <>
       {isLoading ? (
@@ -195,22 +143,6 @@ export const SignInView = observer(() => {
               <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
               <span className="font-semibold text-2xl sm:text-3xl">Plane</span>
             </div>
-
-            {/* <div className="">
-              {authType === "sign-in" && (
-                <div className="mx-auto text-right text-onboarding-text-300 text-sm">
-                  New to Plane?{" "}
-                  <p
-                    className="text-custom-primary-100 hover text-base font-medium hover:cursor-pointer"
-                    onClick={() => {
-                      setAuthType("sign-up");
-                    }}
-                  >
-                    Create a new account
-                  </p>
-                </div>
-              )}
-            </div> */}
           </div>
 
           <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
@@ -232,12 +164,10 @@ export const SignInView = observer(() => {
               ) : (
                 <>
                   <>
-                    {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />}
+                    {/* {enableEmailPassword && <EmailPasswordForm onSubmit={handlePasswordSignIn} />} */}
                     {envConfig?.magic_login && (
                       <div className="sm:w-96 mx-auto flex flex-col divide-y divide-custom-border-200">
-                        <div className="pb-2">
-                          <EmailCodeForm authType={authType} handleSignIn={handleEmailCodeSignIn} />
-                        </div>
+                        <SignInRoot handleSignInRedirection={mutateUserInfo} />
                       </div>
                     )}
                     <div className="flex sm:w-96 items-center mt-4 mx-auto">
@@ -252,36 +182,23 @@ export const SignInView = observer(() => {
                         <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
                       )}
                       {envConfig?.github_client_id && (
-                        <GithubLoginButton
-                          authType={authType}
-                          clientId={envConfig?.github_client_id}
-                          handleSignIn={handleGitHubSignIn}
-                        />
+                        <GithubLoginButton clientId={envConfig?.github_client_id} handleSignIn={handleGitHubSignIn} />
                       )}
                     </div>
-                    {/* {authType === "sign-up" && (
-                      <div className="sm:w-96 text-center mx-auto mt-6 text-onboarding-text-400 text-sm">
-                        Already using Plane?{" "}
-                        <span
-                          className="text-custom-primary-80 hover text-sm font-medium underline hover:cursor-pointer"
-                          onClick={() => {
-                            setAuthType("sign-in");
-                          }}
-                        >
-                          Sign in
-                        </span>
-                      </div>
-                    )} */}
                   </>
-                  <div
-                    className={`flex py-2 bg-onboarding-background-100 border border-onboarding-border-200 mx-auto rounded-[3.5px] sm:w-96 mt-16`}
-                  >
+                  <div className="flex py-2 bg-onboarding-background-100 border border-onboarding-border-200 mx-auto rounded-[3.5px] sm:w-96 mt-16">
                     <Lightbulb className="h-7 w-7 mr-2 mx-3" />
-                    <p className={`text-sm text-left text-onboarding-text-100`}>
+                    <p className="text-sm text-left text-onboarding-text-100">
                       Try the latest features, like Tiptap editor, to write compelling responses.{" "}
-                      <span className="font-medium text-sm underline hover:cursor-pointer" onClick={() => {}}>
-                        See new features
-                      </span>
+                      <Link href="https://plane.so/changelog">
+                        <a
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-sm underline hover:cursor-pointer"
+                        >
+                          See new features
+                        </a>
+                      </Link>
                     </p>
                   </div>
                   <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 ">
