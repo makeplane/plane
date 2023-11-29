@@ -3,36 +3,42 @@ import { Controller, useForm } from "react-hook-form";
 import { CornerDownLeft, XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
+import { UserService } from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useTimer from "hooks/use-timer";
 // ui
 import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "types/auth";
-import useTimer from "hooks/use-timer";
+// constants
+import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
   updateEmail: (email: string) => void;
+  handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
-type UniqueCodeFormValues = {
+type TUniqueCodeFormValues = {
   email: string;
   token: string;
 };
 
-const defaultValues: UniqueCodeFormValues = {
+const defaultValues: TUniqueCodeFormValues = {
   email: "",
   token: "",
 };
 
+// services
 const authService = new AuthService();
+const userService = new UserService();
 
 export const UniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleSignInRedirection } = props;
+  const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
@@ -46,7 +52,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
     getValues,
     handleSubmit,
     reset,
-  } = useForm<UniqueCodeFormValues>({
+  } = useForm<TUniqueCodeFormValues>({
     defaultValues: {
       ...defaultValues,
       email,
@@ -55,7 +61,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
     reValidateMode: "onChange",
   });
 
-  const handleUniqueCodeSignIn = async (formData: UniqueCodeFormValues) => {
+  const handleUniqueCodeSignIn = async (formData: TUniqueCodeFormValues) => {
     const payload: IMagicSignInData = {
       email: formData.email,
       key: `magic_${formData.email}`,
@@ -64,7 +70,12 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
 
     await authService
       .magicSignIn(payload)
-      .then(async () => await handleSignInRedirection())
+      .then(async () => {
+        const currentUser = await userService.currentUser();
+
+        if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
+        else await handleSignInRedirection();
+      })
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -74,7 +85,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
-  const handleSendNewLink = async (formData: UniqueCodeFormValues) => {
+  const handleSendNewLink = async (formData: TUniqueCodeFormValues) => {
     const payload: IEmailCheckData = {
       email: formData.email,
       type: "magic_code",
@@ -103,7 +114,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
-  const handleFormSubmit = async (formData: UniqueCodeFormValues) => {
+  const handleFormSubmit = async (formData: TUniqueCodeFormValues) => {
     if (dirtyFields.email) await handleSendNewLink(formData);
     else await handleUniqueCodeSignIn(formData);
   };

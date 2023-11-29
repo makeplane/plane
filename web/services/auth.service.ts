@@ -40,6 +40,14 @@ export class AuthService extends APIService {
       });
   }
 
+  async setPassword(data: { password: string }): Promise<any> {
+    return this.post(`/api/users/me/set-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async resetPassword(
     uidb64: string,
     token: string,

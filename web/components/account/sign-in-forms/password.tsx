@@ -17,7 +17,7 @@ import { ESignInSteps } from "components/account";
 type Props = {
   email: string;
   updateEmail: (email: string) => void;
-  handleNextStep: (step: ESignInSteps) => void;
+  handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
@@ -34,7 +34,7 @@ const defaultValues: TPasswordFormValues = {
 const authService = new AuthService();
 
 export const PasswordForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleNextStep, handleSignInRedirection } = props;
+  const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -81,7 +81,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
     await authService
       .emailCheck(payload)
       .then((res) => {
-        if (res.is_password_autoset) handleNextStep(ESignInSteps.SET_PASSWORD_LINK);
+        if (res.is_password_autoset) handleStepChange(ESignInSteps.SET_PASSWORD_LINK);
         else
           reset({
             email: formData.email,
@@ -114,7 +114,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
 
     authService
       .sendResetPasswordLink({ email: emailFormValue })
-      .then(() => handleNextStep(ESignInSteps.SET_PASSWORD_LINK))
+      .then(() => handleStepChange(ESignInSteps.SET_PASSWORD_LINK))
       .catch((err) =>
         setToastAlert({
           type: "error",

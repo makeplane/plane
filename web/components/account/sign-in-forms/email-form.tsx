@@ -15,7 +15,7 @@ import { IEmailCheckData, TEmailCheckTypes } from "types/auth";
 import { ESignInSteps } from "components/account";
 
 type Props = {
-  handleNextStep: (step: ESignInSteps) => void;
+  handleStepChange: (step: ESignInSteps) => void;
   updateEmail: (email: string) => void;
 };
 
@@ -26,7 +26,7 @@ type EmailCodeFormValues = {
 const authService = new AuthService();
 
 export const EmailForm: React.FC<Props> = (props) => {
-  const { handleNextStep, updateEmail } = props;
+  const { handleStepChange, updateEmail } = props;
   // states
   const [isCheckingEmail, setIsCheckingEmail] = useState<TEmailCheckTypes | null>(null);
 
@@ -62,13 +62,13 @@ export const EmailForm: React.FC<Props> = (props) => {
       .emailCheck(payload)
       .then((res) => {
         // if type is magic_code, send the user to magic sign in
-        if (type === "magic_code") handleNextStep(ESignInSteps.UNIQUE_CODE);
+        if (type === "magic_code") handleStepChange(ESignInSteps.UNIQUE_CODE);
         // if type is password, check if the user has a password set
         if (type === "password") {
           // if password is autoset, send them to set new password link
-          if (res.is_password_autoset) handleNextStep(ESignInSteps.SET_PASSWORD_LINK);
+          if (res.is_password_autoset) handleStepChange(ESignInSteps.SET_PASSWORD_LINK);
           // if password is not autoset, send them to password form
-          else handleNextStep(ESignInSteps.PASSWORD);
+          else handleStepChange(ESignInSteps.PASSWORD);
         }
       })
       .catch((err) =>
