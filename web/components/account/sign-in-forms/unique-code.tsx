@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { CornerDownLeft, XCircle } from "lucide-react";
 // services
@@ -11,6 +11,7 @@ import { Button, Input } from "@plane/ui";
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "types/auth";
+import useTimer from "hooks/use-timer";
 
 type Props = {
   email: string;
@@ -32,12 +33,17 @@ const authService = new AuthService();
 
 export const UniqueCodeForm: React.FC<Props> = (props) => {
   const { email, updateEmail, handleSignInRedirection } = props;
+  // states
+  const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
+  // timer
+  const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer();
   // form info
   const {
     control,
     formState: { dirtyFields, errors, isSubmitting, isValid },
+    getValues,
     handleSubmit,
     reset,
   } = useForm<UniqueCodeFormValues>({
@@ -68,7 +74,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
-  const handleSendLinkToNewEmail = async (formData: UniqueCodeFormValues) => {
+  const handleSendNewLink = async (formData: UniqueCodeFormValues) => {
     const payload: IEmailCheckData = {
       email: formData.email,
       type: "magic_code",
@@ -98,9 +104,19 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   };
 
   const handleFormSubmit = async (formData: UniqueCodeFormValues) => {
-    if (dirtyFields.email) await handleSendLinkToNewEmail(formData);
+    if (dirtyFields.email) await handleSendNewLink(formData);
     else await handleUniqueCodeSignIn(formData);
   };
+
+  const handleRequestNewCode = async () => {
+    setIsRequestingNewCode(true);
+
+    await handleSendNewLink(getValues())
+      .then(() => setResendCodeTimer(30))
+      .finally(() => setIsRequestingNewCode(false));
+  };
+
+  const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
 
   return (
     <>
@@ -131,6 +147,9 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                     updateEmail(e.target.value);
                     onChange(e.target.value);
                   }}
+                  onBlur={() => {
+                    if (dirtyFields.email) handleSendNewLink(getValues());
+                  }}
                   ref={ref}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@firstflight.com"
@@ -150,26 +169,42 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               type="submit"
               className="text-xs text-onboarding-text-300 mt-1.5 flex items-center gap-1 outline-none bg-transparent border-none"
             >
-              Hit <CornerDownLeft className="h-2.5 w-2.5" /> to get a new code
+              Hit <CornerDownLeft className="h-2.5 w-2.5" /> or <span className="italic">Tab</span> to get a new code
             </button>
           )}
         </div>
-        <Controller
-          control={control}
-          name="token"
-          rules={{
-            required: dirtyFields.email ? false : "Code is required",
-          }}
-          render={({ field: { value, onChange } }) => (
-            <Input
-              value={value}
-              onChange={onChange}
-              hasError={Boolean(errors.token)}
-              placeholder="gets-sets-fays"
-              className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
-            />
-          )}
-        />
+        <div>
+          <Controller
+            control={control}
+            name="token"
+            rules={{
+              required: dirtyFields.email ? false : "Code is required",
+            }}
+            render={({ field: { value, onChange } }) => (
+              <Input
+                value={value}
+                onChange={onChange}
+                hasError={Boolean(errors.token)}
+                placeholder="gets-sets-fays"
+                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+              />
+            )}
+          />
+          <button
+            type="button"
+            onClick={handleRequestNewCode}
+            className={`text-xs text-right w-full text-onboarding-text-200 ${
+              isRequestNewCodeDisabled ? "" : "hover:text-custom-primary-100"
+            }`}
+            disabled={isRequestNewCodeDisabled}
+          >
+            {resendTimerCode > 0
+              ? `Request new code in ${resendTimerCode}s`
+              : isRequestingNewCode
+              ? "Requesting new code..."
+              : "Request new code"}
+          </button>
+        </div>
         <Button
           type="submit"
           variant="primary"

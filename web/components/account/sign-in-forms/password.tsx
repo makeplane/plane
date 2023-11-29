@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { CornerDownLeft, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
@@ -138,7 +138,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
               required: "Email is required",
               validate: (value) => checkEmailValidity(value) || "Email is invalid",
             }}
-            render={({ field: { value, onChange, ref } }) => (
+            render={({ field: { value, onChange } }) => (
               <div className="flex items-center relative rounded-md bg-onboarding-background-200">
                 <Input
                   id="email"
@@ -149,7 +149,9 @@ export const PasswordForm: React.FC<Props> = (props) => {
                     updateEmail(e.target.value);
                     onChange(e.target.value);
                   }}
-                  ref={ref}
+                  onBlur={() => {
+                    if (dirtyFields.email) handleEmailCheck(getValues());
+                  }}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@firstflight.com"
                   className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
@@ -163,14 +165,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          {dirtyFields.email && (
-            <button
-              type="submit"
-              className="text-xs text-onboarding-text-300 mt-1.5 flex items-center gap-1 outline-none bg-transparent border-none"
-            >
-              Hit <CornerDownLeft className="h-2.5 w-2.5" /> to get a new code
-            </button>
-          )}
         </div>
         <div>
           <Controller

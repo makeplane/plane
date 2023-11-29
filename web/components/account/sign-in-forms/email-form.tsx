@@ -35,6 +35,7 @@ export const EmailForm: React.FC<Props> = (props) => {
   const {
     control,
     formState: { errors, isValid },
+    handleSubmit,
     watch,
   } = useForm<EmailCodeFormValues>({
     defaultValues: {
@@ -89,7 +90,7 @@ export const EmailForm: React.FC<Props> = (props) => {
         Sign in with the email you used to sign up for Plane
       </p>
 
-      <form className="mt-5 sm:w-96 mx-auto">
+      <form onSubmit={handleSubmit(() => {})} className="mt-5 sm:w-96 mx-auto">
         <div className="space-y-1">
           <Controller
             control={control}
