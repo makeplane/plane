@@ -1,6 +1,9 @@
 name: Update Docker Images for Plane on Release
 
 on:
+  push:
+    branches:
+      - fix/self-hosting
   release:
     types: [released, prereleased]
 
@@ -26,7 +29,7 @@ jobs:
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:test
           tags: |
             type=ref,event=tag
       
@@ -34,7 +37,7 @@ jobs:
         id: metaBackend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:test
           tags: |
             type=ref,event=tag
 
@@ -42,7 +45,7 @@ jobs:
         id: metaSpace
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:test
           tags: |
             type=ref,event=tag
 
@@ -50,7 +53,7 @@ jobs:
         id: metaProxy
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:test
           tags: |
             type=ref,event=tag
 
