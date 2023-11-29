@@ -52,6 +52,7 @@ from .view import (
     GlobalViewIssuesViewSet,
     IssueViewViewSet,
     IssueViewFavoriteViewSet,
+    GlobalViewIssuesGroupedEndpoint
 )
 from .cycle import (
     CycleViewSet,
