@@ -1,9 +1,6 @@
 name: Update Docker Images for Plane on Release
 
 on:
-  push:
-    branches:
-      - fix/self-hosting
   release:
     types: [released, prereleased]
 
@@ -29,7 +26,7 @@ jobs:
         id: metaFrontend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend
           tags: |
             type=ref,event=tag
       
@@ -37,7 +34,7 @@ jobs:
         id: metaBackend
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend
           tags: |
             type=ref,event=tag
 
@@ -45,7 +42,7 @@ jobs:
         id: metaSpace
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space
           tags: |
             type=ref,event=tag
 
@@ -53,7 +50,7 @@ jobs:
         id: metaProxy
         uses: docker/metadata-action@v4.3.0
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy
           tags: |
             type=ref,event=tag
 
@@ -63,8 +60,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
-          # tags: ${{ steps.metaFrontend.outputs.tags }}
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:test
+          tags: ${{ steps.metaFrontend.outputs.tags }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -78,8 +74,7 @@ jobs:
           file: ./apiserver/Dockerfile.api
           platforms: linux/amd64
           push: true
-          # tags: ${{ steps.metaBackend.outputs.tags }}
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:test
+          tags: ${{ steps.metaBackend.outputs.tags }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -92,8 +87,7 @@ jobs:
           file: ./space/Dockerfile.space
           platforms: linux/amd64
           push: true
-          # tags: ${{ steps.metaSpace.outputs.tags }}
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:test
+          tags: ${{ steps.metaSpace.outputs.tags }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -106,8 +100,7 @@ jobs:
           file: ./nginx/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:test
-          # tags: ${{ steps.metaProxy.outputs.tags }}
+          tags: ${{ steps.metaProxy.outputs.tags }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
