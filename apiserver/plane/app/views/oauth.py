@@ -163,20 +163,10 @@ class OauthEndpoint(BaseAPIView):
                         os.environ.get("GITHUB_CLIENT_ID"),
                     )
                 )
-                and not (
-                    get_configuration_value(
-                        instance_configuration,
-                        "ENABLE_SIGNUP",
-                        os.environ.get("ENABLE_SIGNUP", "0"),
-                    )
-                )
-                and not WorkspaceMemberInvite.objects.filter(
-                    email=request.user.email
-                ).exists()
             ):
                 return Response(
                     {
-                        "error": "New account creation is disabled. Please contact your site administrator"
+                        "error": "Github or Google login is not configured"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -315,6 +305,25 @@ class OauthEndpoint(BaseAPIView):
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
+            instance_configuration = InstanceConfiguration.objects.values(
+                "key", "value"
+            )
+            if (
+                not bool(
+                    get_configuration_value(
+                        instance_configuration,
+                        "ENABLE_SIGNUP",
+                        os.environ.get("ENABLE_SIGNUP", "0"),
+                    )
+                )
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=request.user.email
+                ).exists()
+            ):
+                return Response(
+                    {"error": "New account creation is disabled. Please contact your site administrator"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             ## Signup Case
             # Check if instance is registered or not
             instance = Instance.objects.first()
@@ -323,7 +332,6 @@ class OauthEndpoint(BaseAPIView):
                     {"error": "Instance is not configured"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
 
             if (
                 get_configuration_value(

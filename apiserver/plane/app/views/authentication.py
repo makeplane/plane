@@ -48,12 +48,21 @@ class SignUpEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-
-        if not settings.ENABLE_SIGNUP:
+        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        if (
+            not bool(
+                get_configuration_value(
+                    instance_configuration,
+                    "ENABLE_SIGNUP",
+                    os.environ.get("ENABLE_SIGNUP", "0"),
+                )
+            )
+            and not WorkspaceMemberInvite.objects.filter(
+                email=request.user.email
+            ).exists()
+        ):
             return Response(
-                {
-                    "error": "New account creation is disabled. Please contact your site administrator"
-                },
+                {"error": "Sign up is disabled."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -276,27 +285,13 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
         email = request.data.get("email", False)
 
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        if (
-            not get_configuration_value(
-                instance_configuration,
-                "ENABLE_MAGIC_LINK_LOGIN",
-                os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
-            )
-            and not (
-                get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_SIGNUP",
-                    os.environ.get("ENABLE_SIGNUP", "0"),
-                )
-            )
-            and not WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).exists()
+        if not bool(get_configuration_value(
+            instance_configuration,
+            "ENABLE_MAGIC_LINK_LOGIN",
+            os.environ.get("ENABLE_MAGIC_LINK_LOGIN")),
         ):
             return Response(
-                {
-                    "error": "New account creation is disabled. Please contact your site administrator"
-                },
+                {"error": "Magic link sign in is disabled."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -349,7 +344,6 @@ class MagicSignInGenerateEndpoint(BaseAPIView):
             expiry = 600
 
             ri.set(key, json.dumps(value), ex=expiry)
-
 
         # If the smtp is configured send through here
         current_site = request.META.get("HTTP_ORIGIN")
@@ -427,6 +421,25 @@ class MagicSignInEndpoint(BaseAPIView):
                         )
 
                 else:
+                    instance_configuration = InstanceConfiguration.objects.values(
+                        "key", "value"
+                    )
+                    if (
+                        not bool(
+                            get_configuration_value(
+                                instance_configuration,
+                                "ENABLE_SIGNUP",
+                                os.environ.get("ENABLE_SIGNUP", "0"),
+                            )
+                        )
+                        and not WorkspaceMemberInvite.objects.filter(
+                            email=request.user.email
+                        ).exists()
+                    ):
+                        return Response(
+                            {"error": "Magic Sign up is disabled."},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
                     # Registration case
                     user = User.objects.create(
                         email=email,
