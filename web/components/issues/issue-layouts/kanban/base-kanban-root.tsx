@@ -1,4 +1,5 @@
 import { FC, useCallback, useState } from "react";
+import { useRouter } from "next/router";
 import { DragDropContext, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -29,7 +30,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store/command-palette.store";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
+import { IssuePeekOverview } from "components/issues";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -79,7 +80,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     handleDragDrop,
     addIssuesToView,
   } = props;
-
+  // router
+  const router = useRouter();
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  // mobx store
   const {
     project: { workspaceProjects },
     projectLabel: { projectLabels },
@@ -134,7 +138,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         issueActions[action]!(issue);
       }
     },
-    [issueStore]
+    [issueActions]
   );
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
@@ -264,6 +268,17 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           )}
         </DragDropContext>
       </div>
+
+      {workspaceSlug && peekIssueId && peekProjectId && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={(issueToUpdate) =>
+            handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, EIssueActions.UPDATE)
+          }
+        />
+      )}
     </>
   );
 });
