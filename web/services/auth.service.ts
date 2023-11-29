@@ -69,6 +69,14 @@ export class AuthService extends APIService {
       });
   }
 
+  async instanceAdminEmailCode(data: any): Promise<any> {
+    return this.post("/api/licenses/instances/admins/magic-generate/", data, { headers: {} })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async magicSignIn(data: any): Promise<any> {
     const response = await this.post("/api/magic-sign-in/", data, { headers: {} });
     if (response?.status === 200) {
@@ -80,13 +88,21 @@ export class AuthService extends APIService {
   }
 
   async instanceMagicSignIn(data: any): Promise<any> {
-    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data, { headers: {} });
+    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data);
     if (response?.status === 200) {
       this.setAccessToken(response?.data?.access_token);
       this.setRefreshToken(response?.data?.refresh_token);
       return response?.data;
     }
     throw response.response.data;
+  }
+
+  async setPassword(data: any): Promise<any> {
+    return this.post("/api/users/me/set-password/", data, { headers: {} })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async signOut(): Promise<any> {

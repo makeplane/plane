@@ -15,7 +15,15 @@ export class InstanceService extends APIService {
   }
 
   async getInstanceInfo(): Promise<IInstance> {
-    return this.get("/api/licenses/instances/")
+    return this.get("/api/licenses/instances/", { headers: {} })
+      .then((response) => response.data)
+      .catch((error) => {
+        throw error;
+      });
+  }
+
+  async createInstance(): Promise<IInstance> {
+    return this.post("/api/licenses/instances/", {}, { headers: {} })
       .then((response) => response.data)
       .catch((error) => {
         throw error;

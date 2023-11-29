@@ -5,5 +5,3 @@ export * from "./email-forgot-password-form";
 export * from "./github-login-button";
 export * from "./google-login";
 export * from "./email-signup-form";
-export * from "./instance-email-code-form";
-export * from "./instance-admin-password-form";

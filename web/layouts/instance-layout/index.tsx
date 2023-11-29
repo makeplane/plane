@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 
 import useSWR from "swr";
 
@@ -18,13 +18,19 @@ type Props = {
 const InstanceLayout: FC<Props> = observer(({ children }) => {
   // store
   const {
-    instance: { fetchInstanceInfo, instance },
+    instance: { fetchInstanceInfo, instance, createInstance },
   } = useMobxStore();
 
   const router = useRouter();
   const isGodMode = router.pathname.includes("god-mode");
 
   useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
+
+  useEffect(() => {
+    if (instance?.is_activated === false) {
+      createInstance();
+    }
+  }, [instance?.is_activated, createInstance]);
 
   return (
     <div className="h-screen w-full overflow-hidden">
