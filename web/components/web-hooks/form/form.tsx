@@ -138,29 +138,35 @@ export const WebhookForm: FC<Props> = observer((props) => {
   return (
     <div className="space-y-6">
       <div className="text-xl font-medium">{data ? "Webhook details" : "Create webhook"}</div>
-      <form className="space-y-8" onSubmit={handleSubmit(handleFormSubmit)}>
-        <div>
-          <Controller
-            control={control}
-            name="url"
-            rules={{
-              required: "URL is required",
-            }}
-            render={({ field: { onChange, value } }) => (
-              <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
-            )}
-          />
-          {errors.url && <div className="text-xs text-red-500">{errors.url.message}</div>}
+      <form onSubmit={handleSubmit(handleFormSubmit)}>
+        <div className="space-y-8">
+          <div>
+            <Controller
+              control={control}
+              name="url"
+              rules={{
+                required: "URL is required",
+              }}
+              render={({ field: { onChange, value } }) => (
+                <WebhookInput value={value} onChange={onChange} hasError={Boolean(errors.url)} />
+              )}
+            />
+            {errors.url && <div className="text-xs text-red-500">{errors.url.message}</div>}
+          </div>
+          {data && <WebhookToggle control={control} />}
+          <div className="space-y-3">
+            <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
+          </div>
         </div>
-        {data && <WebhookToggle control={control} />}
-        <div className="space-y-3">
-          <WebhookOptions value={webhookEventType} onChange={(val) => setWebhookEventType(val)} />
+        <div className="mt-4">
+          {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
         </div>
-        {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
-        {data && <WebhookSecretKey data={data} />}
-        <Button type="submit" loading={isSubmitting}>
-          {data ? (isSubmitting ? "Updating..." : "Update") : isSubmitting ? "Creating..." : "Create"}
-        </Button>
+        <div className="space-y-8 mt-8">
+          {data && <WebhookSecretKey data={data} />}
+          <Button type="submit" loading={isSubmitting}>
+            {data ? (isSubmitting ? "Updating..." : "Update") : isSubmitting ? "Creating..." : "Create"}
+          </Button>
+        </div>
       </form>
     </div>
   );
