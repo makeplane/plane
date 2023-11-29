@@ -1,9 +1,7 @@
 require("dotenv").config({ path: ".env" });
 const { withSentryConfig } = require("@sentry/nextjs");
-const path = require("path");
 
 const nextConfig = {
-  transpilePackages: ["@plane/ui", "@plane/lite-text-editor", "@plane/rich-text-editor", "@plane/document-editor"],
   reactStrictMode: false,
   swcMinify: true,
   images: {
