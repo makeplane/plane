@@ -166,7 +166,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       this.loader = loadType;
 
       const params = this.rootStore?.moduleIssuesFilter?.appliedFilters;
-      const response = await this.moduleService.getV3ModuleIssues(workspaceSlug, projectId, moduleId, params);
+      const response = await this.moduleService.getModuleIssues(workspaceSlug, projectId, moduleId, params);
 
       const _issues = { ...this.issues, [moduleId]: { ...response } };
 

@@ -133,6 +133,7 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         filters = issue_filters(request.query_params, "GET")
 
         # Custom ordering for priority and state
@@ -216,25 +217,9 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-        ## Grouping the results
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
-        if sub_group_by and sub_group_by == group_by:
-            return Response(
-                {"error": "Group by and sub group by cannot be same"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if group_by:
-            grouped_results = group_results(issues, group_by, sub_group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(issues, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(issue_dict, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -310,114 +295,6 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
             epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class IssueListEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        filters = issue_filters(request.query_params, "GET")
-
-        issue_queryset = (
-            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .filter(**filters)
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .distinct()
-        )
-
-        serializer = IssueLiteSerializer(
-            issue_queryset, many=True, fields=fields if fields else None
-        )
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class IssueListGroupedEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id):
-        filters = issue_filters(request.query_params, "GET")
-        archive = request.GET.get("archived", False)
-        draft = request.GET.get("draft", False)
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-
-        issue_queryset = (
-            Issue.objects.filter(workspace__slug=slug, project_id=project_id)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .filter(**filters)
-            .filter(is_draft=bool(draft))
-            .filter(~Q(archived_at__isnull=bool(archive)))
-            .filter(
-                models.Q(issue_inbox__status=1)
-                | models.Q(issue_inbox__status=-1)
-                | models.Q(issue_inbox__status=2)
-                | models.Q(issue_inbox__isnull=True)
-            )
-            .annotate(cycle_id=F("issue_cycle__cycle_id"))
-            .annotate(module_id=F("issue_module__module_id"))
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .distinct()
-        )
-
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(
-            issue_dict,
-            status=status.HTTP_200_OK,
-        )
 
 
 class UserWorkSpaceIssues(BaseAPIView):
@@ -1094,6 +971,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
 
@@ -1184,14 +1062,9 @@ class IssueArchiveViewSet(BaseViewSet):
             else issue_queryset.filter(parent__isnull=True)
         )
 
-        issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-        ## Grouping the results
-        group_by = request.GET.get("group_by", False)
-        if group_by:
-            return Response(group_results(issues, group_by), status=status.HTTP_200_OK)
-
-        return Response(issues, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(issue_dict, status=status.HTTP_200_OK)
 
     def retrieve(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
@@ -1591,6 +1464,7 @@ class IssueDraftViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -1673,18 +1547,9 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-        ## Grouping the results
-        group_by = request.GET.get("group_by", False)
-        if group_by:
-            grouped_results = group_results(issues, group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(issues, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(issue_dict, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)

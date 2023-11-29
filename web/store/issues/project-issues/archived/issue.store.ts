@@ -100,7 +100,7 @@ export class ProjectArchivedIssuesStore extends IssueBaseStore implements IProje
       this.loader = loadType;
 
       const params = this.rootStore?.projectArchivedIssuesFilter?.appliedFilters;
-      const response = await this.archivedIssueService.getV3ArchivedIssues(workspaceSlug, projectId, params);
+      const response = await this.archivedIssueService.getArchivedIssues(workspaceSlug, projectId, params);
 
       const _issues = { ...this.issues, [projectId]: { ...response } };
 

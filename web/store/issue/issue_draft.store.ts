@@ -39,7 +39,7 @@ export class DraftIssuesStore {
       const issues = Array.isArray(issuesResponse) ? { allIssues: issuesResponse } : issuesResponse;
 
       runInAction(() => {
-        this.issues = issues;
+        this.issues = Object.values(issues) as any;
         this.isIssuesLoading = false;
       });
     } catch (error) {

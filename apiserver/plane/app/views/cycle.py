@@ -539,9 +539,8 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
 
     @method_decorator(gzip_page)
     def list(self, request, slug, project_id, cycle_id):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         order_by = request.GET.get("order_by", "created_at")
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
         filters = issue_filters(request.query_params, "GET")
         issues = (
             Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
@@ -576,24 +575,9 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             )
         )
 
-        issues_data = IssueStateSerializer(issues, many=True).data
-
-        if sub_group_by and sub_group_by == group_by:
-            return Response(
-                {"error": "Group by and sub group by cannot be same"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if group_by:
-            grouped_results = group_results(issues_data, group_by, sub_group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(
-            issues_data, status=status.HTTP_200_OK
-        )
+        issues = IssueStateSerializer(issues, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(issue_dict, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id, cycle_id):
         issues = request.data.get("issues", [])
@@ -707,56 +691,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
         )
         cycle_issue.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class CycleIssueGroupedEndpoint(BaseAPIView):
-
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def get(self, request, slug, project_id, cycle_id):
-        filters = issue_filters(request.query_params, "GET")
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-
-        issues = (
-            Issue.issue_objects.filter(issue_cycle__cycle_id=cycle_id)
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(bridge_id=F("issue_cycle__id"))
-            .filter(project_id=project_id)
-            .filter(workspace__slug=slug)
-            .select_related("project")
-            .select_related("workspace")
-            .select_related("state")
-            .select_related("parent")
-            .prefetch_related("assignees")
-            .prefetch_related("labels")
-            .filter(**filters)
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-        )
-
-        issues = IssueStateSerializer(issues, many=True, fields=fields if fields else None).data
-        issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(
-            issue_dict,
-            status=status.HTTP_200_OK,
-        )
 
 
 class CycleDateCheckEndpoint(BaseAPIView):

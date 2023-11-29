@@ -101,8 +101,8 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
 
   const filteredIssues: IIssue[] =
     query === ""
-      ? issues ?? []
-      : issues?.filter(
+      ? Object.values(issues ?? {})
+      : Object.values(issues ?? {})?.filter(
           (issue) =>
             issue.name.toLowerCase().includes(query.toLowerCase()) ||
             `${issue.project_detail.identifier}-${issue.sequence_id}`.toLowerCase().includes(query.toLowerCase())
