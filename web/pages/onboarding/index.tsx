@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactElement, Fragment } from "react";
+import { useEffect, useState, ReactElement } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
@@ -17,8 +17,7 @@ import useUserAuth from "hooks/use-user-auth";
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
 // components
-import { InviteMembers, JoinWorkspaces, UserDetails } from "components/onboarding";
-import { DeactivateAccountModal } from "components/account";
+import { InviteMembers, JoinWorkspaces, UserDetails, SwitchOrDeleteAccountModal } from "components/onboarding";
 // ui
 import { Avatar, Spinner } from "@plane/ui";
 // images
@@ -32,7 +31,7 @@ const workspaceService = new WorkspaceService();
 
 const OnboardingPage: NextPageWithLayout = observer(() => {
   const [step, setStep] = useState<number | null>(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
 
   const {
     user: { currentUser, updateCurrentUser, updateUserOnBoard },
@@ -108,7 +107,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
 
   return (
     <>
-      <DeactivateAccountModal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)} />
+      <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
       {user && step !== null ? (
         <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
           <div className="sm:pt-14 sm:pb-8 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
@@ -164,15 +163,15 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             leaveFrom="transform scale-100 opacity-100"
                             leaveTo="transform scale-95 opacity-0"
                           >
-                            <Menu.Items className={"absolute translate-x-full"}>
-                              <Menu.Item>
+                            <Menu.Items className={"absolute min-w-full"}>
+                              <Menu.Item as="div">
                                 <div
-                                  className="absolute pr-28 hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md text-custom-text-300 text-base font-normal p-3 shadow-sm border border-custom-border-200"
+                                  className="hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md font-normal text-red-400 text-base p-3 shadow-sm border border-red-400"
                                   onClick={() => {
-                                    setShowDeleteModal(true);
+                                    setShowDeleteAccountModal(true);
                                   }}
                                 >
-                                  Delete
+                                  Wrong e-mail address?
                                 </div>
                               </Menu.Item>
                             </Menu.Items>
@@ -190,7 +189,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               {step === 1 ? (
                 <JoinWorkspaces
                   setTryDiffAccount={() => {
-                    setShowDeleteModal(true);
+                    setShowDeleteAccountModal(true);
                   }}
                   finishOnboarding={finishOnboarding}
                   stepChange={stepChange}
