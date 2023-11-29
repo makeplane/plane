@@ -57,7 +57,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
       .finally(() => setSwitchingAccount(false));
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeactivateAccount = async () => {
     setIsDeactivating(true);
 
     await deactivateAccount()
@@ -142,7 +142,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
                   </button>
                   <button
                     disabled={isDeactivating}
-                    onClick={handleDeleteAccount}
+                    onClick={handleDeactivateAccount}
                     className={`${
                       resolvedTheme === "dark" ? "bg-[#2F3135]" : ""
                     } px-4 py-1.5 text-sm border border-red-500 rounded-sm text-red-500`}
