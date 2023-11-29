@@ -8,16 +8,14 @@ import { useTheme } from "next-themes";
 // images
 import githubLightModeImage from "/public/logos/github-black.png";
 import githubDarkModeImage from "/public/logos/github-dark.svg";
-import { AuthType } from "components/page-views";
 
 export interface GithubLoginButtonProps {
   handleSignIn: React.Dispatch<string>;
   clientId: string;
-  authType: AuthType;
 }
 
 export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
-  const { handleSignIn, clientId, authType } = props;
+  const { handleSignIn, clientId } = props;
   // states
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);
   const [gitCode, setGitCode] = useState<null | string>(null);
@@ -55,7 +53,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
             width={20}
             alt="GitHub Logo"
           />
-          <span className="text-onboarding-text-200">{authType == "sign-in" ? "Sign-in" : "Sign-up"} with GitHub</span>
+          <span className="text-onboarding-text-200">Sign-in with GitHub</span>
         </button>
       </Link>
     </div>
