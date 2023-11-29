@@ -40,7 +40,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
       ? () =>
           issueService
             .getIssues(workspaceSlug as string, projectId as string)
-            .then((res) => res.filter((issue) => issue.id !== issueId))
+            .then((res) => Object.values(res ?? {}).filter((issue) => issue.id !== issueId))
       : null
   );
 

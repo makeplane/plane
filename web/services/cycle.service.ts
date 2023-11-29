@@ -51,27 +51,12 @@ export class CycleService extends APIService {
       });
   }
 
-  async getV3CycleIssues(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    queries?: any
-  ): Promise<IIssueResponse> {
-    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
-      params: queries,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async getCycleIssuesWithParams(
     workspaceSlug: string,
     projectId: string,
     cycleId: string,
     queries?: any
-  ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
+  ): Promise<IIssueResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
       params: queries,
     })
