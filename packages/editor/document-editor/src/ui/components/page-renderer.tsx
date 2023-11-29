@@ -3,12 +3,13 @@ import { Editor } from "@tiptap/react";
 import { useState } from "react";
 import { DocumentDetails } from "../types/editor-types";
 
-interface IPageRenderer {
+type IPageRenderer = {
   documentDetails: DocumentDetails;
   updatePageTitle: (title: string) => Promise<void>;
   editor: Editor;
   editorClassNames: string;
   editorContentCustomClassNames?: string;
+  readonly: boolean;
 }
 
 const debounce = (func: (...args: any[]) => void, wait: number) => {
@@ -29,22 +30,31 @@ export const PageRenderer = (props: IPageRenderer) => {
     editor,
     editorClassNames,
     editorContentCustomClassNames,
-    updatePageTitle
+    updatePageTitle,
+    readonly
   } = props;
 
   const [pageTitle, setPagetitle] = useState(documentDetails.title)
 
-
-	const debouncedUpdatePageTitle = debounce(updatePageTitle, 300);
+  const debouncedUpdatePageTitle = debounce(updatePageTitle, 300);
 
   const handlePageTitleChange = (title: string) => {
     setPagetitle(title)
-		debouncedUpdatePageTitle(title)
+    debouncedUpdatePageTitle(title)
   }
 
   return (
     <div className="w-full pl-7 pt-5 pb-64">
-      <input onChange={(e) => handlePageTitleChange(e.target.value)} className="text-4xl font-bold break-words pr-5 -mt-2 w-full border-none outline-none" value={pageTitle} />
+
+      {!readonly ?
+        <input
+          onChange={(e) => handlePageTitleChange(e.target.value)}
+          className="text-4xl font-bold break-words pr-5 -mt-2 w-full border-none outline-none"
+          value={pageTitle} />
+        : <h1 className="text-4xl font-bold break-words pr-5 -mt-2">
+          {documentDetails.title}
+        </h1>
+      }
       <div className="flex flex-col h-full w-full pr-5">
         <EditorContainer editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper
