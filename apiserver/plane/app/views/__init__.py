@@ -17,7 +17,6 @@ from .user import (
     UpdateUserOnBoardedEndpoint,
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
-    SetUserPasswordEndpoint,
 )
 
 from .oauth import OauthEndpoint
@@ -45,7 +44,7 @@ from .workspace import (
     WorkspaceUserProfileEndpoint,
     WorkspaceUserProfileIssuesEndpoint,
     WorkspaceLabelsEndpoint,
-    WorkspaceUserProfileIssuesGroupedEndpoint
+    WorkspaceUserProfileIssuesGroupedEndpoint,
 )
 from .state import StateViewSet
 from .view import (
@@ -87,11 +86,11 @@ from .issue import (
 )
 
 from .auth_extended import (
-    VerifyEmailEndpoint,
-    RequestEmailVerificationEndpoint,
     ForgotPasswordEndpoint,
     ResetPasswordEndpoint,
     ChangePasswordEndpoint,
+    SetUserPasswordEndpoint,
+    EmailCheckEndpoint,
 )
 
 
@@ -169,4 +168,8 @@ from .exporter import ExportIssuesEndpoint
 
 from .config import ConfigurationEndpoint
 
-from .webhook import WebhookEndpoint, WebhookLogsEndpoint, WebhookSecretRegenerateEndpoint
+from .webhook import (
+    WebhookEndpoint,
+    WebhookLogsEndpoint,
+    WebhookSecretRegenerateEndpoint,
+)

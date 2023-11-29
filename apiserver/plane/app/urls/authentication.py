@@ -10,12 +10,11 @@ from plane.app.views import (
     MagicSignInEndpoint,
     MagicSignInGenerateEndpoint,
     OauthEndpoint,
+    EmailCheckEndpoint,
     ## End Authentication
     # Auth Extended
     ForgotPasswordEndpoint,
-    VerifyEmailEndpoint,
     ResetPasswordEndpoint,
-    RequestEmailVerificationEndpoint,
     ChangePasswordEndpoint,
     ## End Auth Extender
     # API Tokens
@@ -26,30 +25,25 @@ from plane.app.views import (
 
 urlpatterns = [
     #  Social Auth
+    path("email-check/", EmailCheckEndpoint.as_view(), name="email"),
     path("social-auth/", OauthEndpoint.as_view(), name="oauth"),
     # Auth
     path("sign-in/", SignInEndpoint.as_view(), name="sign-in"),
     path("sign-out/", SignOutEndpoint.as_view(), name="sign-out"),
     # Magic Sign In/Up
-    path(
-        "magic-generate/", MagicSignInGenerateEndpoint.as_view(), name="magic-generate"
-    ),
+    # Deprecated
+    # path(
+    #     "magic-generate/", MagicSignInGenerateEndpoint.as_view(), name="magic-generate"
+    # ),
     path("magic-sign-in/", MagicSignInEndpoint.as_view(), name="magic-sign-in"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    # Email verification
-    path("email-verify/", VerifyEmailEndpoint.as_view(), name="email-verify"),
-    path(
-        "request-email-verify/",
-        RequestEmailVerificationEndpoint.as_view(),
-        name="request-reset-email",
-    ),
     # Password Manipulation
     path(
         "users/me/change-password/",
         ChangePasswordEndpoint.as_view(),
         name="change-password",
     ),
-    path(   
+    path(
         "reset-password/<uidb64>/<token>/",
         ResetPasswordEndpoint.as_view(),
         name="password-reset",

@@ -26,6 +26,8 @@ class UserSerializer(BaseSerializer):
             "token_updated_at",
             "is_onboarded",
             "is_bot",
+            "is_password_autoset",
+            "is_email_verified",
         ]
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -176,4 +178,3 @@ class ResetPasswordSerializer(serializers.Serializer):
     Serializer for password change endpoint.
     """
     new_password = serializers.CharField(required=True)
-    confirm_password = serializers.CharField(required=True)

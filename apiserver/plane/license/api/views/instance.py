@@ -28,7 +28,7 @@ from plane.license.api.permissions import (
 from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
 from plane.settings.redis import redis_instance
-
+from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
@@ -64,7 +64,7 @@ class InstanceEndpoint(BaseAPIView):
                 "instance_key": os.environ.get("INSTANCE_KEY"),
                 "version": data.get("version", 0.1),
                 "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
-                "user_count": User.objects.count(),
+                "user_count": User.objects.filter(is_bot=False).count(),
             }
 
             response = requests.post(
@@ -83,9 +83,14 @@ class InstanceEndpoint(BaseAPIView):
                     api_key=data.get("api_key"),
                     version=data.get("version"),
                     last_checked_at=timezone.now(),
+                    user_count=data.get("user_count", 0),
                 )
+
+                serializer = InstanceSerializer(instance)
+                data = serializer.data
+                data["is_activated"] = True
                 return Response(
-                    {"message": "Instance succesfully registered"},
+                    data,
                     status=status.HTTP_201_CREATED,
                 )
             return Response(
@@ -273,7 +278,6 @@ class AdminSetupMagicSignInEndpoint(BaseAPIView):
 
                 user.is_active = True
                 user.is_email_verified = True
-                user.is_password_autoset = True
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
                 user.last_login_ip = request.META.get("REMOTE_ADDR")

@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 "instance_key": instance_key,
                 "version": data.get("version", 0.1),
                 "machine_signature": machine_signature,
-                "user_count": User.objects.count()
+                "user_count": User.objects.filter(is_bot=False).count(),
             }
 
             response = requests.post(
@@ -69,6 +69,7 @@ class Command(BaseCommand):
                     api_key=data.get("api_key"),
                     version=data.get("version"),
                     last_checked_at=timezone.now(),
+                    user_count=data.get("user_count", 0),
                 )
 
                 self.stdout.write(

@@ -18,6 +18,7 @@ class InstanceSerializer(BaseSerializer):
             "version",
             "email",
             "last_checked_at",
+            "is_setup_done",
         ]
 
 

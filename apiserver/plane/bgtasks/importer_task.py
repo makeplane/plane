@@ -26,6 +26,7 @@ from plane.db.models import (
     IssueProperty,
 )
 from plane.bgtasks.user_welcome_task import send_welcome_slack
+from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
 @shared_task
@@ -120,6 +121,9 @@ def service_importer(service, importer_id):
                 batch_size=100,
                 ignore_conflicts=True,
             )
+        
+        # Update instance user count
+        update_user_instance_user_count.delay()
 
         # Check if sync config is on for github importers
         if service == "github" and importer.config.get("sync", False):
