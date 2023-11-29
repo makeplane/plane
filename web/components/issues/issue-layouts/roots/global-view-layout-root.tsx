@@ -12,14 +12,16 @@ import { Spinner } from "@plane/ui";
 import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
 
 type Props = {
-  type?: TStaticViewTypes;
+  type?: TStaticViewTypes | null;
 };
 
 export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
-  const { type } = props;
+  const { type = null } = props;
 
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query;
+  const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
+
+  const currentIssueView = type ?? globalViewId;
 
   const {
     globalViews: globalViewsStore,
@@ -29,80 +31,54 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
     workspace: workspaceStore,
     workspaceMember: { workspaceMembers },
     issueDetail: issueDetailStore,
-    project: projectStore,
+    project: { workspaceProjects },
+
+    workspaceGlobalIssues: { loader, getIssues, fetchIssues },
+    workspaceGlobalIssuesFilter: { issueFilters, fetchFilters },
   } = useMobxStore();
 
-  const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
+  useSWR(workspaceSlug && currentIssueView ? `WORKSPACE_GLOBAL_VIEW_ISSUES_${currentIssueView}` : null, async () => {
+    if (workspaceSlug && currentIssueView) {
+      await fetchFilters(workspaceSlug, currentIssueView);
+      // await fetchIssues(workspaceSlug, getIssues ? "mutation" : "init-loader");
+    }
+  });
 
-  const storedFilters = globalViewId ? globalViewFiltersStore.storedFilters[globalViewId.toString()] : undefined;
+  // const handleDisplayFiltersUpdate = useCallback(
+  //   (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
+  //     if (!workspaceSlug) return;
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  //     workspaceFilterStore.updateWorkspaceFilters(workspaceSlug.toString(), {
+  //       display_filters: updatedDisplayFilter,
+  //     });
+  //   },
+  //   [workspaceFilterStore, workspaceSlug]
+  // );
 
-  useSWR(
-    workspaceSlug && globalViewId && viewDetails ? `GLOBAL_VIEW_ISSUES_${globalViewId.toString()}` : null,
-    workspaceSlug && globalViewId && viewDetails
-      ? () => {
-          globalViewIssuesStore.fetchViewIssues(workspaceSlug.toString(), globalViewId.toString(), storedFilters ?? {});
-        }
-      : null
-  );
+  // const handleUpdateIssue = useCallback(
+  //   (issue: IIssue, data: Partial<IIssue>) => {
+  //     if (!workspaceSlug) return;
 
-  useSWR(
-    workspaceSlug && type ? `GLOBAL_VIEW_ISSUES_${type.toString()}` : null,
-    workspaceSlug && type
-      ? () => {
-          globalViewIssuesStore.fetchStaticIssues(workspaceSlug.toString(), type);
-        }
-      : null
-  );
+  //     const payload = {
+  //       ...issue,
+  //       ...data,
+  //     };
 
-  const handleDisplayFiltersUpdate = useCallback(
-    (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug) return;
-
-      workspaceFilterStore.updateWorkspaceFilters(workspaceSlug.toString(), {
-        display_filters: updatedDisplayFilter,
-      });
-    },
-    [workspaceFilterStore, workspaceSlug]
-  );
-
-  const handleUpdateIssue = useCallback(
-    (issue: IIssue, data: Partial<IIssue>) => {
-      if (!workspaceSlug) return;
-
-      const payload = {
-        ...issue,
-        ...data,
-      };
-
-      globalViewIssuesStore.updateIssueStructure(type ?? globalViewId!.toString(), payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
-    },
-    [globalViewId, globalViewIssuesStore, workspaceSlug, issueDetailStore]
-  );
-
-  const issues = type
-    ? globalViewIssuesStore.viewIssues?.[type]
-    : globalViewId
-    ? globalViewIssuesStore.viewIssues?.[globalViewId.toString()]
-    : undefined;
-
-  if (!issues)
-    return (
-      <div className="h-full w-full grid place-items-center">
-        <Spinner />
-      </div>
-    );
+  //     globalViewIssuesStore.updateIssueStructure(type ?? globalViewId!.toString(), payload);
+  //     issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
+  //   },
+  //   [globalViewId, globalViewIssuesStore, workspaceSlug, issueDetailStore]
+  // );
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <GlobalViewsAppliedFiltersRoot />
-      {issues?.length === 0 || !projects || projects?.length === 0 ? (
+
+      {/* {issues?.length === 0 || !projects || projects?.length === 0 ? (
         <GlobalViewEmptyState />
       ) : (
         <div className="h-full w-full overflow-auto">
-          {/* <SpreadsheetView
+          <SpreadsheetView
             displayProperties={workspaceFilterStore.workspaceDisplayProperties}
             displayFilters={workspaceFilterStore.workspaceDisplayFilters}
             handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
@@ -110,9 +86,9 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
             members={workspaceMembers?.map((m) => m.member)}
             labels={workspaceStore.workspaceLabels ? workspaceStore.workspaceLabels : undefined}
             disableUserActions={false}
-          /> */}
+          />
         </div>
-      )}
+      )} */}
     </div>
   );
 });

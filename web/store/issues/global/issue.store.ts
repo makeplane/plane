@@ -43,7 +43,6 @@ export interface IGlobalIssuesStore {
     projectId: string,
     issueId: string
   ) => Promise<IIssue | undefined>;
-  quickAddIssue: (workspaceSlug: string, userId: string, data: IIssue) => Promise<IIssue | undefined>;
   viewFlags: ViewFlags;
 }
 
@@ -75,7 +74,6 @@ export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesSt
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
-      quickAddIssue: action,
     });
 
     this.rootStore = _rootStore;
@@ -282,41 +280,6 @@ export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesSt
       });
 
       const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
-
-      return response;
-    } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
-      throw error;
-    }
-  };
-
-  quickAddIssue = async (workspaceSlug: string, userId: string, data: IIssue) => {
-    try {
-      const projectId = data.project;
-
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[userId] = { ..._issues[userId], ...{ [data.id as keyof IIssue]: data } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-
-      if (this.issues && this.currentUserIssueTab) {
-        delete this.issues[userId][this.currentUserIssueTab][data.id as keyof IIssue];
-
-        let _issues = { ...this.issues };
-        if (!_issues) _issues = {};
-        if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-        _issues[userId] = { ..._issues[userId], ...{ [response.id as keyof IIssue]: response } };
-
-        runInAction(() => {
-          this.issues = _issues;
-        });
-      }
 
       return response;
     } catch (error) {
