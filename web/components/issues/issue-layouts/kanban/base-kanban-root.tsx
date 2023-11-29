@@ -84,7 +84,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
+    user: userStore,
   } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];
@@ -215,7 +219,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               quickAddCallback={issueStore?.quickAddIssue}
               viewId={viewId}
               disableIssueCreation={!enableIssueCreation}
-              isReadOnly={!enableInlineEditing}
+              isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
               addIssuesToView={addIssuesToView}
             />
@@ -256,7 +260,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               isDragStarted={isDragStarted}
               disableIssueCreation={true}
               enableQuickIssueCreate={enableQuickAdd}
-              isReadOnly={!enableInlineEditing}
+              isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
               addIssuesToView={(issues) => {
                 console.log("kanban existingIds", issues);
