@@ -36,11 +36,11 @@ interface IssueSuggestionProps {
 const IssueSuggestionList = ({
   items,
   command,
-	editor
+  editor
 }: {
   items: IssueSuggestionProps[];
   command: any;
-  editor: any;
+  editor: Editor;
   range: any;
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -49,11 +49,6 @@ const IssueSuggestionList = ({
   const [displayedItems, setDisplayedItems] = useState<{ [key: string]: IssueSuggestionProps[] }>({});
 
   useEffect(() => {
-
-    if (editor) {
-			editor.chain().blur()
-    }
-
     let newDisplayedItems: { [key: string]: IssueSuggestionProps[] } = {};
     sections.forEach(section => {
       newDisplayedItems[section] = items.filter(item => item.state === section).slice(0, 5);
@@ -72,10 +67,13 @@ const IssueSuggestionList = ({
   );
 
   useEffect(() => {
-    const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"];
+    const navigationKeys = ["ArrowUp", "ArrowDown", "Enter", "Tab"]
     const onKeyDown = (e: KeyboardEvent) => {
       if (navigationKeys.includes(e.key)) {
         e.preventDefault();
+        if (editor.isFocused) {
+          editor.chain().blur()
+        }
         if (e.key === "ArrowUp") {
           setSelectedIndex((selectedIndex + displayedItems[currentSection].length - 1) % displayedItems[currentSection].length);
           return true;
@@ -101,6 +99,10 @@ const IssueSuggestionList = ({
           return true;
         }
         return false;
+      } else if (e.key === "Escape") {
+        if (!editor.isFocused) {
+          editor.chain().focus()
+        }
       }
     };
     document.addEventListener("keydown", onKeyDown);
@@ -199,12 +201,6 @@ export const IssueListRenderer = () => {
         });
     },
     onKeyDown: (props: { event: KeyboardEvent }) => {
-      if (props.event.key === "Escape") {
-        popup?.[0].hide();
-
-        return true;
-      }
-
       // @ts-ignore
       return component?.ref?.onKeyDown(props);
     },
