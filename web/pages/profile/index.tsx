@@ -11,7 +11,6 @@ import useToast from "hooks/use-toast";
 import { ProfileSettingsLayout } from "layouts/settings-layout";
 // components
 import { ImagePickerPopover, UserImageUploadModal } from "components/core";
-import { ProfileSettingsHeader } from "components/headers";
 import { DeactivateAccountModal } from "components/account";
 // ui
 import { Button, CustomSelect, CustomSearchSelect, Input, Spinner } from "@plane/ui";
@@ -169,10 +168,10 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
         )}
       />
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-      <div className="h-full w-full flex flex-col py-9 pr-9 space-y-10 overflow-y-auto">
+      <div className="h-full w-full lg:w-3/5 mx-auto flex flex-col px-8 pb-8 mt-16 space-y-10 overflow-y-auto">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-8 w-full">
-            <div className="relative h-44 w-full mt-6">
+            <div className="relative h-44 w-full">
               <img
                 src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                 className="h-44 w-full rounded-lg object-cover"
@@ -236,7 +235,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">First Name</h4>
+                <h4 className="text-sm">First name</h4>
                 <Controller
                   control={control}
                   name="first_name"
@@ -250,14 +249,14 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className="rounded-md font-medium w-full"
+                      className="rounded-md w-full"
                     />
                   )}
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Last Name</h4>
+                <h4 className="text-sm">Last name</h4>
 
                 <Controller
                   control={control}
@@ -272,7 +271,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.last_name)}
                       placeholder="Enter your last name"
-                      className="rounded-md font-medium w-full"
+                      className="rounded-md w-full"
                     />
                   )}
                 />
@@ -292,8 +291,8 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       onChange={onChange}
                       ref={ref}
                       hasError={Boolean(errors.email)}
-                      placeholder="Enter your last name"
-                      className="rounded-md font-medium w-full"
+                      placeholder="Enter your email"
+                      className="rounded-md w-full"
                       disabled
                     />
                   )}
@@ -312,7 +311,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       onChange={onChange}
                       label={value ? value.toString() : "Select your role"}
                       buttonClassName={errors.role ? "border-red-500 bg-red-500/10" : "border-none"}
-                      className="rounded-md border !border-custom-border-200"
+                      className="rounded-md border-[0.5px] !border-custom-border-200"
                       width="w-full"
                       input
                     >
@@ -328,7 +327,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Display name </h4>
+                <h4 className="text-sm">Display name</h4>
                 <Controller
                   control={control}
                   name="display_name"
@@ -365,7 +364,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h4 className="text-sm">Timezone </h4>
+                <h4 className="text-sm">Timezone</h4>
 
                 <Controller
                   name="user_timezone"
@@ -378,8 +377,8 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       options={timeZoneOptions}
                       onChange={onChange}
                       optionsClassName="w-full"
-                      buttonClassName={"border-none"}
-                      className="rounded-md border !border-custom-border-200"
+                      buttonClassName="border-none"
+                      className="rounded-md border-[0.5px] !border-custom-border-200"
                       input
                     />
                   )}
@@ -389,7 +388,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 
               <div className="flex items-center justify-between py-2">
                 <Button variant="primary" type="submit" loading={isSubmitting}>
-                  {isSubmitting ? "Updating Profile..." : "Update Profile"}
+                  {isSubmitting ? "Saving..." : "Save changes"}
                 </Button>
               </div>
             </div>
@@ -399,8 +398,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
           {({ open }) => (
             <>
               <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
-                <span className="text-lg tracking-tight">Deactivate Account</span>
-                {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
+                <span className="text-lg tracking-tight">Deactivate account</span>
                 <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
               </Disclosure.Button>
 
@@ -437,7 +435,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
 };
 
 ProfileSettingsPage.getLayout = function getLayout(page: ReactElement) {
-  return <ProfileSettingsLayout header={<ProfileSettingsHeader title="Settings" />}>{page}</ProfileSettingsLayout>;
+  return <ProfileSettingsLayout>{page}</ProfileSettingsLayout>;
 };
 
 export default ProfileSettingsPage;
