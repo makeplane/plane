@@ -77,7 +77,7 @@ export const GlobalViewLayoutRoot: React.FC<Props> = observer((props) => {
       };
 
       globalViewIssuesStore.updateIssueStructure(type ?? globalViewId!.toString(), payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
+      // issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, data);
     },
     [globalViewId, globalViewIssuesStore, workspaceSlug, issueDetailStore]
   );

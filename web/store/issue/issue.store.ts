@@ -278,7 +278,7 @@ export class IssueStore implements IIssueStore {
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
+    this.rootStore.projectIssues.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   fetchIssues = async (

@@ -138,7 +138,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
                               <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock data={block.data} handleIssue={blockUpdateHandler} />
+                                <IssueGanttSidebarBlock data={block.data} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}

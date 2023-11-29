@@ -401,7 +401,6 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                 <span className="text-lg tracking-tight">Deactivate account</span>
                 <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
               </Disclosure.Button>
-
               <Transition
                 show={open}
                 enter="transition duration-100 ease-out"

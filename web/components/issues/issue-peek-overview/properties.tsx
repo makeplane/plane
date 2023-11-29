@@ -17,17 +17,19 @@ import {
   SidebarPrioritySelect,
   SidebarStateSelect,
 } from "../sidebar-select";
+// services
+import { IssueService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
-
 // components
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
 import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
+// fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-// services
-import { IssueService } from "services/issue";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
@@ -43,8 +45,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
-  const { user: userStore, cycleIssue: cycleIssueStore, moduleIssue: moduleIssueStore } = useMobxStore();
-  const userRole = userStore.currentProjectRole;
+  const {
+    user: { currentProjectRole },
+    cycleIssues: { addIssueToCycle },
+    moduleIssues: { addIssueToModule },
+  } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -72,15 +77,16 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleParent = (_parent: string) => {
     issueUpdate({ ...issue, parent: _parent });
   };
-  const addIssueToCycle = async (cycleId: string) => {
+  const handleAddIssueToCycle = async (cycleId: string) => {
     if (!workspaceSlug || !issue || !cycleId) return;
-    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), issue.project_detail.id, cycleId, [issue.id]);
+
+    addIssueToCycle(workspaceSlug.toString(), cycleId, [issue.id]);
   };
 
-  const addIssueToModule = async (moduleId: string) => {
+  const handleAddIssueToModule = async (moduleId: string) => {
     if (!workspaceSlug || !issue || !moduleId) return;
 
-    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), issue.project_detail.id, moduleId, [issue.id]);
+    addIssueToModule(workspaceSlug.toString(), moduleId, [issue.id]);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
@@ -303,7 +309,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarCycleSelect
                 issueDetail={issue}
-                handleCycleChange={addIssueToCycle}
+                handleCycleChange={handleAddIssueToCycle}
                 disabled={disableUserActions}
               />
             </div>
@@ -317,7 +323,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarModuleSelect
                 issueDetail={issue}
-                handleModuleChange={addIssueToModule}
+                handleModuleChange={handleAddIssueToModule}
                 disabled={disableUserActions}
               />
             </div>
@@ -370,10 +376,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                   handleDeleteLink={handleDeleteLink}
                   handleEditLink={handleEditLink}
                   userAuth={{
-                    isGuest: userRole === 5,
-                    isViewer: userRole === 10,
-                    isMember: userRole === 15,
-                    isOwner: userRole === 20,
+                    isGuest: currentProjectRole === EUserWorkspaceRoles.GUEST,
+                    isViewer: currentProjectRole === EUserWorkspaceRoles.VIEWER,
+                    isMember: currentProjectRole === EUserWorkspaceRoles.MEMBER,
+                    isOwner: currentProjectRole === EUserWorkspaceRoles.ADMIN,
                   }}
                 />
               ) : null}

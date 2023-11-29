@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-// swr
 import useSWR from "swr";
 // components
 import { SubIssues } from "./issue";
@@ -61,37 +60,38 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
         handleIssuesLoader({ key: "sub_issues", issueId: parentIssue?.id });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading]);
+  }, [handleIssuesLoader, isLoading, issuesLoader.sub_issues, parentIssue?.id]);
 
   return (
-    <div className="relative">
-      {issues &&
-        issues.sub_issues &&
-        issues.sub_issues.length > 0 &&
-        issues.sub_issues.map((issue: IIssue) => (
-          <SubIssues
-            key={`${issue?.id}`}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            parentIssue={parentIssue}
-            issue={issue}
-            spacingLeft={spacingLeft}
-            user={user}
-            editable={editable}
-            removeIssueFromSubIssues={removeIssueFromSubIssues}
-            issuesLoader={issuesLoader}
-            handleIssuesLoader={handleIssuesLoader}
-            copyText={copyText}
-            handleIssueCrudOperation={handleIssueCrudOperation}
-            handleUpdateIssue={handleUpdateIssue}
-          />
-        ))}
+    <>
+      <div className="relative">
+        {issues &&
+          issues.sub_issues &&
+          issues.sub_issues.length > 0 &&
+          issues.sub_issues.map((issue: IIssue) => (
+            <SubIssues
+              key={`${issue?.id}`}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              parentIssue={parentIssue}
+              issue={issue}
+              spacingLeft={spacingLeft}
+              user={user}
+              editable={editable}
+              removeIssueFromSubIssues={removeIssueFromSubIssues}
+              issuesLoader={issuesLoader}
+              handleIssuesLoader={handleIssuesLoader}
+              copyText={copyText}
+              handleIssueCrudOperation={handleIssueCrudOperation}
+              handleUpdateIssue={handleUpdateIssue}
+            />
+          ))}
 
-      <div
-        className={`absolute top-0 bottom-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
-        style={{ left: `${spacingLeft - 12}px` }}
-      />
-    </div>
+        <div
+          className={`absolute top-0 bottom-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
+          style={{ left: `${spacingLeft - 12}px` }}
+        />
+      </div>
+    </>
   );
 };

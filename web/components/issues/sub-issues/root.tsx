@@ -43,7 +43,11 @@ const issueService = new IssueService();
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
 
-  const { user: userStore, issue: issueStore, issueDetail: issueDetailStore } = useMobxStore();
+  const {
+    user: userStore,
+    issue: { updateIssueStructure },
+    projectIssues: { updateIssue },
+  } = useMobxStore();
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
@@ -166,10 +170,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
         ...data,
       };
 
-      issueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
+      updateIssueStructure(null, null, payload);
+      updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+    [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
   );
 
   const isEditable = userRole === 5 || userRole === 10 ? false : true;

@@ -21,7 +21,7 @@ export const ChangeIssueAssignee: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
-    issueDetail: { updateIssue },
+    projectIssues: { updateIssue },
     projectMember: { projectMembers },
   } = useMobxStore();
 

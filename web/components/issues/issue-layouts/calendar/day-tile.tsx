@@ -10,14 +10,12 @@ import { renderDateFormat } from "helpers/date-time.helper";
 // constants
 import { MONTHS_LIST } from "constants/calendar";
 import { IIssue } from "types";
-import { EIssueActions } from "../types";
 import { IGroupedIssues, IIssueResponse } from "store/issues/types";
 
 type Props = {
   date: ICalendarDate;
   issues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues;
-  handleIssues: (date: string, issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (
@@ -30,16 +28,7 @@ type Props = {
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const {
-    date,
-    issues,
-    groupedIssueIds,
-    handleIssues,
-    quickActions,
-    enableQuickIssueCreate,
-    quickAddCallback,
-    viewId,
-  } = props;
+  const { date, issues, groupedIssueIds, quickActions, enableQuickIssueCreate, quickAddCallback, viewId } = props;
 
   const { issueFilter: issueFilterStore } = useMobxStore();
 
@@ -81,12 +70,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                <CalendarIssueBlocks
-                  issues={issues}
-                  issueIdList={issueIdList}
-                  handleIssues={handleIssues}
-                  quickActions={quickActions}
-                />
+                <CalendarIssueBlocks issues={issues} issueIdList={issueIdList} quickActions={quickActions} />
                 {enableQuickIssueCreate && (
                   <div className="py-1 px-2">
                     <CalendarQuickAddIssueForm

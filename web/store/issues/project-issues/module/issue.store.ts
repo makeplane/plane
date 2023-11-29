@@ -54,7 +54,7 @@ export interface IModuleIssuesStore {
     moduleId: string,
     issueIds: string[],
     fetchAfterAddition?: boolean
-  ) => Promise<IIssue>;
+  ) => Promise<any>;
   removeIssueFromModule: (
     workspaceSlug: string,
     projectId: string,
@@ -193,7 +193,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
     try {
       const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-      const issueToModule = await this.addIssueToModule(workspaceSlug, moduleId, [response.id], false);
+      await this.addIssueToModule(workspaceSlug, moduleId, [response.id], false);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
@@ -204,7 +204,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
         this.issues = _issues;
       });
 
-      return issueToModule;
+      return response;
     } catch (error) {
       this.fetchIssues(workspaceSlug, projectId, "mutation", moduleId);
       throw error;
@@ -286,7 +286,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
 
       const response = await this.createIssue(workspaceSlug, projectId, data, moduleId);
 
-      if (this.issues) {
+      if (this.issues && response) {
         delete this.issues[moduleId][data.id as keyof IIssue];
 
         let _issues = { ...this.issues };

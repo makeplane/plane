@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { TwitterPicker } from "react-color";
-// headless ui
 import { Popover, Transition } from "@headlessui/react";
-// services
-import { IssueLabelService } from "services/issue";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useToast from "hooks/use-toast";
 // ui
 import { Input } from "@plane/ui";
 import { IssueLabelSelect } from "../select";
@@ -14,9 +15,6 @@ import { IssueLabelSelect } from "../select";
 import { Plus, X } from "lucide-react";
 // types
 import { IIssue, IIssueLabel } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
-import useToast from "hooks/use-toast";
 
 type Props = {
   issueDetails: IIssue | undefined;
@@ -31,50 +29,36 @@ const defaultValues: Partial<IIssueLabel> = {
   color: "#ff0000",
 };
 
-const issueLabelService = new IssueLabelService();
-
-export const SidebarLabelSelect: React.FC<Props> = ({
-  issueDetails,
-  labelList,
-  submitChanges,
-  isNotAllowed,
-  uneditable,
-}) => {
+export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
+  const { issueDetails, labelList, submitChanges, isNotAllowed, uneditable } = props;
+  // states
   const [createLabelForm, setCreateLabelForm] = useState(false);
-
+  // router
   const router = useRouter();
-
-  const { setToastAlert } = useToast();
-
   const { workspaceSlug, projectId } = router.query;
-
+  // toast
+  const { setToastAlert } = useToast();
+  // mobx store
+  const {
+    projectLabel: { projectLabels, createLabel },
+  } = useMobxStore();
+  // form info
   const {
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    watch,
     control,
     setFocus,
   } = useForm<Partial<IIssueLabel>>({
     defaultValues,
   });
 
-  const { data: issueLabels, mutate: issueLabelMutate } = useSWR<IIssueLabel[]>(
-    workspaceSlug && projectId ? PROJECT_ISSUE_LABELS(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId as string)
-      : null
-  );
-
   const handleNewLabel = async (formData: Partial<IIssueLabel>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await issueLabelService
-      .createIssueLabel(workspaceSlug as string, projectId as string, formData)
+    await createLabel(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         reset(defaultValues);
-
-        issueLabelMutate((prevData: any) => [...(prevData ?? []), res], false);
 
         submitChanges({ labels: [...(issueDetails?.labels ?? []), res.id] });
 
@@ -82,9 +66,9 @@ export const SidebarLabelSelect: React.FC<Props> = ({
       })
       .catch((error) => {
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: error?.error ?? "Error while adding the label",
+          title: "Error!",
+          message: error?.error ?? "Something went wrong. Please try again.",
         });
         reset(formData);
       });
@@ -101,7 +85,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
     <div className={`flex flex-col gap-3 ${uneditable ? "opacity-60" : ""}`}>
       <div className="flex flex-wrap gap-1">
         {labelList?.map((labelId) => {
-          const label = issueLabels?.find((l) => l.id === labelId);
+          const label = projectLabels?.find((l) => l.id === labelId);
 
           if (label)
             return (
@@ -118,7 +102,7 @@ export const SidebarLabelSelect: React.FC<Props> = ({
                 <span
                   className="h-2 w-2 flex-shrink-0 rounded-full"
                   style={{
-                    backgroundColor: label?.color && label.color !== "" ? label.color : "#000",
+                    backgroundColor: label.color ?? "#000000",
                   }}
                 />
                 {label.name}
@@ -166,40 +150,40 @@ export const SidebarLabelSelect: React.FC<Props> = ({
       {createLabelForm && (
         <form className="flex items-center gap-x-2" onSubmit={handleSubmit(handleNewLabel)}>
           <div>
-            <Popover className="relative">
-              <>
-                <Popover.Button className="grid place-items-center outline-none">
-                  {watch("color") && watch("color") !== "" && (
-                    <span
-                      className="h-6 w-6 rounded"
-                      style={{
-                        backgroundColor: watch("color") ?? "black",
-                      }}
-                    />
-                  )}
-                </Popover.Button>
-
-                <Transition
-                  as={React.Fragment}
-                  enter="transition ease-out duration-200"
-                  enterFrom="opacity-0 translate-y-1"
-                  enterTo="opacity-100 translate-y-0"
-                  leave="transition ease-in duration-150"
-                  leaveFrom="opacity-100 translate-y-0"
-                  leaveTo="opacity-0 translate-y-1"
-                >
-                  <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
-                    <Controller
-                      name="color"
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
+            <Controller
+              name="color"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Popover className="relative">
+                  <>
+                    <Popover.Button className="grid place-items-center outline-none">
+                      {value && value?.trim() !== "" && (
+                        <span
+                          className="h-6 w-6 rounded"
+                          style={{
+                            backgroundColor: value ?? "black",
+                          }}
+                        />
                       )}
-                    />
-                  </Popover.Panel>
-                </Transition>
-              </>
-            </Popover>
+                    </Popover.Button>
+
+                    <Transition
+                      as={React.Fragment}
+                      enter="transition ease-out duration-200"
+                      enterFrom="opacity-0 translate-y-1"
+                      enterTo="opacity-100 translate-y-0"
+                      leave="transition ease-in duration-150"
+                      leaveFrom="opacity-100 translate-y-0"
+                      leaveTo="opacity-0 translate-y-1"
+                    >
+                      <Popover.Panel className="absolute z-10 mt-1.5 max-w-xs px-2 sm:px-0">
+                        <TwitterPicker color={value} onChange={(value) => onChange(value.hex)} />
+                      </Popover.Panel>
+                    </Transition>
+                  </>
+                </Popover>
+              )}
+            />
           </div>
           <Controller
             control={control}
@@ -235,4 +219,4 @@ export const SidebarLabelSelect: React.FC<Props> = ({
       )}
     </div>
   );
-};
+});

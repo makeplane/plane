@@ -24,7 +24,7 @@ export const ChangeIssueState: React.FC<Props> = observer((props) => {
 
   const {
     projectState: { projectStates },
-    issueDetail: { updateIssue },
+    projectIssues: { updateIssue },
   } = useMobxStore();
 
   const submitChanges = async (formData: Partial<IIssue>) => {

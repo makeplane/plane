@@ -1,18 +1,17 @@
 import { FC, Fragment, ReactNode } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// components
-import { IssueView } from "./view";
-// hooks
+import useSWR from "swr";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// types
-import { IIssue } from "types";
-import { RootStore } from "store/root";
 // hooks
 import useToast from "hooks/use-toast";
+// components
+import { IssueView } from "./view";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
+// types
+import { IIssue } from "types";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
@@ -27,7 +26,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { workspaceSlug, projectId, issueId, handleIssue, children, isArchived = false } = props;
 
   const router = useRouter();
-  const { peekIssueId } = router.query as { peekIssueId: string };
+  const { peekIssueId } = router.query;
 
   const {
     user: userStore,
@@ -36,18 +35,18 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     archivedIssueDetail: archivedIssueDetailStore,
     archivedIssues: archivedIssuesStore,
     project: projectStore,
-  }: RootStore = useMobxStore();
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
   useSWR(
     workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_PEEK_OVERVIEW_${workspaceSlug}_${projectId}_${peekIssueId}`
+      ? `ISSUE_DETAILS_${workspaceSlug}_${projectId}_${peekIssueId}`
       : null,
     async () => {
-      if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        if (isArchived) await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
-        else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, issueId);
+      if (workspaceSlug && projectId && issueId && issueId === peekIssueId) {
+        if (isArchived) await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
+        else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
       }
     }
   );
@@ -76,10 +75,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const isLoading = isArchived ? archivedIssueDetailStore.loader : issueDetailStore.loader;
 
   const issueUpdate = (_data: Partial<IIssue>) => {
-    if (handleIssue) {
-      handleIssue(_data);
-      issueDetailStore.updateIssue(workspaceSlug, projectId, issueId, _data);
-    }
+    if (handleIssue) handleIssue(_data);
   };
 
   const issueReactionCreate = (reaction: string) =>
@@ -114,6 +110,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     if (query.peekIssueId) {
       issueDetailStore.setPeekId(null);
       delete query.peekIssueId;
+      delete query.peekProjectId;
       router.push({
         pathname: router.pathname,
         query: { ...query },

@@ -289,7 +289,7 @@ export class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
         this.rootStore.cycleIssue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,
@@ -437,7 +437,7 @@ export class CycleIssueKanBanViewStore implements ICycleIssueKanBanViewStore {
         this.rootStore.cycleIssue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,

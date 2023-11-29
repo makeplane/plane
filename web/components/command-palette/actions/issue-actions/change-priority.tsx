@@ -23,7 +23,7 @@ export const ChangeIssuePriority: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    issueDetail: { updateIssue },
+    projectIssues: { updateIssue },
   } = useMobxStore();
 
   const submitChanges = async (formData: Partial<IIssue>) => {

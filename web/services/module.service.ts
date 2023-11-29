@@ -106,7 +106,14 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     data: { issues: string[] }
-  ): Promise<any> {
+  ): Promise<
+    {
+      issue: string;
+      issue_detail: IIssue;
+      module: string;
+      module_detail: IModule;
+    }[]
+  > {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, data)
       .then((response) => response?.data)
       .catch((error) => {

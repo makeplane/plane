@@ -1,10 +1,13 @@
+// ui
+import { ExternalLinkIcon, Tooltip } from "@plane/ui";
 // icons
-import { ExternalLinkIcon } from "@plane/ui";
 import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { linkDetails, UserAuth } from "types";
+// hooks
+import useToast from "hooks/use-toast";
 
 type Props = {
   links: linkDetails[];
@@ -14,18 +17,37 @@ type Props = {
 };
 
 export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEditLink, userAuth }) => {
+  // toast
+  const { setToastAlert } = useToast();
+
   const isNotAllowed = userAuth.isGuest || userAuth.isViewer;
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setToastAlert({
+      message: "The URL has been successfully copied to your clipboard",
+      type: "success",
+      title: "Copied to clipboard",
+    });
+  };
 
   return (
     <>
       {links.map((link) => (
         <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
           <div className="flex items-start justify-between gap-2 w-full">
-            <div className="flex items-start gap-2">
+            <div className="flex items-start truncate gap-2">
               <span className="py-1">
                 <LinkIcon className="h-3 w-3 flex-shrink-0" />
               </span>
-              <span className="text-xs break-all">{link.title && link.title !== "" ? link.title : link.url}</span>
+              <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
+                <span
+                  className="text-xs truncate cursor-pointer"
+                  onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
+                >
+                  {link.title && link.title !== "" ? link.title : link.url}
+                </span>
+              </Tooltip>
             </div>
 
             {!isNotAllowed && (
