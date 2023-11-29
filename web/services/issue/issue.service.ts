@@ -19,16 +19,8 @@ export class IssueService extends APIService {
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getV3Issues(workspaceSlug: string, projectId: string, queries?: any): Promise<IIssueResponse> {
-    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<IIssueResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
       params: queries,
     })
       .then((response) => response?.data)

@@ -79,7 +79,11 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     projectMember: { projectMembers },
     projectState: projectStateStore,
     projectLabel: { projectLabels },
+    user: userStore,
   } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
 
   const issueIds = issueStore?.getIssuesIds || [];
   const issues = issueStore?.getIssues;
@@ -142,7 +146,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             viewId={viewId}
             quickAddCallback={issueStore?.quickAddIssue}
             enableIssueQuickAdd={!!enableQuickAdd}
-            isReadonly={!enableInlineEditing}
+            isReadonly={!enableInlineEditing || !isEditingAllowed}
             disableIssueCreation={!enableIssueCreation}
             currentStore={currentStore}
             addIssuesToView={addIssuesToView}

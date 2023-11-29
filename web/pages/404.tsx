@@ -27,11 +27,11 @@ const PageNotFound: NextPage = () => (
           </p>
         </div>
         <Link href="/">
-          <a className="flex justify-center">
+          <span className="flex justify-center">
             <Button variant="neutral-primary" size="md">
               Go to Home
             </Button>
-          </a>
+          </span>
         </Link>
       </div>
     </div>

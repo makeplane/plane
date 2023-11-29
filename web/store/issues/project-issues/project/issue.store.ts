@@ -112,7 +112,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       this.loader = loadType;
 
       const params = this.rootStore?.projectIssuesFilter?.appliedFilters;
-      const response = await this.issueService.getV3Issues(workspaceSlug, projectId, params);
+      const response = await this.issueService.getIssues(workspaceSlug, projectId, params);
 
       const _issues = { ...this.issues, [projectId]: { ...response } };
 

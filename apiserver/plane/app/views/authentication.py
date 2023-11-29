@@ -4,8 +4,6 @@ import uuid
 import random
 import string
 import json
-import requests
-from requests.exceptions import RequestException
 
 # Django imports
 from django.utils import timezone
@@ -20,7 +18,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from sentry_sdk import capture_exception, capture_message
+from sentry_sdk import capture_message
 
 # Module imports
 from . import BaseAPIView
@@ -32,10 +30,12 @@ from plane.db.models import (
     ProjectMember,
 )
 from plane.settings.redis import redis_instance
-from plane.bgtasks.magic_link_code_task import magic_link
-from plane.license.models import InstanceConfiguration
+from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
+from plane.bgtasks.magic_link_code_task import magic_link
+from plane.bgtasks.user_count_task import update_user_instance_user_count
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -50,22 +50,6 @@ class SignUpEndpoint(BaseAPIView):
 
     def post(self, request):
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        if (
-            not get_configuration_value(
-                instance_configuration,
-                "ENABLE_SIGNUP",
-                os.environ.get("ENABLE_SIGNUP", "0"),
-            )
-            and not WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).exists()
-        ):
-            return Response(
-                {
-                    "error": "New account creation is disabled. Please contact your site administrator"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         email = request.data.get("email", False)
         password = request.data.get("password", False)
@@ -87,6 +71,24 @@ class SignUpEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if (
+            get_configuration_value(
+                instance_configuration,
+                "ENABLE_SIGNUP",
+                os.environ.get("ENABLE_SIGNUP", "0"),
+            )
+            == "0"
+            and not WorkspaceMemberInvite.objects.filter(
+                email=email,
+            ).exists()
+        ):
+            return Response(
+                {
+                    "error": "New account creation is disabled. Please contact your site administrator"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # Check if the user already exists
         if User.objects.filter(email=email).exists():
             return Response(
@@ -105,81 +107,16 @@ class SignUpEndpoint(BaseAPIView):
         user.token_updated_at = timezone.now()
         user.save()
 
-        # Check if user has any accepted invites for workspace and add them to workspace
-        workspace_member_invites = WorkspaceMemberInvite.objects.filter(
-            email=user.email, accepted=True
-        )
-
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(
-                    workspace_id=workspace_member_invite.workspace_id,
-                    member=user,
-                    role=workspace_member_invite.role,
-                )
-                for workspace_member_invite in workspace_member_invites
-            ],
-            ignore_conflicts=True,
-        )
-
-        # Check if user has any project invites
-        project_member_invites = ProjectMemberInvite.objects.filter(
-            email=user.email, accepted=True
-        )
-
-        # Add user to workspace
-        WorkspaceMember.objects.bulk_create(
-            [
-                WorkspaceMember(
-                    workspace_id=project_member_invite.workspace_id,
-                    role=project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
-                    else 15,
-                    member=user,
-                    created_by_id=project_member_invite.created_by_id,
-                )
-                for project_member_invite in project_member_invites
-            ],
-            ignore_conflicts=True,
-        )
-
-        # Now add the users to project
-        ProjectMember.objects.bulk_create(
-            [
-                ProjectMember(
-                    workspace_id=project_member_invite.workspace_id,
-                    role=project_member_invite.role
-                    if project_member_invite.role in [5, 10, 15]
-                    else 15,
-                    member=user,
-                    created_by_id=project_member_invite.created_by_id,
-                )
-                for project_member_invite in project_member_invites
-            ],
-            ignore_conflicts=True,
-        )
-        # Delete all the invites
-        workspace_member_invites.delete()
-        project_member_invites.delete()
-
-        # Send event 
-        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-            auth_events.delay(
-                user=user.id,
-                email=email,
-                user_agent=request.META.get("HTTP_USER_AGENT"),
-                ip=request.META.get("REMOTE_ADDR"),
-                event_name="SIGN_IN",
-                medium="EMAIL",
-                first_time=True
-            )
-
         access_token, refresh_token = get_tokens_for_user(user)
 
         data = {
             "access_token": access_token,
             "refresh_token": refresh_token,
         }
+
+        # Update instance user count
+        update_user_instance_user_count.delay()
+
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -207,8 +144,18 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Check if the instance setup is done or not
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the user
         user = User.objects.filter(email=email).first()
 
+        # User is not present in db
         if user is None:
             return Response(
                 {
@@ -217,7 +164,7 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        # Sign up Process
+        # Check user password
         if not user.check_password(password):
             return Response(
                 {
@@ -292,7 +239,7 @@ class SignInEndpoint(BaseAPIView):
         # Delete all the invites
         workspace_member_invites.delete()
         project_member_invites.delete()
-        # Send event 
+        # Send event
         if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
             auth_events.delay(
                 user=user.id,
@@ -301,7 +248,7 @@ class SignInEndpoint(BaseAPIView):
                 ip=request.META.get("REMOTE_ADDR"),
                 event_name="SIGN_IN",
                 medium="EMAIL",
-                first_time=False
+                first_time=False,
             )
 
         access_token, refresh_token = get_tokens_for_user(user)
@@ -335,101 +282,19 @@ class SignOutEndpoint(BaseAPIView):
         return Response({"message": "success"}, status=status.HTTP_200_OK)
 
 
-class MagicSignInGenerateEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def post(self, request):
-        email = request.data.get("email", False)
-
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        if (
-            not get_configuration_value(
-                instance_configuration,
-                "ENABLE_MAGIC_LINK_LOGIN",
-                os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
-            )
-            and not (
-                get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_SIGNUP",
-                    os.environ.get("ENABLE_SIGNUP", "0"),
-                )
-            )
-            and not WorkspaceMemberInvite.objects.filter(
-                email=request.user.email
-            ).exists()
-        ):
-            return Response(
-                {
-                    "error": "New account creation is disabled. Please contact your site administrator"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not email:
-            return Response(
-                {"error": "Please provide a valid email address"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Clean up
-        email = email.strip().lower()
-        validate_email(email)
-
-        ## Generate a random token
-        token = (
-            "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-        )
-
-        ri = redis_instance()
-
-        key = "magic_" + str(email)
-
-        # Check if the key already exists in python
-        if ri.exists(key):
-            data = json.loads(ri.get(key))
-
-            current_attempt = data["current_attempt"] + 1
-
-            if data["current_attempt"] > 2:
-                return Response(
-                    {"error": "Max attempts exhausted. Please try again later."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            value = {
-                "current_attempt": current_attempt,
-                "email": email,
-                "token": token,
-            }
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
-
-        else:
-            value = {"current_attempt": 0, "email": email, "token": token}
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
-
-        current_site = request.META.get("HTTP_ORIGIN")
-        magic_link.delay(email, key, token, current_site)
-
-        return Response({"key": key}, status=status.HTTP_200_OK)
-
-
 class MagicSignInEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         user_token = request.data.get("token", "").strip()
         key = request.data.get("key", False).strip().lower()
 
@@ -448,48 +313,28 @@ class MagicSignInEndpoint(BaseAPIView):
             email = data["email"]
 
             if str(token) == str(user_token):
-                if User.objects.filter(email=email).exists():
-                    user = User.objects.get(email=email)
-                    if not user.is_active:
-                        return Response(
-                            {
-                                "error": "Your account has been deactivated. Please contact your site administrator."
-                            },
-                            status=status.HTTP_403_FORBIDDEN,
-                        )
-                    # Send event 
-                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                        auth_events.delay(
-                            user=user.id,
-                            email=email,
-                            user_agent=request.META.get("HTTP_USER_AGENT"),
-                            ip=request.META.get("REMOTE_ADDR"),
-                            event_name="SIGN_IN",
-                            medium="MAGIC_LINK",
-                            first_time=False
-                        )
-
-                else:
-                    user = User.objects.create(
+                user = User.objects.get(email=email)
+                if not user.is_active:
+                    return Response(
+                        {
+                            "error": "Your account has been deactivated. Please contact your site administrator."
+                        },
+                        status=status.HTTP_403_FORBIDDEN,
+                    )
+                # Send event
+                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                    auth_events.delay(
+                        user=user.id,
                         email=email,
-                        username=uuid.uuid4().hex,
-                        password=make_password(uuid.uuid4().hex),
-                        is_password_autoset=True,
+                        user_agent=request.META.get("HTTP_USER_AGENT"),
+                        ip=request.META.get("REMOTE_ADDR"),
+                        event_name="SIGN_IN",
+                        medium="MAGIC_LINK",
+                        first_time=False,
                     )
 
-                    # Send event 
-                    if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                        auth_events.delay(
-                            user=user.id,
-                            email=email,
-                            user_agent=request.META.get("HTTP_USER_AGENT"),
-                            ip=request.META.get("REMOTE_ADDR"),
-                            event_name="SIGN_IN",
-                            medium="MAGIC_LINK",
-                            first_time=True
-                        )
-
                 user.is_active = True
+                user.is_email_verified = True
                 user.last_active = timezone.now()
                 user.last_login_time = timezone.now()
                 user.last_login_ip = request.META.get("REMOTE_ADDR")

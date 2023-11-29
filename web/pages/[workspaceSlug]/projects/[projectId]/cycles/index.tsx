@@ -11,7 +11,6 @@ import { AppLayout } from "layouts/app-layout";
 import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
-import { EmptyState } from "components/common";
 import { Tooltip } from "@plane/ui";
 // images
 import emptyCycle from "public/empty-state/empty_cycles.webp";
@@ -28,7 +27,7 @@ import { NewEmptyState } from "components/common/new-empty-state";
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
-  const { project: projectStore, cycle: cycleStore } = useMobxStore();
+  const { cycle: cycleStore } = useMobxStore();
   const { projectCycles } = cycleStore;
   // router
   const router = useRouter();

@@ -75,7 +75,11 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
   // store
-  const { project: projectStore, theme: themeStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    project: projectStore,
+    theme: themeStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -308,7 +312,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
 
                   return (
                     <Link key={item.name} href={item.href}>
-                      <a className="block w-full">
+                      <span className="block w-full">
                         <Tooltip
                           tooltipContent={`${project?.name}: ${item.name}`}
                           position="right"
@@ -326,7 +330,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                             {!isCollapsed && item.name}
                           </div>
                         </Tooltip>
-                      </a>
+                      </span>
                     </Link>
                   );
                 })}

@@ -81,7 +81,7 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
     handleSubmit,
     setFocus,
     register,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<IIssue>({ defaultValues });
 
   useEffect(() => {

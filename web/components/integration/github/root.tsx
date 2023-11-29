@@ -165,10 +165,10 @@ export const GithubImporterRoot: React.FC<Props> = () => {
     <form onSubmit={handleSubmit(createGithubImporterService)}>
       <div className="space-y-2 mt-4">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
-          </div>
+          </span>
         </Link>
 
         <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">

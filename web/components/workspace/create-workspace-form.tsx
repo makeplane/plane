@@ -14,8 +14,6 @@ import { Button, CustomSelect, Input } from "@plane/ui";
 import { IWorkspace } from "types";
 // constants
 import { ORGANIZATION_SIZE, RESTRICTED_URLS } from "constants/workspace";
-// events
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   onSubmit?: (res: IWorkspace) => Promise<void>;

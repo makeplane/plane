@@ -48,7 +48,8 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     user: userStore,
   } = useMobxStore();
 
-  const user = userStore.currentUser;
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
 
   const issuesResponse = issueStore.getIssues;
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
@@ -103,7 +104,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssues={handleIssues}
-      disableUserActions={false}
+      disableUserActions={!isEditingAllowed}
       quickAddCallback={issueStore.quickAddIssue}
       viewId={viewId}
       enableQuickCreateIssue

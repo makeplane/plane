@@ -40,9 +40,9 @@ export interface IProfileIssuesStore {
   ) => Promise<IIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
-    userId: string,
     projectId: string,
-    issueId: string
+    issueId: string,
+    userId?: string
   ) => Promise<IIssue | undefined>;
   quickAddIssue: (workspaceSlug: string, userId: string, data: IIssue) => Promise<IIssue | undefined>;
   viewFlags: ViewFlags;
@@ -173,7 +173,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       else if (this.currentUserIssueTab === "subscribed")
         params = params ? { ...params, subscriber: userId } : { subscriber: userId };
 
-      const response = await this.userService.getV3UserProfileIssues(workspaceSlug, userId, params);
+      const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
       if (!this.currentUserIssueTab) return;
 
@@ -275,7 +275,8 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
     }
   };
 
-  removeIssue = async (workspaceSlug: string, userId: string, projectId: string, issueId: string) => {
+  removeIssue = async (workspaceSlug: string, projectId: string, issueId: string, userId?: string) => {
+    if (!userId) return;
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
