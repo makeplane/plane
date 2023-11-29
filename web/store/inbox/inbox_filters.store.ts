@@ -132,7 +132,7 @@ export class InboxFiltersStore implements IInboxFiltersStore {
         };
       });
 
-      const userRole = parseInt(this.rootStore.user.currentUser?.role || "0");
+      const userRole = this.rootStore.user?.projectMemberInfo?.[projectId]?.role || 0;
       if (userRole > 10) {
         await this.inboxService.patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps });
       }
