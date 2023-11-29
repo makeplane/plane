@@ -1,12 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { ChevronRight } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
@@ -37,23 +33,7 @@ export const IssueColumn: React.FC<Props> = ({
   disableUserActions,
   nestingLevel,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const router = useRouter();
-
-  const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const handleCopyText = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
 
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;

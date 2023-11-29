@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import useProjectDetails from "hooks/use-project-details";
 // components
 import { IssueGanttBlock } from "components/issues";
 import {
@@ -42,8 +41,6 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const router = useRouter();
   const { workspaceSlug } = router.query as { workspaceSlug: string; projectId: string };
-
-  const { projectDetails } = useProjectDetails();
 
   const {
     user: { currentProjectRole },

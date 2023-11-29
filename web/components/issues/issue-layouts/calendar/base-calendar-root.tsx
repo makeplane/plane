@@ -1,8 +1,6 @@
 import { FC, useCallback } from "react";
 import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarChart } from "components/issues";
 // types

@@ -4,7 +4,7 @@ import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // types
 import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
-import { IIssueResponse, IGroupedIssues, TUnGroupedIssues, ViewFlags } from "store/issues/types";
+import { IIssueResponse, IGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 import { EIssueActions } from "../types";
 // constants
 import { getValueFromObject } from "constants/issue";

@@ -6,7 +6,6 @@ import { IssueColumn } from "components/issues";
 import useSubIssue from "hooks/use-sub-issue";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
-import { EIssueActions } from "components/issues/issue-layouts/types";
 
 type Props = {
   issue: IIssue;

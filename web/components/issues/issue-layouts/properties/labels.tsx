@@ -12,7 +12,6 @@ import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
 
 export interface IIssuePropertyLabels {
-  view?: "profile" | "workspace" | "project";
   projectId: string | null;
   value: string[];
   onChange: (data: string[]) => void;
@@ -28,7 +27,6 @@ export interface IIssuePropertyLabels {
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
   const {
-    view,
     projectId,
     value,
     onChange,

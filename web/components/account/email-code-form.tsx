@@ -96,8 +96,6 @@ export const EmailCodeForm: React.FC<Props> = (Props) => {
       });
   };
 
-  const emailOld = getValues("email");
-
   useEffect(() => {
     const submitForm = (e: KeyboardEvent) => {
       if (!codeSent && e.key === "Enter") {

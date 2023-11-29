@@ -20,7 +20,6 @@ type Props = {
     text: string;
     onClick: () => void;
   };
-  secondaryButton?: React.ReactNode;
   disabled?: boolean;
 };
 
@@ -29,7 +28,6 @@ export const NewEmptyState: React.FC<Props> = ({
   description,
   image,
   primaryButton,
-  secondaryButton,
   disabled = false,
   comicBox,
 }) => {

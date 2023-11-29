@@ -10,7 +10,6 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from "components/issue
 import { IIssueDisplayProperties, IIssue, IState } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { EIssueActions } from "../types";
 import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 import { EProjectStore } from "store/command-palette.store";
