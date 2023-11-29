@@ -10,6 +10,7 @@ import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface IViewKanBanLayout {}
 
@@ -42,8 +43,8 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
     destination: any,
     subGroupBy: string | null,
     groupBy: string | null,
-    issues: IIssue[],
-    issueWithIds: any
+    issues: IIssueResponse | undefined,
+    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
   ) => {
     if (kanBanHelperStore.handleDragDrop)
       kanBanHelperStore.handleDragDrop(
