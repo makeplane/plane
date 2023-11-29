@@ -97,11 +97,11 @@ export const WorkspaceSidebarDropdown = observer(() => {
           <>
             <Menu.Button className="group/menu-button text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
               <div
-                className={`flex items-center justify-between gap-x-2 rounded p-1 truncate ${
-                  sidebarCollapsed ? "justify-center" : ""
+                className={`flex items-center  gap-x-2 rounded p-1 truncate ${
+                  sidebarCollapsed ? "justify-center" : "justify-between"
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 truncate">
                   <div
                     className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
                       !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
@@ -145,7 +145,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none">
-                <div className="flex flex-col items-start justify-start gap-3 p-3">
+                <div className="flex flex-col items-start justify-start gap-3 p-3 max-h-96 overflow-y-scroll">
                   <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
                   {workspaces ? (
                     <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">

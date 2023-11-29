@@ -1,6 +1,9 @@
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IntegrationService } from "services/integrations";
 // layouts
@@ -16,16 +19,31 @@ import { Loader } from "@plane/ui";
 import { NextPageWithLayout } from "types/app";
 // fetch-keys
 import { APP_INTEGRATIONS } from "constants/fetch-keys";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-// services
 const integrationService = new IntegrationService();
 
-const WorkspaceIntegrationsPage: NextPageWithLayout = () => {
+const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // mobx store
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
 
-  const { data: appIntegrations } = useSWR(workspaceSlug ? APP_INTEGRATIONS : null, () =>
-    workspaceSlug ? integrationService.getAppIntegrationsList() : null
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
+  if (!isAdmin)
+    return (
+      <div className="h-full w-full flex justify-center mt-10 p-4">
+        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      </div>
+    );
+
+  const { data: appIntegrations } = useSWR(workspaceSlug && isAdmin ? APP_INTEGRATIONS : null, () =>
+    workspaceSlug && isAdmin ? integrationService.getAppIntegrationsList() : null
   );
 
   return (
@@ -43,7 +61,7 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = () => {
       </div>
     </section>
   );
-};
+});
 
 WorkspaceIntegrationsPage.getLayout = function getLayout(page: ReactElement) {
   return (

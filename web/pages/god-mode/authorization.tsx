@@ -13,8 +13,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Loader, ToggleSwitch } from "@plane/ui";
 // components
-import { InstanceGoogleConfigForm } from "components/instance/google-config-form";
-import { InstanceGithubConfigForm } from "components/instance/github-config-form";
+import { InstanceGithubConfigForm, InstanceGoogleConfigForm } from "components/instance";
 
 const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   // store
@@ -65,7 +64,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
   };
 
   return (
-    <div className="flex flex-col gap-8 my-8 mx-12">
+    <div className="flex flex-col gap-8">
       <div className="pb-3 mb-2 border-b border-custom-border-100">
         <div className="text-custom-text-100 font-medium text-xl pb-1">Single sign-on and OAuth</div>
         <div className="text-custom-text-300 font-normal text-sm">
@@ -168,13 +167,11 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <Loader className="space-y-4">
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="50%" />
-          <Loader.Item height="50px" width="50%" />
+          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+            <Loader.Item height="50px" />
+            <Loader.Item height="50px" />
+          </div>
           <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
-          <Loader.Item height="50px" />
-          <Loader.Item height="50px" width="25%" />
         </Loader>
       )}
     </div>

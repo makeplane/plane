@@ -37,10 +37,12 @@ interface IBaseCalendarRoot {
     [EIssueActions.REMOVE]?: (issue: IIssue) => void;
   };
   viewId?: string;
+  handleDragDrop: (source: any, destination: any, issues: any, issueWithIds: any) => void;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
-  const { issueStore, issuesFilterStore, calendarViewStore, QuickActions, issueActions, viewId } = props;
+  const { issueStore, issuesFilterStore, calendarViewStore, QuickActions, issueActions, viewId, handleDragDrop } =
+    props;
 
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
@@ -56,7 +58,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     // return if dropped on the same date
     if (result.destination.droppableId === result.source.droppableId) return;
 
-    calendarViewStore?.handleDragDrop(result.source, result.destination);
+    if (handleDragDrop) handleDragDrop(result.source, result.destination, issues, groupedIssueIds);
   };
 
   const handleIssues = useCallback(

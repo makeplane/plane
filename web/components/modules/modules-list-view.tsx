@@ -11,7 +11,8 @@ import { EmptyState } from "components/common";
 // ui
 import { Loader } from "@plane/ui";
 // assets
-import emptyModule from "public/empty-state/module.svg";
+import emptyModule from "public/empty-state/empty_modules.webp";
+import { NewEmptyState } from "components/common/new-empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
   const router = useRouter();
@@ -78,13 +79,19 @@ export const ModulesListView: React.FC = observer(() => {
           {modulesView === "gantt_chart" && <ModulesListGanttChartView />}
         </>
       ) : (
-        <EmptyState
-          title="Manage your project with modules"
-          description="Modules are smaller, focused projects that help you group and organize issues."
+        <NewEmptyState
+          title="Map your project milestones to Modules and track aggregated work easily."
+          description="A group of issues that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone."
           image={emptyModule}
+          comicBox={{
+            title: "Modules help group work by hierarchy.",
+            direction: "right",
+            description:
+              "A cart module, a chassis module, and a warehouse module are all good example of this grouping.",
+          }}
           primaryButton={{
             icon: <Plus className="h-4 w-4" />,
-            text: "New Module",
+            text: "Build your first module",
             onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
           }}
         />

@@ -113,7 +113,10 @@ class WorkSpaceViewSet(BaseViewSet):
         return (
             self.filter_queryset(super().get_queryset().select_related("owner"))
             .order_by("name")
-            .filter(workspace_member__member=self.request.user)
+            .filter(
+                workspace_member__member=self.request.user,
+                workspace_member__is_active=True,
+            )
             .annotate(total_members=member_count)
             .annotate(total_issues=issue_count)
             .select_related("owner")
@@ -189,17 +192,21 @@ class UserWorkSpacesEndpoint(BaseAPIView):
         )
 
         workspace = (
-            (
-                Workspace.objects.prefetch_related(
-                    Prefetch("workspace_member", queryset=WorkspaceMember.objects.all())
+            Workspace.objects.prefetch_related(
+                Prefetch(
+                    "workspace_member",
+                    queryset=WorkspaceMember.objects.filter(
+                        member=request.user, is_active=True
+                    ),
                 )
-                .filter(
-                    workspace_member__member=request.user,
-                )
-                .select_related("owner")
             )
+            .select_related("owner")
             .annotate(total_members=member_count)
             .annotate(total_issues=issue_count)
+            .filter(
+                workspace_member__member=request.user, workspace_member__is_active=True
+            )
+            .distinct()
         )
 
         serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
@@ -319,7 +326,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             workspace_invitations, batch_size=10, ignore_conflicts=True
         )
 
-        current_site = request.META.get('HTTP_ORIGIN')
+        current_site = request.META.get("HTTP_ORIGIN")
 
         # Send invitations
         for invitation in workspace_invitations:
@@ -418,7 +425,9 @@ class WorkspaceJoinEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, pk):
-        workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
+        workspace_invitation = WorkspaceMemberInvite.objects.get(
+            workspace__slug=slug, pk=pk
+        )
         serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -1313,9 +1322,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         return Response(issues, status=status.HTTP_200_OK)
 
 
-
 class WorkspaceUserProfileIssuesGroupedEndpoint(BaseAPIView):
-
     permission_classes = [
         WorkspaceViewerPermission,
     ]
@@ -1362,12 +1369,15 @@ class WorkspaceUserProfileIssuesGroupedEndpoint(BaseAPIView):
             )
         ).distinct()
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(
             issue_dict,
             status=status.HTTP_200_OK,
         )
+
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
     permission_classes = [
