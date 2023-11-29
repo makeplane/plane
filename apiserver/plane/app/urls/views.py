@@ -6,6 +6,7 @@ from plane.app.views import (
     GlobalViewViewSet,
     GlobalViewIssuesViewSet,
     IssueViewFavoriteViewSet,
+    GlobalViewIssuesGroupedEndpoint
 )
 
 
@@ -61,6 +62,11 @@ urlpatterns = [
                 "get": "list",
             }
         ),
+        name="global-view-issues",
+    ),
+    path(
+        "v3/workspaces/<str:slug>/issues/",
+        GlobalViewIssuesGroupedEndpoint.as_view(),
         name="global-view-issues",
     ),
     path(

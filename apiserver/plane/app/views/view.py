@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     GlobalViewSerializer,
     IssueViewSerializer,
@@ -197,6 +197,60 @@ class GlobalViewIssuesViewSet(BaseViewSet):
 
         return Response(issues, status=status.HTTP_200_OK)
 
+
+class GlobalViewIssuesGroupedEndpoint(BaseAPIView):
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        filters = issue_filters(request.query_params, "GET")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+
+        issue_queryset = (
+            Issue.issue_objects.annotate(
+                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(project__project_projectmember__member=self.request.user)
+            .filter(**filters)
+            .select_related("project")
+            .select_related("workspace")
+            .select_related("state")
+            .select_related("parent")
+            .prefetch_related("assignees")
+            .prefetch_related("labels")
+            .prefetch_related(
+                Prefetch(
+                    "issue_reactions",
+                    queryset=IssueReaction.objects.select_related("actor"),
+                )
+            )
+            .annotate(cycle_id=F("issue_cycle__cycle_id"))
+            .annotate(module_id=F("issue_module__module_id"))
+            .annotate(
+                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+        )
+
+        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(
+            issue_dict,
+            status=status.HTTP_200_OK,
+        )
 
 class IssueViewViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
