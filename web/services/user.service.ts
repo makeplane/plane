@@ -152,27 +152,8 @@ export class UserService extends APIService {
       });
   }
 
-  async getUserProfileIssues(
-    workspaceSlug: string,
-    userId: string,
-    params: any
-  ): Promise<
-    | {
-        [key: string]: IIssue[];
-      }
-    | IIssue[]
-  > {
+  async getUserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<IIssueResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
-      params,
-    })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getV3UserProfileIssues(workspaceSlug: string, userId: string, params: any): Promise<IIssueResponse> {
-    return this.get(`/api/v3/workspaces/${workspaceSlug}/user-issues/${userId}/`, {
       params,
     })
       .then((response) => response?.data)

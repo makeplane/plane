@@ -1207,6 +1207,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
     ]
 
     def get(self, request, slug, user_id):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         filters = issue_filters(request.query_params, "GET")
 
         # Custom ordering for priority and state
@@ -1308,75 +1309,11 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True).data
-
-        ## Grouping the results
-        group_by = request.GET.get("group_by", False)
-        if group_by:
-            grouped_results = group_results(issues, group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(issues, status=status.HTTP_200_OK)
-
-
-class WorkspaceUserProfileIssuesGroupedEndpoint(BaseAPIView):
-    permission_classes = [
-        WorkspaceViewerPermission,
-    ]
-
-    def get(self, request, slug, user_id):
-        filters = issue_filters(request.query_params, "GET")
-        fields = [field for field in request.GET.get("fields", "").split(",") if field]
-
-        issue_queryset = (
-            Issue.issue_objects.filter(
-                Q(assignees__in=[user_id])
-                | Q(created_by_id=user_id)
-                | Q(issue_subscribers__subscriber_id=user_id),
-                workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-            )
-            .filter(**filters)
-            .annotate(
-                sub_issues_count=Issue.issue_objects.filter(parent=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .select_related("project", "workspace", "state", "parent")
-            .prefetch_related("assignees", "labels")
-            .prefetch_related(
-                Prefetch(
-                    "issue_reactions",
-                    queryset=IssueReaction.objects.select_related("actor"),
-                )
-            )
-            .order_by("-created_at")
-            .annotate(
-                link_count=IssueLink.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-            .annotate(
-                attachment_count=IssueAttachment.objects.filter(issue=OuterRef("id"))
-                .order_by()
-                .annotate(count=Func(F("id"), function="Count"))
-                .values("count")
-            )
-        ).distinct()
-
         issues = IssueLiteSerializer(
             issue_queryset, many=True, fields=fields if fields else None
         ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(
-            issue_dict,
-            status=status.HTTP_200_OK,
-        )
+        return Response(issue_dict, status=status.HTTP_200_OK)
 
 
 class WorkspaceLabelsEndpoint(BaseAPIView):
