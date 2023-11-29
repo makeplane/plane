@@ -185,6 +185,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Password reset time the number of seconds the uniquely generated uid will be valid
+PASSWORD_RESET_TIMEOUT = 3600
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static-assets", "collected-static")
@@ -306,7 +309,6 @@ if bool(os.environ.get("SENTRY_DSN", False)):
 PROXY_BASE_URL = os.environ.get("PROXY_BASE_URL", False)  # For External
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN", False)
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
-ENABLE_SIGNUP = os.environ.get("ENABLE_SIGNUP", "1") == "1"
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")

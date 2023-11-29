@@ -1,5 +1,7 @@
 # Python imports
 import os
+import requests
+import json
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -15,8 +17,8 @@ from slack_sdk.errors import SlackApiError
 
 # Module imports
 from plane.db.models import Workspace, WorkspaceMemberInvite, User
-from plane.license.models import InstanceConfiguration
-from plane.license.utils.instance_value import get_configuration_value
+from plane.license.models import InstanceConfiguration, Instance
+from plane.license.utils.instance_value import get_email_configuration
 
 
 @shared_task
@@ -35,14 +37,56 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         # The complete url including the domain
         abs_url = current_site + relative_link
 
+        instance_configuration = InstanceConfiguration.objects.filter(
+            key__startswith="EMAIL_"
+        ).values("key", "value")
+
+        (
+            EMAIL_HOST,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            EMAIL_PORT,
+            EMAIL_USE_TLS,
+            EMAIL_FROM,
+        ) = get_email_configuration(instance_configuration=instance_configuration)
+
+        # Send the email if the users don't have smtp configured
+        if not EMAIL_HOST or not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+            # Check the instance registration
+            instance = Instance.objects.first()
+
+            # send the emails through control center
+            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
+            if not license_engine_base_url:
+                raise Exception("License engine base url is required")
+
+            headers = {
+                "Content-Type": "application/json",
+                "x-instance-id": instance.instance_id,
+                "x-api-key": instance.api_key,
+            }
+
+            payload = {
+                "user": user.first_name or user.display_name or user.email,
+                "workspace_name": workspace.name,
+                "invitation_url": abs_url,
+                "email": email,
+            }
+            _ = requests.post(
+                f"{license_engine_base_url}/api/instances/users/workspace-invitation/",
+                headers=headers,
+                data=json.dumps(payload),
+            )
+
+            return
+
         # Subject of the email
-        subject = f"{user.first_name or user.display_name or user.email} invited you to join {workspace.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on Plane"
 
         context = {
             "email": email,
-            "first_name": invitor,
+            "first_name": user.first_name or user.display_name or user.email,
             "workspace_name": workspace.name,
-            "invitation_url": abs_url,
         }
 
         html_content = render_to_string(
@@ -58,41 +102,17 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             key__startswith="EMAIL_"
         ).values("key", "value")
         connection = get_connection(
-            host=get_configuration_value(
-                instance_configuration, "EMAIL_HOST", os.environ.get("EMAIL_HOST")
-            ),
-            port=int(
-                get_configuration_value(
-                    instance_configuration, "EMAIL_PORT", os.environ.get("EMAIL_PORT")
-                )
-            ),
-            username=get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_USER",
-                os.environ.get("EMAIL_HOST_USER"),
-            ),
-            password=get_configuration_value(
-                instance_configuration,
-                "EMAIL_HOST_PASSWORD",
-                os.environ.get("EMAIL_HOST_PASSWORD"),
-            ),
-            use_tls=bool(
-                get_configuration_value(
-                    instance_configuration,
-                    "EMAIL_USE_TLS",
-                    os.environ.get("EMAIL_USE_TLS", "1"),
-                )
-            ),
+            host=EMAIL_HOST,
+            port=int(EMAIL_PORT),
+            username=EMAIL_HOST_USER,
+            password=EMAIL_HOST_PASSWORD,
+            use_tls=bool(EMAIL_USE_TLS),
         )
 
         msg = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
-            from_email=get_configuration_value(
-                instance_configuration,
-                "EMAIL_FROM",
-                os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
-            ),
+            from_email=EMAIL_FROM,
             to=[email],
             connection=connection,
         )
