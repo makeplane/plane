@@ -55,7 +55,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
 
                 return (
                   <Link href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`} key={issue.id}>
-                    <a>
+                    <span>
                       <div className="grid grid-cols-4 gap-2 px-3 py-2">
                         <h5
                           className={`flex cursor-default items-center gap-2 ${
@@ -70,7 +70,7 @@ export const IssuesList: React.FC<Props> = ({ issues, type }) => {
                           {renderShortDateWithYearFormat(new Date(date?.toString() ?? ""))}
                         </h5>
                       </div>
-                    </a>
+                    </span>
                   </Link>
                 );
               })

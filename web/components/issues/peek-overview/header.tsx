@@ -72,9 +72,9 @@ export const PeekOverviewHeader: React.FC<Props> = ({
           </button>
         )}
         <Link href={`/${workspaceSlug}/projects/${issue?.project}/issues/${issue?.id}`}>
-          <a>
+          <span>
             <MoveDiagonal className="h-3.5 w-3.5" />
-          </a>
+          </span>
         </Link>
         <CustomSelect
           value={mode}

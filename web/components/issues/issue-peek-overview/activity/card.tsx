@@ -93,11 +93,11 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
                             <span className="text-gray font-medium">{activityItem.actor_detail.first_name} Bot</span>
                           ) : (
                             <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
-                              <a className="text-gray font-medium">
+                              <span className="text-gray font-medium">
                                 {activityItem.actor_detail.is_bot
                                   ? activityItem.actor_detail.first_name
                                   : activityItem.actor_detail.display_name}
-                              </a>
+                              </span>
                             </Link>
                           )}{" "}
                           {message}{" "}

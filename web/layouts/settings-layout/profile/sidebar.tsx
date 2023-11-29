@@ -118,9 +118,9 @@ export const ProfileLayoutSidebar = observer(() => {
             <Tooltip position="bottom-left" tooltipContent="Go back to your workspace">
               <div className="flex-shrink-0">
                 <Link href={`/${redirectWorkspaceSlug}`}>
-                  <a>
+                  <span>
                     <LogIn className="h-5 w-5 text-custom-text-200 rotate-180" />
-                  </a>
+                  </span>
                 </Link>
               </div>
             </Tooltip>
@@ -162,9 +162,9 @@ export const ProfileLayoutSidebar = observer(() => {
                     <div className="p-2 pb-0 border-t border-custom-border-100">
                       <Menu.Item as="button" type="button" className="w-full">
                         <Link href="/god-mode">
-                          <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                          <span className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
                             Enter God Mode
-                          </a>
+                          </span>
                         </Link>
                       </Menu.Item>
                     </div>
@@ -178,7 +178,7 @@ export const ProfileLayoutSidebar = observer(() => {
         <div className="w-full cursor-pointer space-y-1 p-4 flex-shrink-0">
           {SIDEBAR_LINKS.map((link) => (
             <Link key={link.key} href={link.href}>
-              <a className="block w-full">
+              <span className="block w-full">
                 <Tooltip tooltipContent={link.name} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                   <div
                     className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
@@ -189,7 +189,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     {!sidebarCollapsed && link.name}
                   </div>
                 </Tooltip>
-              </a>
+              </span>
             </Link>
           ))}
         </div>
@@ -212,7 +212,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     sidebarCollapsed ? "justify-center" : `justify-between`
                   }`}
                 >
-                  <a
+                  <span
                     className={`flex items-center flex-grow w-full truncate gap-x-2 px-2 py-1 hover:bg-custom-sidebar-background-80 rounded-md ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
@@ -235,7 +235,7 @@ export const ProfileLayoutSidebar = observer(() => {
                     {!sidebarCollapsed && (
                       <p className="truncate text-custom-sidebar-text-200 text-sm">{workspace.name}</p>
                     )}
-                  </a>
+                  </span>
                 </Link>
               ))}
             </div>

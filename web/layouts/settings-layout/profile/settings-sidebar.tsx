@@ -55,7 +55,7 @@ export const ProfileSettingsSidebar = observer(() => {
           if (link.key === "change-password" && !enableEmailPassword) return;
           return (
             <Link key={link.key} href={link.href}>
-              <a>
+              <span>
                 <div
                   className={`px-4 py-2 text-sm font-medium rounded-md ${
                     router.asPath === link.href
@@ -65,7 +65,7 @@ export const ProfileSettingsSidebar = observer(() => {
                 >
                   {link.label}
                 </div>
-              </a>
+              </span>
             </Link>
           );
         })}

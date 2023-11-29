@@ -114,7 +114,9 @@ export const EmailSignUpForm: React.FC<Props> = (props) => {
         </div>
         <div className="text-right text-xs">
           <Link href="/">
-            <a className="text-custom-text-200 hover:text-custom-primary-100">Already have an account? Sign in.</a>
+            <span className="text-custom-text-200 hover:text-custom-primary-100">
+              Already have an account? Sign in.
+            </span>
           </Link>
         </div>
         <div>

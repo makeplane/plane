@@ -67,12 +67,12 @@ export const InstanceAdminRestriction: FC<InstanceAdminRestrictionProps> = ({ re
     </div>
     <div className="flex items-center justify-center gap-2">
       <Link href={`/${redirectWorkspaceSlug}`}>
-        <a>
+        <span>
           <Button variant="primary" size="sm">
             <LayoutGrid width={16} height={16} />
             To the workspace
           </Button>
-        </a>
+        </span>
       </Link>
     </div>
   </div>

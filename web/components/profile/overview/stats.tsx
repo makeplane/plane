@@ -43,7 +43,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {overviewCards.map((card) => (
             <Link key={card.route} href={`/${workspaceSlug}/profile/${userId}/${card.route}`}>
-              <a className="flex items-center gap-3 p-4 rounded border border-custom-border-100 whitespace-nowrap">
+              <span className="flex items-center gap-3 p-4 rounded border border-custom-border-100 whitespace-nowrap">
                 <div className="h-11 w-11 bg-custom-background-90 rounded grid place-items-center">
                   <card.icon className="h-5 w-5" />
                 </div>
@@ -51,7 +51,7 @@ export const ProfileStats: React.FC<Props> = ({ userProfile }) => {
                   <p className="text-custom-text-400 text-sm">{card.title}</p>
                   <p className="text-xl font-semibold">{card.value}</p>
                 </div>
-              </a>
+              </span>
             </Link>
           ))}
         </div>
