@@ -68,7 +68,7 @@ export const CycleLayoutRoot: React.FC = observer(() => {
           </div>
         ) : (
           <>
-            {Object.keys(getIssues ?? {}).length == 0 ? (
+            {Object.keys(getIssues ?? {}).length == 0 && !loader ? (
               <CycleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} cycleId={cycleId} />
             ) : (
               <div className="h-full w-full overflow-auto">

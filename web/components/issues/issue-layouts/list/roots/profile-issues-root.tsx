@@ -30,7 +30,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
     [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !userId) return;
 
-      await profileIssuesStore.removeIssue(workspaceSlug, userId, issue.project, issue.id);
+      await profileIssuesStore.removeIssue(workspaceSlug, issue.project, issue.id, userId);
     },
   };
 

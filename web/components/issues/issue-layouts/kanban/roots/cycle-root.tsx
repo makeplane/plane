@@ -11,6 +11,7 @@ import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface ICycleKanBanLayout {}
 
@@ -51,8 +52,8 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     destination: any,
     subGroupBy: string | null,
     groupBy: string | null,
-    issues: IIssue[],
-    issueWithIds: any
+    issues: IIssueResponse | undefined,
+    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
   ) => {
     if (kanBanHelperStore.handleDragDrop)
       kanBanHelperStore.handleDragDrop(

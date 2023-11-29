@@ -53,7 +53,7 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
         </div>
       ) : (
         <>
-          {Object.keys(getIssues ?? {}).length == 0 ? (
+          {Object.keys(getIssues ?? {}).length == 0 && !loader ? (
             <ModuleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
           ) : (
             <div className="h-full w-full overflow-auto">
