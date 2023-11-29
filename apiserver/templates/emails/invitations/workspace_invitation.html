@@ -460,11 +460,11 @@
                                           cellpadding="0"
                                           border="0"
                                           role="presentation"
-                                          width="200"
+                                          width="150"
                                           class="r9-o"
                                           style="
                                             table-layout: fixed;
-                                            width: 200px;
+                                            width: 150px;
                                           "
                                         >
                                           <tr>
@@ -476,7 +476,7 @@
                                             >
                                               <img
                                                 src="https://img.mailinblue.com/5942152/images/content_library/original/64708f00b503b149db7ff135.png"
-                                                width="200"
+                                                width="150"
                                                 border="0"
                                                 style="
                                                   display: block;
@@ -667,9 +667,9 @@
                                                       font-family: Georgia;
                                                       font-size: 17px;
                                                     "
-                                                    >{{first_name}} has invited you
+                                                    ><b>{{first_name}}</b> has invited you
                                                     to join them in
-                                                    {{workspace_name}} on Plane.
+                                                    <b>{{workspace_name}}</b> on Plane.
                                                     Some of our users have told
                                                     us it's a privilege, but we
                                                     will let you be the judge of
@@ -713,7 +713,7 @@
                                         >
                                           <tr>
                                             <td
-                                              height="18"
+                                              height="20"
                                               align="center"
                                               valign="top"
                                               class="r14-i nl2go-default-textstyle"
@@ -732,7 +732,7 @@
                                               "
                                             >
                                               <a
-                                                href="#top"
+                                                href="{{abs_url}}"
                                                 class="r15-r default-button"
                                                 target="_blank"
                                                 data-btn="1"
@@ -751,7 +751,9 @@
                                                 "
                                               >
                                                 <span
-                                                  >Join them on Plane</span
+                                                  ><span style="font-size: 18px"
+                                                    >Join them on Plane</span
+                                                  ></span
                                                 ></a
                                               >
                                             </td>
@@ -1619,7 +1621,7 @@
                                                 >
                                                   <span style="font-size: 12px"
                                                     >This email was sent to
-                                                    contact {{email}}. Please delete
+                                                    {{email}}. Please delete
                                                     if you aren't the intended
                                                     recipient.</span
                                                   >

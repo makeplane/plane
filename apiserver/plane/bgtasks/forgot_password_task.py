@@ -73,6 +73,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
         context = {
             "first_name": first_name,
             "forgot_password_url": abs_url,
+            "email": email,
         }
 
         html_content = render_to_string("emails/auth/forgot_password.html", context)
