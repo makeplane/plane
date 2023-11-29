@@ -7,7 +7,7 @@ import { CommandPalette } from "components/command-palette";
 
 interface IProfileSettingsLayout {
   children: ReactNode;
-  header: ReactNode;
+  header?: ReactNode;
 }
 
 export const ProfileSettingsLayout: FC<IProfileSettingsLayout> = (props) => {
