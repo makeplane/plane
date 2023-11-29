@@ -93,6 +93,7 @@ def magic_link(email, key, token, current_site):
         msg.send()
         return
     except Exception as e:
+        print(e)
         capture_exception(e)
         # Print logs if in DEBUG mode
         if settings.DEBUG:
