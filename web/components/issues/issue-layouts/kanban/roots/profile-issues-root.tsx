@@ -30,7 +30,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !userId) return;
 
-      await profileIssuesStore.removeIssue(workspaceSlug, userId, issue.project, issue.id);
+      await profileIssuesStore.removeIssue(workspaceSlug, issue.project, issue.id, userId);
     },
   };
 
