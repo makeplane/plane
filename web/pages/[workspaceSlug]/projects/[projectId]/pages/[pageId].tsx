@@ -2,21 +2,17 @@ import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Controller, useForm } from "react-hook-form";
-import { Sparkle } from "lucide-react";
-import { observer } from "mobx-react-lite";
 // services
 import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
 import { useDebouncedCallback } from "use-debounce";
-import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { PageDetailsHeader } from "components/headers/page-details";
 import { EmptyState } from "components/common";
-import { GptAssistantModal } from "components/core";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
 import { Spinner, Tooltip } from "@plane/ui";
@@ -28,7 +24,7 @@ import { renderDateFormat } from "helpers/date-time.helper";
 import { NextPageWithLayout } from "types/app";
 import { IPage, IIssue } from "types";
 // fetch-keys
-import { PAGE_DETAILS } from "constants/fetch-keys";
+import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { IssueService } from "services/issue";
 import { EIssueActions } from "components/issues/issue-layouts/types";
@@ -44,22 +40,23 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const { issueDetail: issueDetailStore } = useMobxStore();
 
   const editorRef = useRef<any>(null);
-  // states
+
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-  const [gptModalOpen, setGptModal] = useState(false);
-  // store
-  const {
-    appConfig: { envConfig },
-  } = useMobxStore();
-  // router
+
   const router = useRouter();
   const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
 
   const { user } = useUser();
 
-  const { handleSubmit, reset, getValues, control, setValue, watch } = useForm<IPage>({
-    defaultValues: { name: "", description_html: "<p></p>" },
+  const { handleSubmit, reset, getValues, control } = useForm<IPage>({
+    defaultValues: { name: "" },
   });
+
+
+  const { data: issues } = useSWR(
+    workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
+    workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
+  );
 
   // =================== Fetching Page Details ======================
   const {
@@ -209,22 +206,6 @@ const PageDetailsPage: NextPageWithLayout = () => {
     }
   };
 
-  const handleAiAssistance = async (response: string) => {
-    if (!workspaceSlug || !projectId || !pageId) return;
-
-    const newDescription = `${watch("description_html")}<p>${response}</p>`;
-    setValue("description_html", newDescription);
-    editorRef.current?.setEditorValue(newDescription);
-
-    pageService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), {
-        description_html: newDescription,
-      })
-      .then(() => {
-        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
-      });
-  };
-
   useEffect(() => {
     if (!pageDetails) return;
 
@@ -252,7 +233,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   return (
     <>
-      {pageDetails ? (
+      {pageDetails && issues ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
             {pageDetails.is_locked || pageDetails.archived_at ? (
@@ -285,80 +266,55 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 }
               />
             ) : (
-              <div className="h-full w-full relative overflow-hidden">
-                <Controller
-                  name="description_html"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <DocumentEditorWithRef
-                      documentDetails={{
-                        title: pageDetails.name,
-                        created_by: pageDetails.created_by,
-                        created_on: pageDetails.created_at,
-                        last_updated_at: pageDetails.updated_at,
-                        last_updated_by: pageDetails.updated_by,
-                      }}
-                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                      deleteFile={fileService.deleteImage}
-                      restoreFile={fileService.restoreImage}
-                      ref={editorRef}
-                      debouncedUpdatesEnabled={false}
-                      setIsSubmitting={setIsSubmitting}
-                      value={!value || value === "" ? "<p></p>" : value}
-                      customClassName="tracking-tight self-center px-0 h-full w-full"
-                      onChange={(_description_json: Object, description_html: string) => {
-                        onChange(description_html);
-                        setIsSubmitting("submitting");
-                        debouncedFormSave();
-                      }}
-                      duplicationConfig={{ action: duplicate_page }}
-                      pageArchiveConfig={
-                        user && pageDetails.owned_by === user.id
-                          ? {
-                              is_archived: pageDetails.archived_at ? true : false,
-                              action: pageDetails.archived_at ? unArchivePage : archivePage,
-                            }
-                          : undefined
-                      }
-                      pageLockConfig={
-                        user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
-                      }
-                      embedConfig={
+              <Controller
+                name="description_html"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <DocumentEditorWithRef
+                    documentDetails={{
+                      title: pageDetails.name,
+                      created_by: pageDetails.created_by,
+                      created_on: pageDetails.created_at,
+                      last_updated_at: pageDetails.updated_at,
+                      last_updated_by: pageDetails.updated_by,
+                    }}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+										restoreFile={fileService.restoreImage}
+                    deleteFile={fileService.deleteImage}
+                    ref={editorRef}
+                    debouncedUpdatesEnabled={false}
+                    setIsSubmitting={setIsSubmitting}
+                    value={!value || value === "" ? "<p></p>" : value}
+                    customClassName="tracking-tight px-0 h-full w-full"
+                    onChange={(_description_json: Object, description_html: string) => {
+                      onChange(description_html);
+                      setIsSubmitting("submitting");
+                      debouncedFormSave();
+                    }}
+                    duplicationConfig={{ action: duplicate_page }}
+                    pageArchiveConfig={
+                      user && pageDetails.owned_by === user.id
+                        ? {
+                          is_archived: pageDetails.archived_at ? true : false,
+                          action: pageDetails.archived_at ? unArchivePage : archivePage,
+                        }
+                        : undefined
+                    }
+                    pageLockConfig={
+                      user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
+                    }
+                    embedConfig={
                       {
                         issueEmbedConfig: {
+													issues: issues ? issues : [],
                           fetchIssue: fetchIssue,
                           clickAction: issueWidgetClickAction
                         }
                       }
                     }
-                    />
-                  )}
-                />
-                {projectId && envConfig?.has_openai_configured && (
-                  <>
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-3 right-[68px]"
-                      onClick={() => setGptModal((prevData) => !prevData)}
-                    >
-                      <Sparkle className="h-4 w-4" />
-                      AI
-                    </button>
-                    <GptAssistantModal
-                      isOpen={gptModalOpen}
-                      handleClose={() => {
-                        setGptModal(false);
-                      }}
-                      inset="top-9 right-[68px] !w-1/2 !max-h-[50%]"
-                      content=""
-                      onResponse={(response) => {
-                        handleAiAssistance(response);
-                      }}
-                      projectId={projectId.toString()}
-                    />
-                  </>
+                  />
                 )}
-              </div>
+              />
             )}
           </div>
           <IssuePeekOverview
@@ -380,7 +336,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-});
+};
 
 PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
