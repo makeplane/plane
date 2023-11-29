@@ -122,22 +122,71 @@ export class IssueBaseStore implements IIssueBaseStore {
 
   issuesSortWithOrderBy = (issueObject: IIssueResponse, key: Partial<TIssueOrderByOptions>): IIssue[] => {
     let array = _.values(issueObject);
-    array = _.sortBy(array, "created_at");
+    array = _.reverse(_.sortBy(array, "created_at"));
     switch (key) {
       case "sort_order":
-        return _.sortBy(array, "sort_order");
+        return _.reverse(_.sortBy(array, "sort_order"));
+      case "state__name": {
+        return _.reverse(_.sortBy(array, "state"));
+      }
+      case "-state__name": {
+        return _.sortBy(array, "state");
+      }
+      //dates
+      case "created_at":
+        return _.sortBy(array, "created_at");
       case "-created_at":
         return _.reverse(_.sortBy(array, "created_at"));
+      case "updated_at":
+        return _.sortBy(array, "updated_at");
       case "-updated_at":
         return _.reverse(_.sortBy(array, "updated_at"));
       case "start_date":
         return _.sortBy(array, "start_date");
+      case "-start_date":
+        return _.reverse(_.sortBy(array, "start_date"));
       case "target_date":
         return _.sortBy(array, "target_date");
+      case "-target_date":
+        return _.reverse(_.sortBy(array, "target_date"));
+      //custom
       case "priority": {
+        const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
+        return _.reverse(_.sortBy(array, (_issue: IIssue) => _.indexOf(sortArray, _issue.priority)));
+      }
+      case "-priority": {
         const sortArray = ISSUE_PRIORITIES.map((i) => i.key);
         return _.sortBy(array, (_issue: IIssue) => _.indexOf(sortArray, _issue.priority));
       }
+      //number
+      case "attachment_count":
+        return _.sortBy(array, "attachment_count");
+      case "-attachment_count":
+        return _.reverse(_.sortBy(array, "attachment_count"));
+      case "estimate_point":
+        return _.sortBy(array, "estimate_point");
+      case "-estimate_point":
+        return _.reverse(_.sortBy(array, "estimate_point"));
+      case "link_count":
+        return _.sortBy(array, "link_count");
+
+      case "-link_count":
+        return _.reverse(_.sortBy(array, "link_count"));
+      case "sub_issues_count":
+        return _.sortBy(array, "sub_issues_count");
+
+      case "-sub_issues_count":
+        return _.reverse(_.sortBy(array, "sub_issues_count"));
+      //Array
+      case "labels__name":
+        return _.reverse(_.sortBy(array, "labels"));
+      case "-labels__name":
+        return _.sortBy(array, "labels");
+      case "assignees__first_name":
+        return _.reverse(_.sortBy(array, "assignees"));
+
+      case "-assignees__first_name":
+        return _.sortBy(array, "assignees");
       default:
         return array;
     }
