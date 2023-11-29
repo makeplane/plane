@@ -1,6 +1,5 @@
 export * from "./sign-in-forms";
 export * from "./deactivate-account-modal";
-export * from "./email-code-form";
 export * from "./email-password-form";
 export * from "./email-forgot-password-form";
 export * from "./github-login-button";

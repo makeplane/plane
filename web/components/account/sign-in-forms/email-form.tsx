@@ -19,7 +19,7 @@ type Props = {
   updateEmail: (email: string) => void;
 };
 
-type EmailCodeFormValues = {
+type TEmailCodeFormValues = {
   email: string;
 };
 
@@ -37,7 +37,7 @@ export const EmailForm: React.FC<Props> = (props) => {
     formState: { errors, isValid },
     handleSubmit,
     watch,
-  } = useForm<EmailCodeFormValues>({
+  } = useForm<TEmailCodeFormValues>({
     defaultValues: {
       email: "",
     },
