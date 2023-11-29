@@ -1,5 +1,5 @@
 import { FC, useCallback, useState } from "react";
-import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -29,7 +29,6 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store/command-palette.store";
-import StrictModeDroppable from "components/dnd/StrictModeDroppable";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -110,7 +109,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     setIsDragStarted(true);
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     setIsDragStarted(false);
 
     if (!result) return;

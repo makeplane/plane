@@ -38,9 +38,13 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
   };
 
+  let draggableId = issue.id;
+  if (columnId) draggableId = `${draggableId}__${columnId}`;
+  if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
+
   return (
     <>
-      <Draggable draggableId={issue.id} index={index}>
+      <Draggable draggableId={draggableId} index={index}>
         {(provided, snapshot) => (
           <div
             className="group/kanban-block relative p-1.5 hover:cursor-default"
