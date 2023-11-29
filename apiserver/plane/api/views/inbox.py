@@ -60,9 +60,9 @@ class InboxIssueAPIEndpoint(BaseAPIView):
             .order_by(self.kwargs.get("order_by", "-created_at"))
         )
 
-    def get(self, request, slug, project_id, pk=None):
-        if pk:
-            inbox_issue_queryset = self.get_queryset().get(pk=pk)
+    def get(self, request, slug, project_id, issue_id=None):
+        if issue_id:
+            inbox_issue_queryset = self.get_queryset().get(issue_id=issue_id)
             inbox_issue_data = InboxIssueSerializer(
                 inbox_issue_queryset,
                 fields=self.fields,
@@ -163,7 +163,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         serializer = InboxIssueSerializer(inbox_issue)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def patch(self, request, slug, project_id, pk):
+    def patch(self, request, slug, project_id, issue_id):
         inbox = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
@@ -184,7 +184,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
 
         # Get the inbox issue
         inbox_issue = InboxIssue.objects.get(
-            pk=pk,
+            issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
             inbox_id=inbox.id,
@@ -212,7 +212,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
 
         if bool(issue_data):
             issue = Issue.objects.get(
-                pk=inbox_issue.issue_id, workspace__slug=slug, project_id=project_id
+                pk=issue_id, workspace__slug=slug, project_id=project_id
             )
             # Only allow guests and viewers to edit name and description
             if project_member.role <= 10:
@@ -236,7 +236,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                         type="issue.activity.updated",
                         requested_data=requested_data,
                         actor_id=str(request.user.id),
-                        issue_id=str(issue.id),
+                        issue_id=str(issue_id),
                         project_id=str(project_id),
                         current_instance=json.dumps(
                             IssueSerializer(current_instance).data,
@@ -261,7 +261,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 # Update the issue state if the issue is rejected or marked as duplicate
                 if serializer.data["status"] in [-1, 2]:
                     issue = Issue.objects.get(
-                        pk=inbox_issue.issue_id,
+                        pk=issue_id,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -275,7 +275,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 # Update the issue state if it is accepted
                 if serializer.data["status"] in [1]:
                     issue = Issue.objects.get(
-                        pk=inbox_issue.issue_id,
+                        pk=issue_id,
                         workspace__slug=slug,
                         project_id=project_id,
                     )
@@ -297,7 +297,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
                 InboxIssueSerializer(inbox_issue).data, status=status.HTTP_200_OK
             )
 
-    def delete(self, request, slug, project_id, pk):
+    def delete(self, request, slug, project_id, issue_id):
         inbox = Inbox.objects.filter(
             workspace__slug=slug, project_id=project_id
         ).first()
@@ -318,7 +318,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
 
         # Get the inbox issue
         inbox_issue = InboxIssue.objects.get(
-            pk=pk,
+            issue_id=issue_id,
             workspace__slug=slug,
             project_id=project_id,
             inbox_id=inbox.id,
@@ -345,7 +345,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         if inbox_issue.status in [-2, -1, 0, 2]:
             # Delete the issue also
             Issue.objects.filter(
-                workspace__slug=slug, project_id=project_id, pk=inbox_issue.issue_id
+                workspace__slug=slug, project_id=project_id, pk=issue_id
             ).delete()
 
         inbox_issue.delete()
