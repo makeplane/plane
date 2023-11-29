@@ -85,7 +85,7 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={isGoingToWorkspace}
           >
-            {isGoingToWorkspace ? "..." : "Go to workspace"}
+            {isGoingToWorkspace ? "Going to app..." : "Go to workspace"}
           </Button>
         </div>
       </form>

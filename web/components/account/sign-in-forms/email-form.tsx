@@ -143,7 +143,7 @@ export const EmailForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={Boolean(isCheckingEmail)}
           >
-            {isCheckingEmail === "password" ? "..." : "Use password"}
+            {isCheckingEmail === "password" ? "Loading..." : "Use password"}
           </Button>
         </div>
       </form>

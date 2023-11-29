@@ -125,7 +125,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
           </p>
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? "..." : "Go to workspace"}
+          {isSubmitting ? "Submitting..." : "Go to workspace"}
         </Button>
       </form>
     </>
