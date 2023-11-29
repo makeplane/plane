@@ -1,9 +1,9 @@
 require("dotenv").config({ path: ".env" });
-
 const { withSentryConfig } = require("@sentry/nextjs");
 const path = require("path");
 
 const nextConfig = {
+  transpilePackages: ["@plane/ui", "@plane/lite-text-editor", "@plane/rich-text-editor", "@plane/document-editor"],
   reactStrictMode: false,
   swcMinify: true,
   images: {
@@ -16,10 +16,6 @@ const nextConfig = {
     unoptimized: true,
   },
   output: "standalone",
-  experimental: {
-    // this includes files from the monorepo base two directories up
-    outputFileTracingRoot: path.join(__dirname, "../"),
-  },
 };
 
 if (parseInt(process.env.NEXT_PUBLIC_ENABLE_SENTRY || "0")) {

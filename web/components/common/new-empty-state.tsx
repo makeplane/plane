@@ -48,7 +48,7 @@ export const NewEmptyState: React.FC<Props> = ({
         <h3 className="font-semibold text-2xl">{title}</h3>
         {description && <p className=" text-lg">{description}</p>}
         <div className="relative w-full max-w-6xl">
-          <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text} />
+          <Image src={image} className="w-52 sm:w-60" alt={primaryButton?.text || "button image"} />
         </div>
 
         <div className="flex justify-center items-start relative">
