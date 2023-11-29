@@ -132,7 +132,10 @@ export class InboxFiltersStore implements IInboxFiltersStore {
         };
       });
 
-      await this.inboxService.patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps });
+      const userRole = this.rootStore.user?.projectMemberInfo?.[projectId]?.role || 0;
+      if (userRole > 10) {
+        await this.inboxService.patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps });
+      }
     } catch (error) {
       runInAction(() => {
         this.error = error;

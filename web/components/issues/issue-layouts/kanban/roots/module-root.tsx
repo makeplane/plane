@@ -11,6 +11,7 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface IModuleKanBanLayout {}
 
@@ -29,28 +30,6 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     moduleIssueKanBanView: moduleIssueKanBanViewStore,
     kanBanHelpers: kanBanHelperStore,
   } = useMobxStore();
-
-  // const handleIssues = useCallback(
-  //   (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => {
-  //     if (!workspaceSlug || !moduleId) return;
-
-  //     if (action === "update") {
-  //       moduleIssueStore.updateIssueStructure(group_by, sub_group_by, issue);
-  //       issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-  //     }
-  //     if (action === "delete") moduleIssueStore.deleteIssue(group_by, sub_group_by, issue);
-  //     if (action === "remove" && issue.bridge_id) {
-  //       moduleIssueStore.deleteIssue(group_by, null, issue);
-  //       moduleIssueStore.removeIssueFromModule(
-  //         workspaceSlug.toString(),
-  //         issue.project,
-  //         moduleId.toString(),
-  //         issue.bridge_id
-  //       );
-  //     }
-  //   },
-  //   [moduleIssueStore, issueDetailStore, moduleId, workspaceSlug]
-  // );
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
@@ -73,8 +52,8 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     destination: any,
     subGroupBy: string | null,
     groupBy: string | null,
-    issues: IIssue[],
-    issueWithIds: any
+    issues: IIssueResponse | undefined,
+    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
   ) => {
     if (kanBanHelperStore.handleDragDrop)
       kanBanHelperStore.handleDragDrop(

@@ -53,7 +53,7 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
         </div>
       ) : (
         <>
-          {Object.keys(getIssues ?? {}).length == 0 ? (
+          {Object.keys(getIssues ?? {}).length == 0 && !loader ? (
             <ProjectEmptyState />
           ) : (
             <div className="w-full h-full relative overflow-auto">
