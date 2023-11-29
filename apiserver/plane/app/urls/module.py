@@ -7,7 +7,6 @@ from plane.app.views import (
     ModuleLinkViewSet,
     ModuleFavoriteViewSet,
     BulkImportModulesEndpoint,
-    ModuleIssueGroupedEndpoint,
 )
 
 
@@ -43,11 +42,6 @@ urlpatterns = [
             }
         ),
         name="project-module-issues",
-    ),
-    path(
-        "v3/workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/",
-        ModuleIssueGroupedEndpoint.as_view(),
-        name="project-issue-cycle",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:pk>/",

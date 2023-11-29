@@ -233,7 +233,7 @@ export class CycleStore implements ICycleStore {
 
       const _activeCycleIssues = {
         ...this.active_cycle_issues,
-        [cycleId]: _cycleIssues as IIssue[],
+        [cycleId]: Object.values(_cycleIssues) as IIssue[],
       };
 
       runInAction(() => {

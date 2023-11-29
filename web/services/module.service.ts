@@ -63,21 +63,13 @@ export class ModuleService extends APIService {
       });
   }
 
-  async getModuleIssues(workspaceSlug: string, projectId: string, moduleId: string): Promise<IIssue[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getV3ModuleIssues(
+  async getModuleIssues(
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
     queries?: any
   ): Promise<IIssueResponse> {
-    return this.get(`/api/v3/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-issues/`, {
       params: queries,
     })
       .then((response) => response?.data)

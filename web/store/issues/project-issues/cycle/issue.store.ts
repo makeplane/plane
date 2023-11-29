@@ -168,7 +168,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       this.currentProjectId = projectId;
 
       const params = this.rootStore?.cycleIssuesFilter?.appliedFilters;
-      const response = await this.cycleService.getV3CycleIssues(workspaceSlug, projectId, cycleId, params);
+      const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
 
       const _issues = { ...this.issues, [cycleId]: { ...response } };
 

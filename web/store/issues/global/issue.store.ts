@@ -159,7 +159,7 @@ export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesSt
       else if (this.currentUserIssueTab === "subscribed")
         params = params ? { ...params, subscriber: userId } : { subscriber: userId };
 
-      const response = await this.userService.getV3UserProfileIssues(workspaceSlug, userId, params);
+      const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
 
       if (!this.currentUserIssueTab) return;
 
