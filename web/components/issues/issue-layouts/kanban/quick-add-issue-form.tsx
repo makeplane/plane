@@ -15,7 +15,7 @@ import { createIssuePayload } from "helpers/issue.helper";
 import { IIssue, IProject } from "types";
 
 const Inputs = (props: any) => {
-  const { register, setFocus, projectDetails } = props;
+  const { register, setFocus, projectDetail } = props;
 
   useEffect(() => {
     setFocus("name");
@@ -23,7 +23,7 @@ const Inputs = (props: any) => {
 
   return (
     <div>
-      <h4 className="text-xs font-medium leading-5 text-custom-text-300">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="text-xs font-medium leading-5 text-custom-text-300">{projectDetail?.identifier ?? "..."}</h4>
       <input
         autoComplete="off"
         placeholder="Issue Title"
