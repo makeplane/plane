@@ -35,7 +35,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         relative_link = f"/workspace-invitations/?invitation_id={workspace_member_invite.id}&email={email}&slug={workspace.slug}"
 
         # The complete url including the domain
-        abs_url = current_site + relative_link
+        abs_url = str(current_site) + relative_link
 
         instance_configuration = InstanceConfiguration.objects.filter(
             key__startswith="EMAIL_"
@@ -133,6 +133,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
 
         return
     except (Workspace.DoesNotExist, WorkspaceMemberInvite.DoesNotExist) as e:
+        print("Workspace or WorkspaceMember Invite Does not exists")
         return
     except Exception as e:
         # Print logs if in DEBUG mode

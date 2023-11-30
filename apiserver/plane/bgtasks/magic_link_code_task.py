@@ -21,11 +21,6 @@ from plane.license.utils.instance_value import get_email_configuration
 @shared_task
 def magic_link(email, key, token, current_site):
     try:
-        if current_site:
-            realtivelink = f"/magic-sign-in/?password={token}&key={key}"
-            abs_url = current_site + realtivelink
-        else:
-            abs_url = ""
 
         instance_configuration = InstanceConfiguration.objects.filter(
             key__startswith="EMAIL_"
@@ -69,7 +64,7 @@ def magic_link(email, key, token, current_site):
 
         # Send the mail
         subject = f"Your unique Plane login code is {token}"
-        context = {"code": token}
+        context = {"code": token, "email": email}
 
         html_content = render_to_string("emails/auth/magic_signin.html", context)
         text_content = strip_tags(html_content)
@@ -93,6 +88,7 @@ def magic_link(email, key, token, current_site):
         msg.send()
         return
     except Exception as e:
+        print(e)
         capture_exception(e)
         # Print logs if in DEBUG mode
         if settings.DEBUG:
