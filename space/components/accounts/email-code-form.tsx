@@ -101,7 +101,10 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
 
   useEffect(() => {
     const submitForm = (e: KeyboardEvent) => {
-      if (!codeSent && e.key === "Enter") {
+      if(e.key === "Enter"){
+        e.preventDefault()
+      }
+      else if (!codeSent) {
         e.preventDefault();
         handleSubmit(onSubmit)().then(() => {
           setResendCodeTimer(30);

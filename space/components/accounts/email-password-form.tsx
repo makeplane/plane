@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { EmailResetPasswordForm } from "./email-reset-password-form";
 // ui
 import { Input, PrimaryButton } from "components/ui";
+import CustomForm from "components/ui/form";
 // types
 type EmailPasswordFormValues = {
   email: string;
