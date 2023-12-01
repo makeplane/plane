@@ -10,10 +10,12 @@ import { Check, ChevronDown, Search } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
+import { IIssueLabel } from "types";
 
 export interface IIssuePropertyLabels {
   projectId: string | null;
   value: string[];
+  defaultOptions?: any;
   onChange: (data: string[]) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -29,6 +31,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const {
     projectId,
     value,
+    defaultOptions = [],
     onChange,
     disabled,
     hideDropdownArrow = false,
@@ -42,7 +45,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   const {
     workspace: workspaceStore,
-    projectLabel: { fetchProjectLabels, projectLabels },
+    projectLabel: { fetchProjectLabels, labels },
   }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
@@ -59,7 +62,11 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
 
   if (!value) return null;
 
-  const options = (projectLabels ? projectLabels : []).map((label) => ({
+  let projectLabels: IIssueLabel[] = defaultOptions;
+  const storeLabels = projectId && labels ? labels[projectId] : [];
+  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+
+  const options = projectLabels.map((label) => ({
     value: label.id,
     query: label.name,
     content: (
@@ -95,7 +102,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
-            {(projectLabels ? projectLabels : [])
+            {projectLabels
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
                 <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
@@ -123,7 +130,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             <Tooltip
               position="top"
               tooltipHeading="Labels"
-              tooltipContent={(projectLabels ? projectLabels : [])
+              tooltipContent={projectLabels
                 ?.filter((l) => value.includes(l.id))
                 .map((l) => l.name)
                 .join(", ")}
@@ -167,7 +174,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => !projectLabels && fetchLabels()}
+          onClick={() => !storeLabels && fetchLabels()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -200,8 +207,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                   key={option.value}
                   value={option.value}
                   className={({ selected }) =>
-                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-80
-                     ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
+                      selected ? "text-custom-text-100" : "text-custom-text-200"
+                    }`
                   }
                 >
                   {({ selected }) => (

@@ -110,6 +110,8 @@ export class ProjectLabelStore implements IProjectLabelStore {
 
       const labelResponse = await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId);
 
+      console.log("labelResponse", labelResponse);
+
       runInAction(() => {
         this.labels = {
           ...this.labels,
