@@ -6,11 +6,11 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectViewListItem } from "components/views";
-import { EmptyState } from "components/common";
+import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Input, Loader } from "@plane/ui";
 // assets
-import emptyView from "public/empty-state/view.svg";
+import emptyView from "public/empty-state/empty_view.webp";
 // icons
 import { Plus, Search } from "lucide-react";
 
@@ -59,13 +59,18 @@ export const ProjectViewsList = observer(() => {
           )}
         </div>
       ) : (
-        <EmptyState
-          title="Get focused with views"
-          description="Views aid in saving your issues by applying various filters and grouping options."
+        <NewEmptyState
+          title="Save filtered views for your project. Create as many as you need."
+          description="Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best."
           image={emptyView}
+          comicBox={{
+            title: "Views work atop Issue properties.",
+            description: "You can create a view from here with as many properties as filters as you see fit.",
+            direction: "right",
+          }}
           primaryButton={{
             icon: <Plus size={14} strokeWidth={2} />,
-            text: "New View",
+            text: "Build your first view",
             onClick: () => commandPaletteStore.toggleCreateViewModal(true),
           }}
         />
