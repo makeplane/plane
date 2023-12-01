@@ -116,7 +116,7 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
           <p className="text-xs text-onboarding-text-200">
             When you click the button above, you agree with our{" "}
             <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-              <a className="font-semibold underline">terms and conditions of service.</a>
+              <div className="font-semibold underline">terms and conditions of service.</div>
             </Link>
           </p>
         </div>

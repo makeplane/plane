@@ -144,7 +144,7 @@ const HomePage: NextPageWithLayout = () => {
               <p className="text-xs text-onboarding-text-200">
                 When you click the button above, you agree with our{" "}
                 <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-                  <a className="font-semibold underline">terms and conditions of service.</a>
+                  <div className="font-semibold underline">terms and conditions of service.</div>
                 </Link>
               </p>
             </form>
@@ -153,14 +153,8 @@ const HomePage: NextPageWithLayout = () => {
             <Lightbulb className="h-7 w-7 mr-2 mx-3" />
             <p className="text-sm text-left text-onboarding-text-100">
               Try the latest features, like Tiptap editor, to write compelling responses.{" "}
-              <Link href="https://plane.so/changelog">
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-sm underline hover:cursor-pointer"
-                >
-                  See new features
-                </a>
+              <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
+                <div className="font-medium text-sm underline hover:cursor-pointer">See new features</div>
               </Link>
             </p>
           </div>

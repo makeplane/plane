@@ -157,145 +157,143 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
       <DeletePageModal isOpen={deletePageModal} onClose={() => setDeletePageModal(false)} data={page} />
       <li>
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
-          <span>
-            <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
-              <div className="flex items-center justify-between">
-                <div className="flex overflow-hidden items-center gap-2">
-                  <FileText className="h-4 w-4 shrink-0" />
-                  <p className="mr-2 truncate text-sm text-custom-text-100">{page.name}</p>
-                  {page.label_details.length > 0 &&
-                    page.label_details.map((label) => (
-                      <div
-                        key={label.id}
-                        className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs"
+          <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
+            <div className="flex items-center justify-between">
+              <div className="flex overflow-hidden items-center gap-2">
+                <FileText className="h-4 w-4 shrink-0" />
+                <p className="mr-2 truncate text-sm text-custom-text-100">{page.name}</p>
+                {page.label_details.length > 0 &&
+                  page.label_details.map((label) => (
+                    <div
+                      key={label.id}
+                      className="group flex items-center gap-1 rounded-2xl border border-custom-border-200 px-2 py-0.5 text-xs"
+                      style={{
+                        backgroundColor: `${label?.color}20`,
+                      }}
+                    >
+                      <span
+                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
                         style={{
-                          backgroundColor: `${label?.color}20`,
+                          backgroundColor: label?.color,
                         }}
-                      >
-                        <span
-                          className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                          style={{
-                            backgroundColor: label?.color,
-                          }}
-                        />
-                        {label.name}
-                      </div>
-                    ))}
-                </div>
-                <div className="flex items-center gap-2.5">
-                  {page.archived_at ? (
-                    <Tooltip
-                      tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderShortDate(
-                        page.archived_at
-                      )}`}
-                    >
-                      <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.archived_at)}</p>
-                    </Tooltip>
-                  ) : (
-                    <Tooltip
-                      tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
-                        page.updated_at
-                      )}`}
-                    >
-                      <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
-                    </Tooltip>
-                  )}
-                  {!page.archived_at && userCanEdit && (
-                    <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
-                      {page.is_favorite ? (
-                        <button type="button" onClick={handleRemoveFromFavorites}>
-                          <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
-                        </button>
-                      ) : (
-                        <button type="button" onClick={handleAddToFavorites}>
-                          <Star className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </Tooltip>
-                  )}
-                  {!page.archived_at && userCanEdit && (
-                    <Tooltip
-                      tooltipContent={`${
-                        page.access
-                          ? "This page is only visible to you"
-                          : "This page can be viewed by anyone in the project"
-                      }`}
-                    >
-                      {page.access ? (
-                        <button type="button" onClick={handleMakePublic}>
-                          <Lock className="h-3.5 w-3.5" />
-                        </button>
-                      ) : (
-                        <button type="button" onClick={handleMakePrivate}>
-                          <Globe2 className="h-3.5 w-3.5" />
-                        </button>
-                      )}
-                    </Tooltip>
-                  )}
+                      />
+                      {label.name}
+                    </div>
+                  ))}
+              </div>
+              <div className="flex items-center gap-2.5">
+                {page.archived_at ? (
                   <Tooltip
-                    position="top-right"
-                    tooltipContent={`Created by ${
-                      projectMembers?.find((projectMember) => projectMember.member.id === page.created_by)?.member
-                        .display_name ?? ""
-                    } on ${renderLongDateFormat(`${page.created_at}`)}`}
+                    tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderShortDate(
+                      page.archived_at
+                    )}`}
                   >
-                    <AlertCircle className="h-3.5 w-3.5" />
+                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.archived_at)}</p>
                   </Tooltip>
-                  {page.archived_at ? (
-                    <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
-                      {userCanEdit && (
-                        <>
-                          <CustomMenu.MenuItem onClick={handleRestorePage}>
-                            <div className="flex items-center gap-2">
-                              <ArchiveRestoreIcon className="h-3 w-3" />
-                              <span>Restore page</span>
-                            </div>
-                          </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem onClick={handleDeletePage}>
-                            <div className="flex items-center gap-2">
-                              <Trash2 className="h-3 w-3" />
-                              <span>Delete page</span>
-                            </div>
-                          </CustomMenu.MenuItem>
-                        </>
-                      )}
-                      <CustomMenu.MenuItem onClick={handleCopyUrl}>
-                        <div className="flex items-center gap-2">
-                          <LinkIcon className="h-3 w-3" />
-                          <span>Copy page link</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    </CustomMenu>
-                  ) : (
-                    <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
-                      {userCanEdit && (
-                        <>
-                          <CustomMenu.MenuItem onClick={handleEditPage}>
-                            <div className="flex items-center gap-2">
-                              <Pencil className="h-3 w-3" />
-                              <span>Edit page</span>
-                            </div>
-                          </CustomMenu.MenuItem>
-                          <CustomMenu.MenuItem onClick={handleArchivePage}>
-                            <div className="flex items-center gap-2">
-                              <Archive className="h-3 w-3" />
-                              <span>Archive page</span>
-                            </div>
-                          </CustomMenu.MenuItem>
-                        </>
-                      )}
-                      <CustomMenu.MenuItem onClick={handleCopyUrl}>
-                        <div className="flex items-center gap-2">
-                          <LinkIcon className="h-3 w-3" />
-                          <span>Copy page link</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    </CustomMenu>
-                  )}
-                </div>
+                ) : (
+                  <Tooltip
+                    tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
+                      page.updated_at
+                    )}`}
+                  >
+                    <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
+                  </Tooltip>
+                )}
+                {!page.archived_at && userCanEdit && (
+                  <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
+                    {page.is_favorite ? (
+                      <button type="button" onClick={handleRemoveFromFavorites}>
+                        <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
+                      </button>
+                    ) : (
+                      <button type="button" onClick={handleAddToFavorites}>
+                        <Star className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </Tooltip>
+                )}
+                {!page.archived_at && userCanEdit && (
+                  <Tooltip
+                    tooltipContent={`${
+                      page.access
+                        ? "This page is only visible to you"
+                        : "This page can be viewed by anyone in the project"
+                    }`}
+                  >
+                    {page.access ? (
+                      <button type="button" onClick={handleMakePublic}>
+                        <Lock className="h-3.5 w-3.5" />
+                      </button>
+                    ) : (
+                      <button type="button" onClick={handleMakePrivate}>
+                        <Globe2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </Tooltip>
+                )}
+                <Tooltip
+                  position="top-right"
+                  tooltipContent={`Created by ${
+                    projectMembers?.find((projectMember) => projectMember.member.id === page.created_by)?.member
+                      .display_name ?? ""
+                  } on ${renderLongDateFormat(`${page.created_at}`)}`}
+                >
+                  <AlertCircle className="h-3.5 w-3.5" />
+                </Tooltip>
+                {page.archived_at ? (
+                  <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
+                    {userCanEdit && (
+                      <>
+                        <CustomMenu.MenuItem onClick={handleRestorePage}>
+                          <div className="flex items-center gap-2">
+                            <ArchiveRestoreIcon className="h-3 w-3" />
+                            <span>Restore page</span>
+                          </div>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem onClick={handleDeletePage}>
+                          <div className="flex items-center gap-2">
+                            <Trash2 className="h-3 w-3" />
+                            <span>Delete page</span>
+                          </div>
+                        </CustomMenu.MenuItem>
+                      </>
+                    )}
+                    <CustomMenu.MenuItem onClick={handleCopyUrl}>
+                      <div className="flex items-center gap-2">
+                        <LinkIcon className="h-3 w-3" />
+                        <span>Copy page link</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                ) : (
+                  <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
+                    {userCanEdit && (
+                      <>
+                        <CustomMenu.MenuItem onClick={handleEditPage}>
+                          <div className="flex items-center gap-2">
+                            <Pencil className="h-3 w-3" />
+                            <span>Edit page</span>
+                          </div>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem onClick={handleArchivePage}>
+                          <div className="flex items-center gap-2">
+                            <Archive className="h-3 w-3" />
+                            <span>Archive page</span>
+                          </div>
+                        </CustomMenu.MenuItem>
+                      </>
+                    )}
+                    <CustomMenu.MenuItem onClick={handleCopyUrl}>
+                      <div className="flex items-center gap-2">
+                        <LinkIcon className="h-3 w-3" />
+                        <span>Copy page link</span>
+                      </div>
+                    </CustomMenu.MenuItem>
+                  </CustomMenu>
+                )}
               </div>
             </div>
-          </span>
+          </div>
         </Link>
       </li>
     </>

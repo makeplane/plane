@@ -103,7 +103,7 @@ export const ProfileLayoutSidebar = observer(() => {
     >
       <div className="h-full w-full flex flex-col gap-y-4">
         <Link href={`/${redirectWorkspaceSlug}`}>
-          <a
+          <div
             className={`flex-shrink-0 flex items-center gap-2 px-4 pt-4 truncate ${
               sidebarCollapsed ? "justify-center" : ""
             }`}
@@ -114,7 +114,7 @@ export const ProfileLayoutSidebar = observer(() => {
             {!sidebarCollapsed && (
               <h4 className="text-custom-text-200 font-semibold text-lg truncate">Profile settings</h4>
             )}
-          </a>
+          </div>
         </Link>
         <div className="flex-shrink-0 flex flex-col overflow-x-hidden px-4">
           {!sidebarCollapsed && (
@@ -126,7 +126,7 @@ export const ProfileLayoutSidebar = observer(() => {
 
               return (
                 <Link key={link.key} href={link.href}>
-                  <a className="block w-full">
+                  <div className="w-full">
                     <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                       <div
                         className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
@@ -139,7 +139,7 @@ export const ProfileLayoutSidebar = observer(() => {
                         {!sidebarCollapsed && link.label}
                       </div>
                     </Tooltip>
-                  </a>
+                  </div>
                 </Link>
               );
             })}
@@ -190,7 +190,7 @@ export const ProfileLayoutSidebar = observer(() => {
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
               <Link key={link.key} href={link.href}>
-                <a className="block w-full">
+                <div className="block w-full">
                   <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                     <div
                       className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
@@ -201,7 +201,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       {!sidebarCollapsed && link.label}
                     </div>
                   </Tooltip>
-                </a>
+                </div>
               </Link>
             ))}
           </div>
