@@ -77,7 +77,7 @@ class StateViewSet(BaseViewSet):
         )
 
         if state.default:
-            return Response({"error": "Default state cannot be deleted"}, status=False)
+            return Response({"error": "Default state cannot be deleted"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for any issues in the state
         issue_exist = Issue.issue_objects.filter(state=pk).exists()
