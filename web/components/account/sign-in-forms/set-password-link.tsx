@@ -30,7 +30,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
   const {
     control,
     formState: { errors, isValid },
-    watch,
+    handleSubmit,
   } = useForm({
     defaultValues: {
       email,
@@ -39,11 +39,13 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
     reValidateMode: "onChange",
   });
 
-  const handleSendNewLink = async () => {
+  const handleSendNewLink = async (formData: { email: string }) => {
     setIsSendingNewLink(true);
 
+    updateEmail(formData.email);
+
     const payload: IEmailCheckData = {
-      email: watch("email"),
+      email: formData.email,
       type: "password",
     };
 
@@ -76,7 +78,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
         password
       </p>
 
-      <form className="mt-5 sm:w-96 mx-auto space-y-4">
+      <form onSubmit={handleSubmit(handleSendNewLink)} className="mt-5 sm:w-96 mx-auto space-y-4">
         <div className="space-y-1">
           <Controller
             control={control}
@@ -92,10 +94,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
                   name="email"
                   type="email"
                   value={value}
-                  onChange={(e) => {
-                    updateEmail(e.target.value);
-                    onChange(e.target.value);
-                  }}
+                  onChange={onChange}
                   ref={ref}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@firstflight.com"
@@ -112,11 +111,10 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
           />
         </div>
         <Button
-          type="button"
+          type="submit"
           variant="primary"
           className="w-full"
           size="xl"
-          onClick={handleSendNewLink}
           disabled={!isValid}
           loading={isSendingNewLink}
         >
