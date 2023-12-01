@@ -76,7 +76,6 @@ NEXT_PUBLIC_ENABLE_OAUTH=0
 # Backend
 # Debug value for api server use it as 0 for production use
 DEBUG=0
-DJANGO_SETTINGS_MODULE="plane.settings.selfhosted" # deprecated
 ​
 # Error logs
 SENTRY_DSN=""
