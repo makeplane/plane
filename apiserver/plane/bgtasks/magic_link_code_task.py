@@ -40,9 +40,6 @@ def magic_link(email, key, token, current_site):
             # Check the instance registration
             instance = Instance.objects.first()
 
-            # send the emails through control center
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-
             headers = {
                 "Content-Type": "application/json",
                 "x-instance-id": instance.instance_id,
@@ -55,7 +52,7 @@ def magic_link(email, key, token, current_site):
             }
 
             _ = requests.post(
-                f"{license_engine_base_url}/api/instances/users/magic-code/",
+                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/magic-code/",
                 headers=headers,
                 data=json.dumps(payload),
             )

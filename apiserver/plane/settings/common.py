@@ -325,3 +325,6 @@ USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 # Posthog settings
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
+
+# License engine base url
+LICENSE_ENGINE_BASE_URL = os.environ.get("LICENSE_ENGINE_BASE_URL", "https://control-center.plane.so")

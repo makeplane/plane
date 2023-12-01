@@ -10,7 +10,6 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.conf import settings
-from django.contrib.auth.hashers import make_password
 
 # Third party imports
 from rest_framework.response import Response
@@ -33,7 +32,6 @@ from plane.settings.redis import redis_instance
 from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
-from plane.bgtasks.magic_link_code_task import magic_link
 from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
@@ -49,6 +47,14 @@ class SignUpEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        # Check if the instance configuration is done
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
 
         email = request.data.get("email", False)
@@ -71,6 +77,7 @@ class SignUpEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # If the sign up is not enabled and the user does not have invite disallow him from creating the account
         if (
             get_configuration_value(
                 instance_configuration,
@@ -124,6 +131,14 @@ class SignInEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        # Check if the instance configuration is done
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         email = request.data.get("email", False)
         password = request.data.get("password", False)
 
@@ -141,14 +156,6 @@ class SignInEndpoint(BaseAPIView):
         except ValidationError as e:
             return Response(
                 {"error": "Please provide a valid email address."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Check if the instance setup is done or not
-        instance = Instance.objects.first()
-        if instance is None or not instance.is_setup_done:
-            return Response(
-                {"error": "Instance is not configured"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -288,6 +295,7 @@ class MagicSignInEndpoint(BaseAPIView):
     ]
 
     def post(self, request):
+        # Check if the instance configuration is done
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             return Response(

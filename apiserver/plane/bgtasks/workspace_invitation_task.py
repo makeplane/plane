@@ -55,11 +55,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             # Check the instance registration
             instance = Instance.objects.first()
 
-            # send the emails through control center
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-            if not license_engine_base_url:
-                raise Exception("License engine base url is required")
-
             headers = {
                 "Content-Type": "application/json",
                 "x-instance-id": instance.instance_id,
@@ -73,7 +68,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
                 "email": email,
             }
             _ = requests.post(
-                f"{license_engine_base_url}/api/instances/users/workspace-invitation/",
+                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/workspace-invitation/",
                 headers=headers,
                 data=json.dumps(payload),
             )

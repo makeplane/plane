@@ -6,6 +6,7 @@ import requests
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
+from django.conf import settings
 
 # Module imports
 from plane.license.models import Instance
@@ -39,11 +40,6 @@ class Command(BaseCommand):
             if not machine_signature:
                 raise CommandError("Machine signature is required")
 
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL")
-
-            if not license_engine_base_url:
-                raise CommandError("LICENSE_ENGINE_BASE_URL is required")
-
             headers = {"Content-Type": "application/json"}
 
             payload = {
@@ -54,7 +50,7 @@ class Command(BaseCommand):
             }
 
             response = requests.post(
-                f"{license_engine_base_url}/api/instances/",
+                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
                 headers=headers,
                 data=json.dumps(payload),
             )
