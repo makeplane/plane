@@ -17,11 +17,7 @@ export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
   // store
   const {
     instance: { instance },
-    user: { currentUser },
   } = useMobxStore();
-  // fetch
-
-  console.log("instance", instance);
 
   if (instance?.is_setup_done === false) {
     return <InstanceSetupView />;

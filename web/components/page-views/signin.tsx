@@ -119,7 +119,7 @@ export const SignInView = observer(() => {
                       </Link>
                     </p>
                   </div>
-                  <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 ">
+                  <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100">
                     <Image
                       src={signInIssues}
                       alt="Plane Issues"

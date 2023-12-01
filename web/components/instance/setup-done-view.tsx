@@ -1,43 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-
+import { useTheme } from "next-themes";
 // ui
 import { Button } from "@plane/ui";
 import { UserCog2 } from "lucide-react";
-// image
+// images
 import instanceSetupDone from "public/instance-setup-done.svg";
-import PlaneLogo from "public/plane-logos/blue-without-text.png";
+import PlaneBlackLogo from "public/plane-logos/black-horizontal-with-blue-logo.svg";
+import PlaneWhiteLogo from "public/plane-logos/white-horizontal-with-blue-logo.svg";
+import { useMobxStore } from "lib/mobx/store-provider";
 
-export const InstanceSetupDone = () => (
-  <div className="h-screen w-full overflow-hidden">
-    <div className={`bg-onboarding-gradient-100 h-screen w-full pt-12`}>
-      <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
-        <div
-          className={`flex flex-col items-center relative px-7 sm:px-0 bg-onboarding-gradient-200 h-full rounded-t-md overflow-auto`}
-        >
-          <div className="flex items-center gap-5 py-10 justify-center">
-            <Image src={PlaneLogo} height={44} width={44} alt="image" />
-            <span className="text-4xl font-semibold">To the stratosphere now!</span>
-          </div>
+export const InstanceSetupDone = () => {
+  // states
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  // next-themes
+  const { resolvedTheme } = useTheme();
+  // mobx store
+  const {
+    instance: { fetchInstanceInfo },
+  } = useMobxStore();
 
-          <div className="flex items-center justify-center">
-            <Image src={instanceSetupDone} height={360} width={444} alt="image" />
-          </div>
+  const planeLogo = resolvedTheme === "dark" ? PlaneWhiteLogo : PlaneBlackLogo;
 
-          <div className="flex flex-col gap-8 items-center py-12 w-full">
-            <span className="text-xl font-medium">
-              Your instance is now ready for more security, more controls, and more intelligence.
-            </span>
-            <Button size="lg" prependIcon={<UserCog2 />}>
-              Go to God Mode
-            </Button>
+  const redirectToGodMode = async () => {
+    setIsRedirecting(true);
 
-            <div className="flex p-2.5 text-custom-primary-100 bg-custom-primary-10 border border-custom-primary-100 text-sm text-left mx-auto rounded">
-              Use this wisely. Remember, with great power comes great responsibility.🕷️
+    await fetchInstanceInfo().finally(() => setIsRedirecting(false));
+  };
+
+  return (
+    <div className="h-full w-full overflow-hidden">
+      <div className="bg-onboarding-gradient-100 h-full w-full pt-12 overflow-hidden">
+        <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 overflow-hidden">
+          <div className="flex flex-col items-center relative px-7 sm:px-0 bg-onboarding-gradient-200 h-full rounded-t-md overflow-y-auto pb-8">
+            <div className="flex py-10 justify-center">
+              <div className="h-[30px]">
+                <Image src={planeLogo} className="h-full w-full" alt="Plane logo" />
+              </div>
+            </div>
+
+            <div className="grid place-items-center my-8">
+              <div className="w-[444px]">
+                <Image src={instanceSetupDone} className="h-full w-full" alt="image" />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-8 items-center w-full sm:px-4">
+              <div className="bg-purple-500/20 border border-purple-500 py-2.5 px-3 rounded text-center space-y-3">
+                <h6 className="text-base font-semibold">
+                  Your instance is now ready for more security, more controls, and more intelligence.
+                </h6>
+                <p className="text-xs font-medium">
+                  Use this wisely. Remember, with great power comes great responsibility.
+                </p>
+              </div>
+              <Button size="lg" prependIcon={<UserCog2 />} onClick={redirectToGodMode} loading={isRedirecting}>
+                {isRedirecting ? "Redirecting..." : "Go to God Mode"}
+              </Button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
