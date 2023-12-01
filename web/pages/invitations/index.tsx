@@ -213,7 +213,10 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
               image={emptyInvitation}
               primaryButton={{
                 text: "Back to dashboard",
-                onClick: () => router.push(`/${redirectWorkspaceSlug}`),
+                onClick: () => {
+                  if (user?.is_onboarded === false) router.push("/onboarding");
+                  else router.push(`/${redirectWorkspaceSlug}`);
+                },
               }}
             />
           </div>
