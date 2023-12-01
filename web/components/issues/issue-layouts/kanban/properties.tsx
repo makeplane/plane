@@ -89,6 +89,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
           value={issue?.state || null}
+          defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
           onChange={handleState}
           disabled={isReadOnly}
           hideDropdownArrow
@@ -110,6 +111,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
+          defaultOptions={issue?.label_details ? issue.label_details : []}
           onChange={handleLabel}
           disabled={isReadOnly}
           hideDropdownArrow
@@ -141,6 +143,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
+          defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={isReadOnly}
