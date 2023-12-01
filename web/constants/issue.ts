@@ -113,7 +113,7 @@ export const ISSUE_EXTRA_OPTIONS: {
   title: string;
 }[] = [
   { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
-  { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
+  { key: "show_empty_groups", title: "Show empty groups" }, // filter on front-end
 ];
 
 export const ISSUE_LAYOUTS: {
