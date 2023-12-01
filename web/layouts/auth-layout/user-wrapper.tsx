@@ -21,7 +21,6 @@ export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
       fetchCurrentUser,
       fetchCurrentUserInstanceAdminStatus,
       fetchCurrentUserSettings,
-      
     },
     workspace: { fetchWorkspaces },
   } = useMobxStore();

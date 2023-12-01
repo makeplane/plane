@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { CornerDownLeft, XCircle } from "lucide-react";
 // services
@@ -44,7 +45,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   // toast alert
   const { setToastAlert } = useToast();
   // timer
-  const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer();
+  const { timer: resendTimerCode, setTimer: setResendCodeTimer } = useTimer(30);
   // form info
   const {
     control,
@@ -131,11 +132,9 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
-        Moving to the runway
-      </h1>
-      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
-        Paste the code you got at <span className="font-medium text-custom-primary-100">{email}</span> below.
+      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">Moving to the runway</h1>
+      <p className="text-center text-sm text-onboarding-text-200 mt-3">
+        Paste the code you got at <span className="font-semibold text-custom-primary-100">{email}</span> below
       </p>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mt-5 sm:w-96 mx-auto space-y-4">
@@ -201,20 +200,24 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               />
             )}
           />
-          <button
-            type="button"
-            onClick={handleRequestNewCode}
-            className={`text-xs text-right w-full text-onboarding-text-200 ${
-              isRequestNewCodeDisabled ? "" : "hover:text-custom-primary-100"
-            }`}
-            disabled={isRequestNewCodeDisabled}
-          >
-            {resendTimerCode > 0
-              ? `Request new code in ${resendTimerCode}s`
-              : isRequestingNewCode
-              ? "Requesting new code..."
-              : "Request new code"}
-          </button>
+          <div className="w-full text-right">
+            <button
+              type="button"
+              onClick={handleRequestNewCode}
+              className={`text-xs ${
+                isRequestNewCodeDisabled
+                  ? "text-onboarding-text-300"
+                  : "text-onboarding-text-200 hover:text-custom-primary-100"
+              }`}
+              disabled={isRequestNewCodeDisabled}
+            >
+              {resendTimerCode > 0
+                ? `Request new code in ${resendTimerCode}s`
+                : isRequestingNewCode
+                ? "Requesting new code..."
+                : "Request new code"}
+            </button>
+          </div>
         </div>
         <Button
           type="submit"
@@ -226,6 +229,12 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
         >
           {isSubmitting ? "Signing in..." : "Confirm"}
         </Button>
+        <p className="text-xs text-onboarding-text-200">
+          When you click Confirm above, you agree with our{" "}
+          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <span className="font-semibold underline">terms and conditions of service.</span>
+          </Link>
+        </p>
       </form>
     </>
   );

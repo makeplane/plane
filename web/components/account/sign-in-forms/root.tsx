@@ -23,6 +23,8 @@ type Props = {
   handleSignInRedirection: () => Promise<void>;
 };
 
+const OAUTH_HIDDEN_STEPS = [ESignInSteps.OPTIONAL_SET_PASSWORD, ESignInSteps.CREATE_PASSWORD];
+
 export const SignInRoot: React.FC<Props> = (props) => {
   const { handleSignInRedirection } = props;
   // states
@@ -72,7 +74,7 @@ export const SignInRoot: React.FC<Props> = (props) => {
           />
         )}
       </div>
-      {signInStep !== ESignInSteps.OPTIONAL_SET_PASSWORD && (
+      {!OAUTH_HIDDEN_STEPS.includes(signInStep) && (
         <OAuthOptions
           updateEmail={(newEmail) => setEmail(newEmail)}
           handleStepChange={(step: ESignInSteps) => setSignInStep(step)}

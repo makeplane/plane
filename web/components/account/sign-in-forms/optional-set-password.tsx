@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // ui
 import { Button, Input } from "@plane/ui";
@@ -37,12 +38,12 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">Set a password</h1>
+      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">Set a password</h1>
       <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
-        If you{"'"}d to do away with codes, set a password here.
+        If you{"'"}d to do away with codes, set a password here
       </p>
 
-      <form className="mt-5 sm:w-96 mx-auto">
+      <form className="mt-5 sm:w-96 mx-auto space-y-4">
         <Controller
           control={control}
           name="email"
@@ -65,7 +66,7 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
             />
           )}
         />
-        <div className="grid grid-cols-2 gap-2.5 mt-4">
+        <div className="grid grid-cols-2 gap-2.5">
           <Button
             type="button"
             variant="primary"
@@ -88,6 +89,12 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
             {isGoingToWorkspace ? "Going to app..." : "Go to workspace"}
           </Button>
         </div>
+        <p className="text-xs text-onboarding-text-200">
+          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
+          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <span className="font-semibold underline">terms and conditions of service.</span>
+          </Link>
+        </p>
       </form>
     </>
   );
