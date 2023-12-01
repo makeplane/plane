@@ -108,7 +108,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             <Link
               href={`/${workspaceSlug}/projects/${issueDetails.parent_detail?.project_detail.id}/issues/${issueDetails.parent}`}
             >
-              <a className="flex items-center gap-3">
+              <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2.5">
                   <span
                     className="block h-2 w-2 rounded-full"
@@ -123,7 +123,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
                 <span className="truncate text-custom-text-100">
                   {issueDetails.parent_detail?.name.substring(0, 50)}
                 </span>
-              </a>
+              </div>
             </Link>
 
             <CustomMenu ellipsis optionsClassName="px-1.5">
