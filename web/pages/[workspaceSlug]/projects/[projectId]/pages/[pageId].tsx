@@ -7,7 +7,8 @@ import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
 // hooks
 import useUser from "hooks/use-user";
-import { useDebouncedCallback } from "use-debounce";
+import debounce from "lodash/debounce";
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -15,7 +16,7 @@ import { PageDetailsHeader } from "components/headers/page-details";
 import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
-import { Spinner, Tooltip } from "@plane/ui";
+import { Spinner } from "@plane/ui";
 // assets
 import emptyPage from "public/empty-state/page.svg";
 // helpers
@@ -28,7 +29,6 @@ import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { IssueService } from "services/issue";
 import { EIssueActions } from "components/issues/issue-layouts/types";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const fileService = new FileService();
@@ -36,8 +36,9 @@ const pageService = new PageService();
 const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = () => {
-
-  const { issueDetail: issueDetailStore } = useMobxStore();
+  const {
+    projectIssues: { updateIssue },
+  } = useMobxStore();
 
   const editorRef = useRef<any>(null);
 
@@ -52,11 +53,11 @@ const PageDetailsPage: NextPageWithLayout = () => {
     defaultValues: { name: "", description_html: "" },
   });
 
-
-  const { data: issues } = useSWR(
+  const { data: issuesResponse } = useSWR(
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
     workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
   );
+  const issues = Object.values(issuesResponse ?? {});
 
   // =================== Fetching Page Details ======================
   const {
@@ -70,31 +71,30 @@ const PageDetailsPage: NextPageWithLayout = () => {
       : null
   );
 
-
   const handleUpdateIssue = (issueId: string, data: Partial<IIssue>) => {
     if (!workspaceSlug || !projectId || !user) return;
 
-    issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
-  }
+    updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
+  };
 
   const fetchIssue = async (issueId: string) => {
-    const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string)
-    return issue as IIssue
-  }
+    const issue = await issueService.retrieve(workspaceSlug as string, projectId as string, issueId as string);
+    return issue as IIssue;
+  };
 
   const issueWidgetClickAction = (issueId: string, issueTitle: string) => {
     const url = new URL(router.asPath, window.location.origin);
     const params = new URLSearchParams(url.search);
 
-    if (params.has('peekIssueId')) {
-      params.set('peekIssueId', issueId);
+    if (params.has("peekIssueId")) {
+      params.set("peekIssueId", issueId);
     } else {
-      params.append('peekIssueId', issueId);
+      params.append("peekIssueId", issueId);
     }
 
     // Replace the current URL with the new one
     router.replace(`${url.pathname}?${params.toString()}`, undefined, { shallow: true });
-  }
+  };
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -113,7 +113,6 @@ const PageDetailsPage: NextPageWithLayout = () => {
       });
   };
 
-
   const updatePageTitle = async (title: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -127,7 +126,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
         };
       }, false);
 
-      await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), { name: title })
+      await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), { name: title });
     } catch (e) {
       mutatePageDetails();
     }
@@ -234,7 +233,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
     });
   }, [reset, pageDetails]);
 
-  const debouncedFormSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = debounce(async () => {
     handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 
@@ -278,21 +277,19 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 pageArchiveConfig={
                   user && pageDetails.owned_by === user.id
                     ? {
-                      action: pageDetails.archived_at ? unArchivePage : archivePage,
-                      is_archived: pageDetails.archived_at ? true : false,
-                      archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
-                    }
+                        action: pageDetails.archived_at ? unArchivePage : archivePage,
+                        is_archived: pageDetails.archived_at ? true : false,
+                        archived_at: pageDetails.archived_at ? new Date(pageDetails.archived_at) : undefined,
+                      }
                     : undefined
                 }
-                embedConfig={
-                  {
-                    issueEmbedConfig: {
-                      issues: issues ? issues : [],
-                      fetchIssue: fetchIssue,
-                      clickAction: issueWidgetClickAction
-                    }
-                  }
-                }
+                embedConfig={{
+                  issueEmbedConfig: {
+                    issues: issues ? issues : [],
+                    fetchIssue: fetchIssue,
+                    clickAction: issueWidgetClickAction,
+                  },
+                }}
               />
             ) : (
               <Controller
@@ -325,23 +322,21 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     pageArchiveConfig={
                       user && pageDetails.owned_by === user.id
                         ? {
-                          is_archived: pageDetails.archived_at ? true : false,
-                          action: pageDetails.archived_at ? unArchivePage : archivePage,
-                        }
+                            is_archived: pageDetails.archived_at ? true : false,
+                            action: pageDetails.archived_at ? unArchivePage : archivePage,
+                          }
                         : undefined
                     }
                     pageLockConfig={
                       user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
                     }
-                    embedConfig={
-                      {
-                        issueEmbedConfig: {
-                          issues: issues ? issues : [],
-                          fetchIssue: fetchIssue,
-                          clickAction: issueWidgetClickAction
-                        }
-                      }
-                    }
+                    embedConfig={{
+                      issueEmbedConfig: {
+                        issues: issues ? issues : [],
+                        fetchIssue: fetchIssue,
+                        clickAction: issueWidgetClickAction,
+                      },
+                    }}
                   />
                 )}
               />
@@ -350,11 +345,11 @@ const PageDetailsPage: NextPageWithLayout = () => {
           <IssuePeekOverview
             workspaceSlug={workspaceSlug as string}
             projectId={projectId as string}
-            issueId={peekIssueId ? peekIssueId as string : ""}
+            issueId={peekIssueId ? (peekIssueId as string) : ""}
             isArchived={false}
             handleIssue={(issueToUpdate) => {
-              if (peekIssueId && typeof peekIssueId === 'string') {
-                handleUpdateIssue(peekIssueId, issueToUpdate)
+              if (peekIssueId && typeof peekIssueId === "string") {
+                handleUpdateIssue(peekIssueId, issueToUpdate);
               }
             }}
           />

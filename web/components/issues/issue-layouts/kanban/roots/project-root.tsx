@@ -10,17 +10,19 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface IKanBanLayout {}
 
 export const KanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
     projectIssues: issueStore,
     projectIssuesFilter: issuesFilterStore,
     issueKanBanView: issueKanBanViewStore,
+    kanBanHelpers: kanBanHelperStore,
   } = useMobxStore();
 
   const issueActions = {
@@ -36,6 +38,28 @@ export const KanBanLayout: React.FC = observer(() => {
     },
   };
 
+  const handleDragDrop = (
+    source: any,
+    destination: any,
+    subGroupBy: string | null,
+    groupBy: string | null,
+    issues: IIssueResponse | undefined,
+    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
+  ) => {
+    if (kanBanHelperStore.handleDragDrop)
+      kanBanHelperStore.handleDragDrop(
+        source,
+        destination,
+        workspaceSlug,
+        projectId,
+        issueStore,
+        subGroupBy,
+        groupBy,
+        issues,
+        issueWithIds
+      );
+  };
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -45,6 +69,7 @@ export const KanBanLayout: React.FC = observer(() => {
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
       currentStore={EProjectStore.PROJECT}
+      handleDragDrop={handleDragDrop}
     />
   );
 });

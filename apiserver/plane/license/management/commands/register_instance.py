@@ -2,21 +2,22 @@
 import json
 import os
 import requests
-import uuid
 
 # Django imports
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 
 # Module imports
+from plane.license.models import Instance
 from plane.db.models import User
-from plane.license.models import Instance, InstanceAdmin
-
 
 class Command(BaseCommand):
     help = "Check if instance in registered else register"
+
+    def add_arguments(self, parser):
+        # Positional argument
+        parser.add_argument('machine_signature', type=str, help='Machine signature')
+
 
     def handle(self, *args, **options):
         # Check if the instance is registered
@@ -28,25 +29,15 @@ class Command(BaseCommand):
                 # Load JSON content from the file
                 data = json.load(file)
 
-            admin_email = os.environ.get("ADMIN_EMAIL")
-
-            try:
-                validate_email(admin_email)
-            except ValidationError:
-                CommandError(f"{admin_email} is not a valid ADMIN_EMAIL")
+            machine_signature = options.get("machine_signature", False)
+            instance_key = os.environ.get("INSTANCE_KEY", False)
 
             # Raise an exception if the admin email is not provided
-            if not admin_email:
-                raise CommandError("ADMIN_EMAIL is required")
+            if not instance_key:
+                raise CommandError("INSTANCE_KEY is required")
 
-            # Check if the admin email user exists
-            user = User.objects.filter(email=admin_email).first()
-
-            # If the user does not exist create the user and add him to the database
-            if user is None:
-                user = User.objects.create(email=admin_email, username=uuid.uuid4().hex)
-                user.set_password(admin_email)
-                user.save()
+            if not machine_signature:
+                raise CommandError("Machine signature is required")
 
             license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL")
 
@@ -56,8 +47,10 @@ class Command(BaseCommand):
             headers = {"Content-Type": "application/json"}
 
             payload = {
-                "email": user.email,
+                "instance_key": instance_key,
                 "version": data.get("version", 0.1),
+                "machine_signature": machine_signature,
+                "user_count": User.objects.filter(is_bot=False).count(),
             }
 
             response = requests.post(
@@ -75,20 +68,13 @@ class Command(BaseCommand):
                     license_key=data.get("license_key"),
                     api_key=data.get("api_key"),
                     version=data.get("version"),
-                    primary_email=data.get("email"),
-                    primary_owner=user,
                     last_checked_at=timezone.now(),
-                )
-                # Create instance admin
-                _ = InstanceAdmin.objects.create(
-                    user=user,
-                    instance=instance,
-                    role=20,
+                    user_count=data.get("user_count", 0),
                 )
 
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f"Instance successfully registered with owner: {instance.primary_owner.email}"
+                        f"Instance successfully registered"
                     )
                 )
                 return
@@ -96,7 +82,7 @@ class Command(BaseCommand):
         else:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f"Instance already registered with instance owner: {instance.primary_owner.email}"
+                    f"Instance already registered"
                 )
             )
             return

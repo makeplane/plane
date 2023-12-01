@@ -107,7 +107,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
       this.loader = loadType;
 
       const params = this.rootStore?.projectDraftIssuesFilter?.appliedFilters;
-      const response = await this.issueDraftService.getV3DraftIssues(workspaceSlug, projectId, params);
+      const response = await this.issueDraftService.getDraftIssues(workspaceSlug, projectId, params);
 
       const _issues = { ...this.issues, [projectId]: { ...response } };
 

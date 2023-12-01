@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.5.2",
-    "@types/react": "^18.2.37",
+    "@types/react": "^18.2.39",
     "@types/react-color": "^3.0.9",
     "@types/react-dom": "^18.2.15",
     "classnames": "^2.3.2",

@@ -145,8 +145,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none">
-                <div className="flex flex-col items-start justify-start gap-3 p-3 max-h-96 overflow-y-scroll">
-                  <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
+                <div className="flex flex-col items-start justify-start gap-3 px-3 max-h-96 overflow-y-scroll">
+                  <span className="sticky top-0 bg-custom-background-100 pt-3 z-10 w-full h-full text-sm font-medium text-custom-sidebar-text-200">
+                    Workspace
+                  </span>
                   {workspaces ? (
                     <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                       {workspaces.length > 0 ? (
@@ -195,18 +197,20 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       ) : (
                         <p>No workspace found!</p>
                       )}
-                      <Menu.Item
-                        as="button"
-                        type="button"
-                        onClick={() => {
-                          setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
-                          router.push("/create-workspace");
-                        }}
-                        className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Create Workspace
-                      </Menu.Item>
+                      <div className="sticky bottom-0 bg-custom-background-100 z-10 w-full h-full">
+                        <Menu.Item
+                          as="button"
+                          type="button"
+                          onClick={() => {
+                            setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
+                            router.push("/create-workspace");
+                          }}
+                          className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Create Workspace
+                        </Menu.Item>
+                      </div>
                     </div>
                   ) : (
                     <div className="w-full">
@@ -277,10 +281,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                   <Menu.Item key={index} as="button" type="button">
                     <Link href={link.link}>
-                      <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
-                      </a>
+                      </span>
                     </Link>
                   </Menu.Item>
                 ))}
@@ -300,9 +304,9 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 <div className="p-2 pb-0">
                   <Menu.Item as="button" type="button" className="w-full">
                     <Link href="/god-mode">
-                      <a className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                      <span className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
                         Enter God Mode
-                      </a>
+                      </span>
                     </Link>
                   </Menu.Item>
                 </div>

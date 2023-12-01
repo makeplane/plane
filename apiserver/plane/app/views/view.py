@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Module imports
-from . import BaseViewSet
+from . import BaseViewSet, BaseAPIView
 from plane.app.serializers import (
     GlobalViewSerializer,
     IssueViewSerializer,
@@ -95,6 +95,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
     @method_decorator(gzip_page)
     def list(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
         # Custom ordering for priority and state
         priority_order = ["urgent", "high", "medium", "low", "none"]
@@ -177,25 +178,13 @@ class GlobalViewIssuesViewSet(BaseViewSet):
             )
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
-        issues = IssueLiteSerializer(issue_queryset, many=True).data
 
-        ## Grouping the results
-        group_by = request.GET.get("group_by", False)
-        sub_group_by = request.GET.get("sub_group_by", False)
-        if sub_group_by and sub_group_by == group_by:
-            return Response(
-                {"error": "Group by and sub group by cannot be same"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if group_by:
-            grouped_results = group_results(issues, group_by, sub_group_by)
-            return Response(
-                grouped_results,
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(issues, status=status.HTTP_200_OK)
+        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issue_dict = {str(issue["id"]): issue for issue in issues}
+        return Response(
+            issue_dict,
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueViewViewSet(BaseViewSet):

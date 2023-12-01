@@ -2,7 +2,6 @@
 import uuid
 import requests
 import os
-from requests.exceptions import RequestException
 
 # Django imports
 from django.utils import timezone
@@ -31,8 +30,9 @@ from plane.db.models import (
 )
 from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
-from plane.license.models import InstanceConfiguration
+from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
+from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
 def get_tokens_for_user(user):
@@ -136,6 +136,14 @@ class OauthEndpoint(BaseAPIView):
 
     def post(self, request):
         try:
+            # Check if instance is registered or not
+            instance = Instance.objects.first()
+            if instance is None and not instance.is_setup_done:
+                return Response(
+                    {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
             medium = request.data.get("medium", False)
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
@@ -143,34 +151,17 @@ class OauthEndpoint(BaseAPIView):
             instance_configuration = InstanceConfiguration.objects.values(
                 "key", "value"
             )
-            if (
-                (
-                    not get_configuration_value(
-                        instance_configuration,
-                        "GOOGLE_CLIENT_ID",
-                        os.environ.get("GOOGLE_CLIENT_ID"),
-                    )
-                    or not get_configuration_value(
-                        instance_configuration,
-                        "GITHUB_CLIENT_ID",
-                        os.environ.get("GITHUB_CLIENT_ID"),
-                    )
-                )
-                and not (
-                    get_configuration_value(
-                        instance_configuration,
-                        "ENABLE_SIGNUP",
-                        os.environ.get("ENABLE_SIGNUP", "0"),
-                    )
-                )
-                and not WorkspaceMemberInvite.objects.filter(
-                    email=request.user.email
-                ).exists()
+            if not get_configuration_value(
+                instance_configuration,
+                "GOOGLE_CLIENT_ID",
+                os.environ.get("GOOGLE_CLIENT_ID"),
+            ) or not get_configuration_value(
+                instance_configuration,
+                "GITHUB_CLIENT_ID",
+                os.environ.get("GITHUB_CLIENT_ID"),
             ):
                 return Response(
-                    {
-                        "error": "New account creation is disabled. Please contact your site administrator"
-                    },
+                    {"error": "Github or Google login is not configured"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -286,8 +277,8 @@ class OauthEndpoint(BaseAPIView):
                     "last_login_at": timezone.now(),
                 },
             )
-             
-            # Send event 
+
+            # Send event
             if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                 auth_events.delay(
                     user=user.id,
@@ -295,8 +286,8 @@ class OauthEndpoint(BaseAPIView):
                     user_agent=request.META.get("HTTP_USER_AGENT"),
                     ip=request.META.get("REMOTE_ADDR"),
                     event_name="SIGN_IN",
-                    medium=medium.upper(), 
-                    first_time=False
+                    medium=medium.upper(),
+                    first_time=False,
                 )
 
             access_token, refresh_token = get_tokens_for_user(user)
@@ -309,6 +300,16 @@ class OauthEndpoint(BaseAPIView):
 
         except User.DoesNotExist:
             ## Signup Case
+            instance_configuration = InstanceConfiguration.objects.values(
+                "key", "value"
+            )
+            # Check if instance is registered or not
+            instance = Instance.objects.first()
+            if instance is None and not instance.is_setup_done:
+                return Response(
+                    {"error": "Instance is not configured"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             if (
                 get_configuration_value(
@@ -316,8 +317,9 @@ class OauthEndpoint(BaseAPIView):
                     "ENABLE_SIGNUP",
                     os.environ.get("ENABLE_SIGNUP", "0"),
                 )
+                == "0"
                 and not WorkspaceMemberInvite.objects.filter(
-                    email=request.user.email
+                    email=email,
                 ).exists()
             ):
                 return Response(
@@ -341,7 +343,7 @@ class OauthEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            user = User(
+            user = User.objects.create(
                 username=username,
                 email=email,
                 mobile_number=mobile_number,
@@ -352,7 +354,6 @@ class OauthEndpoint(BaseAPIView):
             )
 
             user.set_password(uuid.uuid4().hex)
-            user.is_password_autoset = True
             user.last_active = timezone.now()
             user.last_login_time = timezone.now()
             user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -418,7 +419,7 @@ class OauthEndpoint(BaseAPIView):
             workspace_member_invites.delete()
             project_member_invites.delete()
 
-            # Send event 
+            # Send event
             if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                 auth_events.delay(
                     user=user.id,
@@ -427,7 +428,7 @@ class OauthEndpoint(BaseAPIView):
                     ip=request.META.get("REMOTE_ADDR"),
                     event_name="SIGN_IN",
                     medium=medium.upper(),
-                    first_time=True
+                    first_time=True,
                 )
 
             SocialLoginConnection.objects.update_or_create(
@@ -445,4 +446,7 @@ class OauthEndpoint(BaseAPIView):
                 "access_token": access_token,
                 "refresh_token": refresh_token,
             }
+
+            # Update the user count
+            update_user_instance_user_count.delay()
             return Response(data, status=status.HTTP_201_CREATED)

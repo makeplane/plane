@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@types/node": "18.15.3",
-    "@types/react": "^18.2.35",
+    "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.14",
     "eslint": "^7.32.0",
     "postcss": "^8.4.29",

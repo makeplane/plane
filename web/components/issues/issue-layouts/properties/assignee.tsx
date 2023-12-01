@@ -10,7 +10,6 @@ import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 import { Placement } from "@popperjs/core";
 
 export interface IIssuePropertyAssignee {
-  view?: "profile" | "workspace" | "project";
   projectId: string | null;
   value: string[] | string;
   onChange: (data: string[]) => void;
@@ -26,7 +25,6 @@ export interface IIssuePropertyAssignee {
 
 export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer((props) => {
   const {
-    view,
     projectId,
     value,
     onChange,

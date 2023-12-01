@@ -10,7 +10,6 @@ import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from "components/issue
 import { IIssueDisplayProperties, IIssue, IState } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
-import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 import { EIssueActions } from "../types";
 import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 import { EProjectStore } from "store/command-palette.store";
@@ -103,7 +102,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
             )}
 
             <div
-              className={`min-h-[150px] h-full ${
+              className={`min-h-[150px] ${
                 verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
               }`}
             >

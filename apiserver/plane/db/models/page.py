@@ -57,7 +57,8 @@ class PageLog(ProjectBaseModel):
         ("module", "Module"),
         ("back_link", "Back Link"),
         ("forward_link", "Forward Link"),
-        ("mention", "Mention"),
+        ("page_mention", "Page Mention"),
+        ("user_mention", "User Mention"),
     )
     transaction = models.UUIDField(default=uuid.uuid4)
     page = models.ForeignKey(

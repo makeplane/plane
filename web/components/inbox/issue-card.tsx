@@ -27,7 +27,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
 
   return (
     <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}?inboxIssueId=${issue.issue_inbox[0].id}`}>
-      <a>
+      <span>
         <div
           id={issue.id}
           className={`relative min-h-[5rem] cursor-pointer select-none space-y-3 py-2 px-4 border-b border-custom-border-200 hover:bg-custom-primary/5 ${
@@ -91,7 +91,7 @@ export const InboxIssueCard: React.FC<Props> = (props) => {
             )}
           </div>
         </div>
-      </a>
+      </span>
     </Link>
   );
 };

@@ -317,9 +317,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               </div>
 
               <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-                <a className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
+                <span className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
                   View Cycle
-                </a>
+                </span>
               </Link>
             </div>
           </div>

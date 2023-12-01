@@ -12,7 +12,6 @@ import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
 
 export interface IIssuePropertyLabels {
-  view?: "profile" | "workspace" | "project";
   projectId: string | null;
   value: string[];
   onChange: (data: string[]) => void;
@@ -28,7 +27,6 @@ export interface IIssuePropertyLabels {
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
   const {
-    view,
     projectId,
     value,
     onChange,
@@ -201,10 +199,9 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 <Combobox.Option
                   key={option.value}
                   value={option.value}
-                  className={({ active, selected }) =>
-                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                      active ? "bg-custom-background-80" : ""
-                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                  className={({ selected }) =>
+                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-80
+                     ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                   }
                 >
                   {({ selected }) => (

@@ -16,6 +16,8 @@ export interface IInstance {
   is_support_required: boolean;
   created_by: string | null;
   updated_by: string | null;
+  is_activated: boolean;
+  is_setup_done: boolean;
 }
 
 export interface IInstanceConfiguration {

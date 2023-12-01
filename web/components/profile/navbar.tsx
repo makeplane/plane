@@ -50,7 +50,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
       <div className="flex items-center overflow-x-scroll">
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
-            <a
+            <span
               className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
                 router.pathname === tab.selected
                   ? "border-custom-primary-100 text-custom-primary-100"
@@ -58,7 +58,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
               }`}
             >
               {tab.label}
-            </a>
+            </span>
           </Link>
         ))}
       </div>

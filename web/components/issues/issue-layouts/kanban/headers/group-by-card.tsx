@@ -1,8 +1,5 @@
 import React, { FC } from "react";
 import { useRouter } from "next/router";
-// services
-import { ModuleService } from "services/module.service";
-import { IssueService } from "services/issue";
 // components
 import { CustomMenu } from "@plane/ui";
 import { CreateUpdateIssueModal } from "components/issues/modal";

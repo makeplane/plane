@@ -2,8 +2,12 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // components
-import { SpreadsheetColumnsList, SpreadsheetIssuesColumn, SpreadsheetQuickAddIssueForm } from "components/issues";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import {
+  IssuePeekOverview,
+  SpreadsheetColumnsList,
+  SpreadsheetIssuesColumn,
+  SpreadsheetQuickAddIssueForm,
+} from "components/issues";
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
@@ -47,22 +51,14 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     disableUserActions,
     enableQuickCreateIssue,
   } = props;
-
+  // states
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
-  const [issuePeekOverview, setIssuePeekOverView] = useState<{
-    workspaceSlug: string;
-    projectId: string;
-    issueId: string;
-  } | null>(null);
-
   const [isScrolled, setIsScrolled] = useState(false);
-
+  // refs
   const containerRef = useRef<HTMLDivElement | null>(null);
-
+  // router
   const router = useRouter();
-  const { cycleId, moduleId } = router.query;
-
-  const type = cycleId ? "cycle" : moduleId ? "module" : "issue";
+  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
   const handleScroll = () => {
     if (!containerRef.current) return;
@@ -88,7 +84,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
       <div className="h-full w-full flex flex-col">
         <div
           ref={containerRef}
-          className="flex max-h-full h-full overflow-y-auto divide-x-[0.5px] divide-custom-border-200 horizontal-scroll-enable"
+          className="flex overflow-y-auto divide-x-[0.5px] divide-custom-border-200 horizontal-scroll-enable"
         >
           {issues && issues.length > 0 ? (
             <>
@@ -116,7 +112,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                         properties={displayProperties}
                         quickActions={quickActions}
                         disableUserActions={disableUserActions}
-                        setIssuePeekOverView={setIssuePeekOverView}
                       />
                     ) : null
                   )}
@@ -185,11 +180,11 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
             ))} */}
         </div>
       </div>
-      {issuePeekOverview && (
+      {workspaceSlug && peekIssueId && peekProjectId && (
         <IssuePeekOverview
-          workspaceSlug={issuePeekOverview?.workspaceSlug}
-          projectId={issuePeekOverview?.projectId}
-          issueId={issuePeekOverview?.issueId}
+          workspaceSlug={workspaceSlug.toString()}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
           handleIssue={(issueToUpdate: any) => handleIssues(issueToUpdate, EIssueActions.UPDATE)}
         />
       )}

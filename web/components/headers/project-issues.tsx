@@ -185,7 +185,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           </FiltersDropdown>
           {projectId && inboxStore.isInboxEnabled && inboxDetails && (
             <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId)}`}>
-              <a>
+              <span>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails.pending_issue_count > 0 && (
@@ -194,7 +194,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                     </span>
                   )}
                 </Button>
-              </a>
+              </span>
             </Link>
           )}
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">

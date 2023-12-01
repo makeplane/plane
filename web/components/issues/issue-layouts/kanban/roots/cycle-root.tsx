@@ -11,18 +11,24 @@ import { EIssueActions } from "../../types";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface ICycleKanBanLayout {}
 
 export const CycleKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, cycleId } = router.query as { workspaceSlug: string; cycleId: string };
+  const { workspaceSlug, projectId, cycleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    cycleId: string;
+  };
 
   // store
   const {
     cycleIssues: cycleIssueStore,
     cycleIssuesFilter: cycleIssueFilterStore,
     cycleIssueKanBanView: cycleIssueKanBanViewStore,
+    kanBanHelpers: kanBanHelperStore,
   } = useMobxStore();
 
   const issueActions = {
@@ -40,6 +46,30 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
     },
   };
+
+  const handleDragDrop = (
+    source: any,
+    destination: any,
+    subGroupBy: string | null,
+    groupBy: string | null,
+    issues: IIssueResponse | undefined,
+    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
+  ) => {
+    if (kanBanHelperStore.handleDragDrop)
+      kanBanHelperStore.handleDragDrop(
+        source,
+        destination,
+        workspaceSlug,
+        projectId,
+        cycleIssueStore,
+        subGroupBy,
+        groupBy,
+        issues,
+        issueWithIds,
+        cycleId
+      );
+  };
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -50,6 +80,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
       QuickActions={CycleIssueQuickActions}
       viewId={cycleId}
       currentStore={EProjectStore.CYCLE}
+      handleDragDrop={handleDragDrop}
       addIssuesToView={(issues: string[]) => cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, issues)}
     />
   );
