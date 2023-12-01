@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 // ui
 import { Input, Button } from "@plane/ui";
@@ -24,6 +24,8 @@ export interface IInstanceSetupEmailCodeForm {
 
 export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (props) => {
   const { handleNextStep, email, moveBack } = props;
+  // states
+  const [isResendingCode, setIsResendingCode] = useState(false);
   // form info
   const {
     control,
@@ -40,10 +42,10 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
   const { setToastAlert } = useToast();
   const { timer, setTimer } = useTimer(30);
   // computed
-  const isResendDisabled = timer > 0 || isSubmitting;
+  const isResendDisabled = timer > 0 || isResendingCode;
 
-  const handleEmailCodeFormSubmit = (formValues: InstanceSetupEmailCodeFormValues) =>
-    authService
+  const handleEmailCodeFormSubmit = async (formValues: InstanceSetupEmailCodeFormValues) =>
+    await authService
       .instanceMagicSignIn({ key: `magic_${formValues.email}`, token: formValues.token })
       .then(() => {
         reset();
@@ -51,42 +53,40 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
       })
       .catch((err) => {
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: err?.error,
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
         });
       });
 
-  const resendMagicCode = () => {
-    setTimer(30);
-    authService
+  const resendMagicCode = async () => {
+    setIsResendingCode(true);
+
+    await authService
       .instanceAdminEmailCode({ email })
-      .then(() => {
-        // setCodeResending(false);
-        setTimer(30);
-      })
+      .then(() => setTimer(30))
       .catch((err) => {
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: err?.error,
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
         });
-      });
+      })
+      .finally(() => setIsResendingCode(false));
   };
 
   return (
     <form onSubmit={handleSubmit(handleEmailCodeFormSubmit)}>
-      <div className="pb-2">
-        <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
-          Let’s secure your instance
-        </h1>
-        <div className="text-center text-sm text-onboarding-text-200 mt-3">
-          <p>Paste the code you got at </p>
-          <span className="text-center text-sm text-custom-primary-80 mt-1 font-semibold ">{email}</span>
-          <span className="text-onboarding-text-200">below.</span>
-        </div>
-
-        <div className="relative mt-10 w-full sm:w-[360px] mx-auto">
+      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
+        Let{"'"}s secure your instance
+      </h1>
+      <p className="text-center text-sm text-onboarding-text-200 mt-3">
+        Paste the code you got at
+        <br />
+        <span className="text-custom-primary-100 font-semibold">{email}</span> below.
+      </p>
+      <div className="relative mt-5 w-full sm:w-96 mx-auto space-y-4">
+        <div>
           <Controller
             name="email"
             control={control}
@@ -98,7 +98,7 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
                 ) || "Email address is not valid",
             }}
             render={({ field: { value, onChange } }) => (
-              <div className={`flex items-center relative rounded-md bg-onboarding-background-200 mb-4`}>
+              <div className="flex items-center relative rounded-md bg-onboarding-background-200">
                 <Input
                   id="email"
                   name="email"
@@ -116,51 +116,44 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
               </div>
             )}
           />
-          <div
-            className={`flex w-full justify-end text-xs outline-none ${
-              isResendDisabled ? "cursor-default text-custom-text-200" : "cursor-pointer text-custom-primary-100"
-            } `}
-          >
-            {timer > 0 ? (
-              <span className="text-right">Request new code in {timer}s</span>
-            ) : isSubmitting ? (
-              "Sending new code..."
-            ) : (
-              <div className="flex justify-end w-full">
-                <button
-                  type="button"
-                  className="w-fit pb-2 text-xs outline-none cursor-pointer text-custom-primary-100"
-                  onClick={resendMagicCode}
-                  disabled={isResendDisabled}
-                >
-                  <span className="font-medium">Resend</span>
-                </button>
-              </div>
-            )}
+          <div className="w-full text-right">
+            <button
+              type="button"
+              onClick={resendMagicCode}
+              className={`text-xs ${
+                isResendDisabled ? "text-onboarding-text-300" : "text-onboarding-text-200 hover:text-custom-primary-100"
+              }`}
+              disabled={isResendDisabled}
+            >
+              {timer > 0
+                ? `Request new code in ${timer}s`
+                : isSubmitting
+                ? "Requesting new code..."
+                : "Request new code"}
+            </button>
           </div>
-          <Controller
-            name="token"
-            control={control}
-            rules={{ required: true }}
-            render={({ field: { value, onChange } }) => (
-              <div className={`flex items-center relative rounded-md bg-onboarding-background-200 mb-4`}>
-                <Input
-                  id="token"
-                  name="token"
-                  type="text"
-                  value={value}
-                  onChange={onChange}
-                  placeholder="gets-sets-flys"
-                  className="border-onboarding-border-100 h-[46px] w-full "
-                />
-              </div>
-            )}
-          />
-
-          <Button variant="primary" className="w-full mt-4" size="xl" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Verifying..." : "Next step"}
-          </Button>
         </div>
+        <Controller
+          name="token"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value, onChange } }) => (
+            <div className={`flex items-center relative rounded-md bg-onboarding-background-200 mb-4`}>
+              <Input
+                id="token"
+                name="token"
+                type="text"
+                value={value}
+                onChange={onChange}
+                placeholder="gets-sets-fays"
+                className="border-onboarding-border-100 h-[46px] w-full "
+              />
+            </div>
+          )}
+        />
+        <Button variant="primary" className="w-full" size="xl" type="submit" loading={isSubmitting}>
+          {isSubmitting ? "Verifying..." : "Next step"}
+        </Button>
       </div>
     </form>
   );
