@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -15,11 +15,14 @@ import DefaultLayout from "layouts/default-layout";
 import { Button, Input } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import signInIssues from "public/onboarding/onboarding-issues.svg";
+import latestFeatures from "public/onboarding/onboarding-pages.svg";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // type
 import { NextPageWithLayout } from "types/app";
+import { useMobxStore } from "lib/mobx/store-provider";
+// types
+import { IUser, IUserSettings } from "types";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -42,6 +45,10 @@ const HomePage: NextPageWithLayout = () => {
   const { resolvedTheme } = useTheme();
   // toast
   const { setToastAlert } = useToast();
+  // mobx store
+  const {
+    user: { fetchCurrentUser, fetchCurrentUserSettings },
+  } = useMobxStore();
   // form info
   const {
     control,
@@ -54,6 +61,31 @@ const HomePage: NextPageWithLayout = () => {
     },
   });
 
+  const handleSignInRedirection = useCallback(
+    async (user: IUser) => {
+      // if the user is not onboarded, redirect them to the onboarding page
+      if (!user.is_onboarded) {
+        router.push("/onboarding");
+        return;
+      }
+
+      // if the user is onboarded, fetch their last workspace details
+      await fetchCurrentUserSettings().then((userSettings: IUserSettings) => {
+        const workspaceSlug =
+          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
+        if (workspaceSlug) router.push(`/${workspaceSlug}`);
+        else router.push("/profile");
+      });
+    },
+    [fetchCurrentUserSettings, router]
+  );
+
+  const mutateUserInfo = useCallback(async () => {
+    await fetchCurrentUser().then(async (user) => {
+      await handleSignInRedirection(user);
+    });
+  }, [fetchCurrentUser, handleSignInRedirection]);
+
   const handleResetPassword = async (formData: TResetPasswordFormValues) => {
     if (!uidb64 || !token || !email) return;
 
@@ -61,13 +93,16 @@ const HomePage: NextPageWithLayout = () => {
       new_password: formData.password,
     };
 
-    await authService.resetPassword(uidb64.toString(), token.toString(), payload).catch((err) =>
-      setToastAlert({
-        type: "error",
-        title: "Error!",
-        message: err?.error ?? "Something went wrong. Please try again.",
-      })
-    );
+    await authService
+      .resetPassword(uidb64.toString(), token.toString(), payload)
+      .then(() => mutateUserInfo())
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
+        })
+      );
   };
 
   return (
@@ -154,18 +189,20 @@ const HomePage: NextPageWithLayout = () => {
             <p className="text-sm text-left text-onboarding-text-100">
               Try the latest features, like Tiptap editor, to write compelling responses.{" "}
               <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
-                <div className="font-medium text-sm underline hover:cursor-pointer">See new features</div>
+                <span className="font-medium text-sm underline hover:cursor-pointer">See new features</span>
               </Link>
             </p>
           </div>
-          <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 ">
-            <Image
-              src={signInIssues}
-              alt="Plane Issues"
-              className={`flex object-cover rounded-md ${
-                resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
-              } `}
-            />
+          <div className="border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 overflow-hidden">
+            <div className="h-[90%]">
+              <Image
+                src={latestFeatures}
+                alt="Plane Issues"
+                className={`rounded-md h-full ml-8 -mt-2 ${
+                  resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
+                } `}
+              />
+            </div>
           </div>
         </div>
       </div>

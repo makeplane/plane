@@ -13,7 +13,7 @@ import { SignInRoot } from "components/account";
 import { Loader, Spinner } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import signInIssues from "public/onboarding/onboarding-issues.svg";
+import latestFeatures from "public/onboarding/onboarding-pages.svg";
 // types
 import { IUser, IUserSettings } from "types";
 
@@ -109,18 +109,20 @@ export const SignInView = observer(() => {
                     <p className="text-sm text-left text-onboarding-text-100">
                       Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
                       <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
-                        <div className="font-medium text-sm underline hover:cursor-pointer">Learn more</div>
+                        <span className="font-medium text-sm underline hover:cursor-pointer">Learn more</span>
                       </Link>
                     </p>
                   </div>
-                  <div className="flex justify-center border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100">
-                    <Image
-                      src={signInIssues}
-                      alt="Plane Issues"
-                      className={`flex object-cover rounded-md ${
-                        resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
-                      } `}
-                    />
+                  <div className="border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 overflow-hidden">
+                    <div className="h-[90%]">
+                      <Image
+                        src={latestFeatures}
+                        alt="Plane Issues"
+                        className={`rounded-md h-full ml-8 -mt-2 ${
+                          resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
+                        } `}
+                      />
+                    </div>
                   </div>
                 </>
               )}

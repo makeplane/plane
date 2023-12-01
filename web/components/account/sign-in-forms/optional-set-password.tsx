@@ -92,7 +92,7 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
         <p className="text-xs text-onboarding-text-200">
           When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <div className="font-semibold underline">terms and conditions of service.</div>
+            <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>
         </p>
       </form>
