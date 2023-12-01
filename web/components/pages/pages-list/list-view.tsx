@@ -5,12 +5,12 @@ import { Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { EmptyState } from "components/common";
 import { PagesListItem } from "./list-item";
+import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // images
-import emptyPage from "public/empty-state/page.svg";
+import emptyPage from "public/empty-state/empty_page.webp";
 // types
 import { IPage } from "types";
 
@@ -41,13 +41,19 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
               ))}
             </ul>
           ) : (
-            <EmptyState
-              title="Have your thoughts in place"
-              description="You can think of Pages as an AI-powered notepad."
+            <NewEmptyState
+              title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started."
+              description="Pages are thoughtspotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
               image={emptyPage}
+              comicBox={{
+                title: "A page can be a doc or a doc of docs.",
+                description:
+                  "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
+                direction: "right",
+              }}
               primaryButton={{
                 icon: <Plus className="h-4 w-4" />,
-                text: "New Page",
+                text: "Create your first page",
                 onClick: () => commandPaletteStore.toggleCreatePageModal(true),
               }}
             />
