@@ -125,21 +125,19 @@ export const ProfileLayoutSidebar = observer(() => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
               return (
-                <Link key={link.key} href={link.href}>
-                  <div className="w-full">
-                    <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
-                      <div
-                        className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
-                          router.pathname === link.href
-                            ? "bg-custom-primary-100/10 text-custom-primary-100"
-                            : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                        } ${sidebarCollapsed ? "justify-center" : ""}`}
-                      >
-                        {<link.Icon className="h-4 w-4" />}
-                        {!sidebarCollapsed && link.label}
-                      </div>
-                    </Tooltip>
-                  </div>
+                <Link key={link.key} href={link.href} className="block w-full">
+                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                    <div
+                      className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
+                        router.pathname === link.href
+                          ? "bg-custom-primary-100/10 text-custom-primary-100"
+                          : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                      } ${sidebarCollapsed ? "justify-center" : ""}`}
+                    >
+                      {<link.Icon className="h-4 w-4" />}
+                      {!sidebarCollapsed && link.label}
+                    </div>
+                  </Tooltip>
                 </Link>
               );
             })}
@@ -189,19 +187,17 @@ export const ProfileLayoutSidebar = observer(() => {
           )}
           <div className="mt-1.5">
             {WORKSPACE_ACTION_LINKS.map((link) => (
-              <Link key={link.key} href={link.href}>
-                <div className="block w-full">
-                  <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
-                    <div
-                      className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
-                        sidebarCollapsed ? "justify-center" : ""
-                      }`}
-                    >
-                      {<link.Icon className="h-4 w-4" />}
-                      {!sidebarCollapsed && link.label}
-                    </div>
-                  </Tooltip>
-                </div>
+              <Link className="block w-full" key={link.key} href={link.href}>
+                <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
+                  <div
+                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
+                      sidebarCollapsed ? "justify-center" : ""
+                    }`}
+                  >
+                    {<link.Icon className="h-4 w-4" />}
+                    {!sidebarCollapsed && link.label}
+                  </div>
+                </Tooltip>
               </Link>
             ))}
           </div>
