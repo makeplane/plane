@@ -26,17 +26,12 @@ const tabOptions = [
   },
 ];
 
-const EmojiIconPicker: React.FC<Props> = ({
-  label,
-  value,
-  onChange,
-  onIconColorChange,
-  disabled = false,
-}) => {
+const EmojiIconPicker: React.FC<Props> = (props) => {
+  const { label, value, onChange, onIconColorChange, disabled = false } = props;
+  // states
   const [isOpen, setIsOpen] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
   const [activeColor, setActiveColor] = useState<string>("rgb(var(--color-text-200))");
-
   const [recentEmojis, setRecentEmojis] = useState<string[]>([]);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -145,15 +140,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                   <Tab.Panel className="flex h-full w-full flex-col justify-center">
                     <div className="relative">
                       <div className="flex items-center justify-between px-1 pb-2">
-                        {[
-                          "#FF6B00",
-                          "#8CC1FF",
-                          "#FCBE1D",
-                          "#18904F",
-                          "#ADF672",
-                          "#05C3FF",
-                          "#000000",
-                        ].map((curCol) => (
+                        {["#FF6B00", "#8CC1FF", "#FCBE1D", "#18904F", "#ADF672", "#05C3FF", "#000000"].map((curCol) => (
                           <span
                             key={curCol}
                             className="h-4 w-4 cursor-pointer rounded-full"
@@ -174,9 +161,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                       </div>
                       <div>
                         <TwitterPicker
-                          className={`!absolute top-4 left-4 z-10 m-2 ${
-                            openColorPicker ? "block" : "hidden"
-                          }`}
+                          className={`!absolute top-4 left-4 z-10 m-2 ${openColorPicker ? "block" : "hidden"}`}
                           color={activeColor}
                           onChange={(color) => {
                             setActiveColor(color.hex);
@@ -199,10 +184,7 @@ const EmojiIconPicker: React.FC<Props> = ({
                             setIsOpen(false);
                           }}
                         >
-                          <span
-                            style={{ color: activeColor }}
-                            className="material-symbols-rounded text-lg"
-                          >
+                          <span style={{ color: activeColor }} className="material-symbols-rounded text-lg">
                             {icon.name}
                           </span>
                         </button>

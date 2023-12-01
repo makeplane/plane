@@ -1,8 +1,10 @@
 // services
-import APIService from "services/api.service";
+import { APIService } from "services/api.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
+import axios from "axios";
 
-interface UnSplashImage {
+export interface UnSplashImage {
   id: string;
   created_at: Date;
   updated_at: Date;
@@ -17,7 +19,7 @@ interface UnSplashImage {
   [key: string]: any;
 }
 
-interface UnSplashImageUrls {
+export interface UnSplashImageUrls {
   raw: string;
   full: string;
   regular: string;
@@ -26,21 +28,65 @@ interface UnSplashImageUrls {
   small_s3: string;
 }
 
-class FileServices extends APIService {
+export class FileService extends APIService {
+  private cancelSource: any;
+
   constructor() {
     super(API_BASE_URL);
+    this.uploadFile = this.uploadFile.bind(this);
+    this.deleteImage = this.deleteImage.bind(this);
+    this.restoreImage = this.restoreImage.bind(this);
+    this.cancelUpload = this.cancelUpload.bind(this);
   }
 
   async uploadFile(workspaceSlug: string, file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/workspaces/${workspaceSlug}/file-assets/`, file)
+    this.cancelSource = axios.CancelToken.source();
+    return this.post(`/api/workspaces/${workspaceSlug}/file-assets/`, file, {
+      headers: {
+        ...this.getHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+      cancelToken: this.cancelSource.token,
+    })
       .then((response) => response?.data)
+      .catch((error) => {
+        if (axios.isCancel(error)) {
+          console.log(error.message);
+        } else {
+          console.log(error);
+          throw error?.response?.data;
+        }
+      });
+  }
+
+  cancelUpload() {
+    this.cancelSource.cancel("Upload cancelled");
+  }
+
+  getUploadFileFunction(workspaceSlug: string): (file: File) => Promise<string> {
+    return async (file: File) => {
+      const formData = new FormData();
+      formData.append("asset", file);
+      formData.append("attributes", JSON.stringify({}));
+
+      const data = await this.uploadFile(workspaceSlug, formData);
+      return data.asset;
+    };
+  }
+
+  async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
+    return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
+      .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteImage(assetUrlWithWorkspaceId: string): Promise<any> {
-    return this.delete(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/`)
+  async restoreImage(assetUrlWithWorkspaceId: string): Promise<any> {
+    return this.post(`/api/workspaces/file-assets/${assetUrlWithWorkspaceId}/restore/`, {
+      headers: this.getHeaders(),
+      "Content-Type": "application/json",
+    })
       .then((response) => response?.status)
       .catch((error) => {
         throw error?.response?.data;
@@ -57,8 +103,14 @@ class FileServices extends APIService {
         throw error?.response?.data;
       });
   }
+
   async uploadUserFile(file: FormData): Promise<any> {
-    return this.mediaUpload(`/api/users/file-assets/`, file)
+    return this.post(`/api/users/file-assets/`, file, {
+      headers: {
+        ...this.getHeaders(),
+        "Content-Type": "multipart/form-data",
+      },
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -96,5 +148,3 @@ class FileServices extends APIService {
       });
   }
 }
-
-export default new FileServices();

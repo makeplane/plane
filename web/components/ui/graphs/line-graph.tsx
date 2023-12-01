@@ -25,12 +25,10 @@ export const LineGraph: React.FC<Props & TGraph & LineSvgProps> = ({
       axisLeft={{
         tickSize: 0,
         tickPadding: 10,
-        tickValues: customYAxisTickValues
-          ? generateYAxisTickValues(customYAxisTickValues)
-          : undefined,
+        tickValues: customYAxisTickValues ? generateYAxisTickValues(customYAxisTickValues) : undefined,
       }}
       theme={{ ...CHARTS_THEME, ...(theme ?? {}) }}
-      animate={true}
+      animate
       {...rest}
     />
   </div>

@@ -1,30 +1,32 @@
 import React from "react";
-
-// next
+import { useRouter } from "next/router";
 import Link from "next/link";
-
-// react hook form
+import { observer } from "mobx-react-lite";
 import { useFormContext, Controller } from "react-hook-form";
-
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
-import { PlusIcon } from "@heroicons/react/20/solid";
-
-// hooks
-import useProjects from "hooks/use-projects";
-
+import { Plus } from "lucide-react";
 // components
-import { Input, CustomSelect } from "components/ui";
-
+import { CustomSelect, Input } from "@plane/ui";
+// types
 import { IJiraImporterForm } from "types";
 
-export const JiraGetImportDetail: React.FC = () => {
+export const JiraGetImportDetail: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+
   const {
-    register,
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
+  const {
     control,
     formState: { errors },
   } = useFormContext<IJiraImporterForm>();
-
-  const { projects } = useProjects();
 
   return (
     <div className="h-full w-full space-y-8 overflow-y-auto">
@@ -33,24 +35,32 @@ export const JiraGetImportDetail: React.FC = () => {
           <h3 className="font-semibold">Jira Personal Access Token</h3>
           <p className="text-sm text-custom-text-200">
             Get to know your access token by navigating to{" "}
-            <Link href="https://id.atlassian.com/manage-profile/security/api-tokens">
-              <a className="text-custom-primary underline" target="_blank" rel="noreferrer">
-                Atlassian Settings
-              </a>
+            <Link href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noreferrer">
+              <span className="text-custom-primary underline">Atlassian Settings</span>
             </Link>
           </p>
         </div>
 
         <div className="col-span-1">
-          <Input
-            id="metadata.api_token"
+          <Controller
+            control={control}
             name="metadata.api_token"
-            placeholder="XXXXXXXX"
-            validations={{
+            rules={{
               required: "Please enter your personal access token.",
             }}
-            register={register}
-            error={errors.metadata?.api_token}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="metadata.api_token"
+                name="metadata.api_token"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                placeholder="XXXXXXXX"
+                className="w-full"
+                autoComplete="off"
+              />
+            )}
           />
         </div>
       </div>
@@ -61,15 +71,25 @@ export const JiraGetImportDetail: React.FC = () => {
           <p className="text-sm text-custom-text-200">If XXX-123 is your issue, then enter XXX</p>
         </div>
         <div className="col-span-1">
-          <Input
-            id="metadata.project_key"
+          <Controller
+            control={control}
             name="metadata.project_key"
-            placeholder="LIN"
-            register={register}
-            validations={{
+            rules={{
               required: "Please enter your project key.",
             }}
-            error={errors.metadata?.project_key}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="metadata.project_key"
+                name="metadata.project_key"
+                type="text"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.metadata?.project_key)}
+                placeholder="LIN"
+                className="w-full"
+              />
+            )}
           />
         </div>
       </div>
@@ -77,21 +97,28 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Jira Email Address</h3>
-          <p className="text-sm text-custom-text-200">
-            Enter the Gmail account that you use in Jira account
-          </p>
+          <p className="text-sm text-custom-text-200">Enter the Email account that you use in Jira account</p>
         </div>
         <div className="col-span-1">
-          <Input
-            id="metadata.email"
+          <Controller
+            control={control}
             name="metadata.email"
-            type="email"
-            placeholder="name@company.com"
-            register={register}
-            validations={{
+            rules={{
               required: "Please enter email address.",
             }}
-            error={errors.metadata?.email}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="metadata.email"
+                name="metadata.email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.metadata?.email)}
+                placeholder="name@company.com"
+                className="w-full"
+              />
+            )}
           />
         </div>
       </div>
@@ -102,16 +129,25 @@ export const JiraGetImportDetail: React.FC = () => {
           <p className="text-sm text-custom-text-200">Enter your companies cloud host name</p>
         </div>
         <div className="col-span-1">
-          <Input
-            id="metadata.cloud_hostname"
+          <Controller
+            control={control}
             name="metadata.cloud_hostname"
-            type="email"
-            placeholder="my-company.atlassian.net"
-            register={register}
-            validations={{
+            rules={{
               required: "Please enter your cloud host name.",
             }}
-            error={errors.metadata?.cloud_hostname}
+            render={({ field: { value, onChange, ref } }) => (
+              <Input
+                id="metadata.cloud_hostname"
+                name="metadata.cloud_hostname"
+                type="email"
+                value={value}
+                onChange={onChange}
+                ref={ref}
+                hasError={Boolean(errors.metadata?.cloud_hostname)}
+                placeholder="my-company.atlassian.net"
+                className="w-full"
+              />
+            )}
           />
         </div>
       </div>
@@ -119,9 +155,7 @@ export const JiraGetImportDetail: React.FC = () => {
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
           <h3 className="font-semibold">Import to project</h3>
-          <p className="text-sm text-custom-text-200">
-            Select which project you want to import to.
-          </p>
+          <p className="text-sm text-custom-text-200">Select which project you want to import to.</p>
         </div>
         <div className="col-span-1">
           <Controller
@@ -143,7 +177,6 @@ export const JiraGetImportDetail: React.FC = () => {
                     )}
                   </span>
                 }
-                verticalPosition="top"
               >
                 {projects && projects.length > 0 ? (
                   projects.map((project) => (
@@ -160,12 +193,12 @@ export const JiraGetImportDetail: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const event = new KeyboardEvent("keydown", { key: "p" });
-                      document.dispatchEvent(event);
+                      setTrackElement("JIRA_IMPORT_DETAIL");
+                      commandPaletteStore.toggleCreateProjectModal(true);
                     }}
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
-                    <PlusIcon className="h-4 w-4 text-custom-text-200" />
+                    <Plus className="h-4 w-4 text-custom-text-200" />
                     <span>Create new project</span>
                   </button>
                 </div>
@@ -176,4 +209,4 @@ export const JiraGetImportDetail: React.FC = () => {
       </div>
     </div>
   );
-};
+});

@@ -1,8 +1,9 @@
 // types
-import { IIssue, IIssueLabels, IWorkspaceLite, IProjectLite } from "types";
+import { IIssue, IIssueLabel, IWorkspaceLite, IProjectLite } from "types";
 
 export interface IPage {
   access: number;
+  archived_at: string | null;
   blocks: IPageBlock[];
   color: string;
   created_at: Date;
@@ -12,9 +13,9 @@ export interface IPage {
   description_stripped: string | null;
   id: string;
   is_favorite: boolean;
-  label_details: IIssueLabels[];
+  is_locked: boolean;
+  label_details: IIssueLabel[];
   labels: string[];
-  labels_list: string[];
   name: string;
   owned_by: string;
   project: string;
@@ -23,6 +24,14 @@ export interface IPage {
   updated_by: string;
   workspace: string;
   workspace_detail: IWorkspaceLite;
+}
+
+export interface IRecentPages {
+  today: IPage[];
+  yesterday: IPage[];
+  this_week: IPage[];
+  older: IPage[];
+  [key: string]: IPage[];
 }
 
 export interface RecentPagesResponse {

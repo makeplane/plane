@@ -1,9 +1,10 @@
 import React from "react";
 import Image from "next/image";
-
-import type { Props } from "./types";
+// image
 import PngFileIcon from "public/attachment/png-icon.png";
+// type
+import type { ImageIconPros } from "./types";
 
-export const PngIcon: React.FC<Props> = ({ width, height }) => (
+export const PngIcon: React.FC<ImageIconPros> = ({ width, height }) => (
   <Image src={PngFileIcon} height={height} width={width} alt="PngFileIcon" />
 );

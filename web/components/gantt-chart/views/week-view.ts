@@ -3,12 +3,7 @@ import { ChartDataType } from "../types";
 // data
 import { weeks, months } from "../data";
 // helpers
-import {
-  generateDate,
-  getWeekNumberByDate,
-  getNumberOfDaysInMonth,
-  getDatesBetweenTwoDates,
-} from "./helpers";
+import { generateDate, getWeekNumberByDate, getNumberOfDaysInMonth, getDatesBetweenTwoDates } from "./helpers";
 
 type GetAllDaysInMonthInMonthViewType = {
   date: any;
@@ -34,9 +29,7 @@ const getAllDaysInMonthInMonthView = (month: number, year: number) => {
       title: `${weeks[date.getDay()].shortTitle} ${_day + 1}`,
       active: false,
       today:
-        currentDate.getFullYear() === year &&
-        currentDate.getMonth() === month &&
-        currentDate.getDate() === _day + 1
+        currentDate.getFullYear() === year && currentDate.getMonth() === month && currentDate.getDate() === _day + 1
           ? true
           : false,
     });
@@ -72,16 +65,8 @@ export const generateWeekChart = (monthPayload: ChartDataType, side: null | "lef
   if (side === null) {
     const currentDate = renderState.data.currentDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - range,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + range,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -96,16 +81,8 @@ export const generateWeekChart = (monthPayload: ChartDataType, side: null | "lef
   } else if (side === "left") {
     const currentDate = renderState.data.startDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - range,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - 1,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - range, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 
@@ -116,16 +93,8 @@ export const generateWeekChart = (monthPayload: ChartDataType, side: null | "lef
   } else if (side === "right") {
     const currentDate = renderState.data.endDate;
 
-    minusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      currentDate.getDate()
-    );
-    plusDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + range,
-      currentDate.getDate()
-    );
+    minusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, currentDate.getDate());
+    plusDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + range, currentDate.getDate());
 
     if (minusDate && plusDate) filteredDates = getDatesBetweenTwoDates(minusDate, plusDate);
 

@@ -1,9 +1,10 @@
 import React from "react";
 import Image from "next/image";
-
-import type { Props } from "./types";
+// image
 import TxtFileIcon from "public/attachment/txt-icon.png";
+// type
+import type { ImageIconPros } from "./types";
 
-export const TxtIcon: React.FC<Props> = ({ width, height }) => (
+export const TxtIcon: React.FC<ImageIconPros> = ({ width, height }) => (
   <Image src={TxtFileIcon} height={height} width={width} alt="TxtFileIcon" />
 );

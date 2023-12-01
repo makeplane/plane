@@ -1,11 +1,6 @@
 // icons
-import {
-  ArticleOutlined,
-  ContrastOutlined,
-  DatasetOutlined,
-  FilterNoneOutlined,
-  PhotoFilterOutlined,
-} from "@mui/icons-material";
+import { ContrastIcon, DiceIcon, LayersIcon, PhotoFilterIcon } from "@plane/ui";
+import { FileText } from "lucide-react";
 // types
 import { TTourSteps } from "./root";
 
@@ -15,23 +10,23 @@ const sidebarOptions: {
 }[] = [
   {
     key: "issues",
-    Icon: FilterNoneOutlined,
+    Icon: LayersIcon,
   },
   {
     key: "cycles",
-    Icon: ContrastOutlined,
+    Icon: ContrastIcon,
   },
   {
     key: "modules",
-    Icon: DatasetOutlined,
+    Icon: DiceIcon,
   },
   {
     key: "views",
-    Icon: PhotoFilterOutlined,
+    Icon: PhotoFilterIcon,
   },
   {
     key: "pages",
-    Icon: ArticleOutlined,
+    Icon: FileText,
   },
 ];
 
@@ -57,13 +52,9 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
               : "text-custom-text-200 border-transparent"
           }`}
           onClick={() => setStep(option.key)}
+          role="button"
         >
-          <option.Icon
-            sx={{
-              fontSize: 18,
-            }}
-            aria-hidden="true"
-          />
+          <option.Icon className="h-4 w-4" aria-hidden="true" />
           {option.key}
         </h5>
       ))}

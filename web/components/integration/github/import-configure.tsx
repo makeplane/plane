@@ -1,7 +1,6 @@
 // components
+import { Button } from "@plane/ui";
 import { GithubAuth, TIntegrationSteps } from "components/integration";
-// ui
-import { PrimaryButton } from "components/ui";
 // types
 import { IAppIntegration, IWorkspaceIntegration } from "types";
 
@@ -20,9 +19,7 @@ export const GithubImportConfigure: React.FC<Props> = ({
 }) => {
   // current integration from all the integrations available
   const integration =
-    appIntegrations &&
-    appIntegrations.length > 0 &&
-    appIntegrations.find((i) => i.provider === provider);
+    appIntegrations && appIntegrations.length > 0 && appIntegrations.find((i) => i.provider === provider);
 
   // current integration from workspace integrations
   const workspaceIntegration =
@@ -44,12 +41,13 @@ export const GithubImportConfigure: React.FC<Props> = ({
       </div>
 
       <div className="flex items-center justify-end">
-        <PrimaryButton
+        <Button
+          variant="primary"
           onClick={() => handleStepChange("import-data")}
           disabled={workspaceIntegration && workspaceIntegration?.id ? false : true}
         >
           Next
-        </PrimaryButton>
+        </Button>
       </div>
     </div>
   );

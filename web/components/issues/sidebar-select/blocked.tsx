@@ -7,12 +7,12 @@ import { UseFormWatch } from "react-hook-form";
 import useToast from "hooks/use-toast";
 import useUser from "hooks/use-user";
 // services
-import issuesService from "services/issues.service";
+import { IssueService } from "services/issue";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-import { BlockedIcon } from "components/icons";
+import { X } from "lucide-react";
+import { BlockedIcon } from "@plane/ui";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
 
@@ -23,12 +23,10 @@ type Props = {
   disabled?: boolean;
 };
 
-export const SidebarBlockedSelect: React.FC<Props> = ({
-  issueId,
-  submitChanges,
-  watch,
-  disabled = false,
-}) => {
+// services
+const issueService = new IssueService();
+
+export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
 
   const { user } = useUser();
@@ -41,8 +39,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
     setIsBlockedModalOpen(false);
   };
 
-  const blockedByIssue =
-    watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
+  const blockedByIssue = watch("related_issues")?.filter((i) => i.relation_type === "blocked_by") || [];
 
   const onSubmit = async (data: ISearchIssueResponse[]) => {
     if (data.length === 0) {
@@ -70,8 +67,8 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
     if (!user) return;
 
-    issuesService
-      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, user, {
+    issueService
+      .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, {
         related_list: [
           ...selectedIssues.map((issue) => ({
             issue: issueId as string,
@@ -125,9 +122,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        const updatedRelations = watch("related_issues")?.filter(
-                          (i) => i.id !== relation.id
-                        );
+                        const updatedRelations = watch("related_issues")?.filter((i) => i.id !== relation.id);
 
                         submitChanges({
                           related_issues: updatedRelations,
@@ -135,16 +130,15 @@ export const SidebarBlockedSelect: React.FC<Props> = ({
 
                         if (!user) return;
 
-                        issuesService.deleteIssueRelation(
+                        issueService.deleteIssueRelation(
                           workspaceSlug as string,
                           projectId as string,
                           issueId as string,
-                          relation.id,
-                          user
+                          relation.id
                         );
                       }}
                     >
-                      <XMarkIcon className="h-2 w-2" />
+                      <X className="h-2 w-2" />
                     </button>
                   </div>
                 ))

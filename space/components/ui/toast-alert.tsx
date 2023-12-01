@@ -1,12 +1,6 @@
 import React from "react";
+import { AlertTriangle, CheckCircle, Info, X, XCircle } from "lucide-react";
 // hooks
-import {
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon,
-  XCircleIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
 import useToast from "hooks/use-toast";
 // icons
 
@@ -26,7 +20,7 @@ const ToastAlerts = () => {
               onClick={() => removeAlert(alert.id)}
             >
               <span className="sr-only">Dismiss</span>
-              <XMarkIcon className="h-5 w-5" aria-hidden="true" />
+              <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
           <div
@@ -43,13 +37,13 @@ const ToastAlerts = () => {
             <div className="flex items-center gap-x-3">
               <div className="flex-shrink-0">
                 {alert.type === "success" ? (
-                  <CheckCircleIcon className="h-8 w-8" aria-hidden="true" />
+                  <CheckCircle className="h-8 w-8" aria-hidden="true" />
                 ) : alert.type === "error" ? (
-                  <XCircleIcon className="h-8 w-8" />
+                  <XCircle className="h-8 w-8" />
                 ) : alert.type === "warning" ? (
-                  <ExclamationTriangleIcon className="h-8 w-8" aria-hidden="true" />
+                  <AlertTriangle className="h-8 w-8" aria-hidden="true" />
                 ) : (
-                  <InformationCircleIcon className="h-8 w-8" />
+                  <Info className="h-8 w-8" />
                 )}
               </div>
               <div>

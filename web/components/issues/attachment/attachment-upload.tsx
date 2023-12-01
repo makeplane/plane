@@ -1,33 +1,40 @@
-import React, { useCallback, useState } from "react";
-
+import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-
-// react-dropzone
 import { useDropzone } from "react-dropzone";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import issuesService from "services/issues.service";
+import { IssueAttachmentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // types
 import { IIssueAttachment } from "types";
 // fetch-keys
 import { ISSUE_ATTACHMENTS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
-
-const maxFileSize = 5 * 1024 * 1024; // 5 MB
+// constants
+import { MAX_FILE_SIZE } from "constants/common";
 
 type Props = {
   disabled?: boolean;
 };
 
-export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const issueAttachmentService = new IssueAttachmentService();
 
+export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
+  const { disabled = false } = props;
+  // states
+  const [isLoading, setIsLoading] = useState(false);
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
+
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles[0] || !workspaceSlug) return;
@@ -43,13 +50,8 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
     );
     setIsLoading(true);
 
-    issuesService
-      .uploadIssueAttachment(
-        workspaceSlug as string,
-        projectId as string,
-        issueId as string,
-        formData
-      )
+    issueAttachmentService
+      .uploadIssueAttachment(workspaceSlug as string, projectId as string, issueId as string, formData)
       .then((res) => {
         mutate<IIssueAttachment[]>(
           ISSUE_ATTACHMENTS(issueId as string),
@@ -64,7 +66,7 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
         });
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         setIsLoading(false);
         setToastAlert({
           type: "error",
@@ -77,14 +79,14 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
     onDrop,
-    maxSize: maxFileSize,
+    maxSize: envConfig?.file_size_limit ?? MAX_FILE_SIZE,
     multiple: false,
     disabled: isLoading || disabled,
   });
 
   const fileError =
     fileRejections.length > 0
-      ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)`
+      ? `Invalid file type or size (max ${envConfig?.file_size_limit ?? MAX_FILE_SIZE / 1024 / 1024} MB)`
       : null;
 
   return (
@@ -108,4 +110,4 @@ export const IssueAttachmentUpload: React.FC<Props> = ({ disabled = false }) => 
       </span>
     </div>
   );
-};
+});

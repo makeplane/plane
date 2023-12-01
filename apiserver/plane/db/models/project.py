@@ -4,9 +4,6 @@ from uuid import uuid4
 # Django imports
 from django.db import models
 from django.conf import settings
-from django.template.defaultfilters import slugify
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Modeule imports
@@ -169,6 +166,7 @@ class ProjectMember(ProjectBaseModel):
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding:
