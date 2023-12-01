@@ -15,7 +15,7 @@ env:
   TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
 
 jobs:
-  branch_build_and_push:
+  branch_build_setup:
     if: ${{ (github.event_name == 'pull_request' && github.event.action =='closed' && github.event.pull_request.merged == true) }}
     name: Build-Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
@@ -59,18 +59,18 @@ jobs:
 
   branch_build_push_frontend:
     runs-on: ubuntu-20.04
-    needs: [branch_build_and_push]
+    needs: [branch_build_setup]
     env:
-      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Frontend Docker Tag 
         run: |
-          if [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:latest"
-          elif [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "preview" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:preview"
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:latest
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "preview" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:preview
           else
-            TAG=${{ env.FRONTEND_TAG }}"
+            TAG=${{ env.FRONTEND_TAG }}
           fi
           echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
       - name: Set up Docker Buildx
@@ -101,18 +101,18 @@ jobs:
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
-    needs: [branch_build_and_push]
+    needs: [branch_build_setup]
     env:
-      SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+      SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Space Docker Tag 
         run: |
-          if [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest"
-          elif [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "preview" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:preview"
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "preview" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:preview
           else
-            TAG=${{ env.SPACE_TAG }}"
+            TAG=${{ env.SPACE_TAG }}
           fi
           echo "SPACE_TAG=${TAG}" >> $GITHUB_ENV
       - name: Set up Docker Buildx
@@ -143,16 +143,16 @@ jobs:
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
-    needs: [branch_build_and_push]
+    needs: [branch_build_setup]
     env:
-      BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+      BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Backend Docker Tag 
         run: |
-          if [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:latest"
-          elif [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "preview" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:preview",${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:preview"
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:latest
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "preview" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:preview",${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:preview
           else
             TAG=${{ env.BACKEND_TAG }}
           fi
@@ -185,16 +185,16 @@ jobs:
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
-    needs: [branch_build_and_push]
+    needs: [branch_build_setup]
     env:
-      PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+      PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
       - name: Set Proxy Docker Tag 
         run: |
-          if [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "master" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:latest"
-          elif [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_and_push.outputs.gh_branch_name }}" == "preview" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:preview"
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:latest
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "preview" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:preview
           else
             TAG=${{ env.PROXY_TAG }}
           fi
