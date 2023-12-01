@@ -1,9 +1,9 @@
 import React, { KeyboardEvent, ReactNode, Ref, forwardRef } from 'react'
 
 interface CustomFormProps extends React.FormHTMLAttributes<HTMLFormElement> {
-    children: ReactNode,
+    children?: ReactNode,
     disableSubmitOnEnter: boolean,
-    onKeyDown: (evt: KeyboardEvent)=> void
+    onKeyDown?: (evt: KeyboardEvent)=> void
 }
 // eslint-disable-next-line react/display-name
 const CustomForm = forwardRef( (props:CustomFormProps, ref: Ref<HTMLFormElement>) => {

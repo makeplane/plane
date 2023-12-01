@@ -12,6 +12,7 @@ import useTimer from "hooks/use-timer";
 
 // ui
 import { Input, PrimaryButton } from "components/ui";
+import CustomForm from "components/ui/form";
 
 // types
 type EmailCodeFormValues = {
@@ -99,28 +100,6 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
     setErrorResendingCode(false);
   }, [emailOld]);
 
-  useEffect(() => {
-    const submitForm = (e: KeyboardEvent) => {
-      if(e.key === "Enter"){
-        e.preventDefault()
-      }
-      else if (!codeSent) {
-        e.preventDefault();
-        handleSubmit(onSubmit)().then(() => {
-          setResendCodeTimer(30);
-        });
-      }
-    };
-
-    if (!codeSent) {
-      window.addEventListener("keydown", submitForm);
-    }
-
-    return () => {
-      window.removeEventListener("keydown", submitForm);
-    };
-  }, [handleSubmit, codeSent, onSubmit, setResendCodeTimer]);
-
   return (
     <>
       {(codeSent || codeResent) && (
@@ -130,7 +109,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           Please check your inbox at <span className="font-medium">{watch("email")}</span>
         </p>
       )}
-      <form className="space-y-4 mt-10 sm:w-[360px] mx-auto">
+      <CustomForm disableSubmitOnEnter={true} className="space-y-4 mt-10 sm:w-[360px] mx-auto">
         <div className="space-y-1">
           <Input
             id="email"
@@ -213,7 +192,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             {isSubmitting ? "Sending code..." : "Send sign in code"}
           </PrimaryButton>
         )}
-      </form>
+      </CustomForm>
     </>
   );
 };
