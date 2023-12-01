@@ -196,7 +196,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.token)}
-                placeholder="gets-sets-fays"
+                placeholder="gets-sets-flys"
                 className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
               />
             )}
