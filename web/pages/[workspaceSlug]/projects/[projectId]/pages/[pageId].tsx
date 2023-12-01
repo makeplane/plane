@@ -28,7 +28,6 @@ import { IPage, IIssue } from "types";
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { IssueService } from "services/issue";
-import { EIssueActions } from "components/issues/issue-layouts/types";
 
 // services
 const fileService = new FileService();
@@ -57,6 +56,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
     workspaceSlug && projectId ? PROJECT_ISSUES_LIST(workspaceSlug as string, projectId as string) : null,
     workspaceSlug && projectId ? () => issueService.getIssues(workspaceSlug as string, projectId as string) : null
   );
+
   const issues = Object.values(issuesResponse ?? {});
 
   // =================== Fetching Page Details ======================
@@ -252,7 +252,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   return (
     <>
-      {pageDetails && issues ? (
+      {pageDetails && issuesResponse ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
             {pageDetails.is_locked || pageDetails.archived_at ? (
@@ -285,7 +285,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 }
                 embedConfig={{
                   issueEmbedConfig: {
-                    issues: issues ? issues : [],
+                    issues: issues,
                     fetchIssue: fetchIssue,
                     clickAction: issueWidgetClickAction,
                   },
@@ -332,7 +332,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     }
                     embedConfig={{
                       issueEmbedConfig: {
-                        issues: issues ? issues : [],
+                        issues: issues,
                         fetchIssue: fetchIssue,
                         clickAction: issueWidgetClickAction,
                       },
