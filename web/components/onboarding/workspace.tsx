@@ -116,11 +116,7 @@ export const Workspace: React.FC<Props> = (props) => {
                 onChange={(event) => {
                   onChange(event.target.value);
                   setValue("name", event.target.value);
-                  if (window && window.location.host) {
-                    const host = window.location.host;
-                    const slug = event.currentTarget.value.split("/");
-                    setValue("slug", `${host}/${slug[slug.length - 1].toLocaleLowerCase().trim().replace(/ /g, "-")}`);
-                  }
+                  setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
                 }}
                 placeholder="Enter workspace name..."
                 ref={ref}
