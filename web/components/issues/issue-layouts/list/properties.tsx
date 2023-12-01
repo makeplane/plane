@@ -60,6 +60,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
           value={issue?.state || null}
+          defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
           hideDropdownArrow
           onChange={handleState}
           disabled={isReadonly}
@@ -81,6 +82,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
+          defaultOptions={issue?.label_details ? issue.label_details : []}
           onChange={handleLabel}
           disabled={isReadonly}
           hideDropdownArrow
@@ -92,6 +94,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
         <IssuePropertyAssignee
           projectId={issue?.project_detail?.id || null}
           value={issue?.assignees || null}
+          defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
           hideDropdownArrow
           onChange={handleAssignee}
           disabled={isReadonly}
