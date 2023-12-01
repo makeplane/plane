@@ -24,7 +24,7 @@ export const JoinWorkspaces: React.FC<Props> = ({ stepChange, setTryDiffAccount 
   } = useForm<IWorkspace>({
     defaultValues: {
       name: "",
-      slug: `${window.location.host}/`,
+      slug: "",
     },
     mode: "onChange",
   });

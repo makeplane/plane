@@ -40,8 +40,6 @@ export const Workspace: React.FC<Props> = (props) => {
 
   const handleCreateWorkspace = async (formData: IWorkspace) => {
     if (isSubmitting) return;
-    const slug = formData.slug.split("/");
-    formData.slug = slug[slug.length - 1];
 
     await workspaceService
       .workspaceSlugCheck(formData.slug)
@@ -118,11 +116,7 @@ export const Workspace: React.FC<Props> = (props) => {
                 onChange={(event) => {
                   onChange(event.target.value);
                   setValue("name", event.target.value);
-                  if (window && window.location.host) {
-                    const host = window.location.host;
-                    const slug = event.currentTarget.value.split("/");
-                    setValue("slug", `${host}/${slug[slug.length - 1].toLocaleLowerCase().trim().replace(/ /g, "-")}`);
-                  }
+                  setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"));
                 }}
                 placeholder="Enter workspace name..."
                 ref={ref}
@@ -137,26 +131,25 @@ export const Workspace: React.FC<Props> = (props) => {
         <Controller
           control={control}
           name="slug"
-          render={({ field: { value, ref } }) => (
-            <div className="flex items-center relative rounded-md bg-onboarding-background-200">
+          render={({ field: { value, ref, onChange } }) => (
+            <div
+              className={`flex items-center px-3 relative rounded-md bg-onboarding-background-200 border ${
+                invalidSlug ? "border-red-500" : "border-onboarding-border-100"
+              } `}
+            >
+              <span className="whitespace-nowrap text-sm">{window && window.location.host}/</span>
               <Input
                 id="slug"
                 name="slug"
                 type="text"
                 value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
                 onChange={(e) => {
-                  const host = window.location.host;
-                  const slug = e.currentTarget.value.split("/");
-                  if (slug.length > 1) {
-                    /^[a-zA-Z0-9_-]+$/.test(slug[slug.length - 1]) ? setInvalidSlug(false) : setInvalidSlug(true);
-                    setValue("slug", `${host}/${slug[slug.length - 1].toLocaleLowerCase().trim().replace(/ /g, "-")}`);
-                  } else {
-                    setValue("slug", `${host}/`);
-                  }
+                  /^[a-zA-Z0-9_-]+$/.test(e.target.value) ? setInvalidSlug(false) : setInvalidSlug(true);
+                  onChange(e.target.value.toLowerCase());
                 }}
                 ref={ref}
                 hasError={Boolean(errors.slug)}
-                className="w-full h-[46px] border-onboarding-border-100"
+                className="w-full h-[46px] !px-0 border-none"
               />
             </div>
           )}
