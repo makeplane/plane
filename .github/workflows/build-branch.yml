@@ -152,7 +152,7 @@ jobs:
           if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
             TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:latest
           elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "release" ] || [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "preview" ]; then
-            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:preview",${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:preview
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:preview,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:preview
           else
             TAG=${{ env.BACKEND_TAG }}
           fi
