@@ -197,8 +197,10 @@ export class IssueBaseStore implements IIssueBaseStore {
   };
 
   getGroupArray(value: string[] | string | null, isDate: boolean = false) {
-    if (Array.isArray(value)) return value;
-    else if (isDate) return [renderDateFormat(value) || "None"];
+    if (Array.isArray(value)) {
+      if (value.length) return value;
+      else return ["None"];
+    } else if (isDate) return [renderDateFormat(value) || "None"];
     else return [value || "None"];
   }
 }
