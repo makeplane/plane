@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
@@ -15,18 +14,16 @@ export const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // states
-  const [createViewModal, setCreateViewModal] = useState(false);
 
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, commandPalette } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   return (
     <>
       {workspaceSlug && projectId && (
         <CreateUpdateProjectViewModal
-          isOpen={createViewModal}
-          onClose={() => setCreateViewModal(false)}
+          isOpen={commandPalette.isCreateViewModalOpen}
+          onClose={() => commandPalette.toggleCreateViewModal(false)}
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
         />
@@ -69,7 +66,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
               variant="primary"
               size="sm"
               prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
-              onClick={() => setCreateViewModal(true)}
+              onClick={() => commandPalette.toggleCreateViewModal(true)}
             >
               Create View
             </Button>

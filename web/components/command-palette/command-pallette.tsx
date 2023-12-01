@@ -55,21 +55,9 @@ export const CommandPalette: FC = observer(() => {
     toggleBulkDeleteIssueModal,
     isDeleteIssueModalOpen,
     toggleDeleteIssueModal,
-
+    isAnyModalOpen,
     createIssueStoreType,
   } = commandPalette;
-
-  const isAnyModalOpen = Boolean(
-    isCreateIssueModalOpen ||
-      isCreateCycleModalOpen ||
-      isCreatePageModalOpen ||
-      isCreateProjectModalOpen ||
-      isCreateModuleModalOpen ||
-      isCreateViewModalOpen ||
-      isShortcutModalOpen ||
-      isBulkDeleteIssueModalOpen ||
-      isDeleteIssueModalOpen
-  );
 
   const { setToastAlert } = useToast();
 
