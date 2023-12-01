@@ -44,8 +44,8 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
   // computed
   const isResendDisabled = timer > 0 || isResendingCode;
 
-  const handleEmailCodeFormSubmit = (formValues: InstanceSetupEmailCodeFormValues) =>
-    authService
+  const handleEmailCodeFormSubmit = async (formValues: InstanceSetupEmailCodeFormValues) =>
+    await authService
       .instanceMagicSignIn({ key: `magic_${formValues.email}`, token: formValues.token })
       .then(() => {
         reset();
@@ -53,9 +53,9 @@ export const InstanceSetupEmailCodeForm: FC<IInstanceSetupEmailCodeForm> = (prop
       })
       .catch((err) => {
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: err?.error,
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
         });
       });
 

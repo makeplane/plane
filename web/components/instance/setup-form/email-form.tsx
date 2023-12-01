@@ -44,9 +44,9 @@ export const InstanceSetupEmailForm: FC<IInstanceSetupEmailForm> = (props) => {
       })
       .catch((err) => {
         setToastAlert({
-          title: "Oops!",
           type: "error",
-          message: err?.error,
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
         });
       });
 

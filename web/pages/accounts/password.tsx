@@ -123,6 +123,7 @@ const HomePage: NextPageWithLayout = () => {
                       hasError={Boolean(errors.password)}
                       placeholder="Choose password"
                       className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                      minLength={8}
                     />
                   )}
                 />

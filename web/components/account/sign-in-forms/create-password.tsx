@@ -118,6 +118,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
                 hasError={Boolean(errors.password)}
                 placeholder="Create password"
                 className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                minLength={8}
               />
             )}
           />
