@@ -6,3 +6,4 @@ export * from "./google-login";
 export * from "./onboarding-form";
 export * from "./sign-in";
 export * from "./user-logged-in";
+export * from "./sign-in-forms";
