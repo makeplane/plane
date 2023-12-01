@@ -97,7 +97,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   }
 
   toggleCommandPaletteModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCommandPaletteOpen = value;
     } else {
       this.isCommandPaletteOpen = !this.isCommandPaletteOpen;
@@ -105,7 +105,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleShortcutModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isShortcutModalOpen = value;
     } else {
       this.isShortcutModalOpen = !this.isShortcutModalOpen;
@@ -113,7 +113,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateProjectModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateProjectModalOpen = value;
     } else {
       this.isCreateProjectModalOpen = !this.isCreateProjectModalOpen;
@@ -121,7 +121,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateCycleModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateCycleModalOpen = value;
     } else {
       this.isCreateCycleModalOpen = !this.isCreateCycleModalOpen;
@@ -129,7 +129,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateViewModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateViewModalOpen = value;
     } else {
       this.isCreateViewModalOpen = !this.isCreateViewModalOpen;
@@ -137,7 +137,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreatePageModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreatePageModalOpen = value;
     } else {
       this.isCreatePageModalOpen = !this.isCreatePageModalOpen;
@@ -145,7 +145,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateIssueModal = (value?: boolean, storeType?: EProjectStore) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateIssueModalOpen = value;
       this.createIssueStoreType = storeType || EProjectStore.PROJECT;
     } else {
@@ -155,7 +155,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleDeleteIssueModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isDeleteIssueModalOpen = value;
     } else {
       this.isDeleteIssueModalOpen = !this.isDeleteIssueModalOpen;
@@ -163,7 +163,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleCreateModuleModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isCreateModuleModalOpen = value;
     } else {
       this.isCreateModuleModalOpen = !this.isCreateModuleModalOpen;
@@ -171,7 +171,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
   };
 
   toggleBulkDeleteIssueModal = (value?: boolean) => {
-    if (value) {
+    if (value !== undefined) {
       this.isBulkDeleteIssueModalOpen = value;
     } else {
       this.isBulkDeleteIssueModalOpen = !this.isBulkDeleteIssueModalOpen;
