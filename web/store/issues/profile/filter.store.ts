@@ -125,6 +125,7 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
       if (!_projectIssueFilters[workspaceSlug]) {
         _projectIssueFilters[workspaceSlug] = { displayProperties: {} } as IProjectIssuesDisplayOptions;
       }
+
       if (
         isEmpty(_projectIssueFilters[workspaceSlug].filters) ||
         isEmpty(_projectIssueFilters[workspaceSlug].displayFilters)
