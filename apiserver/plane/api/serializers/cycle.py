@@ -30,6 +30,11 @@ class CycleSerializer(BaseSerializer):
         model = Cycle
         fields = "__all__"
         read_only_fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
             "workspace",
             "project",
             "owned_by",

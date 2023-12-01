@@ -38,3 +38,4 @@ beautifulsoup4==4.12.2
 dj-database-url==2.1.0
 posthog==3.0.2
 cryptography==41.0.5
+lxml==4.9.3
