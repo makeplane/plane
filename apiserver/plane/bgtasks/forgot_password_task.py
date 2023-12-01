@@ -40,7 +40,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
         ) = get_email_configuration(instance_configuration=instance_configuration)
 
         # Send the email if the users don't have smtp configured
-        if not EMAIL_HOST or not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
             # Check the instance registration
             instance = Instance.objects.first()
 

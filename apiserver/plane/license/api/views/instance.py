@@ -60,7 +60,7 @@ class InstanceEndpoint(BaseAPIView):
             headers = {"Content-Type": "application/json"}
 
             payload = {
-                "instance_key": os.environ.get("INSTANCE_KEY"),
+                "instance_key":settings.INSTANCE_KEY,
                 "version": data.get("version", 0.1),
                 "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
                 "user_count": User.objects.filter(is_bot=False).count(),

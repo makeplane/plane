@@ -31,11 +31,7 @@ class Command(BaseCommand):
                 data = json.load(file)
 
             machine_signature = options.get("machine_signature", False)
-            instance_key = os.environ.get("INSTANCE_KEY", False)
-
-            # Raise an exception if the admin email is not provided
-            if not instance_key:
-                raise CommandError("INSTANCE_KEY is required")
+            
 
             if not machine_signature:
                 raise CommandError("Machine signature is required")
@@ -43,7 +39,7 @@ class Command(BaseCommand):
             headers = {"Content-Type": "application/json"}
 
             payload = {
-                "instance_key": instance_key,
+                "instance_key": settings.INSTANCE_KEY,
                 "version": data.get("version", 0.1),
                 "machine_signature": machine_signature,
                 "user_count": User.objects.filter(is_bot=False).count(),
