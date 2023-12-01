@@ -118,7 +118,7 @@ export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         this.loader = false;
         this.viewIssues = {
           ...this.viewIssues,
-          [viewId]: response as IIssue[],
+          [viewId]: Object.values(response) as IIssue[],
         };
       });
 
@@ -163,7 +163,7 @@ export class GlobalViewIssuesStore implements IGlobalViewIssuesStore {
         this.loader = false;
         this.viewIssues = {
           ...this.viewIssues,
-          [type]: response as IIssue[],
+          [type]: Object.values(response) as IIssue[],
         };
       });
 
