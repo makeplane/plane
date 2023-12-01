@@ -10,7 +10,7 @@ export const LoginView = observer(() => {
   return (
     <>
       {userStore?.loader ? (
-        <div className="relative w-screen h-screen flex justify-center items-center">Loading</div>
+        <div className="relative flex h-screen w-screen items-center justify-center">Loading</div> // TODO: Add spinner instead
       ) : (
         <>{userStore.currentUser ? <UserLoggedIn /> : <SignInView />}</>
       )}
