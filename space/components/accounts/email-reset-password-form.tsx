@@ -1,11 +1,5 @@
 import React from "react";
-
-// react hook form
 import { useForm } from "react-hook-form";
-// services
-import userService from "services/user.service";
-// hooks
-// import useToast from "hooks/use-toast";
 // ui
 import { Input } from "components/ui";
 import { Button } from "@plane/ui";
@@ -30,10 +24,9 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
   });
 
   const forgotPassword = async (formData: any) => {
-    const payload = {
-      email: formData.email,
-    };
-
+    // const payload = {
+    //   email: formData.email,
+    // };
     // await userService
     //   .forgotPassword(payload)
     //   .then(() =>
@@ -60,7 +53,7 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
   };
 
   return (
-    <form className="space-y-4 mt-10 w-full sm:w-[360px] mx-auto" onSubmit={handleSubmit(forgotPassword)}>
+    <form className="mx-auto mt-10 w-full space-y-4 sm:w-[360px]" onSubmit={handleSubmit(forgotPassword)}>
       <div className="space-y-1">
         <Input
           id="email"
@@ -73,11 +66,11 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
               ) || "Email address is not valid",
           })}
           placeholder="Enter registered email address.."
-          className="border-custom-border-300 h-[46px]"
+          className="h-[46px] border-custom-border-300"
         />
         {errors.email && <div className="text-sm text-red-500">{errors.email.message}</div>}
       </div>
-      <div className="mt-5 flex flex-col-reverse sm:flex-row items-center gap-2">
+      <div className="mt-5 flex flex-col-reverse items-center gap-2 sm:flex-row">
         <Button variant="neutral-primary" className="w-full" onClick={() => setIsResettingPassword(false)}>
           Go Back
         </Button>

@@ -13,16 +13,15 @@ import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {};
 
-export const IssuePeekOverview: React.FC<Props> = observer((props) => {
+export const IssuePeekOverview: React.FC<Props> = observer(() => {
+  // states
   const [isSidePeekOpen, setIsSidePeekOpen] = useState(false);
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
-
   // router
   const router = useRouter();
   const { workspace_slug, project_slug, peekId, board } = router.query;
   // store
   const { issueDetails: issueDetailStore, issue: issueStore } = useMobxStore();
-
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
 
   useEffect(() => {
@@ -75,7 +74,7 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="fixed z-20 bg-custom-background-100 top-0 right-0 h-full w-1/2 shadow-custom-shadow-sm">
+            <Dialog.Panel className="fixed right-0 top-0 z-20 h-full w-1/2 bg-custom-background-100 shadow-custom-shadow-sm">
               <SidePeekView handleClose={handleClose} issueDetails={issueDetails} />
             </Dialog.Panel>
           </Transition.Child>
@@ -105,7 +104,7 @@ export const IssuePeekOverview: React.FC<Props> = observer((props) => {
           >
             <Dialog.Panel>
               <div
-                className={`fixed z-20 bg-custom-background-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg shadow-custom-shadow-xl transition-all duration-300 ${
+                className={`fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-custom-background-100 shadow-custom-shadow-xl transition-all duration-300 ${
                   issueDetailStore.peekMode === "modal" ? "h-[70%] w-3/5" : "h-[95%] w-[95%]"
                 }`}
               >
