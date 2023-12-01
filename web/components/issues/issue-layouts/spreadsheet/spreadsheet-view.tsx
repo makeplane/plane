@@ -77,8 +77,6 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     };
   }, []);
 
-  console.log("spreadsheet issues", issues);
-
   return (
     <div className="relative flex h-full w-full rounded-lg text-custom-text-200 overflow-x-auto whitespace-nowrap bg-custom-background-200">
       <div className="h-full w-full flex flex-col">

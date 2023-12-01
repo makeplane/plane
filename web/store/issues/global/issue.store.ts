@@ -2,60 +2,60 @@ import { action, observable, makeObservable, computed, runInAction, autorun } fr
 // base class
 import { IssueBaseStore } from "store/issues";
 // services
-import { UserService } from "services/user.service";
+import { WorkspaceService } from "services/workspace.service";
+import { IssueService } from "services/issue";
 // types
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../types";
+import { IIssue } from "types/issues";
+import { IIssueResponse, TLoader, TUnGroupedIssues, ViewFlags } from "../types";
 import { RootStore } from "store/root";
-import { IIssue } from "types";
-
-interface IProfileIssueTabTypes {
-  assigned: IIssueResponse;
-  created: IIssueResponse;
-  subscribed: IIssueResponse;
-}
+import isEmpty from "lodash/isEmpty";
 
 export interface IGlobalIssuesStore {
   // observable
   loader: TLoader;
-  issues: { [user_id: string]: IProfileIssueTabTypes } | undefined;
-  currentUserId: string | null;
-  currentUserIssueTab: "assigned" | "created" | "subscribed" | null;
+  issues: { [workspace_view: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
-  getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
+  getIssuesIds: TUnGroupedIssues | undefined;
   // actions
-  fetchIssues: (
+  fetchIssues: (workspaceSlug: string, workspaceViewId: string, loadType: TLoader) => Promise<IIssueResponse>;
+  createIssue: (
     workspaceSlug: string,
-    userId: string,
-    loadType: TLoader,
-    type: "assigned" | "created" | "subscribed"
-  ) => Promise<IIssueResponse>;
-  createIssue: (workspaceSlug: string, userId: string, data: Partial<IIssue>) => Promise<IIssue | undefined>;
+    projectId: string,
+    data: Partial<IIssue>,
+    workspaceViewId?: string | undefined
+  ) => Promise<IIssue | undefined>;
   updateIssue: (
     workspaceSlug: string,
-    userId: string,
+    projectId: string,
     issueId: string,
-    data: Partial<IIssue>
+    data: Partial<IIssue>,
+    workspaceViewId?: string | undefined
   ) => Promise<IIssue | undefined>;
   removeIssue: (
     workspaceSlug: string,
-    userId: string,
     projectId: string,
-    issueId: string
+    issueId: string,
+    workspaceViewId?: string | undefined
   ) => Promise<IIssue | undefined>;
-  quickAddIssue: (workspaceSlug: string, userId: string, data: IIssue) => Promise<IIssue | undefined>;
+
   viewFlags: ViewFlags;
 }
 
 export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesStore {
   loader: TLoader = "init-loader";
-  issues: { [user_id: string]: IProfileIssueTabTypes } | undefined = undefined;
-  currentUserId: string | null = null;
-  currentUserIssueTab: "assigned" | "created" | "subscribed" | null = null;
+  issues: { [workspace_view: string]: IIssueResponse } | undefined = undefined;
   // root store
   rootStore;
   // service
-  userService;
+  workspaceService;
+  issueService;
+  //viewData
+  viewFlags = {
+    enableQuickAdd: true,
+    enableIssueCreation: true,
+    enableInlineEditing: true,
+  };
 
   constructor(_rootStore: RootStore) {
     super(_rootStore);
@@ -64,146 +64,91 @@ export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesSt
       // observable
       loader: observable.ref,
       issues: observable.ref,
-      currentUserId: observable.ref,
-      currentUserIssueTab: observable.ref,
       // computed
       getIssues: computed,
       getIssuesIds: computed,
-      viewFlags: computed,
       // action
       fetchIssues: action,
       createIssue: action,
       updateIssue: action,
       removeIssue: action,
-      quickAddIssue: action,
     });
 
     this.rootStore = _rootStore;
-    this.userService = new UserService();
+    this.workspaceService = new WorkspaceService();
+    this.issueService = new IssueService();
 
     autorun(() => {
       const workspaceSlug = this.rootStore.workspace.workspaceSlug;
-      if (!workspaceSlug || !this.currentUserId || !this.currentUserIssueTab) return;
+      const currentView = this.rootStore.workspaceGlobalIssuesFilter?.currentView;
+      if (!workspaceSlug || currentView === "") return;
 
-      const userFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.filters;
-      if (userFilters) this.fetchIssues(workspaceSlug, this.currentUserId, "mutation", this.currentUserIssueTab);
+      const userFilters = this.rootStore?.workspaceGlobalIssuesFilter?.issueFilters?.filters;
+
+      if (!isEmpty(userFilters)) this.fetchIssues(workspaceSlug, currentView, "mutation");
     });
   }
 
   get getIssues() {
-    if (!this.currentUserId || !this.currentUserIssueTab || !this.issues || !this.issues[this.currentUserId])
-      return undefined;
+    const currentView = this.rootStore.workspaceGlobalIssuesFilter?.currentView;
+    if (currentView === "" || !this.issues || !this.issues[currentView]) return undefined;
 
-    return this.issues[this.currentUserId][this.currentUserIssueTab];
+    return this.issues[currentView];
   }
 
   get getIssuesIds() {
-    const currentUserId = this.currentUserId;
-    const displayFilters = this.rootStore?.workspaceProfileIssuesFilter?.issueFilters?.displayFilters;
+    const currentView = this.rootStore.workspaceGlobalIssuesFilter?.currentView;
+    const displayFilters = this.rootStore?.workspaceGlobalIssuesFilter?.issueFilters?.displayFilters;
     if (!displayFilters) return undefined;
 
-    const groupBy = displayFilters?.group_by;
     const orderBy = displayFilters?.order_by;
-    const layout = displayFilters?.layout;
 
-    if (!currentUserId || !this.currentUserIssueTab || !this.issues || !this.issues[currentUserId]) return undefined;
+    if (currentView === "" || !this.issues || !this.issues[currentView]) return undefined;
 
-    let issues: IIssueResponse | IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined = undefined;
+    let issues: IIssueResponse | TUnGroupedIssues | undefined = undefined;
 
-    if (layout === "list" && orderBy) {
-      if (groupBy) issues = this.groupedIssues(groupBy, orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
-      else issues = this.unGroupedIssues(orderBy, this.issues[currentUserId][this.currentUserIssueTab]);
-    }
+    issues = this.unGroupedIssues(orderBy ?? "-created_at", this.issues[currentView]);
 
     return issues;
   }
 
-  get viewFlags() {
-    if (this.currentUserIssueTab === "subscribed") {
-      return {
-        enableQuickAdd: false,
-        enableIssueCreation: false,
-        enableInlineEditing: false,
-      };
-    }
-
-    return {
-      enableQuickAdd: false,
-      enableIssueCreation: true,
-      enableInlineEditing: true,
-    };
-  }
-
-  fetchIssues = async (
-    workspaceSlug: string,
-    userId: string,
-    loadType: TLoader = "init-loader",
-    type: "assigned" | "created" | "subscribed"
-  ) => {
+  fetchIssues = async (workspaceSlug: string, workspaceViewId: string, loadType: TLoader = "init-loader") => {
     try {
       this.loader = loadType;
-      this.currentUserId = userId;
-      if (type) this.currentUserIssueTab = type;
 
-      let params: any = this.rootStore?.workspaceProfileIssuesFilter?.appliedFilters;
-      params = {
-        ...params,
-        assignees: undefined,
-        created_by: undefined,
-        subscriber: undefined,
-      };
-      if (this.currentUserIssueTab === "assigned")
-        params = params ? { ...params, assignees: userId } : { assignees: userId };
-      else if (this.currentUserIssueTab === "created")
-        params = params ? { ...params, created_by: userId } : { created_by: userId };
-      else if (this.currentUserIssueTab === "subscribed")
-        params = params ? { ...params, subscriber: userId } : { subscriber: userId };
+      const params = this.rootStore?.workspaceGlobalIssuesFilter?.appliedFilters;
+      const response = await this.workspaceService.getViewIssues(workspaceSlug, params);
 
-      const response = await this.userService.getUserProfileIssues(workspaceSlug, userId, params);
-
-      if (!this.currentUserIssueTab) return;
-
-      const _issues: any = {
-        ...this.issues,
-        [userId]: {
-          ...this.issues?.[userId],
-          ...{ [this.currentUserIssueTab]: response },
-        },
-      };
+      const _issues = { ...this.issues, [workspaceViewId]: { ...response } };
 
       runInAction(() => {
         this.issues = _issues;
         this.loader = undefined;
       });
 
-      return _issues;
+      return response;
     } catch (error) {
+      console.error(error);
       this.loader = undefined;
       throw error;
     }
   };
 
-  createIssue = async (workspaceSlug: string, userId: string, data: Partial<IIssue>) => {
+  createIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    data: Partial<IIssue>,
+    workspaceViewId: string | undefined = undefined
+  ) => {
+    if (!workspaceViewId) return;
+
     try {
-      const projectId = data.project;
-      const moduleId = data.module_id;
-      const cycleId = data.cycle_id;
-
-      if (!projectId) return;
-
-      let response = {} as IIssue;
-      response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-
-      // if (moduleId)
-      //   response = await this.rootStore.moduleIssues.addIssueToModule(workspaceSlug, projectId, moduleId, response);
-
-      // if (cycleId)
-      //   response = await this.rootStore.cycleIssues.addIssueToCycle(workspaceSlug, projectId, cycleId, response);
+      const response = await this.issueService.createIssue(workspaceSlug, projectId, data);
 
       let _issues = this.issues;
       if (!_issues) _issues = {};
-      if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[userId] = { ..._issues[userId], ...{ [response.id]: response } };
+      if (!_issues[workspaceViewId]) _issues[workspaceViewId] = {};
+      _issues[workspaceViewId] = { ..._issues[workspaceViewId], ...{ [response.id]: response } };
 
       runInAction(() => {
         this.issues = _issues;
@@ -211,116 +156,62 @@ export class GlobalIssuesStore extends IssueBaseStore implements IGlobalIssuesSt
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
+      this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");
       throw error;
     }
   };
 
-  updateIssue = async (workspaceSlug: string, userId: string, issueId: string, data: Partial<IIssue>) => {
+  updateIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: Partial<IIssue>,
+    workspaceViewId: string | undefined = undefined
+  ) => {
+    if (!workspaceViewId) return;
+
     try {
-      const projectId = data.project;
-      const moduleId = data.module_id;
-      const cycleId = data.cycle_id;
-
-      if (!projectId || !this.currentUserIssueTab) return;
-
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
-      if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[projectId][this.currentUserIssueTab][userId] = {
-        ..._issues[projectId][this.currentUserIssueTab][userId],
-        ...data,
-      };
+      if (!_issues[workspaceViewId]) _issues[workspaceViewId] = {};
+      _issues[workspaceViewId][issueId] = { ..._issues[workspaceViewId][issueId], ...data };
 
       runInAction(() => {
         this.issues = _issues;
       });
 
-      let response = data as IIssue | undefined;
-      response = await this.rootStore.projectIssues.updateIssue(
-        workspaceSlug,
-        projectId,
-        data.id as keyof IIssue,
-        data
-      );
-
-      if (moduleId)
-        response = await this.rootStore.moduleIssues.updateIssue(
-          workspaceSlug,
-          projectId,
-          response.id as keyof IIssue,
-          response,
-          moduleId
-        );
-
-      if (cycleId)
-        response = await this.rootStore.cycleIssues.updateIssue(
-          workspaceSlug,
-          projectId,
-          data.id as keyof IIssue,
-          data,
-          cycleId
-        );
+      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
+      this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");
       throw error;
     }
   };
 
-  removeIssue = async (workspaceSlug: string, userId: string, projectId: string, issueId: string) => {
+  removeIssue = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    workspaceViewId: string | undefined = undefined
+  ) => {
+    if (!workspaceViewId) return;
+
     try {
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
-      if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-
-      if (this.currentUserIssueTab) delete _issues?.[userId]?.[this.currentUserIssueTab]?.[issueId];
+      if (!_issues[workspaceViewId]) _issues[workspaceViewId] = {};
+      delete _issues?.[workspaceViewId]?.[issueId];
 
       runInAction(() => {
         this.issues = _issues;
       });
 
-      const response = await this.rootStore.projectIssues.removeIssue(workspaceSlug, projectId, issueId);
+      const response = await this.issueService.deleteIssue(workspaceSlug, projectId, issueId);
 
       return response;
     } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
-      throw error;
-    }
-  };
-
-  quickAddIssue = async (workspaceSlug: string, userId: string, data: IIssue) => {
-    try {
-      const projectId = data.project;
-
-      let _issues = { ...this.issues };
-      if (!_issues) _issues = {};
-      if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[userId] = { ..._issues[userId], ...{ [data.id as keyof IIssue]: data } };
-
-      runInAction(() => {
-        this.issues = _issues;
-      });
-
-      const response = await this.rootStore.projectIssues.createIssue(workspaceSlug, projectId, data);
-
-      if (this.issues && this.currentUserIssueTab) {
-        delete this.issues[userId][this.currentUserIssueTab][data.id as keyof IIssue];
-
-        let _issues = { ...this.issues };
-        if (!_issues) _issues = {};
-        if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-        _issues[userId] = { ..._issues[userId], ...{ [response.id as keyof IIssue]: response } };
-
-        runInAction(() => {
-          this.issues = _issues;
-        });
-      }
-
-      return response;
-    } catch (error) {
-      if (this.currentUserIssueTab) this.fetchIssues(workspaceSlug, userId, "mutation", this.currentUserIssueTab);
+      this.fetchIssues(workspaceSlug, workspaceViewId, "mutation");
       throw error;
     }
   };

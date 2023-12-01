@@ -108,14 +108,13 @@ export const SignInView = observer(() => {
                     <Lightbulb className="h-7 w-7 mr-2 mx-3" />
                     <p className="text-sm text-left text-onboarding-text-100">
                       Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
-                      <Link href="https://plane.so/changelog">
-                        <a
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-sm underline hover:cursor-pointer"
-                        >
-                          Learn more
-                        </a>
+                      <Link
+                        href="https://plane.so/changelog"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-sm underline hover:cursor-pointer"
+                      >
+                        Learn more
                       </Link>
                     </p>
                   </div>

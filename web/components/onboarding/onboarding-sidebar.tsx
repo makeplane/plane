@@ -229,9 +229,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
       <div className={`space-y-1 p-4`}>
         <div className={`flex items-center justify-between w-full px-1 mb-3 gap-2 mt-4 `}>
           <div
-            className={`relative flex items-center justify-between w-full rounded gap-1 group
-             px-3 shadow-custom-shadow-2xs border-onboarding-border-100 border 
-          `}
+            className={`relative flex items-center justify-between w-full rounded gap-1 group px-3 shadow-custom-shadow-2xs border-onboarding-border-100 border`}
           >
             <div className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none`}>
               <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />

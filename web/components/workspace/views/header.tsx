@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -20,11 +18,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
   const { workspaceSlug, globalViewId } = router.query;
 
   const { globalViews: globalViewsStore } = useMobxStore();
-
-  useSWR(
-    workspaceSlug ? `GLOBAL_VIEWS_LIST_${workspaceSlug.toString()}` : null,
-    workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
-  );
 
   // bring the active view to the centre of the header
   useEffect(() => {
