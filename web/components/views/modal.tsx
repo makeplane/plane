@@ -8,6 +8,7 @@ import useToast from "hooks/use-toast";
 import { ProjectViewForm } from "components/views";
 // types
 import { IProjectView } from "types";
+import { debounce } from "lodash";
 
 type Props = {
   data?: IProjectView | null;
@@ -33,7 +34,9 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     await projectViewsStore
       .createView(workspaceSlug, projectId, payload)
       .then(() => {
+        console.log("after calling store");
         handleClose();
+        console.log("after closing");
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -67,6 +70,8 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
     else await updateView(formData);
   };
 
+  const debouncedFormSubmit = debounce(handleFormSubmit, 10, { leading: false, trailing: true });
+
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
@@ -97,7 +102,7 @@ export const CreateUpdateProjectViewModal: FC<Props> = observer((props) => {
                 <ProjectViewForm
                   data={data}
                   handleClose={handleClose}
-                  handleFormSubmit={handleFormSubmit}
+                  handleFormSubmit={debouncedFormSubmit as (formData: IProjectView) => Promise<void>}
                   preLoadedData={preLoadedData}
                 />
               </Dialog.Panel>
