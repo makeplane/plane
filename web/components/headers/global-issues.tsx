@@ -2,8 +2,6 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -27,8 +25,6 @@ const GLOBAL_VIEW_LAYOUTS = [
 type Props = {
   activeLayout: "list" | "spreadsheet";
 };
-
-const STATIC_VIEW_TYPES: TStaticViewTypes[] = ["all-issues", "assigned", "created", "subscribed"];
 
 export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   const { activeLayout } = props;

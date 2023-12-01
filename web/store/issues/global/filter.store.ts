@@ -40,6 +40,7 @@ export interface IGlobalIssuesFilterStore {
   // helpers
   issueDisplayFilters: (workspaceId: string) => IIssuesDisplayOptions | undefined;
   // actions
+  setCurrentView: (view: TIssueViewTypes) => void;
   fetchWorkspaceProperties: (workspaceSlug: string) => Promise<IWorkspaceProperties>;
   updateWorkspaceProperties: (
     workspaceSlug: string,
@@ -78,6 +79,7 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
       workspaceViewFilters: observable.ref,
       // computed
       // actions
+      setCurrentView: action,
       fetchWorkspaceProperties: action,
       updateWorkspaceProperties: action,
       fetchWorkspaceViewFilters: action,
@@ -111,6 +113,10 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
   };
 
   // actions
+  setCurrentView = (view: TIssueViewTypes) => {
+    this.currentView = view;
+  };
+
   fetchWorkspaceProperties = async (workspaceSlug: string) => {
     try {
       let _filters: IWorkspaceProperties = {} as IWorkspaceProperties;
@@ -382,7 +388,6 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
 
   fetchFilters = async (workspaceSlug: string, view: TIssueViewTypes) => {
     try {
-      this.currentView = view;
       await this.fetchWorkspaceProperties(workspaceSlug);
       if (!["all-issues", "assigned", "created", "subscribed"].includes(view))
         await this.fetchWorkspaceViewFilters(workspaceSlug, view);
