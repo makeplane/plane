@@ -331,7 +331,7 @@ class EmailCheckEndpoint(BaseAPIView):
                         first_time=True,
                     )
                 # Automatically send the email
-                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
         # Existing user
         else:
             if type == "magic_code":
