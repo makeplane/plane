@@ -8,11 +8,11 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
-import { EmptyState } from "components/common";
+import { NewEmptyState } from "components/common/new-empty-state";
 // icons
 import { Plus } from "lucide-react";
 // assets
-import emptyAnalytics from "public/empty-state/analytics.svg";
+import emptyAnalytics from "public/empty-state/empty_analytics.webp";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 // type
@@ -58,13 +58,20 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
         </div>
       ) : (
         <>
-          <EmptyState
-            title="You can see your all projects' analytics here"
-            description="Let's create your first project and analyze the stats with various graphs."
+          <NewEmptyState
+            title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster."
+            description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
             image={emptyAnalytics}
+            comicBox={{
+              title: "Analytics works best with Cycles + Modules",
+              description:
+                "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+              direction: "right",
+              extraPadding: true,
+            }}
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
-              text: "New Project",
+              text: "Create Cycles and Modules first",
               onClick: () => {
                 setTrackElement("ANALYTICS_EMPTY_STATE");
                 toggleCreateProjectModal(true);
