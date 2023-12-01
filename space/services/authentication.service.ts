@@ -1,10 +1,49 @@
 // services
 import APIService from "services/api.service";
 import { API_BASE_URL } from "helpers/common.helper";
+import { IEmailCheckData, ILoginTokenResponse, IPasswordSignInData } from "types/auth";
 
 class AuthService extends APIService {
   constructor() {
     super(API_BASE_URL);
+  }
+
+  async emailCheck(data: IEmailCheckData): Promise<{
+    is_password_autoset: boolean;
+  }> {
+    return this.post("/api/email-check/", data, { headers: {} })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async passwordSignIn(data: IPasswordSignInData): Promise<ILoginTokenResponse> {
+    return this.post("/api/sign-in/", data, { headers: {} })
+      .then((response) => {
+        this.setAccessToken(response?.data?.access_token);
+        this.setRefreshToken(response?.data?.refresh_token);
+        return response?.data;
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async sendResetPasswordLink(data: { email: string }): Promise<any> {
+    return this.post(`/api/forgot-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response;
+      });
+  }
+
+  async setPassword(data: { password: string }): Promise<any> {
+    return this.post(`/api/users/me/set-password/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async emailLogin(data: any) {
