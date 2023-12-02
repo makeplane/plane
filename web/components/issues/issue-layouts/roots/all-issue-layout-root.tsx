@@ -63,23 +63,23 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+      const projectId = issue.project;
+      if (!workspaceSlug || !projectId) return;
 
-      await updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      await updateIssue(workspaceSlug, projectId, issue.id, issue, currentIssueView);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+      const projectId = issue.project;
+      if (!workspaceSlug || !projectId) return;
 
-      await removeIssue(workspaceSlug, issue.project, issue.id);
+      await removeIssue(workspaceSlug, projectId, issue.id, currentIssueView);
     },
   };
 
   const handleIssues = useCallback(
     async (issue: IIssue, action: EIssueActions) => {
-      if (issueActions && action && issue) {
-        if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
-        if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
-      }
+      if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
+      if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
     },
     [getIssues]
   );
