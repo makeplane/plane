@@ -6,6 +6,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { EFilterType } from "store/issues/types";
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
 import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
+import { isNil } from "../project-issues/utils";
 
 interface IProjectIssuesFiltersOptions {
   filters: IIssueFilterOptions;
@@ -285,9 +286,13 @@ export class ProfileIssuesFilterStore extends IssueFilterBaseStore implements IP
       start_date: userFilters?.filters?.start_date || undefined,
       target_date: userFilters?.filters?.target_date || undefined,
       type: userFilters?.displayFilters?.type || undefined,
-      sub_issue: userFilters?.displayFilters?.sub_issue || true,
-      show_empty_groups: userFilters?.displayFilters?.show_empty_groups || true,
-      start_target_date: userFilters?.displayFilters?.start_target_date || true,
+      sub_issue: isNil(userFilters?.displayFilters?.sub_issue) ? true : userFilters?.displayFilters?.sub_issue,
+      show_empty_groups: isNil(userFilters?.displayFilters?.show_empty_groups)
+        ? true
+        : userFilters?.displayFilters?.show_empty_groups,
+      start_target_date: isNil(userFilters?.displayFilters?.start_target_date)
+        ? true
+        : userFilters?.displayFilters?.start_target_date,
     };
 
     const filteredParams = handleIssueQueryParamsByLayout(userFilters?.displayFilters?.layout, "profile_issues");

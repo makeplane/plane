@@ -6,6 +6,7 @@ import { EFilterType } from "store/issues/types";
 import { IssueFilterBaseStore } from "../project-issues/base-issue-filter.store";
 // helpers
 import { handleIssueQueryParamsByLayout } from "helpers/issue.helper";
+import { isNil } from "../project-issues/utils";
 // services
 import { WorkspaceService } from "services/workspace.service";
 
@@ -377,6 +378,12 @@ export class GlobalIssuesFilterStore extends IssueFilterBaseStore implements IGl
       start_date: userFilters?.filters?.start_date || undefined,
       target_date: userFilters?.filters?.target_date || undefined,
       type: userFilters?.displayFilters?.type || undefined,
+      show_empty_groups: isNil(userFilters?.displayFilters?.show_empty_groups)
+        ? true
+        : userFilters?.displayFilters?.show_empty_groups,
+      start_target_date: isNil(userFilters?.displayFilters?.start_target_date)
+        ? true
+        : userFilters?.displayFilters?.start_target_date,
       sub_issue: false,
     };
 
