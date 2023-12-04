@@ -10,6 +10,7 @@ from .issue import (
     IssueVotePublicViewSet,
     IssueRetrievePublicEndpoint,
     ProjectIssuesPublicEndpoint,
+    ProjectIssuesPublicGroupedEndpoint,
 )
 
 from .inbox import InboxIssuePublicViewSet
