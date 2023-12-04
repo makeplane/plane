@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -33,6 +34,8 @@ const defaultValues: TPasswordFormValues = {
 
 export const PasswordForm: React.FC<Props> = (props) => {
   const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
+  // states
+  const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -110,6 +113,8 @@ export const PasswordForm: React.FC<Props> = (props) => {
       return;
     }
 
+    setIsSendingResetPasswordLink(true);
+
     authService
       .sendResetPasswordLink({ email: emailFormValue })
       .then(() => handleStepChange(ESignInSteps.SET_PASSWORD_LINK))
@@ -119,7 +124,8 @@ export const PasswordForm: React.FC<Props> = (props) => {
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
-      );
+      )
+      .finally(() => setIsSendingResetPasswordLink(false));
   };
 
   return (
@@ -182,17 +188,28 @@ export const PasswordForm: React.FC<Props> = (props) => {
               />
             )}
           />
-          <button
-            type="button"
-            onClick={handleForgotPassword}
-            className="text-xs font-medium text-right w-full text-custom-primary-100"
-          >
-            Forgot your password?
-          </button>
+          <div className="w-full text-right">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className={`text-xs font-medium ${
+                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-custom-primary-100"
+              }`}
+              disabled={isSendingResetPasswordLink}
+            >
+              {isSendingResetPasswordLink ? "Sending link..." : "Forgot your password?"}
+            </button>
+          </div>
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? "Signing in..." : "Go to workspace"}
         </Button>
+        <p className="text-xs text-onboarding-text-200">
+          When you click the button above, you agree with our{" "}
+          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <span className="font-semibold underline">terms and conditions of service.</span>
+          </Link>
+        </p>
       </form>
     </>
   );
