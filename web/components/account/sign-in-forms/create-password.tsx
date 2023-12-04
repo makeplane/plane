@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
@@ -74,7 +75,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
+      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
         Let{"'"}s get a new password
       </h1>
 
@@ -117,16 +118,23 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
                 hasError={Boolean(errors.password)}
                 placeholder="Create password"
                 className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                minLength={8}
               />
             )}
           />
-          <p className="text-xs text-onboarding-text-200 mt-3">
+          <p className="text-xs text-onboarding-text-200 mt-3 pb-2">
             Whatever you choose now will be your account{"'"}s password until you change it.
           </p>
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Go to workspace"}
         </Button>
+        <p className="text-xs text-onboarding-text-200">
+          When you click the button above, you agree with our{" "}
+          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <span className="font-semibold underline">terms and conditions of service.</span>
+          </Link>
+        </p>
       </form>
     </>
   );

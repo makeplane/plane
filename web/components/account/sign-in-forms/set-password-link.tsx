@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -48,6 +49,13 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
 
     await authService
       .emailCheck(payload)
+      .then(() =>
+        setToastAlert({
+          type: "success",
+          title: "Success!",
+          message: "We have sent a new link to your email.",
+        })
+      )
       .catch((err) =>
         setToastAlert({
           type: "error",
@@ -60,15 +68,15 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
-        Get on your flight deck!
+      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
+        Get on your flight deck
       </h1>
       <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
-        We have sent a link to <span className="font-medium text-custom-primary-100">{email},</span> so you can set a
+        We have sent a link to <span className="font-semibold text-custom-primary-100">{email},</span> so you can set a
         password
       </p>
 
-      <form className="mt-5 sm:w-96 mx-auto">
+      <form className="mt-5 sm:w-96 mx-auto space-y-4">
         <div className="space-y-1">
           <Controller
             control={control}
@@ -103,19 +111,23 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
             )}
           />
         </div>
-        <div className="mt-4">
-          <Button
-            type="button"
-            variant="primary"
-            className="w-full"
-            size="xl"
-            onClick={handleSendNewLink}
-            disabled={!isValid}
-            loading={isSendingNewLink}
-          >
-            {isSendingNewLink ? "Sending new link..." : "Get link again"}
-          </Button>
-        </div>
+        <Button
+          type="button"
+          variant="primary"
+          className="w-full"
+          size="xl"
+          onClick={handleSendNewLink}
+          disabled={!isValid}
+          loading={isSendingNewLink}
+        >
+          {isSendingNewLink ? "Sending new link..." : "Get link again"}
+        </Button>
+        <p className="text-xs text-onboarding-text-200">
+          When you click the button above, you agree with our{" "}
+          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <span className="font-semibold underline">terms and conditions of service.</span>
+          </Link>
+        </p>
       </form>
     </>
   );

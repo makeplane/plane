@@ -1,5 +1,4 @@
 import React from "react";
-
 // next-themes
 import { useTheme } from "next-themes";
 // tooltip2
@@ -50,9 +49,9 @@ export const Tooltip: React.FC<Props> = ({
       hoverCloseDelay={closeDelay}
       content={
         <div
-          className={`relative z-50 max-w-xs gap-1 rounded-md p-2 text-xs shadow-md border border-custom-border-200 ${
+          className={`relative z-50 max-w-xs gap-1 rounded-md border border-custom-border-200 p-2 text-xs shadow-md ${
             theme === "custom" ? "bg-custom-background-100 text-custom-text-200" : "bg-black text-gray-400"
-          } break-words overflow-hidden ${className}`}
+          } overflow-hidden break-words ${className}`}
         >
           {tooltipHeading && (
             <h5 className={`font-medium ${theme === "custom" ? "text-custom-text-100" : "text-white"}`}>

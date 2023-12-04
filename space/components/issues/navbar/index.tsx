@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 // mobx
 import { observer } from "mobx-react-lite";
 // components
-import { NavbarSearch } from "./search";
+// import { NavbarSearch } from "./search";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
 // ui
@@ -83,45 +83,43 @@ const IssueNavbar = observer(() => {
   }, [board, workspace_slug, project_slug, router, projectStore, projectStore?.deploySettings]);
 
   return (
-    <div className="px-5 relative w-full flex items-center gap-4">
+    <div className="relative flex w-full items-center gap-4 px-5">
       {/* project detail */}
-      <div className="flex-shrink-0 flex items-center gap-2">
-        <div className="w-4 h-4 flex justify-center items-center">
+      <div className="flex flex-shrink-0 items-center gap-2">
+        <div className="flex h-4 w-4 items-center justify-center">
           {projectStore?.project && projectStore?.project?.emoji ? (
             renderEmoji(projectStore?.project?.emoji)
           ) : (
-            <Image src="/plane-logo.webp" alt="plane logo" className="w-[24px] h-[24px]" height="24" width="24" />
+            <Image src="/plane-logo.webp" alt="plane logo" className="h-[24px] w-[24px]" height="24" width="24" />
           )}
         </div>
-        <div className="font-medium text-lg max-w-[300px] line-clamp-1 overflow-hidden">
+        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-lg font-medium">
           {projectStore?.project?.name || `...`}
         </div>
       </div>
 
       {/* issue search bar */}
-      <div className="w-full">
-        <NavbarSearch />
-      </div>
+      <div className="w-full">{/* <NavbarSearch /> */}</div>
 
       {/* issue views */}
-      <div className="flex-shrink-0 relative flex items-center gap-1 transition-all ease-in-out delay-150">
+      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
         <NavbarIssueBoardView />
       </div>
 
       {/* theming */}
-      <div className="flex-shrink-0 relative">
+      <div className="relative flex-shrink-0">
         <NavbarTheme />
       </div>
 
       {user ? (
-        <div className="border border-custom-border-200 rounded flex items-center gap-2 p-2">
+        <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
           {user.avatar && user.avatar !== "" ? (
             <div className="h-5 w-5 rounded-full">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={user.avatar} alt={user.display_name ?? ""} className="rounded-full" />
             </div>
           ) : (
-            <div className="bg-custom-background-80 h-5 w-5 rounded-full grid place-items-center text-[10px] capitalize">
+            <div className="grid h-5 w-5 place-items-center rounded-full bg-custom-background-80 text-[10px] capitalize">
               {(user.display_name ?? "A")[0]}
             </div>
           )}

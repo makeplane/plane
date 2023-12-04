@@ -8,10 +8,12 @@ import { Check, ChevronDown, Search, User2 } from "lucide-react";
 import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
 import { Placement } from "@popperjs/core";
+import { IProjectMember } from "types";
 
 export interface IIssuePropertyAssignee {
   projectId: string | null;
   value: string[] | string;
+  defaultOptions?: any;
   onChange: (data: string[]) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -27,6 +29,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const {
     projectId,
     value,
+    defaultOptions = [],
     onChange,
     disabled = false,
     hideDropdownArrow = false,
@@ -40,8 +43,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   // store
   const {
     workspace: workspaceStore,
-    project: projectStore,
-    workspaceMember: { workspaceMembers, fetchWorkspaceMembers },
+    projectMember: { projectMembers: _projectMembers, fetchProjectMembers },
   } = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
   // states
@@ -50,20 +52,16 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  // const fetchProjectMembers = () => {
-  //   setIsLoading(true);
-  //   if (workspaceSlug && projectId)
-  //     workspaceSlug &&
-  //       projectId &&
-  //       projectStore.fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
-  // };
-
   const getWorkspaceMembers = () => {
     setIsLoading(true);
-    if (workspaceSlug) workspaceSlug && fetchWorkspaceMembers(workspaceSlug).then(() => setIsLoading(false));
+    if (workspaceSlug && projectId) fetchProjectMembers(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
-  const options = (workspaceMembers ?? [])?.map((member) => ({
+  const updatedDefaultOptions: IProjectMember[] =
+    defaultOptions.map((member: any) => ({ member: { ...member } })) ?? [];
+  const projectMembers = _projectMembers ?? updatedDefaultOptions;
+
+  const options = projectMembers?.map((member) => ({
     value: member.member.id,
     query: member.member.display_name,
     content: (
@@ -82,7 +80,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
 
     // if multiple assignees
     if (Array.isArray(value)) {
-      const assignees = workspaceMembers?.filter((m) => value.includes(m.member.id));
+      const assignees = projectMembers?.filter((m) => value.includes(m.member.id));
 
       if (!assignees || assignees.length === 0) return "No Assignee";
 
@@ -93,7 +91,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     }
 
     // if single assignee
-    const assignee = workspaceMembers?.find((m) => m.member.id === value)?.member;
+    const assignee = projectMembers?.find((m) => m.member.id === value)?.member;
 
     if (!assignee) return "No Assignee";
 
@@ -107,7 +105,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
-              const member = workspaceMembers?.find((m) => m.member.id === assigneeId)?.member;
+              const member = projectMembers?.find((m) => m.member.id === assigneeId)?.member;
               if (!member) return null;
               return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
             })}
@@ -149,7 +147,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           className={`flex items-center justify-between gap-1 w-full text-xs ${
             disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
           } ${buttonClassName}`}
-          onClick={() => !workspaceMembers && getWorkspaceMembers()}
+          onClick={() => !projectMembers && getWorkspaceMembers()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
