@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -143,17 +143,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const currentMode = peekOptions.find((m) => m.key === peekMode);
 
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert]);
-
   return (
     <>
       {issue && !isArchived && (
@@ -291,7 +280,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
                         )}
                         <PeekOverviewIssueDetails
-                          setShowAlert={(value) => setShowAlert(value)}
                           workspaceSlug={workspaceSlug}
                           issue={issue}
                           issueUpdate={issueUpdate}
@@ -326,7 +314,6 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <div className="relative w-full h-full space-y-6 p-4 py-5 overflow-auto">
                           <div className={isArchived ? "pointer-events-none" : ""}>
                             <PeekOverviewIssueDetails
-                              setShowAlert={(value) => setShowAlert(value)}
                               workspaceSlug={workspaceSlug}
                               issue={issue}
                               issueReactions={issueReactions}

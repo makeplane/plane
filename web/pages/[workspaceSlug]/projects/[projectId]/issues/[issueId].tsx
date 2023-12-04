@@ -11,8 +11,6 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { ProjectIssueDetailsHeader } from "components/headers";
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
-// hooks
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 // ui
 import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
@@ -49,9 +47,6 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
   const {
     projectIssues: { isSubmitting, setIsSubmitting },
   } = useMobxStore();
-
-  // hooks
-  const { setShowAlert } = useReloadConfirmations();
 
   const {
     data: issueDetails,
@@ -116,17 +111,6 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
     });
   }, [issueDetails, reset, issueId]);
 
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert]);
-
   return (
     <>
       {" "}
@@ -143,11 +127,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
       ) : issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
-            <IssueMainContent
-              setShowAlert={(value) => setShowAlert(value)}
-              issueDetails={issueDetails}
-              submitChanges={submitChanges}
-            />
+            <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
           <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 py-5 overflow-hidden">
             <IssueDetailsSidebar

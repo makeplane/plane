@@ -1,5 +1,7 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useMobxStore } from "lib/mobx/store-provider";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
 // components
@@ -12,7 +14,6 @@ import useEditorSuggestions from "hooks/use-editor-suggestions";
 import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 const fileService = new FileService();
 
@@ -24,15 +25,14 @@ interface IPeekOverviewIssueDetails {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
-  setShowAlert: (value: boolean) => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove,setShowAlert } = props;
+  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
   // store
   const {
     user: userStore,
-    projectIssues: { setIsSubmitting },
+    projectIssues: { isSubmitting, setIsSubmitting },
   } = useMobxStore();
   const { currentProjectRole } = userStore;
   const isAllowed = [15, 20].includes(currentProjectRole || 0);
@@ -41,6 +41,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
 
   // hooks
   const editorSuggestions = useEditorSuggestions();
+  const { setShowAlert } = useReloadConfirmations();
 
   const {
     handleSubmit,
@@ -79,6 +80,17 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)();
   }, 1500);
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
 
   // reset form values
   useEffect(() => {

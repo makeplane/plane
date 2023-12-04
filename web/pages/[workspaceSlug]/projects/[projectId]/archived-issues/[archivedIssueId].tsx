@@ -139,17 +139,6 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
       .finally(() => setIsRestoring(false));
   };
 
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert]);
-
   return (
     <>
       {issueDetails && projectId ? (
@@ -173,12 +162,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
               </div>
             )}
             <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60 pointer-events-none">
-              <IssueMainContent
-                setShowAlert={(value) => setShowAlert(value)}
-                issueDetails={issueDetails}
-                submitChanges={submitChanges}
-                uneditable
-              />
+              <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} uneditable />
             </div>
           </div>
           <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">

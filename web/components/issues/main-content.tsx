@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
@@ -8,6 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import {
   AddComment,
@@ -31,7 +33,6 @@ type Props = {
   issueDetails: IIssue;
   submitChanges: (formData: Partial<IIssue>) => Promise<void>;
   uneditable?: boolean;
-  setShowAlert: (value: boolean) => void;
 };
 
 // services
@@ -39,18 +40,20 @@ const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { issueDetails, submitChanges, uneditable = false, setShowAlert } = props;
+  const { issueDetails, submitChanges, uneditable = false } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
+  // hooks
   const { setToastAlert } = useToast();
+  const { setShowAlert } = useReloadConfirmations();
 
   const {
     user: userStore,
     project: projectStore,
     projectState: { states },
-    projectIssues: { isSubmitting },
+    projectIssues: { isSubmitting, setIsSubmitting },
   } = useMobxStore();
   const user = userStore.currentUser ?? undefined;
   const userRole = userStore.currentProjectRole;
@@ -109,6 +112,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         })
       );
   };
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
 
   return (
     <>
