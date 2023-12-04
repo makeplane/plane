@@ -9,8 +9,9 @@ import { EstimatesList } from "components/estimates";
 import { NextPageWithLayout } from "types/app";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { observer } from "mobx-react-lite";
 
-const EstimatesSettingsPage: NextPageWithLayout = () => {
+const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   const {
     user: { currentProjectRole },
   } = useMobxStore();
@@ -22,7 +23,7 @@ const EstimatesSettingsPage: NextPageWithLayout = () => {
       <EstimatesList />
     </div>
   );
-};
+});
 
 EstimatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
