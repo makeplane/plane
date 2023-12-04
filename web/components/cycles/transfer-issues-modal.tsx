@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // services
 import { CycleService } from "services/cycle.service";
 // hooks
 import useToast from "hooks/use-toast";
+import { useMobxStore } from "lib/mobx/store-provider";
 //icons
 import { ContrastIcon, TransferIcon } from "@plane/ui";
 import { AlertCircle, Search, X } from "lucide-react";
@@ -23,8 +25,10 @@ type Props = {
 
 const cycleService = new CycleService();
 
-export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) => {
+export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleClose }) => {
   const [query, setQuery] = useState("");
+
+  const { cycleIssues: cycleIssueStore } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId } = router.query;
@@ -35,6 +39,7 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
     await cycleService
       .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then(() => {
+        cycleIssueStore.emptyIssuesFromCycle(cycleId as string);
         setToastAlert({
           type: "success",
           title: "Issues transfered successfully",
@@ -159,4 +164,4 @@ export const TransferIssuesModal: React.FC<Props> = ({ isOpen, handleClose }) =>
       </Dialog>
     </Transition.Root>
   );
-};
+});

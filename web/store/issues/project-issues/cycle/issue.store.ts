@@ -62,7 +62,7 @@ export interface ICycleIssuesStore {
     issueId: string,
     issueBridgeId: string
   ) => Promise<IIssue>;
-
+  emptyIssuesFromCycle: (cycleId: string) => void;
   viewFlags: ViewFlags;
 }
 
@@ -103,6 +103,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       quickAddIssue: action,
       addIssueToCycle: action,
       removeIssueFromCycle: action,
+      emptyIssuesFromCycle: action,
     });
 
     this.rootStore = _rootStore;
@@ -347,5 +348,14 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
       throw error;
     }
+  };
+
+  emptyIssuesFromCycle = (cycleId: string) => {
+    const _issues = { ...this.issues, [cycleId]: {} };
+
+    runInAction(() => {
+      this.issues = _issues;
+      this.loader = undefined;
+    });
   };
 }
