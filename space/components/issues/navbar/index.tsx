@@ -11,7 +11,7 @@ import { observer } from "mobx-react-lite";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // store
@@ -129,9 +129,7 @@ const IssueNavbar = observer(() => {
         <div className="flex-shrink-0">
           <Link href={`/login/?next_path=${router.asPath}`}>
             <span>
-              <PrimaryButton className="flex-shrink-0" outline>
-                Sign in
-              </PrimaryButton>
+              <Button variant="outline-primary">Sign in</Button>
             </span>
           </Link>
         </div>

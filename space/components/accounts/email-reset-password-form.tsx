@@ -1,8 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 // ui
-import { Input } from "components/ui";
-import { Button } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 type Props = {
   setIsResettingPassword: React.Dispatch<React.SetStateAction<boolean>>;

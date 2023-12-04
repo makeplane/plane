@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 // components
 import { EmailResetPasswordForm } from "./email-reset-password-form";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
+
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -92,14 +93,9 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
             )}
           </div>
           <div>
-            <PrimaryButton
-              type="submit"
-              className="w-full text-center h-[46px]"
-              disabled={!isValid && isDirty}
-              loading={isSubmitting}
-            >
+            <Button variant="primary" type="submit" disabled={!isValid && isDirty} loading={isSubmitting}>
               {isSignUpPage ? (isSubmitting ? "Signing up..." : "Sign up") : isSubmitting ? "Signing in..." : "Sign in"}
-            </PrimaryButton>
+            </Button>
             {!isSignUpPage && (
               <Link href="/sign-up">
                 <span className="block text-custom-text-200 hover:text-custom-primary-100 text-xs mt-4">

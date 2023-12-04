@@ -7,7 +7,7 @@ import {
   PeekOverviewIssueProperties,
 } from "components/issues/peek-overview";
 // types
-import { Loader } from "components/ui/loader";
+import { Loader } from "@plane/ui";
 import { IIssue } from "types/issue";
 
 type Props = {

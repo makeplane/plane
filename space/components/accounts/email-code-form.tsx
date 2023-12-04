@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
 
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 
 // types
 type EmailCodeFormValues = {
@@ -185,19 +185,19 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           </>
         )}
         {codeSent ? (
-          <PrimaryButton
+          <Button
+            variant="primary"
             type="submit"
-            className="w-full text-center h-[46px]"
             size="md"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
             loading={isLoading}
           >
             {isLoading ? "Signing in..." : "Sign in"}
-          </PrimaryButton>
+          </Button>
         ) : (
-          <PrimaryButton
-            className="w-full text-center h-[46px]"
+          <Button
+            variant="primary"
             size="md"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {
@@ -208,7 +208,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             loading={isSubmitting}
           >
             {isSubmitting ? "Sending code..." : "Send sign in code"}
-          </PrimaryButton>
+          </Button>
         )}
       </form>
     </>
