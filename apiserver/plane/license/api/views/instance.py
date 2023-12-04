@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 # Third party imports
 from rest_framework import status
@@ -34,7 +35,6 @@ from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
-from plane.license.utils.instance_value import get_configuration_value
 
 
 class InstanceEndpoint(BaseAPIView):
@@ -57,25 +57,17 @@ class InstanceEndpoint(BaseAPIView):
                 # Load JSON content from the file
                 data = json.load(file)
 
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL")
-
-            if not license_engine_base_url:
-                raise Response(
-                    {"error": "LICENSE_ENGINE_BASE_URL is required"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             headers = {"Content-Type": "application/json"}
 
             payload = {
-                "instance_key": os.environ.get("INSTANCE_KEY"),
+                "instance_key":settings.INSTANCE_KEY,
                 "version": data.get("version", 0.1),
                 "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
                 "user_count": User.objects.filter(is_bot=False).count(),
             }
 
             response = requests.post(
-                f"{license_engine_base_url}/api/instances/",
+                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
                 headers=headers,
                 data=json.dumps(payload),
             )
@@ -130,6 +122,24 @@ class InstanceEndpoint(BaseAPIView):
         serializer = InstanceSerializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            # Save the user in control center
+            headers = {
+                "Content-Type": "application/json",
+                "x-instance-id": instance.instance_id,
+                "x-api-key": instance.api_key,
+            }
+            # Update instance settings in the license engine
+            _ = requests.patch(
+                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
+                headers=headers,
+                data=json.dumps(
+                    {
+                        "is_support_required": serializer.data["is_support_required"],
+                        "is_telemetry_enabled": serializer.data["is_telemetry_enabled"],
+                        "version": serializer.data["version"],
+                    }
+                ),
+            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -250,7 +260,6 @@ class AdminMagicSignInGenerateEndpoint(BaseAPIView):
                 {"error": "Admin for this instance is already registered"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
 
         if not email:
             return Response(
@@ -409,13 +418,6 @@ class AdminSetUserPasswordEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-        if not license_engine_base_url:
-            return Response(
-                {"error": "License engine base url is required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Save the user in control center
         headers = {
             "Content-Type": "application/json",
@@ -423,14 +425,14 @@ class AdminSetUserPasswordEndpoint(BaseAPIView):
             "x-api-key": instance.api_key,
         }
         _ = requests.patch(
-            f"{license_engine_base_url}/api/instances/",
+            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
             headers=headers,
             data=json.dumps({"is_setup_done": True}),
         )
 
         # Also register the user as admin
         _ = requests.post(
-            f"{license_engine_base_url}/api/instances/users/register/",
+            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/register/",
             headers=headers,
             data=json.dumps(
                 {
@@ -472,24 +474,20 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-
-        if not license_engine_base_url:
-            return Response(
-                {"error": "License engine base url is required"},
-                status=status.HTTP_400_BAD_REQUEST,
+        if not instance.is_signup_screen_visited:
+            instance.is_signup_screen_visited = True
+            instance.save()
+            # set the headers
+            headers = {
+                "Content-Type": "application/json",
+                "x-instance-id": instance.instance_id,
+                "x-api-key": instance.api_key,
+            }
+            # create the payload
+            payload = {"is_signup_screen_visited": True}
+            _ = requests.patch(
+                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
+                headers=headers,
+                data=json.dumps(payload),
             )
-
-        headers = {
-            "Content-Type": "application/json",
-            "x-instance-id": instance.instance_id,
-            "x-api-key": instance.api_key,
-        }
-
-        payload = {"is_signup_screen_visited": True}
-        response = requests.patch(
-            f"{license_engine_base_url}/api/instances/",
-            headers=headers,
-            data=json.dumps(payload),
-        )
         return Response(status=status.HTTP_204_NO_CONTENT)

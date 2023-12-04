@@ -105,17 +105,21 @@ class ForgotPasswordEndpoint(BaseAPIView):
     def post(self, request):
         email = request.data.get("email")
 
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-            token = PasswordResetTokenGenerator().make_token(user)
+        try:
+            validate_email(email)
+        except ValidationError:
+            return Response({"error": "Please enter a valid email"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Get the user
+        user = User.objects.filter(email=email).first()
+        if user:
+            # Get the reset token for user
+            uidb64, token = get_tokens_for_user(user=user)
             current_site = request.META.get("HTTP_ORIGIN")
-
+            # send the forgot password email
             forgot_password.delay(
                 user.first_name, user.email, uidb64, token, current_site
             )
-
             return Response(
                 {"message": "Check your email to reset your password"},
                 status=status.HTTP_200_OK,
@@ -130,14 +134,18 @@ class ResetPasswordEndpoint(BaseAPIView):
 
     def post(self, request, uidb64, token):
         try:
+            # Decode the id from the uidb64
             id = smart_str(urlsafe_base64_decode(uidb64))
             user = User.objects.get(id=id)
+
+            # check if the token is valid for the user
             if not PasswordResetTokenGenerator().check_token(user, token):
                 return Response(
                     {"error": "Token is invalid"},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
 
+            # Reset the password
             serializer = ResetPasswordSerializer(data=request.data)
             if serializer.is_valid():
                 # set_password also hashes the password that the user will get
@@ -145,9 +153,9 @@ class ResetPasswordEndpoint(BaseAPIView):
                 user.is_password_autoset = False
                 user.save()
 
+                # Log the user in
                 # Generate access token for the user
                 access_token, refresh_token = get_tokens_for_user(user)
-
                 data = {
                     "access_token": access_token,
                     "refresh_token": refresh_token,
@@ -166,7 +174,6 @@ class ResetPasswordEndpoint(BaseAPIView):
 class ChangePasswordEndpoint(BaseAPIView):
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data)
-
         user = User.objects.get(pk=request.user.id)
         if serializer.is_valid():
             if not user.check_password(serializer.data.get("old_password")):
@@ -218,16 +225,15 @@ class EmailCheckEndpoint(BaseAPIView):
     ]
 
     def post(self, request):
-        # get the email
-
         # Check the instance registration
         instance = Instance.objects.first()
-        if instance is None:
+        if instance is None or not instance.is_setup_done:
             return Response(
                 {"error": "Instance is not configured"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Get the configurations
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
 
         email = request.data.get("email", False)
@@ -267,7 +273,7 @@ class EmailCheckEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-
+            # Create the user with default values
             user = User.objects.create(
                 email=email,
                 username=uuid.uuid4().hex,
@@ -325,7 +331,7 @@ class EmailCheckEndpoint(BaseAPIView):
                         first_time=True,
                     )
                 # Automatically send the email
-                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
         # Existing user
         else:
             if type == "magic_code":

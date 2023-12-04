@@ -1,7 +1,8 @@
 # Python imports
 import csv
 import io
-import os
+import requests
+import json
 
 # Django imports
 from django.core.mail import EmailMultiAlternatives, get_connection
@@ -17,8 +18,8 @@ from sentry_sdk import capture_exception
 from plane.db.models import Issue
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
-from plane.license.models import InstanceConfiguration
-from plane.license.utils.instance_value import get_configuration_value
+from plane.license.models import InstanceConfiguration, Instance
+from plane.license.utils.instance_value import get_email_configuration
 
 row_mapping = {
     "state__name": "State",
@@ -43,7 +44,7 @@ CYCLE_ID = "issue_cycle__cycle_id"
 MODULE_ID = "issue_module__module_id"
 
 
-def send_export_email(email, slug, csv_buffer):
+def send_export_email(email, slug, csv_buffer, rows):
     """Helper function to send export email."""
     subject = "Your Export is ready"
     html_content = render_to_string("emails/exports/analytics.html", {})
@@ -55,47 +56,58 @@ def send_export_email(email, slug, csv_buffer):
     instance_configuration = InstanceConfiguration.objects.filter(
         key__startswith="EMAIL_"
     ).values("key", "value")
+
+    (
+        EMAIL_HOST,
+        EMAIL_HOST_USER,
+        EMAIL_HOST_PASSWORD,
+        EMAIL_PORT,
+        EMAIL_USE_TLS,
+        EMAIL_FROM,
+    ) = get_email_configuration(instance_configuration=instance_configuration)
+
+    # Send the email if the users don't have smtp configured
+    if EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+        # Check the instance registration
+        instance = Instance.objects.first()
+
+        headers = {
+            "Content-Type": "application/json",
+            "x-instance-id": instance.instance_id,
+            "x-api-key": instance.api_key,
+        }
+
+        payload = {
+            "email": email,
+            "slug": slug,
+            "rows": rows,
+        }
+
+        _ = requests.post(
+            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/analytics/",
+            headers=headers,
+            json=payload,
+        )
+        return
+
     connection = get_connection(
-        host=get_configuration_value(
-            instance_configuration, "EMAIL_HOST", os.environ.get("EMAIL_HOST")
-        ),
-        port=int(
-            get_configuration_value(
-                instance_configuration, "EMAIL_PORT", os.environ.get("EMAIL_PORT")
-            )
-        ),
-        username=get_configuration_value(
-            instance_configuration,
-            "EMAIL_HOST_USER",
-            os.environ.get("EMAIL_HOST_USER"),
-        ),
-        password=get_configuration_value(
-            instance_configuration,
-            "EMAIL_HOST_PASSWORD",
-            os.environ.get("EMAIL_HOST_PASSWORD"),
-        ),
-        use_tls=bool(
-            get_configuration_value(
-                instance_configuration,
-                "EMAIL_USE_TLS",
-                os.environ.get("EMAIL_USE_TLS", "1"),
-            )
-        ),
+        host=EMAIL_HOST,
+        port=int(EMAIL_PORT),
+        username=EMAIL_HOST_USER,
+        password=EMAIL_HOST_PASSWORD,
+        use_tls=bool(EMAIL_USE_TLS),
     )
 
     msg = EmailMultiAlternatives(
         subject=subject,
         body=text_content,
-        from_email=get_configuration_value(
-            instance_configuration,
-            "EMAIL_FROM",
-            os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
-        ),
+        from_email=EMAIL_FROM,
         to=[email],
         connection=connection,
     )
     msg.attach(f"{slug}-analytics.csv", csv_buffer.getvalue())
     msg.send(fail_silently=False)
+    return
 
 
 def get_assignee_details(slug, filters):
@@ -463,8 +475,11 @@ def analytic_export_task(email, data, slug):
             )
 
         csv_buffer = generate_csv_from_rows(rows)
-        send_export_email(email, slug, csv_buffer)
+        send_export_email(email, slug, csv_buffer, rows)
+        return
     except Exception as e:
+        print(e)
         if settings.DEBUG:
             print(e)
         capture_exception(e)
+        return
