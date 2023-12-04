@@ -59,7 +59,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                   ) || "Email address is not valid",
               })}
               placeholder="Enter your email address..."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
             {errors.email && <div className="text-sm text-red-500">{errors.email.message}</div>}
           </div>
@@ -71,7 +71,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                 required: "Password is required",
               })}
               placeholder="Enter your password..."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
             {errors.password && <div className="text-sm text-red-500">{errors.password.message}</div>}
           </div>
@@ -93,7 +93,14 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
             )}
           </div>
           <div>
-            <Button variant="primary" type="submit" disabled={!isValid && isDirty} loading={isSubmitting}>
+            <Button
+              variant="primary"
+              type="submit"
+              size="xl"
+              className="w-full"
+              disabled={!isValid && isDirty}
+              loading={isSubmitting}
+            >
               {isSignUpPage ? (isSubmitting ? "Signing up..." : "Sign up") : isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
             {!isSignUpPage && (

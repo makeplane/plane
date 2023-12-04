@@ -133,7 +133,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             id="email"
             type="email"
             placeholder="Enter your email address..."
-            className="border-custom-border-300 h-[46px]"
+            className="border-custom-border-300 h-[46px] w-full"
             {...register("email", {
               required: "Email address is required",
               validate: (value) =>
@@ -154,7 +154,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                 required: "Code is required",
               })}
               placeholder="Enter code..."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
             {errors.token && <div className="text-sm text-red-500">{errors.token.message}</div>}
             <button
@@ -188,7 +188,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           <Button
             variant="primary"
             type="submit"
-            size="md"
+            className="w-full"
+            size="xl"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
             loading={isLoading}
@@ -198,7 +199,8 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
         ) : (
           <Button
             variant="primary"
-            size="md"
+            className="w-full"
+            size="xl"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {
                 setResendCodeTimer(30);
