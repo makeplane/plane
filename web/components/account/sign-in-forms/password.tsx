@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
@@ -36,6 +36,8 @@ const authService = new AuthService();
 
 export const PasswordForm: React.FC<Props> = (props) => {
   const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
+  // states
+  const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -113,6 +115,8 @@ export const PasswordForm: React.FC<Props> = (props) => {
       return;
     }
 
+    setIsSendingResetPasswordLink(true);
+
     authService
       .sendResetPasswordLink({ email: emailFormValue })
       .then(() => handleStepChange(ESignInSteps.SET_PASSWORD_LINK))
@@ -122,7 +126,8 @@ export const PasswordForm: React.FC<Props> = (props) => {
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
-      );
+      )
+      .finally(() => setIsSendingResetPasswordLink(false));
   };
 
   return (
@@ -189,9 +194,12 @@ export const PasswordForm: React.FC<Props> = (props) => {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-xs font-medium text-custom-primary-100"
+              className={`text-xs font-medium ${
+                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-custom-primary-100"
+              }`}
+              disabled={isSendingResetPasswordLink}
             >
-              Forgot your password?
+              {isSendingResetPasswordLink ? "Sending link..." : "Forgot your password?"}
             </button>
           </div>
         </div>
