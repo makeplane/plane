@@ -109,7 +109,7 @@ def webhook_task(self, webhook, slug, event, event_data, action):
         if webhook.secret_key:
             hmac_signature = hmac.new(
                 webhook.secret_key.encode("utf-8"),
-                json.dumps(payload, sort_keys=True).encode("utf-8"),
+                json.dumps(payload).encode("utf-8"),
                 hashlib.sha256,
             )
             signature = hmac_signature.hexdigest()
