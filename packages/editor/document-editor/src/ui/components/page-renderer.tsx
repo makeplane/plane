@@ -10,7 +10,7 @@ type IPageRenderer = {
   editorClassNames: string;
   editorContentCustomClassNames?: string;
   readonly: boolean;
-}
+};
 
 const debounce = (func: (...args: any[]) => void, wait: number) => {
   let timeout: NodeJS.Timeout | null = null;
@@ -31,30 +31,31 @@ export const PageRenderer = (props: IPageRenderer) => {
     editorClassNames,
     editorContentCustomClassNames,
     updatePageTitle,
-    readonly
+    readonly,
   } = props;
 
-  const [pageTitle, setPagetitle] = useState(documentDetails.title)
+  const [pageTitle, setPagetitle] = useState(documentDetails.title);
 
   const debouncedUpdatePageTitle = debounce(updatePageTitle, 300);
 
   const handlePageTitleChange = (title: string) => {
-    setPagetitle(title)
-    debouncedUpdatePageTitle(title)
-  }
+    setPagetitle(title);
+    debouncedUpdatePageTitle(title);
+  };
 
   return (
     <div className="w-full pl-7 pt-5 pb-64">
-
-      {!readonly ?
+      {!readonly ? (
         <input
           onChange={(e) => handlePageTitleChange(e.target.value)}
-          className="text-4xl font-bold break-words pr-5 -mt-2 w-full border-none outline-none"
-          value={pageTitle} />
-        : <h1 className="text-4xl font-bold break-words pr-5 -mt-2">
+          className="text-4xl bg-custom-background font-bold break-words pr-5 -mt-2 w-full border-none outline-none"
+          value={pageTitle}
+        />
+      ) : (
+        <h1 className="text-4xl font-bold break-words pr-5 -mt-2">
           {documentDetails.title}
         </h1>
-      }
+      )}
       <div className="flex flex-col h-full w-full pr-5">
         <EditorContainer editor={editor} editorClassNames={editorClassNames}>
           <EditorContentWrapper

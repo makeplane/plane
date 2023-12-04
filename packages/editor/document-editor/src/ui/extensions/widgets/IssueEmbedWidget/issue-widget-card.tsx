@@ -9,6 +9,7 @@ const IssueWidgetCard = (props) => {
   const [issueDetails, setIssueDetails] = useState();
 
   useEffect(() => {
+    console.log("csdava");
     props.issueEmbedConfig
       .fetchIssue(props.node.attrs.entity_identifier)
       .then((issue) => {
@@ -53,17 +54,20 @@ const IssueWidgetCard = (props) => {
                 ))}
               </AvatarGroup>
             </div>
-            {issueDetails.target_date && <div className="rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-300 gap-1 text-custom-text-100 text-xs h-5">
-              <Calendar className="h-3 w-3" strokeWidth={1.5} />
-              {new Date(issueDetails.target_date).toLocaleString()}
-            </div>
-            }
+            {issueDetails.target_date && (
+              <div className="rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-300 gap-1 text-custom-text-100 text-xs h-5">
+                <Calendar className="h-3 w-3" strokeWidth={1.5} />
+                {new Date(issueDetails.target_date).toLocaleString()}
+              </div>
+            )}
           </div>
         </div>
       ) : loading == -1 ? (
         <div className="flex gap-[8px] items-center pb-[10px] pt-[10px] pl-[13px] rounded border-[#D97706] border-2 bg-[#FFFBEB] text-[#D97706]">
           <AlertTriangle color={"#D97706"} />
-          {"This Issue embed is not found in any project. It can no longer be updated or accessed from here."}
+          {
+            "This Issue embed is not found in any project. It can no longer be updated or accessed from here."
+          }
         </div>
       ) : (
         <div className="w-full space-y-2 border-[0.5px] border-custom-border-200 rounded-md p-3 shadow-custom-shadow-2xs">
@@ -80,4 +84,4 @@ const IssueWidgetCard = (props) => {
   );
 };
 
-export default IssueWidgetCard
+export default IssueWidgetCard;
