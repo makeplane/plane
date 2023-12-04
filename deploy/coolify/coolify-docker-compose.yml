@@ -71,7 +71,6 @@ services:
       - ENABLE_MAGIC_LINK_LOGIN=${ENABLE_MAGIC_LINK_LOGIN:-0}
       - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
       - WEB_URL=$SERVICE_FQDN_PLANE_8082
-      - LICENSE_ENGINE_BASE_URL=${LICENSE_ENGINE_BASE_URL:-"https://control-center.plane.so"}
     depends_on:
       - plane-db
       - plane-redis
@@ -117,7 +116,6 @@ services:
       - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
       - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
       - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
-      - LICENSE_ENGINE_BASE_URL=${LICENSE_ENGINE_BASE_URL:-"https://control-center.plane.so"}
     depends_on:
       - api
       - plane-db
@@ -164,7 +162,6 @@ services:
       - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
       - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
       - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
-      - LICENSE_ENGINE_BASE_URL=${LICENSE_ENGINE_BASE_URL:-"https://control-center.plane.so"}
     depends_on:
       - api
       - plane-db
