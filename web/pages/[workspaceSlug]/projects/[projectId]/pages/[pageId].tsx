@@ -28,6 +28,7 @@ import { IPage, IIssue } from "types";
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { IssueService } from "services/issue";
+import useToast from "hooks/use-toast";
 
 // services
 const fileService = new FileService();
@@ -45,6 +46,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   const router = useRouter();
   const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
+  const { setToastAlert } = useToast();
 
   const { user } = useUser();
 
@@ -91,10 +93,26 @@ const PageDetailsPage: NextPageWithLayout = () => {
     } else {
       params.append("peekIssueId", issueId);
     }
-
     // Replace the current URL with the new one
     router.replace(`${url.pathname}?${params.toString()}`, undefined, { shallow: true });
   };
+
+  const actionCompleteAlert = ({
+    title,
+    message,
+    type,
+  }: {
+    title: string;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }) => {
+    setToastAlert({
+      title,
+      message,
+      type,
+    });
+  };
+
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -257,6 +275,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
           <div className="h-full w-full overflow-hidden">
             {pageDetails.is_locked || pageDetails.archived_at ? (
               <DocumentReadOnlyEditorWithRef
+                onActionCompleteHandler={actionCompleteAlert}
                 ref={editorRef}
                 value={pageDetails.description_html}
                 customClassName={"tracking-tight w-full px-0"}
@@ -307,6 +326,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     restoreFile={fileService.restoreImage}
                     deleteFile={fileService.deleteImage}
+                    cancelUploadImage={fileService.cancelUpload}
                     ref={editorRef}
                     debouncedUpdatesEnabled={false}
                     updatePageTitle={updatePageTitle}
@@ -318,6 +338,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                       setIsSubmitting("submitting");
                       debouncedFormSave();
                     }}
+                    onActionCompleteHandler={actionCompleteAlert}
                     duplicationConfig={{ action: duplicate_page }}
                     pageArchiveConfig={
                       user && pageDetails.owned_by === user.id

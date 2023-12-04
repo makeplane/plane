@@ -1,7 +1,8 @@
 import { Editor } from "@tiptap/react";
 import { Archive, Info, Lock } from "lucide-react";
-import { IMarking, UploadImage } from "..";
+import { IMarking } from "..";
 import { FixedMenu } from "../menu";
+import { UploadImage } from "@plane/editor-types";
 import { DocumentDetails } from "../types/editor-types";
 import { AlertLabel } from "./alert-label";
 import {

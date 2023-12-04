@@ -24,6 +24,11 @@ interface IDocumentReadOnlyEditor {
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
   pageDuplicationConfig?: IDuplicationConfig;
+  onActionCompleteHandler: (action: {
+    title: string;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }) => void;
   embedConfig?: IEmbedConfig;
 }
 
@@ -46,9 +51,9 @@ const DocumentReadOnlyEditor = ({
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
-  embedConfig
+  embedConfig,
+  onActionCompleteHandler,
 }: DocumentReadOnlyEditorProps) => {
-
   const router = useRouter();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
   const { markings, updateMarkings } = useEditorMarkings();
@@ -58,7 +63,7 @@ const DocumentReadOnlyEditor = ({
     forwardedRef,
     extensions: [
       IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig }),
-    ]
+    ],
   });
 
   useEffect(() => {
@@ -83,6 +88,7 @@ const DocumentReadOnlyEditor = ({
     pageArchiveConfig: pageArchiveConfig,
     pageLockConfig: pageLockConfig,
     duplicationConfig: pageDuplicationConfig,
+    onActionCompleteHandler,
   });
 
   return (

@@ -18,7 +18,6 @@ import { IEmbedConfig } from "./extensions/widgets/IssueEmbedWidget/types";
 import { UploadImage, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 interface IDocumentEditor {
-
   // document info
   documentDetails: DocumentDetails;
   value: string;
@@ -27,8 +26,14 @@ interface IDocumentEditor {
   uploadFile: UploadImage;
   deleteFile: DeleteImage;
   restoreFile: RestoreImage;
+  cancelUploadImage: () => any;
 
   // editor state managers
+  onActionCompleteHandler: (action: {
+    title: string;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }) => void;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
@@ -40,7 +45,7 @@ interface IDocumentEditor {
   updatePageTitle: (title: string) => Promise<void>;
   debouncedUpdatesEnabled?: boolean;
 
-  // embed configuration 
+  // embed configuration
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
@@ -80,6 +85,8 @@ const DocumentEditor = ({
   pageArchiveConfig,
   embedConfig,
   updatePageTitle,
+  cancelUploadImage,
+  onActionCompleteHandler,
 }: IDocumentEditor) => {
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
@@ -101,6 +108,7 @@ const DocumentEditor = ({
     value,
     uploadFile,
     deleteFile,
+    cancelUploadImage,
     forwardedRef,
     extensions: DocumentEditorExtensions(
       uploadFile,
@@ -119,7 +127,9 @@ const DocumentEditor = ({
     duplicationConfig: duplicationConfig,
     pageLockConfig: pageLockConfig,
     pageArchiveConfig: pageArchiveConfig,
+    onActionCompleteHandler,
   });
+
   const editorClassNames = getEditorClassNames({
     noBorder: true,
     borderOnFocus: false,
