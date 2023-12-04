@@ -148,7 +148,8 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             disabled={
               memberDetails.id === currentUser?.id ||
               !member.member ||
-              (currentProjectRole && !isAdmin && currentProjectRole < member.role)
+              !currentProjectRole ||
+              currentProjectRole < member.role
             }
             placement="bottom-end"
           >
