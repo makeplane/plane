@@ -29,8 +29,10 @@ export const IssueEmbedSuggestions = Extension.create({
         char: "#issue_",
         pluginKey: new PluginKey("issue-embed-suggestions"),
         editor: this.editor,
+        allowSpaces: true,
+
         ...this.options.suggestion,
       }),
     ];
   },
-})
+});
