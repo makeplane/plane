@@ -13,11 +13,12 @@ on:
 
 env:
   TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+  WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
 
 jobs:
   branch_build_setup:
     if: ${{ (github.event_name == 'pull_request' && github.event.action =='closed' && github.event.pull_request.merged == true) }}
-    name: Build-Push Web/Space/API/Proxy Docker Image
+    name: Branch Build Setup
     runs-on: ubuntu-20.04
 
     steps:
@@ -56,8 +57,10 @@ jobs:
             !./web
     outputs:
       gh_branch_name: ${{ env.TARGET_BRANCH }}
+      webhook_url: ${{ env.WEBHOOK_URL }}
 
   branch_build_push_frontend:
+    name: Branch Build Push Frontend
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -98,8 +101,11 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+    outputs:
+      status: ${{ job.status }}
 
   branch_build_push_space:
+    name: Branch Build Push Space
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -140,8 +146,11 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+    outputs:
+      status: ${{ job.status }}
 
   branch_build_push_backend:
+    name: Branch Build Push Backend
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -182,8 +191,11 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+    outputs:
+      status: ${{ job.status }}
 
   branch_build_push_proxy:
+    name: Branch Build Push Proxy
     runs-on: ubuntu-20.04
     needs: [branch_build_setup]
     env:
@@ -225,3 +237,22 @@ jobs:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+    outputs:
+      status: ${{ job.status }}
+
+  branch_build_success_webhook:
+    name: Branch Build Success Webhook
+    runs-on: ubuntu-20.04
+    needs: [branch_build_setup, branch_build_push_frontend, branch_build_push_space, branch_build_push_backend, branch_build_push_proxy]
+    if: ${{ needs.branch_build_push_frontend.outputs.status == 'success' && 
+            needs.branch_build_push_space.outputs.status == 'success' && 
+            needs.branch_build_push_backend.outputs.status == 'success' && 
+            needs.branch_build_push_proxy.outputs.status == 'success' && 
+            needs.branch_build_setup.outputs.webhook_url }}
+    steps:
+      - name: Send Success Webhook
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ needs.branch_build_setup.outputs.webhook_url }}
+          data: '{ "branch": "${{ needs.branch_build_setup.outputs.gh_branch_name }}" }'
+          
