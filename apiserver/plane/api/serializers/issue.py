@@ -21,7 +21,8 @@ from plane.db.models import (
 from .base import BaseSerializer
 from .cycle import CycleSerializer, CycleLiteSerializer
 from .module import ModuleSerializer, ModuleLiteSerializer
-
+from .user import UserLiteSerializer
+from .state import StateLiteSerializer
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -331,12 +332,23 @@ class ModuleIssueSerializer(BaseSerializer):
         ]
 
 
-class IssueExpandSerializer(BaseSerializer):
-    # Serialize the related cycle. It's a OneToOne relation.
-    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
+class LabelLiteSerializer(BaseSerializer):
 
-    # Serialize the related module. It's a OneToOne relation.
+    class Meta:
+        model = Label
+        fields = [
+            "id",
+            "name",
+            "color",
+        ]
+
+
+class IssueExpandSerializer(BaseSerializer):
+    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
     module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
+    labels = LabelLiteSerializer(read_only=True, many=True)
+    assignees = UserLiteSerializer(read_only=True, many=True)
+    state = StateLiteSerializer(read_only=True)
 
     class Meta:
         model = Issue
