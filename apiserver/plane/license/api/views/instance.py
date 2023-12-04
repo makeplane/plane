@@ -27,14 +27,11 @@ from plane.license.api.serializers import (
     InstanceAdminSerializer,
     InstanceConfigurationSerializer,
 )
-from plane.app.serializers import UserSerializer
 from plane.license.api.permissions import (
     InstanceAdminPermission,
 )
 from plane.db.models import User
 from plane.license.utils.encryption import encrypt_data
-from plane.settings.redis import redis_instance
-from plane.bgtasks.magic_link_code_task import magic_link
 
 
 class InstanceEndpoint(BaseAPIView):
@@ -60,7 +57,7 @@ class InstanceEndpoint(BaseAPIView):
             headers = {"Content-Type": "application/json"}
 
             payload = {
-                "instance_key":settings.INSTANCE_KEY,
+                "instance_key": settings.INSTANCE_KEY,
                 "version": data.get("version", 0.1),
                 "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
                 "user_count": User.objects.filter(is_bot=False).count(),
@@ -239,15 +236,13 @@ def get_tokens_for_user(user):
     )
 
 
-class AdminMagicSignInGenerateEndpoint(BaseAPIView):
+class InstanceAdminSignInEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
     ]
 
     def post(self, request):
-        email = request.data.get("email", False)
-
-        # Check the instance registration
+        # Check instance first
         instance = Instance.objects.first()
         if instance is None:
             return Response(
@@ -255,168 +250,63 @@ class AdminMagicSignInGenerateEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # check if the instance is already activated
         if InstanceAdmin.objects.first():
             return Response(
                 {"error": "Admin for this instance is already registered"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not email:
-            return Response(
-                {"error": "Please provide a valid email address"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Clean up
-        email = email.strip().lower()
-        validate_email(email)
-
-        # check if the email exists
-        if not User.objects.filter(email=email).exists():
-            # Create a user
-            _ = User.objects.create(
-                email=email,
-                username=uuid.uuid4().hex,
-                password=make_password(uuid.uuid4().hex),
-                is_password_autoset=True,
-            )
-
-        ## Generate a random token
-        token = (
-            "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-            + "-"
-            + "".join(random.choices(string.ascii_lowercase, k=4))
-        )
-
-        ri = redis_instance()
-
-        key = "magic_" + str(email)
-
-        # Check if the key already exists in python
-        if ri.exists(key):
-            data = json.loads(ri.get(key))
-
-            current_attempt = data["current_attempt"] + 1
-
-            if data["current_attempt"] > 2:
-                return Response(
-                    {"error": "Max attempts exhausted. Please try again later."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-            value = {
-                "current_attempt": current_attempt,
-                "email": email,
-                "token": token,
-            }
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
-
-        else:
-            value = {"current_attempt": 0, "email": email, "token": token}
-            expiry = 600
-
-            ri.set(key, json.dumps(value), ex=expiry)
-
-        # If the smtp is configured send through here
-        current_site = request.META.get("HTTP_ORIGIN")
-        magic_link.delay(email, key, token, current_site)
-
-        return Response({"key": key}, status=status.HTTP_200_OK)
-
-
-class AdminSetupMagicSignInEndpoint(BaseAPIView):
-    permission_classes = [
-        AllowAny,
-    ]
-
-    def post(self, request):
-        user_token = request.data.get("token", "").strip()
-        key = request.data.get("key", "").strip().lower()
-
-        if not key or user_token == "":
-            return Response(
-                {"error": "User token and key are required"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if InstanceAdmin.objects.first():
-            return Response(
-                {"error": "Admin for this instance is already registered"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        ri = redis_instance()
-
-        if ri.exists(key):
-            data = json.loads(ri.get(key))
-
-            token = data["token"]
-            email = data["email"]
-
-            if str(token) == str(user_token):
-                # get the user
-                user = User.objects.get(email=email)
-                # get the email
-                user.is_active = True
-                user.is_email_verified = True
-                user.last_active = timezone.now()
-                user.last_login_time = timezone.now()
-                user.last_login_ip = request.META.get("REMOTE_ADDR")
-                user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
-                user.token_updated_at = timezone.now()
-                user.save()
-
-                access_token, refresh_token = get_tokens_for_user(user)
-                data = {
-                    "access_token": access_token,
-                    "refresh_token": refresh_token,
-                }
-
-                return Response(data, status=status.HTTP_200_OK)
-
-            else:
-                return Response(
-                    {"error": "Your login code was incorrect. Please try again."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
-        else:
-            return Response(
-                {"error": "The magic code/link has expired please try again"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-
-class AdminSetUserPasswordEndpoint(BaseAPIView):
-    def post(self, request):
-        user = User.objects.get(pk=request.user.id)
+        # Get the email and password from all the user
+        email = request.data.get("email", False)
         password = request.data.get("password", False)
 
-        # If the user password is not autoset then return error
-        if not user.is_password_autoset:
+        # return error if the email and password is not present
+        if not email or not password:
             return Response(
-                {
-                    "error": "Your password is already set please change your password from profile"
-                },
+                {"error": "Email and password are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check password validation
-        if not password and len(str(password)) < 8:
+        # Validate the email
+        email = email.strip().lower()
+        try:
+            validate_email(email)
+        except ValidationError as e:
             return Response(
-                {"error": "Password is not valid"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        instance = Instance.objects.first()
-        if instance is None:
-            return Response(
-                {"error": "Instance is not configured"},
+                {"error": "Please provide a valid email address."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Check if already a user exists or not
+        user = User.objects.filter(email=email).first()
+
+        # Existing user
+        if user:
+            # Check user password
+            if not user.check_password(password):
+                return Response(
+                    {
+                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        else:
+            user = User.objects.create(
+                email=email,
+                username=uuid.uuid4().hex,
+                password=make_password(password),
+                is_password_autoset=False,
+            )
+
+        # settings last active for the user
+        user.is_active = True
+        user.last_active = timezone.now()
+        user.last_login_time = timezone.now()
+        user.last_login_ip = request.META.get("REMOTE_ADDR")
+        user.last_login_uagent = request.META.get("HTTP_USER_AGENT")
+        user.token_updated_at = timezone.now()
+        user.save()
 
         # Save the user in control center
         headers = {
@@ -452,12 +342,13 @@ class AdminSetUserPasswordEndpoint(BaseAPIView):
         instance.is_setup_done = True
         instance.save()
 
-        # Set the user password
-        user.set_password(password)
-        user.is_password_autoset = False
-        user.save()
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # get tokens for user
+        access_token, refresh_token = get_tokens_for_user(user)
+        data = {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class SignUpScreenVisitedEndpoint(BaseAPIView):
