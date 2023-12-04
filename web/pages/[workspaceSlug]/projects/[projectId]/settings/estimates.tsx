@@ -7,12 +7,22 @@ import { ProjectSettingHeader } from "components/headers";
 import { EstimatesList } from "components/estimates";
 // types
 import { NextPageWithLayout } from "types/app";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-const EstimatesSettingsPage: NextPageWithLayout = () => (
-  <div className="pr-9 py-8 w-full overflow-y-auto">
-    <EstimatesList />
-  </div>
-);
+const EstimatesSettingsPage: NextPageWithLayout = () => {
+  const {
+    user: { currentProjectRole },
+  } = useMobxStore();
+
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
+
+  return (
+    <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60 pointer-events-none"}`}>
+      <EstimatesList />
+    </div>
+  );
+};
 
 EstimatesSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (
