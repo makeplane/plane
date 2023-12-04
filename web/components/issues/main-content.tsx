@@ -31,6 +31,7 @@ type Props = {
   issueDetails: IIssue;
   submitChanges: (formData: Partial<IIssue>) => Promise<void>;
   uneditable?: boolean;
+  setShowAlert: (value: boolean) => void;
 };
 
 // services
@@ -38,7 +39,7 @@ const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { issueDetails, submitChanges, uneditable = false } = props;
+  const { issueDetails, submitChanges, uneditable = false,  setShowAlert } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -195,6 +196,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         </div>
 
         <IssueDescriptionForm
+        setShowAlert={setShowAlert}
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}

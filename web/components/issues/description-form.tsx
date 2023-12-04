@@ -2,7 +2,6 @@ import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
@@ -27,12 +26,13 @@ export interface IssueDetailsProps {
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   isAllowed: boolean;
+  setShowAlert: (value: boolean) => void;
 }
 
 const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleFormSubmit, workspaceSlug, isAllowed } = props;
+  const { issue, handleFormSubmit, workspaceSlug, isAllowed,setShowAlert } = props;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -41,7 +41,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     projectIssues: { setIsSubmitting },
   } = useMobxStore();
 
-  const { setShowAlert } = useReloadConfirmations();
   const editorSuggestion = useEditorSuggestions();
 
   const {
@@ -87,7 +86,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   }, [issue, reset]);
 
   const debouncedFormSave = debounce(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    handleSubmit(handleDescriptionFormSubmit)();
   }, 1500);
 
   return (

@@ -287,6 +287,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
                         )}
                         <PeekOverviewIssueDetails
+                          setShowAlert={(value) => setShowAlert(value)}
                           workspaceSlug={workspaceSlug}
                           issue={issue}
                           issueUpdate={issueUpdate}
@@ -321,6 +322,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <div className="relative w-full h-full space-y-6 p-4 py-5 overflow-auto">
                           <div className={isArchived ? "pointer-events-none" : ""}>
                             <PeekOverviewIssueDetails
+                              setShowAlert={(value) => setShowAlert(value)}
                               workspaceSlug={workspaceSlug}
                               issue={issue}
                               issueReactions={issueReactions}

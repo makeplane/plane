@@ -7,7 +7,6 @@ import { TextArea } from "@plane/ui";
 import { IssueReaction } from "./reactions";
 // hooks
 import debounce from "lodash/debounce";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 // types
 import { IIssue } from "types";
@@ -25,14 +24,15 @@ interface IPeekOverviewIssueDetails {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
+  setShowAlert: (value: boolean) => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
+  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove,setShowAlert } = props;
   // store
   const {
     user: userStore,
-    projectIssues: { isSubmitting, setIsSubmitting },
+    projectIssues: { setIsSubmitting },
   } = useMobxStore();
   const { currentProjectRole } = userStore;
   const isAllowed = [15, 20].includes(currentProjectRole || 0);
@@ -40,7 +40,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const [characterLimit, setCharacterLimit] = useState(false);
 
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
   const editorSuggestions = useEditorSuggestions();
 
   const {

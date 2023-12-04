@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite/dist/observer";
+import { observer } from "mobx-react-lite";
 // services
 import { IssueService } from "services/issue";
 // layouts
@@ -142,7 +142,11 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
       ) : issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
           <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
-            <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
+            <IssueMainContent
+              setShowAlert={(value) => setShowAlert(value)}
+              issueDetails={issueDetails}
+              submitChanges={submitChanges}
+            />
           </div>
           <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 py-5 overflow-hidden">
             <IssueDetailsSidebar
