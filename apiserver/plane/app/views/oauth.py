@@ -303,14 +303,6 @@ class OauthEndpoint(BaseAPIView):
             instance_configuration = InstanceConfiguration.objects.values(
                 "key", "value"
             )
-            # Check if instance is registered or not
-            instance = Instance.objects.first()
-            if instance is None and not instance.is_setup_done:
-                return Response(
-                    {"error": "Instance is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             if (
                 get_configuration_value(
                     instance_configuration,

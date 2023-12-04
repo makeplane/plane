@@ -32,13 +32,9 @@ def update_user_instance_user_count():
             "x-api-key": instance.api_key,
         }
 
-        license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL")
-        if not license_engine_base_url:
-            raise Exception("License Engine base url is required")
-        
         # Update the license engine
         _ = requests.post(
-            f"{license_engine_base_url}/api/instances/",
+            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
             headers=headers,
             data=json.dumps(payload),
         )

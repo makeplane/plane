@@ -15,7 +15,7 @@ import useToast from "hooks/use-toast";
 // types
 import { IProjectMember, TUserProjectRole } from "types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
@@ -246,7 +246,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     width="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
-                                      if (parseInt(key) > (currentProjectRole ?? 5)) return null;
+                                      if (parseInt(key) > (currentProjectRole ?? EUserWorkspaceRoles.GUEST))
+                                        return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>

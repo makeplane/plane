@@ -9,6 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {};
 
@@ -56,7 +57,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
     user: { currentUser, currentProjectRole },
     trackEvent: { setTrackElement, postHogEventTracker },
   } = useMobxStore();
-  const isAdmin = currentProjectRole === 20;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
 
@@ -97,7 +98,7 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
                 project_id: currentProjectDetails?.id,
                 project_name: currentProjectDetails?.name,
                 project_identifier: currentProjectDetails?.identifier,
-                enabled: !currentProjectDetails?.[feature.property as keyof IProject]
+                enabled: !currentProjectDetails?.[feature.property as keyof IProject],
               });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],

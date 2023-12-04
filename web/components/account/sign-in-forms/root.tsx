@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+// hooks
+import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
 import {
   EmailForm,
@@ -19,33 +21,27 @@ export enum ESignInSteps {
   CREATE_PASSWORD = "CREATE_PASSWORD",
 }
 
-type Props = {
-  handleSignInRedirection: () => Promise<void>;
-};
-
 const OAUTH_HIDDEN_STEPS = [ESignInSteps.OPTIONAL_SET_PASSWORD, ESignInSteps.CREATE_PASSWORD];
 
-export const SignInRoot: React.FC<Props> = (props) => {
-  const { handleSignInRedirection } = props;
+export const SignInRoot = () => {
   // states
   const [signInStep, setSignInStep] = useState<ESignInSteps>(ESignInSteps.EMAIL);
   const [email, setEmail] = useState("");
+  // sign in redirection hook
+  const { handleRedirection } = useSignInRedirection();
 
   return (
     <>
       <div className="mx-auto flex flex-col">
         {signInStep === ESignInSteps.EMAIL && (
-          <EmailForm
-            handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
-            updateEmail={(newEmail) => setEmail(newEmail)}
-          />
+          <EmailForm handleStepChange={(step) => setSignInStep(step)} updateEmail={(newEmail) => setEmail(newEmail)} />
         )}
         {signInStep === ESignInSteps.PASSWORD && (
           <PasswordForm
             email={email}
             updateEmail={(newEmail) => setEmail(newEmail)}
-            handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
-            handleSignInRedirection={handleSignInRedirection}
+            handleStepChange={(step) => setSignInStep(step)}
+            handleSignInRedirection={handleRedirection}
           />
         )}
         {signInStep === ESignInSteps.SET_PASSWORD_LINK && (
@@ -55,30 +51,30 @@ export const SignInRoot: React.FC<Props> = (props) => {
           <UniqueCodeForm
             email={email}
             updateEmail={(newEmail) => setEmail(newEmail)}
-            handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
-            handleSignInRedirection={handleSignInRedirection}
+            handleStepChange={(step) => setSignInStep(step)}
+            handleSignInRedirection={handleRedirection}
           />
         )}
         {signInStep === ESignInSteps.OPTIONAL_SET_PASSWORD && (
           <OptionalSetPasswordForm
             email={email}
-            handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
-            handleSignInRedirection={handleSignInRedirection}
+            handleStepChange={(step) => setSignInStep(step)}
+            handleSignInRedirection={handleRedirection}
           />
         )}
         {signInStep === ESignInSteps.CREATE_PASSWORD && (
           <CreatePasswordForm
             email={email}
-            handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
-            handleSignInRedirection={handleSignInRedirection}
+            handleStepChange={(step) => setSignInStep(step)}
+            handleSignInRedirection={handleRedirection}
           />
         )}
       </div>
       {!OAUTH_HIDDEN_STEPS.includes(signInStep) && (
         <OAuthOptions
           updateEmail={(newEmail) => setEmail(newEmail)}
-          handleStepChange={(step: ESignInSteps) => setSignInStep(step)}
-          handleSignInRedirection={handleSignInRedirection}
+          handleStepChange={(step) => setSignInStep(step)}
+          handleSignInRedirection={handleRedirection}
         />
       )}
     </>
