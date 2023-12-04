@@ -11,6 +11,7 @@ import { ArchiveRestore } from "lucide-react";
 import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
 // types
 import { IProject } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -27,6 +28,8 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
 
   const projectDetails = projectStore.currentProjectDetails;
   const userRole = userStore.currentProjectRole;
+
+  const isAdmin = userRole === EUserWorkspaceRoles.ADMIN;
 
   return (
     <>
@@ -56,7 +59,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
               projectDetails?.archive_in === 0 ? handleChange({ archive_in: 1 }) : handleChange({ archive_in: 0 })
             }
             size="sm"
-            disabled={userRole !== 20}
+            disabled={!isAdmin}
           />
         </div>
 
@@ -74,7 +77,7 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
                     }}
                     input
                     width="w-full"
-                    disabled={userRole !== 20}
+                    disabled={!isAdmin}
                   >
                     <>
                       {PROJECT_AUTOMATION_MONTHS.map((month) => (

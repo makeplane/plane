@@ -1,12 +1,14 @@
-export const getUserRole = (role: number) => {
+import { EUserWorkspaceRoles } from "constants/workspace";
+
+export const getUserRole = (role: EUserWorkspaceRoles) => {
   switch (role) {
-    case 5:
+    case EUserWorkspaceRoles.GUEST:
       return "GUEST";
-    case 10:
+    case EUserWorkspaceRoles.VIEWER:
       return "VIEWER";
-    case 15:
+    case EUserWorkspaceRoles.MEMBER:
       return "MEMBER";
-    case 20:
+    case EUserWorkspaceRoles.ADMIN:
       return "ADMIN";
   }
 };

@@ -14,6 +14,7 @@ import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
 import { useMobxStore } from "lib/mobx/store-provider";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const fileService = new FileService();
 
@@ -32,7 +33,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   // store
   const { user: userStore } = useMobxStore();
   const { currentProjectRole } = userStore;
-  const isAllowed = [15, 20].includes(currentProjectRole || 0);
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);

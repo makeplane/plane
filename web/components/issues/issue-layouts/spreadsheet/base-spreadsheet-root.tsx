@@ -18,6 +18,7 @@ import { observer } from "mobx-react-lite";
 import { EFilterType, TUnGroupedIssues } from "store/issues/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IBaseSpreadsheetRoot {
   issueFiltersStore:
@@ -49,7 +50,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
   } = useMobxStore();
 
   const { currentProjectRole } = userStore;
-  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const issuesResponse = issueStore.getIssues;
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;

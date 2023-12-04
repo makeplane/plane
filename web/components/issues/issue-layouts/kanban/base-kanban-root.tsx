@@ -31,6 +31,7 @@ import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IBaseKanBanLayout {
   issueStore:
@@ -93,7 +94,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   } = useMobxStore();
 
   const { currentProjectRole } = userStore;
-  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];

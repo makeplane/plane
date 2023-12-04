@@ -16,6 +16,7 @@ import { Loader } from "@plane/ui";
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
 import { IInboxIssue, IIssue } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const defaultValues: Partial<IInboxIssue> = {
   name: "",
@@ -144,6 +145,8 @@ export const InboxMainContent: React.FC = observer(() => {
       </div>
     );
 
+  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       {issueDetails ? (
@@ -222,7 +225,7 @@ export const InboxMainContent: React.FC = observer(() => {
                   description_html: issueDetails.description_html,
                 }}
                 handleFormSubmit={submitChanges}
-                isAllowed={userRole === 15 || userRole === 20 || user?.id === issueDetails.created_by}
+                isAllowed={isAllowed || user?.id === issueDetails.created_by}
               />
             </div>
 

@@ -26,6 +26,7 @@ import { MinusCircle } from "lucide-react";
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, SUB_ISSUES } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   issueDetails: IIssue;
@@ -100,6 +101,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       );
   };
 
+  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       <div className="rounded-lg">
@@ -166,7 +169,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
-          isAllowed={userRole === 20 || userRole === 15 || !uneditable}
+          isAllowed={isAllowed || !uneditable}
         />
 
         <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />

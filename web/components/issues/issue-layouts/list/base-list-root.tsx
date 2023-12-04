@@ -25,6 +25,7 @@ import { IIssueResponse } from "store/issues/types";
 import { EProjectStore } from "store/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
 import { useRouter } from "next/router";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 enum EIssueActions {
   UPDATE = "update",
@@ -83,7 +84,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   } = useMobxStore();
 
   const { currentProjectRole } = userStore;
-  const isEditingAllowed = [15, 20].includes(currentProjectRole || 0);
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const issueIds = issueStore?.getIssuesIds || [];
   const issues = issueStore?.getIssues;

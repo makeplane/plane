@@ -26,6 +26,7 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // types
 import { IPage } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IPagesListItem {
   workspaceSlug: string;
@@ -144,7 +145,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
     setCreateUpdatePageModal(true);
   };
 
-  const userCanEdit = currentProjectRole === 15 || currentProjectRole === 20;
+  const userCanEdit = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
