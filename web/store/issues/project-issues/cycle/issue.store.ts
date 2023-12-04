@@ -62,7 +62,14 @@ export interface ICycleIssuesStore {
     issueId: string,
     issueBridgeId: string
   ) => Promise<IIssue>;
-  emptyIssuesFromCycle: (cycleId: string) => void;
+  transferIssuesFromCycle: (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    payload: {
+      new_cycle_id: string;
+    }
+  ) => Promise<IIssue>;
   viewFlags: ViewFlags;
 }
 
@@ -103,7 +110,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       quickAddIssue: action,
       addIssueToCycle: action,
       removeIssueFromCycle: action,
-      emptyIssuesFromCycle: action,
+      transferIssuesFromCycle: action,
     });
 
     this.rootStore = _rootStore;
@@ -350,12 +357,27 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
     }
   };
 
-  emptyIssuesFromCycle = (cycleId: string) => {
-    const _issues = { ...this.issues, [cycleId]: {} };
+  transferIssuesFromCycle = async (
+    workspaceSlug: string,
+    projectId: string,
+    cycleId: string,
+    payload: {
+      new_cycle_id: string;
+    }
+  ) => {
+    try {
+      const response = await this.cycleService.transferIssues(
+        workspaceSlug as string,
+        projectId as string,
+        cycleId as string,
+        payload
+      );
+      await this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
 
-    runInAction(() => {
-      this.issues = _issues;
-      this.loader = undefined;
-    });
+      return response;
+    } catch (error) {
+      this.fetchIssues(workspaceSlug, projectId, "mutation", cycleId);
+      throw error;
+    }
   };
 }

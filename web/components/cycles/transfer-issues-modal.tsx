@@ -36,10 +36,9 @@ export const TransferIssuesModal: React.FC<Props> = observer(({ isOpen, handleCl
   const { setToastAlert } = useToast();
 
   const transferIssue = async (payload: any) => {
-    await cycleService
-      .transferIssues(workspaceSlug as string, projectId as string, cycleId as string, payload)
+    await cycleIssueStore
+      .transferIssuesFromCycle(workspaceSlug as string, projectId as string, cycleId as string, payload)
       .then(() => {
-        cycleIssueStore.emptyIssuesFromCycle(cycleId as string);
         setToastAlert({
           type: "success",
           title: "Issues transfered successfully",
