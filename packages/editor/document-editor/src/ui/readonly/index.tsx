@@ -70,7 +70,7 @@ const DocumentReadOnlyEditor = ({
     if (editor) {
       updateMarkings(editor.getJSON());
     }
-  }, [editor?.getJSON()]);
+  }, [editor]);
 
   if (!editor) {
     return null;
