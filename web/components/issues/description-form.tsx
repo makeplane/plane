@@ -11,6 +11,7 @@ import { IIssue } from "types";
 // services
 import { FileService } from "services/file.service";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { useRouter } from "next/router";
 
 export interface IssueDescriptionFormValues {
   name: string;
@@ -32,13 +33,18 @@ export interface IssueDetailsProps {
 const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleFormSubmit, workspaceSlug, isAllowed,setShowAlert } = props;
+  const { issue, handleFormSubmit, workspaceSlug, isAllowed, setShowAlert } = props;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
+  // router
+  const router = useRouter();
+  const { inboxId } = router.query;
+
   // mobx store
   const {
-    projectIssues: { setIsSubmitting },
+    projectIssues: { setIsSubmitting: PIsetIsSubmitting },
+    inboxIssueDetails: { setIsSubmitting: IIsetIsSubmitting },
   } = useMobxStore();
 
   const editorSuggestion = useEditorSuggestions();
@@ -88,6 +94,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)();
   }, 1500);
+
+  const setIsSubmitting = inboxId ? IIsetIsSubmitting : PIsetIsSubmitting;
 
   return (
     <div className="relative">

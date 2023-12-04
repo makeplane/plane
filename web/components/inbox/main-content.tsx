@@ -3,15 +3,17 @@ import Router, { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { useForm } from "react-hook-form";
-import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, Copy, ExternalLink, Inbox, RefreshCw, XCircle } from "lucide-react";
 
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { IssueDescriptionForm, IssueDetailsSidebar, IssueReaction } from "components/issues";
 import { InboxIssueActivity } from "components/inbox";
+// hooks
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // ui
-import { Loader } from "@plane/ui";
+import { Loader, StateGroupIcon } from "@plane/ui";
 // helpers
 import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 // types
@@ -30,10 +32,17 @@ export const InboxMainContent: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId, inboxIssueId } = router.query;
 
-  const { inboxIssues: inboxIssuesStore, inboxIssueDetails: inboxIssueDetailsStore, user: userStore } = useMobxStore();
+  const {
+    inboxIssues: inboxIssuesStore,
+    inboxIssueDetails: inboxIssueDetailsStore,
+    user: userStore,
+    projectState: { states },
+  } = useMobxStore();
 
   const user = userStore.currentUser;
   const userRole = userStore.currentProjectRole;
+
+  const { setShowAlert } = useReloadConfirmations();
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -54,6 +63,9 @@ export const InboxMainContent: React.FC = observer(() => {
 
   const issuesList = inboxId ? inboxIssuesStore.inboxIssues[inboxId.toString()] : undefined;
   const issueDetails = inboxIssueId ? inboxIssueDetailsStore.issueDetails[inboxIssueId.toString()] : undefined;
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetails?.state)
+    : undefined;
 
   const submitChanges = useCallback(
     async (formData: Partial<IInboxIssue>) => {
@@ -123,6 +135,17 @@ export const InboxMainContent: React.FC = observer(() => {
       labels: issueDetails.labels ?? issueDetails.labels,
     });
   }, [issueDetails, reset, inboxIssueId]);
+
+  useEffect(() => {
+    if (inboxIssueDetailsStore.isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        inboxIssueDetailsStore.setIsSubmitting("saved");
+      }, 2000);
+    } else if (inboxIssueDetailsStore.isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [inboxIssueDetailsStore.isSubmitting, setShowAlert]);
 
   const issueStatus = issueDetails?.issue_inbox[0].status;
 
@@ -214,8 +237,36 @@ export const InboxMainContent: React.FC = observer(() => {
                 </>
               ) : null}
             </div>
+            <div className="flex items-center mb-5">
+              {!currentIssueState ? (
+                <StateGroupIcon className="h-4 w-4 mr-3" stateGroup="backlog" color="#ff7700" />
+              ) : (
+                <StateGroupIcon
+                  className="h-4 w-4 mr-3"
+                  stateGroup={currentIssueState.group}
+                  color={currentIssueState.color}
+                />
+              )}
+              <h4 className="text-lg text-custom-text-300 font-medium mr-4">
+                {issueDetails?.project_detail?.identifier}-{issueDetails?.sequence_id}
+              </h4>
+              <div
+                className={`flex transition-all duration-300 items-center gap-x-2 ${
+                  inboxIssueDetailsStore.isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+                }`}
+              >
+                {inboxIssueDetailsStore.isSubmitting !== "submitted" &&
+                  inboxIssueDetailsStore.isSubmitting !== "saved" && (
+                    <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
+                  )}
+                <span className="text-sm text-custom-text-300">
+                  {inboxIssueDetailsStore.isSubmitting === "submitting" ? "Saving..." : "Saved"}
+                </span>
+              </div>
+            </div>
             <div>
               <IssueDescriptionForm
+                setShowAlert={setShowAlert}
                 workspaceSlug={workspaceSlug as string}
                 issue={{
                   name: issueDetails.name,

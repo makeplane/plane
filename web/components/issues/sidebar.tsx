@@ -87,7 +87,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -273,13 +273,15 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
           <div className="flex items-center gap-x-2">
-            {currentIssueState && (
+            {currentIssueState ? (
               <StateGroupIcon
                 className="h-4 w-4"
                 stateGroup={currentIssueState.group}
                 color={currentIssueState.color}
               />
-            )}
+            ) : inboxIssueId ? (
+              <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
+            ) : null}
             <h4 className="text-lg text-custom-text-300 font-medium">
               {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
             </h4>

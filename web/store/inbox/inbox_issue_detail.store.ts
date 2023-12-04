@@ -5,6 +5,7 @@ import { RootStore } from "../root";
 import { InboxService } from "services/inbox.service";
 // types
 import { IInboxIssue, IIssue, TInboxStatus } from "types";
+import { TIssueUpdateStatus } from "store/issues/types";
 // constants
 import { INBOX_ISSUE_SOURCE } from "constants/inbox";
 
@@ -12,6 +13,7 @@ export interface IInboxIssueDetailsStore {
   // states
   loader: boolean;
   error: any | null;
+  isSubmitting: TIssueUpdateStatus; // inbox issue update status;
 
   // observables
   issueDetails: {
@@ -46,12 +48,14 @@ export interface IInboxIssueDetailsStore {
     data: TInboxStatus
   ) => Promise<void>;
   deleteIssue: (workspaceSlug: string, projectId: string, inboxId: string, issueId: string) => Promise<void>;
+  setIsSubmitting: (status: TIssueUpdateStatus) => void;
 }
 
 export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
   // states
   loader: boolean = false;
   error: any | null = null;
+  isSubmitting: TIssueUpdateStatus = "saved";
 
   // observables
   issueDetails: { [issueId: string]: IInboxIssue } = {};
@@ -67,6 +71,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
       // states
       loader: observable.ref,
       error: observable.ref,
+      isSubmitting: observable.ref,
 
       // observables
       issueDetails: observable.ref,
@@ -76,11 +81,16 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
       createIssue: action,
       updateIssueStatus: action,
       deleteIssue: action,
+      setIsSubmitting: action,
     });
 
     this.rootStore = _rootStore;
     this.inboxService = new InboxService();
   }
+
+  setIsSubmitting = (status: TIssueUpdateStatus) => {
+    this.isSubmitting = status;
+  };
 
   fetchIssueDetails = async (workspaceSlug: string, projectId: string, inboxId: string, issueId: string) => {
     try {
@@ -155,6 +165,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
 
     try {
       runInAction(() => {
+        this.isSubmitting = "submitting";
         this.issueDetails = {
           ...this.issueDetails,
           [issueId]: updatedIssue,
@@ -170,6 +181,7 @@ export class InboxIssueDetailsStore implements IInboxIssueDetailsStore {
       });
 
       await this.inboxService.patchInboxIssue(workspaceSlug, projectId, inboxId, issueId, { issue: data });
+      this.isSubmitting = "submitted";
     } catch (error) {
       runInAction(() => {
         this.error = error;

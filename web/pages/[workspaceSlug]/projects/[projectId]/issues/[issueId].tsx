@@ -50,6 +50,7 @@ const IssueDetailsPage: NextPageWithLayout = observer(() => {
     projectIssues: { isSubmitting, setIsSubmitting },
   } = useMobxStore();
 
+  // hooks
   const { setShowAlert } = useReloadConfirmations();
 
   const {

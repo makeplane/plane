@@ -6,13 +6,21 @@ import { IssueService } from "services/issue/issue.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags, TIssueUpdateStatus } from "../../types";
+import {
+  IIssueResponse,
+  TLoader,
+  IGroupedIssues,
+  ISubGroupedIssues,
+  TUnGroupedIssues,
+  ViewFlags,
+  TIssueUpdateStatus,
+} from "../../types";
 import { RootStore } from "store/root";
 
 export interface IProjectIssuesStore {
   // observable
   loader: TLoader;
-  isSubmitting: TIssueUpdateStatus;
+  isSubmitting: TIssueUpdateStatus; // update issue status
   issues: { [project_id: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
