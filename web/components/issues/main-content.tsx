@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
@@ -113,16 +112,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         })
       );
   };
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert]);
 
   const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
@@ -214,7 +203,6 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         </div>
 
         <IssueDescriptionForm
-          setShowAlert={setShowAlert}
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}

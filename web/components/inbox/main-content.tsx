@@ -137,17 +137,6 @@ export const InboxMainContent: React.FC = observer(() => {
     });
   }, [issueDetails, reset, inboxIssueId]);
 
-  useEffect(() => {
-    if (inboxIssueDetailsStore.isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        inboxIssueDetailsStore.setIsSubmitting("saved");
-      }, 2000);
-    } else if (inboxIssueDetailsStore.isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [inboxIssueDetailsStore.isSubmitting, setShowAlert]);
-
   const issueStatus = issueDetails?.issue_inbox[0].status;
 
   if (!inboxIssueId)
@@ -269,7 +258,6 @@ export const InboxMainContent: React.FC = observer(() => {
             </div>
             <div>
               <IssueDescriptionForm
-                setShowAlert={setShowAlert}
                 workspaceSlug={workspaceSlug as string}
                 issue={{
                   name: issueDetails.name,

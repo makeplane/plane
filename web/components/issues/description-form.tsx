@@ -3,6 +3,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import debounce from "lodash/debounce";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // components
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
@@ -27,13 +28,12 @@ export interface IssueDetailsProps {
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   isAllowed: boolean;
-  setShowAlert: (value: boolean) => void;
 }
 
 const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleFormSubmit, workspaceSlug, isAllowed, setShowAlert } = props;
+  const { issue, handleFormSubmit, workspaceSlug, isAllowed } = props;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);
 
@@ -43,10 +43,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
 
   // mobx store
   const {
-    projectIssues: { setIsSubmitting: PIsetIsSubmitting },
-    inboxIssueDetails: { setIsSubmitting: IIsetIsSubmitting },
+    projectIssues: { setIsSubmitting: PIsetIsSubmitting, isSubmitting: PIisSubmitting },
+    inboxIssueDetails: { setIsSubmitting: IIsetIsSubmitting, isSubmitting: IIisSubmitting },
   } = useMobxStore();
 
+  // hooks
+  const { setShowAlert } = useReloadConfirmations();
   const editorSuggestion = useEditorSuggestions();
 
   const {
@@ -96,6 +98,18 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   }, 1500);
 
   const setIsSubmitting = inboxId ? IIsetIsSubmitting : PIsetIsSubmitting;
+  const isSubmitting = inboxId ? IIisSubmitting : PIisSubmitting;
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   return (
     <div className="relative">
