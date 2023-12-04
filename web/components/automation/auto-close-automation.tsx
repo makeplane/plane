@@ -11,6 +11,7 @@ import { ArchiveX } from "lucide-react";
 import { IProject } from "types";
 // fetch keys
 import { PROJECT_AUTOMATION_MONTHS } from "constants/project";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   handleChange: (formData: Partial<IProject>) => Promise<void>;
@@ -53,6 +54,8 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
     default_state: defaultState,
   };
 
+  const isAdmin = userRole === EUserWorkspaceRoles.ADMIN;
+
   return (
     <>
       <SelectMonthModal
@@ -83,7 +86,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                 : handleChange({ close_in: 0, default_state: null })
             }
             size="sm"
-            disabled={userRole !== 20}
+            disabled={!isAdmin}
           />
         </div>
 
@@ -102,7 +105,7 @@ export const AutoCloseAutomation: React.FC<Props> = observer((props) => {
                       }}
                       input
                       width="w-full"
-                      disabled={userRole !== 20}
+                      disabled={!isAdmin}
                     >
                       <>
                         {PROJECT_AUTOMATION_MONTHS.map((month) => (

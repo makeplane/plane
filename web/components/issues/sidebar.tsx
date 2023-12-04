@@ -40,6 +40,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import type { IIssue, IIssueLink, linkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   control: any;
@@ -248,7 +249,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     setLinkModal(true);
   };
 
-  const isNotAllowed = userRole === 5 || userRole === 10;
+  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
   const currentIssueState = projectId
     ? states[projectId.toString()]?.find((s) => s.id === issueDetail?.state)
@@ -314,7 +315,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <LinkIcon className="h-3.5 w-3.5" />
               </button>
             )}
-            {!isNotAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
+            {isAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
@@ -344,7 +345,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarStateSelect
                             value={value}
                             onChange={(val: string) => submitChanges({ state: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -365,7 +366,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarAssigneeSelect
                             value={value}
                             onChange={(val: string[]) => submitChanges({ assignees: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -386,7 +387,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarPrioritySelect
                             value={value}
                             onChange={(val) => submitChanges({ priority: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -407,7 +408,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarEstimateSelect
                             value={value}
                             onChange={(val: number | null) => submitChanges({ estimate_point: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -435,7 +436,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                               onChange(val);
                             }}
                             issueDetails={issueDetail}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -460,7 +461,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
@@ -481,7 +482,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
@@ -499,7 +500,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
@@ -517,7 +518,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
@@ -541,7 +542,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             }
                             className="bg-custom-background-80 border-none"
                             maxDate={maxDate ?? undefined}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -569,7 +570,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             }
                             className="bg-custom-background-80 border-none"
                             minDate={minDate ?? undefined}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -590,7 +591,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
                         handleCycleChange={handleCycleChange}
-                        disabled={isNotAllowed || uneditable}
+                        disabled={!isAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -605,7 +606,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
                         handleModuleChange={handleModuleChange}
-                        disabled={isNotAllowed || uneditable}
+                        disabled={!isAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -624,7 +625,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   issueDetails={issueDetail}
                   labelList={issueDetail?.labels ?? []}
                   submitChanges={submitChanges}
-                  isNotAllowed={isNotAllowed}
+                  isNotAllowed={!isAllowed}
                   uneditable={uneditable ?? false}
                 />
               </div>
@@ -634,7 +635,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <h4>Links</h4>
-                {!isNotAllowed && (
+                {isAllowed && (
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${
