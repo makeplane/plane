@@ -85,8 +85,8 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
     });
   }
 
-  setIsSubmitting = (value: "submitting" | "submitted" | "saved") => {
-    this.isSubmitting = value;
+  setIsSubmitting = (status: TIssueUpdateStatus) => {
+    this.isSubmitting = status;
   };
 
   get getIssues() {

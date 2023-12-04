@@ -42,8 +42,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const [characterLimit, setCharacterLimit] = useState(false);
 
   // hooks
-  const editorSuggestions = useEditorSuggestions();
   const { setShowAlert } = useReloadConfirmations();
+  const editorSuggestions = useEditorSuggestions();
 
   const {
     handleSubmit,
