@@ -33,6 +33,7 @@ import { linkDetails, IModule, ModuleLink } from "types";
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
 import { MODULE_STATUS } from "constants/module";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const defaultValues: Partial<IModule> = {
   lead: "",
@@ -588,10 +589,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               handleEditLink={handleEditLink}
                               handleDeleteLink={handleDeleteLink}
                               userAuth={{
-                                isGuest: userRole === 5,
-                                isViewer: userRole === 10,
-                                isMember: userRole === 15,
-                                isOwner: userRole === 20,
+                                isGuest: userRole === EUserWorkspaceRoles.GUEST,
+                                isViewer: userRole === EUserWorkspaceRoles.VIEWER,
+                                isMember: userRole === EUserWorkspaceRoles.MEMBER,
+                                isOwner: userRole === EUserWorkspaceRoles.ADMIN,
                               }}
                             />
                           </>
