@@ -4,28 +4,29 @@ import { ProjectSettingsSidebar } from "./sidebar";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { NotAuthorizedView } from "components/auth-screens";
+import { observer } from "mobx-react-lite";
 
 export interface IProjectSettingLayout {
   children: ReactNode;
 }
 
-export const ProjectSettingLayout: FC<IProjectSettingLayout> = (props) => {
+export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) => {
   const { children } = props;
 
   const {
     user: { currentProjectRole },
   } = useMobxStore();
 
-  const canViewSettings = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const restrictViewSettings = currentProjectRole && currentProjectRole <= EUserWorkspaceRoles.VIEWER;
 
-  return canViewSettings ? (
+  return restrictViewSettings ? (
+    <NotAuthorizedView type="project" />
+  ) : (
     <div className="flex gap-2 h-full w-full overflow-x-hidden overflow-y-scroll">
       <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
         <ProjectSettingsSidebar />
       </div>
       {children}
     </div>
-  ) : (
-    <NotAuthorizedView type="project" />
   );
-};
+});
