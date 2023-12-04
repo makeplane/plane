@@ -46,6 +46,26 @@ class AuthService extends APIService {
       });
   }
 
+  async resetPassword(
+    uidb64: string,
+    token: string,
+    data: {
+      new_password: string;
+    }
+  ): Promise<ILoginTokenResponse> {
+    return this.post(`/api/reset-password/${uidb64}/${token}/`, data, { headers: {} })
+      .then((response) => {
+        if (response?.status === 200) {
+          this.setAccessToken(response?.data?.access_token);
+          this.setRefreshToken(response?.data?.refresh_token);
+          return response?.data;
+        }
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async emailLogin(data: any) {
     return this.post("/api/sign-in/", data, { headers: {} })
       .then((response) => {
