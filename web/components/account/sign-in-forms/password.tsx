@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -184,17 +185,25 @@ export const PasswordForm: React.FC<Props> = (props) => {
               />
             )}
           />
-          <button
-            type="button"
-            onClick={handleForgotPassword}
-            className="text-xs font-medium text-right w-full text-custom-primary-100"
-          >
-            Forgot your password?
-          </button>
+          <div className="w-full text-right">
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              className="text-xs font-medium text-custom-primary-100"
+            >
+              Forgot your password?
+            </button>
+          </div>
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
           {isSubmitting ? "Signing in..." : "Go to workspace"}
         </Button>
+        <p className="text-xs text-onboarding-text-200">
+          When you click the button above, you agree with our{" "}
+          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+            <span className="font-semibold underline">terms and conditions of service.</span>
+          </Link>
+        </p>
       </form>
     </>
   );

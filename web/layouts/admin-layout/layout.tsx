@@ -1,4 +1,5 @@
 import { FC, ReactNode } from "react";
+import { observer } from "mobx-react-lite";
 // layouts
 import { AdminAuthWrapper, UserAuthWrapper } from "layouts/auth-layout";
 // components
@@ -12,20 +13,14 @@ export interface IInstanceAdminLayout {
   children: ReactNode;
 }
 
-export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
+export const InstanceAdminLayout: FC<IInstanceAdminLayout> = observer((props) => {
   const { children } = props;
   // store
   const {
     instance: { instance },
-    user: { currentUser },
   } = useMobxStore();
-  // fetch
 
-  console.log("instance", instance);
-
-  if (instance?.is_setup_done === false) {
-    return <InstanceSetupView />;
-  }
+  if (instance?.is_setup_done === false) return <InstanceSetupView />;
 
   return (
     <>
@@ -46,4 +41,4 @@ export const InstanceAdminLayout: FC<IInstanceAdminLayout> = (props) => {
       </UserAuthWrapper>
     </>
   );
-};
+});

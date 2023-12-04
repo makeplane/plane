@@ -1,4 +1,4 @@
-import { observable, action, makeObservable } from "mobx";
+import { observable, action, makeObservable, computed } from "mobx";
 // types
 import { RootStore } from "./root";
 // services
@@ -29,6 +29,9 @@ export interface ICommandPaletteStore {
   isCreateIssueModalOpen: boolean;
   isDeleteIssueModalOpen: boolean;
   isBulkDeleteIssueModalOpen: boolean;
+
+  // computed
+  isAnyModalOpen: boolean;
 
   toggleCommandPaletteModal: (value?: boolean) => void;
   toggleShortcutModal: (value?: boolean) => void;
@@ -77,6 +80,7 @@ class CommandPaletteStore implements ICommandPaletteStore {
       isDeleteIssueModalOpen: observable.ref,
       isBulkDeleteIssueModalOpen: observable.ref,
       // computed
+      isAnyModalOpen: computed,
       // projectPages: computed,
       // action
       toggleCommandPaletteModal: action,
@@ -94,6 +98,20 @@ class CommandPaletteStore implements ICommandPaletteStore {
     this.rootStore = _rootStore;
     this.projectService = new ProjectService();
     this.pageService = new PageService();
+  }
+
+  get isAnyModalOpen() {
+    return Boolean(
+      this.isCreateIssueModalOpen ||
+        this.isCreateCycleModalOpen ||
+        this.isCreatePageModalOpen ||
+        this.isCreateProjectModalOpen ||
+        this.isCreateModuleModalOpen ||
+        this.isCreateViewModalOpen ||
+        this.isShortcutModalOpen ||
+        this.isBulkDeleteIssueModalOpen ||
+        this.isDeleteIssueModalOpen
+    );
   }
 
   toggleCommandPaletteModal = (value?: boolean) => {
