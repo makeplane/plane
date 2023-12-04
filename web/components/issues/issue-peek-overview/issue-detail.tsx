@@ -25,19 +25,32 @@ interface IPeekOverviewIssueDetails {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
+  setShowAlert: (value: boolean) => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
+  const {
+    workspaceSlug,
+    issue,
+    issueReactions,
+    user,
+    issueUpdate,
+    issueReactionCreate,
+    issueReactionRemove,
+    setShowAlert,
+  } = props;
   // store
-  const { user: userStore } = useMobxStore();
+  const {
+    user: userStore,
+    projectIssues: { isSubmitting, setIsSubmitting },
+  } = useMobxStore();
   const { currentProjectRole } = userStore;
   const isAllowed = [15, 20].includes(currentProjectRole || 0);
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks
-  const { setShowAlert } = useReloadConfirmations();
+
   const editorSuggestions = useEditorSuggestions();
 
   const {
@@ -75,19 +88,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   }, [issueTitleCurrentValue, localTitleValue]);
 
   const debouncedFormSave = debounce(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    handleSubmit(handleDescriptionFormSubmit)();
   }, 1500);
-
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert]);
 
   // reset form values
   useEffect(() => {
@@ -171,13 +173,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
             />
           )}
         />
-        <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
-        >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>
       </div>
       <IssueReaction
         issueReactions={issueReactions}

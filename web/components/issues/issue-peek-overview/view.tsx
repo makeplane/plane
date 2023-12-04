@@ -1,8 +1,8 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
+import { MoveRight, MoveDiagonal, Bell, Link2, Trash2, RefreshCw } from "lucide-react";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
@@ -14,6 +14,7 @@ import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
 import { IIssue } from "types";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -89,10 +90,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const router = useRouter();
   const { peekIssueId } = router.query as { peekIssueId: string };
 
-  const { user: userStore, issueDetail: issueDetailStore } = useMobxStore();
+  const {
+    user: userStore,
+    issueDetail: issueDetailStore,
+    projectIssues: { isSubmitting, setIsSubmitting },
+  } = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+
+  const { setShowAlert } = useReloadConfirmations();
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
@@ -135,6 +142,17 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   const user = userStore?.currentUser;
 
   const currentMode = peekOptions.find((m) => m.key === peekMode);
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
 
   return (
     <>
@@ -235,12 +253,20 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
                     </Button>
                   )}
+                <div className={`flex items-center gap-x-2 ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"}`}>
+                  {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
+                    <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
+                  )}
+                  <span className="text-sm text-custom-text-300">
+                    {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+                  </span>
+                </div>
                 <button onClick={handleCopyText}>
-                  <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
+                  <Link2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 -rotate-45" />
                 </button>
                 {!disableUserActions && (
                   <button onClick={() => setDeleteIssueModal(true)}>
-                    <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+                    <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
                 )}
               </div>
@@ -261,6 +287,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
                         )}
                         <PeekOverviewIssueDetails
+                          setShowAlert={setShowAlert}
                           workspaceSlug={workspaceSlug}
                           issue={issue}
                           issueUpdate={issueUpdate}
@@ -295,6 +322,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <div className="relative w-full h-full space-y-6 p-4 py-5 overflow-auto">
                           <div className={isArchived ? "pointer-events-none" : ""}>
                             <PeekOverviewIssueDetails
+                              setShowAlert={setShowAlert}
                               workspaceSlug={workspaceSlug}
                               issue={issue}
                               issueReactions={issueReactions}

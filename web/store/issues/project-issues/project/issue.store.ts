@@ -6,12 +6,13 @@ import { IssueService } from "services/issue/issue.service";
 // types
 import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
-import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
+import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags, TIssueUpdateStatus } from "../../types";
 import { RootStore } from "store/root";
 
 export interface IProjectIssuesStore {
   // observable
   loader: TLoader;
+  isSubmitting: TIssueUpdateStatus;
   issues: { [project_id: string]: IIssueResponse } | undefined;
   // computed
   getIssues: IIssueResponse | undefined;
@@ -22,12 +23,14 @@ export interface IProjectIssuesStore {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>) => Promise<IIssue>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<IIssue>;
   quickAddIssue: (workspaceSlug: string, projectId: string, data: IIssue) => Promise<IIssue>;
+  setIsSubmitting: (value: TIssueUpdateStatus) => void;
 
   viewFlags: ViewFlags;
 }
 
 export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssuesStore {
   loader: TLoader = "init-loader";
+  isSubmitting: TIssueUpdateStatus = "saved";
   issues: { [project_id: string]: IIssueResponse } | undefined = undefined;
   // root store
   rootStore;
@@ -48,6 +51,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       // observable
       loader: observable.ref,
       issues: observable.ref,
+      isSubmitting: observable.ref,
       // computed
       getIssues: computed,
       getIssuesIds: computed,
@@ -57,6 +61,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       updateIssue: action,
       removeIssue: action,
       quickAddIssue: action,
+      setIsSubmitting: action,
     });
 
     this.rootStore = _rootStore;
@@ -71,6 +76,10 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       if (userFilters) this.fetchIssues(workspaceSlug, projectId, "mutation");
     });
   }
+
+  setIsSubmitting = (value: "submitting" | "submitted" | "saved") => {
+    this.isSubmitting = value;
+  };
 
   get getIssues() {
     const projectId = this.rootStore?.project.projectId;
@@ -157,10 +166,13 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       _issues[projectId][issueId] = { ..._issues[projectId][issueId], ...data };
 
       runInAction(() => {
+        this.isSubmitting = "submitting";
         this.issues = _issues;
       });
 
       const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+
+      this.isSubmitting = "submitted";
 
       return response;
     } catch (error) {

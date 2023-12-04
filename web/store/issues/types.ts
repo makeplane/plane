@@ -31,3 +31,6 @@ export interface ViewFlags {
   enableIssueCreation: boolean;
   enableInlineEditing: boolean;
 }
+
+// issue update status
+export type TIssueUpdateStatus = "saved" | "submitting" | "submitted";
