@@ -12,6 +12,7 @@ import { IssueView } from "./view";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IIssuePeekOverview {
   workspaceSlug: string;
@@ -118,7 +119,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }
   };
 
-  const userRole = userStore.currentProjectRole ?? 5;
+  const userRole = userStore.currentProjectRole ?? EUserWorkspaceRoles.GUEST;
 
   return (
     <Fragment>

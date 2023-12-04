@@ -13,7 +13,7 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // types
 import { IProjectMember, TUserProjectRole } from "types";
 
@@ -38,7 +38,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   // derived values
-  const isAdmin = currentProjectRole === 20;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
   const memberDetails = member.member;
 
   const handleRemove = async () => {
@@ -148,12 +148,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             disabled={
               memberDetails.id === currentUser?.id ||
               !member.member ||
-              (currentProjectRole && currentProjectRole !== 20 && currentProjectRole < member.role)
+              !currentProjectRole ||
+              currentProjectRole < member.role
             }
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (currentProjectRole && currentProjectRole !== 20 && currentProjectRole < parseInt(key)) return null;
+              if (currentProjectRole && !isAdmin && currentProjectRole < parseInt(key)) return null;
 
               return (
                 <CustomSelect.Option key={key} value={parseInt(key, 10)}>
