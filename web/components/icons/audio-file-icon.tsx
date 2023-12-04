@@ -1,9 +1,13 @@
 import React from "react";
 import Image from "next/image";
-
-import type { Props } from "./types";
+// image
 import AudioFileIcon from "public/attachment/audio-icon.png";
 
-export const AudioIcon: React.FC<Props> = ({ width, height }) => (
+export type AudioIconProps = {
+  width?: number;
+  height?: number;
+};
+
+export const AudioIcon: React.FC<AudioIconProps> = ({ width, height }) => (
   <Image src={AudioFileIcon} height={height} width={width} alt="AudioFileIcon" />
 );

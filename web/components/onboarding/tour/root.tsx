@@ -1,16 +1,15 @@
 import { useState } from "react";
-
 import Image from "next/image";
-
-// hooks
-import useUser from "hooks/use-user";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { TourSidebar } from "components/onboarding";
 // ui
-import { PrimaryButton, SecondaryButton } from "components/ui";
+import { Button } from "@plane/ui";
 // icons
-import { XMarkIcon } from "@heroicons/react/24/outline";
-// images
+import { X } from "lucide-react";
+// assets
 import PlaneWhiteLogo from "public/plane-logos/white-horizontal.svg";
 import IssuesTour from "public/onboarding/issues.webp";
 import CyclesTour from "public/onboarding/cycles.webp";
@@ -52,8 +51,7 @@ const TOUR_STEPS: {
   {
     key: "modules",
     title: "Break into modules",
-    description:
-      "Modules break your big thing into Projects or Features, to help you organize better.",
+    description: "Modules break your big thing into Projects or Features, to help you organize better.",
     image: ModulesTour,
     prevStep: "cycles",
     nextStep: "views",
@@ -76,10 +74,13 @@ const TOUR_STEPS: {
   },
 ];
 
-export const TourRoot: React.FC<Props> = ({ onComplete }) => {
+export const TourRoot: React.FC<Props> = observer((props) => {
+  const { onComplete } = props;
+  // states
   const [step, setStep] = useState<TTourSteps>("welcome");
 
-  const { user } = useUser();
+  const { user: userStore, commandPalette: commandPaletteStore, trackEvent: {setTrackElement} } = useMobxStore();
+  const user = userStore.currentUser;
 
   const currentStepIndex = TOUR_STEPS.findIndex((tourStep) => tourStep.key === step);
   const currentStep = TOUR_STEPS[currentStepIndex];
@@ -92,23 +93,27 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
             <div className="h-3/5 bg-custom-primary-100 grid place-items-center">
               <Image src={PlaneWhiteLogo} alt="Plane White Logo" />
             </div>
-            <div className="h-2/5 overflow-y-auto p-6">
+            <div className="h-2/5 flex flex-col overflow-y-auto p-6">
               <h3 className="font-semibold sm:text-xl">
                 Welcome to Plane, {user?.first_name} {user?.last_name}
               </h3>
               <p className="text-custom-text-200 text-sm mt-3">
-                We{"'"}re glad that you decided to try out Plane. You can now manage your projects
-                with ease. Get started by creating a project.
+                We{"'"}re glad that you decided to try out Plane. You can now manage your projects with ease. Get
+                started by creating a project.
               </p>
-              <div className="flex items-center gap-6 mt-8">
-                <PrimaryButton onClick={() => setStep("issues")}>Take a Product Tour</PrimaryButton>
-                <button
-                  type="button"
-                  className="outline-custom-text-100 bg-transparent text-custom-primary-100 text-xs font-medium"
-                  onClick={onComplete}
-                >
-                  No thanks, I will explore it myself
-                </button>
+              <div className="flex items-end h-full">
+                <div className="flex items-center gap-6 mt-8">
+                  <Button variant="primary" onClick={() => setStep("issues")}>
+                    Take a Product Tour
+                  </Button>
+                  <button
+                    type="button"
+                    className="outline-custom-text-100 bg-transparent text-custom-primary-100 text-xs font-medium"
+                    onClick={onComplete}
+                  >
+                    No thanks, I will explore it myself
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -120,7 +125,7 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
             className="fixed top-[19%] sm:top-[11.5%] right-[9%] md:right-[24%] lg:right-[19%] border border-custom-text-100 rounded-full p-1 translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer"
             onClick={onComplete}
           >
-            <XMarkIcon className="h-3 w-3 text-custom-text-100" />
+            <X className="h-3 w-3 text-custom-text-100" />
           </button>
           <TourSidebar step={step} setStep={setStep} />
           <div className="col-span-10 lg:col-span-7 h-full overflow-hidden">
@@ -137,19 +142,27 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
               <div className="h-full flex items-end justify-between gap-4 mt-3">
                 <div className="flex items-center gap-4">
                   {currentStep?.prevStep && (
-                    <SecondaryButton onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
+                    <Button variant="neutral-primary" onClick={() => setStep(currentStep.prevStep ?? "welcome")}>
                       Back
-                    </SecondaryButton>
+                    </Button>
                   )}
                   {currentStep?.nextStep && (
-                    <PrimaryButton onClick={() => setStep(currentStep.nextStep ?? "issues")}>
+                    <Button variant="primary" onClick={() => setStep(currentStep.nextStep ?? "issues")}>
                       Next
-                    </PrimaryButton>
+                    </Button>
                   )}
                 </div>
-                {TOUR_STEPS.findIndex((tourStep) => tourStep.key === step) ===
-                  TOUR_STEPS.length - 1 && (
-                  <PrimaryButton onClick={onComplete}>Create my first project</PrimaryButton>
+                {currentStepIndex === TOUR_STEPS.length - 1 && (
+                  <Button
+                    variant="primary"
+                    onClick={() => {
+                      onComplete();
+                      setTrackElement("ONBOARDING_TOUR")
+                      commandPaletteStore.toggleCreateProjectModal(true);
+                    }}
+                  >
+                    Create my first project
+                  </Button>
                 )}
               </div>
             </div>
@@ -158,4 +171,4 @@ export const TourRoot: React.FC<Props> = ({ onComplete }) => {
       )}
     </>
   );
-};
+});

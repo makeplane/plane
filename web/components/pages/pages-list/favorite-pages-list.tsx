@@ -1,27 +1,25 @@
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
-// services
-import pagesService from "services/pages.service";
+import { FC } from "react";
+import { observer } from "mobx-react-lite";
 // components
-import { PagesView } from "components/pages";
-// types
-import { TPagesListProps } from "./types";
-// fetch-keys
-import { FAVORITE_PAGES_LIST } from "constants/fetch-keys";
+import { PagesListView } from "components/pages/pages-list";
+// hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+// ui
+import { Loader } from "@plane/ui";
 
-export const FavoritePagesList: React.FC<TPagesListProps> = ({ viewType }) => {
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+export const FavoritePagesList: FC = observer(() => {
+  const {
+    page: { favoriteProjectPages },
+  } = useMobxStore();
 
-  const { data: pages } = useSWR(
-    workspaceSlug && projectId ? FAVORITE_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId
-      ? () =>
-          pagesService.getPagesWithParams(workspaceSlug as string, projectId as string, "favorite")
-      : null
-  );
+  if (!favoriteProjectPages)
+    return (
+      <Loader className="space-y-4">
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+      </Loader>
+    );
 
-  return <PagesView pages={pages} viewType={viewType} />;
-};
+  return <PagesListView pages={favoriteProjectPages} />;
+});

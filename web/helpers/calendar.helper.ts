@@ -1,79 +1,7 @@
-export const startOfWeek = (date: Date) => {
-  const startOfMonthDate = new Date(date.getFullYear(), date.getMonth(), 1);
-  const dayOfWeek = startOfMonthDate.getDay() % 7;
-  const startOfWeekDate = new Date(
-    startOfMonthDate.getFullYear(),
-    startOfMonthDate.getMonth(),
-    startOfMonthDate.getDate() - dayOfWeek
-  );
-  const timezoneOffset = startOfMonthDate.getTimezoneOffset();
-  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
-  const startOfWeekAdjusted = new Date(startOfWeekDate.getTime() - timezoneOffsetMilliseconds);
-  return startOfWeekAdjusted;
-};
-
-export const lastDayOfWeek = (date: Date) => {
-  const lastDayOfPreviousMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  const dayOfWeek = lastDayOfPreviousMonth.getDay() % 7;
-  const daysUntilEndOfWeek = 6 - dayOfWeek;
-  const lastDayOfWeekDate = new Date(
-    lastDayOfPreviousMonth.getFullYear(),
-    lastDayOfPreviousMonth.getMonth(),
-    lastDayOfPreviousMonth.getDate() + daysUntilEndOfWeek
-  );
-  const timezoneOffset = lastDayOfPreviousMonth.getTimezoneOffset();
-  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
-  const lastDayOfWeekAdjusted = new Date(lastDayOfWeekDate.getTime() - timezoneOffsetMilliseconds);
-  return lastDayOfWeekAdjusted;
-};
-
-export const getCurrentWeekStartDate = (date: Date) => {
-  const today = new Date(date);
-  const dayOfWeek = today.getDay();
-  const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dayOfWeek);
-  const timezoneOffset = startOfWeek.getTimezoneOffset();
-  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
-  const startOfWeekAdjusted = new Date(startOfWeek.getTime() - timezoneOffsetMilliseconds);
-  return startOfWeekAdjusted;
-};
-
-export const getCurrentWeekEndDate = (date: Date) => {
-  const today = new Date(date);
-  const dayOfWeek = today.getDay();
-  const endOfWeek = new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate() + (6 - dayOfWeek)
-  );
-  const timezoneOffset = endOfWeek.getTimezoneOffset();
-  const timezoneOffsetMilliseconds = timezoneOffset * 60 * 1000;
-  const endOfWeekAdjusted = new Date(endOfWeek.getTime() - timezoneOffsetMilliseconds);
-  return endOfWeekAdjusted;
-};
-
-export const eachDayOfInterval = ({ start, end }: { start: Date; end: Date }) => {
-  const days = [];
-  const current = new Date(start);
-  while (current <= end) {
-    days.push(new Date(current));
-    current.setDate(current.getDate() + 1);
-  }
-  return days;
-};
-
-export const weekDayInterval = ({ start, end }: { start: Date; end: Date }) => {
-  const dates = [];
-  const currentDate = new Date(start);
-  const endDate = new Date(end);
-  while (currentDate <= endDate) {
-    const dayOfWeek = currentDate.getDay();
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      dates.push(new Date(currentDate));
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-  return dates;
-};
+// helpers
+import { getWeekNumberOfDate, renderDateFormat } from "helpers/date-time.helper";
+// types
+import { ICalendarDate, ICalendarPayload } from "components/issues";
 
 export const formatDate = (date: Date, format: string): string => {
   const day = date.getDate();
@@ -112,38 +40,53 @@ export const formatDate = (date: Date, format: string): string => {
   return formattedDate;
 };
 
-export const updateDateWithYear = (yearString: string, date: Date) => {
-  const year = parseInt(yearString);
-  const month = date.getMonth();
-  const day = date.getDate();
-  return new Date(year, month, day);
-};
+/**
+ * @returns {ICalendarPayload} calendar payload to render the calendar
+ * @param {ICalendarPayload | null} currentStructure current calendar payload
+ * @param {Date} startDate date of the month to render
+ * @description Returns calendar payload to render the calendar, if currentStructure is null, it will generate the payload for the month of startDate, else it will construct the payload for the month of startDate and append it to the currentStructure
+ */
+export const generateCalendarData = (currentStructure: ICalendarPayload | null, startDate: Date): ICalendarPayload => {
+  const calendarData: ICalendarPayload = currentStructure ?? {};
 
-export const updateDateWithMonth = (monthString: string, date: Date) => {
-  const month = parseInt(monthString) - 1;
-  const year = date.getFullYear();
-  const day = date.getDate();
-  return new Date(year, month, day);
-};
+  const startMonth = startDate.getMonth();
+  const startYear = startDate.getFullYear();
 
-export const isSameMonth = (monthString: string, date: Date) => {
-  const month = parseInt(monthString) - 1;
-  return month === date.getMonth();
-};
+  const currentDate = new Date(startYear, startMonth, 1);
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
 
-export const isSameYear = (yearString: string, date: Date) => {
-  const year = parseInt(yearString);
-  return year === date.getFullYear();
-};
+  calendarData[`y-${year}`] ||= {};
+  calendarData[`y-${year}`][`m-${month}`] ||= {};
 
-export const addSevenDaysToDate = (date: Date) => {
-  const currentDate = new Date(date);
-  const newDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
-  return newDate;
-};
+  const numWeeks = Math.ceil((totalDaysInMonth + firstDayOfMonth) / 7);
 
-export const subtract7DaysToDate = (date: Date) => {
-  const currentDate = new Date(date);
-  const newDate = new Date(currentDate.getTime() - 7 * 24 * 60 * 60 * 1000);
-  return newDate;
+  for (let week = 0; week < numWeeks; week++) {
+    const currentWeekObject: { [date: string]: ICalendarDate } = {};
+
+    const weekNumber = getWeekNumberOfDate(new Date(year, month, week * 7 - firstDayOfMonth + 1));
+
+    for (let i = 0; i < 7; i++) {
+      const dayNumber = week * 7 + i - firstDayOfMonth;
+
+      const date = new Date(year, month, dayNumber + 1);
+
+      currentWeekObject[renderDateFormat(date)] = {
+        date,
+        year,
+        month,
+        day: dayNumber + 1,
+        week: weekNumber,
+        is_current_month: date.getMonth() === month,
+        is_current_week: getWeekNumberOfDate(date) === getWeekNumberOfDate(new Date()),
+        is_today: date.toDateString() === new Date().toDateString(),
+      };
+    }
+
+    calendarData[`y-${year}`][`m-${month}`][`w-${weekNumber}`] = currentWeekObject;
+  }
+
+  return calendarData;
 };

@@ -1,15 +1,10 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectServices from "services/project.service";
+import { ProjectMemberService } from "services/project";
 // ui
-import { AssigneesList, Avatar, CustomSearchSelect } from "components/ui";
-// icons
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { Avatar, AvatarGroup, CustomSearchSelect, UserGroupIcon } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -18,6 +13,8 @@ type Props = {
   onChange: () => void;
 };
 
+const projectMemberService = new ProjectMemberService();
+
 export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -25,7 +22,7 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectServices.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
   const options = members?.map((member) => ({
@@ -33,7 +30,7 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -46,13 +43,21 @@ export const ModuleMembersSelect: React.FC<Props> = ({ value, onChange }) => {
         <div className="flex items-center gap-2 text-custom-text-200">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="flex items-center justify-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={false} />
+              <AvatarGroup>
+                {value.map((assigneeId) => {
+                  const member = members?.find((m) => m.member.id === assigneeId)?.member;
+
+                  if (!member) return null;
+
+                  return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+                })}
+              </AvatarGroup>
               <span className="text-custom-text-200">{value.length} Assignees</span>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              <UserGroupIcon className="h-4 w-4 text-custom-text-200" />
-              <span className="text-custom-text-200">Assignee</span>
+            <div className="flex items-center justify-center gap-2 text-custom-text-300">
+              <UserGroupIcon className="h-3 w-3" />
+              <span>Assignee</span>
             </div>
           )}
         </div>

@@ -72,11 +72,7 @@ export const ToastContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, []);
 
   const setToastAlert = useCallback(
-    (data: {
-      title: string;
-      type?: "success" | "error" | "warning" | "info";
-      message?: string;
-    }) => {
+    (data: { title: string; type?: "success" | "error" | "warning" | "info"; message?: string }) => {
       const id = uuid();
       const { title, type, message } = data;
       dispatch({

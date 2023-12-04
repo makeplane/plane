@@ -1,13 +1,8 @@
-import type {
-  IUser,
-  IIssue,
-  IProject,
-  IProjectLite,
-  IWorkspace,
-  IWorkspaceLite,
-  IIssueFilterOptions,
-  IUserLite,
-} from "types";
+import type { IUser, IIssue, IProjectLite, IWorkspaceLite, IIssueFilterOptions, IUserLite } from "types";
+
+export type TCycleView = "all" | "active" | "upcoming" | "completed" | "draft";
+
+export type TCycleLayout = "list" | "board" | "gantt";
 
 export interface ICycle {
   backlog_issues: number;
@@ -16,7 +11,7 @@ export interface ICycle {
   created_at: Date;
   created_by: string;
   description: string;
-  distribution: {
+  distribution?: {
     assignees: TAssigneesDistribution[];
     completion_chart: TCompletionChartDistribution;
     labels: TLabelsDistribution[];
@@ -82,9 +77,7 @@ export interface CycleIssueResponse {
   sub_issues_count: number;
 }
 
-export type SelectCycleType =
-  | (ICycle & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
+export type SelectCycleType = (ICycle & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
 export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | null;
 

@@ -1,5 +1,6 @@
 // ui
-import { CustomMenu, LineGraph } from "components/ui";
+import { LineGraph } from "components/ui";
+import { CustomMenu } from "@plane/ui";
 // constants
 import { MONTHS } from "constants/project";
 

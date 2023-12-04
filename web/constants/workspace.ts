@@ -1,9 +1,18 @@
 // services images
 import GithubLogo from "public/services/github.png";
-import JiraLogo from "public/services/jira.png";
+import JiraLogo from "public/services/jira.svg";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
+// types
+import { TStaticViewTypes } from "types";
+
+export enum EUserWorkspaceRoles {
+  GUEST = 5,
+  VIEWER = 10,
+  MEMBER = 15,
+  ADMIN = 20,
+}
 
 export const ROLE = {
   5: "Guest",
@@ -27,7 +36,7 @@ export const USER_ROLES = [
   { value: "Other", label: "Other" },
 ];
 
-export const IMPORTERS_EXPORTERS_LIST = [
+export const IMPORTERS_LIST = [
   {
     provider: "github",
     type: "import",
@@ -65,5 +74,89 @@ export const EXPORTERS_LIST = [
     title: "JSON",
     description: "Export issues to a JSON file.",
     logo: JSONLogo,
+  },
+];
+
+export const DEFAULT_GLOBAL_VIEWS_LIST: {
+  key: TStaticViewTypes;
+  label: string;
+}[] = [
+  {
+    key: "all-issues",
+    label: "All issues",
+  },
+  {
+    key: "assigned",
+    label: "Assigned",
+  },
+  {
+    key: "created",
+    label: "Created",
+  },
+  {
+    key: "subscribed",
+    label: "Subscribed",
+  },
+];
+
+export const RESTRICTED_URLS = [
+  "404",
+  "accounts",
+  "api",
+  "create-workspace",
+  "error",
+  "god-mode",
+  "installations",
+  "invitations",
+  "onboarding",
+  "profile",
+  "spaces",
+  "workspace-invitations",
+];
+
+export const WORKSPACE_SETTINGS_LINKS: {
+  label: string;
+  href: string;
+  access: EUserWorkspaceRoles;
+}[] = [
+  {
+    label: "General",
+    href: `/settings`,
+    access: EUserWorkspaceRoles.GUEST,
+  },
+  {
+    label: "Members",
+    href: `/settings/members`,
+    access: EUserWorkspaceRoles.GUEST,
+  },
+  {
+    label: "Billing and plans",
+    href: `/settings/billing`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "Integrations",
+    href: `/settings/integrations`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "Imports",
+    href: `/settings/imports`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "Exports",
+    href: `/settings/exports`,
+    access: EUserWorkspaceRoles.MEMBER,
+  },
+  {
+    label: "Webhooks",
+    href: `/settings/webhooks`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "API tokens",
+    href: `/settings/api-tokens`,
+    access: EUserWorkspaceRoles.ADMIN,
   },
 ];
