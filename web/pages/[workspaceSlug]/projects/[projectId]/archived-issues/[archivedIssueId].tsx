@@ -2,10 +2,13 @@ import { useCallback, useEffect, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite";
 // services
 import { IssueService, IssueArchiveService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -37,7 +40,7 @@ const defaultValues: Partial<IIssue> = {
 const issueService = new IssueService();
 const issueArchiveService = new IssueArchiveService();
 
-const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
+const ArchivedIssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
@@ -45,6 +48,11 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   const [isRestoring, setIsRestoring] = useState(false);
   // hooks
   const { setToastAlert } = useToast();
+  const { setShowAlert } = useReloadConfirmations();
+  // mobx stores
+  const {
+    projectIssues: { isSubmitting, setIsSubmitting },
+  } = useMobxStore();
 
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,
@@ -65,7 +73,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   const submitChanges = useCallback(
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !archivedIssueId) return;
-
+      setIsSubmitting("submitting");
       mutate<IIssue>(
         ISSUE_DETAILS(archivedIssueId as string),
         (prevData) => {
@@ -88,6 +96,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
+          setIsSubmitting("submitted");
         })
         .catch((e) => {
           console.error(e);
@@ -130,6 +139,17 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       .finally(() => setIsRestoring(false));
   };
 
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
+
   return (
     <>
       {issueDetails && projectId ? (
@@ -153,7 +173,12 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
               </div>
             )}
             <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60 pointer-events-none">
-              <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} uneditable />
+              <IssueMainContent
+                setShowAlert={(value) => setShowAlert(value)}
+                issueDetails={issueDetails}
+                submitChanges={submitChanges}
+                uneditable
+              />
             </div>
           </div>
           <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">
@@ -184,7 +209,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 ArchivedIssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
