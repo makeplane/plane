@@ -253,7 +253,11 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
                     </Button>
                   )}
-                <div className={`flex items-center gap-x-2 ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"}`}>
+                <div
+                  className={`flex items-center gap-x-2 transition-all duration-300 ${
+                    isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+                  }`}
+                >
                   {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
                     <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
                   )}

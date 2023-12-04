@@ -39,7 +39,7 @@ const issueService = new IssueService();
 const issueCommentService = new IssueCommentService();
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
-  const { issueDetails, submitChanges, uneditable = false,  setShowAlert } = props;
+  const { issueDetails, submitChanges, uneditable = false, setShowAlert } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
@@ -184,7 +184,9 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             {issueDetails?.project_detail?.identifier}-{issueDetails?.sequence_id}
           </h4>
           <div
-            className={`flex transition-all items-center gap-x-2 ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"}`}
+            className={`flex transition-all duration-300 items-center gap-x-2 ${
+              isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
           >
             {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
               <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
@@ -196,7 +198,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         </div>
 
         <IssueDescriptionForm
-        setShowAlert={setShowAlert}
+          setShowAlert={setShowAlert}
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
