@@ -22,7 +22,7 @@ def update_user_instance_user_count():
 
         # Update the count in the license engine
         payload = {
-            "user_count": User.objects.count(),
+            "user_count": instance_users,
         }
 
         # Save the user in control center
