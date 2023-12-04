@@ -25,20 +25,10 @@ interface IPeekOverviewIssueDetails {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
-  setShowAlert: (value: boolean) => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const {
-    workspaceSlug,
-    issue,
-    issueReactions,
-    user,
-    issueUpdate,
-    issueReactionCreate,
-    issueReactionRemove,
-    setShowAlert,
-  } = props;
+  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
   // store
   const {
     user: userStore,
@@ -47,10 +37,10 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const { currentProjectRole } = userStore;
   const isAllowed = [15, 20].includes(currentProjectRole || 0);
   // states
-
   const [characterLimit, setCharacterLimit] = useState(false);
-  // hooks
 
+  // hooks
+  const { setShowAlert } = useReloadConfirmations();
   const editorSuggestions = useEditorSuggestions();
 
   const {

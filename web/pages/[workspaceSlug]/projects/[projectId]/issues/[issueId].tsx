@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useForm } from "react-hook-form";
+import { useMobxStore } from "lib/mobx/store-provider";
+import { observer } from "mobx-react-lite/dist/observer";
 // services
 import { IssueService } from "services/issue";
 // layouts
@@ -9,6 +11,8 @@ import { AppLayout } from "layouts/app-layout";
 // components
 import { ProjectIssueDetailsHeader } from "components/headers";
 import { IssueDetailsSidebar, IssueMainContent } from "components/issues";
+// hooks
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // ui
 import { EmptyState } from "components/common";
 import { Loader } from "@plane/ui";
@@ -36,10 +40,17 @@ const defaultValues: Partial<IIssue> = {
 // services
 const issueService = new IssueService();
 
-const IssueDetailsPage: NextPageWithLayout = () => {
+const IssueDetailsPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
+
+  // mobx store
+  const {
+    projectIssues: { isSubmitting, setIsSubmitting },
+  } = useMobxStore();
+
+  const { setShowAlert } = useReloadConfirmations();
 
   const {
     data: issueDetails,
@@ -60,6 +71,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
     async (formData: Partial<IIssue>) => {
       if (!workspaceSlug || !projectId || !issueId) return;
 
+      setIsSubmitting("submitting");
       mutate<IIssue>(
         ISSUE_DETAILS(issueId as string),
         (prevData) => {
@@ -85,6 +97,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
+          setIsSubmitting("submitted");
         })
         .catch((e) => {
           console.error(e);
@@ -101,6 +114,17 @@ const IssueDetailsPage: NextPageWithLayout = () => {
       ...issueDetails,
     });
   }, [issueDetails, reset, issueId]);
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
 
   return (
     <>
@@ -147,7 +171,7 @@ const IssueDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 IssueDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (

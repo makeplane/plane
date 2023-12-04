@@ -19,9 +19,9 @@ import {
 } from "components/issues";
 import { SubIssuesRoot } from "./sub-issues";
 // ui
-import { CustomMenu, LayersIcon } from "@plane/ui";
+import { CustomMenu, LayersIcon, StateGroupIcon } from "@plane/ui";
 // icons
-import { MinusCircle } from "lucide-react";
+import { MinusCircle, RefreshCw } from "lucide-react";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
@@ -45,10 +45,19 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const {
+    user: userStore,
+    project: projectStore,
+    projectState: { states },
+    projectIssues: { isSubmitting },
+  } = useMobxStore();
   const user = userStore.currentUser ?? undefined;
   const userRole = userStore.currentProjectRole;
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetails.state)
+    : undefined;
 
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
@@ -162,6 +171,29 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             </CustomMenu>
           </div>
         ) : null}
+        <div className="flex items-center mb-5">
+          {currentIssueState && (
+            <StateGroupIcon
+              className="h-4 w-4 mr-3"
+              stateGroup={currentIssueState.group}
+              color={currentIssueState.color}
+            />
+          )}
+          <h4 className="text-lg text-custom-text-300 font-medium mr-4">
+            {issueDetails?.project_detail?.identifier}-{issueDetails?.sequence_id}
+          </h4>
+          <div
+            className={`flex transition-all items-center gap-x-2 ${isSubmitting === "saved" ? "fadeOut" : "fadeIn"}`}
+          >
+            {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
+              <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
+            )}
+            <span className="text-sm text-custom-text-300">
+              {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+            </span>
+          </div>
+        </div>
+
         <IssueDescriptionForm
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}

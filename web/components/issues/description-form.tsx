@@ -1,5 +1,6 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import debounce from "lodash/debounce";
@@ -33,11 +34,14 @@ const fileService = new FileService();
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const { issue, handleFormSubmit, workspaceSlug, isAllowed } = props;
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
 
-  const { setShowAlert } = useReloadConfirmations();
+  // mobx store
+  const {
+    projectIssues: { setIsSubmitting },
+  } = useMobxStore();
 
+  const { setShowAlert } = useReloadConfirmations();
   const editorSuggestion = useEditorSuggestions();
 
   const {
@@ -72,17 +76,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     },
     [handleFormSubmit]
   );
-
-  useEffect(() => {
-    if (isSubmitting === "submitted") {
-      setShowAlert(false);
-      setTimeout(async () => {
-        setIsSubmitting("saved");
-      }, 2000);
-    } else if (isSubmitting === "submitting") {
-      setShowAlert(true);
-    }
-  }, [isSubmitting, setShowAlert]);
 
   // reset form values
   useEffect(() => {
@@ -166,13 +159,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
             />
           )}
         />
-        <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
-        >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>
       </div>
     </div>
   );
