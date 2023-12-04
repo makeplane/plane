@@ -1,7 +1,6 @@
 import { FC, useState } from "react";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-// icons
 import {
   AlertCircle,
   Archive,
@@ -14,12 +13,13 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
-import { renderShortDate, render24HourFormatTime, renderLongDateFormat } from "helpers/date-time.helper";
+import { render24HourFormatTime, renderFormattedDate } from "helpers/date-time.helper";
 // ui
 import { CustomMenu, Tooltip } from "@plane/ui";
 // components
@@ -38,10 +38,10 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   const [deletePageModal, setDeletePageModal] = useState(false);
-  // store
+  // mobx store
   const {
     page: { archivePage, removeFromFavorites, addToFavorites, makePublic, makePrivate, restorePage },
-    user: { currentProjectRole },
+    user: { currentUser, currentProjectRole },
     projectMember: { projectMembers },
   } = useMobxStore();
   // hooks
@@ -144,7 +144,13 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
     setCreateUpdatePageModal(true);
   };
 
-  const userCanEdit = currentProjectRole === 15 || currentProjectRole === 20;
+  const ownerDetails = projectMembers?.find((projectMember) => projectMember.member.id === page.owned_by)?.member;
+  const isCurrentUserOwner = page.owned_by === currentUser?.id;
+
+  const userCanEdit = isCurrentUserOwner || [15, 20].includes(currentProjectRole ?? 5);
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === 20;
+  const userCanLock = isCurrentUserOwner || currentProjectRole === 20;
+  const userCanDelete = isCurrentUserOwner || currentProjectRole === 20;
 
   return (
     <>
@@ -184,7 +190,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
               <div className="flex items-center gap-2.5">
                 {page.archived_at ? (
                   <Tooltip
-                    tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderShortDate(
+                    tooltipContent={`Archived at ${render24HourFormatTime(page.archived_at)} on ${renderFormattedDate(
                       page.archived_at
                     )}`}
                   >
@@ -192,9 +198,9 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                   </Tooltip>
                 ) : (
                   <Tooltip
-                    tooltipContent={`Last updated at ${render24HourFormatTime(page.updated_at)} on ${renderShortDate(
+                    tooltipContent={`Last updated at ${render24HourFormatTime(
                       page.updated_at
-                    )}`}
+                    )} on ${renderFormattedDate(page.updated_at)}`}
                   >
                     <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
                   </Tooltip>
@@ -233,30 +239,27 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 )}
                 <Tooltip
                   position="top-right"
-                  tooltipContent={`Created by ${
-                    projectMembers?.find((projectMember) => projectMember.member.id === page.created_by)?.member
-                      .display_name ?? ""
-                  } on ${renderLongDateFormat(`${page.created_at}`)}`}
+                  tooltipContent={`Created by ${ownerDetails?.display_name} on ${renderFormattedDate(page.created_at)}`}
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
                 </Tooltip>
                 {page.archived_at ? (
                   <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
-                    {userCanEdit && (
-                      <>
-                        <CustomMenu.MenuItem onClick={handleRestorePage}>
-                          <div className="flex items-center gap-2">
-                            <ArchiveRestoreIcon className="h-3 w-3" />
-                            <span>Restore page</span>
-                          </div>
-                        </CustomMenu.MenuItem>
-                        <CustomMenu.MenuItem onClick={handleDeletePage}>
-                          <div className="flex items-center gap-2">
-                            <Trash2 className="h-3 w-3" />
-                            <span>Delete page</span>
-                          </div>
-                        </CustomMenu.MenuItem>
-                      </>
+                    {userCanArchive && (
+                      <CustomMenu.MenuItem onClick={handleRestorePage}>
+                        <div className="flex items-center gap-2">
+                          <ArchiveRestoreIcon className="h-3 w-3" />
+                          <span>Restore page</span>
+                        </div>
+                      </CustomMenu.MenuItem>
+                    )}
+                    {userCanDelete && (
+                      <CustomMenu.MenuItem onClick={handleDeletePage}>
+                        <div className="flex items-center gap-2">
+                          <Trash2 className="h-3 w-3" />
+                          <span>Delete page</span>
+                        </div>
+                      </CustomMenu.MenuItem>
                     )}
                     <CustomMenu.MenuItem onClick={handleCopyUrl}>
                       <div className="flex items-center gap-2">
