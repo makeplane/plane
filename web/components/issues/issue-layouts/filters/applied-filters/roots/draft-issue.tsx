@@ -25,9 +25,7 @@ export const DraftIssueAppliedFiltersRoot: React.FC = observer(() => {
   const appliedFilters: IIssueFilterOptions = {};
   Object.entries(userFilters ?? {}).forEach(([key, value]) => {
     if (!value) return;
-
     if (Array.isArray(value) && value.length === 0) return;
-
     appliedFilters[key as keyof IIssueFilterOptions] = value;
   });
 

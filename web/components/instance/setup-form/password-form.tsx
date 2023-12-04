@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { useForm, Controller } from "react-hook-form";
 // ui
 import { Input, Button } from "@plane/ui";
@@ -43,14 +44,14 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
   return (
     <form onSubmit={handleSubmit(handlePasswordSubmit)}>
       <div className="pb-2">
-        <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
+        <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
           Moving to the runway
         </h1>
         <p className="text-center text-sm text-onboarding-text-200 mt-3">
-          {"Let's set a password so you can do away with codes."}
+          Let{"'"}s set a password so you can do away with codes.
         </p>
 
-        <div className="relative mt-10 w-full sm:w-[360px] mx-auto">
+        <div className="relative mt-5 w-full sm:w-96 mx-auto space-y-4">
           <Controller
             control={control}
             name="email"
@@ -79,8 +80,7 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
               </div>
             )}
           />
-
-          <div className="mt-4">
+          <div>
             <Controller
               control={control}
               name="password"
@@ -106,13 +106,19 @@ export const InstanceSetupPasswordForm: React.FC<IInstanceSetupPasswordForm> = (
                 </div>
               )}
             />
+            <p className="text-xs mt-3 text-onboarding-text-200 pb-2">
+              Whatever you choose now will be your account{"'"}s password
+            </p>
           </div>
-          <p className="text-xs mt-2 text-onboarding-text-200">
-            {"Whatever you choose now will be your account's password"}
-          </p>
           <Button variant="primary" className="w-full mt-4" size="xl" type="submit" loading={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Next Step"}
+            {isSubmitting ? "Submitting..." : "Next step"}
           </Button>
+          <p className="text-xs text-onboarding-text-200">
+            When you click the button above, you agree with our{" "}
+            <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+              <span className="font-semibold underline">terms and conditions of service.</span>
+            </Link>
+          </p>
         </div>
       </div>
     </form>

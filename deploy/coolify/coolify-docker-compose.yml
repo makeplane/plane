@@ -35,7 +35,6 @@ services:
     command: ./bin/takeoff
     environment:
       - DEBUG=${DEBUG:-0}
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.selfhosted}
       - SENTRY_DSN=${SENTRY_DSN:-""}
       - PGUSER=${PGUSER:-plane}
       - PGPASSWORD=${PGPASSWORD:-plane}
@@ -84,7 +83,6 @@ services:
     command: ./bin/worker
     environment:
       - DEBUG=${DEBUG:-0}
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.selfhosted}
       - SENTRY_DSN=${SENTRY_DSN:-""}
       - PGUSER=${PGUSER:-plane}
       - PGPASSWORD=${PGPASSWORD:-plane}
@@ -131,7 +129,6 @@ services:
     command: ./bin/beat
     environment:
       - DEBUG=${DEBUG:-0}
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.selfhosted}
       - SENTRY_DSN=${SENTRY_DSN:-""}
       - PGUSER=${PGUSER:-plane}
       - PGPASSWORD=${PGPASSWORD:-plane}

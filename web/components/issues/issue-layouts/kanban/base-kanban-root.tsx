@@ -267,6 +267,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               enableQuickIssueCreate={enableQuickAdd}
               isReadOnly={!enableInlineEditing || !isEditingAllowed}
               currentStore={currentStore}
+              quickAddCallback={issueStore?.quickAddIssue}
               addIssuesToView={(issues) => {
                 console.log("kanban existingIds", issues);
 

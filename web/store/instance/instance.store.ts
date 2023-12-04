@@ -71,7 +71,7 @@ export class InstanceStore implements IInstanceStore {
   }
 
   /**
-   * fetch instace info from API
+   * fetch instance info from API
    */
   fetchInstanceInfo = async () => {
     try {

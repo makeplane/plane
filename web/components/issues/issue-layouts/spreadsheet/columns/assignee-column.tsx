@@ -25,6 +25,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
       <IssuePropertyAssignee
         projectId={issue.project_detail?.id ?? null}
         value={issue.assignees}
+        defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
         onChange={(data) => onChange({ assignees: data })}
         className="h-full w-full"
         buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
