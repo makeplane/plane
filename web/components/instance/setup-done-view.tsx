@@ -55,7 +55,7 @@ export const InstanceSetupDone = () => {
                 </p>
               </div>
               <Button size="lg" prependIcon={<UserCog2 />} onClick={redirectToGodMode} loading={isRedirecting}>
-                {isRedirecting ? "Redirecting..." : "Go to God Mode"}
+                Go to God Mode
               </Button>
             </div>
           </div>

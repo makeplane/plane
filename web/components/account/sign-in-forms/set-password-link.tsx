@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import Link from "next/link";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
 // hooks
@@ -22,14 +20,12 @@ const authService = new AuthService();
 
 export const SetPasswordLink: React.FC<Props> = (props) => {
   const { email, updateEmail } = props;
-  // states
-  const [isSendingNewLink, setIsSendingNewLink] = useState(false);
 
   const { setToastAlert } = useToast();
 
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
   } = useForm({
     defaultValues: {
@@ -40,17 +36,14 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
   });
 
   const handleSendNewLink = async (formData: { email: string }) => {
-    setIsSendingNewLink(true);
-
     updateEmail(formData.email);
 
     const payload: IEmailCheckData = {
       email: formData.email,
-      type: "password",
     };
 
     await authService
-      .emailCheck(payload)
+      .sendResetPasswordLink(payload)
       .then(() =>
         setToastAlert({
           type: "success",
@@ -64,8 +57,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
-      )
-      .finally(() => setIsSendingNewLink(false));
+      );
   };
 
   return (
@@ -73,7 +65,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
         Get on your flight deck
       </h1>
-      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
+      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-2.5">
         We have sent a link to <span className="font-semibold text-custom-primary-100">{email},</span> so you can set a
         password
       </p>
@@ -87,45 +79,24 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
               required: "Email is required",
               validate: (value) => checkEmailValidity(value) || "Email is invalid",
             }}
-            render={({ field: { value, onChange, ref } }) => (
-              <div className="flex items-center relative rounded-md bg-onboarding-background-200">
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={value}
-                  onChange={onChange}
-                  ref={ref}
-                  hasError={Boolean(errors.email)}
-                  placeholder="orville.wright@firstflight.com"
-                  className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
-                />
-                {value.length > 0 && (
-                  <XCircle
-                    className="h-5 w-5 absolute stroke-custom-text-400 hover:cursor-pointer right-3"
-                    onClick={() => onChange("")}
-                  />
-                )}
-              </div>
+            render={({ field: { value, onChange } }) => (
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={value}
+                onChange={onChange}
+                hasError={Boolean(errors.email)}
+                placeholder="orville.wright@firstflight.com"
+                className="w-full h-[46px] text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
+                disabled
+              />
             )}
           />
         </div>
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          size="xl"
-          disabled={!isValid}
-          loading={isSendingNewLink}
-        >
-          {isSendingNewLink ? "Sending new link..." : "Get link again"}
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
+          {isSubmitting ? "Sending new link" : "Get link again"}
         </Button>
-        <p className="text-xs text-onboarding-text-200">
-          When you click the button above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
       </form>
     </>
   );
