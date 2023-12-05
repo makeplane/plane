@@ -44,61 +44,6 @@ class InstanceEndpoint(BaseAPIView):
             AllowAny(),
         ]
 
-    def post(self, request):
-        # Check if the instance is registered
-        instance = Instance.objects.first()
-
-        # If instance is None then register this instance
-        if instance is None:
-            with open("package.json", "r") as file:
-                # Load JSON content from the file
-                data = json.load(file)
-
-            headers = {"Content-Type": "application/json"}
-
-            payload = {
-                "instance_key": settings.INSTANCE_KEY,
-                "version": data.get("version", 0.1),
-                "machine_signature": os.environ.get("MACHINE_SIGNATURE"),
-                "user_count": User.objects.filter(is_bot=False).count(),
-            }
-
-            response = requests.post(
-                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
-                headers=headers,
-                data=json.dumps(payload),
-            )
-
-            if response.status_code == 201:
-                data = response.json()
-                # Create instance
-                instance = Instance.objects.create(
-                    instance_name="Plane Free",
-                    instance_id=data.get("id"),
-                    license_key=data.get("license_key"),
-                    api_key=data.get("api_key"),
-                    version=data.get("version"),
-                    last_checked_at=timezone.now(),
-                    user_count=data.get("user_count", 0),
-                )
-
-                serializer = InstanceSerializer(instance)
-                data = serializer.data
-                data["is_activated"] = True
-                return Response(
-                    data,
-                    status=status.HTTP_201_CREATED,
-                )
-            return Response(
-                {"error": "Instance could not be registered"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        else:
-            return Response(
-                {"message": "Instance already registered"},
-                status=status.HTTP_200_OK,
-            )
-
     def get(self, request):
         instance = Instance.objects.first()
         # get the instance
@@ -119,24 +64,6 @@ class InstanceEndpoint(BaseAPIView):
         serializer = InstanceSerializer(instance, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            # Save the user in control center
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-            # Update instance settings in the license engine
-            _ = requests.patch(
-                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
-                headers=headers,
-                data=json.dumps(
-                    {
-                        "is_support_required": serializer.data["is_support_required"],
-                        "is_telemetry_enabled": serializer.data["is_telemetry_enabled"],
-                        "version": serializer.data["version"],
-                    }
-                ),
-            )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -209,12 +136,7 @@ class InstanceConfigurationEndpoint(BaseAPIView):
         bulk_configurations = []
         for configuration in configurations:
             value = request.data.get(configuration.key, configuration.value)
-            if value is not None and configuration.key in [
-                "OPENAI_API_KEY",
-                "GITHUB_CLIENT_SECRET",
-                "EMAIL_HOST_PASSWORD",
-                "UNSPLASH_ACESS_KEY",
-            ]:
+            if configuration.is_encrypted:
                 configuration.value = encrypt_data(value)
             else:
                 configuration.value = value
@@ -308,31 +230,6 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
         user.token_updated_at = timezone.now()
         user.save()
 
-        # Save the user in control center
-        headers = {
-            "Content-Type": "application/json",
-            "x-instance-id": instance.instance_id,
-            "x-api-key": instance.api_key,
-        }
-        _ = requests.patch(
-            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
-            headers=headers,
-            data=json.dumps({"is_setup_done": True}),
-        )
-
-        # Also register the user as admin
-        _ = requests.post(
-            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/register/",
-            headers=headers,
-            data=json.dumps(
-                {
-                    "email": str(user.email),
-                    "signup_mode": "MAGIC_CODE",
-                    "is_admin": True,
-                }
-            ),
-        )
-
         # Register the user as an instance admin
         _ = InstanceAdmin.objects.create(
             user=user,
@@ -358,27 +255,11 @@ class SignUpScreenVisitedEndpoint(BaseAPIView):
 
     def post(self, request):
         instance = Instance.objects.first()
-
         if instance is None:
             return Response(
                 {"error": "Instance is not configured"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        if not instance.is_signup_screen_visited:
-            instance.is_signup_screen_visited = True
-            instance.save()
-            # set the headers
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-            # create the payload
-            payload = {"is_signup_screen_visited": True}
-            _ = requests.patch(
-                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/",
-                headers=headers,
-                data=json.dumps(payload),
-            )
+        instance.is_signup_screen_visited = True
+        instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
