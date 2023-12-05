@@ -1,4 +1,4 @@
-import { ReactElement, useCallback } from "react";
+import { ReactElement } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form";
 import { AuthService } from "services/auth.service";
 // hooks
 import useToast from "hooks/use-toast";
+import useSignInRedirection from "hooks/use-sign-in-redirection";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
@@ -20,9 +21,6 @@ import latestFeatures from "public/onboarding/onboarding-pages.svg";
 import { checkEmailValidity } from "helpers/string.helper";
 // type
 import { NextPageWithLayout } from "types/app";
-import { useMobxStore } from "lib/mobx/store-provider";
-// types
-import { IUser, IUserSettings } from "types";
 
 type TResetPasswordFormValues = {
   email: string;
@@ -45,10 +43,8 @@ const HomePage: NextPageWithLayout = () => {
   const { resolvedTheme } = useTheme();
   // toast
   const { setToastAlert } = useToast();
-  // mobx store
-  const {
-    user: { fetchCurrentUser, fetchCurrentUserSettings },
-  } = useMobxStore();
+  // sign in redirection hook
+  const { handleRedirection } = useSignInRedirection();
   // form info
   const {
     control,
@@ -61,31 +57,6 @@ const HomePage: NextPageWithLayout = () => {
     },
   });
 
-  const handleSignInRedirection = useCallback(
-    async (user: IUser) => {
-      // if the user is not onboarded, redirect them to the onboarding page
-      if (!user.is_onboarded) {
-        router.push("/onboarding");
-        return;
-      }
-
-      // if the user is onboarded, fetch their last workspace details
-      await fetchCurrentUserSettings().then((userSettings: IUserSettings) => {
-        const workspaceSlug =
-          userSettings?.workspace?.last_workspace_slug || userSettings?.workspace?.fallback_workspace_slug;
-        if (workspaceSlug) router.push(`/${workspaceSlug}`);
-        else router.push("/profile");
-      });
-    },
-    [fetchCurrentUserSettings, router]
-  );
-
-  const mutateUserInfo = useCallback(async () => {
-    await fetchCurrentUser().then(async (user) => {
-      await handleSignInRedirection(user);
-    });
-  }, [fetchCurrentUser, handleSignInRedirection]);
-
   const handleResetPassword = async (formData: TResetPasswordFormValues) => {
     if (!uidb64 || !token || !email) return;
 
@@ -95,7 +66,7 @@ const HomePage: NextPageWithLayout = () => {
 
     await authService
       .resetPassword(uidb64.toString(), token.toString(), payload)
-      .then(() => mutateUserInfo())
+      .then(() => handleRedirection())
       .catch((err) =>
         setToastAlert({
           type: "error",

@@ -13,7 +13,7 @@ import useToast from "hooks/use-toast";
 // services
 import UserService from "services/user.service";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 
 const defaultValues = {
   first_name: "",
@@ -173,9 +173,9 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
         </div>
       </div>
 
-      <PrimaryButton type="submit" size="md" disabled={!isValid} loading={isSubmitting}>
+      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
         {isSubmitting ? "Updating..." : "Continue"}
-      </PrimaryButton>
+      </Button>
     </form>
   );
 });

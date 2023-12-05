@@ -16,6 +16,8 @@ interface IProfileIssuesPage {
 }
 
 export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
+  const { type } = props;
+
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as {
     workspaceSlug: string;
@@ -28,11 +30,11 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   }: RootStore = useMobxStore();
 
   useSWR(
-    workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${props.type}` : null,
+    workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,
     async () => {
       if (workspaceSlug && userId) {
         await fetchFilters(workspaceSlug);
-        await fetchIssues(workspaceSlug, userId, getIssues ? "mutation" : "init-loader", props.type);
+        await fetchIssues(workspaceSlug, userId, getIssues ? "mutation" : "init-loader", type);
       }
     }
   );
