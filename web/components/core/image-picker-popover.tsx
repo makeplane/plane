@@ -324,7 +324,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                       File formats supported- .jpeg, .jpg, .png, .webp, .svg
                     </p>
 
-                    <div className="flex items-center justify-end gap-2">
+                    <div className="flex items-start h-12 justify-end gap-2">
                       <Button
                         variant="neutral-primary"
                         onClick={() => {

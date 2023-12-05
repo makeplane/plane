@@ -7,7 +7,7 @@ import type {
   IWorkspaceLite,
   IProjectLite,
   IIssueFilterOptions,
-  linkDetails,
+  ILinkDetails,
 } from "types";
 
 export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
@@ -29,7 +29,7 @@ export interface IModule {
   id: string;
   lead: string | null;
   lead_detail: IUserLite | null;
-  link_module: linkDetails[];
+  link_module: ILinkDetails[];
   links_list: ModuleLink[];
   members: string[];
   members_detail: IUserLite[];

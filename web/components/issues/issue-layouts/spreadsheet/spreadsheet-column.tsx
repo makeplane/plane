@@ -85,14 +85,17 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
           customButton={
             <div className="flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-2">
               <div className="flex items-center gap-1.5">
+                {<propertyDetails.icon className="h-4 w-4 text-custom-text-400" />}
+                {propertyDetails.title}
+              </div>
+              <div className="flex ml-3">
                 {activeSortingProperty === property && (
                   <div className="rounded-full flex items-center justify-center h-3.5 w-3.5">
                     <ListFilter className="h-3 w-3" />
                   </div>
                 )}
-                {propertyDetails.title}
+                <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
               </div>
-              <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
             </div>
           }
           width="xl"

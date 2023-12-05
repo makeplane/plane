@@ -22,6 +22,7 @@ import { Button } from "@plane/ui";
 import { CheckCircle2, ChevronDown, ChevronUp, Clock, FileStack, Inbox, Trash2, XCircle } from "lucide-react";
 // types
 import type { TInboxStatus } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const InboxActionsHeader = observer(() => {
   const [date, setDate] = useState(new Date());
@@ -71,7 +72,7 @@ export const InboxActionsHeader = observer(() => {
   }, [issue]);
 
   const issueStatus = issue?.issue_inbox[0].status;
-  const isAllowed = userRole === 15 || userRole === 20;
+  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
   const today = new Date();
   const tomorrow = new Date(today);
