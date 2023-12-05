@@ -1,6 +1,5 @@
 export * from "./create-password";
 export * from "./email-form";
-export * from "./latest-features";
 export * from "./o-auth-options";
 export * from "./optional-set-password";
 export * from "./password";

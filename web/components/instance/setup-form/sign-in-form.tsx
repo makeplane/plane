@@ -1,5 +1,7 @@
 import { FC } from "react";
 import { useForm, Controller } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Input, Button } from "@plane/ui";
 // icons
@@ -23,12 +25,14 @@ export interface IInstanceSetupEmailForm {
 
 export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
   const { handleNextStep } = props;
+  const {
+    user: { fetchCurrentUser },
+  } = useMobxStore();
   // form info
   const {
     control,
     formState: { errors, isSubmitting },
     handleSubmit,
-    reset,
     setValue,
   } = useForm<InstanceSetupEmailFormValues>({
     defaultValues: {
@@ -47,8 +51,8 @@ export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
 
     await authService
       .instanceAdminSignIn(payload)
-      .then(() => {
-        reset();
+      .then(async () => {
+        await fetchCurrentUser();
         handleNextStep(formValues.email);
       })
       .catch((err) => {

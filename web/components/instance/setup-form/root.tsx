@@ -21,7 +21,7 @@ export const InstanceSetupFormRoot = () => {
             <div className="mx-auto flex flex-col">
               <InstanceSetupSignInForm handleNextStep={() => setSetupStep(EInstanceSetupSteps.DONE)} />
             </div>
-            {/* <LatestFeatureBlock /> */}
+            <LatestFeatureBlock />
           </div>
         </div>
       )}

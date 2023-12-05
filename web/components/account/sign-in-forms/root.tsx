@@ -5,6 +5,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
+import { LatestFeatureBlock } from "components/common";
 import {
   EmailForm,
   UniqueCodeForm,
@@ -13,7 +14,6 @@ import {
   OAuthOptions,
   OptionalSetPasswordForm,
   CreatePasswordForm,
-  LatestFeatures,
   SelfHostedSignInForm,
 } from "components/account";
 
@@ -113,7 +113,7 @@ export const SignInRoot = observer(() => {
       {isOAuthEnabled && !OAUTH_HIDDEN_STEPS.includes(signInStep) && (
         <OAuthOptions handleSignInRedirection={handleRedirection} />
       )}
-      <LatestFeatures />
+      <LatestFeatureBlock />
     </>
   );
 });
