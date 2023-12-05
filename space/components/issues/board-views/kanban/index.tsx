@@ -3,8 +3,8 @@
 // mobx react lite
 import { observer } from "mobx-react-lite";
 // components
-import { IssueListHeader } from "components/issues/board-views/kanban/header";
-import { IssueListBlock } from "components/issues/board-views/kanban/block";
+import { IssueKanBanHeader } from "components/issues/board-views/kanban/header";
+import { IssueKanBanBlock } from "components/issues/board-views/kanban/block";
 // ui
 import { Icon } from "components/ui";
 // interfaces
@@ -23,14 +23,14 @@ export const IssueKanbanView = observer(() => {
         store?.issue?.states.map((_state: IIssueState) => (
           <div key={_state.id} className="flex-shrink-0 relative w-[340px] h-full flex flex-col">
             <div className="flex-shrink-0">
-              <IssueListHeader state={_state} />
+              <IssueKanBanHeader state={_state} />
             </div>
             <div className="w-full h-full overflow-hidden overflow-y-auto hide-vertical-scrollbar">
               {store.issue.getFilteredIssuesByState(_state.id) &&
               store.issue.getFilteredIssuesByState(_state.id).length > 0 ? (
                 <div className="space-y-3 pb-2 px-2">
                   {store.issue.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
-                    <IssueListBlock key={_issue.id} issue={_issue} />
+                    <IssueKanBanBlock key={_issue.id} issue={_issue} />
                   ))}
                 </div>
               ) : (
