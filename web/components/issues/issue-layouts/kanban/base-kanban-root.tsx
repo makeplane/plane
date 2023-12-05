@@ -1,5 +1,5 @@
 import { FC, useCallback, useState } from "react";
-import { DragDropContext, DropResult, Droppable } from "@hello-pangea/dnd";
+import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -30,7 +30,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
 import { EProjectStore } from "store/command-palette.store";
-import { IssuePeekOverview } from "components/issues";
+import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IBaseKanBanLayout {
@@ -67,6 +67,12 @@ export interface IBaseKanBanLayout {
   ) => void;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
+
+type KanbanDragState = {
+  draggedIssueId?: string | null;
+  source?: DraggableLocation | null;
+  destination?: DraggableLocation | null;
+};
 
 export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBaseKanBanLayout) => {
   const {
@@ -114,8 +120,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
 
+  // states
   const [isDragStarted, setIsDragStarted] = useState<boolean>(false);
-  const onDragStart = () => {
+  const [dragState, setDragState] = useState<KanbanDragState>({});
+  const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+
+  const onDragStart = (dragStart: DragStart) => {
+    setDragState({
+      draggedIssueId: dragStart.draggableId.split("__")[0],
+    });
     setIsDragStarted(true);
   };
 
@@ -134,7 +147,18 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     )
       return;
 
-    if (handleDragDrop) handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds);
+    if (handleDragDrop) {
+      if (result.destination?.droppableId && result.destination?.droppableId.split("__")[0] === "issue-trash-box") {
+        setDragState({
+          ...dragState,
+          source: result.source,
+          destination: result.destination,
+        });
+        setDeleteIssueModal(true);
+      } else {
+        handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds);
+      }
+    }
   };
 
   const handleIssues = useCallback(
@@ -146,6 +170,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     [issueActions]
   );
 
+  const handleDeleteIssue = async () => {
+    if (!handleDragDrop) return;
+    await handleDragDrop(dragState.source, dragState.destination, sub_group_by, group_by, issues, issueIds);
+    setDeleteIssueModal(false);
+    setDragState({});
+  };
+
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
     kanbanViewStore.handleKanBanToggle(toggle, value);
   };
@@ -156,6 +187,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   return (
     <>
+      <DeleteIssueModal
+        data={dragState.draggedIssueId ? issues[dragState.draggedIssueId] : ({} as IIssue)}
+        isOpen={deleteIssueModal}
+        handleClose={() => setDeleteIssueModal(false)}
+        onSubmit={handleDeleteIssue}
+      />
+
       {showLoader && issueStore?.loader === "init-loader" && (
         <div className="fixed top-16 right-2 z-30 bg-custom-background-80 shadow-custom-shadow-sm w-10 h-10 rounded flex justify-center items-center">
           <Spinner className="w-5 h-5" />
