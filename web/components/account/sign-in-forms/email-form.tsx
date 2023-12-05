@@ -84,7 +84,7 @@ export const EmailForm: React.FC<Props> = (props) => {
   return (
     <>
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
-        Get on your flight deck!
+        Get on your flight deck
       </h1>
       <p className="text-center text-sm text-onboarding-text-200 mt-3">
         Sign in with the email you used to sign up for Plane

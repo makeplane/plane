@@ -8,8 +8,7 @@ import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
-import { DeleteIssueModal } from "../delete-issue-modal";
-import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
+import { DeleteIssueModal, DeleteArchivedIssueModal, IssueUpdateStatus } from "components/issues/";
 // types
 import { IIssue } from "types";
 // hooks
@@ -93,6 +92,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
@@ -216,33 +216,35 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                   </div>
                 )}
               </div>
-
-              <div className="flex items-center gap-4">
-                {issue?.created_by !== user?.id &&
-                  !issue?.assignees.includes(user?.id ?? "") &&
-                  !router.pathname.includes("[archivedIssueId]") && (
-                    <Button
-                      size="sm"
-                      prependIcon={<Bell className="h-3 w-3" />}
-                      variant="outline-primary"
-                      className="hover:!bg-custom-primary-100/20"
-                      onClick={() =>
-                        issueSubscription && issueSubscription.subscribed
-                          ? issueSubscriptionRemove()
-                          : issueSubscriptionCreate()
-                      }
-                    >
-                      {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
-                    </Button>
-                  )}
-                <button onClick={handleCopyText}>
-                  <Link2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200 -rotate-45" />
-                </button>
-                {!disableUserActions && (
-                  <button onClick={() => setDeleteIssueModal(true)}>
-                    <Trash2 className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
+              <div className="flex items-center gap-x-4">
+                <IssueUpdateStatus isSubmitting={isSubmitting} />
+                <div className="flex items-center gap-4">
+                  {issue?.created_by !== user?.id &&
+                    !issue?.assignees.includes(user?.id ?? "") &&
+                    !router.pathname.includes("[archivedIssueId]") && (
+                      <Button
+                        size="sm"
+                        prependIcon={<Bell className="h-3 w-3" />}
+                        variant="outline-primary"
+                        className="hover:!bg-custom-primary-100/20"
+                        onClick={() =>
+                          issueSubscription && issueSubscription.subscribed
+                            ? issueSubscriptionRemove()
+                            : issueSubscriptionCreate()
+                        }
+                      >
+                        {issueSubscription && issueSubscription.subscribed ? "Unsubscribe" : "Subscribe"}
+                      </Button>
+                    )}
+                  <button onClick={handleCopyText}>
+                    <Link2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 -rotate-45" />
                   </button>
-                )}
+                  {!disableUserActions && (
+                    <button onClick={() => setDeleteIssueModal(true)}>
+                      <Trash2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -261,6 +263,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
                         )}
                         <PeekOverviewIssueDetails
+                          setIsSubmitting={(value) => setIsSubmitting(value)}
+                          isSubmitting={isSubmitting}
                           workspaceSlug={workspaceSlug}
                           issue={issue}
                           issueUpdate={issueUpdate}
@@ -295,6 +299,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <div className="relative w-full h-full space-y-6 p-4 py-5 overflow-auto">
                           <div className={isArchived ? "pointer-events-none" : ""}>
                             <PeekOverviewIssueDetails
+                              setIsSubmitting={(value) => setIsSubmitting(value)}
+                              isSubmitting={isSubmitting}
                               workspaceSlug={workspaceSlug}
                               issue={issue}
                               issueReactions={issueReactions}
