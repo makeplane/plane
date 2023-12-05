@@ -1,8 +1,11 @@
+import { useRef, useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 // components
 import { KanBanProperties } from "./properties";
 // ui
 import { Tooltip } from "@plane/ui";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 import { EIssueActions } from "../types";
@@ -37,6 +40,11 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   // router
   const router = useRouter();
 
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
+
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
   };
@@ -54,6 +62,8 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   if (columnId) draggableId = `${draggableId}__${columnId}`;
   if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
 
+  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
+
   return (
     <>
       <Draggable draggableId={draggableId} index={index}>
@@ -69,8 +79,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
               <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
             )}
             <div
-              className="absolute top-3 right-3 hidden group-hover/kanban-block:block"
+              ref={menuActionRef}
+              className={`absolute top-3 right-3 hidden group-hover/kanban-block:block ${isMenuActive ? "!block" : ""}`}
               onClick={(event) => {
+                setIsMenuActive(!isMenuActive);
                 event.stopPropagation();
               }}
             >
