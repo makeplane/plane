@@ -7,12 +7,12 @@ import { Dialog, Transition } from "@headlessui/react";
 // ui
 import { Button, Input } from "@plane/ui";
 // types
-import type { IIssueLink, linkDetails, ModuleLink } from "types";
+import type { IIssueLink, ILinkDetails, ModuleLink } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
-  data?: linkDetails | null;
+  data?: ILinkDetails | null;
   status: boolean;
   createIssueLink: (formData: IIssueLink | ModuleLink) => Promise<void>;
   updateIssueLink: (formData: IIssueLink | ModuleLink, linkId: string) => Promise<void>;

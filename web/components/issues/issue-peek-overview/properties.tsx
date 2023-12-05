@@ -25,7 +25,7 @@ import useToast from "hooks/use-toast";
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
+import { IIssue, IIssueLink, TIssuePriorities, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // constants
@@ -43,7 +43,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const { issue, issueUpdate, disableUserActions } = props;
   // states
   const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const {
     user: { currentProjectRole },
@@ -147,7 +147,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
       });
   };
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setLinkModal(true);
   };
