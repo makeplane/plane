@@ -6,7 +6,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 // components
-import { ReactionSelector, Tooltip } from "components/ui";
+import { ReactionSelector } from "components/ui";
+import { Tooltip } from "@plane/ui";
 
 export const IssueEmojiReactions: React.FC = observer(() => {
   // router

@@ -10,7 +10,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CommentCard, AddComment } from "components/issues/peek-overview";
 // ui
-import { Icon, PrimaryButton } from "components/ui";
+import { Icon } from "components/ui";
+import { Button } from "@plane/ui";
 // types
 import { IIssue } from "types/issue";
 
@@ -55,9 +56,7 @@ export const PeekOverviewIssueActivity: React.FC<Props> = observer(() => {
                 Sign in to add your comment
               </p>
               <Link href={`/?next_path=${router.asPath}`}>
-                <span>
-                  <PrimaryButton className="flex-shrink-0 !px-7">Sign in</PrimaryButton>
-                </span>
+                <Button variant="primary">Sign in</Button>
               </Link>
             </div>
           )}
