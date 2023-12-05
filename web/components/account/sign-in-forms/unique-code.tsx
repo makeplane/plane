@@ -22,10 +22,9 @@ type Props = {
   updateEmail: (email: string) => void;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
-  submitButtonLabel?: {
-    default: string;
-    loading: string;
-  };
+  submitButtonLabel?: string;
+  showTermsAndConditions?: boolean;
+  updateUserOnboardingStatus: (value: boolean) => void;
 };
 
 type TUniqueCodeFormValues = {
@@ -48,10 +47,9 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
     updateEmail,
     handleStepChange,
     handleSignInRedirection,
-    submitButtonLabel = {
-      default: "Continue",
-      loading: "Signing in...",
-    },
+    submitButtonLabel = "Continue",
+    showTermsAndConditions = false,
+    updateUserOnboardingStatus,
   } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
@@ -86,6 +84,8 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       .magicSignIn(payload)
       .then(async () => {
         const currentUser = await userService.currentUser();
+
+        updateUserOnboardingStatus(currentUser.is_onboarded);
 
         if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
         else await handleSignInRedirection();
@@ -229,7 +229,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Request new code in ${resendTimerCode}s`
                 : isRequestingNewCode
-                ? "Requesting new code..."
+                ? "Requesting new code"
                 : "Request new code"}
             </button>
           </div>
@@ -239,17 +239,19 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
           variant="primary"
           className="w-full"
           size="xl"
-          disabled={!isValid || dirtyFields.email}
+          disabled={!isValid || hasEmailChanged}
           loading={isSubmitting}
         >
-          {!hasEmailChanged && isSubmitting ? submitButtonLabel.loading : submitButtonLabel.default}
+          {submitButtonLabel}
         </Button>
-        <p className="text-xs text-onboarding-text-200">
-          When you click Confirm above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
+        {showTermsAndConditions && (
+          <p className="text-xs text-onboarding-text-200">
+            When you click the button above, you agree with our{" "}
+            <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+              <span className="font-semibold underline">terms and conditions of service.</span>
+            </Link>
+          </p>
+        )}
       </form>
     </>
   );

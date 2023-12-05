@@ -1,5 +1,4 @@
 import React from "react";
-import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { AuthService } from "services/auth.service";
@@ -96,14 +95,8 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
           />
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? "Sending new link..." : "Get link again"}
+          {isSubmitting ? "Sending new link" : "Get link again"}
         </Button>
-        <p className="text-xs text-onboarding-text-200">
-          When you click the button above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
       </form>
     </>
   );

@@ -16,6 +16,7 @@ type Props = {
   email: string;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
+  isOnboarded: boolean;
 };
 
 type TCreatePasswordFormValues = {
@@ -32,7 +33,7 @@ const defaultValues: TCreatePasswordFormValues = {
 const authService = new AuthService();
 
 export const CreatePasswordForm: React.FC<Props> = (props) => {
-  const { email, handleSignInRedirection } = props;
+  const { email, handleSignInRedirection, isOnboarded } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // form info
@@ -121,10 +122,10 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
           )}
         />
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Go to workspace"}
+          {isOnboarded ? "Go to workspace" : "Set up workspace"}
         </Button>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
+          When you click the button above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

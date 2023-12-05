@@ -109,7 +109,7 @@ export const EmailForm: React.FC<Props> = (props) => {
           />
         </div>
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? "Loading..." : "Continue"}
+          Continue
         </Button>
       </form>
     </>

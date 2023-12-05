@@ -12,13 +12,14 @@ type Props = {
   email: string;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
+  isOnboarded: boolean;
 };
 
 export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
-  const { email, handleStepChange, handleSignInRedirection } = props;
+  const { email, handleStepChange, handleSignInRedirection, isOnboarded } = props;
   // states
   const [isGoingToWorkspace, setIsGoingToWorkspace] = useState(false);
-
+  // form info
   const {
     control,
     formState: { errors, isValid },
@@ -86,11 +87,13 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={isGoingToWorkspace}
           >
-            {isGoingToWorkspace ? "Going to app..." : "Go to workspace"}
+            {isOnboarded ? "Go to workspace" : "Set up workspace"}
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
+          When you click{" "}
+          <span className="text-custom-primary-100">{isOnboarded ? "Go to workspace" : "Set up workspace"}</span> above,
+          you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>
