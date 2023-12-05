@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR, { mutate } from "swr";
+import { MinusCircle } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
@@ -16,12 +17,12 @@ import {
   IssueAttachments,
   IssueDescriptionForm,
   IssueReaction,
+  IssueUpdateStatus,
 } from "components/issues";
+import { useState } from "react";
 import { SubIssuesRoot } from "./sub-issues";
 // ui
-import { CustomMenu, LayersIcon } from "@plane/ui";
-// icons
-import { MinusCircle } from "lucide-react";
+import { CustomMenu, LayersIcon, StateGroupIcon } from "@plane/ui";
 // types
 import { IIssue, IIssueComment } from "types";
 // fetch-keys
@@ -41,15 +42,25 @@ const issueCommentService = new IssueCommentService();
 export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { issueDetails, submitChanges, uneditable = false } = props;
 
+  // states
+  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { user: userStore, project: projectStore } = useMobxStore();
+  const {
+    user: userStore,
+    project: projectStore,
+    projectState: { states },
+  } = useMobxStore();
   const user = userStore.currentUser ?? undefined;
   const userRole = userStore.currentProjectRole;
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetails.state)
+    : undefined;
 
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
@@ -165,7 +176,19 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             </CustomMenu>
           </div>
         ) : null}
+        <div className="flex items-center mb-5">
+          {currentIssueState && (
+            <StateGroupIcon
+              className="h-4 w-4 mr-3"
+              stateGroup={currentIssueState.group}
+              color={currentIssueState.color}
+            />
+          )}
+          <IssueUpdateStatus isSubmitting={isSubmitting} issueDetail={issueDetails} />
+        </div>
         <IssueDescriptionForm
+          setIsSubmitting={(value) => setIsSubmitting(value)}
+          isSubmitting={isSubmitting}
           workspaceSlug={workspaceSlug as string}
           issue={issueDetails}
           handleFormSubmit={submitChanges}
