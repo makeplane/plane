@@ -118,7 +118,7 @@ class ForgotPasswordEndpoint(BaseAPIView):
         user = User.objects.filter(email=email).first()
         if user:
             # Get the reset token for user
-            uidb64, token = get_tokens_for_user(user=user)
+            uidb64, token = generate_password_token(user=user)
             current_site = request.META.get("HTTP_ORIGIN")
             # send the forgot password email
             forgot_password.delay(
