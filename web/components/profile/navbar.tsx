@@ -51,7 +51,7 @@ export const ProfileNavbar: React.FC<Props> = (props) => {
         {tabsList.map((tab) => (
           <Link key={tab.route} href={`/${workspaceSlug}/profile/${userId}/${tab.route}`}>
             <span
-              className={`border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
+              className={`flex border-b-2 p-4 text-sm font-medium outline-none whitespace-nowrap ${
                 router.pathname === tab.selected
                   ? "border-custom-primary-100 text-custom-primary-100"
                   : "border-transparent"

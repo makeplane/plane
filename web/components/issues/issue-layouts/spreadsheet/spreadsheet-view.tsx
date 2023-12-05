@@ -8,7 +8,7 @@ import {
   SpreadsheetIssuesColumn,
   SpreadsheetQuickAddIssueForm,
 } from "components/issues";
-import { Spinner } from "@plane/ui";
+import { Spinner, LayersIcon } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
 import { EIssueActions } from "../types";
@@ -95,9 +95,14 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 >
                   <div className="flex items-center text-sm font-medium z-[2] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
                     {displayProperties.key && (
-                      <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">ID</span>
+                      <span className="flex items-center px-4 py-2.5 h-full w-24 flex-shrink-0">
+                        <span className="mr-1.5 text-custom-text-400">#</span>ID
+                      </span>
                     )}
-                    <span className="flex items-center justify-center px-4 py-2.5 h-full w-full flex-grow">Issue</span>
+                    <span className="flex items-center justify-center px-4 py-2.5 h-full w-full flex-grow">
+                      <LayersIcon className="h-4 w-4 text-custom-text-400 mr-1.5" />
+                      Issue
+                    </span>
                   </div>
 
                   {issues.map((issue, index) =>

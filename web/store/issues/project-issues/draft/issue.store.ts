@@ -36,7 +36,7 @@ export class ProjectDraftIssuesStore extends IssueBaseStore implements IProjectD
   //viewData
   viewFlags = {
     enableQuickAdd: false,
-    enableIssueCreation: false,
+    enableIssueCreation: true,
     enableInlineEditing: false,
   };
 

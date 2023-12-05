@@ -75,20 +75,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-
-    mutate<IModule>(
-      MODULE_DETAILS(moduleId as string),
-      (prevData) => ({
-        ...(prevData as IModule),
-        ...data,
-      }),
-      false
-    );
-
-    moduleService
-      .patchModule(workspaceSlug as string, projectId as string, moduleId as string, data)
-      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
-      .catch((e) => console.log(e));
+    moduleStore.updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
