@@ -14,6 +14,7 @@ import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/f
 
 type Props = {
   issueDetail: IIssue | undefined;
+  handleCycleChange?: (cycleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
 };
@@ -22,7 +23,7 @@ type Props = {
 const cycleService = new CycleService();
 
 export const SidebarCycleSelect: React.FC<Props> = (props) => {
-  const { issueDetail, disabled = false, handleIssueUpdate } = props;
+  const { issueDetail, disabled = false, handleIssueUpdate, handleCycleChange } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -40,7 +41,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
       : null
   );
 
-  const handleCycleChange = async (cycleId: string) => {
+  const handleCycleStoreChange = async (cycleId: string) => {
     if (!workspaceSlug || !issueDetail || !cycleId) return;
 
     setIsUpdating(true);
@@ -96,7 +97,9 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
         onChange={(value: any) => {
           value === issueCycle?.cycle_detail.id
             ? handleRemoveIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
-            : handleCycleChange(value);
+            : handleCycleChange
+            ? handleCycleChange(value)
+            : handleCycleStoreChange(value);
         }}
         options={options}
         customButton={

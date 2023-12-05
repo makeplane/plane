@@ -13,12 +13,13 @@ import { ISSUE_DETAILS, MODULE_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issueDetail: IIssue | undefined;
+  handleModuleChange?: (moduleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
 };
 
 export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
-  const { issueDetail, disabled = false, handleIssueUpdate } = props;
+  const { issueDetail, disabled = false, handleIssueUpdate, handleModuleChange } = props;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -30,7 +31,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
 
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const handleModuleChange = async (moduleId: string) => {
+  const handleModuleStoreChange = async (moduleId: string) => {
     if (!workspaceSlug || !issueDetail || !moduleId) return;
 
     setIsUpdating(true);
@@ -86,7 +87,9 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
         onChange={(value: any) => {
           value === issueModule?.module_detail.id
             ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
-            : handleModuleChange(value);
+            : handleModuleChange
+            ? handleModuleChange(value)
+            : handleModuleStoreChange(value);
         }}
         options={options}
         customButton={
