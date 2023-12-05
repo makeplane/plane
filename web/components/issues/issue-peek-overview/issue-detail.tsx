@@ -70,8 +70,10 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   const [localIssueDescription, setLocalIssueDescription] = useState("");
 
   useEffect(() => {
-    setLocalIssueDescription(issue.description_html);
-    setLocalTitleValue(issue.name);
+    if (issue.id) {
+      setLocalIssueDescription(issue.description_html);
+      setLocalTitleValue(issue.name);
+    }
   }, [issue.id]);
 
   const debouncedFormSave = debounce(async () => {

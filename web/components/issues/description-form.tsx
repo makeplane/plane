@@ -15,13 +15,13 @@ import useEditorSuggestions from "hooks/use-editor-suggestions";
 export interface IssueDescriptionFormValues {
   name: string;
   description_html: string;
-  id?: string;
 }
 
 export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    id: string;
     project_id?: string;
   };
   workspaceSlug: string;
@@ -58,8 +58,10 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   const [localIssueDescription, setLocalIssueDescription] = useState("");
 
   useEffect(() => {
-    setLocalIssueDescription(issue.description_html);
-    setLocalTitleValue(issue.name);
+    if (issue.id) {
+      setLocalIssueDescription(issue.description_html);
+      setLocalTitleValue(issue.name);
+    }
   }, [issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
