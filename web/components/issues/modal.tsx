@@ -240,7 +240,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
         if (handleSubmit) {
           await handleSubmit(res);
         } else {
-          if (viewId) currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
+          currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
           if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res, payload.cycle);
           if (payload.module && payload.module !== "") await addIssueToModule(res, payload.module);
