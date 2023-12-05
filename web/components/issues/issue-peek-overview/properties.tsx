@@ -6,7 +6,8 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui icons
 import { DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
-import { CalendarDays, ContrastIcon, Link2, Plus, Signal, Tag, Triangle, User2 } from "lucide-react";
+import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
+import { ContrastIcon } from "@plane/ui";
 import {
   SidebarAssigneeSelect,
   SidebarCycleSelect,
@@ -289,7 +290,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           {/* parent */}
           <div className="flex items-center gap-2 w-full">
             <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
-              <User2 className="h-4 w-4 flex-shrink-0" />
+              <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
             <div>

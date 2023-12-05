@@ -111,12 +111,8 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
             })}
           </AvatarGroup>
         ) : (
-          <span
-            className={`flex items-center justify-between gap-1 h-full w-full text-xs rounded duration-300 focus:outline-none ${
-              noLabelBorder ? "" : " px-2.5 py-1 border-[0.5px] border-custom-border-300"
-            }`}
-          >
-            <User2 className="h-3 w-3" />
+          <span className="flex items-end justify-center h-5 w-5 bg-custom-background-80 rounded-full border border-dashed border-custom-text-400">
+            <User2 className="h-4 w-4 text-custom-text-400" />
           </span>
         )}
       </div>
