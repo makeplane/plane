@@ -9,7 +9,7 @@ import {
   SpreadsheetQuickAddIssueForm,
 } from "components/issues";
 import { Spinner, LayersIcon } from "@plane/ui";
-
+// types
 import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
 import { EIssueActions } from "../types";
 
