@@ -237,7 +237,6 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     : null;
 
   const handleEditLink = (link: linkDetails) => {
-    console.log("link", link);
     setSelectedLinkToUpdate(link);
     setModuleLinkModal(true);
   };
