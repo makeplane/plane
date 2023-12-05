@@ -358,28 +358,29 @@ export class ModuleStore implements IModuleStore {
   ) => {
     try {
       const response = await this.moduleService.updateModuleLink(workspaceSlug, projectId, moduleId, linkId, data);
+      const _modules = {
+        ...this.modules,
+        [projectId]: this.modules[projectId]?.map((module) =>
+          module.id === moduleId
+            ? {
+                ...module,
+                link_module: module.link_module.map((link) => (link.id === linkId ? response : link)),
+              }
+            : module
+        ),
+      };
+
+      const _moduleDetails = {
+        ...this.moduleDetails,
+        [moduleId]: {
+          ...this.moduleDetails[moduleId],
+          link_module: this.moduleDetails[moduleId].link_module.map((link) => (link.id === linkId ? response : link)),
+        },
+      };
 
       runInAction(() => {
-        this.modules = {
-          ...this.modules,
-          [projectId]: this.modules[projectId]?.map((module) =>
-            module.id === moduleId
-              ? {
-                  ...module,
-                  link_module: module.link_module.map((link) => (link.id === linkId ? { ...response, ...link } : link)),
-                }
-              : module
-          ),
-        };
-        this.moduleDetails = {
-          ...this.moduleDetails,
-          [moduleId]: {
-            ...this.moduleDetails[moduleId],
-            link_module: this.moduleDetails[moduleId].link_module.map((link) =>
-              link.id === linkId ? { ...response, ...link } : link
-            ),
-          },
-        };
+        this.modules = _modules;
+        this.moduleDetails = _moduleDetails;
       });
 
       return response;

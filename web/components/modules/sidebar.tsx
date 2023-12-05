@@ -84,7 +84,21 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload);
+    createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link created",
+          message: "Module link created successfully.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
+      });
   };
 
   const handleUpdateLink = async (formData: ModuleLink, linkId: string) => {
@@ -92,13 +106,41 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload);
+    updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link updated",
+          message: "Module link updated successfully.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
+      });
   };
 
   const handleDeleteLink = async (linkId: string) => {
     if (!workspaceSlug || !projectId || !module) return;
 
-    deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId);
+    deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link deleted",
+          message: "Module link deleted successfully.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
+      });
   };
 
   const handleCopyText = () => {
