@@ -7,7 +7,7 @@ export interface IEmailCheckData {
 
 export interface ILoginTokenResponse {
   access_token: string;
-  refresh_toke: string;
+  refresh_token: string;
 }
 
 export interface IMagicSignInData {
