@@ -135,7 +135,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
 
       {/* extra render properties */}
       {/* sub-issues */}
-      {displayProperties && displayProperties?.sub_issue_count && (
+      {displayProperties && displayProperties?.sub_issue_count && !!issue?.sub_issues_count && (
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -145,7 +145,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
       )}
 
       {/* attachments */}
-      {displayProperties && displayProperties?.attachment_count && (
+      {displayProperties && displayProperties?.attachment_count && !!issue?.attachment_count && (
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -155,7 +155,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
       )}
 
       {/* link */}
-      {displayProperties && displayProperties?.link && (
+      {displayProperties && displayProperties?.link && !!issue?.link_count && (
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />

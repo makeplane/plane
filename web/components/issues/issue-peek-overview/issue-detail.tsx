@@ -60,8 +60,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     formState: { errors },
   } = useForm<IIssue>({
     defaultValues: {
-      name: "",
-      description_html: "",
+      name: issue.name,
+      description_html: issue.description_html,
     },
   });
 
@@ -78,13 +78,17 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     [issue, issueUpdate]
   );
 
-  const [localTitleValue, setLocalTitleValue] = useState("");
+  const [localTitleValue, setLocalTitleValue] = useState(issue.name);
   const issueTitleCurrentValue = watch("name");
   useEffect(() => {
     if (localTitleValue === "" && issueTitleCurrentValue !== "") {
       setLocalTitleValue(issueTitleCurrentValue);
     }
   }, [issueTitleCurrentValue, localTitleValue]);
+
+  useEffect(() => {
+    setLocalTitleValue(issue.name);
+  }, [issue.name]);
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));

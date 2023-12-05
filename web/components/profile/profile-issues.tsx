@@ -34,7 +34,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
     async () => {
       if (workspaceSlug && userId) {
         await fetchFilters(workspaceSlug);
-        await fetchIssues(workspaceSlug, userId, getIssues ? "mutation" : "init-loader", type);
+        await fetchIssues(workspaceSlug, userId, getIssues ? "mutation" : "init-loader", undefined, type);
       }
     }
   );
