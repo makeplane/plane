@@ -39,8 +39,8 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
   return (
     <>
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">Set a password</h1>
-      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
-        If you{"'"}d to do away with codes, set a password here
+      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-2.5">
+        If you{"'"}d like to do away with codes, set a password here.
       </p>
 
       <form className="mt-5 sm:w-96 mx-auto space-y-4">

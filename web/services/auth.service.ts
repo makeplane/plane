@@ -3,16 +3,20 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IEmailCheckData, ILoginTokenResponse, IMagicSignInData, IPasswordSignInData } from "types/auth";
+import {
+  IEmailCheckData,
+  IEmailCheckResponse,
+  ILoginTokenResponse,
+  IMagicSignInData,
+  IPasswordSignInData,
+} from "types/auth";
 
 export class AuthService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async emailCheck(data: IEmailCheckData): Promise<{
-    is_password_autoset: boolean;
-  }> {
+  async emailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
     return this.post("/api/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
@@ -92,7 +96,7 @@ export class AuthService extends APIService {
       });
   }
 
-  async emailCode(data: any): Promise<any> {
+  async generateUniqueCode(data: { email: string }): Promise<any> {
     return this.post("/api/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {

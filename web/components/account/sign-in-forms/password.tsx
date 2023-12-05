@@ -37,6 +37,7 @@ const authService = new AuthService();
 export const PasswordForm: React.FC<Props> = (props) => {
   const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
   // states
+  const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
@@ -78,7 +79,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
   const handleEmailCheck = async (formData: TPasswordFormValues) => {
     const payload: IEmailCheckData = {
       email: formData.email,
-      type: "password",
     };
 
     await authService
@@ -128,6 +128,31 @@ export const PasswordForm: React.FC<Props> = (props) => {
         })
       )
       .finally(() => setIsSendingResetPasswordLink(false));
+  };
+
+  const handleSendUniqueCode = async () => {
+    const emailFormValue = getValues("email");
+
+    const isEmailValid = checkEmailValidity(emailFormValue);
+
+    if (!isEmailValid) {
+      setError("email", { message: "Email is invalid" });
+      return;
+    }
+
+    setIsSendingUniqueCode(true);
+
+    await authService
+      .generateUniqueCode({ email: emailFormValue })
+      .then(() => handleStepChange(ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD))
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() => setIsSendingUniqueCode(false));
   };
 
   return (
@@ -186,7 +211,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.password)}
                 placeholder="Enter password"
-                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
               />
             )}
           />
@@ -203,9 +228,28 @@ export const PasswordForm: React.FC<Props> = (props) => {
             </button>
           </div>
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? "Signing in..." : "Go to workspace"}
-        </Button>
+        <div className="grid sm:grid-cols-2 gap-2.5">
+          <Button
+            type="button"
+            onClick={handleSendUniqueCode}
+            variant="primary"
+            className="w-full"
+            size="xl"
+            loading={isSendingUniqueCode}
+          >
+            {isSendingUniqueCode ? "Sending code..." : "Use unique code"}
+          </Button>
+          <Button
+            type="submit"
+            variant="outline-primary"
+            className="w-full"
+            size="xl"
+            disabled={!isValid}
+            loading={isSubmitting}
+          >
+            {isSubmitting ? "Signing in..." : "Go to workspace"}
+          </Button>
+        </div>
         <p className="text-xs text-onboarding-text-200">
           When you click the button above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">

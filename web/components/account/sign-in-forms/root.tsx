@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useSignInRedirection from "hooks/use-sign-in-redirection";
 // components
@@ -10,6 +13,7 @@ import {
   OAuthOptions,
   OptionalSetPasswordForm,
   CreatePasswordForm,
+  LatestFeatures,
 } from "components/account";
 
 export enum ESignInSteps {
@@ -19,16 +23,21 @@ export enum ESignInSteps {
   UNIQUE_CODE = "UNIQUE_CODE",
   OPTIONAL_SET_PASSWORD = "OPTIONAL_SET_PASSWORD",
   CREATE_PASSWORD = "CREATE_PASSWORD",
+  USE_UNIQUE_CODE_FROM_PASSWORD = "USE_UNIQUE_CODE_FROM_PASSWORD",
 }
 
 const OAUTH_HIDDEN_STEPS = [ESignInSteps.OPTIONAL_SET_PASSWORD, ESignInSteps.CREATE_PASSWORD];
 
-export const SignInRoot = () => {
+export const SignInRoot = observer(() => {
   // states
   const [signInStep, setSignInStep] = useState<ESignInSteps>(ESignInSteps.EMAIL);
   const [email, setEmail] = useState("");
   // sign in redirection hook
   const { handleRedirection } = useSignInRedirection();
+  // mobx store
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
 
   return (
     <>
@@ -46,6 +55,18 @@ export const SignInRoot = () => {
         )}
         {signInStep === ESignInSteps.SET_PASSWORD_LINK && (
           <SetPasswordLink email={email} updateEmail={(newEmail) => setEmail(newEmail)} />
+        )}
+        {signInStep === ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD && (
+          <UniqueCodeForm
+            email={email}
+            updateEmail={(newEmail) => setEmail(newEmail)}
+            handleStepChange={(step) => setSignInStep(step)}
+            handleSignInRedirection={handleRedirection}
+            submitButtonLabel={{
+              loading: "Signing in...",
+              default: "Go to workspace",
+            }}
+          />
         )}
         {signInStep === ESignInSteps.UNIQUE_CODE && (
           <UniqueCodeForm
@@ -77,6 +98,7 @@ export const SignInRoot = () => {
           handleSignInRedirection={handleRedirection}
         />
       )}
+      <LatestFeatures />
     </>
   );
-};
+});

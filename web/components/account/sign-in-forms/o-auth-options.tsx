@@ -87,11 +87,11 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="flex sm:w-96 items-center mt-4 mx-auto">
-        <hr className={`border-onboarding-border-100 w-full`} />
+        <hr className="border-onboarding-border-100 w-full" />
         <p className="text-center text-sm text-onboarding-text-400 mx-3 flex-shrink-0">Or continue with</p>
-        <hr className={`border-onboarding-border-100 w-full`} />
+        <hr className="border-onboarding-border-100 w-full" />
       </div>
-      <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:flex-row sm:w-96 mx-auto overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-center gap-2 pt-7 sm:w-96 mx-auto overflow-hidden">
         {envConfig?.google_client_id && (
           <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
         )}
