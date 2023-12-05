@@ -67,12 +67,12 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   );
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const issueTitleCurrentValue = watch("name");
+  const [localIssueDescription, setLocalIssueDescription] = useState("");
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
-    }
-  }, [issueTitleCurrentValue, localTitleValue]);
+    setLocalIssueDescription(issue.description_html);
+    setLocalTitleValue(issue.name);
+  }, [issue.id]);
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
@@ -154,7 +154,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={value}
+              value={localIssueDescription}
+              text_html={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled

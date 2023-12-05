@@ -15,6 +15,7 @@ import useEditorSuggestions from "hooks/use-editor-suggestions";
 export interface IssueDescriptionFormValues {
   name: string;
   description_html: string;
+  id?: string;
 }
 
 export interface IssueDetailsProps {
@@ -54,12 +55,12 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   });
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const issueTitleCurrentValue = watch("name");
+  const [localIssueDescription, setLocalIssueDescription] = useState("");
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
-    }
-  }, [issueTitleCurrentValue, localTitleValue]);
+    setLocalIssueDescription(issue.description_html);
+    setLocalTitleValue(issue.name);
+  }, [issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -149,7 +150,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={value}
+              value={localIssueDescription}
+              text_html={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
