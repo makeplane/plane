@@ -1,4 +1,8 @@
 import { TIssueOrderByOptions } from "types";
+import { LayersIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip } from "lucide-react";
+import { FC } from "react";
+import { ISvgIcons } from "@plane/ui/src/icons/type";
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
   [key: string]: {
@@ -7,6 +11,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: string;
     descendingOrderKey: TIssueOrderByOptions;
     descendingOrderTitle: string;
+    icon: FC<ISvgIcons>;
   };
 } = {
   assignee: {
@@ -15,6 +20,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-assignees__first_name",
     descendingOrderTitle: "Z",
+    icon: UserGroupIcon,
   },
   created_on: {
     title: "Created on",
@@ -22,6 +28,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "created_at",
     descendingOrderTitle: "Old",
+    icon: CalendarDays,
   },
   due_date: {
     title: "Due date",
@@ -29,6 +36,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
     descendingOrderTitle: "Old",
+    icon: CalendarDays,
   },
   estimate: {
     title: "Estimate",
@@ -36,6 +44,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "Low",
     descendingOrderKey: "-estimate_point",
     descendingOrderTitle: "High",
+    icon: Triangle,
   },
   labels: {
     title: "Labels",
@@ -43,6 +52,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-labels__name",
     descendingOrderTitle: "Z",
+    icon: Tag,
   },
   priority: {
     title: "Priority",
@@ -50,6 +60,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "None",
     descendingOrderKey: "-priority",
     descendingOrderTitle: "Urgent",
+    icon: Signal,
   },
   start_date: {
     title: "Start date",
@@ -57,6 +68,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
     descendingOrderTitle: "Old",
+    icon: CalendarDays,
   },
   state: {
     title: "State",
@@ -64,6 +76,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "A",
     descendingOrderKey: "-state__name",
     descendingOrderTitle: "Z",
+    icon: DoubleCircleIcon,
   },
   updated_on: {
     title: "Updated on",
@@ -71,6 +84,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "updated_at",
     descendingOrderTitle: "Old",
+    icon: CalendarDays,
   },
   link: {
     title: "Link",
@@ -78,6 +92,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "Most",
     descendingOrderKey: "link_count",
     descendingOrderTitle: "Least",
+    icon: Link2,
   },
   attachment_count: {
     title: "Attachment",
@@ -85,6 +100,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "Most",
     descendingOrderKey: "attachment_count",
     descendingOrderTitle: "Least",
+    icon: Paperclip,
   },
   sub_issue_count: {
     title: "Sub-issue",
@@ -92,5 +108,6 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "Most",
     descendingOrderKey: "sub_issues_count",
     descendingOrderTitle: "Least",
+    icon: LayersIcon,
   },
 };

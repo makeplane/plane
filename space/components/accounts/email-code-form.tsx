@@ -11,7 +11,7 @@ import useToast from "hooks/use-toast";
 import useTimer from "hooks/use-timer";
 
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
 
 // types
 type EmailCodeFormValues = {
@@ -133,7 +133,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             id="email"
             type="email"
             placeholder="Enter your email address..."
-            className="border-custom-border-300 h-[46px]"
+            className="border-custom-border-300 h-[46px] w-full"
             {...register("email", {
               required: "Email address is required",
               validate: (value) =>
@@ -154,7 +154,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
                 required: "Code is required",
               })}
               placeholder="Enter code..."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
             {errors.token && <div className="text-sm text-red-500">{errors.token.message}</div>}
             <button
@@ -185,20 +185,22 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
           </>
         )}
         {codeSent ? (
-          <PrimaryButton
+          <Button
+            variant="primary"
             type="submit"
-            className="w-full text-center h-[46px]"
-            size="md"
+            className="w-full"
+            size="xl"
             onClick={handleSubmit(handleSignin)}
             disabled={!isValid && isDirty}
             loading={isLoading}
           >
             {isLoading ? "Signing in..." : "Sign in"}
-          </PrimaryButton>
+          </Button>
         ) : (
-          <PrimaryButton
-            className="w-full text-center h-[46px]"
-            size="md"
+          <Button
+            variant="primary"
+            className="w-full"
+            size="xl"
             onClick={() => {
               handleSubmit(onSubmit)().then(() => {
                 setResendCodeTimer(30);
@@ -208,7 +210,7 @@ export const EmailCodeForm = ({ handleSignIn }: any) => {
             loading={isSubmitting}
           >
             {isSubmitting ? "Sending code..." : "Send sign in code"}
-          </PrimaryButton>
+          </Button>
         )}
       </form>
     </>

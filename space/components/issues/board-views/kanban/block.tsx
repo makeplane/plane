@@ -13,7 +13,7 @@ import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
 import { useRouter } from "next/router";
 
-export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
+export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
   const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
   // router
