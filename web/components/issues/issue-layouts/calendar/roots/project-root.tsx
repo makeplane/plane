@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 
 export const CalendarLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
 
   const {
     projectIssues: issueStore,
@@ -23,22 +23,22 @@ export const CalendarLayout: React.FC = observer(() => {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      issueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      issueStore.removeIssue(workspaceSlug, issue.project, issue.id);
+      await issueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
     },
   };
 
   const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (calendarHelperStore.handleDragDrop)
+    if (calendarHelperStore.handleDragDrop && workspaceSlug && projectId)
       calendarHelperStore.handleDragDrop(
         source,
         destination,
-        workspaceSlug,
-        projectId,
+        workspaceSlug.toString(),
+        projectId.toString(),
         issueStore,
         issues,
         issueWithIds

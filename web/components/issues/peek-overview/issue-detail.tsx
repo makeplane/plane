@@ -1,16 +1,17 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
-// components
-import { TextArea } from "@plane/ui";
-import { IssueReaction } from "./reactions";
 // hooks
-import debounce from "lodash/debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
+// components
+import { IssueReaction } from "components/issues";
+// ui
+import { TextArea } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IUser } from "types";
 // services
 import { FileService } from "services/file.service";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -22,7 +23,7 @@ interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
   issue: IIssue;
   issueReactions: any;
-  user: any;
+  user: IUser | null;
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;

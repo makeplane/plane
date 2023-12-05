@@ -50,9 +50,9 @@ interface IBaseListRoot {
     | IProfileIssuesStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => void;
-    [EIssueActions.UPDATE]?: (group_by: string | null, issue: IIssue) => void;
-    [EIssueActions.REMOVE]?: (group_by: string | null, issue: IIssue) => void;
+    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (group_by: string | null, issue: IIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (group_by: string | null, issue: IIssue) => Promise<void>;
   };
   getProjects: (projectStore: IProjectStore) => IProject[] | null;
   viewId?: string;
@@ -105,7 +105,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const members = projectMembers?.map((m) => m.member) ?? null;
   const handleIssues = async (issue: IIssue, action: EIssueActions) => {
     if (issueActions[action]) {
-      issueActions[action]!(group_by, issue);
+      await issueActions[action]!(group_by, issue);
     }
   };
 
@@ -160,7 +160,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate) => handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
+          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
         />
       )}
     </>

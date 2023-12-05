@@ -25,17 +25,17 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
   };
 
   const issueActions = {
-    [EIssueActions.UPDATE]: (issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-      moduleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, moduleId);
+      await moduleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, moduleId);
     },
-    [EIssueActions.DELETE]: (issue: IIssue) => {
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-      moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
+      await moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
     },
-    [EIssueActions.REMOVE]: (issue: IIssue) => {
+    [EIssueActions.REMOVE]: async (issue: IIssue) => {
       if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
-      moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
+      await moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
     },
   };
 

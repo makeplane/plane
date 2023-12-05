@@ -1,10 +1,12 @@
 import { FC } from "react";
 // components
-import { IssueReactionPreview, IssueReactionSelector } from "./";
+import { IssueReactionPreview, IssueReactionSelector } from "components/issues";
+// types
+import { IUser } from "types";
 
 interface IIssueReaction {
   issueReactions: any;
-  user: any;
+  user: IUser | null;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
   position?: "top" | "bottom";

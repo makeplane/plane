@@ -181,18 +181,20 @@ export interface IIssueLabelTree extends IIssueLabel {
 }
 
 export interface IIssueActivity {
+  access?: "EXTERNAL" | "INTERNAL";
   actor: string;
   actor_detail: IUserLite;
   attachments: any[];
-  comment: string;
+  comment?: string;
+  comment_html?: string;
+  comment_stripped?: string;
   created_at: Date;
   created_by: string;
   field: string | null;
   id: string;
   issue: string | null;
-  issue_comment: string | null;
+  issue_comment?: string | null;
   issue_detail: {
-    description: any;
     description_html: string;
     id: string;
     name: string;
@@ -210,13 +212,6 @@ export interface IIssueActivity {
   verb: string;
   workspace: string;
   workspace_detail?: IWorkspaceLite;
-}
-
-export interface IIssueComment extends IIssueActivity {
-  access: "EXTERNAL" | "INTERNAL";
-  comment_html: string;
-  comment_json: any;
-  comment_stripped: string;
 }
 
 export interface IIssueLite {

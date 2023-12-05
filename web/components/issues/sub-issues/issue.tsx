@@ -28,7 +28,7 @@ export interface ISubIssues {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => Promise<void>;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -65,7 +65,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
           workspaceSlug={workspaceSlug}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate) => handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
+          handleIssue={async (issueToUpdate) => await handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
         />
       )}
       <div>
