@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { mutate } from "swr";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -28,9 +25,7 @@ import {
 } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { linkDetails, IModule, ModuleLink } from "types";
-// fetch-keys
-import { MODULE_DETAILS } from "constants/fetch-keys";
+import { ILinkDetails, IModule, ModuleLink } from "types";
 // constant
 import { MODULE_STATUS } from "constants/module";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -48,24 +43,30 @@ type Props = {
   handleClose: () => void;
 };
 
-// services
-const moduleService = new ModuleService();
-
 // TODO: refactor this component
 export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { moduleId, handleClose } = props;
 
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
 
-  const { module: moduleStore, user: userStore } = useMobxStore();
+  const {
+    module: {
+      moduleDetails: _moduleDetails,
+      updateModuleDetails,
+      createModuleLink,
+      updateModuleLink,
+      deleteModuleLink,
+    },
+    user: userStore,
+  } = useMobxStore();
 
   const userRole = userStore.currentProjectRole;
-  const moduleDetails = moduleStore.moduleDetails[moduleId] ?? undefined;
+  const moduleDetails = _moduleDetails[moduleId] ?? undefined;
 
   const { setToastAlert } = useToast();
 
@@ -75,7 +76,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const submitChanges = (data: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
-    moduleStore.updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
+    updateModuleDetails(workspaceSlug.toString(), projectId.toString(), moduleId, data);
   };
 
   const handleCreateLink = async (formData: ModuleLink) => {
@@ -83,22 +84,20 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    await moduleService
-      .createModuleLink(workspaceSlug as string, projectId as string, moduleId as string, payload)
-      .then(() => mutate(MODULE_DETAILS(moduleId as string)))
-      .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "This URL already exists for this module.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
+    createModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), payload)
+      .then(() => {
+        setToastAlert({
+          type: "success",
+          title: "Module link created",
+          message: "Module link created successfully.",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
       });
   };
 
@@ -107,50 +106,40 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
     const payload = { metadata: {}, ...formData };
 
-    const updatedLinks = moduleDetails.link_module.map((l) =>
-      l.id === linkId
-        ? {
-            ...l,
-            title: formData.title,
-            url: formData.url,
-          }
-        : l
-    );
-
-    mutate<IModule>(
-      MODULE_DETAILS(module.id),
-      (prevData) => ({ ...(prevData as IModule), link_module: updatedLinks }),
-      false
-    );
-
-    await moduleService
-      .updateModuleLink(workspaceSlug as string, projectId as string, module.id, linkId, payload)
+    updateModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId, payload)
       .then(() => {
-        mutate(MODULE_DETAILS(module.id));
+        setToastAlert({
+          type: "success",
+          title: "Module link updated",
+          message: "Module link updated successfully.",
+        });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
       });
   };
 
   const handleDeleteLink = async (linkId: string) => {
     if (!workspaceSlug || !projectId || !module) return;
 
-    const updatedLinks = moduleDetails.link_module.filter((l) => l.id !== linkId);
-
-    mutate<IModule>(
-      MODULE_DETAILS(module.id),
-      (prevData) => ({ ...(prevData as IModule), link_module: updatedLinks }),
-      false
-    );
-
-    await moduleService
-      .deleteModuleLink(workspaceSlug as string, projectId as string, module.id, linkId)
+    deleteModuleLink(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), linkId)
       .then(() => {
-        mutate(MODULE_DETAILS(module.id));
+        setToastAlert({
+          type: "success",
+          title: "Module link deleted",
+          message: "Module link deleted successfully.",
+        });
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: "Some error occurred",
+        });
       });
   };
 
@@ -236,7 +225,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     ? Math.round((moduleDetails.completed_issues / moduleDetails.total_issues) * 100)
     : null;
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleEditLink = (link: ILinkDetails) => {
     console.log("link", link);
     setSelectedLinkToUpdate(link);
     setModuleLinkModal(true);

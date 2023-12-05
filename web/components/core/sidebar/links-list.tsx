@@ -5,14 +5,14 @@ import { Pencil, Trash2, LinkIcon } from "lucide-react";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import { linkDetails, UserAuth } from "types";
+import { ILinkDetails, UserAuth } from "types";
 // hooks
 import useToast from "hooks/use-toast";
 
 type Props = {
-  links: linkDetails[];
+  links: ILinkDetails[];
   handleDeleteLink: (linkId: string) => void;
-  handleEditLink: (link: linkDetails) => void;
+  handleEditLink: (link: ILinkDetails) => void;
   userAuth: UserAuth;
 };
 
