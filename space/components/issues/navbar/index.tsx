@@ -9,6 +9,7 @@ import { observer } from "mobx-react-lite";
 // import { NavbarSearch } from "./search";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
+import { IssueFiltersDropdown } from "components/issues/filters";
 // ui
 import { Avatar, Button } from "@plane/ui";
 import { Briefcase } from "lucide-react";
@@ -16,6 +17,7 @@ import { Briefcase } from "lucide-react";
 import { useMobxStore } from "lib/mobx/store-provider";
 // store
 import { RootStore } from "store/root";
+import { TIssueBoardKeys } from "types/issue";
 
 const renderEmoji = (emoji: string | { name: string; color: string }) => {
   if (!emoji) return;
@@ -30,10 +32,21 @@ const renderEmoji = (emoji: string | { name: string; color: string }) => {
 };
 
 const IssueNavbar = observer(() => {
-  const { project: projectStore, user: userStore }: RootStore = useMobxStore();
+  const {
+    project: projectStore,
+    user: userStore,
+    issuesFilter: { updateFilters },
+  }: RootStore = useMobxStore();
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, board } = router.query;
+  const { workspace_slug, project_slug, board, states, priorities, labels } = router.query as {
+    workspace_slug: string;
+    project_slug: string;
+    board: string;
+    states: string;
+    priorities: string;
+    labels: string;
+  };
 
   const user = userStore?.currentUser;
 
@@ -46,7 +59,7 @@ const IssueNavbar = observer(() => {
   useEffect(() => {
     if (workspace_slug && project_slug && projectStore?.deploySettings) {
       const viewsAcceptable: string[] = [];
-      let currentBoard: string | null = null;
+      let currentBoard: TIssueBoardKeys | null = null;
 
       if (projectStore?.deploySettings?.views?.list) viewsAcceptable.push("list");
       if (projectStore?.deploySettings?.views?.kanban) viewsAcceptable.push("kanban");
@@ -56,31 +69,41 @@ const IssueNavbar = observer(() => {
 
       if (board) {
         if (viewsAcceptable.includes(board.toString())) {
-          currentBoard = board.toString();
+          currentBoard = board.toString() as TIssueBoardKeys;
         } else {
           if (viewsAcceptable && viewsAcceptable.length > 0) {
-            currentBoard = viewsAcceptable[0];
+            currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
           }
         }
       } else {
         if (viewsAcceptable && viewsAcceptable.length > 0) {
-          currentBoard = viewsAcceptable[0];
+          currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
         }
       }
 
       if (currentBoard) {
         if (projectStore?.activeBoard === null || projectStore?.activeBoard !== currentBoard) {
+          let params: any = { board: currentBoard };
+          if (priorities && priorities.length > 0) params = { ...params, priorities: priorities };
+          if (states && states.length > 0) params = { ...params, states: states };
+          if (labels && labels.length > 0) params = { ...params, labels: labels };
+
+          let storeParams: any = {};
+          if (priorities && priorities.length > 0) storeParams = { ...storeParams, priority: priorities.split(",") };
+          if (states && states.length > 0) storeParams = { ...storeParams, state: states.split(",") };
+          if (labels && labels.length > 0) storeParams = { ...storeParams, labels: labels.split(",") };
+
+          if (storeParams) updateFilters(project_slug, storeParams);
+
           projectStore.setActiveBoard(currentBoard);
           router.push({
             pathname: `/${workspace_slug}/${project_slug}`,
-            query: {
-              board: currentBoard,
-            },
+            query: { ...params },
           });
         }
       }
     }
-  }, [board, workspace_slug, project_slug, router, projectStore, projectStore?.deploySettings]);
+  }, [board, workspace_slug, project_slug, router, projectStore, projectStore?.deploySettings, updateFilters]);
 
   return (
     <div className="relative flex w-full items-center gap-4 px-5">
@@ -118,6 +141,11 @@ const IssueNavbar = observer(() => {
       {/* issue views */}
       <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
         <NavbarIssueBoardView />
+      </div>
+
+      {/* issue filters */}
+      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
+        <IssueFiltersDropdown />
       </div>
 
       {/* theming */}

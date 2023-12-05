@@ -5,6 +5,7 @@ import { issueViews } from "constants/data";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { TIssueBoardKeys } from "types/issue";
 
 export const NavbarIssueBoardView = observer(() => {
   const {
@@ -15,7 +16,7 @@ export const NavbarIssueBoardView = observer(() => {
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const handleCurrentBoardView = (boardView: string) => {
-    setActiveBoard(boardView);
+    setActiveBoard(boardView as TIssueBoardKeys);
     router.push(`/${workspace_slug}/${project_slug}?board=${boardView}`);
   };
 
