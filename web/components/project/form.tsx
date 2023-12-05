@@ -28,7 +28,7 @@ const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store
-  const { project: projectStore, trackEvent: { postHogEventTracker } } = useMobxStore();
+  const { project: projectStore, trackEvent: { postHogEventTracker }, workspace: { currentWorkspace } } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // form data
@@ -63,8 +63,13 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       .updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         postHogEventTracker(
-          'PROJECT_UPDATE',
-          {...res, state: "SUCCESS"}
+          'PROJECT_UPDATED',
+          { ...res, state: "SUCCESS" },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: res.workspace
+          }
         );
         setToastAlert({
           type: "success",
@@ -74,9 +79,14 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         postHogEventTracker(
-          'PROJECT_UPDATE',
+          'PROJECT_UPDATED',
           {
             state: "FAILED"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
           }
         );
         setToastAlert({

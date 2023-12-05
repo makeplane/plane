@@ -57,6 +57,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     user: { currentProjectRole },
     workspaceMember: { workspaceMembers },
     trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace }
   } = useMobxStore();
 
   const {
@@ -92,16 +93,30 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: "success",
           message: "Member added successfully",
         });
-        postHogEventTracker("PROJECT_MEMBER_INVITE", {
-          ...res,
-          state: "SUCCESS",
-        });
+        postHogEventTracker("MEMBER_ADDED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch((error) => {
         console.log(error);
-        postHogEventTracker("PROJECT_MEMBER_INVITE", {
-          state: "FAILED",
-        });
+        postHogEventTracker("MEMBER_ADDED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .finally(() => {
         reset(defaultValues);

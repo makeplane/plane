@@ -54,6 +54,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     user: userStore,
     project: projectStore,
     projectState: { states },
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace }
   } = useMobxStore();
   const user = userStore.currentUser ?? undefined;
   const userRole = userStore.currentProjectRole;
@@ -82,7 +84,22 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
     await issueCommentService
       .patchIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId, data)
-      .then(() => mutateIssueActivity());
+      .then((res) => {
+        mutateIssueActivity();
+        postHogEventTracker(
+          "COMMENT_UPDATED",
+          {
+            ...res,
+            state: "SUCCESS"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
+      }
+      );
   };
 
   const handleCommentDelete = async (commentId: string) => {
@@ -92,7 +109,21 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
     await issueCommentService
       .deleteIssueComment(workspaceSlug as string, projectId as string, issueId as string, commentId)
-      .then(() => mutateIssueActivity());
+      .then(() => {
+        mutateIssueActivity();
+        postHogEventTracker(
+          "COMMENT_DELETED",
+          {
+            state: "SUCCESS"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
+      }
+      );
   };
 
   const handleAddComment = async (formData: IIssueComment) => {
@@ -100,8 +131,20 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
 
     await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData)
-      .then(() => {
+      .then((res) => {
         mutate(PROJECT_ISSUES_ACTIVITY(issueDetails.id));
+        postHogEventTracker(
+          "COMMENT_ADDED",
+          {
+            ...res,
+            state: "SUCCESS"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch(() =>
         setToastAlert({
