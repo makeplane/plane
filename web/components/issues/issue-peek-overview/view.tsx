@@ -2,14 +2,13 @@ import { FC, ReactNode, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-import { MoveRight, MoveDiagonal, Bell, Link2, Trash2, RefreshCw } from "lucide-react";
+import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
 // components
 import { PeekOverviewIssueDetails } from "./issue-detail";
 import { PeekOverviewProperties } from "./properties";
 import { IssueComment } from "./activity";
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
-import { DeleteIssueModal } from "../delete-issue-modal";
-import { DeleteArchivedIssueModal } from "../delete-archived-issue-modal";
+import { DeleteIssueModal, DeleteArchivedIssueModal, IssueUpdateStatus } from "components/issues/";
 // types
 import { IIssue } from "types";
 // hooks
@@ -217,20 +216,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                   </div>
                 )}
               </div>
-              <div className="flex items-center">
-                <div
-                  className={`flex items-center mr-4 gap-x-2 transition-all duration-300 ${
-                    isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-                  }`}
-                >
-                  {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
-                    <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
-                  )}
-                  <span className="text-sm text-custom-text-300">
-                    {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-                  </span>
-                </div>
-
+              <div className="flex items-center gap-x-4">
+                <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
                   {issue?.created_by !== user?.id &&
                     !issue?.assignees.includes(user?.id ?? "") &&
