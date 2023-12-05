@@ -29,6 +29,7 @@ import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
 import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { IssueService } from "services/issue";
 import useToast from "hooks/use-toast";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 
 // services
 const fileService = new FileService();
@@ -44,6 +45,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
 
+  const { setShowAlert } = useReloadConfirmations();
   const router = useRouter();
   const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
   const { setToastAlert } = useToast();
@@ -112,6 +114,17 @@ const PageDetailsPage: NextPageWithLayout = () => {
       type,
     });
   };
+
+  useEffect(() => {
+    if (isSubmitting === "submitted") {
+      setShowAlert(false);
+      setTimeout(async () => {
+        setIsSubmitting("saved");
+      }, 2000);
+    } else if (isSubmitting === "submitting") {
+      setShowAlert(true);
+    }
+  }, [isSubmitting, setShowAlert]);
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -324,6 +337,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                       last_updated_by: pageDetails.updated_by,
                     }}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                    setShouldShowAlert={setShowAlert}
                     restoreFile={fileService.restoreImage}
                     deleteFile={fileService.deleteImage}
                     cancelUploadImage={fileService.cancelUpload}
@@ -334,6 +348,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     value={!value || value === "" ? "<p></p>" : value}
                     customClassName="tracking-tight px-0 h-full w-full"
                     onChange={(_description_json: Object, description_html: string) => {
+                      setShowAlert(true);
                       onChange(description_html);
                       setIsSubmitting("submitting");
                       debouncedFormSave();
