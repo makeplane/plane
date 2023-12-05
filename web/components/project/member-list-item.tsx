@@ -33,6 +33,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const {
     user: { currentUser, currentProjectMemberInfo, currentProjectRole, leaveProject },
     projectMember: { removeMemberFromProject, updateMember },
+    project: { fetchProjects },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
@@ -46,7 +47,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
 
     if (memberDetails.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
-        .then(() => router.push(`/${workspaceSlug}/projects`))
+        .then(async () => {
+          await fetchProjects(workspaceSlug.toString());
+
+          router.push(`/${workspaceSlug}/projects`);
+        })
         .catch((err) =>
           setToastAlert({
             type: "error",
@@ -174,7 +179,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
                 onClick={() => setRemoveMemberModal(true)}
                 className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
               >
-                <XCircle className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={2} />
+                <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
               </button>
             </Tooltip>
           )}
