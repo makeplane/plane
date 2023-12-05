@@ -148,7 +148,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             quickAddCallback={issueStore?.quickAddIssue}
             enableIssueQuickAdd={!!enableQuickAdd}
             isReadonly={!enableInlineEditing || !isEditingAllowed}
-            disableIssueCreation={!enableIssueCreation}
+            disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
             currentStore={currentStore}
             addIssuesToView={addIssuesToView}
           />

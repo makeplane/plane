@@ -33,7 +33,7 @@ import {
 import { CustomDatePicker } from "components/ui";
 // icons
 import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, User2 } from "lucide-react";
-import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
@@ -80,12 +80,15 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
 
-  const { user: userStore } = useMobxStore();
+  const {
+    user: userStore,
+    projectState: { states },
+  } = useMobxStore();
   const user = userStore.currentUser;
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -248,6 +251,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetail?.state)
+    : undefined;
+
   return (
     <>
       <LinkModal
@@ -266,9 +273,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
       <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
-          <h4 className="text-sm font-medium">
-            {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
-          </h4>
+          <div className="flex items-center gap-x-2">
+            {currentIssueState ? (
+              <StateGroupIcon
+                className="h-4 w-4"
+                stateGroup={currentIssueState.group}
+                color={currentIssueState.color}
+              />
+            ) : inboxIssueId ? (
+              <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
+            ) : null}
+            <h4 className="text-lg text-custom-text-300 font-medium">
+              {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
+            </h4>
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             {issueDetail?.created_by !== user?.id &&
               !issueDetail?.assignees.includes(user?.id ?? "") &&

@@ -26,16 +26,27 @@ interface IPeekOverviewIssueDetails {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
+  const {
+    workspaceSlug,
+    issue,
+    issueReactions,
+    user,
+    issueUpdate,
+    issueReactionCreate,
+    issueReactionRemove,
+    isSubmitting,
+    setIsSubmitting,
+  } = props;
   // store
   const { user: userStore } = useMobxStore();
   const { currentProjectRole } = userStore;
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks
   const { setShowAlert } = useReloadConfirmations();
@@ -172,13 +183,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
             />
           )}
         />
-        <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
-        >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>
       </div>
       <IssueReaction
         issueReactions={issueReactions}
