@@ -74,7 +74,7 @@ from plane.app.permissions import (
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.utils.grouper import group_results
-
+from plane.bgtasks.event_tracking_task import auth_events
 
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
@@ -407,6 +407,18 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
                     # Delete the invitation
                     workspace_invite.delete()
+                
+                # Send event
+                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                    auth_events.delay(
+                        user=user.id if user is not None else None,
+                        email=email,
+                        user_agent=request.META.get("HTTP_USER_AGENT"),
+                        ip=request.META.get("REMOTE_ADDR"),
+                        event_name="WORKSPACE_INVITE",
+                        medium="EMAIL",
+                        first_time=True if user is not None else False,
+                    )
 
                 return Response(
                     {"message": "Workspace Invitation Accepted"},
