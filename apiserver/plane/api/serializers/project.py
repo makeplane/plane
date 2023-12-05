@@ -21,6 +21,7 @@ class ProjectSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "id",
+            'emoji',
             "workspace",
             "created_at",
             "updated_at",
