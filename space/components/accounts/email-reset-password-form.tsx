@@ -1,8 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 // ui
-import { Input } from "components/ui";
-import { Button } from "@plane/ui";
+import { Button, Input } from "@plane/ui";
 // types
 type Props = {
   setIsResettingPassword: React.Dispatch<React.SetStateAction<boolean>>;
@@ -66,15 +65,15 @@ export const EmailResetPasswordForm: React.FC<Props> = ({ setIsResettingPassword
               ) || "Email address is not valid",
           })}
           placeholder="Enter registered email address.."
-          className="h-[46px] border-custom-border-300"
+          className="h-[46px] border-custom-border-300 w-full"
         />
         {errors.email && <div className="text-sm text-red-500">{errors.email.message}</div>}
       </div>
       <div className="mt-5 flex flex-col-reverse items-center gap-2 sm:flex-row">
-        <Button variant="neutral-primary" className="w-full" onClick={() => setIsResettingPassword(false)}>
+        <Button variant="neutral-primary" className="w-full" size="xl" onClick={() => setIsResettingPassword(false)}>
           Go Back
         </Button>
-        <Button variant="primary" className="w-full" type="submit" loading={isSubmitting}>
+        <Button variant="primary" className="w-full" size="xl" type="submit" loading={isSubmitting}>
           {isSubmitting ? "Sending link..." : "Send reset link"}
         </Button>
       </div>

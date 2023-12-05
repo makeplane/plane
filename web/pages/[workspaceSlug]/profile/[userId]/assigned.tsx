@@ -1,5 +1,4 @@
 import React, { ReactElement } from "react";
-import { observer } from "mobx-react-lite";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProfileAuthWrapper } from "layouts/user-profile-layout";
@@ -9,7 +8,7 @@ import { UserProfileHeader } from "components/headers";
 import { NextPageWithLayout } from "types/app";
 import { ProfileIssuesPage } from "components/profile/profile-issues";
 
-const ProfileAssignedIssuesPage: NextPageWithLayout = observer(() => <ProfileIssuesPage type="assigned" />);
+const ProfileAssignedIssuesPage: NextPageWithLayout = () => <ProfileIssuesPage type="assigned" />;
 
 ProfileAssignedIssuesPage.getLayout = function getLayout(page: ReactElement) {
   return (
