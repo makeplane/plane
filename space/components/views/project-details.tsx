@@ -9,6 +9,7 @@ import { IssueCalendarView } from "components/issues/board-views/calendar";
 import { IssueSpreadsheetView } from "components/issues/board-views/spreadsheet";
 import { IssueGanttView } from "components/issues/board-views/gantt";
 import { IssuePeekOverview } from "components/issues/peek-overview";
+import { IssueAppliedFilters } from "components/issues/filters/applied-filters/root";
 // mobx store
 import { RootStore } from "store/root";
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -71,7 +72,10 @@ export const ProjectDetailsView = observer(() => {
             </div>
           ) : (
             projectStore?.activeBoard && (
-              <>
+              <div className="relative w-full h-full overflow-hidden flex flex-col">
+                {/* applied filters */}
+                <IssueAppliedFilters />
+
                 {projectStore?.activeBoard === "list" && (
                   <div className="relative h-full w-full overflow-y-auto">
                     <IssueListView />
@@ -85,7 +89,7 @@ export const ProjectDetailsView = observer(() => {
                 {projectStore?.activeBoard === "calendar" && <IssueCalendarView />}
                 {projectStore?.activeBoard === "spreadsheet" && <IssueSpreadsheetView />}
                 {projectStore?.activeBoard === "gantt" && <IssueGanttView />}
-              </>
+              </div>
             )
           )}
         </>

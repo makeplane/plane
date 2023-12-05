@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { ReactionSelector, Tooltip } from "components/ui";
+import { ReactionSelector } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 

@@ -10,7 +10,7 @@ import { StateGroupIcon } from "@plane/ui";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
 
-export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
+export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) => {
   const store: RootStore = useMobxStore();
 
   const stateGroup = issueGroupFilter(state.group);
