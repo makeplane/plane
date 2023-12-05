@@ -28,7 +28,7 @@ import {
 } from "helpers/date-time.helper";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { linkDetails, IModule, ModuleLink } from "types";
+import { ILinkDetails, IModule, ModuleLink } from "types";
 // fetch-keys
 import { MODULE_DETAILS } from "constants/fetch-keys";
 // constant
@@ -57,7 +57,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
@@ -236,7 +236,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     ? Math.round((moduleDetails.completed_issues / moduleDetails.total_issues) * 100)
     : null;
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleEditLink = (link: ILinkDetails) => {
     console.log("link", link);
     setSelectedLinkToUpdate(link);
     setModuleLinkModal(true);

@@ -37,7 +37,7 @@ import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserG
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { IIssue, IIssueLink, linkDetails } from "types";
+import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -78,7 +78,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const {
     user: userStore,
@@ -244,7 +244,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setLinkModal(true);
   };
