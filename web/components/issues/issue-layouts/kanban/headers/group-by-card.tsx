@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 // components
 import { CustomMenu } from "@plane/ui";
 import { CreateUpdateIssueModal } from "components/issues/modal";
+import { CreateUpdateDraftIssueModal } from "components/issues/draft-issue-modal";
 import { ExistingIssuesListModal } from "components/core";
 // lucide icons
 import { Minimize2, Maximize2, Circle, Plus } from "lucide-react";
@@ -51,6 +52,8 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, cycleId } = router.query;
 
+  const isDraftIssue = router.pathname.includes("draft-issue");
+
   const { setToastAlert } = useToast();
 
   const renderExistingIssueModal = moduleId || cycleId;
@@ -73,12 +76,21 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
   return (
     <>
-      <CreateUpdateIssueModal
-        isOpen={isOpen}
-        handleClose={() => setIsOpen(false)}
-        prePopulateData={issuePayload}
-        currentStore={currentStore}
-      />
+      {isDraftIssue ? (
+        <CreateUpdateDraftIssueModal
+          isOpen={isOpen}
+          handleClose={() => setIsOpen(false)}
+          prePopulateData={issuePayload}
+          fieldsToShow={["all"]}
+        />
+      ) : (
+        <CreateUpdateIssueModal
+          isOpen={isOpen}
+          handleClose={() => setIsOpen(false)}
+          prePopulateData={issuePayload}
+          currentStore={currentStore}
+        />
+      )}
       {renderExistingIssueModal && (
         <ExistingIssuesListModal
           isOpen={openExistingIssueListModal}
