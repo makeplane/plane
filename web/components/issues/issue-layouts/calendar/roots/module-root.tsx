@@ -14,7 +14,7 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     moduleIssues: moduleIssueStore,
     moduleIssuesFilter: moduleIssueFilterStore,
     moduleIssueCalendarView: moduleIssueCalendarViewStore,
-    calendarHelpers: calendarHelperStore,
+    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
   } = useMobxStore();
 
   const router = useRouter();
@@ -40,17 +40,16 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
   };
 
   const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (calendarHelperStore.handleDragDrop)
-      calendarHelperStore.handleDragDrop(
-        source,
-        destination,
-        workspaceSlug,
-        projectId,
-        moduleIssueStore,
-        issues,
-        issueWithIds,
-        moduleId
-      );
+    handleCalenderDragDrop(
+      source,
+      destination,
+      workspaceSlug,
+      projectId,
+      moduleIssueStore,
+      issues,
+      issueWithIds,
+      moduleId
+    );
   };
 
   return (

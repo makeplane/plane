@@ -16,7 +16,7 @@ export const CalendarLayout: React.FC = observer(() => {
     projectIssues: issueStore,
     issueCalendarView: issueCalendarViewStore,
     projectIssuesFilter: projectIssueFiltersStore,
-    calendarHelpers: calendarHelperStore,
+    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
   } = useMobxStore();
 
   const issueActions = {
@@ -33,8 +33,8 @@ export const CalendarLayout: React.FC = observer(() => {
   };
 
   const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (calendarHelperStore.handleDragDrop && workspaceSlug && projectId)
-      calendarHelperStore.handleDragDrop(
+    if (workspaceSlug && projectId)
+      handleCalenderDragDrop(
         source,
         destination,
         workspaceSlug.toString(),

@@ -59,7 +59,7 @@ export const ModuleKanBanLayout: React.FC = observer(() => {
     issues: IIssueResponse | undefined,
     issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
   ) => {
-    if (kanBanHelperStore.handleDragDrop && workspaceSlug && projectId && moduleId)
+    if (workspaceSlug && projectId && moduleId)
       return await kanBanHelperStore.handleDragDrop(
         source,
         destination,

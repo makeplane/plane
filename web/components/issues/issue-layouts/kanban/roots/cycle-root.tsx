@@ -59,7 +59,7 @@ export const CycleKanBanLayout: React.FC = observer(() => {
     issues: IIssueResponse | undefined,
     issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
   ) => {
-    if (kanBanHelperStore.handleDragDrop && workspaceSlug && projectId && cycleId)
+    if (workspaceSlug && projectId && cycleId)
       return await kanBanHelperStore.handleDragDrop(
         source,
         destination,
