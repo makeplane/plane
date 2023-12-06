@@ -149,7 +149,8 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   const isCurrentUserOwner = page.owned_by === currentUser?.id;
 
   const userCanEdit =
-    isCurrentUserOwner || [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole ?? 5);
+    isCurrentUserOwner ||
+    (currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole));
   const userCanChangeAccess = isCurrentUserOwner;
   const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
   const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
