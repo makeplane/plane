@@ -66,30 +66,6 @@ def send_export_email(email, slug, csv_buffer, rows):
         EMAIL_FROM,
     ) = get_email_configuration(instance_configuration=instance_configuration)
 
-    # Send the email if the users don't have smtp configured
-    if EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
-        # Check the instance registration
-        instance = Instance.objects.first()
-
-        headers = {
-            "Content-Type": "application/json",
-            "x-instance-id": instance.instance_id,
-            "x-api-key": instance.api_key,
-        }
-
-        payload = {
-            "email": email,
-            "slug": slug,
-            "rows": rows,
-        }
-
-        _ = requests.post(
-            f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/analytics/",
-            headers=headers,
-            json=payload,
-        )
-        return
-
     connection = get_connection(
         host=EMAIL_HOST,
         port=int(EMAIL_PORT),

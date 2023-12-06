@@ -25,7 +25,7 @@ export const LatestFeatureBlock = () => {
           <Image
             src={latestFeatures}
             alt="Plane Issues"
-            className={`rounded-md h-full ml-8 -mt-2 ${
+            className={`rounded-md h-full ml-10 -mt-2 ${
               resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
             } `}
           />
