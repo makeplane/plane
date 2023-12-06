@@ -287,7 +287,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
-    "plane.license.bgtasks.instance_verification_task",
 )
 
 # Sentry Settings
