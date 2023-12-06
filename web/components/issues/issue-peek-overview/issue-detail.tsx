@@ -78,13 +78,15 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     [issue, issueUpdate]
   );
 
-  const [localTitleValue, setLocalTitleValue] = useState(issue.name);
-  const issueTitleCurrentValue = watch("name");
+  const [localTitleValue, setLocalTitleValue] = useState("");
+  const [localIssueDescription, setLocalIssueDescription] = useState("");
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
+    if (issue.id) {
+      setLocalIssueDescription(issue.description_html);
+      setLocalTitleValue(issue.name);
     }
-  }, [issueTitleCurrentValue, localTitleValue]);
+  }, [issue.id]);
 
   useEffect(() => {
     setLocalTitleValue(issue.name);
@@ -170,7 +172,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={value}
+              value={localIssueDescription}
+              text_html={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled

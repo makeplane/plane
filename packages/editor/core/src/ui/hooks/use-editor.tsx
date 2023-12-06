@@ -4,7 +4,6 @@ import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
-import { useInitializedContent } from "./useInitializedContent";
 import {
   DeleteImage,
   IMentionSuggestion,
@@ -15,6 +14,7 @@ import {
 interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
+  text_html?: string;
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
   setIsSubmitting?: (
@@ -38,6 +38,7 @@ export const useEditor = ({
   cancelUploadImage,
   editorProps = {},
   value,
+  text_html,
   extensions = [],
   onStart,
   onChange,
@@ -78,10 +79,8 @@ export const useEditor = ({
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
     },
-    [],
+    [text_html],
   );
-
-  useInitializedContent(editor, value);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;
