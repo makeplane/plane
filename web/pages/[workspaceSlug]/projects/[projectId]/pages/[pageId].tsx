@@ -33,13 +33,14 @@ import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { EUserWorkspaceRoles } from "constants/workspace";
 import { GptAssistantModal } from "components/core";
 import { Sparkle } from "lucide-react";
+import { observer } from "mobx-react-lite";
 
 // services
 const fileService = new FileService();
 const pageService = new PageService();
 const issueService = new IssueService();
 
-const PageDetailsPage: NextPageWithLayout = () => {
+const PageDetailsPage: NextPageWithLayout = observer(() => {
   const {
     projectIssues: { updateIssue },
     appConfig: { envConfig },
@@ -371,6 +372,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <DocumentEditorWithRef
+                      isSubmitting={isSubmitting}
                       documentDetails={{
                         title: pageDetails.name,
                         created_by: pageDetails.created_by,
@@ -421,7 +423,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                   <>
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-3 right-[68px]"
+                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-2.5 right-[68px]"
                       onClick={() => setGptModal((prevData) => !prevData)}
                     >
                       <Sparkle className="h-4 w-4" />
@@ -463,7 +465,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
       )}
     </>
   );
-};
+});
 
 PageDetailsPage.getLayout = function getLayout(page: ReactElement) {
   return (
