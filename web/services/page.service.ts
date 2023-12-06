@@ -19,10 +19,7 @@ export class PageService extends APIService {
 
   async patchPage(workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>): Promise<IPage> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data)
-      .then((response) => {
-        console.log("on page patch", response?.data);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         console.log("error", error?.response?.data);
         throw error?.response?.data;
@@ -169,7 +166,7 @@ export class PageService extends APIService {
 
   // =============== Archiving & Unarchiving Pages =================
   async archivePage(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/archive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -177,7 +174,7 @@ export class PageService extends APIService {
   }
 
   async restorePage(workspaceSlug: string, projectId: string, pageId: string): Promise<void> {
-    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unarchive/`)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unarchive/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -193,16 +190,22 @@ export class PageService extends APIService {
   }
   // ==================== Pages Locking Services ==========================
   async lockPage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
-    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
-      .then((response) => response?.data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
+      .then((response) => {
+        console.log("lock ddata", response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
   async unlockPage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
-    this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock/`)
-      .then((response) => response?.data)
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock/`)
+      .then((response) => {
+        console.log("unloack data", response.data);
+        return response?.data;
+      })
       .catch((error) => {
         throw error?.response?.data;
       });

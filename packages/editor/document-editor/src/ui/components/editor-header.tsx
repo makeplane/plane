@@ -47,8 +47,6 @@ export const EditorHeader = (props: IEditorHeader) => {
     isSubmitting,
   } = props;
 
-  console.log(isSubmitting);
-
   return (
     <div className="flex items-center border-b border-custom-border-200 py-2 px-5">
       <div className="flex-shrink-0 w-56 lg:w-72">

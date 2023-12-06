@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, ReactElement } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { MutatorOptions } from "swr";
 import { Controller, useForm } from "react-hook-form";
 // services
 import { PageService } from "services/page.service";
@@ -158,6 +158,33 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   }, [pageDetails?.description_html]);
 
+  const mutatePageDetailsHelper = (
+    serverMutatorFn: Promise<any>,
+    dataToMutate: Partial<IPage>,
+    onErrorAction: () => void
+  ) => {
+    const commonSwrOptions: MutatorOptions = {
+      revalidate: true,
+      populateCache: false,
+      rollbackOnError: (e) => {
+        onErrorAction();
+        return true;
+      },
+    };
+    const formData = getValues();
+    mutatePageDetails(async () => serverMutatorFn, {
+      optimisticData: (prevData) => {
+        if (!prevData) return;
+        return {
+          ...prevData,
+          description_html: formData.description_html,
+          ...dataToMutate,
+        };
+      },
+      ...commonSwrOptions,
+    });
+  };
+
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
@@ -205,87 +232,69 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const archivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
-
-    const formData = getValues();
-
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
-
-        return {
-          ...prevData,
-          description_html: formData.description_html,
-          archived_at: renderDateFormat(new Date()),
-        };
-      }, true);
-
-      await pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
-    } catch (e) {
-      mutatePageDetails();
-    }
+    mutatePageDetailsHelper(
+      pageService.archivePage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
+      {
+        archived_at: renderDateFormat(new Date()),
+      },
+      () =>
+        actionCompleteAlert({
+          title: `Page could not be Archived`,
+          message: `Sorry, page could not be Archived, please try again later`,
+          type: "error",
+        })
+    );
   };
 
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    const formData = getValues();
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
-
-        return {
-          ...prevData,
-          description_html: formData.description_html,
-          archived_at: null,
-        };
-      }, true);
-
-      await pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
-    } catch (e) {
-      mutatePageDetails();
-    }
+    mutatePageDetailsHelper(
+      pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
+      {
+        archived_at: null,
+      },
+      () =>
+        actionCompleteAlert({
+          title: `Page could not be Restored`,
+          message: `Sorry, page could not be Restored, please try again later`,
+          type: "error",
+        })
+    );
   };
 
   // ========================= Page Lock ==========================
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
-
-    const formData = getValues();
-    mutatePageDetails((prevData) => {
-      if (!prevData) return;
-
-      return {
-        ...prevData,
-        description_html: formData.description_html,
+    mutatePageDetailsHelper(
+      pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
+      {
         is_locked: true,
-      };
-    }, true);
-    try {
-      await pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString()).then(() => {});
-    } catch (e) {
-      mutatePageDetails();
-    }
+      },
+      () =>
+        actionCompleteAlert({
+          title: `Page cannot be Locked`,
+          message: `Sorry, page cannot be Locked, please try again later`,
+          type: "error",
+        })
+    );
   };
 
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    const formData = getValues();
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
-
-        return {
-          ...prevData,
-          description_html: formData.description_html,
-          is_locked: false,
-        };
-      }, true);
-
-      await pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
-    } catch (e) {
-      mutatePageDetails();
-    }
+    mutatePageDetailsHelper(
+      pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString()),
+      {
+        is_locked: false,
+      },
+      () =>
+        actionCompleteAlert({
+          title: `Page could not be Unlocked`,
+          message: `Sorry, page could not be Unlocked, please try again later`,
+          type: "error",
+        })
+    );
   };
 
   const [localPageDescription, setLocalIssueDescription] = useState({
@@ -312,6 +321,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const isPageReadOnly =
     pageDetails?.is_locked ||
+    pageDetails?.archived_at ||
     (currentProjectRole && [EUserWorkspaceRoles.VIEWER, EUserWorkspaceRoles.GUEST].includes(currentProjectRole));
 
   const isCurrentUserOwner = pageDetails?.owned_by === user?.id;
