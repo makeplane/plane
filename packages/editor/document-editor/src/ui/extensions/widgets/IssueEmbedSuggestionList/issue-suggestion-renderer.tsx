@@ -12,7 +12,6 @@ import {
 import { PriorityIcon } from "@plane/ui";
 
 const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
-  console.log(container);
   const containerHeight = container.offsetHeight;
   const itemHeight = item ? item.offsetHeight : 0;
 

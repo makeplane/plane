@@ -191,10 +191,7 @@ export class PageService extends APIService {
   // ==================== Pages Locking Services ==========================
   async lockPage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/lock/`)
-      .then((response) => {
-        console.log("lock ddata", response.data);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -202,10 +199,7 @@ export class PageService extends APIService {
 
   async unlockPage(workspaceSlug: string, projectId: string, pageId: string): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/unlock/`)
-      .then((response) => {
-        console.log("unloack data", response.data);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

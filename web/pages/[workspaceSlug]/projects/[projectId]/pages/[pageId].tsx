@@ -154,13 +154,23 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   useEffect(() => {
     if (pageDetails?.description_html) {
-      setLocalIssueDescription({ id: pageId, description_html: pageDetails.description_html });
+      setLocalIssueDescription({ id: pageId as string, description_html: pageDetails.description_html });
     }
   }, [pageDetails?.description_html]);
+
+  function createObjectFromArray(keys: string[], options: any): any {
+    return keys.reduce((obj, key) => {
+      if (options[key] !== undefined) {
+        obj[key] = options[key];
+      }
+      return obj;
+    }, {} as { [key: string]: any });
+  }
 
   const mutatePageDetailsHelper = (
     serverMutatorFn: Promise<any>,
     dataToMutate: Partial<IPage>,
+    formDataValues: Array<keyof IPage>,
     onErrorAction: () => void
   ) => {
     const commonSwrOptions: MutatorOptions = {
@@ -172,12 +182,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       },
     };
     const formData = getValues();
+    const formDataMutationObject = createObjectFromArray(formDataValues, formData);
+
     mutatePageDetails(async () => serverMutatorFn, {
       optimisticData: (prevData) => {
         if (!prevData) return;
         return {
           ...prevData,
-          description_html: formData.description_html,
+          description_html: formData["description_html"],
+          ...formDataMutationObject,
           ...dataToMutate,
         };
       },
@@ -192,26 +205,33 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
     if (!formData?.name || formData?.name.length === 0) return;
 
-    await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), formData);
+    try {
+      await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), formData);
+    } catch (error) {
+      actionCompleteAlert({
+        title: `Page could not be updated`,
+        message: `Sorry, page could not be updated, please try again later`,
+        type: "error",
+      });
+    }
   };
 
   const updatePageTitle = async (title: string) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
-
-        return {
-          ...prevData,
-          name: title,
-        };
-      }, false);
-
-      await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), { name: title });
-    } catch (e) {
-      mutatePageDetails();
-    }
+    mutatePageDetailsHelper(
+      pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), { name: title }),
+      {
+        name: title,
+      },
+      [],
+      () =>
+        actionCompleteAlert({
+          title: `Page Title could not be updated`,
+          message: `Sorry, page title could not be updated, please try again later`,
+          type: "error",
+        })
+    );
   };
 
   const createPage = async (payload: Partial<IPage>) => {
@@ -237,6 +257,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       {
         archived_at: renderDateFormat(new Date()),
       },
+      ["description_html"],
       () =>
         actionCompleteAlert({
           title: `Page could not be Archived`,
@@ -254,6 +275,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       {
         archived_at: null,
       },
+      ["description_html"],
       () =>
         actionCompleteAlert({
           title: `Page could not be Restored`,
@@ -271,6 +293,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       {
         is_locked: true,
       },
+      ["description_html"],
       () =>
         actionCompleteAlert({
           title: `Page cannot be Locked`,
@@ -288,6 +311,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       {
         is_locked: false,
       },
+      ["description_html"],
       () =>
         actionCompleteAlert({
           title: `Page could not be Unlocked`,
