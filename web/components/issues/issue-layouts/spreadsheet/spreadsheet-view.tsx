@@ -139,6 +139,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               <Spinner />
             </div>
           )}
+          <div /> {/* empty div to show right most border */}
         </div>
 
         <div className="border-t border-custom-border-100">
