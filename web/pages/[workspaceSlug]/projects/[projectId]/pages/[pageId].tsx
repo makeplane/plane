@@ -72,7 +72,10 @@ const PageDetailsPage: NextPageWithLayout = () => {
     workspaceSlug && projectId && pageId ? PAGE_DETAILS(pageId.toString()) : null,
     workspaceSlug && projectId && pageId
       ? () => pageService.getPageDetails(workspaceSlug.toString(), projectId.toString(), pageId.toString())
-      : null
+      : null,
+    {
+      revalidateOnFocus: false,
+    }
   );
 
   const handleUpdateIssue = (issueId: string, data: Partial<IIssue>) => {
@@ -125,6 +128,12 @@ const PageDetailsPage: NextPageWithLayout = () => {
       setShowAlert(true);
     }
   }, [isSubmitting, setShowAlert]);
+
+  useEffect(() => {
+    if (pageDetails?.description_html) {
+      setLocalIssueDescription(pageDetails.description_html);
+    }
+  }, [pageDetails?.description_html]);
 
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
@@ -257,13 +266,6 @@ const PageDetailsPage: NextPageWithLayout = () => {
   };
 
   const [localPageDescription, setLocalIssueDescription] = useState("");
-
-  useEffect(() => {
-    console.log("set", pageDetails?.description_html);
-    if (pageDetails?.description_html) {
-      setLocalIssueDescription(pageDetails.description_html);
-    }
-  }, [pageDetails?.description_html]);
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
