@@ -29,6 +29,7 @@ import { NextPageWithLayout } from "types/app";
 import { IPage } from "types";
 // fetch-keys
 import { PAGE_DETAILS } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 // services
 const fileService = new FileService();
@@ -42,6 +43,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   // store
   const {
     appConfig: { envConfig },
+    user: { currentProjectRole },
   } = useMobxStore();
   // router
   const router = useRouter();
@@ -217,12 +219,24 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
       />
     );
 
+  const isPageReadOnly =
+    pageDetails?.is_locked ||
+    (currentProjectRole && [EUserWorkspaceRoles.VIEWER, EUserWorkspaceRoles.GUEST].includes(currentProjectRole));
+
+  const isCurrentUserOwner = pageDetails?.owned_by === user?.id;
+
+  const userCanDuplicate =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const userCanLock =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+
   return (
     <>
       {pageDetails ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
-            {pageDetails.is_locked || pageDetails.archived_at ? (
+            {isPageReadOnly ? (
               <DocumentReadOnlyEditorWithRef
                 ref={editorRef}
                 value={pageDetails.description_html}
@@ -278,18 +292,16 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                         setIsSubmitting("submitting");
                         debouncedFormSave();
                       }}
-                      duplicationConfig={{ action: duplicate_page }}
+                      duplicationConfig={userCanDuplicate ? { action: duplicate_page } : undefined}
                       pageArchiveConfig={
-                        user && pageDetails.owned_by === user.id
+                        userCanArchive
                           ? {
                               is_archived: pageDetails.archived_at ? true : false,
                               action: pageDetails.archived_at ? unArchivePage : archivePage,
                             }
                           : undefined
                       }
-                      pageLockConfig={
-                        user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
-                      }
+                      pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
                     />
                   )}
                 />
