@@ -38,7 +38,7 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
     setLoginCallBackURL(`${origin}/` as any);
   }, []);
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="w-full">
       <Link
         href={`https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >

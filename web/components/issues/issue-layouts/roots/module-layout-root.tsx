@@ -47,13 +47,13 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
     <div className="relative w-full h-full flex flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
 
-      {loader === "init-loader" ? (
+      {loader === "init-loader" || !getIssues ? (
         <div className="w-full h-full flex justify-center items-center">
           <Spinner />
         </div>
       ) : (
         <>
-          {Object.keys(getIssues ?? {}).length == 0 && !loader ? (
+          {Object.keys(getIssues ?? {}).length == 0 ? (
             <ModuleEmptyState workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
           ) : (
             <div className="h-full w-full overflow-auto">

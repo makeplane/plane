@@ -14,4 +14,5 @@ export interface IAppConfig {
   posthog_host: string | null;
   has_openai_configured: boolean;
   has_unsplash_configured: boolean;
+  is_self_managed: boolean;
 }

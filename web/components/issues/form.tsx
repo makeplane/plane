@@ -602,16 +602,18 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
           </div>
         </div>
         <div className="-mx-5 mt-5 flex items-center justify-between gap-2 border-t border-custom-border-100 px-5 pt-5">
-          <div
-            className="flex cursor-default items-center gap-1.5"
-            onClick={() => setCreateMore((prevData) => !prevData)}
-          >
-            <div className="flex cursor-pointer items-center justify-center">
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+          {!status && (
+            <div
+              className="flex cursor-default items-center gap-1.5"
+              onClick={() => setCreateMore((prevData) => !prevData)}
+            >
+              <div className="flex cursor-pointer items-center justify-center">
+                <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+              </div>
+              <span className="text-xs">Create more</span>
             </div>
-            <span className="text-xs">Create more</span>
-          </div>
-          <div className="flex items-center gap-2">
+          )}
+          <div className="flex items-center gap-2 ml-auto">
             <Button
               variant="neutral-primary"
               size="sm"
