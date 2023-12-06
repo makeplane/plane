@@ -39,9 +39,10 @@ const IssueNavbar = observer(() => {
   }: RootStore = useMobxStore();
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, board, states, priorities, labels } = router.query as {
+  const { workspace_slug, project_slug, board, peekId, states, priorities, labels } = router.query as {
     workspace_slug: string;
     project_slug: string;
+    peekId: string;
     board: string;
     states: string;
     priorities: string;
@@ -84,6 +85,7 @@ const IssueNavbar = observer(() => {
       if (currentBoard) {
         if (projectStore?.activeBoard === null || projectStore?.activeBoard !== currentBoard) {
           let params: any = { board: currentBoard };
+          if (peekId && peekId.length > 0) params = { ...params, peekId: peekId };
           if (priorities && priorities.length > 0) params = { ...params, priorities: priorities };
           if (states && states.length > 0) params = { ...params, states: states };
           if (labels && labels.length > 0) params = { ...params, labels: labels };
@@ -155,7 +157,7 @@ const IssueNavbar = observer(() => {
 
       {user ? (
         <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
-          <Avatar name={user?.display_name} src={user?.avatar} size={24} shape="square" className="!text-base" />
+          <Avatar name={user?.display_name} src={user?.avatar} shape="square" size="sm" />
           <h6 className="text-xs font-medium">{user.display_name}</h6>
         </div>
       ) : (

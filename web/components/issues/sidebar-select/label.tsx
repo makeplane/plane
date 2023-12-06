@@ -125,6 +125,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
               Select Label
             </span>
           }
+          disabled={uneditable}
         />
         {!isNotAllowed && (
           <button

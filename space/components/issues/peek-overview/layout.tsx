@@ -19,7 +19,15 @@ export const IssuePeekOverview: React.FC<Props> = observer(() => {
   const [isModalPeekOpen, setIsModalPeekOpen] = useState(false);
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, peekId, board } = router.query;
+  const { workspace_slug, project_slug, peekId, board, priorities, states, labels } = router.query as {
+    workspace_slug: string;
+    project_slug: string;
+    peekId: string;
+    board: string;
+    priorities: string;
+    states: string;
+    labels: string;
+  };
   // store
   const { issueDetails: issueDetailStore, issue: issueStore } = useMobxStore();
   const issueDetails = issueDetailStore.peekId && peekId ? issueDetailStore.details[peekId.toString()] : undefined;
@@ -34,16 +42,15 @@ export const IssuePeekOverview: React.FC<Props> = observer(() => {
 
   const handleClose = () => {
     issueDetailStore.setPeekId(null);
-    router.replace(
-      {
-        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
-        query: {
-          board,
-        },
-      },
-      undefined,
-      { shallow: true }
-    );
+
+    const params: any = { board: board };
+    if (states && states.length > 0) params.states = states;
+    if (priorities && priorities.length > 0) params.priorities = priorities;
+    if (labels && labels.length > 0) params.labels = labels;
+
+    router.replace({ pathname: `/${workspace_slug?.toString()}/${project_slug}`, query: { ...params } }, undefined, {
+      shallow: true,
+    });
   };
 
   useEffect(() => {
@@ -91,7 +98,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(() => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity z-20" />
           </Transition.Child>
           <Transition.Child
             as={React.Fragment}

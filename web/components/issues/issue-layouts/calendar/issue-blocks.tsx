@@ -1,8 +1,12 @@
+import { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Draggable } from "@hello-pangea/dnd";
+import { MoreHorizontal } from "lucide-react";
 // components
 import { Tooltip } from "@plane/ui";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssue } from "types";
 import { IIssueResponse } from "store/issues/types";
@@ -10,13 +14,18 @@ import { IIssueResponse } from "store/issues/types";
 type Props = {
   issues: IIssueResponse | undefined;
   issueIdList: string[] | null;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
   const { issues, issueIdList, quickActions } = props;
   // router
   const router = useRouter();
+
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
@@ -26,6 +35,20 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
       query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
+
+  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
+
+  const customActionButton = (
+    <div
+      ref={menuActionRef}
+      className={`w-full cursor-pointer text-custom-sidebar-text-400 rounded p-1 hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      }`}
+      onClick={() => setIsMenuActive(!isMenuActive)}
+    >
+      <MoreHorizontal className="h-3.5 w-3.5" />
+    </div>
+  );
 
   return (
     <>
@@ -69,13 +92,13 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
                     </Tooltip>
                   </div>
                   <div
-                    className="hidden group-hover/calendar-block:block"
+                    className={`h-5 w-5 hidden group-hover/calendar-block:block ${isMenuActive ? "!block" : ""}`}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                     }}
                   >
-                    {quickActions(issue)}
+                    {quickActions(issue, customActionButton)}
                   </div>
                 </div>
               </div>

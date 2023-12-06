@@ -30,6 +30,7 @@ import { IssuePeekOverview } from "components/issues/issue-peek-overview";
 import { IssueService } from "services/issue";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 // services
 const fileService = new FileService();
@@ -39,6 +40,8 @@ const issueService = new IssueService();
 const PageDetailsPage: NextPageWithLayout = () => {
   const {
     projectIssues: { updateIssue },
+    appConfig: { envConfig },
+    user: { currentProjectRole },
   } = useMobxStore();
 
   const editorRef = useRef<any>(null);
@@ -287,12 +290,24 @@ const PageDetailsPage: NextPageWithLayout = () => {
       />
     );
 
+  const isPageReadOnly =
+    pageDetails?.is_locked ||
+    (currentProjectRole && [EUserWorkspaceRoles.VIEWER, EUserWorkspaceRoles.GUEST].includes(currentProjectRole));
+
+  const isCurrentUserOwner = pageDetails?.owned_by === user?.id;
+
+  const userCanDuplicate =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const userCanLock =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
+
   return (
     <>
       {pageDetails && issuesResponse ? (
         <div className="flex h-full flex-col justify-between">
           <div className="h-full w-full overflow-hidden">
-            {pageDetails.is_locked || pageDetails.archived_at ? (
+            {isPageReadOnly ? (
               <DocumentReadOnlyEditorWithRef
                 onActionCompleteHandler={actionCompleteAlert}
                 ref={editorRef}
@@ -331,62 +346,84 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 }}
               />
             ) : (
-              <Controller
-                name="description_html"
-                control={control}
-                render={({ field: { value, onChange } }) => (
-                  <DocumentEditorWithRef
-                    documentDetails={{
-                      title: pageDetails.name,
-                      created_by: pageDetails.created_by,
-                      created_on: pageDetails.created_at,
-                      last_updated_at: pageDetails.updated_at,
-                      last_updated_by: pageDetails.updated_by,
-                    }}
-                    uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
-                    setShouldShowAlert={setShowAlert}
-                    restoreFile={fileService.restoreImage}
-                    deleteFile={fileService.deleteImage}
-                    cancelUploadImage={fileService.cancelUpload}
-                    ref={editorRef}
-                    debouncedUpdatesEnabled={false}
-                    updatePageTitle={updatePageTitle}
-                    setIsSubmitting={setIsSubmitting}
-                    value={localPageDescription.description_html}
-                    rerenderOnPropsChange={localPageDescription}
-                    isSubmitting={isSubmitting}
-                    customClassName="tracking-tight px-0 h-full w-full"
-                    onChange={(_description_json: Object, description_html: string) => {
-                      setShowAlert(true);
-                      onChange(description_html);
-                      setIsSubmitting("submitting");
-                      debouncedFormSave();
-                    }}
-                    onActionCompleteHandler={actionCompleteAlert}
-                    duplicationConfig={{ action: duplicate_page }}
-                    pageArchiveConfig={
-                      user && pageDetails.owned_by === user.id
-                        ? {
-                            is_archived: pageDetails.archived_at ? true : false,
-                            action: pageDetails.archived_at ? unArchivePage : archivePage,
-                          }
-                        : undefined
-                    }
-                    pageLockConfig={
-                      user && pageDetails.owned_by === user.id ? { is_locked: false, action: lockPage } : undefined
-                    }
-                    embedConfig={{
-                      issueEmbedConfig: {
-                        issues: issues,
-                        fetchIssue: fetchIssue,
-                        clickAction: issueWidgetClickAction,
-                      },
-                    }}
-                  />
+              <div className="h-full w-full relative overflow-hidden">
+                <Controller
+                  name="description_html"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <DocumentEditorWithRef
+                      documentDetails={{
+                        title: pageDetails.name,
+                        created_by: pageDetails.created_by,
+                        created_on: pageDetails.created_at,
+                        last_updated_at: pageDetails.updated_at,
+                        last_updated_by: pageDetails.updated_by,
+                      }}
+                      uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
+                      setShouldShowAlert={setShowAlert}
+                      deleteFile={fileService.deleteImage}
+                      restoreFile={fileService.restoreImage}
+                      cancelUploadImage={fileService.cancelUpload}
+                      ref={editorRef}
+                      debouncedUpdatesEnabled={false}
+                      setIsSubmitting={setIsSubmitting}
+                      updatePageTitle={updatePageTitle}
+                      value={localPageDescription.description_html}
+                      rerenderOnPropsChange={localPageDescription}
+                      onActionCompleteHandler={actionCompleteAlert}
+                      customClassName="tracking-tight self-center px-0 h-full w-full"
+                      onChange={(_description_json: Object, description_html: string) => {
+                        setShowAlert(true);
+                        onChange(description_html);
+                        setIsSubmitting("submitting");
+                        debouncedFormSave();
+                      }}
+                      duplicationConfig={userCanDuplicate ? { action: duplicate_page } : undefined}
+                      pageArchiveConfig={
+                        userCanArchive
+                          ? {
+                              is_archived: pageDetails.archived_at ? true : false,
+                              action: pageDetails.archived_at ? unArchivePage : archivePage,
+                            }
+                          : undefined
+                      }
+                      pageLockConfig={userCanLock ? { is_locked: false, action: lockPage } : undefined}
+                      embedConfig={{
+                        issueEmbedConfig: {
+                          issues: issues,
+                          fetchIssue: fetchIssue,
+                          clickAction: issueWidgetClickAction,
+                        },
+                      }}
+                    />
+                  )}
+                />
+                {projectId && envConfig?.has_openai_configured && (
+                  <>
+                    <button
+                      type="button"
+                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-3 right-[68px]"
+                      onClick={() => setGptModal((prevData) => !prevData)}
+                    >
+                      <Sparkle className="h-4 w-4" />
+                      AI
+                    </button>
+                    <GptAssistantModal
+                      isOpen={gptModalOpen}
+                      handleClose={() => {
+                        setGptModal(false);
+                      }}
+                      inset="top-9 right-[68px] !w-1/2 !max-h-[50%]"
+                      content=""
+                      onResponse={(response) => {
+                        handleAiAssistance(response);
+                      }}
+                      projectId={projectId.toString()}
+                    />
+                  </>
                 )}
-              />
+              </div>
             )}
-          </div>
           <IssuePeekOverview
             workspaceSlug={workspaceSlug as string}
             projectId={projectId as string}
@@ -398,6 +435,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
               }
             }}
           />
+        </div>
         </div>
       ) : (
         <div className="h-full w-full grid place-items-center">

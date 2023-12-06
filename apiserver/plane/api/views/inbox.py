@@ -103,7 +103,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         if inbox is None and not project.inbox_view:
             return Response(
                 {
-                    "error": "Inbox is not enabled for this project enable it through the project settings"
+                    "error": "Inbox is not enabled for this project enable it through the project's api"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -177,7 +177,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         if inbox is None and not project.inbox_view:
             return Response(
                 {
-                    "error": "Inbox is not enabled for this project enable it through the project settings"
+                    "error": "Inbox is not enabled for this project enable it through the project's api"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -311,7 +311,7 @@ class InboxIssueAPIEndpoint(BaseAPIView):
         if inbox is None and not project.inbox_view:
             return Response(
                 {
-                    "error": "Inbox is not enabled for this project enable it through the project settings"
+                    "error": "Inbox is not enabled for this project enable it through the project's api"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

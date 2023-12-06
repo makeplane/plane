@@ -75,7 +75,7 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
       {formattedConfig ? (
         <>
           <div className="flex flex-col gap-12 w-full lg:w-2/5 pb-8 border-b border-custom-border-100">
-            <div className="flex items-center gap-14 mr-4">
+            <div className="flex items-center gap-14 mr-4 pointer-events-none opacity-50">
               <div className="grow">
                 <div className="text-custom-text-100 font-medium text-sm">
                   Turn Magic Links {Boolean(parseInt(enableMagicLogin)) ? "off" : "on"}
@@ -92,11 +92,12 @@ const InstanceAdminAuthorizationPage: NextPageWithLayout = observer(() => {
               <div className={`shrink-0 ${isSubmitting && "opacity-70"}`}>
                 <ToggleSwitch
                   value={Boolean(parseInt(enableMagicLogin))}
-                  onChange={() => {
-                    Boolean(parseInt(enableMagicLogin)) === true
-                      ? updateConfig("ENABLE_MAGIC_LINK_LOGIN", "0")
-                      : updateConfig("ENABLE_MAGIC_LINK_LOGIN", "1");
-                  }}
+                  // onChange={() => {
+                  //   Boolean(parseInt(enableMagicLogin)) === true
+                  //     ? updateConfig("ENABLE_MAGIC_LINK_LOGIN", "0")
+                  //     : updateConfig("ENABLE_MAGIC_LINK_LOGIN", "1");
+                  // }}
+                  onChange={() => {}}
                   size="sm"
                   disabled={isSubmitting}
                 />

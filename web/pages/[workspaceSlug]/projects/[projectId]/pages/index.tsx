@@ -162,7 +162,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
 
 ProjectPagesPage.getLayout = function getLayout(page: ReactElement) {
   return (
-    <AppLayout header={<PagesHeader showButton />} withProjectWrapper>
+    <AppLayout header={<PagesHeader />} withProjectWrapper>
       {page}
     </AppLayout>
   );
