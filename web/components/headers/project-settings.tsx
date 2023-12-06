@@ -26,7 +26,7 @@ export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) 
   } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
-  if (currentProjectRole && currentProjectRole <= EUserWorkspaceRoles.VIEWER) return;
+  if (currentProjectRole && currentProjectRole <= EUserWorkspaceRoles.VIEWER) return null;
 
   return (
     <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
