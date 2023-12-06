@@ -21,19 +21,21 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    id: string;
     project_id?: string;
   };
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   isAllowed: boolean;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
 const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleFormSubmit, workspaceSlug, isAllowed } = props;
+  const { issue, handleFormSubmit, workspaceSlug, isAllowed, isSubmitting, setIsSubmitting } = props;
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
@@ -54,12 +56,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   });
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const issueTitleCurrentValue = watch("name");
+  const [localIssueDescription, setLocalIssueDescription] = useState("");
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
+    if (issue.id) {
+      setLocalIssueDescription(issue.description_html);
+      setLocalTitleValue(issue.name);
     }
-  }, [issueTitleCurrentValue, localTitleValue]);
+  }, [issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -149,7 +153,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={value}
+              value={localIssueDescription}
+              text_html={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
@@ -166,13 +171,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
             />
           )}
         />
-        <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
-        >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ import { RootStore } from "store/root";
 export interface IIssuePropertyState {
   projectId: string | null;
   value: any | string | null;
+  defaultOptions?: any;
   onChange: (state: IState) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -30,6 +31,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
   const {
     projectId,
     value,
+    defaultOptions = [],
     onChange,
     disabled,
     hideDropdownArrow = false,
@@ -47,10 +49,9 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectStates: IState[] = [];
-  const projectStatesByGroup = projectStateStore.groupedProjectStates;
-  if (projectStatesByGroup)
-    for (const group in projectStatesByGroup) projectStates.push(...projectStatesByGroup[group]);
+  let projectStates: IState[] = defaultOptions;
+  const storeStates = projectId ? projectStateStore.states[projectId] : [];
+  if (storeStates && storeStates.length > 0) projectStates = storeStates;
 
   const fetchProjectStates = () => {
     setIsLoading(true);
@@ -120,7 +121,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
               className={`flex items-center justify-between h-5 gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
-              onClick={() => !projectStatesByGroup && fetchProjectStates()}
+              onClick={() => !storeStates && fetchProjectStates()}
             >
               {label}
               {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

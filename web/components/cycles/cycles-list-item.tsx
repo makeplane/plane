@@ -153,7 +153,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-        <span className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
+        <div className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
           <div className="flex items-center gap-3 w-full truncate">
             <div className="flex items-center gap-4 truncate">
               <span className="flex-shrink-0">
@@ -262,7 +262,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
-        </span>
+        </div>
       </Link>
     </>
   );

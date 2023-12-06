@@ -6,6 +6,12 @@
   height: 0;
 }
 
+/* block quotes */
+.ProseMirror blockquote p::before,
+.ProseMirror blockquote p::after {
+  display: none;
+}
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
@@ -246,16 +252,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   padding: 0;
 }
 
-.ProseMirror:not(.dragging) .ProseMirror-selectednode:not(img):not(pre) {
-  outline: none !important;
-  border-radius: 0.2rem;
-  background-color: rgb(var(--color-background-90));
-  border: 1px solid #5abbf7;
-  padding: 4px 2px 4px 2px;
-  transition: background-color 0.2s;
-  box-shadow: none;
-}
-
 .drag-handle {
   position: fixed;
   opacity: 1;
@@ -319,4 +315,9 @@ div[data-type="horizontalRule"] {
   & > div {
     border-bottom: 1px solid rgb(var(--color-text-100));
   }
+}
+
+/* image resizer */
+.moveable-control-box {
+  z-index: 10 !important;
 }

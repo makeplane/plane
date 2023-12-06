@@ -139,7 +139,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <span className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
+        <div className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="top">
@@ -249,7 +249,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </div>
             </div>
           </div>
-        </span>
+        </div>
       </Link>
     </>
   );

@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 // components
 import { EmailResetPasswordForm } from "./email-reset-password-form";
 // ui
-import { Input, PrimaryButton } from "components/ui";
+import { Button, Input } from "@plane/ui";
+
 // types
 type EmailPasswordFormValues = {
   email: string;
@@ -58,7 +59,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                   ) || "Email address is not valid",
               })}
               placeholder="Enter your email address..."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
             {errors.email && <div className="text-sm text-red-500">{errors.email.message}</div>}
           </div>
@@ -70,7 +71,7 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
                 required: "Password is required",
               })}
               placeholder="Enter your password..."
-              className="border-custom-border-300 h-[46px]"
+              className="border-custom-border-300 h-[46px] w-full"
             />
             {errors.password && <div className="text-sm text-red-500">{errors.password.message}</div>}
           </div>
@@ -92,14 +93,16 @@ export const EmailPasswordForm: React.FC<Props> = ({ onSubmit }) => {
             )}
           </div>
           <div>
-            <PrimaryButton
+            <Button
+              variant="primary"
               type="submit"
-              className="w-full text-center h-[46px]"
+              size="xl"
+              className="w-full"
               disabled={!isValid && isDirty}
               loading={isSubmitting}
             >
               {isSignUpPage ? (isSubmitting ? "Signing up..." : "Sign up") : isSubmitting ? "Signing in..." : "Sign in"}
-            </PrimaryButton>
+            </Button>
             {!isSignUpPage && (
               <Link href="/sign-up">
                 <span className="block text-custom-text-200 hover:text-custom-primary-100 text-xs mt-4">

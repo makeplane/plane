@@ -17,6 +17,7 @@ import {
 import { IWorkspaceView } from "types/workspace-views";
 // store
 import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store/issue";
+import { IIssueResponse } from "store/issues/types";
 
 export class WorkspaceService extends APIService {
   constructor() {
@@ -245,10 +246,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async getViewIssues(
-    workspaceSlug: string,
-    params: any
-  ): Promise<IIssueGroupedStructure | IIssueGroupWithSubGroupsStructure | IIssueUnGroupedStructure> {
+  async getViewIssues(workspaceSlug: string, params: any): Promise<IIssueResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
       params,
     })

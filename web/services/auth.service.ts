@@ -55,7 +55,7 @@ export class AuthService extends APIService {
       new_password: string;
     }
   ): Promise<ILoginTokenResponse> {
-    return this.post(`/api/reset-password/${uidb64}/${token}/`, data)
+    return this.post(`/api/reset-password/${uidb64}/${token}/`, data, { headers: {} })
       .then((response) => {
         if (response?.status === 200) {
           this.setAccessToken(response?.data?.access_token);
@@ -135,7 +135,7 @@ export class AuthService extends APIService {
   }
 
   async instanceMagicSignIn(data: any): Promise<any> {
-    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data);
+    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data, { headers: {} });
     if (response?.status === 200) {
       this.setAccessToken(response?.data?.access_token);
       this.setRefreshToken(response?.data?.refresh_token);

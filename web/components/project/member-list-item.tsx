@@ -13,7 +13,7 @@ import { CustomSelect, Tooltip } from "@plane/ui";
 // icons
 import { ChevronDown, Dot, XCircle } from "lucide-react";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 // types
 import { IProjectMember, TUserProjectRole } from "types";
 
@@ -33,12 +33,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
   const {
     user: { currentUser, currentProjectMemberInfo, currentProjectRole, leaveProject },
     projectMember: { removeMemberFromProject, updateMember },
+    project: { fetchProjects },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
 
   // derived values
-  const isAdmin = currentProjectRole === 20;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
   const memberDetails = member.member;
 
   const handleRemove = async () => {
@@ -46,7 +47,11 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
 
     if (memberDetails.id === currentUser?.id) {
       await leaveProject(workspaceSlug.toString(), projectId.toString())
-        .then(() => router.push(`/${workspaceSlug}/projects`))
+        .then(async () => {
+          await fetchProjects(workspaceSlug.toString());
+
+          router.push(`/${workspaceSlug}/projects`);
+        })
         .catch((err) =>
           setToastAlert({
             type: "error",
@@ -148,12 +153,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
             disabled={
               memberDetails.id === currentUser?.id ||
               !member.member ||
-              (currentProjectRole && currentProjectRole !== 20 && currentProjectRole < member.role)
+              !currentProjectRole ||
+              currentProjectRole < member.role
             }
             placement="bottom-end"
           >
             {Object.keys(ROLE).map((key) => {
-              if (currentProjectRole && currentProjectRole !== 20 && currentProjectRole < parseInt(key)) return null;
+              if (currentProjectRole && !isAdmin && currentProjectRole < parseInt(key)) return null;
 
               return (
                 <CustomSelect.Option key={key} value={parseInt(key, 10)}>
@@ -173,7 +179,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
                 onClick={() => setRemoveMemberModal(true)}
                 className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
               >
-                <XCircle className="h-3.5 w-3.5 text-custom-text-400" strokeWidth={2} />
+                <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
               </button>
             </Tooltip>
           )}

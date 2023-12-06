@@ -21,13 +21,11 @@ export const InstanceSetupFormRoot = () => {
   return (
     <>
       {setupStep === EInstanceSetupSteps.DONE ? (
-        <div>
-          <InstanceSetupDone />
-        </div>
+        <InstanceSetupDone />
       ) : (
-        <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
-          <div className={`px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-24 pb-56 rounded-t-md overflow-auto`}>
-            <div className="sm:w-96 mx-auto flex flex-col divide-y divide-custom-border-200">
+        <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200">
+          <div className="bg-onboarding-gradient-200 h-full pt-24 pb-56 rounded-t-md overflow-auto">
+            <div className="mx-auto flex flex-col">
               {setupStep === EInstanceSetupSteps.EMAIL && (
                 <InstanceSetupEmailForm
                   handleNextStep={(email) => {

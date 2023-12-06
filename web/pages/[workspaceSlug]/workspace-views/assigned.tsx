@@ -2,7 +2,7 @@ import { ReactElement } from "react";
 // components
 import { GlobalViewsHeader } from "components/workspace";
 import { GlobalIssuesHeader } from "components/headers";
-import { GlobalViewLayoutRoot } from "components/issues";
+import { AllIssueLayoutRoot } from "components/issues/issue-layouts";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // types
@@ -12,7 +12,7 @@ const GlobalViewAssignedIssuesPage: NextPageWithLayout = () => (
   <div className="h-full overflow-hidden bg-custom-background-100">
     <div className="h-full w-full flex flex-col border-b border-custom-border-300">
       <GlobalViewsHeader />
-      <GlobalViewLayoutRoot type="assigned" />
+      <AllIssueLayoutRoot type="assigned" />
     </div>
   </div>
 );

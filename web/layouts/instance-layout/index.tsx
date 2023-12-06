@@ -24,7 +24,9 @@ const InstanceLayout: FC<Props> = observer(({ children }) => {
   const router = useRouter();
   const isGodMode = router.pathname.includes("god-mode");
 
-  useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
+  useSWR("INSTANCE_INFO", () => fetchInstanceInfo(), {
+    revalidateOnFocus: false,
+  });
 
   useEffect(() => {
     if (instance?.is_activated === false) {

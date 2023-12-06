@@ -1,4 +1,4 @@
-import { observable, action, computed, makeObservable, runInAction, reaction } from "mobx";
+import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // services
 import IssueService from "services/issue.service";
 // store

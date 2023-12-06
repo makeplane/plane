@@ -118,8 +118,6 @@ export class KanBanHelpers implements IKanBanHelpers {
 
       const [removed] = sourceIssues.splice(source.index, 1);
 
-      console.log("removed", removed);
-
       if (removed) {
         if (viewId) store?.removeIssue(workspaceSlug, projectId, removed, viewId);
         else store?.removeIssue(workspaceSlug, projectId, removed);

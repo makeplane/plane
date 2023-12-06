@@ -15,6 +15,7 @@ import { Loader } from "@plane/ui";
 import { IProject, IUserLite, IWorkspace } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const defaultValues: Partial<IProject> = {
   project_lead: null,
@@ -29,7 +30,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   const { user: userStore, project: projectStore } = useMobxStore();
   const { currentProjectDetails } = projectStore;
   const { currentProjectRole } = userStore;
-  const isAdmin = currentProjectRole === 20;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
   // form info

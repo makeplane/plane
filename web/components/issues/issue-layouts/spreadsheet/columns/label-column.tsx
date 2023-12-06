@@ -27,6 +27,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
       <IssuePropertyLabels
         projectId={issue.project_detail?.id ?? null}
         value={issue.labels}
+        defaultOptions={issue?.label_details ? issue.label_details : []}
         onChange={(data) => onChange({ labels: data })}
         className="h-full w-full"
         buttonClassName="px-2.5 h-full"

@@ -113,7 +113,7 @@ export const ISSUE_EXTRA_OPTIONS: {
   title: string;
 }[] = [
   { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
-  { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
+  { key: "show_empty_groups", title: "Show empty groups" }, // filter on front-end
 ];
 
 export const ISSUE_LAYOUTS: {
@@ -297,7 +297,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state_group", "labels", "assignees", "created_by", "project", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {

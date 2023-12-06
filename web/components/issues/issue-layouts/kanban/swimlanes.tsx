@@ -91,6 +91,12 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   currentStore?: EProjectStore;
   enableQuickIssueCreate: boolean;
   isReadOnly: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -118,6 +124,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     enableQuickIssueCreate,
     isReadOnly,
     addIssuesToView,
+    quickAddCallback,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -176,6 +183,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   isDragStarted={isDragStarted}
                   isReadOnly={isReadOnly}
                   addIssuesToView={addIssuesToView}
+                  quickAddCallback={quickAddCallback}
                 />
               </div>
             )}
@@ -208,6 +216,12 @@ export interface IKanBanSwimLanes {
   currentStore?: EProjectStore;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   enableQuickIssueCreate: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
   isReadOnly: boolean;
 }
 
@@ -236,6 +250,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     isReadOnly,
     currentStore,
     addIssuesToView,
+    quickAddCallback,
   } = props;
 
   return (
@@ -378,6 +393,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -406,6 +422,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -434,6 +451,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -462,6 +480,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -490,6 +509,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -518,6 +538,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -546,6 +567,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
@@ -574,6 +596,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
           isReadOnly={isReadOnly}
+          quickAddCallback={quickAddCallback}
         />
       )}
     </div>
