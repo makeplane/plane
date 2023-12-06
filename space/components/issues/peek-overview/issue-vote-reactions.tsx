@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
-import { Tooltip } from "components/ui";
+// ui
+import { Tooltip } from "@plane/ui";
 
 export const IssueVotes: React.FC = observer(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);

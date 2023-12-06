@@ -36,6 +36,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const {
     user: { currentUser, updateCurrentUser, updateUserOnBoard },
     workspace: workspaceStore,
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
   const router = useRouter();
 
@@ -50,6 +51,10 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     defaultValues: {
       full_name: "",
     },
+  });
+
+  useSWR(`USER_WORKSPACES_LIST`, () => workspaceStore.fetchWorkspaces(), {
+    shouldRetryOnError: false,
   });
 
   const { data: invitations } = useSWR("USER_WORKSPACE_INVITATIONS_LIST", () =>
@@ -73,7 +78,19 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const finishOnboarding = async () => {
     if (!user || !workspaces) return;
 
-    await updateUserOnBoard();
+    await updateUserOnBoard().then(() => {
+      postHogEventTracker(
+        "USER_ONBOARDING_COMPLETE",
+        {
+          user_role: user.role,
+          email: user.email,
+          user_id: user.id,
+          status: "SUCCESS"
+        }
+      )
+    }).catch((error) => {
+      console.log(error);
+    })
 
     router.replace(`/${workspaces[0].slug}`);
   };
@@ -87,6 +104,19 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
       if (!user || !invitations) return;
 
       const onboardingStep = user.onboarding_step;
+
+      if (!onboardingStep.workspace_join && !onboardingStep.workspace_create && workspaces && workspaces?.length > 0) {
+        await updateCurrentUser({
+          onboarding_step: {
+            ...user.onboarding_step,
+            workspace_join: true,
+            workspace_create: true,
+          },
+          last_workspace_id: workspaces[0].id,
+        });
+        setStep(2);
+        return;
+      }
 
       if (!onboardingStep.workspace_join && !onboardingStep.workspace_create && step !== 1) setStep(1);
 

@@ -32,7 +32,7 @@ import {
 // ui
 import { CustomDatePicker } from "components/ui";
 // icons
-import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, User2 } from "lucide-react";
+import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
 import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
@@ -421,7 +421,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <User2 className="h-4 w-4 flex-shrink-0" />
+                      <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
                       <p>Parent</p>
                     </div>
                     <div className="sm:basis-1/2">

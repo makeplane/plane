@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // mobx
@@ -11,7 +10,8 @@ import { observer } from "mobx-react-lite";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Avatar, Button } from "@plane/ui";
+import { Briefcase } from "lucide-react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // store
@@ -87,10 +87,24 @@ const IssueNavbar = observer(() => {
       {/* project detail */}
       <div className="flex flex-shrink-0 items-center gap-2">
         <div className="flex h-4 w-4 items-center justify-center">
-          {projectStore?.project && projectStore?.project?.emoji ? (
-            renderEmoji(projectStore?.project?.emoji)
+          {projectStore.project ? (
+            projectStore.project?.emoji ? (
+              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                {renderEmoji(projectStore.project.emoji)}
+              </span>
+            ) : projectStore.project?.icon_prop ? (
+              <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                {renderEmoji(projectStore.project.icon_prop)}
+              </div>
+            ) : (
+              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                {projectStore.project?.name.charAt(0)}
+              </span>
+            )
           ) : (
-            <Image src="/plane-logo.webp" alt="plane logo" className="h-[24px] w-[24px]" height="24" width="24" />
+            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+              <Briefcase className="h-4 w-4" />
+            </span>
           )}
         </div>
         <div className="line-clamp-1 max-w-[300px] overflow-hidden text-lg font-medium">
@@ -113,26 +127,13 @@ const IssueNavbar = observer(() => {
 
       {user ? (
         <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
-          {user.avatar && user.avatar !== "" ? (
-            <div className="h-5 w-5 rounded-full">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={user.avatar} alt={user.display_name ?? ""} className="rounded-full" />
-            </div>
-          ) : (
-            <div className="grid h-5 w-5 place-items-center rounded-full bg-custom-background-80 text-[10px] capitalize">
-              {(user.display_name ?? "A")[0]}
-            </div>
-          )}
+          <Avatar name={user?.display_name} src={user?.avatar} size={24} shape="square" className="!text-base" />
           <h6 className="text-xs font-medium">{user.display_name}</h6>
         </div>
       ) : (
         <div className="flex-shrink-0">
           <Link href={`/login/?next_path=${router.asPath}`}>
-            <span>
-              <PrimaryButton className="flex-shrink-0" outline>
-                Sign in
-              </PrimaryButton>
-            </span>
+            <Button variant="outline-primary">Sign in</Button>
           </Link>
         </div>
       )}

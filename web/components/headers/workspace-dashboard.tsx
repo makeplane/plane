@@ -8,11 +8,9 @@ import githubWhiteImage from "/public/logos/github-white.png";
 // components
 import { ProductUpdatesModal } from "components/common";
 import { Breadcrumbs } from "@plane/ui";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export const WorkspaceDashboardHeader = () => {
   const [isProductUpdatesModalOpen, setIsProductUpdatesModalOpen] = useState(false);
-  const { trackEvent: { postHogEventTracker } } = useMobxStore();
   // theme
   const { resolvedTheme } = useTheme();
 

@@ -67,7 +67,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
     await updateWorkspace(currentWorkspace.slug, payload)
       .then((res) => {
-        postHogEventTracker("WORKSPACE_UPDATE", {
+        postHogEventTracker("WORKSPACE_UPDATED", {
           ...res,
           state: "SUCCESS",
         });
@@ -78,7 +78,7 @@ export const WorkspaceDetails: FC = observer(() => {
         });
       })
       .catch((err) => {
-        postHogEventTracker("WORKSPACE_UPDATE", {
+        postHogEventTracker("WORKSPACE_UPDATED", {
           state: "FAILED",
         });
         console.error(err);
