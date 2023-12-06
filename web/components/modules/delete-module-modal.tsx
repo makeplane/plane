@@ -26,7 +26,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
 
-  const { module: moduleStore } = useMobxStore();
+  const { module: moduleStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -50,6 +50,12 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module deleted successfully.",
         });
+        postHogEventTracker(
+          "MODULE_DELETED",
+          {
+            state: 'SUCCESS'
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -57,6 +63,12 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });
+        postHogEventTracker(
+          "MODULE_DELETED",
+          {
+            state: 'FAILED'
+          }
+        );
       })
       .finally(() => {
         setIsDeleteLoading(false);
