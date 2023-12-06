@@ -13,7 +13,7 @@ import useSignInRedirection from "hooks/use-sign-in-redirection";
 // ui
 import { Button, Input } from "@plane/ui";
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 import latestFeatures from "public/onboarding/onboarding-pages.svg";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
