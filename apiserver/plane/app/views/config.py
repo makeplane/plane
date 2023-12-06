@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.license.models import Instance, InstanceConfiguration
+from plane.license.models import InstanceConfiguration
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -103,5 +103,7 @@ class ConfigurationEndpoint(BaseAPIView):
         )
 
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+
+        data["is_self_managed"] = bool(int(os.environ.get("IS_SELF_MANAGED", "1")))
 
         return Response(data, status=status.HTTP_200_OK)

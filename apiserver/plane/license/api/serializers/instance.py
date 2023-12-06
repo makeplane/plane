@@ -43,7 +43,7 @@ class InstanceConfigurationSerializer(BaseSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         # Decrypt secrets value
-        if instance.key in ["OPENAI_API_KEY", "GITHUB_CLIENT_SECRET", "EMAIL_HOST_PASSWORD", "UNSPLASH_ACESS_KEY"] and instance.value is not None:
+        if instance.is_encrypted and instance.value is not None:
             data["value"] = decrypt_data(instance.value)
 
         return data

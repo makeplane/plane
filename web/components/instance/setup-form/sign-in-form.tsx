@@ -1,5 +1,7 @@
 import { FC } from "react";
 import { useForm, Controller } from "react-hook-form";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Input, Button } from "@plane/ui";
 // icons
@@ -9,37 +11,48 @@ import { AuthService } from "services/auth.service";
 const authService = new AuthService();
 // hooks
 import useToast from "hooks/use-toast";
+// helpers
+import { checkEmailValidity } from "helpers/string.helper";
 
-export interface InstanceSetupEmailFormValues {
+interface InstanceSetupEmailFormValues {
   email: string;
+  password: string;
 }
 
 export interface IInstanceSetupEmailForm {
   handleNextStep: (email: string) => void;
 }
 
-export const InstanceSetupEmailForm: FC<IInstanceSetupEmailForm> = (props) => {
+export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
   const { handleNextStep } = props;
+  const {
+    user: { fetchCurrentUser },
+  } = useMobxStore();
   // form info
   const {
     control,
+    formState: { errors, isSubmitting },
     handleSubmit,
     setValue,
-    reset,
-    formState: { isSubmitting },
   } = useForm<InstanceSetupEmailFormValues>({
     defaultValues: {
       email: "",
+      password: "",
     },
   });
   // hooks
   const { setToastAlert } = useToast();
 
-  const handleEmailFormSubmit = (formValues: InstanceSetupEmailFormValues) =>
-    authService
-      .instanceAdminEmailCode({ email: formValues.email })
-      .then(() => {
-        reset();
+  const handleFormSubmit = async (formValues: InstanceSetupEmailFormValues) => {
+    const payload = {
+      email: formValues.email,
+      password: formValues.password,
+    };
+
+    await authService
+      .instanceAdminSignIn(payload)
+      .then(async () => {
+        await fetchCurrentUser();
         handleNextStep(formValues.email);
       })
       .catch((err) => {
@@ -49,9 +62,10 @@ export const InstanceSetupEmailForm: FC<IInstanceSetupEmailForm> = (props) => {
           message: err?.error ?? "Something went wrong. Please try again.",
         });
       });
+  };
 
   return (
-    <form onSubmit={handleSubmit(handleEmailFormSubmit)}>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
         Let{"'"}s secure your instance
       </h1>
@@ -66,13 +80,10 @@ export const InstanceSetupEmailForm: FC<IInstanceSetupEmailForm> = (props) => {
           control={control}
           rules={{
             required: "Email address is required",
-            validate: (value) =>
-              /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
-                value
-              ) || "Email address is not valid",
+            validate: (value) => checkEmailValidity(value) || "Email is invalid",
           }}
           render={({ field: { value, onChange } }) => (
-            <div className={`flex items-center relative rounded-md bg-onboarding-background-200`}>
+            <div className="flex items-center relative rounded-md bg-onboarding-background-200">
               <Input
                 id="email"
                 name="email"
@@ -80,7 +91,7 @@ export const InstanceSetupEmailForm: FC<IInstanceSetupEmailForm> = (props) => {
                 value={value}
                 onChange={onChange}
                 placeholder="orville.wright@firstflight.com"
-                className={`w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12`}
+                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
               />
               {value.length > 0 && (
                 <XCircle
@@ -91,11 +102,28 @@ export const InstanceSetupEmailForm: FC<IInstanceSetupEmailForm> = (props) => {
             </div>
           )}
         />
+        <Controller
+          control={control}
+          name="password"
+          rules={{
+            required: "Password is required",
+          }}
+          render={({ field: { value, onChange } }) => (
+            <Input
+              type="password"
+              value={value}
+              onChange={onChange}
+              hasError={Boolean(errors.password)}
+              placeholder="Enter password"
+              className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
+            />
+          )}
+        />
         <p className="text-xs text-custom-text-200 pb-2">
           Use your email address if you are the instance admin. <br /> Use your admin’s e-mail if you are not.
         </p>
         <Button variant="primary" className="w-full" size="xl" type="submit" loading={isSubmitting}>
-          {isSubmitting ? "Sending code..." : "Send unique code"}
+          {isSubmitting ? "Signing in..." : "Sign in"}
         </Button>
       </div>
     </form>

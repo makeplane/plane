@@ -2,8 +2,6 @@ from .instance import (
     InstanceEndpoint,
     InstanceAdminEndpoint,
     InstanceConfigurationEndpoint,
-    AdminSetupMagicSignInEndpoint,
+    InstanceAdminSignInEndpoint,
     SignUpScreenVisitedEndpoint,
-    AdminMagicSignInGenerateEndpoint,
-    AdminSetUserPasswordEndpoint,
 )
