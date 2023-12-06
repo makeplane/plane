@@ -30,7 +30,7 @@ app.conf.beat_schedule = {
     },
     "check-instance-verification": {
         "task": "plane.license.bgtasks.instance_verification_task.instance_verification_task",
-        "schedule": crontab(),
+        "schedule": crontab(minute=0, hour='*/4'),
     },
 }
 
