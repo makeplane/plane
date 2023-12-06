@@ -89,8 +89,9 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       displayFilters={issueFiltersStore.issueFilters?.displayFilters ?? {}}
       handleDisplayFilterUpdate={handleDisplayFiltersUpdate}
       issues={issues as IIssueUnGroupedStructure}
-      quickActions={(issue) => (
+      quickActions={(issue, customActionButton) => (
         <QuickActions
+          customActionButton={customActionButton}
           issue={issue}
           handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
           handleUpdate={

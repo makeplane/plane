@@ -232,8 +232,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               group_by={group_by}
               order_by={order_by}
               handleIssues={handleIssues}
-              quickActions={(sub_group_by, group_by, issue) => (
+              quickActions={(sub_group_by, group_by, issue, customActionButton) => (
                 <QuickActions
+                  customActionButton={customActionButton}
                   issue={issue}
                   handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
                   handleUpdate={
@@ -275,8 +276,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               group_by={group_by}
               order_by={order_by}
               handleIssues={handleIssues}
-              quickActions={(sub_group_by, group_by, issue) => (
+              quickActions={(sub_group_by, group_by, issue, customActionButton) => (
                 <QuickActions
+                  customActionButton={customActionButton}
                   issue={issue}
                   handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
                   handleUpdate={

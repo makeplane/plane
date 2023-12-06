@@ -16,7 +16,7 @@ type Props = {
   groupedIssueIds: IGroupedIssues;
   layout: "month" | "week" | undefined;
   showWeekends: boolean;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,

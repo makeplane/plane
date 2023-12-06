@@ -12,6 +12,7 @@ import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import { IIssueDisplayProperties, IIssue } from "types";
 import { EIssueActions } from "../types";
 import { useRouter } from "next/router";
+import { MoreHorizontal } from "lucide-react";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -21,7 +22,12 @@ interface IssueBlockProps {
   isDragDisabled: boolean;
   showEmptyGroup: boolean;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   isReadOnly: boolean;
 }
@@ -66,6 +72,18 @@ export const KanBanIssueMemoBlock: React.FC<IssueBlockProps> = (props) => {
 
   useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
+  const customActionButton = (
+    <div
+      ref={menuActionRef}
+      className={`w-full cursor-pointer text-custom-sidebar-text-400 rounded p-1 hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      }`}
+      onClick={() => setIsMenuActive(!isMenuActive)}
+    >
+      <MoreHorizontal className="h-3.5 w-3.5" />
+    </div>
+  );
+
   return (
     <>
       <Draggable draggableId={draggableId} index={index}>
@@ -90,16 +108,15 @@ export const KanBanIssueMemoBlock: React.FC<IssueBlockProps> = (props) => {
                     {issue.project_detail.identifier}-{issue.sequence_id}
                   </div>
                   <div
-                    ref={menuActionRef}
                     className={`absolute -top-1 right-0 hidden group-hover/kanban-block:block ${
                       isMenuActive ? "!block" : ""
                     }`}
-                    onClick={() => setIsMenuActive(!isMenuActive)}
                   >
                     {quickActions(
                       !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
                       !columnId && columnId === "null" ? null : columnId,
-                      issue
+                      issue,
+                      customActionButton
                     )}
                   </div>
                 </div>
