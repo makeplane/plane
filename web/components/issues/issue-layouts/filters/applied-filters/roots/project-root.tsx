@@ -4,14 +4,18 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { AppliedFiltersList } from "components/issues";
+import { AppliedFiltersList, SaveFilterView } from "components/issues";
+
 // types
 import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store/issues/types";
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+  };
 
   const {
     projectLabel: { projectLabels },
@@ -60,7 +64,7 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   if (Object.keys(appliedFilters).length === 0) return null;
 
   return (
-    <div className="p-4">
+    <div className="p-4 flex items-center justify-between">
       <AppliedFiltersList
         appliedFilters={appliedFilters}
         handleClearAllFilters={handleClearAllFilters}
@@ -69,6 +73,8 @@ export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
+
+      <SaveFilterView workspaceSlug={workspaceSlug} projectId={projectId} filterParams={appliedFilters} />
     </div>
   );
 });

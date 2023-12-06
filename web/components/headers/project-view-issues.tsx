@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
-import { Breadcrumbs, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -15,6 +15,8 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EFilterType } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
+import { Plus } from "lucide-react";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
@@ -25,7 +27,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   };
 
   const {
-    issueFilter: issueFilterStore,
     projectViewFilters: projectViewFiltersStore,
     project: { currentProjectDetails },
     projectLabel: { projectLabels },
@@ -33,6 +34,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     projectState: projectStateStore,
     projectViews: projectViewsStore,
     viewIssuesFilter: { issueFilters, updateFilters },
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
@@ -170,6 +173,16 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>
+        <Button
+          onClick={() => {
+            setTrackElement("PROJECT_VIEW_PAGE_HEADER");
+            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+          }}
+          size="sm"
+          prependIcon={<Plus />}
+        >
+          Add Issue
+        </Button>
       </div>
     </div>
   );
