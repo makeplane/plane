@@ -2,12 +2,16 @@ export type TEmailCheckTypes = "magic_code" | "password";
 
 export interface IEmailCheckData {
   email: string;
-  type: TEmailCheckTypes;
+}
+
+export interface IEmailCheckResponse {
+  is_password_autoset: boolean;
+  is_existing: boolean;
 }
 
 export interface ILoginTokenResponse {
   access_token: string;
-  refresh_toke: string;
+  refresh_token: string;
 }
 
 export interface IMagicSignInData {

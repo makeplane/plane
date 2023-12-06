@@ -87,6 +87,7 @@ from .auth_extended import (
     ChangePasswordEndpoint,
     SetUserPasswordEndpoint,
     EmailCheckEndpoint,
+    MagicGenerateEndpoint,
 )
 
 

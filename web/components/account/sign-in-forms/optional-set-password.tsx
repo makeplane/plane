@@ -12,13 +12,14 @@ type Props = {
   email: string;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
+  isOnboarded: boolean;
 };
 
 export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
-  const { email, handleStepChange, handleSignInRedirection } = props;
+  const { email, handleStepChange, handleSignInRedirection, isOnboarded } = props;
   // states
   const [isGoingToWorkspace, setIsGoingToWorkspace] = useState(false);
-
+  // form info
   const {
     control,
     formState: { errors, isValid },
@@ -39,8 +40,8 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
   return (
     <>
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">Set a password</h1>
-      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-3">
-        If you{"'"}d to do away with codes, set a password here
+      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-2.5">
+        If you{"'"}d like to do away with codes, set a password here.
       </p>
 
       <form className="mt-5 sm:w-96 mx-auto space-y-4">
@@ -86,11 +87,13 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={isGoingToWorkspace}
           >
-            {isGoingToWorkspace ? "Going to app..." : "Go to workspace"}
+            {isOnboarded ? "Go to workspace" : "Set up workspace"}
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
+          When you click{" "}
+          <span className="text-custom-primary-100">{isOnboarded ? "Go to workspace" : "Set up workspace"}</span> above,
+          you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

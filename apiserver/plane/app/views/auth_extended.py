@@ -37,8 +37,8 @@ from plane.bgtasks.forgot_password_task import forgot_password
 from plane.license.models import Instance, InstanceConfiguration
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
-from plane.bgtasks.user_count_task import update_user_instance_user_count
 from plane.bgtasks.event_tracking_task import auth_events
+
 
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
@@ -108,13 +108,16 @@ class ForgotPasswordEndpoint(BaseAPIView):
         try:
             validate_email(email)
         except ValidationError:
-            return Response({"error": "Please enter a valid email"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Please enter a valid email"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Get the user
         user = User.objects.filter(email=email).first()
         if user:
             # Get the reset token for user
-            uidb64, token = get_tokens_for_user(user=user)
+            uidb64, token = generate_password_token(user=user)
             current_site = request.META.get("HTTP_ORIGIN")
             # send the forgot password email
             forgot_password.delay(
@@ -130,7 +133,9 @@ class ForgotPasswordEndpoint(BaseAPIView):
 
 
 class ResetPasswordEndpoint(BaseAPIView):
-    permission_classes = [AllowAny,]
+    permission_classes = [
+        AllowAny,
+    ]
 
     def post(self, request, uidb64, token):
         try:
@@ -219,6 +224,89 @@ class SetUserPasswordEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+class MagicGenerateEndpoint(BaseAPIView):
+    permission_classes = [
+        AllowAny,
+    ]
+
+    def post(self, request):
+        email = request.data.get("email", False)
+
+        # Check the instance registration
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not email:
+            return Response(
+                {"error": "Please provide a valid email address"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Clean up the email
+        email = email.strip().lower()
+        validate_email(email)
+
+        # check if the email exists not
+        if not User.objects.filter(email=email).exists():
+            # Create a user
+            _ = User.objects.create(
+                email=email,
+                username=uuid.uuid4().hex,
+                password=make_password(uuid.uuid4().hex),
+                is_password_autoset=True,
+            )
+
+        ## Generate a random token
+        token = (
+            "".join(random.choices(string.ascii_lowercase, k=4))
+            + "-"
+            + "".join(random.choices(string.ascii_lowercase, k=4))
+            + "-"
+            + "".join(random.choices(string.ascii_lowercase, k=4))
+        )
+
+        ri = redis_instance()
+
+        key = "magic_" + str(email)
+
+        # Check if the key already exists in python
+        if ri.exists(key):
+            data = json.loads(ri.get(key))
+
+            current_attempt = data["current_attempt"] + 1
+
+            if data["current_attempt"] > 2:
+                return Response(
+                    {"error": "Max attempts exhausted. Please try again later."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            value = {
+                "current_attempt": current_attempt,
+                "email": email,
+                "token": token,
+            }
+            expiry = 600
+
+            ri.set(key, json.dumps(value), ex=expiry)
+
+        else:
+            value = {"current_attempt": 0, "email": email, "token": token}
+            expiry = 600
+
+            ri.set(key, json.dumps(value), ex=expiry)
+
+        # If the smtp is configured send through here
+        current_site = request.META.get("HTTP_ORIGIN")
+        magic_link.delay(email, key, token, current_site)
+
+        return Response({"key": key}, status=status.HTTP_200_OK)
+
+
 class EmailCheckEndpoint(BaseAPIView):
     permission_classes = [
         AllowAny,
@@ -237,16 +325,19 @@ class EmailCheckEndpoint(BaseAPIView):
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
 
         email = request.data.get("email", False)
-        type = request.data.get("type", "magic_code")
 
         if not email:
-            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # validate the email
         try:
             validate_email(email)
         except ValidationError:
-            return Response({"error": "Email is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Email is not valid"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Check if the user exists
         user = User.objects.filter(email=email).first()
@@ -281,71 +372,59 @@ class EmailCheckEndpoint(BaseAPIView):
                 is_password_autoset=True,
             )
 
-            # Update instance user count
-            update_user_instance_user_count.delay()
 
-            # Case when the user selects magic code
-            if type == "magic_code":
-                if not bool(get_configuration_value(
+            if not bool(
+                get_configuration_value(
                     instance_configuration,
                     "ENABLE_MAGIC_LINK_LOGIN",
-                    os.environ.get("ENABLE_MAGIC_LINK_LOGIN")),
-                ):
-                    return Response(
-                        {"error": "Magic link sign in is disabled."},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-                
-                # Send event
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="MAGIC_LINK",
-                        first_time=True,
-                    )
-                key, token, current_attempt = generate_magic_token(email=email)
-                if not current_attempt:
-                    return Response({"error": "Max attempts exhausted. Please try again later."}, status=status.HTTP_400_BAD_REQUEST)
-                # Trigger the email
-                magic_link.delay(email, "magic_" + str(email), token, current_site)
-                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
-            else:
-                # Get the uidb64 and token for the user
-                uidb64, token = generate_password_token(user=user)
-                forgot_password.delay(
-                    user.first_name, user.email, uidb64, token, current_site
+                    os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
+                ),
+            ):
+                return Response(
+                    {"error": "Magic link sign in is disabled."},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-                # Send event
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="EMAIL",
-                        first_time=True,
-                    )
-                # Automatically send the email
-                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
+
+            # Send event
+            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="MAGIC_LINK",
+                    first_time=True,
+                )
+            key, token, current_attempt = generate_magic_token(email=email)
+            if not current_attempt:
+                return Response(
+                    {"error": "Max attempts exhausted. Please try again later."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            # Trigger the email
+            magic_link.delay(email, "magic_" + str(email), token, current_site)
+            return Response(
+                {"is_password_autoset": user.is_password_autoset, "is_existing": False},
+                status=status.HTTP_200_OK,
+            )
+
         # Existing user
         else:
-            if type == "magic_code":
+            if user.is_password_autoset:
                 ## Generate a random token
-                if not bool(get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_MAGIC_LINK_LOGIN",
-                    os.environ.get("ENABLE_MAGIC_LINK_LOGIN")),
+                if not bool(
+                    get_configuration_value(
+                        instance_configuration,
+                        "ENABLE_MAGIC_LINK_LOGIN",
+                        os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
+                    ),
                 ):
                     return Response(
                         {"error": "Magic link sign in is disabled."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-                
+
                 if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                     auth_events.delay(
                         user=user.id,
@@ -356,15 +435,24 @@ class EmailCheckEndpoint(BaseAPIView):
                         medium="MAGIC_LINK",
                         first_time=False,
                     )
-                
+
                 # Generate magic token
                 key, token, current_attempt = generate_magic_token(email=email)
                 if not current_attempt:
-                    return Response({"error": "Max attempts exhausted. Please try again later."}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(
+                        {"error": "Max attempts exhausted. Please try again later."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
                 # Trigger the email
                 magic_link.delay(email, key, token, current_site)
-                return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
+                return Response(
+                    {
+                        "is_password_autoset": user.is_password_autoset,
+                        "is_existing": True,
+                    },
+                    status=status.HTTP_200_OK,
+                )
             else:
                 if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
                     auth_events.delay(
@@ -376,14 +464,12 @@ class EmailCheckEndpoint(BaseAPIView):
                         medium="EMAIL",
                         first_time=False,
                     )
-                
-                if user.is_password_autoset:
-                    # send email
-                    uidb64, token = generate_password_token(user=user)
-                    forgot_password.delay(
-                        user.first_name, user.email, uidb64, token, current_site
-                    )
-                    return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
-                else:
-                    # User should enter password to login
-                    return Response({"is_password_autoset": user.is_password_autoset}, status=status.HTTP_200_OK)
+
+                # User should enter password to login
+                return Response(
+                    {
+                        "is_password_autoset": user.is_password_autoset,
+                        "is_existing": True,
+                    },
+                    status=status.HTTP_200_OK,
+                )
