@@ -96,7 +96,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier
-                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
                         : undefined
                     }
                     mentionSuggestions={editorSuggestions.mentionSuggestions}
