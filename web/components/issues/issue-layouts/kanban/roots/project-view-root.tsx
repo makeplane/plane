@@ -38,7 +38,7 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
     },
   };
 
-  const handleDragDrop = (
+  const handleDragDrop = async (
     source: any,
     destination: any,
     subGroupBy: string | null,
@@ -47,7 +47,7 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
     issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
   ) => {
     if (kanBanHelperStore.handleDragDrop)
-      kanBanHelperStore.handleDragDrop(
+      return await kanBanHelperStore.handleDragDrop(
         source,
         destination,
         workspaceSlug,

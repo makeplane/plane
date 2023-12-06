@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
 // components
 import { Tooltip } from "@plane/ui";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
@@ -11,7 +13,7 @@ type Props = {
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   disableUserActions: boolean;
   nestingLevel: number;
 };
@@ -27,6 +29,10 @@ export const IssueColumn: React.FC<Props> = ({
 }) => {
   // router
   const router = useRouter();
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
+
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
@@ -39,6 +45,20 @@ export const IssueColumn: React.FC<Props> = ({
 
   const paddingLeft = `${nestingLevel * 54}px`;
 
+  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
+
+  const customActionButton = (
+    <div
+      ref={menuActionRef}
+      className={`w-full cursor-pointer text-custom-sidebar-text-400 rounded p-1 hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      }`}
+      onClick={() => setIsMenuActive(!isMenuActive)}
+    >
+      <MoreHorizontal className="h-3.5 w-3.5" />
+    </div>
+  );
+
   return (
     <>
       <div className="group flex items-center w-[28rem] text-sm h-11 top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
@@ -48,12 +68,18 @@ export const IssueColumn: React.FC<Props> = ({
             style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
-              <span className="flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ">
+              <span
+                className={`flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ${
+                  isMenuActive ? "!opacity-0" : ""
+                } `}
+              >
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
 
               {!disableUserActions && (
-                <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">{quickActions(issue)}</div>
+                <div className={`absolute top-0 left-2.5 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+                  {quickActions(issue, customActionButton)}
+                </div>
               )}
             </div>
 

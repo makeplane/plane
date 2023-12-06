@@ -6,6 +6,7 @@ import { IViewIssuesStore } from "./project-issues/project-view/issue.store";
 import { IProjectDraftIssuesStore } from "./project-issues/draft/issue.store";
 import { IProfileIssuesStore } from "./profile/issue.store";
 import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "./types";
+import { IIssue } from "types";
 
 export interface IKanBanHelpers {
   // actions
@@ -26,7 +27,7 @@ export interface IKanBanHelpers {
     issues: IIssueResponse | undefined,
     issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined,
     viewId?: string | null
-  ) => void;
+  ) => Promise<IIssue | undefined>;
 }
 
 export class KanBanHelpers implements IKanBanHelpers {
@@ -119,8 +120,8 @@ export class KanBanHelpers implements IKanBanHelpers {
       const [removed] = sourceIssues.splice(source.index, 1);
 
       if (removed) {
-        if (viewId) store?.removeIssue(workspaceSlug, projectId, removed, viewId);
-        else store?.removeIssue(workspaceSlug, projectId, removed);
+        if (viewId) return await store?.removeIssue(workspaceSlug, projectId, removed, viewId);
+        else return await store?.removeIssue(workspaceSlug, projectId, removed);
       }
     } else {
       const sourceIssues = subGroupBy
@@ -182,8 +183,8 @@ export class KanBanHelpers implements IKanBanHelpers {
       }
 
       if (updateIssue && updateIssue?.id) {
-        if (viewId) store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue, viewId);
-        else store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
+        if (viewId) return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue, viewId);
+        else return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
       }
     }
   };

@@ -21,7 +21,7 @@ type Props = {
   members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue,customActionButton?: React.ReactElement) => React.ReactNode;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
