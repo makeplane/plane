@@ -22,14 +22,6 @@ export class InstanceService extends APIService {
       });
   }
 
-  async createInstance(): Promise<IInstance> {
-    return this.post("/api/licenses/instances/", {}, { headers: {} })
-      .then((response) => response.data)
-      .catch((error) => {
-        throw error;
-      });
-  }
-
   async getInstanceAdmins(): Promise<IInstanceAdmin[]> {
     return this.get("/api/licenses/instances/admins/")
       .then((response) => response.data)

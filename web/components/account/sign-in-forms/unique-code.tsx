@@ -22,6 +22,9 @@ type Props = {
   updateEmail: (email: string) => void;
   handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
+  submitButtonLabel?: string;
+  showTermsAndConditions?: boolean;
+  updateUserOnboardingStatus: (value: boolean) => void;
 };
 
 type TUniqueCodeFormValues = {
@@ -39,7 +42,15 @@ const authService = new AuthService();
 const userService = new UserService();
 
 export const UniqueCodeForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
+  const {
+    email,
+    updateEmail,
+    handleStepChange,
+    handleSignInRedirection,
+    submitButtonLabel = "Continue",
+    showTermsAndConditions = false,
+    updateUserOnboardingStatus,
+  } = props;
   // states
   const [isRequestingNewCode, setIsRequestingNewCode] = useState(false);
   // toast alert
@@ -74,6 +85,8 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       .then(async () => {
         const currentUser = await userService.currentUser();
 
+        updateUserOnboardingStatus(currentUser.is_onboarded);
+
         if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
         else await handleSignInRedirection();
       })
@@ -86,15 +99,15 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       );
   };
 
-  const handleSendNewLink = async (formData: TUniqueCodeFormValues) => {
+  const handleSendNewCode = async (formData: TUniqueCodeFormValues) => {
     const payload: IEmailCheckData = {
       email: formData.email,
-      type: "magic_code",
     };
 
     await authService
-      .emailCheck(payload)
+      .generateUniqueCode(payload)
       .then(() => {
+        setResendCodeTimer(30);
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -116,25 +129,30 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   };
 
   const handleFormSubmit = async (formData: TUniqueCodeFormValues) => {
-    if (dirtyFields.email) await handleSendNewLink(formData);
+    updateEmail(formData.email);
+
+    if (dirtyFields.email) await handleSendNewCode(formData);
     else await handleUniqueCodeSignIn(formData);
   };
 
   const handleRequestNewCode = async () => {
     setIsRequestingNewCode(true);
 
-    await handleSendNewLink(getValues())
+    await handleSendNewCode(getValues())
       .then(() => setResendCodeTimer(30))
       .finally(() => setIsRequestingNewCode(false));
   };
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
+  const hasEmailChanged = dirtyFields.email;
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">Moving to the runway</h1>
-      <p className="text-center text-sm text-onboarding-text-200 mt-3">
-        Paste the code you got at <span className="font-semibold text-custom-primary-100">{email}</span> below
+      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
+        Get on your flight deck
+      </h1>
+      <p className="text-center text-sm text-onboarding-text-200 mt-2.5">
+        Paste the code you got at <span className="font-semibold text-custom-primary-100">{email}</span> below.
       </p>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="mt-5 sm:w-96 mx-auto space-y-4">
@@ -153,12 +171,9 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                   name="email"
                   type="email"
                   value={value}
-                  onChange={(e) => {
-                    updateEmail(e.target.value);
-                    onChange(e.target.value);
-                  }}
+                  onChange={onChange}
                   onBlur={() => {
-                    if (dirtyFields.email) handleSendNewLink(getValues());
+                    if (hasEmailChanged) handleSendNewCode(getValues());
                   }}
                   ref={ref}
                   hasError={Boolean(errors.email)}
@@ -174,7 +189,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               </div>
             )}
           />
-          {dirtyFields.email && (
+          {hasEmailChanged && (
             <button
               type="submit"
               className="text-xs text-onboarding-text-300 mt-1.5 flex items-center gap-1 outline-none bg-transparent border-none"
@@ -188,7 +203,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
             control={control}
             name="token"
             rules={{
-              required: dirtyFields.email ? false : "Code is required",
+              required: hasEmailChanged ? false : "Code is required",
             }}
             render={({ field: { value, onChange } }) => (
               <Input
@@ -196,7 +211,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.token)}
                 placeholder="gets-sets-flys"
-                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
               />
             )}
           />
@@ -214,7 +229,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Request new code in ${resendTimerCode}s`
                 : isRequestingNewCode
-                ? "Requesting new code..."
+                ? "Requesting new code"
                 : "Request new code"}
             </button>
           </div>
@@ -224,17 +239,19 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
           variant="primary"
           className="w-full"
           size="xl"
-          disabled={!isValid || dirtyFields.email}
+          disabled={!isValid || hasEmailChanged}
           loading={isSubmitting}
         >
-          {isSubmitting ? "Signing in..." : "Confirm"}
+          {submitButtonLabel}
         </Button>
-        <p className="text-xs text-onboarding-text-200">
-          When you click Confirm above, you agree with our{" "}
-          <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
-            <span className="font-semibold underline">terms and conditions of service.</span>
-          </Link>
-        </p>
+        {showTermsAndConditions && (
+          <p className="text-xs text-onboarding-text-200">
+            When you click the button above, you agree with our{" "}
+            <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
+              <span className="font-semibold underline">terms and conditions of service.</span>
+            </Link>
+          </p>
+        )}
       </form>
     </>
   );

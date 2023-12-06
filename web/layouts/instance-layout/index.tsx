@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode } from "react";
 
 import useSWR from "swr";
 
@@ -18,7 +18,7 @@ type Props = {
 const InstanceLayout: FC<Props> = observer(({ children }) => {
   // store
   const {
-    instance: { fetchInstanceInfo, instance, createInstance },
+    instance: { fetchInstanceInfo, instance },
   } = useMobxStore();
 
   const router = useRouter();
@@ -27,12 +27,6 @@ const InstanceLayout: FC<Props> = observer(({ children }) => {
   useSWR("INSTANCE_INFO", () => fetchInstanceInfo(), {
     revalidateOnFocus: false,
   });
-
-  useEffect(() => {
-    if (instance?.is_activated === false) {
-      createInstance();
-    }
-  }, [instance?.is_activated, createInstance]);
 
   return (
     <div className="h-screen w-full overflow-hidden">

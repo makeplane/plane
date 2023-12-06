@@ -3,24 +3,20 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { AuthService } from "services/auth.service";
-import { UserService } from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { ESignInSteps, GithubLoginButton, GoogleLoginButton } from "components/account";
+import { GithubLoginButton, GoogleLoginButton } from "components/account";
 
 type Props = {
-  updateEmail: (email: string) => void;
-  handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
 // services
 const authService = new AuthService();
-const userService = new UserService();
 
 export const OAuthOptions: React.FC<Props> = observer((props) => {
-  const { updateEmail, handleStepChange, handleSignInRedirection } = props;
+  const { handleSignInRedirection } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // mobx store
@@ -38,14 +34,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
 
-        if (response) {
-          const currentUser = await userService.currentUser();
-
-          updateEmail(currentUser.email);
-
-          if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
-          else handleSignInRedirection();
-        }
+        if (response) handleSignInRedirection();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
@@ -66,14 +55,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         };
         const response = await authService.socialAuth(socialAuthPayload);
 
-        if (response) {
-          const currentUser = await userService.currentUser();
-
-          updateEmail(currentUser.email);
-
-          if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
-          else handleSignInRedirection();
-        }
+        if (response) handleSignInRedirection();
       } else throw Error("Cant find credentials");
     } catch (err: any) {
       setToastAlert({
@@ -87,11 +69,11 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="flex sm:w-96 items-center mt-4 mx-auto">
-        <hr className={`border-onboarding-border-100 w-full`} />
+        <hr className="border-onboarding-border-100 w-full" />
         <p className="text-center text-sm text-onboarding-text-400 mx-3 flex-shrink-0">Or continue with</p>
-        <hr className={`border-onboarding-border-100 w-full`} />
+        <hr className="border-onboarding-border-100 w-full" />
       </div>
-      <div className="flex flex-col items-center justify-center gap-4 pt-7 sm:flex-row sm:w-96 mx-auto overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-center gap-2 pt-7 sm:w-96 mx-auto overflow-hidden">
         {envConfig?.google_client_id && (
           <GoogleLoginButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
         )}

@@ -30,6 +30,7 @@ class Instance(BaseModel):
     is_signup_screen_visited = models.BooleanField(default=False)
     # users
     user_count = models.PositiveBigIntegerField(default=0)
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Instance"
@@ -47,6 +48,7 @@ class InstanceAdmin(BaseModel):
     )
     instance = models.ForeignKey(Instance, on_delete=models.CASCADE, related_name="admins")
     role = models.PositiveIntegerField(choices=ROLE_CHOICES, default=20)
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
         unique_together = ["instance", "user"]
@@ -61,6 +63,7 @@ class InstanceConfiguration(BaseModel):
     key = models.CharField(max_length=100, unique=True)
     value = models.TextField(null=True, blank=True, default=None)
     category = models.TextField()
+    is_encrypted = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Instance Configuration"
