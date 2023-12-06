@@ -59,7 +59,7 @@ const IssueWidgetCard = (props) => {
             {issueDetails.target_date && (
               <div className="rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-300 gap-1 text-custom-text-100 text-xs h-5">
                 <Calendar className="h-3 w-3" strokeWidth={1.5} />
-                {new Date(issueDetails.target_date).toLocaleString()}
+                {new Date(issueDetails.target_date).toLocaleDateString()}
               </div>
             )}
           </div>
