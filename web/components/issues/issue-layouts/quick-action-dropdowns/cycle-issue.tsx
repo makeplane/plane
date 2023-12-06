@@ -14,7 +14,7 @@ import { IQuickActionProps } from "../list/list-view-types";
 import { EProjectStore } from "store/command-palette.store";
 
 export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
-  const { issue, handleDelete, handleUpdate, handleRemoveFromView } = props;
+  const { issue, handleDelete, handleUpdate, handleRemoveFromView, customActionButton } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -58,7 +58,7 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
         }}
         currentStore={EProjectStore.CYCLE}
       />
-      <CustomMenu placement="bottom-start" ellipsis>
+      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

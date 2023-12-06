@@ -12,7 +12,7 @@ type Props = {
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: IIssueDisplayProperties;
-  quickActions: (issue: IIssue) => React.ReactNode;
+  quickActions: (issue: IIssue,customActionButton?: React.ReactElement) => React.ReactNode;
   disableUserActions: boolean;
   nestingLevel?: number;
 };
