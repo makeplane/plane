@@ -3,18 +3,20 @@ import { Controller, useForm } from "react-hook-form";
 import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
-import { IssueReaction } from "components/issues";
+import { IssuePeekOverviewReactions } from "components/issues";
 // ui
 import { TextArea } from "@plane/ui";
 // types
 import { IIssue, IUser } from "types";
 // services
 import { FileService } from "services/file.service";
-import { useMobxStore } from "lib/mobx/store-provider";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const fileService = new FileService();
@@ -87,7 +89,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       setLocalIssueDescription(issue.description_html);
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id]);
+  }, [issue.id, issue.description_html, issue.name]);
 
   useEffect(() => {
     setLocalTitleValue(issue.name);
@@ -106,7 +108,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
-  }, [isSubmitting, setShowAlert]);
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   // reset form values
   useEffect(() => {
@@ -167,7 +169,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => (
+          render={({ field: { onChange } }) => (
             <RichTextEditor
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
@@ -192,7 +194,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           )}
         />
       </div>
-      <IssueReaction
+      <IssuePeekOverviewReactions
         issueReactions={issueReactions}
         user={user}
         issueReactionCreate={issueReactionCreate}

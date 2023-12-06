@@ -12,7 +12,7 @@ interface IIssueReaction {
   position?: "top" | "bottom";
 }
 
-export const IssueReaction: FC<IIssueReaction> = (props) => {
+export const IssuePeekOverviewReactions: FC<IIssueReaction> = (props) => {
   const { issueReactions, user, issueReactionCreate, issueReactionRemove, position = "bottom" } = props;
 
   const handleReaction = (reaction: string) => {
