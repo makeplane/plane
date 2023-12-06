@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Search, X } from "lucide-react";
 // components
-import { FilterLabels, FilterPriority, FilterState } from "./";
+import { FilterPriority, FilterState } from "./";
 // types
 
 // filter helpers
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export const FilterSelection: React.FC<Props> = observer((props) => {
-  const { filters, handleFilters, layoutDisplayFiltersOptions, labels, states } = props;
+  const { filters, handleFilters, layoutDisplayFiltersOptions, states } = props;
 
   const [filtersSearchQuery, setFiltersSearchQuery] = useState("");
 

@@ -38,6 +38,7 @@ const pageService = new PageService();
 const PageDetailsPage: NextPageWithLayout = observer(() => {
   const editorRef = useRef<any>(null);
   // states
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [gptModalOpen, setGptModal] = useState(false);
   // store
