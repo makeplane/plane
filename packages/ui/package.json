@@ -19,9 +19,9 @@
   },
   "devDependencies": {
     "@types/node": "^20.5.2",
-    "@types/react": "^18.2.39",
+    "@types/react": "^18.2.42",
     "@types/react-color": "^3.0.9",
-    "@types/react-dom": "^18.2.15",
+    "@types/react-dom": "^18.2.17",
     "classnames": "^2.3.2",
     "eslint-config-custom": "*",
     "react": "^18.2.0",
