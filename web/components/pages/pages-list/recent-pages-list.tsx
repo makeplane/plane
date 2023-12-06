@@ -9,7 +9,7 @@ import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // assets
-import emptyPage from "public/empty-state/empty_page.webp";
+import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
