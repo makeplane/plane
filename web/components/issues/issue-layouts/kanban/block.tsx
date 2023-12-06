@@ -1,14 +1,17 @@
-import { memo } from "react";
+import { memo, useRef, useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
 import isEqual from "lodash/isEqual";
 // components
 import { KanBanProperties } from "./properties";
 // ui
 import { Tooltip } from "@plane/ui";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 import { EIssueActions } from "../types";
 import { useRouter } from "next/router";
+import { MoreHorizontal } from "lucide-react";
 
 interface IssueBlockProps {
   sub_group_id: string;
@@ -18,7 +21,12 @@ interface IssueBlockProps {
   isDragDisabled: boolean;
   showEmptyGroup: boolean;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   isReadOnly: boolean;
 }
@@ -39,6 +47,8 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
     props;
 
   const router = useRouter();
+
+  // states
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
     if (issueToUpdate) handleIssues(sub_group_by, group_by, issueToUpdate, EIssueActions.UPDATE);
@@ -116,6 +126,21 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
   let draggableId = issue.id;
   if (columnId) draggableId = `${draggableId}__${columnId}`;
   if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
+
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
+  const [isMenuActive, setIsMenuActive] = useState(false);
+  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
+  const customActionButton = (
+    <div
+      ref={menuActionRef}
+      className={`w-full cursor-pointer text-custom-sidebar-text-400 rounded p-1 hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      }`}
+      onClick={() => setIsMenuActive(!isMenuActive)}
+    >
+      <MoreHorizontal className="h-3.5 w-3.5" />
+    </div>
+  );
 
   return (
     <>

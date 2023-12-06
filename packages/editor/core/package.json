@@ -28,8 +28,9 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@tiptap/core": "^2.1.7",
     "@plane/editor-types": "*",
+    "@tiptap/core": "^2.1.7",
+    "@tiptap/extension-blockquote": "^2.1.13",
     "@tiptap/extension-code-block-lowlight": "^2.1.12",
     "@tiptap/extension-color": "^2.1.11",
     "@tiptap/extension-image": "^2.1.7",
@@ -61,12 +62,12 @@
     "tiptap-markdown": "^0.8.2"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "postcss": "^8.4.29",
-    "eslint-config-next": "13.2.4",
     "@types/node": "18.15.3",
     "@types/react": "^18.2.39",
     "@types/react-dom": "18.0.11",
+    "eslint": "^7.32.0",
+    "eslint-config-next": "13.2.4",
+    "postcss": "^8.4.29",
     "tailwind-config-custom": "*",
     "tsconfig": "*",
     "tsup": "^7.2.0",
