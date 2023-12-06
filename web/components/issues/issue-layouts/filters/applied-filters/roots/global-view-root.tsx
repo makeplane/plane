@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 
@@ -6,28 +5,20 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { AppliedFiltersList } from "components/issues";
-// ui
-import { Button } from "@plane/ui";
-// helpers
-import { areFiltersDifferent } from "helpers/filter.helper";
 // types
 import { IIssueFilterOptions } from "types";
 import { EFilterType } from "store/issues/types";
 
 export const GlobalViewsAppliedFiltersRoot = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, globalViewId } = router.query as { workspaceSlug: string; globalViewId: string };
+  const { workspaceSlug } = router.query as { workspaceSlug: string; globalViewId: string };
 
   const {
-    globalViews: globalViewsStore,
-    globalViewFilters: globalViewFiltersStore,
     project: { workspaceProjects },
     workspace: { workspaceLabels },
     workspaceMember: { workspaceMembers },
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
-
-  const viewDetails = globalViewId ? globalViewsStore.globalViewDetails[globalViewId.toString()] : undefined;
 
   const userFilters = issueFilters?.filters;
 

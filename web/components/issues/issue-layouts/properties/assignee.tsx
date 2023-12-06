@@ -38,7 +38,6 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
     optionsClassName,
     placement,
     multiple = false,
-    noLabelBorder = false,
   } = props;
   // store
   const {

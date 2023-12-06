@@ -63,7 +63,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       setLocalIssueDescription(issue.description_html);
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id]);
+  }, [issue.id, issue.name, issue.description_html]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -86,7 +86,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
-  }, [isSubmitting, setShowAlert]);
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   // reset form values
   useEffect(() => {
@@ -147,7 +147,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => (
+          render={({ field: { onChange } }) => (
             <RichTextEditor
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}

@@ -57,6 +57,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     issueIds,
     sub_group_by,
     group_by,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     order_by,
     sub_group_id = "null",
     list,
@@ -69,6 +70,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     kanBanToggle,
     handleKanBanToggle,
     enableQuickIssueCreate,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isDragStarted,
     quickAddCallback,
     viewId,

@@ -56,7 +56,7 @@ const Inputs = (props: any) => {
 };
 
 export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, subGroupId = null, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, prePopulatedData, quickAddCallback, viewId } = props;
 
   // router
   const router = useRouter();

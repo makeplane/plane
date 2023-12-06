@@ -27,7 +27,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   };
 
   const {
-    projectViewFilters: projectViewFiltersStore,
     project: { currentProjectDetails },
     projectLabel: { projectLabels },
     projectMember: { projectMembers },
@@ -37,8 +36,6 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
   } = useMobxStore();
-
-  const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 

@@ -1,5 +1,4 @@
 // components
-import { AppliedLabelsFilters } from "./label";
 import { AppliedPriorityFilters } from "./priority";
 import { AppliedStateFilters } from "./state";
 // icons
@@ -20,7 +19,7 @@ type Props = {
 export const replaceUnderscoreIfSnakeCase = (str: string) => str.replace(/_/g, " ");
 
 export const AppliedFiltersList: React.FC<Props> = (props) => {
-  const { appliedFilters, handleRemoveAllFilters, handleRemoveFilter, labels, states } = props;
+  const { appliedFilters, handleRemoveAllFilters, handleRemoveFilter, states } = props;
 
   return (
     <div className="flex items-stretch gap-2 flex-wrap bg-custom-background-100">

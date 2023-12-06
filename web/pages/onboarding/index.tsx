@@ -36,7 +36,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const {
     user: { currentUser, updateCurrentUser, updateUserOnBoard },
     workspace: workspaceStore,
-    trackEvent: { postHogEventTracker }
+    trackEvent: { postHogEventTracker },
   } = useMobxStore();
   const router = useRouter();
 
@@ -78,19 +78,18 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
   const finishOnboarding = async () => {
     if (!user || !workspaces) return;
 
-    await updateUserOnBoard().then(() => {
-      postHogEventTracker(
-        "USER_ONBOARDING_COMPLETE",
-        {
+    await updateUserOnBoard()
+      .then(() => {
+        postHogEventTracker("USER_ONBOARDING_COMPLETE", {
           user_role: user.role,
           email: user.email,
           user_id: user.id,
-          status: "SUCCESS"
-        }
-      )
-    }).catch((error) => {
-      console.log(error);
-    })
+          status: "SUCCESS",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     router.replace(`/${workspaces[0].slug}`);
   };
@@ -133,7 +132,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     };
 
     handleStepChange();
-  }, [user, invitations, step]);
+  }, [user, invitations, step, updateCurrentUser, workspaces]);
 
   return (
     <>
