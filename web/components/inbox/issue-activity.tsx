@@ -10,7 +10,7 @@ import { IssueService, IssueCommentService } from "services/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IIssue, IIssueComment } from "types";
+import { IIssue, IIssueActivity } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
 
@@ -37,7 +37,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
 
   const user = userStore.currentUser;
 
-  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
+  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueActivity>) => {
     if (!workspaceSlug || !projectId || !inboxIssueId || !user) return;
 
     await issueCommentService
@@ -55,7 +55,7 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
       .then(() => mutateIssueActivity());
   };
 
-  const handleAddComment = async (formData: IIssueComment) => {
+  const handleAddComment = async (formData: IIssueActivity) => {
     if (!workspaceSlug || !issueDetails || !user) return;
 
     await issueCommentService

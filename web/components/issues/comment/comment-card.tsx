@@ -14,16 +14,16 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import type { IIssueComment } from "types";
+import type { IIssueActivity } from "types";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 // services
 const fileService = new FileService();
 
 type Props = {
-  comment: IIssueComment;
+  comment: IIssueActivity;
   handleCommentDeletion: (comment: string) => void;
-  onSubmit: (commentId: string, data: Partial<IIssueComment>) => void;
+  onSubmit: (commentId: string, data: Partial<IIssueActivity>) => void;
   showAccessSpecifier?: boolean;
   workspaceSlug: string;
 };
@@ -50,11 +50,11 @@ export const CommentCard: React.FC<Props> = ({
     setFocus,
     watch,
     setValue,
-  } = useForm<IIssueComment>({
+  } = useForm<IIssueActivity>({
     defaultValues: comment,
   });
 
-  const onEnter = (formData: Partial<IIssueComment>) => {
+  const onEnter = (formData: Partial<IIssueActivity>) => {
     if (isSubmitting) return;
     setIsEditing(false);
 
@@ -110,13 +110,10 @@ export const CommentCard: React.FC<Props> = ({
                 deleteFile={fileService.deleteImage}
                 restoreFile={fileService.restoreImage}
                 ref={editorRef}
-                value={watch("comment_html")}
+                value={watch("comment_html") ?? ""}
                 debouncedUpdatesEnabled={false}
                 customClassName="min-h-[50px] p-3 shadow-sm"
-                onChange={(comment_json: Object, comment_html: string) => {
-                  setValue("comment_json", comment_json);
-                  setValue("comment_html", comment_html);
-                }}
+                onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
                 mentionSuggestions={editorSuggestions.mentionSuggestions}
                 mentionHighlights={editorSuggestions.mentionHighlights}
               />
@@ -147,7 +144,7 @@ export const CommentCard: React.FC<Props> = ({
             )}
             <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
-              value={comment.comment_html}
+              value={comment.comment_html ?? ""}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
               mentionHighlights={editorSuggestions.mentionHighlights}
             />
