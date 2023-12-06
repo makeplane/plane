@@ -2,7 +2,7 @@
 import APIService from "services/api.service";
 import { API_BASE_URL } from "helpers/common.helper";
 
-class UserService extends APIService {
+export class UserService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
@@ -23,5 +23,3 @@ class UserService extends APIService {
       });
   }
 }
-
-export default UserService;

@@ -16,6 +16,12 @@ export interface IUser {
   last_name: string;
   mobile_number: string;
   role: string;
+  onboarding_step: {
+    workspace_join?: boolean;
+    profile_complete?: boolean;
+    workspace_create?: boolean;
+    workspace_invite?: boolean;
+  };
   token: string;
   updated_at: Date;
   username: string;

@@ -1,7 +1,7 @@
 // mobx
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 // service
-import UserService from "services/user.service";
+import { UserService } from "services/user.service";
 // types
 import { IUser } from "types/user";
 
@@ -9,7 +9,7 @@ export interface IUserStore {
   loader: boolean;
   error: any | null;
   currentUser: any | null;
-  fetchCurrentUser: () => void;
+  fetchCurrentUser: () => Promise<IUser>;
   currentActor: () => any;
 }
 
@@ -89,6 +89,7 @@ class UserStore implements IUserStore {
           this.currentUser = response;
         });
       }
+      return response;
     } catch (error) {
       console.error("Failed to fetch current user", error);
       this.loader = false;

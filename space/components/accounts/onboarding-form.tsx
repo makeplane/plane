@@ -11,7 +11,7 @@ import { USER_ROLES } from "constants/workspace";
 // hooks
 import useToast from "hooks/use-toast";
 // services
-import UserService from "services/user.service";
+import { UserService } from "services/user.service";
 // ui
 import { Button, Input } from "@plane/ui";
 
@@ -173,7 +173,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
         </div>
       </div>
 
-      <Button variant="primary" type="submit" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
+      <Button variant="primary" type="submit" size="xl" disabled={!isValid} loading={isSubmitting}>
         {isSubmitting ? "Updating..." : "Continue"}
       </Button>
     </form>
