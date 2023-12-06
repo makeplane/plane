@@ -9,7 +9,6 @@ const IssueWidgetCard = (props) => {
   const [issueDetails, setIssueDetails] = useState();
 
   useEffect(() => {
-    console.log("csdava");
     props.issueEmbedConfig
       .fetchIssue(props.node.attrs.entity_identifier)
       .then((issue) => {

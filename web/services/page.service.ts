@@ -19,8 +19,12 @@ export class PageService extends APIService {
 
   async patchPage(workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>): Promise<IPage> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/${pageId}/`, data)
-      .then((response) => response?.data)
+      .then((response) => {
+        console.log("on page patch", response?.data);
+        return response?.data;
+      })
       .catch((error) => {
+        console.log("error", error?.response?.data);
         throw error?.response?.data;
       });
   }

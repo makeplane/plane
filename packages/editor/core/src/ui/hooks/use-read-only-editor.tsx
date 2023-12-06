@@ -15,6 +15,7 @@ interface CustomReadOnlyEditorProps {
   forwardedRef?: any;
   extensions?: any;
   editorProps?: EditorProps;
+  text_html?: string;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
 }
@@ -24,33 +25,37 @@ export const useReadOnlyEditor = ({
   forwardedRef,
   extensions = [],
   editorProps = {},
+  text_html,
   mentionHighlights,
   mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
-  const editor = useCustomEditor({
-    editable: false,
-    content:
-      typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-    editorProps: {
-      ...CoreReadOnlyEditorProps,
-      ...editorProps,
+  const editor = useCustomEditor(
+    {
+      editable: false,
+      content:
+        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      editorProps: {
+        ...CoreReadOnlyEditorProps,
+        ...editorProps,
+      },
+      extensions: [
+        ...CoreReadOnlyEditorExtensions({
+          mentionSuggestions: mentionSuggestions ?? [],
+          mentionHighlights: mentionHighlights ?? [],
+        }),
+        ...extensions,
+      ],
     },
-    extensions: [
-      ...CoreReadOnlyEditorExtensions({
-        mentionSuggestions: mentionSuggestions ?? [],
-        mentionHighlights: mentionHighlights ?? [],
-      }),
-      ...extensions,
-    ],
-  });
+    [text_html],
+  );
 
-  const hasIntiliazedContent = useRef(false);
-  useEffect(() => {
-    if (editor && !value && !hasIntiliazedContent.current) {
-      editor.commands.setContent(value);
-      hasIntiliazedContent.current = true;
-    }
-  }, [value]);
+  // const hasIntiliazedContent = useRef(false);
+  // useEffect(() => {
+  //   if (editor && !value && !hasIntiliazedContent.current) {
+  //     editor.commands.setContent(value);
+  //     hasIntiliazedContent.current = true;
+  //   }
+  // }, [value]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;

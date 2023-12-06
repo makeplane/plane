@@ -129,19 +129,11 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const updatePage = async (formData: IPage) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
-    if (!formData.name || formData.name.length === 0 || formData.name === "") return;
+    formData.name = pageDetails?.name as string;
 
-    await pageService
-      .patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), formData)
-      .then(() => {
-        mutatePageDetails(
-          (prevData) => ({
-            ...prevData,
-            ...formData,
-          }),
-          false
-        );
-      });
+    if (!formData?.name || formData?.name.length === 0) return;
+
+    await pageService.patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), formData);
   };
 
   const updatePageTitle = async (title: string) => {
@@ -173,7 +165,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const duplicate_page = async () => {
     const currentPageValues = getValues();
     const formData: Partial<IPage> = {
-      name: "Copy of " + currentPageValues.name,
+      name: "Copy of " + pageDetails?.name,
       description_html: currentPageValues.description_html,
     };
     await createPage(formData);
@@ -182,12 +174,15 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const archivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
+    const formData = getValues();
+
     try {
       mutatePageDetails((prevData) => {
         if (!prevData) return;
 
         return {
           ...prevData,
+          description_html: formData.description_html,
           archived_at: renderDateFormat(new Date()),
         };
       }, true);
@@ -201,15 +196,17 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const unArchivePage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
+    const formData = getValues();
     try {
       mutatePageDetails((prevData) => {
         if (!prevData) return;
 
         return {
           ...prevData,
+          description_html: formData.description_html,
           archived_at: null,
         };
-      }, false);
+      }, true);
 
       await pageService.restorePage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
     } catch (e) {
@@ -221,17 +218,18 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const lockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
+    const formData = getValues();
+    mutatePageDetails((prevData) => {
+      if (!prevData) return;
+
+      return {
+        ...prevData,
+        description_html: formData.description_html,
+        is_locked: true,
+      };
+    }, true);
     try {
-      mutatePageDetails((prevData) => {
-        if (!prevData) return;
-
-        return {
-          ...prevData,
-          is_locked: true,
-        };
-      }, false);
-
-      await pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
+      await pageService.lockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString()).then(() => {});
     } catch (e) {
       mutatePageDetails();
     }
@@ -240,15 +238,17 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const unlockPage = async () => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
+    const formData = getValues();
     try {
       mutatePageDetails((prevData) => {
         if (!prevData) return;
 
         return {
           ...prevData,
+          description_html: formData.description_html,
           is_locked: false,
         };
-      }, false);
+      }, true);
 
       await pageService.unlockPage(workspaceSlug.toString(), projectId.toString(), pageId.toString());
     } catch (e) {
@@ -256,13 +256,14 @@ const PageDetailsPage: NextPageWithLayout = () => {
     }
   };
 
-  useEffect(() => {
-    if (!pageDetails) return;
+  const [localPageDescription, setLocalIssueDescription] = useState("");
 
-    reset({
-      ...pageDetails,
-    });
-  }, [reset, pageDetails]);
+  useEffect(() => {
+    console.log("set", pageDetails?.description_html);
+    if (pageDetails?.description_html) {
+      setLocalIssueDescription(pageDetails.description_html);
+    }
+  }, [pageDetails?.description_html]);
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
@@ -290,7 +291,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
               <DocumentReadOnlyEditorWithRef
                 onActionCompleteHandler={actionCompleteAlert}
                 ref={editorRef}
-                value={pageDetails.description_html}
+                value={localPageDescription}
+                text_html={localPageDescription}
                 customClassName={"tracking-tight w-full px-0"}
                 borderOnFocus={false}
                 noBorder
@@ -336,7 +338,6 @@ const PageDetailsPage: NextPageWithLayout = () => {
                       last_updated_at: pageDetails.updated_at,
                       last_updated_by: pageDetails.updated_by,
                     }}
-                    isSubmitting={isSubmitting}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     setShouldShowAlert={setShowAlert}
                     restoreFile={fileService.restoreImage}
@@ -346,7 +347,9 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     debouncedUpdatesEnabled={false}
                     updatePageTitle={updatePageTitle}
                     setIsSubmitting={setIsSubmitting}
-                    value={!value || value === "" ? "<p></p>" : value}
+                    value={localPageDescription}
+                    text_html={localPageDescription}
+                    isSubmitting={isSubmitting}
                     customClassName="tracking-tight px-0 h-full w-full"
                     onChange={(_description_json: Object, description_html: string) => {
                       setShowAlert(true);
