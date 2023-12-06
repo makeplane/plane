@@ -1,10 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import {
-  useImperativeHandle,
-  useRef,
-  MutableRefObject,
-  useEffect,
-} from "react";
+import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { CoreReadOnlyEditorExtensions } from "../read-only/extensions";
 import { CoreReadOnlyEditorProps } from "../read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
@@ -15,7 +10,10 @@ interface CustomReadOnlyEditorProps {
   forwardedRef?: any;
   extensions?: any;
   editorProps?: EditorProps;
-  text_html?: string;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
 }
@@ -25,7 +23,7 @@ export const useReadOnlyEditor = ({
   forwardedRef,
   extensions = [],
   editorProps = {},
-  text_html,
+  rerenderOnPropsChange,
   mentionHighlights,
   mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
@@ -46,16 +44,8 @@ export const useReadOnlyEditor = ({
         ...extensions,
       ],
     },
-    [text_html],
+    [rerenderOnPropsChange],
   );
-
-  // const hasIntiliazedContent = useRef(false);
-  // useEffect(() => {
-  //   if (editor && !value && !hasIntiliazedContent.current) {
-  //     editor.commands.setContent(value);
-  //     hasIntiliazedContent.current = true;
-  //   }
-  // }, [value]);
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;

@@ -17,7 +17,10 @@ import { getMenuOptions } from "../utils/menu-options";
 
 interface IDocumentReadOnlyEditor {
   value: string;
-  text_html: string;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   noBorder: boolean;
   borderOnFocus: boolean;
   customClassName: string;
@@ -53,7 +56,7 @@ const DocumentReadOnlyEditor = ({
   pageLockConfig,
   pageArchiveConfig,
   embedConfig,
-  text_html,
+  rerenderOnPropsChange,
   onActionCompleteHandler,
 }: DocumentReadOnlyEditorProps) => {
   const router = useRouter();
@@ -63,7 +66,7 @@ const DocumentReadOnlyEditor = ({
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
-    text_html,
+    rerenderOnPropsChange,
     extensions: [
       IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig }),
     ],

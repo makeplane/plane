@@ -21,7 +21,10 @@ interface IDocumentEditor {
   // document info
   documentDetails: DocumentDetails;
   value: string;
-  text_html?: string;
+  rerenderOnPropsChange: {
+    id: string;
+    description_html: string;
+  };
 
   // file operations
   uploadFile: UploadImage;
@@ -90,7 +93,7 @@ const DocumentEditor = ({
   updatePageTitle,
   cancelUploadImage,
   onActionCompleteHandler,
-  text_html,
+  rerenderOnPropsChange,
 }: IDocumentEditor) => {
   // const [alert, setAlert] = useState<string>("")
   const { markings, updateMarkings } = useEditorMarkings();
@@ -113,7 +116,7 @@ const DocumentEditor = ({
     uploadFile,
     deleteFile,
     cancelUploadImage,
-    text_html,
+    rerenderOnPropsChange,
     forwardedRef,
     extensions: DocumentEditorExtensions(
       uploadFile,

@@ -131,7 +131,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (pageDetails?.description_html) {
-      setLocalIssueDescription(pageDetails.description_html);
+      setLocalIssueDescription({ id: pageId, description_html: pageDetails.description_html });
     }
   }, [pageDetails?.description_html]);
 
@@ -265,7 +265,10 @@ const PageDetailsPage: NextPageWithLayout = () => {
     }
   };
 
-  const [localPageDescription, setLocalIssueDescription] = useState("");
+  const [localPageDescription, setLocalIssueDescription] = useState({
+    id: pageId as string,
+    description_html: "",
+  });
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
@@ -293,8 +296,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
               <DocumentReadOnlyEditorWithRef
                 onActionCompleteHandler={actionCompleteAlert}
                 ref={editorRef}
-                value={localPageDescription}
-                text_html={localPageDescription}
+                value={localPageDescription.description_html}
+                rerenderOnPropsChange={localPageDescription}
                 customClassName={"tracking-tight w-full px-0"}
                 borderOnFocus={false}
                 noBorder
@@ -349,8 +352,8 @@ const PageDetailsPage: NextPageWithLayout = () => {
                     debouncedUpdatesEnabled={false}
                     updatePageTitle={updatePageTitle}
                     setIsSubmitting={setIsSubmitting}
-                    value={localPageDescription}
-                    text_html={localPageDescription}
+                    value={localPageDescription.description_html}
+                    rerenderOnPropsChange={localPageDescription}
                     isSubmitting={isSubmitting}
                     customClassName="tracking-tight px-0 h-full w-full"
                     onChange={(_description_json: Object, description_html: string) => {
