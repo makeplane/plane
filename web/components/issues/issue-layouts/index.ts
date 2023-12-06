@@ -15,3 +15,6 @@ export * from "./spreadsheet";
 
 // properties
 export * from "./properties";
+
+// save view
+export * from "./save-filter-view";
