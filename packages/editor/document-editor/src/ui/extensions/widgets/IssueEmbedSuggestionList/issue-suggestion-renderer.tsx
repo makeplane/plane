@@ -12,6 +12,7 @@ import {
 import { PriorityIcon } from "@plane/ui";
 
 const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
+  console.log(container);
   const containerHeight = container.offsetHeight;
   const itemHeight = item ? item.offsetHeight : 0;
 
@@ -175,44 +176,52 @@ const IssueSuggestionList = ({
     >
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
-
         return (
           sectionItems &&
           sectionItems.length > 0 && (
             <div
-              className="h-full w-full flex flex-col"
+              className={"h-full w-full flex flex-col"}
               key={`${section}-container`}
               id={`${section}-container`}
             >
-              <h6 className="sticky top-0 z-[10] bg-custom-background-100 text-xs text-custom-text-400 font-medium px-2 py-1">
+              <h6
+                className={
+                  "sticky top-0 z-[10] bg-custom-background-100 text-xs text-custom-text-400 font-medium px-2 py-1"
+                }
+              >
                 {section}
               </h6>
-              <div className="h-full w-full truncate space-y-0.5" id={section}>
-                {sectionItems.map((item, index) => (
-                  <button
-                    type="button"
-                    className={cn(
-                      `w-full flex items-center gap-2 rounded px-2 py-1 text-left text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100 truncate`,
-                      {
-                        "bg-custom-primary-100/5  text-custom-text-100":
-                          section === currentSection && index === selectedIndex,
-                      },
-                    )}
-                    key={index}
-                    onClick={() => selectItem(index)}
-                  >
-                    <p className="text-xs text-custom-text-300 whitespace-nowrap">
-                      {item.identifier}
-                    </p>
-                    <span className="flex-shrink-0">
-                      <PriorityIcon
-                        priority={item.priority}
-                        className="h-3.5 w-3.5"
-                      />
-                    </span>
-                    <h5 className="flex-grow text-xs truncate">{item.title}</h5>
-                  </button>
-                ))}
+              <div
+                key={section}
+                id={section}
+                className={"max-h-[140px] overflow-y-scroll overflow-x-hidden"}
+              >
+                {sectionItems.map(
+                  (item: IssueSuggestionProps, index: number) => (
+                    <button
+                      className={cn(
+                        `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
+                        {
+                          "bg-custom-primary-100/5  text-custom-text-100":
+                            section === currentSection &&
+                            index === selectedIndex,
+                        },
+                      )}
+                      key={index}
+                      onClick={() => selectItem(index)}
+                    >
+                      <h5 className="text-xs text-custom-text-300 whitespace-nowrap">
+                        {item.identifier}
+                      </h5>
+                      <PriorityIcon priority={item.priority} />
+                      <div>
+                        <p className="flex-grow text-xs truncate">
+                          {item.title}
+                        </p>
+                      </div>
+                    </button>
+                  ),
+                )}
               </div>
             </div>
           )

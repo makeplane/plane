@@ -31,6 +31,8 @@ import { IssueService } from "services/issue";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import { EUserWorkspaceRoles } from "constants/workspace";
+import { GptAssistantModal } from "components/core";
+import { Sparkle } from "lucide-react";
 
 // services
 const fileService = new FileService();
@@ -47,6 +49,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
   const editorRef = useRef<any>(null);
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
+  const [gptModalOpen, setGptModal] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
   const router = useRouter();
@@ -55,7 +58,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
 
   const { user } = useUser();
 
-  const { handleSubmit, reset, getValues, control } = useForm<IPage>({
+  const { handleSubmit, reset, setValue, watch, getValues, control } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -65,6 +68,22 @@ const PageDetailsPage: NextPageWithLayout = () => {
   );
 
   const issues = Object.values(issuesResponse ?? {});
+
+  const handleAiAssistance = async (response: string) => {
+    if (!workspaceSlug || !projectId || !pageId) return;
+
+    const newDescription = `${watch("description_html")}<p>${response}</p>`;
+    setValue("description_html", newDescription);
+    editorRef.current?.setEditorValue(newDescription);
+
+    pageService
+      .patchPage(workspaceSlug.toString(), projectId.toString(), pageId.toString(), {
+        description_html: newDescription,
+      })
+      .then(() => {
+        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
+      });
+  };
 
   // =================== Fetching Page Details ======================
   const {
@@ -424,18 +443,18 @@ const PageDetailsPage: NextPageWithLayout = () => {
                 )}
               </div>
             )}
-          <IssuePeekOverview
-            workspaceSlug={workspaceSlug as string}
-            projectId={projectId as string}
-            issueId={peekIssueId ? (peekIssueId as string) : ""}
-            isArchived={false}
-            handleIssue={(issueToUpdate) => {
-              if (peekIssueId && typeof peekIssueId === "string") {
-                handleUpdateIssue(peekIssueId, issueToUpdate);
-              }
-            }}
-          />
-        </div>
+            <IssuePeekOverview
+              workspaceSlug={workspaceSlug as string}
+              projectId={projectId as string}
+              issueId={peekIssueId ? (peekIssueId as string) : ""}
+              isArchived={false}
+              handleIssue={(issueToUpdate) => {
+                if (peekIssueId && typeof peekIssueId === "string") {
+                  handleUpdateIssue(peekIssueId, issueToUpdate);
+                }
+              }}
+            />
+          </div>
         </div>
       ) : (
         <div className="h-full w-full grid place-items-center">

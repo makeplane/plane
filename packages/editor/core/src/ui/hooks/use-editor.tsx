@@ -14,7 +14,7 @@ import {
 interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
-  rerenderOnPropsChange: {
+  rerenderOnPropsChange?: {
     id: string;
     description_html: string;
   };
