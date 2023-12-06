@@ -34,8 +34,11 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
       const cycle = analytics.extras.cycle_details.find((c) => c.issue_cycle__cycle_id === datum.id);
       tooltipValue = cycle && cycle.issue_cycle__cycle__name ? cycle.issue_cycle__cycle__name : "None";
     } else if (params.segment === "issue_module__module_id") {
-      const module = analytics.extras.module_details.find((m) => m.issue_module__module_id === datum.id);
-      tooltipValue = module && module.issue_module__module__name ? module.issue_module__module__name : "None";
+      const selectedModule = analytics.extras.module_details.find((m) => m.issue_module__module_id === datum.id);
+      tooltipValue =
+        selectedModule && selectedModule.issue_module__module__name
+          ? selectedModule.issue_module__module__name
+          : "None";
     } else tooltipValue = datum.id;
   } else {
     if (DATE_KEYS.includes(params.x_axis)) tooltipValue = datum.indexValue;
