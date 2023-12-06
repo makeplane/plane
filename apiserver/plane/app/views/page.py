@@ -22,6 +22,7 @@ from plane.db.models import (
     IssueAssignee,
     IssueActivity,
     PageLog,
+    ProjectMember,
 )
 from plane.app.serializers import (
     PageSerializer,
@@ -140,12 +141,6 @@ class PageViewSet(BaseViewSet):
             pk=page_id, workspace__slug=slug, project_id=project_id
         ).first()
 
-        # only the owner can lock the page
-        if request.user.id != page.owned_by_id:
-            return Response(
-                {"error": "Only the page owner can lock the page"},
-            )
-
         page.is_locked = True
         page.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -155,12 +150,6 @@ class PageViewSet(BaseViewSet):
             pk=page_id, workspace__slug=slug, project_id=project_id
         ).first()
 
-        # only the owner can unlock the page
-        if request.user.id != page.owned_by_id:
-            return Response(
-                {"error": "Only the page owner can unlock the page"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         page.is_locked = False
         page.save()
 
@@ -175,10 +164,16 @@ class PageViewSet(BaseViewSet):
     def archive(self, request, slug, project_id, page_id):
         page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
 
-        if page.owned_by_id != request.user.id:
+        # only the owner and admin can archive the page
+        if (
+            ProjectMember.objects.filter(
+                project_id=project_id, member=request.user, is_active=True, role__gt=20
+            ).exists()
+            or request.user.id != page.owned_by_id
+        ):
             return Response(
-                {"error": "Only the owner of the page can archive a page"},
-                status=status.HTTP_204_NO_CONTENT,
+                {"error": "Only the owner and admin can archive the page"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         unarchive_archive_page_and_descendants(page_id, datetime.now())
@@ -188,9 +183,15 @@ class PageViewSet(BaseViewSet):
     def unarchive(self, request, slug, project_id, page_id):
         page = Page.objects.get(pk=page_id, workspace__slug=slug, project_id=project_id)
 
-        if page.owned_by_id != request.user.id:
+        # only the owner and admin can un archive the page
+        if (
+            ProjectMember.objects.filter(
+                project_id=project_id, member=request.user, is_active=True, role__gt=20
+            ).exists()
+            or request.user.id != page.owned_by_id
+        ):
             return Response(
-                {"error": "Only the owner of the page can unarchive a page"},
+                {"error": "Only the owner and admin can un archive the page"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -216,6 +217,18 @@ class PageViewSet(BaseViewSet):
     def destroy(self, request, slug, project_id, pk):
         page = Page.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
 
+        # only the owner and admin can delete the page
+        if (
+            ProjectMember.objects.filter(
+                project_id=project_id, member=request.user, is_active=True, role__gt=20
+            ).exists()
+            or request.user.id != page.owned_by_id
+        ):
+            return Response(
+                {"error": "Only the owner and admin can delete the page"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         if page.archived_at is None:
             return Response(
                 {"error": "The page should be archived before deleting"},
@@ -226,7 +239,6 @@ class PageViewSet(BaseViewSet):
         _ = Page.objects.filter(
             parent_id=pk, project_id=project_id, workspace__slug=slug
         ).update(parent=None)
-
 
         page.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -308,36 +320,6 @@ class PageLogEndpoint(BaseAPIView):
         # Delete the transaction object
         transaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class CreateIssueFromBlockEndpoint(BaseAPIView):
-    permission_classes = [
-        ProjectEntityPermission,
-    ]
-
-    def post(self, request, slug, project_id, page_id):
-        page = Page.objects.get(
-            workspace__slug=slug,
-            project_id=project_id,
-            pk=page_id,
-        )
-        issue = Issue.objects.create(
-            name=request.data.get("name"),
-            project_id=project_id,
-        )
-        _ = IssueAssignee.objects.create(
-            issue=issue, assignee=request.user, project_id=project_id
-        )
-
-        _ = IssueActivity.objects.create(
-            issue=issue,
-            actor=request.user,
-            project_id=project_id,
-            comment=f"created the issue from {page.name} block",
-            verb="created",
-        )
-
-        return Response(IssueLiteSerializer(issue).data, status=status.HTTP_200_OK)
 
 
 class SubPagesEndpoint(BaseAPIView):

@@ -130,7 +130,6 @@ from .page import (
     PageFavoriteViewSet,
     PageLogEndpoint,
     SubPagesEndpoint,
-    CreateIssueFromBlockEndpoint,
 )
 
 from .search import GlobalSearchEndpoint, IssueSearchEndpoint
