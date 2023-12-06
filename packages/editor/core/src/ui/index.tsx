@@ -3,7 +3,7 @@ import * as React from "react";
 import { Extension } from "@tiptap/react";
 import { getEditorClassNames } from "../lib/utils";
 import { EditorProps } from "@tiptap/pm/view";
-import { useEditor } from "./hooks/useEditor";
+import { useEditor } from "./hooks/use-editor";
 import { EditorContainer } from "../ui/components/editor-container";
 import { EditorContentWrapper } from "../ui/components/editor-content";
 import {
