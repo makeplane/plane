@@ -52,9 +52,12 @@ export const PageRenderer = (props: IPageRenderer) => {
           value={pageTitle}
         />
       ) : (
-        <h1 className="text-4xl font-bold break-words pr-5 -mt-2">
-          {documentDetails.title}
-        </h1>
+        <input
+          onChange={(e) => handlePageTitleChange(e.target.value)}
+          className="text-4xl bg-custom-background font-bold break-words pr-5 -mt-2 w-full border-none outline-none overflow-x-clip"
+          value={pageTitle}
+          disabled
+        />
       )}
       <div className="flex flex-col h-full w-full pr-5">
         <EditorContainer editor={editor} editorClassNames={editorClassNames}>
