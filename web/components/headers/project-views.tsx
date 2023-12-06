@@ -4,8 +4,6 @@ import { Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CreateUpdateProjectViewModal } from "components/views";
-// components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
@@ -13,21 +11,13 @@ import { renderEmoji } from "helpers/emoji.helper";
 export const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug } = router.query;
 
   const { project: projectStore, commandPalette } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   return (
     <>
-      {workspaceSlug && projectId && (
-        <CreateUpdateProjectViewModal
-          isOpen={commandPalette.isCreateViewModalOpen}
-          onClose={() => commandPalette.toggleCreateViewModal(false)}
-          workspaceSlug={workspaceSlug.toString()}
-          projectId={projectId.toString()}
-        />
-      )}
       <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
           <div>

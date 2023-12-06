@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { SignInRoot, UserLoggedIn } from "components/accounts";
 import { Loader } from "@plane/ui";
 // images
-import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
+import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text-new.png";
 
 export const LoginView = observer(() => {
   // store
