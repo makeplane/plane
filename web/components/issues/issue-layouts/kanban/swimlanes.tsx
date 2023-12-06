@@ -82,7 +82,12 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   members: IUserLite[] | null;
   projects: IProject[] | null;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
@@ -200,7 +205,12 @@ export interface IKanBanSwimLanes {
   group_by: string | null;
   order_by: string | null;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;

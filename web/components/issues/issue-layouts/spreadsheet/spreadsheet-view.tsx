@@ -142,7 +142,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="border-t border-custom-border-100">
-          <div className="mb-3 z-50 sticky bottom-0 left-0">
+          <div className="mb-3 z-5 sticky bottom-0 left-0">
             {enableQuickCreateIssue && (
               <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
             )}

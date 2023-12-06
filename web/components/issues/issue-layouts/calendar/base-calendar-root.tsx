@@ -81,8 +81,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-            quickActions={(issue) => (
+            quickActions={(issue, customActionButton) => (
               <QuickActions
+              customActionButton={customActionButton}
                 issue={issue}
                 handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
                 handleUpdate={

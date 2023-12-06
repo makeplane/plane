@@ -79,7 +79,6 @@ COPY apiserver/manage.py manage.py
 COPY apiserver/plane plane/
 COPY apiserver/templates templates/
 
-COPY apiserver/gunicorn.config.py ./
 RUN apk --no-cache add "bash~=5.2"
 COPY apiserver/bin ./bin/
 

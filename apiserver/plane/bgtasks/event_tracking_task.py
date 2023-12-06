@@ -28,3 +28,23 @@ def auth_events(user, email, user_agent, ip, event_name, medium, first_time):
         )
     except Exception as e:
         capture_exception(e)
+ 
+@shared_task
+def workspace_invite_event(user, email, user_agent, ip, event_name, accepted_from):
+    try:
+        posthog = Posthog(settings.POSTHOG_API_KEY, host=settings.POSTHOG_HOST)
+        posthog.capture(
+            email,
+            event=event_name,
+            properties={
+                    "event_id": uuid.uuid4().hex,
+                    "user": {"email": email, "id": str(user)},
+                    "device_ctx": {
+                        "ip": ip,
+                        "user_agent": user_agent,
+                    },
+                    "accepted_from": accepted_from
+            }
+        )
+    except Exception as e:
+        capture_exception(e)

@@ -70,7 +70,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
         )}
 
         {/* labels */}
-        {isFilterEnabled("labels") && (
+        {/* {isFilterEnabled("labels") && (
           <div className="py-2">
             <FilterLabels
               appliedFilters={filters.labels ?? null}
@@ -79,7 +79,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
               searchQuery={filtersSearchQuery}
             />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

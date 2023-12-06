@@ -23,20 +23,21 @@ interface IssueBlockProps {
   isReadOnly: boolean;
 }
 
-export const KanBanIssueMemoBlock: React.FC<IssueBlockProps> = (props) => {
-  const {
-    sub_group_id,
-    columnId,
-    index,
-    issue,
-    isDragDisabled,
-    showEmptyGroup,
-    handleIssues,
-    quickActions,
-    displayProperties,
-    isReadOnly,
-  } = props;
-  // router
+interface IssueDetailsBlockProps {
+  sub_group_id: string;
+  columnId: string;
+  issue: IIssue;
+  showEmptyGroup: boolean;
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
+  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  displayProperties: IIssueDisplayProperties | null;
+  isReadOnly: boolean;
+}
+
+const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
+  const { sub_group_id, columnId, issue, showEmptyGroup, handleIssues, quickActions, displayProperties, isReadOnly } =
+    props;
+
   const router = useRouter();
 
   const updateIssue = (sub_group_by: string | null, group_by: string | null, issueToUpdate: IIssue) => {
@@ -51,6 +52,66 @@ export const KanBanIssueMemoBlock: React.FC<IssueBlockProps> = (props) => {
       query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
+
+  return (
+    <>
+      {displayProperties && displayProperties?.key && (
+        <div className="relative">
+          <div className="text-xs line-clamp-1 text-custom-text-300">
+            {issue.project_detail.identifier}-{issue.sequence_id}
+          </div>
+          <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">
+            {quickActions(
+              !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
+              !columnId && columnId === "null" ? null : columnId,
+              issue
+            )}
+          </div>
+        </div>
+      )}
+      <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
+        <div className="line-clamp-2 text-sm font-medium text-custom-text-100" onClick={handleIssuePeekOverview}>
+          {issue.name}
+        </div>
+      </Tooltip>
+      <div>
+        <KanBanProperties
+          sub_group_id={sub_group_id}
+          columnId={columnId}
+          issue={issue}
+          handleIssues={updateIssue}
+          displayProperties={displayProperties}
+          showEmptyGroup={showEmptyGroup}
+          isReadOnly={isReadOnly}
+        />
+      </div>
+    </>
+  );
+};
+
+const validateMemo = (prevProps: IssueDetailsBlockProps, nextProps: IssueDetailsBlockProps) => {
+  if (prevProps.issue !== nextProps.issue) return false;
+  if (!isEqual(prevProps.displayProperties, nextProps.displayProperties)) {
+    return false;
+  }
+  return true;
+};
+
+const KanbanIssueMemoBlock = memo(KanbanIssueDetailsBlock, validateMemo);
+
+export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
+  const {
+    sub_group_id,
+    columnId,
+    index,
+    issue,
+    isDragDisabled,
+    showEmptyGroup,
+    handleIssues,
+    quickActions,
+    displayProperties,
+    isReadOnly,
+  } = props;
 
   let draggableId = issue.id;
   if (columnId) draggableId = `${draggableId}__${columnId}`;
@@ -74,39 +135,16 @@ export const KanBanIssueMemoBlock: React.FC<IssueBlockProps> = (props) => {
                 isDragDisabled ? "" : "hover:cursor-grab"
               } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
             >
-              {displayProperties && displayProperties?.key && (
-                <div className="relative">
-                  <div className="text-xs line-clamp-1 text-custom-text-300">
-                    {issue.project_detail.identifier}-{issue.sequence_id}
-                  </div>
-                  <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">
-                    {quickActions(
-                      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-                      !columnId && columnId === "null" ? null : columnId,
-                      issue
-                    )}
-                  </div>
-                </div>
-              )}
-              <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
-                <div
-                  className="line-clamp-2 text-sm font-medium text-custom-text-100"
-                  onClick={handleIssuePeekOverview}
-                >
-                  {issue.name}
-                </div>
-              </Tooltip>
-              <div>
-                <KanBanProperties
-                  sub_group_id={sub_group_id}
-                  columnId={columnId}
-                  issue={issue}
-                  handleIssues={updateIssue}
-                  displayProperties={displayProperties}
-                  showEmptyGroup={showEmptyGroup}
-                  isReadOnly={isReadOnly}
-                />
-              </div>
+              <KanbanIssueMemoBlock
+                sub_group_id={sub_group_id}
+                columnId={columnId}
+                issue={issue}
+                showEmptyGroup={showEmptyGroup}
+                handleIssues={handleIssues}
+                quickActions={quickActions}
+                displayProperties={displayProperties}
+                isReadOnly={isReadOnly}
+              />
             </div>
           </div>
         )}
@@ -114,10 +152,3 @@ export const KanBanIssueMemoBlock: React.FC<IssueBlockProps> = (props) => {
     </>
   );
 };
-
-const validateMemo = (prevProps: IssueBlockProps, nextProps: IssueBlockProps) => {
-  if (prevProps.issue != nextProps.issue) return true;
-  return false;
-};
-
-export const KanbanIssueBlock = memo(KanBanIssueMemoBlock, validateMemo);

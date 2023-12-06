@@ -165,6 +165,7 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                         workspace__slug=slug,
                         is_active=True,
                     ).select_related("member"),
+                    to_attr='members_list'
                 )
             )
             .order_by("sort_order", "name")

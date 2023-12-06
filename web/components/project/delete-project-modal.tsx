@@ -12,7 +12,6 @@ import { Button, Input } from "@plane/ui";
 import type { IProject } from "types";
 // fetch-keys
 import { useMobxStore } from "lib/mobx/store-provider";
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type DeleteProjectModal = {
   isOpen: boolean;
@@ -28,7 +27,7 @@ const defaultValues = {
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, workspace: { currentWorkspace }, trackEvent: { postHogEventTracker } } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -63,9 +62,17 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
-        trackEvent(
-          'DELETE_PROJECT'
-        )
+        postHogEventTracker(
+          'PROJECT_DELETED',
+          {
+            state: "SUCCESS"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -73,9 +80,17 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         });
       })
       .catch(() => {
-        trackEvent(
-          'DELETE_PROJECT/FAIL'
-        )
+        postHogEventTracker(
+          'PROJECT_DELETED',
+          {
+            state: "FAILED"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
         setToastAlert({
           type: "error",
           title: "Error!",

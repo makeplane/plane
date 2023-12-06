@@ -27,7 +27,12 @@ export interface IGroupByKanBan {
   isDragDisabled: boolean;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   showEmptyGroup: boolean;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
@@ -181,7 +186,12 @@ export interface IKanBan {
   order_by: string | null;
   sub_group_id?: string;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
+  quickActions: (
+    sub_group_by: string | null,
+    group_by: string | null,
+    issue: IIssue,
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;

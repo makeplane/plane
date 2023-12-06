@@ -1,7 +1,6 @@
-import { FC, Fragment, ReactNode } from "react";
+import { FC, Fragment, ReactNode, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
@@ -60,17 +59,16 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  useSWR(
-    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_DETAILS_${workspaceSlug}_${projectId}_${peekIssueId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && issueId && issueId === peekIssueId) {
-        if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
-        else await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
-      }
+  const fetchIssueDetail = useCallback(async () => {
+    if (workspaceSlug && projectId && peekIssueId) {
+      if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      else await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
     }
-  );
+  }, [fetchArchivedPeekIssueDetails, fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId, isArchived]);
+
+  useEffect(() => {
+    fetchIssueDetail();
+  }, [workspaceSlug, projectId, peekIssueId, fetchIssueDetail]);
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();

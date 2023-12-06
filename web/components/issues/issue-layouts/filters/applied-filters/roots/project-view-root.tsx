@@ -31,7 +31,6 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   } = useMobxStore();
 
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
-  const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
 
   const userFilters = issueFilters?.filters;
   // filters whose value not null or empty array
@@ -89,7 +88,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
     projectViewsStore.updateView(workspaceSlug.toString(), projectId.toString(), viewId.toString(), {
       query_data: {
         ...viewDetails.query_data,
-        ...(storedFilters ?? {}),
+        ...(appliedFilters ?? {}),
       },
     });
   };
@@ -104,13 +103,16 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
         members={projectMembers?.map((m) => m.member)}
         states={projectStateStore.states?.[projectId?.toString() ?? ""]}
       />
-      {storedFilters && viewDetails && areFiltersDifferent(storedFilters, viewDetails.query_data ?? {}) && (
-        <div className="flex items-center justify-center flex-shrink-0">
-          <Button variant="primary" size="sm" onClick={handleUpdateView}>
-            Update view
-          </Button>
-        </div>
-      )}
+
+      {appliedFilters &&
+        viewDetails?.query_data &&
+        areFiltersDifferent(appliedFilters, viewDetails?.query_data ?? {}) && (
+          <div className="flex items-center justify-center flex-shrink-0">
+            <Button variant="primary" size="sm" onClick={handleUpdateView}>
+              Update view
+            </Button>
+          </div>
+        )}
     </div>
   );
 });

@@ -20,7 +20,7 @@ export interface EmailFormValues {
   EMAIL_HOST_USER: string;
   EMAIL_HOST_PASSWORD: string;
   EMAIL_USE_TLS: string;
-  EMAIL_USE_SSL: string;
+  // EMAIL_USE_SSL: string;
 }
 
 export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
@@ -44,7 +44,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
       EMAIL_HOST_USER: config["EMAIL_HOST_USER"],
       EMAIL_HOST_PASSWORD: config["EMAIL_HOST_PASSWORD"],
       EMAIL_USE_TLS: config["EMAIL_USE_TLS"],
-      EMAIL_USE_SSL: config["EMAIL_USE_SSL"],
+      // EMAIL_USE_SSL: config["EMAIL_USE_SSL"],
     },
   });
 
@@ -194,7 +194,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-10 pt-4 mr-8">
+        {/* <div className="flex items-center gap-10 pt-4 mr-8">
           <div className="grow">
             <div className="text-custom-text-100 font-medium text-sm">
               Turn SSL {Boolean(parseInt(watch("EMAIL_USE_SSL"))) ? "off" : "on"}
@@ -218,7 +218,7 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
               )}
             />
           </div>
-        </div>
+        </div> */}
       </div>
 
       <div className="flex items-center py-1 max-w-4xl">

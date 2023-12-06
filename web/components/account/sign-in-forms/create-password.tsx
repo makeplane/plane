@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -41,6 +41,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
     control,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
+    setFocus,
   } = useForm<TCreatePasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -73,6 +74,10 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
         })
       );
   };
+
+  useEffect(() => {
+    setFocus("password");
+  }, [setFocus]);
 
   return (
     <>

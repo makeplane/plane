@@ -82,6 +82,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     moduleIssues: moduleIssueStore,
     user: userStore,
     trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace }
   } = useMobxStore();
 
   const user = userStore.currentUser;
@@ -250,10 +251,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
             title: "Success!",
             message: "Issue created successfully.",
           });
-          postHogEventTracker("ISSUE_CREATE", {
+          postHogEventTracker("ISSUE_CREATED", {
             ...res,
             state: "SUCCESS",
-          });
+          },
+            {
+              isGrouping: true,
+              groupType: "Workspace_metrics",
+              gorupId: currentWorkspace?.id!
+            }
+          );
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
         }
       })
@@ -263,9 +270,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });
-        postHogEventTracker("ISSUE_CREATE", {
+        postHogEventTracker("ISSUE_CREATED", {
           state: "FAILED",
-        });
+        },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       });
 
     if (!createMore) onFormSubmitClose();
@@ -317,10 +330,16 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Success!",
           message: "Issue updated successfully.",
         });
-        postHogEventTracker("ISSUE_UPDATE", {
+        postHogEventTracker("ISSUE_UPDATED", {
           ...res,
           state: "SUCCESS",
-        });
+        },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -328,9 +347,15 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Error!",
           message: "Issue could not be updated. Please try again.",
         });
-        postHogEventTracker("ISSUE_UPDATE", {
+        postHogEventTracker("ISSUE_UPDATED", {
           state: "FAILED",
-        });
+        },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       });
   };
 
