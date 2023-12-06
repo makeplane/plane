@@ -18,7 +18,7 @@ export const ProjectEmptyState: React.FC = observer(() => {
     <div className="h-full w-full grid place-items-center">
       <NewEmptyState
         title="Create an issue and assign it to someone, even yourself"
-        description="Think of issues as jobs, tasks, work, or JTBD. Which we like.An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal."
+        description="Think of issues as jobs, tasks, work, or JTBD. Which we like. An issue and its sub-issues are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes issues to move your project towards its goal."
         image={emptyIssue}
         comicBox={{
           title: "Issues are building blocks in Plane.",
