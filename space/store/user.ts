@@ -9,7 +9,7 @@ export interface IUserStore {
   loader: boolean;
   error: any | null;
   currentUser: any | null;
-  fetchCurrentUser: () => Promise<IUser>;
+  fetchCurrentUser: () => Promise<IUser | undefined>;
   currentActor: () => any;
 }
 
@@ -83,12 +83,12 @@ class UserStore implements IUserStore {
       this.loader = true;
       this.error = null;
       const response = await this.userService.currentUser();
-      if (response) {
+
+      if (response)
         runInAction(() => {
           this.loader = false;
           this.currentUser = response;
         });
-      }
       return response;
     } catch (error) {
       console.error("Failed to fetch current user", error);

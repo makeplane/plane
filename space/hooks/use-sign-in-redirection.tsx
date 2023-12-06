@@ -45,9 +45,10 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
 
     await fetchCurrentUser()
       .then(async (user) => {
-        await handleSignInRedirection(user)
-          .catch((err) => setError(err))
-          .finally(() => setIsRedirecting(false));
+        if (user)
+          await handleSignInRedirection(user)
+            .catch((err) => setError(err))
+            .finally(() => setIsRedirecting(false));
       })
       .catch((err) => {
         setError(err);
