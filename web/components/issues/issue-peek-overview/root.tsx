@@ -1,4 +1,4 @@
-import { FC, Fragment, ReactNode } from "react";
+import { FC, Fragment, ReactNode, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
@@ -40,17 +40,17 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  useSWR(
-    workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId
-      ? `ISSUE_DETAILS_${workspaceSlug}_${projectId}_${peekIssueId}`
-      : null,
-    async () => {
-      if (workspaceSlug && projectId && issueId && issueId === peekIssueId) {
-        if (isArchived) await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
-        else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId);
-      }
+  const fetchIssueDetail = async () => {
+    if (workspaceSlug && projectId && peekIssueId) {
+      if (isArchived)
+        await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
     }
-  );
+  };
+
+  useEffect(() => {
+    fetchIssueDetail();
+  }, [workspaceSlug, projectId, peekIssueId]);
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
