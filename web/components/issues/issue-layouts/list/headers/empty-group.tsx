@@ -14,7 +14,7 @@ export interface IEmptyHeader {
 }
 
 export const EmptyHeader: React.FC<IEmptyHeader> = observer((props) => {
-  const { column_id, column_value, issues_count, disableIssueCreation, currentStore, addIssuesToView } = props;
+  const { column_value, issues_count, disableIssueCreation, currentStore, addIssuesToView } = props;
 
   return (
     <HeaderGroupByCard
