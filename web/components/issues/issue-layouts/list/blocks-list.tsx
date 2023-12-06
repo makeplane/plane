@@ -22,17 +22,20 @@ export const IssueBlocksList: FC<Props> = (props) => {
   return (
     <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
       {issueIds && issueIds.length > 0 ? (
-        issueIds.map((issueId: string) => (
-          <IssueBlock
-            key={issues[issueId]?.id}
-            columnId={columnId}
-            issue={issues[issueId]}
-            handleIssues={handleIssues}
-            quickActions={quickActions}
-            isReadonly={isReadonly}
-            displayProperties={displayProperties}
-          />
-        ))
+        issueIds.map(
+          (issueId: string) =>
+            issues[issueId] && (
+              <IssueBlock
+                key={issues[issueId].id}
+                columnId={columnId}
+                issue={issues[issueId]}
+                handleIssues={handleIssues}
+                quickActions={quickActions}
+                isReadonly={isReadonly}
+                displayProperties={displayProperties}
+              />
+            )
+        )
       ) : (
         <div className="bg-custom-background-100 text-custom-text-400 text-sm p-3">No issues</div>
       )}

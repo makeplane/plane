@@ -5,9 +5,6 @@ const withImages = require("next-images");
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
-  experimental: {
-    outputFileTracingRoot: path.join(__dirname, "../"),
-  },
   images: {
     unoptimized: true,
   },
