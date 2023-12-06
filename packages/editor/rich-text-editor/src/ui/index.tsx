@@ -24,7 +24,7 @@ export type IRichTextEditor = {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   cancelUploadImage?: () => any;
-  rerenderOnPropsChange: {
+  rerenderOnPropsChange?: {
     id: string;
     description_html: string;
   };
