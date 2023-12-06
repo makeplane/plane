@@ -46,6 +46,7 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const {
     workspace: { workspaceSlug },
     user: { currentUserSettings },
+    trackEvent: { postHogEventTracker }
   } = useMobxStore();
 
   const router = useRouter();
@@ -88,10 +89,18 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(() => {
+      .then((res) => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
+        postHogEventTracker(
+          "MEMBER_ACCEPTED",
+          {
+            ...res,
+            state: "SUCCESS",
+            accepted_from: "App"
+          }
+        );
         userService
           .updateUser({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
@@ -147,11 +156,10 @@ const UserInvitationsPage: NextPageWithLayout = observer(() => {
                   return (
                     <div
                       key={invitation.id}
-                      className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                        isSelected
+                      className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${isSelected
                           ? "border-custom-primary-100"
                           : "border-custom-border-200 hover:bg-custom-background-80"
-                      }`}
+                        }`}
                       onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                     >
                       <div className="flex-shrink-0">
