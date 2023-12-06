@@ -5,7 +5,7 @@ import { PluginKey, NodeSelection, Plugin } from "@tiptap/pm/state";
 import { __serializeForClipboard, EditorView } from "@tiptap/pm/view";
 
 function createDragHandleElement(): HTMLElement {
-  let dragHandleElement = document.createElement("div");
+  const dragHandleElement = document.createElement("div");
   dragHandleElement.draggable = true;
   dragHandleElement.dataset.dragHandle = "";
   dragHandleElement.classList.add("drag-handle");
