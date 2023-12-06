@@ -103,16 +103,19 @@ class ProjectListSerializer(DynamicBaseSerializer):
     members = serializers.SerializerMethodField()
 
     def get_members(self, obj):
-        project_members = ProjectMember.objects.filter(
-            project_id=obj.id,
-            is_active=True,
-        ).values(
-            "id",
-            "member_id",
-            "member__display_name",
-            "member__avatar",
-        )
-        return list(project_members)
+        project_members = getattr(obj, "members_list", None)
+        if project_members is not None:
+            # Filter members by the project ID
+            return [
+                {
+                    "id": member.id,
+                    "member_id": member.member_id,
+                    "member__display_name": member.member.display_name,
+                    "member__avatar": member.member.avatar,
+                }
+                for member in project_members
+            ]
+        return []
 
     class Meta:
         model = Project
