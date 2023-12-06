@@ -105,7 +105,19 @@ const IssueNavbar = observer(() => {
         }
       }
     }
-  }, [board, workspace_slug, project_slug, router, projectStore, projectStore?.deploySettings, updateFilters]);
+  }, [
+    board,
+    workspace_slug,
+    project_slug,
+    router,
+    projectStore,
+    projectStore?.deploySettings,
+    updateFilters,
+    labels,
+    states,
+    priorities,
+    peekId,
+  ]);
 
   return (
     <div className="relative flex w-full items-center gap-4 px-5">

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { mutate } from "swr";
 import { useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
 // mobx store
@@ -32,7 +31,6 @@ import {
 // types
 import { ICycle } from "types";
 // fetch-keys
-import { CYCLE_DETAILS } from "constants/fetch-keys";
 import { CYCLE_STATUS } from "constants/cycle";
 
 type Props = {
@@ -54,7 +52,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const {
     cycle: cycleDetailsStore,
-    trackEvent: { setTrackElement, postHogEventTracker },
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;

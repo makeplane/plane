@@ -43,7 +43,6 @@ interface IssuesModalProps {
 
 // services
 const issueService = new IssueService();
-const issueDraftService = new IssueDraftService();
 const moduleService = new ModuleService();
 
 export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer((props) => {
@@ -65,7 +64,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { project: projectStore, user: userStore } = useMobxStore();
+  const { project: projectStore, user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
 
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
@@ -167,9 +166,10 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const createDraftIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await issueDraftService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
+    await draftIssueStore
+      .createIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(async () => {
+        await draftIssueStore.fetchIssues(workspaceSlug as string, activeProject ?? "", "mutation");
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -192,8 +192,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const updateDraftIssue = async (payload: Partial<IIssue>) => {
     if (!user) return;
 
-    await issueDraftService
-      .updateDraftIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
+    await draftIssueStore
+      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);

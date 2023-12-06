@@ -91,10 +91,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     }
   }, [issue.id]);
 
-  useEffect(() => {
-    setLocalTitleValue(issue.name);
-  }, [issue.name]);
-
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
   }, 1500);

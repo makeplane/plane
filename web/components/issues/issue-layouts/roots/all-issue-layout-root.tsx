@@ -5,7 +5,7 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { GlobalViewEmptyState, GlobalViewsAppliedFiltersRoot } from "components/issues";
+import { GlobalViewsAppliedFiltersRoot } from "components/issues";
 import { SpreadsheetView } from "components/issues/issue-layouts";
 import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-action-dropdowns";
 // ui
@@ -81,7 +81,8 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
       if (action === EIssueActions.UPDATE) await issueActions[action]!(issue);
       if (action === EIssueActions.DELETE) await issueActions[action]!(issue);
     },
-    [getIssues]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
 
   const handleDisplayFiltersUpdate = useCallback(
