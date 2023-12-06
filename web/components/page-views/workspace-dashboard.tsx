@@ -22,7 +22,7 @@ export const WorkspaceDashboardView = observer(() => {
     user: userStore,
     project: projectStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
+    trackEvent: { setTrackElement, postHogEventTracker },
   } = useMobxStore();
 
   const user = userStore.currentUser;
@@ -37,7 +37,18 @@ export const WorkspaceDashboardView = observer(() => {
   );
 
   const handleTourCompleted = () => {
-    userStore.updateTourCompleted();
+    userStore.updateTourCompleted().then(() => {
+      postHogEventTracker(
+        "USER_TOUR_COMPLETE",
+        {
+          user_id: user?.id,
+          email: user?.email,
+          state: "SUCCESS"
+        }
+      )
+    }).catch((error) => {
+      console.log(error);
+    })
   };
 
   return (

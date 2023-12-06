@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
@@ -48,6 +48,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
     getValues,
     handleSubmit,
     setError,
+    setFocus,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -126,6 +127,10 @@ export const PasswordForm: React.FC<Props> = (props) => {
       )
       .finally(() => setIsSendingUniqueCode(false));
   };
+
+  useEffect(() => {
+    setFocus("password");
+  }, [setFocus]);
 
   return (
     <>

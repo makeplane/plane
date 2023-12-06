@@ -29,9 +29,8 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
           theme: "outline",
           size: "large",
           logo_alignment: "center",
-          width: 360,
           text: "signin_with",
-        } as any // customization attributes
+        } as GsiButtonConfiguration // customization attributes
       );
     } catch (err) {
       console.log(err);
@@ -40,7 +39,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
     (window as any)?.google?.accounts.id.prompt(); // also display the One Tap dialog
 
     setGsiScriptLoaded(true);
-  }, [handleSignIn, gsiScriptLoaded]);
+  }, [handleSignIn, gsiScriptLoaded, clientId]);
 
   useEffect(() => {
     if ((window as any)?.google?.accounts?.id) {
