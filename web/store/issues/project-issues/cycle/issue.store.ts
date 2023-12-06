@@ -53,7 +53,8 @@ export interface ICycleIssuesStore {
     workspaceSlug: string,
     cycleId: string,
     issueIds: string[],
-    fetchAfterAddition?: boolean
+    fetchAfterAddition?: boolean,
+    projectId?: string
   ) => Promise<IIssue>;
   removeIssueFromCycle: (
     workspaceSlug: string,
@@ -314,19 +315,27 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
     }
   };
 
-  addIssueToCycle = async (workspaceSlug: string, cycleId: string, issueIds: string[], fetchAfterAddition = true) => {
-    if (!this.currentProjectId) return;
+  addIssueToCycle = async (
+    workspaceSlug: string,
+    cycleId: string,
+    issueIds: string[],
+    fetchAfterAddition = true,
+    projectId?: string
+  ) => {
+    if (!this.currentProjectId && !projectId) return;
+
+    const projectIdToUpdate: string = this.currentProjectId || projectId || "";
 
     try {
-      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, this.currentProjectId, cycleId, {
+      const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectIdToUpdate, cycleId, {
         issues: issueIds,
       });
 
-      if (fetchAfterAddition) this.fetchIssues(workspaceSlug, this.currentProjectId, "mutation", cycleId);
+      if (fetchAfterAddition) this.fetchIssues(workspaceSlug, projectIdToUpdate, "mutation", cycleId);
 
       return issueToCycle;
     } catch (error) {
-      this.fetchIssues(workspaceSlug, this.currentProjectId, "mutation", cycleId);
+      this.fetchIssues(workspaceSlug, projectIdToUpdate, "mutation", cycleId);
       throw error;
     }
   };

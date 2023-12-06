@@ -52,7 +52,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
 
-  const { cycle: cycleDetailsStore, trackEvent: { setTrackElement, postHogEventTracker } } = useMobxStore();
+  const {
+    cycle: cycleDetailsStore,
+    trackEvent: { setTrackElement, postHogEventTracker },
+  } = useMobxStore();
 
   const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
 
@@ -70,31 +73,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const submitChanges = (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
 
-    mutate<ICycle>(CYCLE_DETAILS(cycleId as string), (prevData) => ({ ...(prevData as ICycle), ...data }), false);
-
-    cycleService
-      .patchCycle(workspaceSlug as string, projectId as string, cycleId as string, data)
-      .then((res) => {
-        mutate(CYCLE_DETAILS(cycleId as string));
-        postHogEventTracker(
-          "CYCLE_UPDATE",
-          {
-            ...res,
-            state: "SUCCESS"
-          }
-        );
-      }
-      )
-      .catch((e) => {
-        console.log(e);
-        postHogEventTracker(
-          "CYCLE_UPDATE",
-          {
-            state: "FAILED"
-          }
-        );
-      }
-      );
+    cycleDetailsStore.patchCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), data);
   };
 
   const handleCopyText = () => {
@@ -304,10 +283,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     cycleDetails.total_issues === 0
       ? "0 Issue"
       : cycleDetails.total_issues === cycleDetails.completed_issues
-        ? cycleDetails.total_issues > 1
-          ? `${cycleDetails.total_issues}`
-          : `${cycleDetails.total_issues}`
-        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+      ? cycleDetails.total_issues > 1
+        ? `${cycleDetails.total_issues}`
+        : `${cycleDetails.total_issues}`
+      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   return (
     <>
@@ -337,11 +316,12 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             </button>
             {!isCompleted && (
               <CustomMenu width="lg" placement="bottom-end" ellipsis>
-                <CustomMenu.MenuItem onClick={() => {
-                  setTrackElement("CYCLE_PAGE_SIDEBAR");
-                  setCycleDeleteModal(true)
-                }
-                }>
+                <CustomMenu.MenuItem
+                  onClick={() => {
+                    setTrackElement("CYCLE_PAGE_SIDEBAR");
+                    setCycleDeleteModal(true);
+                  }}
+                >
                   <span className="flex items-center justify-start gap-2">
                     <Trash2 className="h-3 w-3" />
                     <span>Delete cycle</span>

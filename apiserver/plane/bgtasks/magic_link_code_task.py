@@ -34,30 +34,6 @@ def magic_link(email, key, token, current_site):
             EMAIL_FROM,
         ) = get_email_configuration(instance_configuration=instance_configuration)
 
-        # Send the email if the users don't have smtp configured
-        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
-            # Check the instance registration
-            instance = Instance.objects.first()
-
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-
-            payload = {
-                "token": token,
-                "email": email,
-            }
-
-            _ = requests.post(
-                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/magic-code/",
-                headers=headers,
-                data=json.dumps(payload),
-            )
-
-            return
-
         # Send the mail
         subject = f"Your unique Plane login code is {token}"
         context = {"code": token, "email": email}

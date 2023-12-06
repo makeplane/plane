@@ -63,7 +63,7 @@ def date_filter(filter, date_term, queries):
                         duration=int(digit),
                         subsequent=date_query[1],
                         term=term,
-                        date_filter="created_at__date",
+                        date_filter=date_term,
                         offset=date_query[2],
                     )
             else:

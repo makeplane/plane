@@ -55,7 +55,7 @@ export interface IIssueLink {
   url: string;
 }
 
-export interface linkDetails {
+export interface ILinkDetails {
   created_at: Date;
   created_by: string;
   created_by_detail: IUserLite;
@@ -99,7 +99,7 @@ export interface IIssue {
   // tempId is used for optimistic updates. It is not a part of the API response.
   tempId?: string;
   issue_cycle: IIssueCycle | null;
-  issue_link: linkDetails[];
+  issue_link: ILinkDetails[];
   issue_module: IIssueModule | null;
   labels: string[];
   label_details: any[];

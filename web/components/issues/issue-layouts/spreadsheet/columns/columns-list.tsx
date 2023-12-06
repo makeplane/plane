@@ -1,4 +1,5 @@
 import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
@@ -30,6 +31,12 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
     labels,
     states,
   } = props;
+
+  const {
+    project: { currentProjectDetails },
+  } = useMobxStore();
+
+  const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
   return (
     <>
@@ -102,7 +109,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
           property="due_date"
         />
       )}
-      {displayProperties.estimate && (
+      {displayProperties.estimate && isEstimateEnabled && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
           disableUserActions={disableUserActions}

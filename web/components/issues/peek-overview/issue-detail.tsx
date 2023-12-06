@@ -27,16 +27,27 @@ interface IPeekOverviewIssueDetails {
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
 export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) => {
-  const { workspaceSlug, issue, issueReactions, user, issueUpdate, issueReactionCreate, issueReactionRemove } = props;
+  const {
+    workspaceSlug,
+    issue,
+    issueReactions,
+    user,
+    issueUpdate,
+    issueReactionCreate,
+    issueReactionRemove,
+    isSubmitting,
+    setIsSubmitting,
+  } = props;
   // store
   const { user: userStore } = useMobxStore();
   const { currentProjectRole } = userStore;
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
   // hooks
   const { setShowAlert } = useReloadConfirmations();
@@ -50,8 +61,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     formState: { errors },
   } = useForm<IIssue>({
     defaultValues: {
-      name: "",
-      description_html: "",
+      name: issue.name,
+      description_html: issue.description_html,
     },
   });
 
@@ -69,12 +80,18 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
   );
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const issueTitleCurrentValue = watch("name");
+  const [localIssueDescription, setLocalIssueDescription] = useState("");
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
+    if (issue.id) {
+      setLocalIssueDescription(issue.description_html);
+      setLocalTitleValue(issue.name);
     }
-  }, [issueTitleCurrentValue, localTitleValue]);
+  }, [issue.id]);
+
+  useEffect(() => {
+    setLocalTitleValue(issue.name);
+  }, [issue.name]);
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
@@ -156,7 +173,8 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={value}
+              value={localIssueDescription}
+              text_html={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
@@ -173,13 +191,6 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
             />
           )}
         />
-        <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
-        >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>
       </div>
       <IssueReaction
         issueReactions={issueReactions}

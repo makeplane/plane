@@ -11,7 +11,7 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IEmailCheckData, IPasswordSignInData } from "types/auth";
+import { IPasswordSignInData } from "types/auth";
 // constants
 import { ESignInSteps } from "components/account";
 
@@ -37,6 +37,7 @@ const authService = new AuthService();
 export const PasswordForm: React.FC<Props> = (props) => {
   const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
   // states
+  const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
   const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
   // toast alert
   const { setToastAlert } = useToast();
@@ -46,7 +47,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
     formState: { dirtyFields, errors, isSubmitting, isValid },
     getValues,
     handleSubmit,
-    reset,
     setError,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
@@ -57,7 +57,9 @@ export const PasswordForm: React.FC<Props> = (props) => {
     reValidateMode: "onChange",
   });
 
-  const handlePasswordSignIn = async (formData: TPasswordFormValues) => {
+  const handleFormSubmit = async (formData: TPasswordFormValues) => {
+    updateEmail(formData.email);
+
     const payload: IPasswordSignInData = {
       email: formData.email,
       password: formData.password,
@@ -73,36 +75,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
           message: err?.error ?? "Something went wrong. Please try again.",
         })
       );
-  };
-
-  const handleEmailCheck = async (formData: TPasswordFormValues) => {
-    const payload: IEmailCheckData = {
-      email: formData.email,
-      type: "password",
-    };
-
-    await authService
-      .emailCheck(payload)
-      .then((res) => {
-        if (res.is_password_autoset) handleStepChange(ESignInSteps.SET_PASSWORD_LINK);
-        else
-          reset({
-            email: formData.email,
-            password: "",
-          });
-      })
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      );
-  };
-
-  const handleFormSubmit = async (formData: TPasswordFormValues) => {
-    if (dirtyFields.email) await handleEmailCheck(formData);
-    else await handlePasswordSignIn(formData);
   };
 
   const handleForgotPassword = async () => {
@@ -130,6 +102,31 @@ export const PasswordForm: React.FC<Props> = (props) => {
       .finally(() => setIsSendingResetPasswordLink(false));
   };
 
+  const handleSendUniqueCode = async () => {
+    const emailFormValue = getValues("email");
+
+    const isEmailValid = checkEmailValidity(emailFormValue);
+
+    if (!isEmailValid) {
+      setError("email", { message: "Email is invalid" });
+      return;
+    }
+
+    setIsSendingUniqueCode(true);
+
+    await authService
+      .generateUniqueCode({ email: emailFormValue })
+      .then(() => handleStepChange(ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD))
+      .catch((err) =>
+        setToastAlert({
+          type: "error",
+          title: "Error!",
+          message: err?.error ?? "Something went wrong. Please try again.",
+        })
+      )
+      .finally(() => setIsSendingUniqueCode(false));
+  };
+
   return (
     <>
       <h1 className="text-center text-2xl sm:text-2.5xl font-semibold text-onboarding-text-100">
@@ -151,13 +148,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
                   name="email"
                   type="email"
                   value={value}
-                  onChange={(e) => {
-                    updateEmail(e.target.value);
-                    onChange(e.target.value);
-                  }}
-                  onBlur={() => {
-                    if (dirtyFields.email) handleEmailCheck(getValues());
-                  }}
+                  onChange={onChange}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@firstflight.com"
                   className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
@@ -186,7 +177,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.password)}
                 placeholder="Enter password"
-                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
               />
             )}
           />
@@ -199,15 +190,34 @@ export const PasswordForm: React.FC<Props> = (props) => {
               }`}
               disabled={isSendingResetPasswordLink}
             >
-              {isSendingResetPasswordLink ? "Sending link..." : "Forgot your password?"}
+              {isSendingResetPasswordLink ? "Sending link" : "Forgot your password?"}
             </button>
           </div>
         </div>
-        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isSubmitting ? "Signing in..." : "Go to workspace"}
-        </Button>
+        <div className="grid sm:grid-cols-2 gap-2.5">
+          <Button
+            type="button"
+            onClick={handleSendUniqueCode}
+            variant="primary"
+            className="w-full"
+            size="xl"
+            loading={isSendingUniqueCode}
+          >
+            {isSendingUniqueCode ? "Sending code" : "Use unique code"}
+          </Button>
+          <Button
+            type="submit"
+            variant="outline-primary"
+            className="w-full"
+            size="xl"
+            disabled={!isValid}
+            loading={isSubmitting}
+          >
+            Go to workspace
+          </Button>
+        </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click the button above, you agree with our{" "}
+          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

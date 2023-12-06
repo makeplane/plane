@@ -15,6 +15,7 @@ export * from "./sidebar";
 export * from "./label";
 export * from "./issue-reaction";
 export * from "./confirm-issue-discard";
+export * from "./issue-update-status";
 
 // draft issue
 export * from "./draft-issue-form";
