@@ -36,8 +36,6 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
     project: { currentProjectDetails },
   } = useMobxStore();
 
-  console.log(issues);
-
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
   return (
