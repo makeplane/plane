@@ -22,9 +22,13 @@ const issueCommentService = new IssueCommentService();
 
 export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssueId } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
-  const { user: userStore, trackEvent: { postHogEventTracker }, workspace: { currentWorkspace } } = useMobxStore();
+  const {
+    user: userStore,
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -38,50 +42,48 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
   const user = userStore.currentUser;
 
   const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
-    if (!workspaceSlug || !projectId || !inboxIssueId || !user) return;
+    if (!workspaceSlug || !projectId || !issueDetails.id || !user) return;
 
     await issueCommentService
-      .patchIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId, data)
+      .patchIssueComment(workspaceSlug as string, projectId as string, issueDetails.id as string, commentId, data)
       .then((res) => {
         mutateIssueActivity();
         postHogEventTracker(
           "COMMENT_UPDATED",
           {
             ...res,
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      );
+      });
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !inboxIssueId || !user) return;
+    if (!workspaceSlug || !projectId || !issueDetails.id || !user) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
     await issueCommentService
-      .deleteIssueComment(workspaceSlug as string, projectId as string, inboxIssueId as string, commentId)
+      .deleteIssueComment(workspaceSlug as string, projectId as string, issueDetails.id as string, commentId)
       .then(() => {
         mutateIssueActivity();
         postHogEventTracker(
           "COMMENT_DELETED",
           {
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      );
+      });
   };
 
   const handleAddComment = async (formData: IIssueComment) => {
@@ -95,12 +97,12 @@ export const InboxIssueActivity: React.FC<Props> = observer(({ issueDetails }) =
           "COMMENT_ADDED",
           {
             ...res,
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })
