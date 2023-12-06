@@ -5,8 +5,8 @@ import {
   MutableRefObject,
   useEffect,
 } from "react";
-import { CoreReadOnlyEditorExtensions } from "../../ui/read-only/extensions";
-import { CoreReadOnlyEditorProps } from "../../ui/read-only/props";
+import { CoreReadOnlyEditorExtensions } from "../read-only/extensions";
+import { CoreReadOnlyEditorProps } from "../read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
 import { IMentionSuggestion } from "@plane/editor-types";
 
