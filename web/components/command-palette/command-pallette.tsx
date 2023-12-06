@@ -151,6 +151,7 @@ export const CommandPalette: FC = observer(() => {
       projectId,
       workspaceSlug,
       isAnyModalOpen,
+      setTrackElement,
     ]
   );
 

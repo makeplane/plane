@@ -4,8 +4,6 @@ import { Popover, Transition } from "@headlessui/react";
 import { Placement } from "@popperjs/core";
 // ui
 import { Button } from "@plane/ui";
-// icons
-import { ChevronUp } from "lucide-react";
 
 type Props = {
   children: React.ReactNode;

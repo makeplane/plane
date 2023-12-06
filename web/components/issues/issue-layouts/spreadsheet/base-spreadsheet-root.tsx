@@ -63,7 +63,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         issueActions[action]!(issue);
       }
     },
-    [issueStore]
+    [issueActions]
   );
 
   const handleDisplayFiltersUpdate = useCallback(
@@ -80,7 +80,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
         viewId
       );
     },
-    [issueFiltersStore, projectId, workspaceSlug]
+    [issueFiltersStore, projectId, workspaceSlug, viewId]
   );
 
   return (

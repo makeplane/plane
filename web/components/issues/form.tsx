@@ -229,7 +229,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
       project: projectId,
       ...initialData,
     });
-  }, [setFocus, initialData, reset]);
+  }, [setFocus, initialData, projectId, reset]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
