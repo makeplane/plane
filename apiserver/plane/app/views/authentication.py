@@ -30,7 +30,6 @@ from plane.settings.redis import redis_instance
 from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
-from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
 def get_tokens_for_user(user):
@@ -119,9 +118,6 @@ class SignUpEndpoint(BaseAPIView):
             "refresh_token": refresh_token,
         }
 
-        # Update instance user count
-        update_user_instance_user_count.delay()
-
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -200,8 +196,6 @@ class SignInEndpoint(BaseAPIView):
                 password=make_password(password),
                 is_password_autoset=False,
             )
-            # Update instance user count
-            update_user_instance_user_count.delay()
 
         # settings last active for the user
         user.is_active = True

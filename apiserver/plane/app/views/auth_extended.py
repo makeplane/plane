@@ -37,7 +37,6 @@ from plane.bgtasks.forgot_password_task import forgot_password
 from plane.license.models import Instance, InstanceConfiguration
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
-from plane.bgtasks.user_count_task import update_user_instance_user_count
 from plane.bgtasks.event_tracking_task import auth_events
 
 
@@ -373,8 +372,6 @@ class EmailCheckEndpoint(BaseAPIView):
                 is_password_autoset=True,
             )
 
-            # Update instance user count
-            update_user_instance_user_count.delay()
 
             if not bool(
                 get_configuration_value(
