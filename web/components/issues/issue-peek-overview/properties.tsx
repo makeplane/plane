@@ -47,12 +47,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const {
     user: { currentProjectRole },
-    cycleIssues: { addIssueToCycle },
+    cycleIssues: cycleIssueStore,
     moduleIssues: { addIssueToModule },
+    issueDetail: { fetchPeekIssueDetails },
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const { setToastAlert } = useToast();
 
@@ -76,17 +77,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   };
   const handleParent = (_parent: string) => {
     issueUpdate({ ...issue, parent: _parent });
-  };
-  const handleAddIssueToCycle = async (cycleId: string) => {
-    if (!workspaceSlug || !issue || !cycleId) return;
-
-    addIssueToCycle(workspaceSlug.toString(), cycleId, [issue.id]);
-  };
-
-  const handleAddIssueToModule = async (moduleId: string) => {
-    if (!workspaceSlug || !issue || !moduleId) return;
-
-    addIssueToModule(workspaceSlug.toString(), moduleId, [issue.id]);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
@@ -145,6 +135,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const handleCycleOrModuleChange = async () => {
+    if (!workspaceSlug || !projectId) return;
+
+    await fetchPeekIssueDetails(workspaceSlug, projectId, issue.id);
   };
 
   const handleEditLink = (link: ILinkDetails) => {
@@ -309,8 +305,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarCycleSelect
                 issueDetail={issue}
-                handleCycleChange={handleAddIssueToCycle}
                 disabled={disableUserActions}
+                handleIssueUpdate={handleCycleOrModuleChange}
               />
             </div>
           </div>
@@ -323,8 +319,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarModuleSelect
                 issueDetail={issue}
-                handleModuleChange={handleAddIssueToModule}
                 disabled={disableUserActions}
+                handleIssueUpdate={handleCycleOrModuleChange}
               />
             </div>
           </div>

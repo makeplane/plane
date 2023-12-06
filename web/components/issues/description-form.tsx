@@ -21,6 +21,7 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    id: string;
     project_id?: string;
   };
   workspaceSlug: string;
@@ -55,12 +56,14 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   });
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const issueTitleCurrentValue = watch("name");
+  const [localIssueDescription, setLocalIssueDescription] = useState("");
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
+    if (issue.id) {
+      setLocalIssueDescription(issue.description_html);
+      setLocalTitleValue(issue.name);
     }
-  }, [issueTitleCurrentValue, localTitleValue]);
+  }, [issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -150,7 +153,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={value}
+              value={localIssueDescription}
+              text_html={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled

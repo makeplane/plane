@@ -246,6 +246,7 @@ export const InboxMainContent: React.FC = observer(() => {
                 issue={{
                   name: issueDetails.name,
                   description_html: issueDetails.description_html,
+                  id: issueDetails.id,
                 }}
                 handleFormSubmit={submitChanges}
                 isAllowed={isAllowed || user?.id === issueDetails.created_by}
