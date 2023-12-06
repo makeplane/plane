@@ -32,7 +32,6 @@ from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
 from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
-from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
 def get_tokens_for_user(user):
@@ -303,14 +302,6 @@ class OauthEndpoint(BaseAPIView):
             instance_configuration = InstanceConfiguration.objects.values(
                 "key", "value"
             )
-            # Check if instance is registered or not
-            instance = Instance.objects.first()
-            if instance is None and not instance.is_setup_done:
-                return Response(
-                    {"error": "Instance is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             if (
                 get_configuration_value(
                     instance_configuration,
@@ -447,6 +438,4 @@ class OauthEndpoint(BaseAPIView):
                 "refresh_token": refresh_token,
             }
 
-            # Update the user count
-            update_user_instance_user_count.delay()
             return Response(data, status=status.HTTP_201_CREATED)

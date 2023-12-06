@@ -32,14 +32,15 @@ import {
 // ui
 import { CustomDatePicker } from "components/ui";
 // icons
-import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, User2 } from "lucide-react";
-import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
+import { Bell, CalendarDays, LinkIcon, Plus, Signal, Tag, Trash2, Triangle, LayoutPanelTop } from "lucide-react";
+import { Button, ContrastIcon, DiceIcon, DoubleCircleIcon, StateGroupIcon, UserGroupIcon } from "@plane/ui";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // types
-import type { IIssue, IIssueLink, linkDetails } from "types";
+import type { IIssue, IIssueLink, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS, PROJECT_ISSUES_ACTIVITY } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   control: any;
@@ -77,14 +78,17 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
-  const { user: userStore } = useMobxStore();
+  const {
+    user: userStore,
+    projectState: { states },
+  } = useMobxStore();
   const user = userStore.currentUser;
   const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
-  const { workspaceSlug, projectId, issueId } = router.query;
+  const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
 
   const { isEstimateActive } = useEstimateOption();
 
@@ -240,12 +244,16 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const maxDate = targetDate ? new Date(targetDate) : null;
   maxDate?.setDate(maxDate.getDate());
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setLinkModal(true);
   };
 
-  const isNotAllowed = userRole === 5 || userRole === 10;
+  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+
+  const currentIssueState = projectId
+    ? states[projectId.toString()]?.find((s) => s.id === issueDetail?.state)
+    : undefined;
 
   return (
     <>
@@ -265,9 +273,20 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
       )}
       <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
-          <h4 className="text-sm font-medium">
-            {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
-          </h4>
+          <div className="flex items-center gap-x-2">
+            {currentIssueState ? (
+              <StateGroupIcon
+                className="h-4 w-4"
+                stateGroup={currentIssueState.group}
+                color={currentIssueState.color}
+              />
+            ) : inboxIssueId ? (
+              <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
+            ) : null}
+            <h4 className="text-lg text-custom-text-300 font-medium">
+              {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
+            </h4>
+          </div>
           <div className="flex flex-wrap items-center gap-2">
             {issueDetail?.created_by !== user?.id &&
               !issueDetail?.assignees.includes(user?.id ?? "") &&
@@ -295,7 +314,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 <LinkIcon className="h-3.5 w-3.5" />
               </button>
             )}
-            {!isNotAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
+            {isAllowed && (fieldsToShow.includes("all") || fieldsToShow.includes("delete")) && (
               <button
                 type="button"
                 className="rounded-md border border-red-500 p-2 text-red-500 shadow-sm duration-300 hover:bg-red-500/20 focus:outline-none"
@@ -325,7 +344,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarStateSelect
                             value={value}
                             onChange={(val: string) => submitChanges({ state: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -346,7 +365,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarAssigneeSelect
                             value={value}
                             onChange={(val: string[]) => submitChanges({ assignees: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -367,7 +386,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarPrioritySelect
                             value={value}
                             onChange={(val) => submitChanges({ priority: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -388,7 +407,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                           <SidebarEstimateSelect
                             value={value}
                             onChange={(val: number | null) => submitChanges({ estimate_point: val })}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -402,7 +421,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("parent")) && (
                   <div className="flex flex-wrap items-center py-2">
                     <div className="flex items-center gap-x-2 text-sm text-custom-text-200 sm:basis-1/2">
-                      <User2 className="h-4 w-4 flex-shrink-0" />
+                      <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
                       <p>Parent</p>
                     </div>
                     <div className="sm:basis-1/2">
@@ -416,7 +435,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                               onChange(val);
                             }}
                             issueDetails={issueDetail}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -441,7 +460,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("blocked")) && (
@@ -462,7 +481,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("duplicate")) && (
@@ -480,7 +499,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("relates_to")) && (
@@ -498,7 +517,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       mutate(PROJECT_ISSUES_ACTIVITY(issueId as string));
                     }}
                     watch={watchIssue}
-                    disabled={isNotAllowed || uneditable}
+                    disabled={!isAllowed || uneditable}
                   />
                 )}
                 {(fieldsToShow.includes("all") || fieldsToShow.includes("startDate")) && (
@@ -522,7 +541,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             }
                             className="bg-custom-background-80 border-none"
                             maxDate={maxDate ?? undefined}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -550,7 +569,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                             }
                             className="bg-custom-background-80 border-none"
                             minDate={minDate ?? undefined}
-                            disabled={isNotAllowed || uneditable}
+                            disabled={!isAllowed || uneditable}
                           />
                         )}
                       />
@@ -571,7 +590,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       <SidebarCycleSelect
                         issueDetail={issueDetail}
                         handleCycleChange={handleCycleChange}
-                        disabled={isNotAllowed || uneditable}
+                        disabled={!isAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -586,7 +605,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                       <SidebarModuleSelect
                         issueDetail={issueDetail}
                         handleModuleChange={handleModuleChange}
-                        disabled={isNotAllowed || uneditable}
+                        disabled={!isAllowed || uneditable}
                       />
                     </div>
                   </div>
@@ -605,7 +624,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   issueDetails={issueDetail}
                   labelList={issueDetail?.labels ?? []}
                   submitChanges={submitChanges}
-                  isNotAllowed={isNotAllowed}
+                  isNotAllowed={!isAllowed}
                   uneditable={uneditable ?? false}
                 />
               </div>
@@ -615,7 +634,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <h4>Links</h4>
-                {!isNotAllowed && (
+                {isAllowed && (
                   <button
                     type="button"
                     className={`grid h-7 w-7 place-items-center rounded p-1 outline-none duration-300 hover:bg-custom-background-90 ${

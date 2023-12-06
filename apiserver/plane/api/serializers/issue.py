@@ -1,3 +1,6 @@
+from lxml import html
+
+
 # Django imports
 from django.utils import timezone
 
@@ -21,7 +24,8 @@ from plane.db.models import (
 from .base import BaseSerializer
 from .cycle import CycleSerializer, CycleLiteSerializer
 from .module import ModuleSerializer, ModuleLiteSerializer
-
+from .user import UserLiteSerializer
+from .state import StateLiteSerializer
 
 class IssueSerializer(BaseSerializer):
     assignees = serializers.ListField(
@@ -42,7 +46,6 @@ class IssueSerializer(BaseSerializer):
 
     class Meta:
         model = Issue
-        fields = "__all__"
         read_only_fields = [
             "id",
             "workspace",
@@ -52,6 +55,10 @@ class IssueSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+        exclude = [
+            "description",
+            "description_stripped",
+        ]
 
     def validate(self, data):
         if (
@@ -60,6 +67,15 @@ class IssueSerializer(BaseSerializer):
             and data.get("start_date", None) > data.get("target_date", None)
         ):
             raise serializers.ValidationError("Start date cannot exceed target date")
+        
+        try:
+            if(data.get("description_html", None) is not None):
+                parsed = html.fromstring(data["description_html"])
+                parsed_str = html.tostring(parsed, encoding='unicode')
+                data["description_html"] = parsed_str
+            
+        except Exception as e:
+            raise serializers.ValidationError(f"Invalid HTML: {str(e)}")
 
         # Validate assignees are from project
         if data.get("assignees", []):
@@ -291,7 +307,6 @@ class IssueCommentSerializer(BaseSerializer):
 
     class Meta:
         model = IssueComment
-        fields = "__all__"
         read_only_fields = [
             "id",
             "workspace",
@@ -302,6 +317,21 @@ class IssueCommentSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+        exclude = [
+            "comment_stripped",
+            "comment_json",
+        ]
+
+    def validate(self, data):
+        try:
+            if(data.get("comment_html", None) is not None):
+                parsed = html.fromstring(data["comment_html"])
+                parsed_str = html.tostring(parsed, encoding='unicode')
+                data["comment_html"] = parsed_str
+            
+        except Exception as e:
+            raise serializers.ValidationError(f"Invalid HTML: {str(e)}")
+        return data
 
 
 class IssueActivitySerializer(BaseSerializer):
@@ -331,12 +361,23 @@ class ModuleIssueSerializer(BaseSerializer):
         ]
 
 
-class IssueExpandSerializer(BaseSerializer):
-    # Serialize the related cycle. It's a OneToOne relation.
-    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
+class LabelLiteSerializer(BaseSerializer):
 
-    # Serialize the related module. It's a OneToOne relation.
+    class Meta:
+        model = Label
+        fields = [
+            "id",
+            "name",
+            "color",
+        ]
+
+
+class IssueExpandSerializer(BaseSerializer):
+    cycle = CycleLiteSerializer(source="issue_cycle.cycle", read_only=True)
     module = ModuleLiteSerializer(source="issue_module.module", read_only=True)
+    labels = LabelLiteSerializer(read_only=True, many=True)
+    assignees = UserLiteSerializer(read_only=True, many=True)
+    state = StateLiteSerializer(read_only=True)
 
     class Meta:
         model = Issue

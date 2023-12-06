@@ -1,8 +1,6 @@
 # Python imports
 import os
 import uuid
-import random
-import string
 import json
 
 # Django imports
@@ -17,7 +15,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from sentry_sdk import capture_message
 
 # Module imports
@@ -33,8 +30,6 @@ from plane.settings.redis import redis_instance
 from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
-from plane.bgtasks.magic_link_code_task import magic_link
-from plane.bgtasks.user_count_task import update_user_instance_user_count
 
 
 def get_tokens_for_user(user):
@@ -49,11 +44,18 @@ class SignUpEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        # Check if the instance configuration is done
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         instance_configuration = InstanceConfiguration.objects.values("key", "value")
 
         email = request.data.get("email", False)
         password = request.data.get("password", False)
-
         ## Raise exception if any of the above are missing
         if not email or not password:
             return Response(
@@ -61,8 +63,8 @@ class SignUpEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Validate the email
         email = email.strip().lower()
-
         try:
             validate_email(email)
         except ValidationError as e:
@@ -71,6 +73,7 @@ class SignUpEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # If the sign up is not enabled and the user does not have invite disallow him from creating the account
         if (
             get_configuration_value(
                 instance_configuration,
@@ -100,6 +103,7 @@ class SignUpEndpoint(BaseAPIView):
         user.set_password(password)
 
         # settings last actives for the user
+        user.is_password_autoset = False
         user.last_active = timezone.now()
         user.last_login_time = timezone.now()
         user.last_login_ip = request.META.get("REMOTE_ADDR")
@@ -114,9 +118,6 @@ class SignUpEndpoint(BaseAPIView):
             "refresh_token": refresh_token,
         }
 
-        # Update instance user count
-        update_user_instance_user_count.delay()
-
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -124,6 +125,14 @@ class SignInEndpoint(BaseAPIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        # Check if the instance configuration is done
+        instance = Instance.objects.first()
+        if instance is None or not instance.is_setup_done:
+            return Response(
+                {"error": "Instance is not configured"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         email = request.data.get("email", False)
         password = request.data.get("password", False)
 
@@ -134,8 +143,8 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Validate email
         email = email.strip().lower()
-
         try:
             validate_email(email)
         except ValidationError as e:
@@ -144,33 +153,48 @@ class SignInEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the instance setup is done or not
-        instance = Instance.objects.first()
-        if instance is None or not instance.is_setup_done:
-            return Response(
-                {"error": "Instance is not configured"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         # Get the user
         user = User.objects.filter(email=email).first()
 
-        # User is not present in db
-        if user is None:
-            return Response(
-                {
-                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                },
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        # Existing user
+        if user:
+            # Check user password
+            if not user.check_password(password):
+                return Response(
+                    {
+                        "error": "Sorry, we could not find a user with the provided credentials. Please try again."
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
-        # Check user password
-        if not user.check_password(password):
-            return Response(
-                {
-                    "error": "Sorry, we could not find a user with the provided credentials. Please try again."
-                },
-                status=status.HTTP_403_FORBIDDEN,
+        # Create the user
+        else:
+            # Get the configurations
+            instance_configuration = InstanceConfiguration.objects.values("key", "value")
+            # Create the user
+            if (
+                get_configuration_value(
+                    instance_configuration,
+                    "ENABLE_SIGNUP",
+                    os.environ.get("ENABLE_SIGNUP", "0"),
+                )
+                == "0"
+                and not WorkspaceMemberInvite.objects.filter(
+                    email=email,
+                ).exists()
+            ):
+                return Response(
+                    {
+                        "error": "New account creation is disabled. Please contact your site administrator"
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            user = User.objects.create(
+                email=email,
+                username=uuid.uuid4().hex,
+                password=make_password(password),
+                is_password_autoset=False,
             )
 
         # settings last active for the user
@@ -288,6 +312,7 @@ class MagicSignInEndpoint(BaseAPIView):
     ]
 
     def post(self, request):
+        # Check if the instance configuration is done
         instance = Instance.objects.first()
         if instance is None or not instance.is_setup_done:
             return Response(

@@ -169,8 +169,8 @@ class ChangePasswordSerializer(serializers.Serializer):
     Serializer for password change endpoint.
     """
     old_password = serializers.CharField(required=True)
-    new_password = serializers.CharField(required=True)
-    confirm_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, min_length=8)
+    confirm_password = serializers.CharField(required=True, min_length=8)
 
     def validate(self, data):
         if data.get("old_password") == data.get("new_password"):
@@ -187,9 +187,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 
 class ResetPasswordSerializer(serializers.Serializer):
-    model = User
-
     """
     Serializer for password change endpoint.
     """
-    new_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True, min_length=8)

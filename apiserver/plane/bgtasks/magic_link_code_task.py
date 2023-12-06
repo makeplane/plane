@@ -21,7 +21,6 @@ from plane.license.utils.instance_value import get_email_configuration
 @shared_task
 def magic_link(email, key, token, current_site):
     try:
-
         instance_configuration = InstanceConfiguration.objects.filter(
             key__startswith="EMAIL_"
         ).values("key", "value")
@@ -34,33 +33,6 @@ def magic_link(email, key, token, current_site):
             EMAIL_USE_TLS,
             EMAIL_FROM,
         ) = get_email_configuration(instance_configuration=instance_configuration)
-
-        # Send the email if the users don't have smtp configured
-        if not EMAIL_HOST or not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
-            # Check the instance registration
-            instance = Instance.objects.first()
-
-            # send the emails through control center
-            license_engine_base_url = os.environ.get("LICENSE_ENGINE_BASE_URL", False)
-
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-
-            payload = {
-                "token": token,
-                "email": email,
-            }
-
-            _ = requests.post(
-                f"{license_engine_base_url}/api/instances/users/magic-code/",
-                headers=headers,
-                data=json.dumps(payload),
-            )
-
-            return
 
         # Send the mail
         subject = f"Your unique Plane login code is {token}"

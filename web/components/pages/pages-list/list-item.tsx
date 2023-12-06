@@ -26,6 +26,7 @@ import { CustomMenu, Tooltip } from "@plane/ui";
 import { CreateUpdatePageModal, DeletePageModal } from "components/pages";
 // types
 import { IPage } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IPagesListItem {
   workspaceSlug: string;
@@ -147,10 +148,11 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   const ownerDetails = projectMembers?.find((projectMember) => projectMember.member.id === page.owned_by)?.member;
   const isCurrentUserOwner = page.owned_by === currentUser?.id;
 
-  const userCanEdit = isCurrentUserOwner || [15, 20].includes(currentProjectRole ?? 5);
-  const userCanArchive = isCurrentUserOwner || currentProjectRole === 20;
-  const userCanLock = isCurrentUserOwner || currentProjectRole === 20;
-  const userCanDelete = isCurrentUserOwner || currentProjectRole === 20;
+  const userCanEdit =
+    isCurrentUserOwner || [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole ?? 5);
+  const userCanChangeAccess = isCurrentUserOwner;
+  const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
 
   return (
     <>
@@ -205,20 +207,18 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                     <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
                   </Tooltip>
                 )}
-                {!page.archived_at && userCanEdit && (
-                  <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
-                    {page.is_favorite ? (
-                      <button type="button" onClick={handleRemoveFromFavorites}>
-                        <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
-                      </button>
-                    ) : (
-                      <button type="button" onClick={handleAddToFavorites}>
-                        <Star className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </Tooltip>
-                )}
-                {!page.archived_at && userCanEdit && (
+                <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
+                  {page.is_favorite ? (
+                    <button type="button" onClick={handleRemoveFromFavorites}>
+                      <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleAddToFavorites}>
+                      <Star className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </Tooltip>
+                {userCanChangeAccess && (
                   <Tooltip
                     tooltipContent={`${
                       page.access
@@ -243,57 +243,53 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 >
                   <AlertCircle className="h-3.5 w-3.5" />
                 </Tooltip>
-                {page.archived_at ? (
-                  <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
-                    {userCanArchive && (
-                      <CustomMenu.MenuItem onClick={handleRestorePage}>
-                        <div className="flex items-center gap-2">
-                          <ArchiveRestoreIcon className="h-3 w-3" />
-                          <span>Restore page</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    )}
-                    {userCanDelete && (
-                      <CustomMenu.MenuItem onClick={handleDeletePage}>
-                        <div className="flex items-center gap-2">
-                          <Trash2 className="h-3 w-3" />
-                          <span>Delete page</span>
-                        </div>
-                      </CustomMenu.MenuItem>
-                    )}
-                    <CustomMenu.MenuItem onClick={handleCopyUrl}>
-                      <div className="flex items-center gap-2">
-                        <LinkIcon className="h-3 w-3" />
-                        <span>Copy page link</span>
-                      </div>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                ) : (
-                  <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
-                    {userCanEdit && (
-                      <>
+                <CustomMenu width="auto" placement="bottom-end" className="!-m-1" verticalEllipsis>
+                  {page.archived_at ? (
+                    <>
+                      {userCanArchive && (
+                        <CustomMenu.MenuItem onClick={handleRestorePage}>
+                          <div className="flex items-center gap-2">
+                            <ArchiveRestoreIcon className="h-3 w-3" />
+                            <span>Restore page</span>
+                          </div>
+                        </CustomMenu.MenuItem>
+                      )}
+                      {userCanDelete && (
+                        <CustomMenu.MenuItem onClick={handleDeletePage}>
+                          <div className="flex items-center gap-2">
+                            <Trash2 className="h-3 w-3" />
+                            <span>Delete page</span>
+                          </div>
+                        </CustomMenu.MenuItem>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {userCanEdit && (
                         <CustomMenu.MenuItem onClick={handleEditPage}>
                           <div className="flex items-center gap-2">
                             <Pencil className="h-3 w-3" />
                             <span>Edit page</span>
                           </div>
                         </CustomMenu.MenuItem>
+                      )}
+                      {userCanArchive && (
                         <CustomMenu.MenuItem onClick={handleArchivePage}>
                           <div className="flex items-center gap-2">
                             <Archive className="h-3 w-3" />
                             <span>Archive page</span>
                           </div>
                         </CustomMenu.MenuItem>
-                      </>
-                    )}
-                    <CustomMenu.MenuItem onClick={handleCopyUrl}>
-                      <div className="flex items-center gap-2">
-                        <LinkIcon className="h-3 w-3" />
-                        <span>Copy page link</span>
-                      </div>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
-                )}
+                      )}
+                    </>
+                  )}
+                  <CustomMenu.MenuItem onClick={handleCopyUrl}>
+                    <div className="flex items-center gap-2">
+                      <LinkIcon className="h-3 w-3" />
+                      <span>Copy page link</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                </CustomMenu>
               </div>
             </div>
           </div>

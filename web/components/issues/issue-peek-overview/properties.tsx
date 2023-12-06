@@ -5,8 +5,8 @@ import { observer } from "mobx-react-lite";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui icons
-import { DiceIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
-import { CalendarDays, ContrastIcon, Link2, Plus, Signal, Tag, Triangle, User2 } from "lucide-react";
+import { DiceIcon, DoubleCircleIcon, UserGroupIcon, ContrastIcon } from "@plane/ui";
+import { CalendarDays, Link2, Plus, Signal, Tag, Triangle, LayoutPanelTop } from "lucide-react";
 import {
   SidebarAssigneeSelect,
   SidebarCycleSelect,
@@ -25,7 +25,7 @@ import useToast from "hooks/use-toast";
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { IIssue, IIssueLink, TIssuePriorities, linkDetails } from "types";
+import { IIssue, IIssueLink, TIssuePriorities, ILinkDetails } from "types";
 // fetch-keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
 // constants
@@ -43,16 +43,17 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const { issue, issueUpdate, disableUserActions } = props;
   // states
   const [linkModal, setLinkModal] = useState(false);
-  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<linkDetails | null>(null);
+  const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const {
     user: { currentProjectRole },
-    cycleIssues: { addIssueToCycle },
+    cycleIssues: cycleIssueStore,
     moduleIssues: { addIssueToModule },
+    issueDetail: { fetchPeekIssueDetails },
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const { setToastAlert } = useToast();
 
@@ -76,17 +77,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   };
   const handleParent = (_parent: string) => {
     issueUpdate({ ...issue, parent: _parent });
-  };
-  const handleAddIssueToCycle = async (cycleId: string) => {
-    if (!workspaceSlug || !issue || !cycleId) return;
-
-    addIssueToCycle(workspaceSlug.toString(), cycleId, [issue.id]);
-  };
-
-  const handleAddIssueToModule = async (moduleId: string) => {
-    if (!workspaceSlug || !issue || !moduleId) return;
-
-    addIssueToModule(workspaceSlug.toString(), moduleId, [issue.id]);
   };
   const handleLabels = (formData: Partial<IIssue>) => {
     issueUpdate({ ...issue, ...formData });
@@ -147,7 +137,13 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
       });
   };
 
-  const handleEditLink = (link: linkDetails) => {
+  const handleCycleOrModuleChange = async () => {
+    if (!workspaceSlug || !projectId) return;
+
+    await fetchPeekIssueDetails(workspaceSlug, projectId, issue.id);
+  };
+
+  const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setLinkModal(true);
   };
@@ -289,7 +285,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           {/* parent */}
           <div className="flex items-center gap-2 w-full">
             <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
-              <User2 className="h-4 w-4 flex-shrink-0" />
+              <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
             <div>
@@ -309,8 +305,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarCycleSelect
                 issueDetail={issue}
-                handleCycleChange={handleAddIssueToCycle}
                 disabled={disableUserActions}
+                handleIssueUpdate={handleCycleOrModuleChange}
               />
             </div>
           </div>
@@ -323,8 +319,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             <div>
               <SidebarModuleSelect
                 issueDetail={issue}
-                handleModuleChange={handleAddIssueToModule}
                 disabled={disableUserActions}
+                handleIssueUpdate={handleCycleOrModuleChange}
               />
             </div>
           </div>

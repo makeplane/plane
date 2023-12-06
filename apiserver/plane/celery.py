@@ -28,9 +28,13 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.file_asset_task.delete_file_asset",
         "schedule": crontab(hour=0, minute=0),
     },
+    "check-instance-verification": {
+        "task": "plane.license.bgtasks.instance_verification_task.instance_verification_task",
+        "schedule": crontab(minute=0, hour='*/4'),
+    },
 }
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
 
-app.conf.beat_scheduler = 'django_celery_beat.schedulers.DatabaseScheduler'
+app.conf.beat_scheduler = "django_celery_beat.schedulers.DatabaseScheduler"
