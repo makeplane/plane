@@ -354,12 +354,15 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   last_updated_by: pageDetails.updated_by,
                 }}
                 pageLockConfig={
-                  !pageDetails.archived_at && user && pageDetails.owned_by === user.id
+                  userCanLock && !pageDetails.archived_at
                     ? { action: unlockPage, is_locked: pageDetails.is_locked }
                     : undefined
                 }
+                pageDuplicationConfig={
+                  userCanDuplicate && !pageDetails.archived_at ? { action: duplicate_page } : undefined
+                }
                 pageArchiveConfig={
-                  user && pageDetails.owned_by === user.id
+                  userCanArchive
                     ? {
                         action: pageDetails.archived_at ? unArchivePage : archivePage,
                         is_archived: pageDetails.archived_at ? true : false,
