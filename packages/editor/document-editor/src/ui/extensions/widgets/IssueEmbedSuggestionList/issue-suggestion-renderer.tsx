@@ -171,46 +171,48 @@ const IssueSuggestionList = ({
     <div
       id="issue-list-container"
       ref={commandListContainer}
-      className="z-5 p-2 fixed h-auto max-h-[330px] w-[600px] overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all issue-embed-suggestion-list"
+      className="z-[10] fixed max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
     >
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
+
         return (
           sectionItems &&
           sectionItems.length > 0 && (
-            <div key={`${section}-container`} id={`${section}-container`}>
-              <p className={"sticky text-xs --color-text-300 p-2"}>{section}</p>
-              <div
-                key={section}
-                id={section}
-                className={"max-h-[140px] overflow-y-scroll overflow-x-hidden"}
-              >
-                {sectionItems.map(
-                  (item: IssueSuggestionProps, index: number) => (
-                    <button
-                      className={cn(
-                        `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
-                        {
-                          "bg-custom-primary-100/5  text-custom-text-100":
-                            section === currentSection &&
-                            index === selectedIndex,
-                        },
-                      )}
-                      key={index}
-                      onClick={() => selectItem(index)}
-                    >
-                      <h5 className="text-xs text-custom-text-300 whitespace-nowrap w-[50px]">
-                        {item.identifier}
-                      </h5>
-                      <PriorityIcon priority={item.priority} />
-                      <div>
-                        <p className="font-medium whitespace-nowrap max-w-[480px] overflow-x-clip">
-                          {item.title}
-                        </p>
-                      </div>
-                    </button>
-                  ),
-                )}
+            <div
+              className="h-full w-full flex flex-col"
+              key={`${section}-container`}
+              id={`${section}-container`}
+            >
+              <h6 className="sticky top-0 z-[10] bg-custom-background-100 text-xs text-custom-text-400 font-medium px-2 py-1">
+                {section}
+              </h6>
+              <div className="h-full w-full truncate space-y-0.5" id={section}>
+                {sectionItems.map((item, index) => (
+                  <button
+                    type="button"
+                    className={cn(
+                      `w-full flex items-center gap-2 rounded px-2 py-1 text-left text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100 truncate`,
+                      {
+                        "bg-custom-primary-100/5  text-custom-text-100":
+                          section === currentSection && index === selectedIndex,
+                      },
+                    )}
+                    key={index}
+                    onClick={() => selectItem(index)}
+                  >
+                    <p className="text-xs text-custom-text-300 whitespace-nowrap">
+                      {item.identifier}
+                    </p>
+                    <span className="flex-shrink-0">
+                      <PriorityIcon
+                        priority={item.priority}
+                        className="h-3.5 w-3.5"
+                      />
+                    </span>
+                    <h5 className="flex-grow text-xs truncate">{item.title}</h5>
+                  </button>
+                ))}
               </div>
             </div>
           )
