@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // services
@@ -40,6 +40,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
   const {
     control,
     formState: { errors, isSubmitting, isValid },
+    setFocus,
     handleSubmit,
   } = useForm<TCreatePasswordFormValues>({
     defaultValues: {
@@ -73,6 +74,10 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
         })
       );
   };
+
+  useEffect(() => {
+    setFocus("password");
+  }, [setFocus]);
 
   return (
     <>
@@ -122,7 +127,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
           )}
         />
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isOnboarded ? "Continue" : "Set up profile"}
+          {isOnboarded ? "Go to board" : "Set up profile"}
         </Button>
         <p className="text-xs text-onboarding-text-200">
           When you click the button above, you agree with our{" "}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -34,6 +34,7 @@ export const EmailForm: React.FC<Props> = (props) => {
     control,
     formState: { errors, isSubmitting, isValid },
     handleSubmit,
+    setFocus,
   } = useForm<TEmailFormValues>({
     defaultValues: {
       email: "",
@@ -66,6 +67,10 @@ export const EmailForm: React.FC<Props> = (props) => {
         })
       );
   };
+
+  useEffect(() => {
+    setFocus("email");
+  }, [setFocus]);
 
   return (
     <>

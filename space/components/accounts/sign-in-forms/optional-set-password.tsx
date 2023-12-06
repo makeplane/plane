@@ -87,12 +87,13 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={isGoingToWorkspace}
           >
-            {isOnboarded ? "Continue" : "Set up profile"}
+            {isOnboarded ? "Go to board" : "Set up profile"}
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">{isOnboarded ? "Continue" : "Set up profile"}</span>{" "}
-          above, you agree with our{" "}
+          When you click{" "}
+          <span className="text-custom-primary-100">{isOnboarded ? "Go to board" : "Set up profile"}</span> above, you
+          agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

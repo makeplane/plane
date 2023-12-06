@@ -93,6 +93,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
           <Input
             id="firstName"
             autoComplete="off"
+            className="w-full"
             placeholder="Enter your first name..."
             {...register("first_name", {
               required: "First name is required",
@@ -105,6 +106,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
           <Input
             id="lastName"
             autoComplete="off"
+            className="w-full"
             placeholder="Enter your last name..."
             {...register("last_name", {
               required: "Last name is required",

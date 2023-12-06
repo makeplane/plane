@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
@@ -48,6 +48,7 @@ export const PasswordForm: React.FC<Props> = (props) => {
     getValues,
     handleSubmit,
     setError,
+    setFocus,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -126,6 +127,10 @@ export const PasswordForm: React.FC<Props> = (props) => {
       )
       .finally(() => setIsSendingUniqueCode(false));
   };
+
+  useEffect(() => {
+    setFocus("password");
+  }, [setFocus]);
 
   return (
     <>
@@ -213,11 +218,11 @@ export const PasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={isSubmitting}
           >
-            Continue
+            Go to board
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Continue</span> above, you agree with our{" "}
+          When you click <span className="text-custom-primary-100">Go to board</span> above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

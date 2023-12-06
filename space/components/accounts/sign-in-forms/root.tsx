@@ -77,7 +77,7 @@ export const SignInRoot = observer(() => {
                 updateEmail={(newEmail) => setEmail(newEmail)}
                 handleStepChange={(step) => setSignInStep(step)}
                 handleSignInRedirection={handleRedirection}
-                submitButtonLabel="Continue"
+                submitButtonLabel="Go to board"
                 showTermsAndConditions
                 updateUserOnboardingStatus={(value) => setIsOnboarded(value)}
               />
@@ -110,9 +110,10 @@ export const SignInRoot = observer(() => {
           </>
         )}
       </div>
-      {isOAuthEnabled && !OAUTH_HIDDEN_STEPS.includes(signInStep) && (
-        <OAuthOptions handleSignInRedirection={handleRedirection} />
-      )}
+      {isOAuthEnabled &&
+        !OAUTH_HIDDEN_STEPS.includes(signInStep) &&
+        signInStep !== ESignInSteps.CREATE_PASSWORD &&
+        signInStep !== ESignInSteps.PASSWORD && <OAuthOptions handleSignInRedirection={handleRedirection} />}
       <LatestFeatureBlock />
     </>
   );

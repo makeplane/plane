@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { CornerDownLeft, XCircle } from "lucide-react";
@@ -64,6 +64,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
     getValues,
     handleSubmit,
     reset,
+    setFocus,
   } = useForm<TUniqueCodeFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -85,7 +86,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       .then(async () => {
         const currentUser = await userService.currentUser();
 
-        updateUserOnboardingStatus(currentUser.is_onboarded);
+        updateUserOnboardingStatus(currentUser.onboarding_step.profile_complete ?? false);
 
         if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
         else await handleSignInRedirection();
@@ -145,6 +146,10 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
 
   const isRequestNewCodeDisabled = isRequestingNewCode || resendTimerCode > 0;
   const hasEmailChanged = dirtyFields.email;
+
+  useEffect(() => {
+    setFocus("token");
+  }, [setFocus]);
 
   return (
     <>
