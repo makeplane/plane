@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
@@ -10,7 +10,7 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // types
-import { IEmailCheckData, TEmailCheckTypes } from "types/auth";
+import { IEmailCheckData } from "types/auth";
 // constants
 import { ESignInSteps } from "components/account";
 
@@ -19,7 +19,7 @@ type Props = {
   updateEmail: (email: string) => void;
 };
 
-type TEmailCodeFormValues = {
+type TEmailFormValues = {
   email: string;
 };
 
@@ -27,17 +27,14 @@ const authService = new AuthService();
 
 export const EmailForm: React.FC<Props> = (props) => {
   const { handleStepChange, updateEmail } = props;
-  // states
-  const [isCheckingEmail, setIsCheckingEmail] = useState<TEmailCheckTypes | null>(null);
 
   const { setToastAlert } = useToast();
 
   const {
     control,
-    formState: { errors, isValid },
+    formState: { errors, isSubmitting, isValid },
     handleSubmit,
-    watch,
-  } = useForm<TEmailCodeFormValues>({
+  } = useForm<TEmailFormValues>({
     defaultValues: {
       email: "",
     },
@@ -45,31 +42,21 @@ export const EmailForm: React.FC<Props> = (props) => {
     reValidateMode: "onChange",
   });
 
-  const handleEmailCheck = async (type: TEmailCheckTypes) => {
-    setIsCheckingEmail(type);
-
-    const email = watch("email");
-
+  const handleFormSubmit = async (data: TEmailFormValues) => {
     const payload: IEmailCheckData = {
-      email,
-      type,
+      email: data.email,
     };
 
     // update the global email state
-    updateEmail(email);
+    updateEmail(data.email);
 
     await authService
       .emailCheck(payload)
       .then((res) => {
-        // if type is magic_code, send the user to magic sign in
-        if (type === "magic_code") handleStepChange(ESignInSteps.UNIQUE_CODE);
-        // if type is password, check if the user has a password set
-        if (type === "password") {
-          // if password is autoset, send them to set new password link
-          if (res.is_password_autoset) handleStepChange(ESignInSteps.SET_PASSWORD_LINK);
-          // if password is not autoset, send them to password form
-          else handleStepChange(ESignInSteps.PASSWORD);
-        }
+        // if the password has been autoset, send the user to magic sign-in
+        if (res.is_password_autoset) handleStepChange(ESignInSteps.UNIQUE_CODE);
+        // if the password has not been autoset, send them to password sign-in
+        else handleStepChange(ESignInSteps.PASSWORD);
       })
       .catch((err) =>
         setToastAlert({
@@ -77,8 +64,7 @@ export const EmailForm: React.FC<Props> = (props) => {
           title: "Error!",
           message: err?.error ?? "Something went wrong. Please try again.",
         })
-      )
-      .finally(() => setIsCheckingEmail(null));
+      );
   };
 
   return (
@@ -86,11 +72,11 @@ export const EmailForm: React.FC<Props> = (props) => {
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
         Get on your flight deck
       </h1>
-      <p className="text-center text-sm text-onboarding-text-200 mt-3">
-        Sign in with the email you used to sign up for Plane
+      <p className="text-center text-sm text-onboarding-text-200 mt-2.5">
+        Create or join a workspace. Start with your e-mail.
       </p>
 
-      <form onSubmit={handleSubmit(() => {})} className="mt-5 sm:w-96 mx-auto">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="mt-8 sm:w-96 mx-auto space-y-4">
         <div className="space-y-1">
           <Controller
             control={control}
@@ -122,30 +108,9 @@ export const EmailForm: React.FC<Props> = (props) => {
             )}
           />
         </div>
-        <div className="grid grid-cols-2 gap-2.5 mt-4">
-          <Button
-            type="button"
-            variant="primary"
-            className="w-full"
-            size="xl"
-            onClick={() => handleEmailCheck("magic_code")}
-            disabled={!isValid}
-            loading={Boolean(isCheckingEmail)}
-          >
-            {isCheckingEmail === "magic_code" ? "Sending code..." : "Send unique code"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline-primary"
-            className="w-full"
-            size="xl"
-            onClick={() => handleEmailCheck("password")}
-            disabled={!isValid}
-            loading={Boolean(isCheckingEmail)}
-          >
-            {isCheckingEmail === "password" ? "Loading..." : "Use password"}
-          </Button>
-        </div>
+        <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
+          Continue
+        </Button>
       </form>
     </>
   );

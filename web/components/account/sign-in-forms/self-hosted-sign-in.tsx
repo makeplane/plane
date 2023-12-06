@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
@@ -12,13 +12,10 @@ import { Button, Input } from "@plane/ui";
 import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "types/auth";
-// constants
-import { ESignInSteps } from "components/account";
 
 type Props = {
   email: string;
   updateEmail: (email: string) => void;
-  handleStepChange: (step: ESignInSteps) => void;
   handleSignInRedirection: () => Promise<void>;
 };
 
@@ -34,20 +31,15 @@ const defaultValues: TPasswordFormValues = {
 
 const authService = new AuthService();
 
-export const PasswordForm: React.FC<Props> = (props) => {
-  const { email, updateEmail, handleStepChange, handleSignInRedirection } = props;
-  // states
-  const [isSendingUniqueCode, setIsSendingUniqueCode] = useState(false);
-  const [isSendingResetPasswordLink, setIsSendingResetPasswordLink] = useState(false);
+export const SelfHostedSignInForm: React.FC<Props> = (props) => {
+  const { email, updateEmail, handleSignInRedirection } = props;
   // toast alert
   const { setToastAlert } = useToast();
   // form info
   const {
     control,
-    formState: { dirtyFields, errors, isSubmitting, isValid },
-    getValues,
+    formState: { dirtyFields, errors, isSubmitting },
     handleSubmit,
-    setError,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -58,12 +50,12 @@ export const PasswordForm: React.FC<Props> = (props) => {
   });
 
   const handleFormSubmit = async (formData: TPasswordFormValues) => {
-    updateEmail(formData.email);
-
     const payload: IPasswordSignInData = {
       email: formData.email,
       password: formData.password,
     };
+
+    updateEmail(formData.email);
 
     await authService
       .passwordSignIn(payload)
@@ -75,56 +67,6 @@ export const PasswordForm: React.FC<Props> = (props) => {
           message: err?.error ?? "Something went wrong. Please try again.",
         })
       );
-  };
-
-  const handleForgotPassword = async () => {
-    const emailFormValue = getValues("email");
-
-    const isEmailValid = checkEmailValidity(emailFormValue);
-
-    if (!isEmailValid) {
-      setError("email", { message: "Email is invalid" });
-      return;
-    }
-
-    setIsSendingResetPasswordLink(true);
-
-    authService
-      .sendResetPasswordLink({ email: emailFormValue })
-      .then(() => handleStepChange(ESignInSteps.SET_PASSWORD_LINK))
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsSendingResetPasswordLink(false));
-  };
-
-  const handleSendUniqueCode = async () => {
-    const emailFormValue = getValues("email");
-
-    const isEmailValid = checkEmailValidity(emailFormValue);
-
-    if (!isEmailValid) {
-      setError("email", { message: "Email is invalid" });
-      return;
-    }
-
-    setIsSendingUniqueCode(true);
-
-    await authService
-      .generateUniqueCode({ email: emailFormValue })
-      .then(() => handleStepChange(ESignInSteps.USE_UNIQUE_CODE_FROM_PASSWORD))
-      .catch((err) =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: err?.error ?? "Something went wrong. Please try again.",
-        })
-      )
-      .finally(() => setIsSendingUniqueCode(false));
   };
 
   return (
@@ -181,43 +123,12 @@ export const PasswordForm: React.FC<Props> = (props) => {
               />
             )}
           />
-          <div className="w-full text-right">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className={`text-xs font-medium ${
-                isSendingResetPasswordLink ? "text-onboarding-text-300" : "text-custom-primary-100"
-              }`}
-              disabled={isSendingResetPasswordLink}
-            >
-              {isSendingResetPasswordLink ? "Sending link" : "Forgot your password?"}
-            </button>
-          </div>
         </div>
-        <div className="grid sm:grid-cols-2 gap-2.5">
-          <Button
-            type="button"
-            onClick={handleSendUniqueCode}
-            variant="primary"
-            className="w-full"
-            size="xl"
-            loading={isSendingUniqueCode}
-          >
-            {isSendingUniqueCode ? "Sending code" : "Use unique code"}
-          </Button>
-          <Button
-            type="submit"
-            variant="outline-primary"
-            className="w-full"
-            size="xl"
-            disabled={!isValid}
-            loading={isSubmitting}
-          >
-            Go to workspace
-          </Button>
-        </div>
+        <Button type="submit" variant="primary" className="w-full" size="xl" loading={isSubmitting}>
+          Go to workspace
+        </Button>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
+          When you click the button above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

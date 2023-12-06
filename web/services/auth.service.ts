@@ -3,16 +3,20 @@ import { APIService } from "services/api.service";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
 // types
-import { IEmailCheckData, ILoginTokenResponse, IMagicSignInData, IPasswordSignInData } from "types/auth";
+import {
+  IEmailCheckData,
+  IEmailCheckResponse,
+  ILoginTokenResponse,
+  IMagicSignInData,
+  IPasswordSignInData,
+} from "types/auth";
 
 export class AuthService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async emailCheck(data: IEmailCheckData): Promise<{
-    is_password_autoset: boolean;
-  }> {
+  async emailCheck(data: IEmailCheckData): Promise<IEmailCheckResponse> {
     return this.post("/api/email-check/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
@@ -80,18 +84,6 @@ export class AuthService extends APIService {
       });
   }
 
-  async setInstanceAdminPassword(data: any): Promise<any> {
-    return this.post("/api/licenses/instances/admins/set-password/", data)
-      .then((response) => {
-        this.setAccessToken(response?.data?.access_token);
-        this.setRefreshToken(response?.data?.refresh_token);
-        return response?.data;
-      })
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async socialAuth(data: any): Promise<ILoginTokenResponse> {
     return this.post("/api/social-auth/", data, { headers: {} })
       .then((response) => {
@@ -104,16 +96,8 @@ export class AuthService extends APIService {
       });
   }
 
-  async emailCode(data: any): Promise<any> {
+  async generateUniqueCode(data: { email: string }): Promise<any> {
     return this.post("/api/magic-generate/", data, { headers: {} })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async instanceAdminEmailCode(data: any): Promise<any> {
-    return this.post("/api/licenses/instances/admins/magic-generate/", data, { headers: {} })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -134,14 +118,18 @@ export class AuthService extends APIService {
       });
   }
 
-  async instanceMagicSignIn(data: any): Promise<any> {
-    const response = await this.post("/api/licenses/instances/admins/magic-sign-in/", data, { headers: {} });
-    if (response?.status === 200) {
-      this.setAccessToken(response?.data?.access_token);
-      this.setRefreshToken(response?.data?.refresh_token);
-      return response?.data;
-    }
-    throw response.response.data;
+  async instanceAdminSignIn(data: IPasswordSignInData): Promise<ILoginTokenResponse> {
+    return await this.post("/api/licenses/instances/admins/sign-in/", data, { headers: {} })
+      .then((response) => {
+        if (response?.status === 200) {
+          this.setAccessToken(response?.data?.access_token);
+          this.setRefreshToken(response?.data?.refresh_token);
+          return response?.data;
+        }
+      })
+      .catch((error) => {
+        throw error?.response?.data;
+      });
   }
 
   async signOut(): Promise<any> {

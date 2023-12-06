@@ -109,7 +109,7 @@ const HomePage: NextPageWithLayout = () => {
                     ref={ref}
                     hasError={Boolean(errors.email)}
                     placeholder="orville.wright@firstflight.com"
-                    className="w-full h-[46px] text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                    className="w-full h-[46px] text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
                     disabled
                   />
                 )}
@@ -128,7 +128,7 @@ const HomePage: NextPageWithLayout = () => {
                       onChange={onChange}
                       hasError={Boolean(errors.password)}
                       placeholder="Choose password"
-                      className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                      className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
                       minLength={8}
                     />
                   )}
