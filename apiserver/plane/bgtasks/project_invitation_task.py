@@ -13,7 +13,6 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import Project, User, ProjectMemberInvite
-from plane.license.models import InstanceConfiguration
 from plane.license.utils.instance_value import get_email_configuration
 
 @shared_task
@@ -47,7 +46,6 @@ def project_invitation(email, project_id, token, current_site, invitor):
         project_member_invite.save()
 
         # Configure email connection from the database
-        instance_configuration = InstanceConfiguration.objects.filter(key__startswith='EMAIL_').values("key", "value")
         (
             EMAIL_HOST,
             EMAIL_HOST_USER,
@@ -55,7 +53,7 @@ def project_invitation(email, project_id, token, current_site, invitor):
             EMAIL_PORT,
             EMAIL_USE_TLS,
             EMAIL_FROM,
-        ) = get_email_configuration(instance_configuration=instance_configuration)
+        ) = get_email_configuration()
 
         connection = get_connection(
             host=EMAIL_HOST,
