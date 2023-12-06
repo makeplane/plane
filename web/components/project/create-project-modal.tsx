@@ -66,7 +66,8 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const {
     project: projectStore,
     workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker }
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace },
   } = useMobxStore();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
@@ -135,8 +136,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           state: "SUCCESS"
         }
         postHogEventTracker(
-          "PROJECT_CREATE",
+          "PROJECT_CREATED",
           newPayload,
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: res.workspace
+          }
         )
         setToastAlert({
           type: "success",
@@ -156,10 +162,15 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             message: err.data[key],
           });
           postHogEventTracker(
-            "PROJECT_CREATE",
+            "PROJECT_CREATED",
             {
               state: "FAILED"
             },
+            {
+              isGrouping: true,
+              groupType: "Workspace_metrics",
+              gorupId: currentWorkspace?.id!
+            }
           )
         }
         );
