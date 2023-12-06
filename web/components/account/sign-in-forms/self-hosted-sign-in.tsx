@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
@@ -40,6 +40,7 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
     control,
     formState: { dirtyFields, errors, isSubmitting },
     handleSubmit,
+    setFocus,
   } = useForm<TPasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -68,6 +69,10 @@ export const SelfHostedSignInForm: React.FC<Props> = (props) => {
         })
       );
   };
+
+  useEffect(() => {
+    setFocus("email");
+  }, [setFocus]);
 
   return (
     <>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
-import { AuthService } from "services/auth.service";
+import { AuthService } from "services/authentication.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -13,7 +13,7 @@ import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IPasswordSignInData } from "types/auth";
 // constants
-import { ESignInSteps } from "components/account";
+import { ESignInSteps } from "components/accounts";
 
 type Props = {
   email: string;
@@ -218,11 +218,11 @@ export const PasswordForm: React.FC<Props> = (props) => {
             disabled={!isValid}
             loading={isSubmitting}
           >
-            Go to workspace
+            Go to board
           </Button>
         </div>
         <p className="text-xs text-onboarding-text-200">
-          When you click <span className="text-custom-primary-100">Go to workspace</span> above, you agree with our{" "}
+          When you click <span className="text-custom-primary-100">Go to board</span> above, you agree with our{" "}
           <Link href="https://plane.so/terms-and-conditions" target="_blank" rel="noopener noreferrer">
             <span className="font-semibold underline">terms and conditions of service.</span>
           </Link>

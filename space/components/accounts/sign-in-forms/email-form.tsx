@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { XCircle } from "lucide-react";
 // services
-import { AuthService } from "services/auth.service";
+import { AuthService } from "services/authentication.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -12,7 +12,7 @@ import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData } from "types/auth";
 // constants
-import { ESignInSteps } from "components/account";
+import { ESignInSteps } from "components/accounts";
 
 type Props = {
   handleStepChange: (step: ESignInSteps) => void;

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { CornerDownLeft, XCircle } from "lucide-react";
 // services
-import { AuthService } from "services/auth.service";
+import { AuthService } from "services/authentication.service";
 import { UserService } from "services/user.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -15,7 +15,7 @@ import { checkEmailValidity } from "helpers/string.helper";
 // types
 import { IEmailCheckData, IMagicSignInData } from "types/auth";
 // constants
-import { ESignInSteps } from "components/account";
+import { ESignInSteps } from "components/accounts";
 
 type Props = {
   email: string;
@@ -86,7 +86,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
       .then(async () => {
         const currentUser = await userService.currentUser();
 
-        updateUserOnboardingStatus(currentUser.is_onboarded);
+        updateUserOnboardingStatus(currentUser.onboarding_step.profile_complete ?? false);
 
         if (currentUser.is_password_autoset) handleStepChange(ESignInSteps.OPTIONAL_SET_PASSWORD);
         else await handleSignInRedirection();
@@ -150,6 +150,7 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
   useEffect(() => {
     setFocus("token");
   }, [setFocus]);
+
   return (
     <>
       <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">

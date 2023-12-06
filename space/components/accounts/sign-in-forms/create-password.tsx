@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 // services
-import { AuthService } from "services/auth.service";
+import { AuthService } from "services/authentication.service";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -10,7 +10,7 @@ import { Button, Input } from "@plane/ui";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // constants
-import { ESignInSteps } from "components/account";
+import { ESignInSteps } from "components/accounts";
 
 type Props = {
   email: string;
@@ -40,8 +40,8 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
   const {
     control,
     formState: { errors, isSubmitting, isValid },
-    handleSubmit,
     setFocus,
+    handleSubmit,
   } = useForm<TCreatePasswordFormValues>({
     defaultValues: {
       ...defaultValues,
@@ -127,7 +127,7 @@ export const CreatePasswordForm: React.FC<Props> = (props) => {
           )}
         />
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={!isValid} loading={isSubmitting}>
-          {isOnboarded ? "Go to workspace" : "Set up workspace"}
+          {isOnboarded ? "Go to board" : "Set up profile"}
         </Button>
         <p className="text-xs text-onboarding-text-200">
           When you click the button above, you agree with our{" "}
