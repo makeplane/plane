@@ -95,7 +95,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
 
   return (
     <div className="relative w-full h-full flex flex-col overflow-hidden">
-      {currentView != currentIssueView && loader === "init-loader" ? (
+      {currentView != currentIssueView && (loader === "init-loader" || !getIssues) ? (
         <div className="w-full h-full flex justify-center items-center">
           <Spinner />
         </div>
@@ -103,7 +103,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
         <>
           <GlobalViewsAppliedFiltersRoot />
 
-          {Object.keys(getIssues ?? {}).length == 0 && !loader ? (
+          {Object.keys(getIssues ?? {}).length == 0 ? (
             <>{/* <GlobalViewEmptyState /> */}</>
           ) : (
             <div className="w-full h-full relative overflow-auto">
