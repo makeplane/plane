@@ -24,6 +24,7 @@ export type IRichTextEditor = {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   cancelUploadImage?: () => any;
+  text_html?: string;
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
@@ -48,6 +49,7 @@ interface EditorHandle {
 
 const RichTextEditor = ({
   onChange,
+  text_html,
   dragDropEnabled,
   debouncedUpdatesEnabled,
   setIsSubmitting,
@@ -76,6 +78,7 @@ const RichTextEditor = ({
     deleteFile,
     restoreFile,
     forwardedRef,
+    text_html,
     extensions: RichTextEditorExtensions(
       uploadFile,
       setIsSubmitting,

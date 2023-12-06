@@ -2,6 +2,7 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // service
 import ProjectService from "services/project.service";
+import { TIssueBoardKeys } from "types/issue";
 // types
 import { IWorkspace, IProject, IProjectSettings } from "types/project";
 
@@ -12,9 +13,9 @@ export interface IProjectStore {
   project: IProject | null;
   deploySettings: IProjectSettings | null;
   viewOptions: any;
-  activeBoard: string | null;
+  activeBoard: TIssueBoardKeys | null;
   fetchProjectSettings: (workspace_slug: string, project_slug: string) => Promise<void>;
-  setActiveBoard: (value: string) => void;
+  setActiveBoard: (value: TIssueBoardKeys) => void;
 }
 
 class ProjectStore implements IProjectStore {
@@ -25,7 +26,7 @@ class ProjectStore implements IProjectStore {
   project: IProject | null = null;
   deploySettings: IProjectSettings | null = null;
   viewOptions: any = null;
-  activeBoard: string | null = null;
+  activeBoard: TIssueBoardKeys | null = null;
   // root store
   rootStore;
   // service
@@ -80,7 +81,7 @@ class ProjectStore implements IProjectStore {
     }
   };
 
-  setActiveBoard = (boardValue: string) => {
+  setActiveBoard = (boardValue: TIssueBoardKeys) => {
     this.activeBoard = boardValue;
   };
 }
