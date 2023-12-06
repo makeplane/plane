@@ -89,7 +89,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
 
           if (label)
             return (
-              <span
+              <button
                 key={label.id}
                 className="group flex cursor-pointer items-center gap-1 rounded-2xl border border-custom-border-100 px-1 py-0.5 text-xs hover:border-red-500/20 hover:bg-red-500/20"
                 onClick={() => {
@@ -98,6 +98,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
                     labels: updatedLabels,
                   });
                 }}
+                disabled={uneditable}
               >
                 <span
                   className="h-2 w-2 flex-shrink-0 rounded-full"
@@ -107,7 +108,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
                 />
                 {label.name}
                 <X className="h-2 w-2 group-hover:text-red-500" />
-              </span>
+              </button>
             );
         })}
         <IssueLabelSelect
@@ -209,6 +210,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
             type="button"
             className="grid place-items-center rounded bg-red-500 p-2.5"
             onClick={() => setCreateLabelForm(false)}
+            disabled={uneditable}
           >
             <X className="h-4 w-4 text-white" />
           </button>

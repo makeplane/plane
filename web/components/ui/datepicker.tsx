@@ -61,7 +61,7 @@ export const CustomDatePicker: React.FC<Props> = ({
       noBorder ? "" : "border border-custom-border-200"
     } w-full rounded-md caret-transparent outline-none ${className}`}
     dateFormat="MMM dd, yyyy"
-    isClearable={isClearable}
+    isClearable={Boolean(isClearable && !disabled)}
     disabled={disabled}
     maxDate={maxDate}
     minDate={minDate}

@@ -40,13 +40,13 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
                 <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
               )}
 
-              {filterKey === "labels" && labels && (
+              {/* {filterKey === "labels" && labels && (
                 <AppliedLabelsFilters
                   handleRemove={(val) => handleRemoveFilter("labels", val)}
                   labels={labels}
                   values={value}
                 />
-              )}
+              )} */}
 
               {filterKey === "state" && states && (
                 <AppliedStateFilters

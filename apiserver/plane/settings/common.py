@@ -110,7 +110,9 @@ CSRF_COOKIE_SECURE = True
 CORS_ALLOW_CREDENTIALS = True
 cors_origins_raw = os.environ.get("CORS_ALLOWED_ORIGINS", "")
 # filter out empty strings
-cors_allowed_origins = [origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()]
+cors_allowed_origins = [
+    origin.strip() for origin in cors_origins_raw.split(",") if origin.strip()
+]
 if cors_allowed_origins:
     CORS_ALLOWED_ORIGINS = cors_allowed_origins
 else:
@@ -286,6 +288,7 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
+    "plane.license.bgtasks.instance_verification_task",
 )
 
 # Sentry Settings
@@ -327,7 +330,11 @@ POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
 # License engine base url
-LICENSE_ENGINE_BASE_URL = os.environ.get("LICENSE_ENGINE_BASE_URL", "https://control-center.plane.so")
+LICENSE_ENGINE_BASE_URL = os.environ.get(
+    "LICENSE_ENGINE_BASE_URL", "https://control-center.plane.so"
+)
 
 # instance key
-INSTANCE_KEY = os.environ.get("INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3")
+INSTANCE_KEY = os.environ.get(
+    "INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3"
+)

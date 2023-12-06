@@ -50,31 +50,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             EMAIL_FROM,
         ) = get_email_configuration(instance_configuration=instance_configuration)
 
-        # Send the email if the users don't have smtp configured
-        if not (EMAIL_HOST and EMAIL_HOST_USER and EMAIL_HOST_PASSWORD):
-            # Check the instance registration
-            instance = Instance.objects.first()
-
-            headers = {
-                "Content-Type": "application/json",
-                "x-instance-id": instance.instance_id,
-                "x-api-key": instance.api_key,
-            }
-
-            payload = {
-                "user": user.first_name or user.display_name or user.email,
-                "workspace_name": workspace.name,
-                "invitation_url": abs_url,
-                "email": email,
-            }
-            _ = requests.post(
-                f"{settings.LICENSE_ENGINE_BASE_URL}/api/instances/users/workspace-invitation/",
-                headers=headers,
-                data=json.dumps(payload),
-            )
-
-            return
-
         # Subject of the email
         subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on Plane"
 

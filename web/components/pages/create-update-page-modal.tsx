@@ -9,8 +9,6 @@ import { PageForm } from "./page-form";
 import { IPage } from "types";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
-// helpers
-import { trackEvent } from "helpers/event-tracker.helper";
 
 type Props = {
   data?: IPage | null;
@@ -27,6 +25,8 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   // store
   const {
     page: { createPage, updatePage },
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace }
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -47,10 +47,18 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Success!",
           message: "Page created successfully.",
         });
-        trackEvent("PAGE_CREATE", {
-          ...res,
-          case: "SUCCESS",
-        });
+        postHogEventTracker(
+          "PAGE_CREATED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -58,9 +66,16 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
-        trackEvent("PAGE_CREATE", {
-          case: "FAILED",
-        });
+        postHogEventTracker("PAGE_CREATED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       });
   };
 
@@ -75,10 +90,17 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Success!",
           message: "Page updated successfully.",
         });
-        trackEvent("PAGE_UPDATE", {
-          ...res,
-          case: "SUCCESS",
-        });
+        postHogEventTracker("PAGE_UPDATED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -86,9 +108,16 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be updated. Please try again.",
         });
-        trackEvent("PAGE_UPDATE", {
-          case: "FAILED",
-        });
+        postHogEventTracker("PAGE_UPDATED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       });
   };
 
