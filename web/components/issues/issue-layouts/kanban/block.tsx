@@ -1,7 +1,5 @@
-import { useRef, useState } from "react";
-import { memo } from "react";
+import { memo, useRef, useState } from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import isEqual from "lodash/isEqual";
 // components
 import { KanBanProperties } from "./properties";
 // ui

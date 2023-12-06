@@ -58,7 +58,7 @@ export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => 
         }}
         currentStore={EProjectStore.PROJECT}
       />
-      <CustomMenu className="z-50" placement="bottom-start" customButton={customActionButton} ellipsis>
+      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

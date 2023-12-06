@@ -24,6 +24,8 @@ import {
 } from "store/issues";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IIssueKanBanViewStore } from "store/issue";
+// hooks
+import useToast from "hooks/use-toast";
 // constants
 import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 //components
@@ -64,7 +66,7 @@ export interface IBaseKanBanLayout {
     groupBy: string | null,
     issues: any,
     issueWithIds: any
-  ) => void;
+  ) => Promise<IIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
@@ -98,6 +100,9 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     projectState: projectStateStore,
     user: userStore,
   } = useMobxStore();
+
+  // hooks
+  const { setToastAlert } = useToast();
 
   const { currentProjectRole } = userStore;
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
@@ -172,9 +177,25 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const handleDeleteIssue = async () => {
     if (!handleDragDrop) return;
-    await handleDragDrop(dragState.source, dragState.destination, sub_group_by, group_by, issues, issueIds);
-    setDeleteIssueModal(false);
-    setDragState({});
+    await handleDragDrop(dragState.source, dragState.destination, sub_group_by, group_by, issues, issueIds)
+      .then(() => {
+        setToastAlert({
+          title: "Success",
+          type: "success",
+          message: "Issue deleted successfully",
+        });
+      })
+      .catch(() => {
+        setToastAlert({
+          title: "Error",
+          type: "error",
+          message: "Failed to delete issue",
+        });
+      })
+      .finally(() => {
+        setDeleteIssueModal(false);
+        setDragState({});
+      });
   };
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
