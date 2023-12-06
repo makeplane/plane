@@ -26,7 +26,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
     <>
       <IssuePropertyState
         projectId={issue.project_detail?.id ?? null}
-        value={issue.state_detail.id}
+        value={issue.state}
         defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
         className="h-full w-full"
