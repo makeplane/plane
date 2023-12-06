@@ -44,6 +44,7 @@ interface IDocumentEditor {
   forwardedRef?: any;
   updatePageTitle: (title: string) => Promise<void>;
   debouncedUpdatesEnabled?: boolean;
+  isSubmitting: "submitting" | "submitted" | "saved";
 
   // embed configuration
   duplicationConfig?: IDuplicationConfig;
@@ -78,6 +79,7 @@ const DocumentEditor = ({
   uploadFile,
   deleteFile,
   restoreFile,
+  isSubmitting,
   customClassName,
   forwardedRef,
   duplicationConfig,
@@ -153,6 +155,7 @@ const DocumentEditor = ({
         isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
         documentDetails={documentDetails}
+        isSubmitting={isSubmitting}
       />
       <div className="h-full w-full flex overflow-y-auto">
         <div className="flex-shrink-0 h-full w-56 lg:w-72 sticky top-0">

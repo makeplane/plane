@@ -1,5 +1,5 @@
 import { Editor } from "@tiptap/react";
-import { Archive, Info, Lock } from "lucide-react";
+import { Archive, RefreshCw, Lock } from "lucide-react";
 import { IMarking } from "..";
 import { FixedMenu } from "../menu";
 import { UploadImage } from "@plane/editor-types";
@@ -27,6 +27,7 @@ interface IEditorHeader {
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void;
   documentDetails: DocumentDetails;
+  isSubmitting?: "submitting" | "submitted" | "saved";
 }
 
 export const EditorHeader = (props: IEditorHeader) => {
@@ -43,6 +44,7 @@ export const EditorHeader = (props: IEditorHeader) => {
     KanbanMenuOptions,
     isArchived,
     isLocked,
+    isSubmitting,
   } = props;
 
   return (
@@ -83,6 +85,21 @@ export const EditorHeader = (props: IEditorHeader) => {
             label={`Archived at ${new Date(archivedAt).toLocaleString()}`}
           />
         )}
+
+        {!isLocked && !isArchived ? (
+          <div
+            className={`flex transition-all duration-300 items-center gap-x-2 ${
+              isSubmitting === "saved" ? "fadeOut" : "fadeIn"
+            }`}
+          >
+            {isSubmitting !== "submitted" && isSubmitting !== "saved" && (
+              <RefreshCw className="h-4 w-4 stroke-custom-text-300" />
+            )}
+            <span className="text-sm text-custom-text-300">
+              {isSubmitting === "submitting" ? "Saving..." : "Saved"}
+            </span>
+          </div>
+        ) : null}
         {!isArchived && <InfoPopover documentDetails={documentDetails} />}
         <VerticalDropdownMenu items={KanbanMenuOptions} />
       </div>

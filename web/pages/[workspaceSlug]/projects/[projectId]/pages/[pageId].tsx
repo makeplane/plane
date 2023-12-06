@@ -336,6 +336,7 @@ const PageDetailsPage: NextPageWithLayout = () => {
                       last_updated_at: pageDetails.updated_at,
                       last_updated_by: pageDetails.updated_by,
                     }}
+                    isSubmitting={isSubmitting}
                     uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                     setShouldShowAlert={setShowAlert}
                     restoreFile={fileService.restoreImage}
