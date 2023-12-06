@@ -102,13 +102,7 @@ export const PageForm: React.FC<Props> = (props) => {
             Cancel
           </Button>
           <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-            {data
-              ? isSubmitting
-                ? "Updating Page..."
-                : "Update Page"
-              : isSubmitting
-              ? "Creating Page..."
-              : "Create Page"}
+            {data ? (isSubmitting ? "Updating..." : "Update page") : isSubmitting ? "Creating..." : "Create Page"}
           </Button>
         </div>
       </div>

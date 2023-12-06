@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { FileText, Plus } from "lucide-react";
@@ -8,18 +7,22 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Breadcrumbs, Button } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-export interface IPagesHeaderProps {
-  showButton?: boolean;
-}
-
-export const PagesHeader: FC<IPagesHeaderProps> = observer((props) => {
-  const { showButton = false } = props;
+export const PagesHeader = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+  // mobx store
+  const {
+    user: { currentProjectRole },
+    project: { currentProjectDetails },
+    commandPalette: { toggleCreatePageModal },
+  } = useMobxStore();
 
-  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const canUserCreatePage =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -50,14 +53,9 @@ export const PagesHeader: FC<IPagesHeaderProps> = observer((props) => {
           </Breadcrumbs>
         </div>
       </div>
-      {showButton && (
+      {canUserCreatePage && (
         <div className="flex items-center gap-2">
-          <Button
-            variant="primary"
-            prependIcon={<Plus />}
-            size="sm"
-            onClick={() => commandPaletteStore.toggleCreatePageModal(true)}
-          >
+          <Button variant="primary" prependIcon={<Plus />} size="sm" onClick={() => toggleCreatePageModal(true)}>
             Create Page
           </Button>
         </div>

@@ -17,10 +17,11 @@ type Props = {
   onChange: (value: string[]) => void;
   projectId: string;
   label?: JSX.Element;
+  disabled?: boolean;
 };
 
 export const IssueLabelSelect: React.FC<Props> = observer((props) => {
-  const { setIsOpen, value, onChange, projectId, label } = props;
+  const { setIsOpen, value, onChange, projectId, label, disabled = false } = props;
 
   // states
   const [query, setQuery] = useState("");
@@ -50,7 +51,14 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
     query === "" ? issueLabels : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <Combobox as="div" value={value} onChange={(val) => onChange(val)} className="relative flex-shrink-0" multiple>
+    <Combobox
+      as="div"
+      value={value}
+      onChange={(val) => onChange(val)}
+      className="relative flex-shrink-0"
+      multiple
+      disabled={disabled}
+    >
       {({ open }: any) => (
         <>
           <Combobox.Button as={Fragment}>
