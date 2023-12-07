@@ -58,6 +58,7 @@ interface IBaseListRoot {
   viewId?: string;
   currentStore: EProjectStore;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
 export const BaseListRoot = observer((props: IBaseListRoot) => {
@@ -70,6 +71,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
     viewId,
     currentStore,
     addIssuesToView,
+    canEditPropertiesBasedOnProject,
   } = props;
   // router
   const router = useRouter();
@@ -90,6 +92,12 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   const issues = issueStore?.getIssues;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
+  const canEditProperties = (projectId: string | undefined) => {
+    const isEditingAllowedBasedOnProject =
+      canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+
+    return enableInlineEditing && isEditingAllowedBasedOnProject;
+  };
 
   const displayFilters = issueFilterStore?.issueFilters?.displayFilters;
   const group_by = displayFilters?.group_by || null;
@@ -147,7 +155,7 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
             viewId={viewId}
             quickAddCallback={issueStore?.quickAddIssue}
             enableIssueQuickAdd={!!enableQuickAdd}
-            isReadonly={!enableInlineEditing || !isEditingAllowed}
+            canEditProperties={canEditProperties}
             disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
             currentStore={currentStore}
             addIssuesToView={addIssuesToView}

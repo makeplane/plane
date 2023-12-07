@@ -19,7 +19,7 @@ interface IssueBlocksListProps {
     customActionButton?: React.ReactElement
   ) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
-  isReadOnly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
@@ -33,7 +33,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
     handleIssues,
     quickActions,
     displayProperties,
-    isReadOnly,
+    canEditProperties,
   } = props;
 
   return (
@@ -57,7 +57,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
                 columnId={columnId}
                 sub_group_id={sub_group_id}
                 isDragDisabled={isDragDisabled}
-                isReadOnly={isReadOnly}
+                canEditProperties={canEditProperties}
               />
             );
           })}

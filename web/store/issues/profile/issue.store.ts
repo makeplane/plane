@@ -136,7 +136,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       return {
         enableQuickAdd: false,
         enableIssueCreation: false,
-        enableInlineEditing: false,
+        enableInlineEditing: true,
       };
     }
 

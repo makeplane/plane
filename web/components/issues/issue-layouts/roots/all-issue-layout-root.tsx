@@ -55,7 +55,11 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isEditingAllowed = false;
+  const canEditProperties = (projectId: string | undefined) => {
+    const isEditingAllowedBasedOnProject = false;
+
+    return isEditingAllowedBasedOnProject;
+  };
 
   const issuesResponse = getIssues;
   const issueIds = (getIssuesIds ?? []) as TUnGroupedIssues;
@@ -123,7 +127,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                 members={workspaceMembers?.map((m) => m.member)}
                 labels={workspaceLabels || undefined}
                 handleIssues={handleIssues}
-                disableUserActions={isEditingAllowed}
+                canEditProperties={canEditProperties}
                 viewId={currentIssueView}
               />
             </div>

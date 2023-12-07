@@ -23,7 +23,7 @@ export interface IGroupByList {
   displayProperties: IIssueDisplayProperties | undefined;
   enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
-  isReadonly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -50,7 +50,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
     displayProperties,
     enableIssueQuickAdd,
     showEmptyGroup,
-    isReadonly,
+    canEditProperties,
     quickAddCallback,
     viewId,
     disableIssueCreation,
@@ -105,7 +105,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                     handleIssues={handleIssues}
                     quickActions={quickActions}
                     displayProperties={displayProperties}
-                    isReadonly={isReadonly}
+                    canEditProperties={canEditProperties}
                   />
                 )}
 
@@ -134,7 +134,7 @@ export interface IList {
   displayProperties: IIssueDisplayProperties | undefined;
   showEmptyGroup: boolean;
   enableIssueQuickAdd: boolean;
-  isReadonly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   states: IState[] | null;
   labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
@@ -165,7 +165,7 @@ export const List: React.FC<IList> = (props) => {
     displayProperties,
     showEmptyGroup,
     enableIssueQuickAdd,
-    isReadonly,
+    canEditProperties,
     disableIssueCreation,
     states,
     stateGroups,
@@ -193,7 +193,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           enableIssueQuickAdd={enableIssueQuickAdd}
           showEmptyGroup={showEmptyGroup}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -215,7 +215,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -237,7 +237,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -259,7 +259,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -281,7 +281,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -303,7 +303,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -325,7 +325,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
@@ -347,7 +347,7 @@ export const List: React.FC<IList> = (props) => {
           displayProperties={displayProperties}
           showEmptyGroup={showEmptyGroup}
           enableIssueQuickAdd={enableIssueQuickAdd}
-          isReadonly={isReadonly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}

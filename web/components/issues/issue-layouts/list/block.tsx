@@ -14,11 +14,11 @@ interface IssueBlockProps {
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
-  isReadonly?: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
-  const { columnId, issue, handleIssues, quickActions, displayProperties, isReadonly } = props;
+  const { columnId, issue, handleIssues, quickActions, displayProperties, canEditProperties } = props;
   // router
   const router = useRouter();
   const updateIssue = (group_by: string | null, issueToUpdate: IIssue) => {
@@ -33,6 +33,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
       query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
+
+  const canEditIssueProperties = canEditProperties(issue.project);
 
   return (
     <>
@@ -61,7 +63,7 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
               <ListProperties
                 columnId={columnId}
                 issue={issue}
-                isReadonly={isReadonly}
+                isReadonly={!canEditIssueProperties}
                 handleIssues={updateIssue}
                 displayProperties={displayProperties}
               />
