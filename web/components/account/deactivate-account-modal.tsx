@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { useTheme } from "next-themes";
 import { Dialog, Transition } from "@headlessui/react";
 import { Trash2 } from "lucide-react";
+import { mutate } from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
@@ -27,6 +29,7 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
   const router = useRouter();
 
   const { setToastAlert } = useToast();
+  const { setTheme } = useTheme();
 
   const handleClose = () => {
     setIsDeactivating(false);
@@ -43,8 +46,10 @@ export const DeactivateAccountModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Account deactivated successfully.",
         });
-        handleClose();
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
+        handleClose();
       })
       .catch((err) =>
         setToastAlert({

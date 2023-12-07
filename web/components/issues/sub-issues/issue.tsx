@@ -117,17 +117,16 @@ export const SubIssues: React.FC<ISubIssues> = ({
                 workspaceSlug={workspaceSlug}
                 parentIssue={parentIssue}
                 issue={issue}
-                user={user}
                 editable={editable}
               />
             </div>
 
             <div className="flex-shrink-0 text-sm">
-              <CustomMenu width="auto" ellipsis>
+              <CustomMenu width="auto" placement="bottom-end" ellipsis>
                 {editable && (
                   <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("edit", parentIssue?.id, issue)}>
-                    <div className="flex items-center justify-start gap-2">
-                      <Pencil width={14} strokeWidth={2} />
+                    <div className="flex items-center gap-2">
+                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>Edit issue</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -135,8 +134,8 @@ export const SubIssues: React.FC<ISubIssues> = ({
 
                 {editable && (
                   <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("delete", parentIssue?.id, issue)}>
-                    <div className="flex items-center justify-start gap-2">
-                      <Trash width={14} strokeWidth={2} />
+                    <div className="flex items-center gap-2">
+                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
                       <span>Delete issue</span>
                     </div>
                   </CustomMenu.MenuItem>
@@ -145,8 +144,8 @@ export const SubIssues: React.FC<ISubIssues> = ({
                 <CustomMenu.MenuItem
                   onClick={() => copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)}
                 >
-                  <div className="flex items-center justify-start gap-2">
-                    <LinkIcon width={14} strokeWidth={2} />
+                  <div className="flex items-center gap-2">
+                    <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
                     <span>Copy issue link</span>
                   </div>
                 </CustomMenu.MenuItem>
