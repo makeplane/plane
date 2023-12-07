@@ -13,6 +13,7 @@ from plane.app.views import (
     UserProjectInvitationsViewset,
     ProjectPublicCoverImagesEndpoint,
     ProjectDeployBoardViewSet,
+    UserProjectRolesEndpoint,
 )
 
 
@@ -73,6 +74,11 @@ urlpatterns = [
             },
         ),
         name="user-project-invitations",
+    ),
+    path(
+        "users/me/workspaces/<str:slug>/project-roles/",
+        UserProjectRolesEndpoint.as_view(),
+        name="user-project-roles",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/join/<uuid:pk>/",
