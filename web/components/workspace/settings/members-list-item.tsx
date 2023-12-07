@@ -126,10 +126,6 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
 
   if (!currentWorkspaceMemberInfo) return null;
 
-  console.log("---");
-  console.log("member", member?.status, member);
-  console.log("---");
-
   return (
     <>
       <ConfirmWorkspaceMemberRemove
