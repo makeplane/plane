@@ -27,10 +27,7 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   const {
     workspaceProfileIssues: { loader, getIssues, fetchIssues },
     workspaceProfileIssuesFilter: { issueFilters, fetchFilters },
-    workspaceMember: { currentWorkspaceUserProjectsRole },
   }: RootStore = useMobxStore();
-
-  console.log("currentWorkspaceUserProjectsRole", currentWorkspaceUserProjectsRole);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}_${type}` : null,

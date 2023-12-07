@@ -95,7 +95,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
   enableQuickIssueCreate: boolean;
-  isReadOnly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -127,7 +127,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     isDragStarted,
     disableIssueCreation,
     enableQuickIssueCreate,
-    isReadOnly,
+    canEditProperties,
     addIssuesToView,
     quickAddCallback,
   } = props;
@@ -186,7 +186,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   projects={projects}
                   enableQuickIssueCreate={enableQuickIssueCreate}
                   isDragStarted={isDragStarted}
-                  isReadOnly={isReadOnly}
+                  canEditProperties={canEditProperties}
                   addIssuesToView={addIssuesToView}
                   quickAddCallback={quickAddCallback}
                 />
@@ -232,7 +232,7 @@ export interface IKanBanSwimLanes {
     data: IIssue,
     viewId?: string
   ) => Promise<IIssue | undefined>;
-  isReadOnly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
@@ -257,7 +257,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     isDragStarted,
     disableIssueCreation,
     enableQuickIssueCreate,
-    isReadOnly,
+    canEditProperties,
     currentStore,
     addIssuesToView,
     quickAddCallback,
@@ -402,7 +402,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -431,7 +431,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -460,7 +460,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -489,7 +489,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -518,7 +518,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -547,7 +547,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -576,7 +576,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}
@@ -605,7 +605,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          isReadOnly={isReadOnly}
+          canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
       )}

@@ -56,6 +56,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       // observables
       members: observable.ref,
       memberInvitations: observable.ref,
+      workspaceUserProjectsRole: observable.ref,
       // actions
       fetchWorkspaceUserProjectsRole: action,
       fetchWorkspaceMembers: action,

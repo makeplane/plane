@@ -12,8 +12,8 @@ type Props = {
   expandedIssues: string[];
   setExpandedIssues: React.Dispatch<React.SetStateAction<string[]>>;
   properties: IIssueDisplayProperties;
-  quickActions: (issue: IIssue,customActionButton?: React.ReactElement) => React.ReactNode;
-  disableUserActions: boolean;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  canEditProperties: (projectId: string | undefined) => boolean;
   nestingLevel?: number;
 };
 
@@ -23,7 +23,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
   setExpandedIssues,
   properties,
   quickActions,
-  disableUserActions,
+  canEditProperties,
   nestingLevel = 0,
 }) => {
   const handleToggleExpand = (issueId: string) => {
@@ -49,7 +49,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
         expanded={isExpanded}
         handleToggleExpand={handleToggleExpand}
         properties={properties}
-        disableUserActions={disableUserActions}
+        canEditProperties={canEditProperties}
         nestingLevel={nestingLevel}
         quickActions={quickActions}
       />
@@ -66,7 +66,7 @@ export const SpreadsheetIssuesColumn: React.FC<Props> = ({
             setExpandedIssues={setExpandedIssues}
             properties={properties}
             quickActions={quickActions}
-            disableUserActions={disableUserActions}
+            canEditProperties={canEditProperties}
             nestingLevel={nestingLevel + 1}
           />
         ))}

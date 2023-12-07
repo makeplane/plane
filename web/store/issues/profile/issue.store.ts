@@ -136,7 +136,7 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       return {
         enableQuickAdd: false,
         enableIssueCreation: false,
-        enableInlineEditing: false,
+        enableInlineEditing: true,
       };
     }
 
@@ -233,8 +233,8 @@ export class ProfileIssuesStore extends IssueBaseStore implements IProfileIssues
       let _issues = { ...this.issues };
       if (!_issues) _issues = {};
       if (!_issues[userId]) _issues[userId] = { assigned: {}, created: {}, subscribed: {} };
-      _issues[userId][this.currentUserIssueTab][userId] = {
-        ..._issues[userId][this.currentUserIssueTab][userId],
+      _issues[userId][this.currentUserIssueTab][issueId] = {
+        ..._issues[userId][this.currentUserIssueTab][issueId],
         ...data,
       };
 
