@@ -57,11 +57,7 @@ export const UserImageUploadModal: React.FC<Props> = observer((props) => {
   };
 
   const handleSubmit = async () => {
-    console.log("Submit triggered");
-
     if (!image) return;
-
-    console.log("Inside submit");
 
     setIsImageUploading(true);
 
