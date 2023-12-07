@@ -54,16 +54,16 @@ def get_email_configuration():
                     "default": os.environ.get("EMAIL_HOST", None),
                 },
                 {
-                    "key": "EMAIL_FROM",
-                    "default": os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
+                    "key": "EMAIL_PORT",
+                    "default": os.environ.get("EMAIL_PORT", 587),
                 },
                 {
                     "key": "EMAIL_USE_TLS",
                     "default": os.environ.get("EMAIL_USE_TLS", "1"),
                 },
                 {
-                    "key": "EMAIL_PORT",
-                    "default": os.environ.get("EMAIL_PORT", 587),
+                    "key": "EMAIL_FROM",
+                    "default": os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
                 },
             ]
         )
