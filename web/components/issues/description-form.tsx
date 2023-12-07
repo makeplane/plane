@@ -61,8 +61,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     description_html: issue.description_html,
   });
 
-  console.log("in form", localIssueDescription);
-
   useEffect(() => {
     if (issue.id) {
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });

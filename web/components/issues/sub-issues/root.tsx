@@ -45,11 +45,10 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
 
   const {
-    user: userStore,
+    user: { currentProjectRole },
     issue: { updateIssueStructure },
-    projectIssues: { updateIssue },
+    projectIssues: { updateIssue, removeIssue },
   } = useMobxStore();
-  const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -177,7 +176,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
     [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
   );
 
-  const isEditable = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
     if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
@@ -261,7 +260,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                     </>
                   }
                   buttonClassName="whitespace-nowrap"
-                  // position="left"
+                  placement="bottom-end"
                   noBorder
                   noChevron
                 >
@@ -297,7 +296,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
-                    // position="left"
+                    placement="bottom-end"
                     noBorder
                     noChevron
                   >
@@ -356,7 +355,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
             </>
           )}
           {isEditable &&
-            issueCrudOperation?.delete?.toggle &&
+            workspaceSlug &&
+            projectId &&
             issueCrudOperation?.delete?.issueId &&
             issueCrudOperation?.delete?.issue && (
               <DeleteIssueModal
@@ -366,6 +366,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                   handleIssueCrudOperation("delete", null, null);
                 }}
                 data={issueCrudOperation?.delete?.issue}
+                onSubmit={async () => {
+                  await removeIssue(
+                    workspaceSlug.toString(),
+                    projectId.toString(),
+                    issueCrudOperation?.delete?.issue?.id ?? ""
+                  );
+                }}
               />
             )}
         </>
