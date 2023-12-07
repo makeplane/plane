@@ -1,77 +1,73 @@
-import React from "react";
-import { useRouter } from "next/router";
+import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { PageService } from "services/page.service";
 // components
-import { PagesView } from "components/pages";
-import { EmptyState } from "components/common";
+import { PagesListView } from "components/pages/pages-list";
+import { NewEmptyState } from "components/common/new-empty-state";
 // ui
 import { Loader } from "@plane/ui";
 // assets
-import emptyPage from "public/empty-state/page.svg";
+import emptyPage from "public/empty-state/empty_page.png";
 // helpers
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
-// types
-import { TPagesListProps } from "./types";
-import { RecentPagesResponse } from "types";
-// fetch-keys
-import { RECENT_PAGES_LIST } from "constants/fetch-keys";
 
-// services
-const pageService = new PageService();
+export const RecentPagesList: FC = observer(() => {
+  // store
+  const {
+    commandPalette: commandPaletteStore,
+    page: { recentProjectPages },
+  } = useMobxStore();
 
-export const RecentPagesList: React.FC<TPagesListProps> = observer((props) => {
-  const { viewType } = props;
+  const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
 
-  const { commandPalette: commandPaletteStore } = useMobxStore();
-
-  const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
-
-  const { data: pages } = useSWR(
-    workspaceSlug && projectId ? RECENT_PAGES_LIST(projectId as string) : null,
-    workspaceSlug && projectId ? () => pageService.getRecentPages(workspaceSlug as string, projectId as string) : null
-  );
-
-  const isEmpty = pages && Object.keys(pages).every((key) => pages[key].length === 0);
+  if (!recentProjectPages) {
+    return (
+      <Loader className="space-y-4">
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+        <Loader.Item height="40px" />
+      </Loader>
+    );
+  }
 
   return (
     <>
-      {pages ? (
-        Object.keys(pages).length > 0 && !isEmpty ? (
-          Object.keys(pages).map((key) => {
-            if (pages[key].length === 0) return null;
+      {Object.keys(recentProjectPages).length > 0 && !isEmpty ? (
+        <>
+          {Object.keys(recentProjectPages).map((key) => {
+            if (recentProjectPages[key]?.length === 0) return null;
 
             return (
-              <div key={key} className="h-full overflow-hidden pb-9">
-                <h2 className="text-xl font-semibold capitalize mb-2">{replaceUnderscoreIfSnakeCase(key)}</h2>
-                <PagesView pages={pages[key as keyof RecentPagesResponse]} viewType={viewType} />
+              <div key={key}>
+                <h2 className="sticky top-0 bg-custom-background-100 z-[1] text-xl font-semibold capitalize mb-2">
+                  {replaceUnderscoreIfSnakeCase(key)}
+                </h2>
+                <PagesListView pages={recentProjectPages[key]} />
               </div>
             );
-          })
-        ) : (
-          <EmptyState
-            title="Have your thoughts in place"
-            description="You can think of Pages as an AI-powered notepad."
+          })}
+        </>
+      ) : (
+        <>
+          <NewEmptyState
+            title="Write a note, a doc, or a full knowledge base. Get Galileo, Plane’s AI assistant, to help you get started."
+            description="Pages are thoughtspotting space in Plane. Take down meeting notes, format them easily, embed issues, lay them out using a library of components, and keep them all in your project’s context. To make short work of any doc, invoke Galileo, Plane’s AI, with a shortcut or the click of a button."
             image={emptyPage}
+            comicBox={{
+              title: "A page can be a doc or a doc of docs.",
+              description:
+                "We wrote Parth and Meera’s love story. You could write your project’s mission, goals, and eventual vision.",
+              direction: "right",
+            }}
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
-              text: "New Page",
+              text: "Create your first page",
               onClick: () => commandPaletteStore.toggleCreatePageModal(true),
             }}
           />
-        )
-      ) : (
-        <Loader className="space-y-4">
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-          <Loader.Item height="40px" />
-        </Loader>
+        </>
       )}
     </>
   );

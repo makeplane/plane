@@ -38,7 +38,10 @@ type TCyclesListItem = {
 export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const { cycle, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore } = useMobxStore();
+  const {
+    cycle: cycleStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // states
@@ -119,6 +122,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
     e.preventDefault();
     e.stopPropagation();
     setDeleteModal(true);
+    setTrackElement("CYCLE_PAGE_LIST_LAYOUT");
   };
 
   const openCycleOverview = (e: MouseEvent<HTMLButtonElement>) => {
@@ -149,7 +153,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-        <a className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
+        <div className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
           <div className="flex items-center gap-3 w-full truncate">
             <div className="flex items-center gap-4 truncate">
               <span className="flex-shrink-0">
@@ -160,6 +164,8 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     ) : (
                       <span className="text-sm text-custom-primary-100">{`!`}</span>
                     )
+                  ) : progress === 100 ? (
+                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
@@ -256,7 +262,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
               </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
-        </a>
+        </div>
       </Link>
     </>
   );

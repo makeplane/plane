@@ -31,6 +31,8 @@ import type { IUser, IIssue, ISearchIssueResponse } from "types";
 // components
 import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
+import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 const aiService = new AIService();
 const fileService = new FileService();
@@ -89,7 +91,7 @@ interface IssueFormProps {
   )[];
 }
 
-export const DraftIssueForm: FC<IssueFormProps> = (props) => {
+export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const {
     handleFormSubmit,
     data,
@@ -100,30 +102,30 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     createMore,
     setCreateMore,
     status,
-    user,
     fieldsToShow,
     handleDiscard,
   } = props;
-
+  // states
   const [stateModal, setStateModal] = useState(false);
   const [labelModal, setLabelModal] = useState(false);
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
   const [selectedParentIssue, setSelectedParentIssue] = useState<ISearchIssueResponse | null>(null);
-
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   const [iAmFeelingLucky, setIAmFeelingLucky] = useState(false);
-
+  // hooks
   const { setValue: setLocalStorageValue } = useLocalStorage("draftedIssue", {});
-
+  const { setToastAlert } = useToast();
+  const editorSuggestions = useEditorSuggestions();
+  // refs
   const editorRef = useRef<any>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const editorSuggestions = useEditorSuggestions();
-
+  // store
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
+  // form info
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -231,15 +233,10 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
     setIAmFeelingLucky(true);
 
     aiService
-      .createGptTask(
-        workspaceSlug as string,
-        projectId as string,
-        {
-          prompt: issueName,
-          task: "Generate a proper description for this issue.",
-        },
-        user
-      )
+      .createGptTask(workspaceSlug as string, projectId as string, {
+        prompt: issueName,
+        task: "Generate a proper description for this issue.",
+      })
       .then((res) => {
         if (res.response === "")
           setToastAlert({
@@ -428,6 +425,7 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                         cancelUploadImage={fileService.cancelUpload}
                         uploadFile={fileService.getUploadFileFunction(workspaceSlug as string)}
                         deleteFile={fileService.deleteImage}
+                        restoreFile={fileService.restoreImage}
                         ref={editorRef}
                         debouncedUpdatesEnabled={false}
                         value={
@@ -445,21 +443,23 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
                       />
                     )}
                   />
-                  <GptAssistantModal
-                    isOpen={gptAssistantModal}
-                    handleClose={() => {
-                      setGptAssistantModal(false);
-                      // this is done so that the title do not reset after gpt popover closed
-                      reset(getValues());
-                    }}
-                    inset="top-2 left-0"
-                    content=""
-                    htmlContent={watch("description_html")}
-                    onResponse={(response) => {
-                      handleAiAssistance(response);
-                    }}
-                    projectId={projectId}
-                  />
+                  {envConfig?.has_openai_configured && (
+                    <GptAssistantModal
+                      isOpen={gptAssistantModal}
+                      handleClose={() => {
+                        setGptAssistantModal(false);
+                        // this is done so that the title do not reset after gpt popover closed
+                        reset(getValues());
+                      }}
+                      inset="top-2 left-0"
+                      content=""
+                      htmlContent={watch("description_html")}
+                      onResponse={(response) => {
+                        handleAiAssistance(response);
+                      }}
+                      projectId={projectId}
+                    />
+                  )}
                 </div>
               )}
               <div className="flex flex-wrap items-center gap-2">
@@ -628,4 +628,4 @@ export const DraftIssueForm: FC<IssueFormProps> = (props) => {
       </form>
     </>
   );
-};
+});

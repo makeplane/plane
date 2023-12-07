@@ -5,30 +5,33 @@ import { issueViews } from "constants/data";
 // mobx
 import { useMobxStore } from "lib/mobx/store-provider";
 import { RootStore } from "store/root";
+import { TIssueBoardKeys } from "types/issue";
 
 export const NavbarIssueBoardView = observer(() => {
-  const { project: projectStore, issue: issueStore }: RootStore = useMobxStore();
-
+  const {
+    project: { viewOptions, setActiveBoard, activeBoard },
+  }: RootStore = useMobxStore();
+  // router
   const router = useRouter();
   const { workspace_slug, project_slug } = router.query as { workspace_slug: string; project_slug: string };
 
   const handleCurrentBoardView = (boardView: string) => {
-    projectStore.setActiveBoard(boardView);
+    setActiveBoard(boardView as TIssueBoardKeys);
     router.push(`/${workspace_slug}/${project_slug}?board=${boardView}`);
   };
 
   return (
     <>
-      {projectStore?.viewOptions &&
-        Object.keys(projectStore?.viewOptions).map((viewKey: string) => {
-          if (projectStore?.viewOptions[viewKey]) {
+      {viewOptions &&
+        Object.keys(viewOptions).map((viewKey: string) => {
+          if (viewOptions[viewKey]) {
             return (
               <div
                 key={viewKey}
-                className={`w-[28px] h-[28px] flex justify-center items-center rounded-sm cursor-pointer ${
-                  viewKey === projectStore?.activeBoard
+                className={`flex h-[28px] w-[28px] cursor-pointer items-center justify-center rounded-sm ${
+                  viewKey === activeBoard
                     ? `bg-custom-background-80 text-custom-text-200`
-                    : `hover:bg-custom-background-80 text-custom-text-300`
+                    : `text-custom-text-300 hover:bg-custom-background-80`
                 }`}
                 onClick={() => handleCurrentBoardView(viewKey)}
                 title={viewKey}

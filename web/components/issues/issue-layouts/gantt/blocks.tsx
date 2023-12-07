@@ -1,28 +1,28 @@
+import { useRouter } from "next/router";
 // ui
 import { Tooltip, StateGroupIcon } from "@plane/ui";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
-import { IBlockUpdateData } from "components/gantt-chart";
 // helpers
 import { renderShortDate } from "helpers/date-time.helper";
 // types
 import { IIssue } from "types";
 
-export const IssueGanttBlock = ({
-  data,
-  handleIssue,
-}: {
-  data: IIssue;
-  handleIssue: (block: IIssue, payload: IBlockUpdateData) => void;
-}) => (
-  <IssuePeekOverview
-    workspaceSlug={data?.workspace_detail?.slug}
-    projectId={data?.project_detail?.id}
-    issueId={data?.id}
-    handleIssue={(issueToUpdate) => handleIssue({ ...data, ...issueToUpdate }, {})}
-  >
+export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
+  const router = useRouter();
+
+  const handleIssuePeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project },
+    });
+  };
+
+  return (
     <div
       className="flex items-center relative h-full w-full rounded cursor-pointer"
       style={{ backgroundColor: data?.state_detail?.color }}
+      onClick={handleIssuePeekOverview}
     >
       <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
@@ -41,24 +41,24 @@ export const IssueGanttBlock = ({
         </Tooltip>
       </Tooltip>
     </div>
-  </IssuePeekOverview>
-);
+  );
+};
 
 // rendering issues on gantt sidebar
-export const IssueGanttSidebarBlock = ({
-  data,
-  handleIssue,
-}: {
-  data: IIssue;
-  handleIssue: (block: IIssue, payload: IBlockUpdateData) => void;
-}) => (
-  <IssuePeekOverview
-    workspaceSlug={data?.workspace_detail?.slug}
-    projectId={data?.project_detail?.id}
-    issueId={data?.id}
-    handleIssue={(issueToUpdate) => handleIssue({ ...data, ...issueToUpdate }, {})}
-  >
-    <div className="relative w-full flex items-center gap-2 h-full cursor-pointer">
+export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
+  const router = useRouter();
+
+  const handleIssuePeekOverview = () => {
+    const { query } = router;
+
+    router.push({
+      pathname: router.pathname,
+      query: { ...query, peekIssueId: data?.id, peekProjectId: data?.project },
+    });
+  };
+
+  return (
+    <div className="relative w-full flex items-center gap-2 h-full cursor-pointer" onClick={handleIssuePeekOverview}>
       <StateGroupIcon stateGroup={data?.state_detail?.group} color={data?.state_detail?.color} />
       <div className="text-xs text-custom-text-300 flex-shrink-0">
         {data?.project_detail?.identifier} {data?.sequence_id}
@@ -67,5 +67,5 @@ export const IssueGanttSidebarBlock = ({
         <span className="text-sm font-medium flex-grow truncate">{data?.name}</span>
       </Tooltip>
     </div>
-  </IssuePeekOverview>
-);
+  );
+};

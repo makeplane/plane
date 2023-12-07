@@ -6,12 +6,16 @@ import { IProjectMember } from "types";
 import { ProjectMemberService } from "services/project";
 
 export interface IProjectMemberStore {
+  // states
+  error: any | null;
+
   // observables
   members: {
     [projectId: string]: IProjectMember[] | null; // project_id: members
   };
   // computed
   projectMembers: IProjectMember[] | null;
+  projectMemberIds: (isLayoutRender?: boolean) => string[];
   // actions
   getProjectMemberById: (memberId: string) => IProjectMember | null;
   getProjectMemberByUserId: (memberId: string) => IProjectMember | null;
@@ -28,6 +32,10 @@ export interface IProjectMemberStore {
 }
 
 export class ProjectMemberStore implements IProjectMemberStore {
+  // states
+  error: any | null = null;
+
+  // observables
   members: {
     [projectId: string]: IProjectMember[]; // projectId: members
   } = {};
@@ -88,6 +96,13 @@ export class ProjectMemberStore implements IProjectMemberStore {
     return memberInfo;
   };
 
+  projectMemberIds = (isLayoutRender: boolean = false) => {
+    if (!this.projectMembers) return [];
+    let memberIds = (this.projectMembers ?? []).map((member) => member.member.id);
+    memberIds = isLayoutRender ? [...memberIds, "None"] : memberIds;
+    return memberIds;
+  };
+
   /**
    * fetch the project members info using workspace id and project id
    * @param workspaceSlug
@@ -117,6 +132,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
    */
   removeMemberFromProject = async (workspaceSlug: string, projectId: string, memberId: string) => {
     const originalMembers = this.projectMembers || [];
+
     try {
       runInAction(() => {
         this.members = {
@@ -124,17 +140,20 @@ export class ProjectMemberStore implements IProjectMemberStore {
           [projectId]: this.projectMembers?.filter((member) => member.id !== memberId) || [],
         };
       });
+
       await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberId);
       await this.fetchProjectMembers(workspaceSlug, projectId);
     } catch (error) {
-      console.log("Failed to delete project from project store");
       // revert back to original members in case of error
       runInAction(() => {
+        this.error = error;
         this.members = {
           ...this.members,
           [projectId]: originalMembers,
         };
       });
+
+      throw error;
     }
   };
 

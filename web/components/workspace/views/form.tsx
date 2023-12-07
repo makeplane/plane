@@ -114,7 +114,7 @@ export const WorkspaceViewForm: React.FC<Props> = observer((props) => {
                   value={value}
                   placeholder="Description"
                   onChange={onChange}
-                  className="h-32 resize-none text-sm"
+                  className="h-24 w-full resize-none text-sm"
                   hasError={Boolean(errors?.description)}
                 />
               )}

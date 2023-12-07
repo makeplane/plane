@@ -3,7 +3,7 @@ import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 
 import MentionList from "./MentionList";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
+import { IMentionSuggestion } from "@plane/editor-types";
 
 const Suggestion = (suggestions: IMentionSuggestion[]) => ({
   items: ({ query }: { query: string }) =>

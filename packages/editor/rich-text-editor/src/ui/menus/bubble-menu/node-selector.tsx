@@ -1,12 +1,12 @@
 import {
   BulletListItem,
   cn,
-  CodeItem,
   HeadingOneItem,
   HeadingThreeItem,
   HeadingTwoItem,
   NumberedListItem,
   QuoteItem,
+  CodeItem,
   TodoListItem,
 } from "@plane/editor-core";
 import { Editor } from "@tiptap/react";

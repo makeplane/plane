@@ -5,6 +5,8 @@ import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 // ui
 import { Avatar } from "@plane/ui";
+import { EProjectStore } from "store/command-palette.store";
+import { IIssue } from "types";
 
 export interface IAssigneesHeader {
   column_id: string;
@@ -15,9 +17,12 @@ export interface IAssigneesHeader {
   issues_count: number;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
-export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="base" />;
+export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="md" />;
 
 export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
   const {
@@ -29,6 +34,9 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
     issues_count,
     kanBanToggle,
     handleKanBanToggle,
+    disableIssueCreation,
+    currentStore,
+    addIssuesToView,
   } = props;
 
   const assignee = column_value ?? null;
@@ -56,6 +64,9 @@ export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
             issuePayload={{ assignees: [assignee?.id] }}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         ))}
     </>

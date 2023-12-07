@@ -17,12 +17,12 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
       <IssuePropertyEstimates
-        projectId={issue.project_detail.id ?? null}
+        projectId={issue.project_detail?.id ?? null}
         value={issue.estimate_point}
         onChange={(data) => onChange({ estimate_point: data })}
         className="h-full w-full"

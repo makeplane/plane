@@ -28,28 +28,27 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const {
+    project: { currentProjectDetails, updateProject },
+  } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
 
   const handleUseEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectStore
-      .updateProject(workspaceSlug.toString(), projectId.toString(), {
-        estimate: estimate.id,
-      })
-      .catch((err) => {
-        const error = err?.error;
-        const errorString = Array.isArray(error) ? error[0] : error;
+    await updateProject(workspaceSlug.toString(), projectId.toString(), {
+      estimate: estimate.id,
+    }).catch((err) => {
+      const error = err?.error;
+      const errorString = Array.isArray(error) ? error[0] : error;
 
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: errorString ?? "Estimate points could not be used. Please try again.",
-        });
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: errorString ?? "Estimate points could not be used. Please try again.",
       });
+    });
   };
 
   return (
@@ -69,7 +68,7 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
           </div>
           <div className="flex items-center gap-2">
             {currentProjectDetails?.estimate !== estimate?.id && estimate?.points?.length > 0 && (
-              <Button variant="neutral-primary" onClick={handleUseEstimate}>
+              <Button variant="neutral-primary" onClick={handleUseEstimate} size="sm">
                 Use
               </Button>
             )}

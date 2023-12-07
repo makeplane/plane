@@ -17,7 +17,7 @@ export const IssuePropertyPriority: React.FC<IIssuePropertyPriority> = observer(
     <PrioritySelect
       value={value}
       onChange={onChange}
-      buttonClassName="!h-5 p-1.5"
+      buttonClassName="!h-5"
       disabled={disabled}
       hideDropdownArrow={hideDropdownArrow}
     />

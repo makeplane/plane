@@ -1,38 +1,33 @@
-import React from "react";
-
+import React, { FC } from "react";
 import { useRouter } from "next/router";
-
-import { mutate } from "swr";
-
-// headless ui
 import { Dialog, Transition } from "@headlessui/react";
-// services
-import { PageService } from "services/page.service";
 // hooks
 import useToast from "hooks/use-toast";
 // components
 import { PageForm } from "./page-form";
 // types
-import { IUser, IPage } from "types";
-// fetch-keys
-import { ALL_PAGES_LIST, FAVORITE_PAGES_LIST, MY_PAGES_LIST, RECENT_PAGES_LIST } from "constants/fetch-keys";
+import { IPage } from "types";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
-  isOpen: boolean;
-  handleClose: () => void;
   data?: IPage | null;
-  user: IUser | undefined;
-  workspaceSlug: string;
+  handleClose: () => void;
+  isOpen: boolean;
   projectId: string;
 };
 
-// services
-const pageService = new PageService();
-
-export const CreateUpdatePageModal: React.FC<Props> = (props) => {
-  const { isOpen, handleClose, data, user, workspaceSlug, projectId } = props;
+export const CreateUpdatePageModal: FC<Props> = (props) => {
+  const { isOpen, handleClose, data, projectId } = props;
   // router
   const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // store
+  const {
+    page: { createPage, updatePage },
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace }
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -40,38 +35,30 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
     handleClose();
   };
 
-  const createPage = async (payload: IPage) => {
-    await pageService
-      .createPage(workspaceSlug as string, projectId as string, payload, user)
+  const createProjectPage = async (payload: IPage) => {
+    if (!workspaceSlug) return;
+
+    await createPage(workspaceSlug.toString(), projectId, payload)
       .then((res) => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
-        mutate<IPage[]>(
-          MY_PAGES_LIST(projectId as string),
-          (prevData) => {
-            if (!prevData) return undefined;
-
-            return [res, ...(prevData as IPage[])];
-          },
-          false
-        );
-        mutate<IPage[]>(
-          ALL_PAGES_LIST(projectId as string),
-          (prevData) => {
-            if (!prevData) return undefined;
-
-            return [res, ...(prevData as IPage[])];
-          },
-          false
-        );
-        onClose();
-
         router.push(`/${workspaceSlug}/projects/${projectId}/pages/${res.id}`);
-
+        onClose();
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page created successfully.",
         });
+        postHogEventTracker(
+          "PAGE_CREATED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -79,51 +66,41 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be created. Please try again.",
         });
+        postHogEventTracker("PAGE_CREATED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       });
   };
 
-  const updatePage = async (payload: IPage) => {
-    await pageService
-      .patchPage(workspaceSlug as string, projectId as string, data?.id ?? "", payload, user)
+  const updateProjectPage = async (payload: IPage) => {
+    if (!data || !workspaceSlug) return;
+
+    await updatePage(workspaceSlug.toString(), projectId, data.id, payload)
       .then((res) => {
-        mutate(RECENT_PAGES_LIST(projectId as string));
-        mutate<IPage[]>(
-          FAVORITE_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
-          false
-        );
-        mutate<IPage[]>(
-          MY_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
-          false
-        );
-        mutate<IPage[]>(
-          ALL_PAGES_LIST(projectId as string),
-          (prevData) =>
-            (prevData ?? []).map((p) => {
-              if (p.id === res.id) return { ...p, ...res };
-
-              return p;
-            }),
-          false
-        );
         onClose();
-
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Page updated successfully.",
         });
+        postHogEventTracker("PAGE_UPDATED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -131,14 +108,24 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
           title: "Error!",
           message: "Page could not be updated. Please try again.",
         });
+        postHogEventTracker("PAGE_UPDATED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       });
   };
 
   const handleFormSubmit = async (formData: IPage) => {
     if (!workspaceSlug || !projectId) return;
 
-    if (!data) await createPage(formData);
-    else await updatePage(formData);
+    if (!data) await createProjectPage(formData);
+    else await updateProjectPage(formData);
   };
 
   return (
@@ -157,7 +144,7 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+          <div className="flex justify-center text-center p-4 sm:p-0 my-10 md:my-20">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -167,13 +154,8 @@ export const CreateUpdatePageModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-5 py-8 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
-                <PageForm
-                  handleFormSubmit={handleFormSubmit}
-                  handleClose={handleClose}
-                  status={data ? true : false}
-                  data={data}
-                />
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all px-4 sm:w-full sm:max-w-2xl">
+                <PageForm handleFormSubmit={handleFormSubmit} handleClose={handleClose} data={data} />
               </Dialog.Panel>
             </Transition.Child>
           </div>

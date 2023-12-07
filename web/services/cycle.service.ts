@@ -1,24 +1,19 @@
 // services
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // types
-import type { CycleDateCheckData, IUser, ICycle, IIssue } from "types";
+import type { CycleDateCheckData, ICycle, IIssue } from "types";
 // helpers
 import { API_BASE_URL } from "helpers/common.helper";
-
-const trackEventService = new TrackEventService();
+import { IIssueResponse } from "store/issues/types";
 
 export class CycleService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async createCycle(workspaceSlug: string, projectId: string, data: any, user: any): Promise<any> {
+  async createCycle(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/`, data)
-      .then((response) => {
-        trackEventService.trackCycleEvent(response?.data, "CYCLE_CREATE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -61,7 +56,7 @@ export class CycleService extends APIService {
     projectId: string,
     cycleId: string,
     queries?: any
-  ): Promise<IIssue[] | { [key: string]: IIssue[] }> {
+  ): Promise<IIssueResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, {
       params: queries,
     })
@@ -71,29 +66,17 @@ export class CycleService extends APIService {
       });
   }
 
-  async patchCycle(
-    workspaceSlug: string,
-    projectId: string,
-    cycleId: string,
-    data: Partial<ICycle>,
-    user: IUser | undefined
-  ): Promise<any> {
+  async patchCycle(workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`, data)
-      .then((response) => {
-        if (user) trackEventService.trackCycleEvent(response?.data, "CYCLE_UPDATE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string, user: IUser | undefined): Promise<any> {
+  async deleteCycle(workspaceSlug: string, projectId: string, cycleId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/`)
-      .then((response) => {
-        trackEventService.trackCycleEvent(response?.data, "CYCLE_DELETE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

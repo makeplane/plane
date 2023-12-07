@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { ArrowLeft, Circle, ExternalLink, Plus } from "lucide-react";
+import { ArrowLeft, Briefcase, Circle, ExternalLink, Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -16,85 +16,74 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
+import { EFilterType } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
 
 export const ProjectIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
 
   const {
-    issueFilter: issueFilterStore,
-    project: projectStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     inbox: inboxStore,
     commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+    // issue filters
+    projectIssuesFilter: { issueFilters, updateFilters },
+    projectIssues: {},
   } = useMobxStore();
 
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
-
-  const handleLayoutChange = useCallback(
-    (layout: TIssueLayouts) => {
-      if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          layout,
-        },
-      });
-    },
-    [issueFilterStore, projectId, workspaceSlug]
-  );
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
       if (!workspaceSlug || !projectId) return;
-
-      const newValues = issueFilterStore.userFilters?.[key] ?? [];
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (issueFilterStore.userFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        filters: {
-          [key]: newValues,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues });
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleLayoutChange = useCallback(
+    (layout: TIssueLayouts) => {
+      if (!workspaceSlug || !projectId) return;
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout });
+    },
+    [workspaceSlug, projectId, updateFilters]
+  );
+
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, updateFilters]
   );
-  const { currentProjectDetails } = projectStore;
 
-  const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId.toString()]?.[0] : undefined;
+  const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId]?.[0] : undefined;
 
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
 
@@ -121,17 +110,23 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               <Breadcrumbs.BreadcrumbItem
                 type="text"
                 icon={
-                  currentProjectDetails?.emoji ? (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
-                      {renderEmoji(currentProjectDetails.emoji)}
-                    </span>
-                  ) : currentProjectDetails?.icon_prop ? (
-                    <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
-                      {renderEmoji(currentProjectDetails.icon_prop)}
-                    </div>
+                  currentProjectDetails ? (
+                    currentProjectDetails?.emoji ? (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                        {renderEmoji(currentProjectDetails.emoji)}
+                      </span>
+                    ) : currentProjectDetails?.icon_prop ? (
+                      <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                        {renderEmoji(currentProjectDetails.icon_prop)}
+                      </div>
+                    ) : (
+                      <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        {currentProjectDetails?.name.charAt(0)}
+                      </span>
+                    )
                   ) : (
-                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
-                      {currentProjectDetails?.name.charAt(0)}
+                    <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                      <Briefcase className="h-4 w-4" />
                     </span>
                   )
                 }
@@ -167,30 +162,30 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           />
           <FiltersDropdown title="Filters" placement="bottom-end">
             <FilterSelection
-              filters={issueFilterStore.userFilters}
+              filters={issueFilters?.filters ?? {}}
               handleFiltersUpdate={handleFiltersUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
-              labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+              labels={projectLabels ?? undefined}
               members={projectMembers?.map((m) => m.member)}
-              states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+              states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
             />
           </FiltersDropdown>
           <FiltersDropdown title="Display" placement="bottom-end">
             <DisplayFiltersSelection
-              displayFilters={issueFilterStore.userDisplayFilters}
-              displayProperties={issueFilterStore.userDisplayProperties}
-              handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-              handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
               }
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
           {projectId && inboxStore.isInboxEnabled && inboxDetails && (
-            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId.toString())}`}>
-              <a>
+            <Link href={`/${workspaceSlug}/projects/${projectId}/inbox/${inboxStore.getInboxId(projectId)}`}>
+              <span>
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails.pending_issue_count > 0 && (
@@ -199,13 +194,20 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                     </span>
                   )}
                 </Button>
-              </a>
+              </span>
             </Link>
           )}
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button onClick={() => commandPaletteStore.toggleCreateIssueModal(true)} size="sm" prependIcon={<Plus />}>
+          <Button
+            onClick={() => {
+              setTrackElement("PROJECT_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+            }}
+            size="sm"
+            prependIcon={<Plus />}
+          >
             Add Issue
           </Button>
         </div>

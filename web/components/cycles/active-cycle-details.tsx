@@ -80,7 +80,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
 
-  const activeCycle = cycleStore.cycles?.[projectId]?.active || null;
+  const activeCycle = cycleStore.cycles?.[projectId]?.current || null;
   const cycle = activeCycle ? activeCycle[0] : null;
   const issues = (cycleStore?.active_cycle_issues as any) || null;
 
@@ -250,7 +250,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         handleRemoveFromFavorites(e);
                       }}
                     >
-                      <Star className="h-4 w-4 text-orange-400" fill="#f6ad55" />
+                      <Star className="h-4 w-4 text-orange-400 fill-orange-400" />
                     </button>
                   ) : (
                     <button
@@ -317,9 +317,9 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
               </div>
 
               <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-                <a className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
+                <span className="bg-custom-primary text-white px-4 rounded-md py-2 text-center text-sm font-medium w-full hover:bg-custom-primary/90">
                   View Cycle
-                </a>
+                </span>
               </Link>
             </div>
           </div>

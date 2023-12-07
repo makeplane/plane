@@ -260,7 +260,7 @@ export class ModuleIssueStore implements IModuleIssueStore {
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
+    this.rootStore.projectIssues.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
@@ -339,17 +339,9 @@ export class ModuleIssueStore implements IModuleIssueStore {
 
   addIssueToModule = async (workspaceSlug: string, projectId: string, moduleId: string, issueIds: string[]) => {
     try {
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.moduleService.addIssuesToModule(
-        workspaceSlug,
-        projectId,
-        moduleId,
-        {
-          issues: issueIds,
-        },
-        user
-      );
+      await this.moduleService.addIssuesToModule(workspaceSlug, projectId, moduleId, {
+        issues: issueIds,
+      });
 
       this.fetchIssues(workspaceSlug, projectId, moduleId);
     } catch (error) {

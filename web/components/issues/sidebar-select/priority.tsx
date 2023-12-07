@@ -17,7 +17,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
   <CustomSelect
     customButton={
       <div
-        className={`flex items-center gap-1.5 text-left text-xs capitalize rounded px-2.5 py-0.5 ${
+        className={`flex items-center gap-1 text-left text-xs capitalize rounded px-2 py-0.5 ${
           value === "urgent"
             ? "border-red-500/20 bg-red-500/20 text-red-500"
             : value === "high"
@@ -29,8 +29,8 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
             : "bg-custom-background-80 border-custom-border-200 text-custom-text-200"
         }`}
       >
-        <span className="grid place-items-center -my-1">
-          <PriorityIcon priority={value} className="h-3.5 w-3.5" />
+        <span className="flex items-center justify-center h-4 w-4 overflow-hidden">
+          <PriorityIcon priority={value} transparentBg={true} className={`w-3.5 h-3.5 ${(value === "urgent" || value === "none") ? 'p-0.5' : '-mt-1'} `} />
         </span>
         <span>{value ?? "None"}</span>
       </div>
@@ -43,7 +43,7 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
     {PRIORITIES.map((option) => (
       <CustomSelect.Option key={option} value={option} className="capitalize">
         <>
-          <PriorityIcon priority={option} className="h-3.5 w-3.5" />
+          <PriorityIcon priority={option} />
           {option ?? "None"}
         </>
       </CustomSelect.Option>

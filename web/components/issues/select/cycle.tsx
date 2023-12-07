@@ -55,9 +55,9 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = selectedCycle ? (
-    <div className="flex items-center gap-1 text-custom-text-200">
-      <ContrastIcon className="h-3 w-3" />
-      <div className="truncate">{selectedCycle.name}</div>
+    <div className="flex items-center w-full gap-1 text-custom-text-200">
+      <ContrastIcon className="h-3 w-3 flex-shrink-0" />
+      <div className="truncate max-w-[160px]">{selectedCycle.name}</div>
     </div>
   ) : (
     <div className="flex items-center gap-1 text-custom-text-300">
@@ -104,24 +104,39 @@ export const IssueCycleSelect: React.FC<IssueCycleSelectProps> = observer((props
           <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
+                <>
+                  {filteredOptions.map((option) => (
+                    <Combobox.Option
+                      key={option.value}
+                      value={option.value}
+                      className={({ active, selected }) =>
+                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                          active && !selected ? "bg-custom-background-80" : ""
+                        } w-full truncate ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                      }
+                    >
+                      {({ selected }) => (
+                        <>
+                          {option.content}
+                          {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
+                        </>
+                      )}
+                    </Combobox.Option>
+                  ))}
                   <Combobox.Option
-                    key={option.value}
-                    value={option.value}
-                    className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                        active && !selected ? "bg-custom-background-80" : ""
-                      } w-full truncate ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                    key="none"
+                    value=""
+                    className={({ active }) =>
+                      `flex items-center justify-between gap-2 ${
+                        active ? "bg-custom-background-80" : ""
+                      }  cursor-pointer select-none truncate rounded px-1 py-1.5 w-full text-custom-text-100`
                     }
                   >
-                    {({ selected }) => (
-                      <>
-                        {option.content}
-                        {selected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                      </>
-                    )}
+                    <div className="flex items-center gap-1.5 truncate">
+                      <span className="truncate flex-grow">None</span>
+                    </div>
                   </Combobox.Option>
-                ))
+                </>
               ) : (
                 <span className="flex items-center gap-2 p-1">
                   <p className="text-left text-custom-text-200 ">No matching results</p>

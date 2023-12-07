@@ -1,59 +1,30 @@
-import React, { Fragment, useEffect, ReactElement } from "react";
-import { useRouter } from "next/router";
+import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { TrackEventService } from "services/track_event.service";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
 import { CustomAnalytics, ScopeAndDemand } from "components/analytics";
 import { WorkspaceAnalyticsHeader } from "components/headers";
-import { EmptyState } from "components/common";
+import { NewEmptyState } from "components/common/new-empty-state";
 // icons
 import { Plus } from "lucide-react";
 // assets
-import emptyAnalytics from "public/empty-state/analytics.svg";
+import emptyAnalytics from "public/empty-state/empty_analytics.webp";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
 // type
 import { NextPageWithLayout } from "types/app";
 
-const trackEventService = new TrackEventService();
-
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  // router
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
   // store
   const {
     project: { workspaceProjects },
-    user: { currentUser },
     commandPalette: { toggleCreateProjectModal },
+    trackEvent: { setTrackElement },
   } = useMobxStore();
-
-  const trackAnalyticsEvent = (tab: string) => {
-    if (!currentUser) return;
-    const eventPayload = {
-      workspaceSlug: workspaceSlug?.toString(),
-    };
-    const eventType =
-      tab === "scope_and_demand" ? "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS" : "WORKSPACE_CUSTOM_ANALYTICS";
-    trackEventService.trackAnalyticsEvent(eventPayload, eventType, currentUser);
-  };
-
-  useEffect(() => {
-    if (!workspaceSlug) return;
-
-    if (currentUser && workspaceSlug)
-      trackEventService.trackAnalyticsEvent(
-        { workspaceSlug: workspaceSlug?.toString() },
-        "WORKSPACE_SCOPE_AND_DEMAND_ANALYTICS",
-        currentUser
-      );
-  }, [currentUser, workspaceSlug]);
 
   return (
     <>
@@ -69,7 +40,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
                       selected ? "bg-custom-background-80" : ""
                     }`
                   }
-                  onClick={() => trackAnalyticsEvent(tab.key)}
+                  onClick={() => {}}
                 >
                   {tab.title}
                 </Tab>
@@ -87,14 +58,24 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
         </div>
       ) : (
         <>
-          <EmptyState
-            title="You can see your all projects' analytics here"
-            description="Let's create your first project and analyze the stats with various graphs."
+          <NewEmptyState
+            title="Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster."
+            description="See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time."
             image={emptyAnalytics}
+            comicBox={{
+              title: "Analytics works best with Cycles + Modules",
+              description:
+                "First, timebox your issues into Cycles and, if you can, group issues that span more than a cycle into Modules. Check out both on the left nav.",
+              direction: "right",
+              extraPadding: true,
+            }}
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
-              text: "New Project",
-              onClick: () => toggleCreateProjectModal(true),
+              text: "Create Cycles and Modules first",
+              onClick: () => {
+                setTrackElement("ANALYTICS_EMPTY_STATE");
+                toggleCreateProjectModal(true);
+              },
             }}
           />
         </>

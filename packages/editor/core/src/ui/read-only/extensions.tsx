@@ -16,7 +16,7 @@ import TableRow from "../extensions/table/table-row/table-row";
 import ReadOnlyImageExtension from "../extensions/image/read-only-image";
 import { isValidHttpUrl } from "../../lib/utils";
 import { Mentions } from "../mentions";
-import { IMentionSuggestion } from "../../types/mention-suggestion";
+import { IMentionSuggestion } from "@plane/editor-types";
 
 export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   mentionSuggestions: IMentionSuggestion[];

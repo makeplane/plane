@@ -56,7 +56,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
   const moduleStatus = MODULE_STATUS.find((status) => status.value === module.status);
 
   const issueCount = module
-    ? moduleTotalIssues === 0
+    ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
       ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
@@ -139,7 +139,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <a className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
+        <div className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="top">
@@ -148,7 +148,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               <div className="flex items-center gap-2">
                 {moduleStatus && (
                   <span
-                    className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                    className="flex items-center justify-center text-xs text-center h-6 w-20 rounded-sm"
+                    style={{
+                      color: moduleStatus.color,
+                      backgroundColor: `${moduleStatus.color}20`,
+                    }}
                   >
                     {moduleStatus.label}
                   </span>
@@ -245,7 +249,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </div>
             </div>
           </div>
-        </a>
+        </div>
       </Link>
     </>
   );

@@ -32,7 +32,7 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
   const [activeProject, setActiveProject] = useState<string | null>(null);
 
-  const { project: projectStore, module: moduleStore } = useMobxStore();
+  const { project: projectStore, module: moduleStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
@@ -49,10 +49,10 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
 
   const createModule = async (payload: Partial<IModule>) => {
     if (!workspaceSlug || !projectId) return;
-
+    const selectedProjectId = payload.project ?? projectId.toString();
     await moduleStore
-      .createModule(workspaceSlug.toString(), projectId.toString(), payload)
-      .then(() => {
+      .createModule(workspaceSlug.toString(), selectedProjectId, payload)
+      .then((res) => {
         handleClose();
 
         setToastAlert({
@@ -60,6 +60,13 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module created successfully.",
         });
+        postHogEventTracker(
+          "MODULE_CREATED",
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -67,15 +74,21 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be created. Please try again.",
         });
+        postHogEventTracker(
+          "MODULE_CREATED",
+          {
+            state: "FAILED"
+          }
+        );
       });
   };
 
   const updateModule = async (payload: Partial<IModule>) => {
     if (!workspaceSlug || !projectId || !data) return;
-
+    const selectedProjectId = payload.project ?? projectId.toString();
     await moduleStore
-      .updateModuleDetails(workspaceSlug.toString(), projectId.toString(), data.id, payload)
-      .then(() => {
+      .updateModuleDetails(workspaceSlug.toString(), selectedProjectId, data.id, payload)
+      .then((res) => {
         handleClose();
 
         setToastAlert({
@@ -83,6 +96,13 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Success!",
           message: "Module updated successfully.",
         });
+        postHogEventTracker(
+          "MODULE_UPDATED",
+          {
+            ...res,
+            state: "SUCCESS"
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -90,6 +110,12 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be updated. Please try again.",
         });
+        postHogEventTracker(
+          "MODULE_UPDATED",
+          {
+            state: "FAILED"
+          }
+        );
       });
   };
 
@@ -99,7 +125,6 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
     const payload: Partial<IModule> = {
       ...formData,
     };
-
     if (!data) await createModule(payload);
     else await updateModule(payload);
   };

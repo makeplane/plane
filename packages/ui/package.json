@@ -2,7 +2,7 @@
   "name": "@plane/ui",
   "description": "UI components shared across multiple apps internally",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -12,16 +12,16 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
+    "build": "tsup src/index.ts --format esm,cjs --dts --external react --minify",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts --external react",
     "lint": "eslint src/",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
-    "@types/react-color": "^3.0.9",
     "@types/node": "^20.5.2",
-    "@types/react": "18.2.0",
-    "@types/react-dom": "18.2.0",
+    "@types/react": "^18.2.42",
+    "@types/react-color": "^3.0.9",
+    "@types/react-dom": "^18.2.17",
     "classnames": "^2.3.2",
     "eslint-config-custom": "*",
     "react": "^18.2.0",
@@ -29,9 +29,6 @@
     "tsconfig": "*",
     "tsup": "^5.10.1",
     "typescript": "4.7.4"
-  },
-  "publishConfig": {
-    "access": "public"
   },
   "dependencies": {
     "@blueprintjs/core": "^4.16.3",

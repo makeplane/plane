@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { IssueService, IssueDraftService } from "services/issue";
+import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
@@ -43,7 +43,6 @@ interface IssuesModalProps {
 
 // services
 const issueService = new IssueService();
-const issueDraftService = new IssueDraftService();
 const moduleService = new ModuleService();
 
 export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer((props) => {
@@ -65,7 +64,7 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
 
-  const { project: projectStore, user: userStore } = useMobxStore();
+  const { project: projectStore, user: userStore, projectDraftIssues: draftIssueStore } = useMobxStore();
 
   const user = userStore.currentUser;
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
@@ -167,9 +166,10 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const createDraftIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await issueDraftService
-      .createDraftIssue(workspaceSlug as string, activeProject ?? "", payload)
+    await draftIssueStore
+      .createIssue(workspaceSlug as string, activeProject ?? "", payload)
       .then(async () => {
+        await draftIssueStore.fetchIssues(workspaceSlug as string, activeProject ?? "", "mutation");
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -192,8 +192,8 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const updateDraftIssue = async (payload: Partial<IIssue>) => {
     if (!user) return;
 
-    await issueDraftService
-      .updateDraftIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
+    await draftIssueStore
+      .updateIssue(workspaceSlug as string, activeProject ?? "", data?.id ?? "", payload)
       .then((res) => {
         if (isUpdatingSingleIssue) {
           mutate<IIssue>(PROJECT_ISSUES_DETAILS, (prevData) => ({ ...prevData, ...res }), false);
@@ -226,36 +226,24 @@ export const CreateUpdateDraftIssueModal: React.FC<IssuesModalProps> = observer(
   const addIssueToCycle = async (issueId: string, cycleId: string) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await issueService.addIssueToCycle(
-      workspaceSlug as string,
-      activeProject ?? "",
-      cycleId,
-      {
-        issues: [issueId],
-      },
-      user
-    );
+    await issueService.addIssueToCycle(workspaceSlug as string, activeProject ?? "", cycleId, {
+      issues: [issueId],
+    });
   };
 
   const addIssueToModule = async (issueId: string, moduleId: string) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
-    await moduleService.addIssuesToModule(
-      workspaceSlug as string,
-      activeProject ?? "",
-      moduleId as string,
-      {
-        issues: [issueId],
-      },
-      user
-    );
+    await moduleService.addIssuesToModule(workspaceSlug as string, activeProject ?? "", moduleId as string, {
+      issues: [issueId],
+    });
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
     if (!workspaceSlug || !activeProject || !user) return;
 
     await issueService
-      .createIssue(workspaceSlug.toString(), activeProject, payload, user)
+      .createIssue(workspaceSlug.toString(), activeProject, payload)
       .then(async (res) => {
         if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
         if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);

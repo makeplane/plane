@@ -24,7 +24,7 @@ type Props = {
 
 const pageService = new PageService();
 
-export const CreateBlock: FC<Props> = ({ user }) => {
+export const CreateBlock: FC<Props> = () => {
   // const [blockTitle, setBlockTitle] = useState("");
   // router
   const router = useRouter();
@@ -46,15 +46,9 @@ export const CreateBlock: FC<Props> = ({ user }) => {
     if (!workspaceSlug || !projectId || !pageId) return;
 
     await pageService
-      .createPageBlock(
-        workspaceSlug as string,
-        projectId as string,
-        pageId as string,
-        {
-          name: watch("name"),
-        },
-        user
-      )
+      .createPageBlock(workspaceSlug as string, projectId as string, pageId as string, {
+        name: watch("name"),
+      })
       .then((res) => {
         mutate<IPageBlock[]>(
           PAGE_BLOCKS_LIST(pageId as string),

@@ -1,14 +1,13 @@
 import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// services
-import { ProjectStateService } from "services/project";
+import { observer } from "mobx-react-lite";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { CustomSearchSelect, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 // icons
 import { Plus } from "lucide-react";
-// fetch keys
-import { STATES_LIST } from "constants/fetch-keys";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,18 +16,23 @@ type Props = {
   projectId: string;
 };
 
-// services
-const projectStateService = new ProjectStateService();
+export const IssueStateSelect: React.FC<Props> = observer((props) => {
+  const { setIsOpen, value, onChange, projectId } = props;
 
-export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
   // states
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: states } = useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId) : null,
-    workspaceSlug && projectId ? () => projectStateService.getStates(workspaceSlug as string, projectId) : null
+  const {
+    projectState: { states: projectStates, fetchProjectStates },
+  } = useMobxStore();
+
+  useSWR(
+    workspaceSlug && projectId ? `STATES_LIST_${projectId.toUpperCase()}` : null,
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId) : null
   );
+
+  const states = projectStates?.[projectId] || [];
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -74,4 +78,4 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       noChevron
     />
   );
-};
+});

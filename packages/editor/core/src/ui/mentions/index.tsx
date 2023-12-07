@@ -2,10 +2,7 @@
 
 import suggestion from "./suggestion";
 import { CustomMention } from "./custom";
-import {
-  IMentionHighlight,
-  IMentionSuggestion,
-} from "../../types/mention-suggestion";
+import { IMentionHighlight, IMentionSuggestion } from "@plane/editor-types";
 
 export const Mentions = (
   mentionSuggestions: IMentionSuggestion[],

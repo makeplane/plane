@@ -42,7 +42,9 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   // store
-  const { projectEstimates: projectEstimatesStore } = useMobxStore();
+  const {
+    projectEstimates: { createEstimate, updateEstimate },
+  } = useMobxStore();
 
   const {
     formState: { errors, isSubmitting },
@@ -60,11 +62,10 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const createEstimate = async (payload: IEstimateFormData) => {
+  const handleCreateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId) return;
 
-    await projectEstimatesStore
-      .createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
+    await createEstimate(workspaceSlug.toString(), projectId.toString(), payload)
       .then(() => {
         onClose();
       })
@@ -83,13 +84,12 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       });
   };
 
-  const updateEstimate = async (payload: IEstimateFormData) => {
+  const handleUpdateEstimate = async (payload: IEstimateFormData) => {
     if (!workspaceSlug || !projectId || !data) return;
 
-    await projectEstimatesStore
-      .updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
+    await updateEstimate(workspaceSlug.toString(), projectId.toString(), data.id, payload)
       .then(() => {
-        handleClose();
+        onClose();
       })
       .catch((err) => {
         const error = err?.error;
@@ -101,8 +101,6 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
           message: errorString ?? "Estimate could not be updated. Please try again.",
         });
       });
-
-    onClose();
   };
 
   const onSubmit = async (formData: FormValues) => {
@@ -171,8 +169,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
       else payload.estimate_points.push({ ...point });
     }
 
-    if (data) await updateEstimate(payload);
-    else await createEstimate(payload);
+    if (data) await handleUpdateEstimate(payload);
+    else await handleCreateEstimate(payload);
   };
 
   useEffect(() => {

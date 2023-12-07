@@ -1,9 +1,11 @@
 # Python imports
 import csv
 import io
+import requests
+import json
 
 # Django imports
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -16,6 +18,7 @@ from sentry_sdk import capture_exception
 from plane.db.models import Issue
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
+from plane.license.utils.instance_value import get_email_configuration
 
 row_mapping = {
     "state__name": "State",
@@ -30,7 +33,7 @@ row_mapping = {
     "priority": "Priority",
     "estimate": "Estimate",
     "issue_cycle__cycle_id": "Cycle",
-    "issue_module__module_id": "Module"
+    "issue_module__module_id": "Module",
 }
 
 ASSIGNEE_ID = "assignees__id"
@@ -40,16 +43,41 @@ CYCLE_ID = "issue_cycle__cycle_id"
 MODULE_ID = "issue_module__module_id"
 
 
-def send_export_email(email, slug, csv_buffer):
+def send_export_email(email, slug, csv_buffer, rows):
     """Helper function to send export email."""
     subject = "Your Export is ready"
     html_content = render_to_string("emails/exports/analytics.html", {})
     text_content = strip_tags(html_content)
 
     csv_buffer.seek(0)
-    msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_FROM, [email])
+
+    (
+        EMAIL_HOST,
+        EMAIL_HOST_USER,
+        EMAIL_HOST_PASSWORD,
+        EMAIL_PORT,
+        EMAIL_USE_TLS,
+        EMAIL_FROM,
+    ) = get_email_configuration()
+
+    connection = get_connection(
+        host=EMAIL_HOST,
+        port=int(EMAIL_PORT),
+        username=EMAIL_HOST_USER,
+        password=EMAIL_HOST_PASSWORD,
+        use_tls=bool(EMAIL_USE_TLS),
+    )
+
+    msg = EmailMultiAlternatives(
+        subject=subject,
+        body=text_content,
+        from_email=EMAIL_FROM,
+        to=[email],
+        connection=connection,
+    )
     msg.attach(f"{slug}-analytics.csv", csv_buffer.getvalue())
     msg.send(fail_silently=False)
+    return
 
 
 def get_assignee_details(slug, filters):
@@ -417,8 +445,11 @@ def analytic_export_task(email, data, slug):
             )
 
         csv_buffer = generate_csv_from_rows(rows)
-        send_export_email(email, slug, csv_buffer)
+        send_export_email(email, slug, csv_buffer, rows)
+        return
     except Exception as e:
+        print(e)
         if settings.DEBUG:
             print(e)
         capture_exception(e)
+        return

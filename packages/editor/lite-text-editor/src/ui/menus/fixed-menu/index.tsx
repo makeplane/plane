@@ -1,12 +1,13 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon } from "lucide-react";
 
 import {
   BoldItem,
   BulletListItem,
   cn,
   CodeItem,
+  findTableAncestor,
   ImageItem,
+  isCellSelection,
   ItalicItem,
   NumberedListItem,
   QuoteItem,
@@ -15,13 +16,20 @@ import {
   UnderLineItem,
 } from "@plane/editor-core";
 import { Tooltip } from "@plane/ui";
-import { UploadImage } from "../../";
+import type { SVGProps } from "react";
+import { UploadImage } from "@plane/editor-types";
 
+interface LucideProps extends Partial<SVGProps<SVGSVGElement>> {
+  size?: string | number;
+  absoluteStrokeWidth?: boolean;
+}
+
+type LucideIcon = (props: LucideProps) => JSX.Element;
 export interface BubbleMenuItem {
   name: string;
   isActive: () => boolean;
   command: () => void;
-  icon: typeof BoldIcon;
+  icon: LucideIcon;
 }
 
 type EditorBubbleMenuProps = {
@@ -46,14 +54,14 @@ type EditorBubbleMenuProps = {
 };
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
-  const basicMarkItems: BubbleMenuItem[] = [
+  const basicTextFormattingItems: BubbleMenuItem[] = [
     BoldItem(props.editor),
     ItalicItem(props.editor),
     UnderLineItem(props.editor),
     StrikeThroughItem(props.editor),
   ];
 
-  const listItems: BubbleMenuItem[] = [
+  const listFormattingItems: BubbleMenuItem[] = [
     BulletListItem(props.editor),
     NumberedListItem(props.editor),
   ];
@@ -63,10 +71,38 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     CodeItem(props.editor),
   ];
 
-  const complexItems: BubbleMenuItem[] = [
-    TableItem(props.editor),
-    ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
-  ];
+  function getComplexItems(): BubbleMenuItem[] {
+    const items: BubbleMenuItem[] = [TableItem(props.editor)];
+
+    if (shouldShowImageItem()) {
+      items.push(
+        ImageItem(props.editor, props.uploadFile, props.setIsSubmitting),
+      );
+    }
+
+    return items;
+  }
+
+  const complexItems: BubbleMenuItem[] = getComplexItems();
+
+  function shouldShowImageItem(): boolean {
+    if (typeof window !== "undefined") {
+      const selectionRange: any = window?.getSelection();
+      const { selection } = props.editor.state;
+
+      if (selectionRange.rangeCount !== 0) {
+        const range = selectionRange.getRangeAt(0);
+        if (findTableAncestor(range.startContainer)) {
+          return false;
+        }
+        if (isCellSelection(selection)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
 
   const handleAccessChange = (accessKey: string) => {
     props.commentAccessSpecifier?.onAccessChange(accessKey);
@@ -103,7 +139,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
       <div className="flex items-stretch justify-between gap-2 w-full border-[0.5px] border-custom-border-200 bg-custom-background-90 rounded p-1">
         <div className="flex items-stretch">
           <div className="flex items-stretch gap-0.5 pr-2.5 border-r border-custom-border-200">
-            {basicMarkItems.map((item, index) => (
+            {basicTextFormattingItems.map((item, index) => (
               <Tooltip
                 key={index}
                 tooltipContent={<span className="capitalize">{item.name}</span>}
@@ -130,7 +166,7 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             ))}
           </div>
           <div className="flex items-stretch gap-0.5 px-2.5 border-r border-custom-border-200">
-            {listItems.map((item, index) => (
+            {listFormattingItems.map((item, index) => (
               <Tooltip
                 key={index}
                 tooltipContent={<span className="capitalize">{item.name}</span>}

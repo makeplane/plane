@@ -20,13 +20,14 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail.id, issue.id, isExpanded);
+  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
       <IssuePropertyState
-        projectId={issue.project_detail.id ?? null}
-        value={issue.state_detail}
+        projectId={issue.project_detail?.id ?? null}
+        value={issue.state}
+        defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
         className="h-full w-full"
         buttonClassName="!shadow-none !border-0 h-full w-full"

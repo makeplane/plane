@@ -233,7 +233,7 @@ export class CycleStore implements ICycleStore {
 
       const _activeCycleIssues = {
         ...this.active_cycle_issues,
-        [cycleId]: _cycleIssues as IIssue[],
+        [cycleId]: Object.values(_cycleIssues) as IIssue[],
       };
 
       runInAction(() => {
@@ -248,12 +248,7 @@ export class CycleStore implements ICycleStore {
 
   createCycle = async (workspaceSlug: string, projectId: string, data: Partial<ICycle>) => {
     try {
-      const response = await this.cycleService.createCycle(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser
-      );
+      const response = await this.cycleService.createCycle(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.cycle_details = {
@@ -274,7 +269,7 @@ export class CycleStore implements ICycleStore {
 
   patchCycle = async (workspaceSlug: string, projectId: string, cycleId: string, data: Partial<ICycle>) => {
     try {
-      const _response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data, undefined);
+      const _response = await this.cycleService.patchCycle(workspaceSlug, projectId, cycleId, data);
 
       const _cycleDetails = {
         ...this.cycle_details,
@@ -297,7 +292,7 @@ export class CycleStore implements ICycleStore {
 
   removeCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
-      const _response = await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId, undefined);
+      const _response = await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId);
 
       const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
       this.fetchCycles(workspaceSlug, projectId, _currentView);

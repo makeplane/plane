@@ -22,7 +22,11 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
 
-  const { moduleIssue: moduleIssueStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    moduleIssues: moduleIssueStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -31,15 +35,13 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await moduleIssueStore
-      .addIssueToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds)
-      .catch(() =>
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the module. Please try again.",
-        })
-      );
+    await moduleIssueStore.addIssueToModule(workspaceSlug.toString(), moduleId.toString(), issueIds).catch(() =>
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the module. Please try again.",
+      })
+    );
   };
 
   return (
@@ -58,7 +60,10 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
           primaryButton={{
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-            onClick: () => commandPaletteStore.toggleCreateIssueModal(true),
+            onClick: () => {
+              setTrackElement("MODULE_EMPTY_STATE");
+              commandPaletteStore.toggleCreateIssueModal(true);
+            },
           }}
           secondaryButton={
             <Button

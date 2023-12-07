@@ -1,7 +1,7 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { RootStore } from "../root";
 // types
-import { IIssueLabels, IProject, IWorkspace, IWorkspaceMember } from "types";
+import { IIssueLabel, IProject, IWorkspace, IWorkspaceMember } from "types";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { ProjectService } from "services/project";
@@ -15,12 +15,12 @@ export interface IWorkspaceStore {
   // observables
   workspaceSlug: string | null;
   workspaces: IWorkspace[] | undefined;
-  labels: { [workspaceSlug: string]: IIssueLabels[] }; // workspaceSlug: labels[]
+  labels: { [workspaceSlug: string]: IIssueLabel[] }; // workspaceSlug: labels[]
 
   // actions
   setWorkspaceSlug: (workspaceSlug: string) => void;
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
-  getWorkspaceLabelById: (workspaceSlug: string, labelId: string) => IIssueLabels | null;
+  getWorkspaceLabelById: (workspaceSlug: string, labelId: string) => IIssueLabel | null;
   fetchWorkspaces: () => Promise<IWorkspace[]>;
   fetchWorkspaceLabels: (workspaceSlug: string) => Promise<void>;
 
@@ -32,7 +32,7 @@ export interface IWorkspaceStore {
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreateByCurrentUser: IWorkspace[] | null;
-  workspaceLabels: IIssueLabels[] | null;
+  workspaceLabels: IIssueLabel[] | null;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -44,7 +44,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   workspaceSlug: string | null = null;
   workspaces: IWorkspace[] | undefined = [];
   projects: { [workspaceSlug: string]: IProject[] } = {}; // workspaceSlug: project[]
-  labels: { [workspaceSlug: string]: IIssueLabels[] } = {};
+  labels: { [workspaceSlug: string]: IIssueLabel[] } = {};
   members: { [workspaceSlug: string]: IWorkspaceMember[] } = {};
 
   // services
@@ -212,9 +212,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.workspaceService.createWorkspace(data, user);
+      const response = await this.workspaceService.createWorkspace(data);
 
       runInAction(() => {
         this.loader = false;
@@ -247,9 +245,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.workspaceService.updateWorkspace(workspaceSlug, data, user);
+      const response = await this.workspaceService.updateWorkspace(workspaceSlug, data);
 
       runInAction(() => {
         this.loader = false;
@@ -281,9 +277,7 @@ export class WorkspaceStore implements IWorkspaceStore {
         this.error = null;
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.workspaceService.deleteWorkspace(workspaceSlug, user);
+      await this.workspaceService.deleteWorkspace(workspaceSlug);
 
       runInAction(() => {
         this.loader = false;

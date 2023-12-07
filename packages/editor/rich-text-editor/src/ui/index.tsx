@@ -8,28 +8,26 @@ import {
 } from "@plane/editor-core";
 import { EditorBubbleMenu } from "./menus/bubble-menu";
 import { RichTextEditorExtensions } from "./extensions";
+import {
+  DeleteImage,
+  IMentionSuggestion,
+  RestoreImage,
+  UploadImage,
+} from "@plane/editor-types";
 
-export type UploadImage = (file: File) => Promise<string>;
-export type DeleteImage = (assetUrlWithWorkspaceId: string) => Promise<any>;
-
-export type IMentionSuggestion = {
-  id: string;
-  type: string;
-  avatar: string;
-  title: string;
-  subtitle: string;
-  redirect_uri: string;
-};
-
-export type IMentionHighlight = string;
-
-interface IRichTextEditor {
+export type IRichTextEditor = {
   value: string;
+  dragDropEnabled?: boolean;
   uploadFile: UploadImage;
+  restoreFile: RestoreImage;
   deleteFile: DeleteImage;
   noBorder?: boolean;
   borderOnFocus?: boolean;
   cancelUploadImage?: () => any;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
@@ -41,9 +39,9 @@ interface IRichTextEditor {
   debouncedUpdatesEnabled?: boolean;
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
-}
+};
 
-interface RichTextEditorProps extends IRichTextEditor {
+export interface RichTextEditorProps extends IRichTextEditor {
   forwardedRef?: React.Ref<EditorHandle>;
 }
 
@@ -54,6 +52,7 @@ interface EditorHandle {
 
 const RichTextEditor = ({
   onChange,
+  dragDropEnabled,
   debouncedUpdatesEnabled,
   setIsSubmitting,
   setShouldShowAlert,
@@ -65,8 +64,10 @@ const RichTextEditor = ({
   cancelUploadImage,
   borderOnFocus,
   customClassName,
+  restoreFile,
   forwardedRef,
   mentionHighlights,
+  rerenderOnPropsChange,
   mentionSuggestions,
 }: RichTextEditorProps) => {
   const editor = useEditor({
@@ -78,8 +79,14 @@ const RichTextEditor = ({
     uploadFile,
     cancelUploadImage,
     deleteFile,
+    restoreFile,
     forwardedRef,
-    extensions: RichTextEditorExtensions(uploadFile, setIsSubmitting),
+    rerenderOnPropsChange,
+    extensions: RichTextEditorExtensions(
+      uploadFile,
+      setIsSubmitting,
+      dragDropEnabled,
+    ),
     mentionHighlights,
     mentionSuggestions,
   });

@@ -46,7 +46,7 @@ export const WorkspaceSidebarMenu = observer(() => {
 
         return (
           <Link key={index} href={link.href}>
-            <a className="block w-full">
+            <span className="block w-full">
               <Tooltip
                 tooltipContent={link.name}
                 position="right"
@@ -64,7 +64,7 @@ export const WorkspaceSidebarMenu = observer(() => {
                   {!themeStore?.sidebarCollapsed && link.name}
                 </div>
               </Tooltip>
-            </a>
+            </span>
           </Link>
         );
       })}

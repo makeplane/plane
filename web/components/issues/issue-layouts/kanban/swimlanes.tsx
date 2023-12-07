@@ -5,33 +5,43 @@ import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
 import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
 // types
-import { IIssue, IIssueDisplayProperties, IIssueLabels, IProject, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 // constants
 import { getValueFromObject } from "constants/issue";
+import { EIssueActions } from "../types";
+import { EProjectStore } from "store/command-palette.store";
 
 interface ISubGroupSwimlaneHeader {
-  issues: any;
+  issues: IIssueResponse;
+  issueIds: any;
   sub_group_by: string | null;
   group_by: string | null;
   list: any;
   listKey: string;
   kanBanToggle: any;
   handleKanBanToggle: any;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
-  issues,
+  issueIds,
   sub_group_by,
   group_by,
   list,
   listKey,
   kanBanToggle,
   handleKanBanToggle,
+  disableIssueCreation,
+  currentStore,
+  addIssuesToView,
 }) => {
   const calculateIssueCount = (column_id: string) => {
     let issueCount = 0;
-    issues &&
-      Object.keys(issues)?.forEach((_issueKey: any) => {
-        issueCount += issues?.[_issueKey]?.[column_id]?.length || 0;
+    issueIds &&
+      Object.keys(issueIds)?.forEach((_issueKey: any) => {
+        issueCount += issueIds?.[_issueKey]?.[column_id]?.length || 0;
       });
     return issueCount;
   };
@@ -50,6 +60,9 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
               issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
               kanBanToggle={kanBanToggle}
               handleKanBanToggle={handleKanBanToggle}
+              disableIssueCreation={disableIssueCreation}
+              currentStore={currentStore}
+              addIssuesToView={addIssuesToView}
             />
           </div>
         ))}
@@ -58,30 +71,42 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 };
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
+  issues: IIssueResponse;
+  issueIds: any;
   order_by: string | null;
   showEmptyGroup: boolean;
   states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: IIssueLabels[] | null;
+  labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
-  issues: any;
-  handleIssues: (
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
+  quickActions: (
     sub_group_by: string | null,
     group_by: string | null,
     issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
+  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   isDragStarted?: boolean;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  enableQuickIssueCreate: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
     issues,
+    issueIds,
     sub_group_by,
     group_by,
     order_by,
@@ -100,13 +125,18 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     members,
     projects,
     isDragStarted,
+    disableIssueCreation,
+    enableQuickIssueCreate,
+    canEditProperties,
+    addIssuesToView,
+    quickAddCallback,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
     let issueCount = 0;
-    issues?.[column_id] &&
-      Object.keys(issues?.[column_id])?.forEach((_list: any) => {
-        issueCount += issues?.[column_id]?.[_list]?.length || 0;
+    issueIds?.[column_id] &&
+      Object.keys(issueIds?.[column_id])?.forEach((_list: any) => {
+        issueCount += issueIds?.[column_id]?.[_list]?.length || 0;
       });
     return issueCount;
   };
@@ -127,6 +157,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
+                  disableIssueCreation={disableIssueCreation}
+                  addIssuesToView={addIssuesToView}
                 />
               </div>
               <div className="w-full border-b border-custom-border-400 border-dashed" />
@@ -134,7 +166,8 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
             {!kanBanToggle?.subgroupByIssuesVisibility.includes(getValueFromObject(_list, listKey) as string) && (
               <div className="relative">
                 <KanBan
-                  issues={issues?.[getValueFromObject(_list, listKey) as string]}
+                  issues={issues}
+                  issueIds={issueIds?.[getValueFromObject(_list, listKey) as string]}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
                   order_by={order_by}
@@ -151,8 +184,11 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   labels={labels}
                   members={members}
                   projects={projects}
-                  enableQuickIssueCreate
+                  enableQuickIssueCreate={enableQuickIssueCreate}
                   isDragStarted={isDragStarted}
+                  canEditProperties={canEditProperties}
+                  addIssuesToView={addIssuesToView}
+                  quickAddCallback={quickAddCallback}
                 />
               </div>
             )}
@@ -163,33 +199,46 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
 });
 
 export interface IKanBanSwimLanes {
-  issues: any;
+  issues: IIssueResponse;
+  issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
   sub_group_by: string | null;
   group_by: string | null;
   order_by: string | null;
-  handleIssues: (
+  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
+  quickActions: (
     sub_group_by: string | null,
     group_by: string | null,
     issue: IIssue,
-    action: "update" | "delete"
-  ) => void;
-  quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
-  displayProperties: IIssueDisplayProperties;
+    customActionButton?: React.ReactElement
+  ) => React.ReactNode;
+  displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
   states: IState[] | null;
   stateGroups: any;
   priorities: any;
-  labels: IIssueLabels[] | null;
+  labels: IIssueLabel[] | null;
   members: IUserLite[] | null;
   projects: IProject[] | null;
   isDragStarted?: boolean;
+  disableIssueCreation?: boolean;
+  currentStore?: EProjectStore;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
+  enableQuickIssueCreate: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
   const {
     issues,
+    issueIds,
     sub_group_by,
     group_by,
     order_by,
@@ -206,6 +255,12 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     members,
     projects,
     isDragStarted,
+    disableIssueCreation,
+    enableQuickIssueCreate,
+    canEditProperties,
+    currentStore,
+    addIssuesToView,
+    quickAddCallback,
   } = props;
 
   return (
@@ -214,84 +269,111 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
         {group_by && group_by === "project" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={projects}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
         {group_by && group_by === "state" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={states}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
         {group_by && group_by === "state_detail.group" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={stateGroups}
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
         {group_by && group_by === "priority" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={priorities}
             listKey={`key`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
         {group_by && group_by === "labels" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={labels ? [...labels, { id: "None", name: "None" }] : labels}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
         {group_by && group_by === "assignees" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={members ? [...members, { id: "None", display_name: "None" }] : members}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
 
         {group_by && group_by === "created_by" && (
           <SubGroupSwimlaneHeader
             issues={issues}
+            issueIds={issueIds}
             sub_group_by={sub_group_by}
             group_by={group_by}
             list={members}
             listKey={`id`}
             kanBanToggle={kanBanToggle}
             handleKanBanToggle={handleKanBanToggle}
+            disableIssueCreation={disableIssueCreation}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
           />
         )}
       </div>
@@ -299,6 +381,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
       {sub_group_by && sub_group_by === "project" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -317,12 +400,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "state" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -341,12 +429,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "state" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -365,12 +458,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "state_detail.group" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -389,12 +487,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "priority" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -413,12 +516,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "labels" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -437,12 +545,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "assignees" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -461,12 +574,17 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
 
       {sub_group_by && sub_group_by === "created_by" && (
         <SubGroupSwimlane
           issues={issues}
+          issueIds={issueIds}
           sub_group_by={sub_group_by}
           group_by={group_by}
           order_by={order_by}
@@ -485,6 +603,10 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           members={members}
           projects={projects}
           isDragStarted={isDragStarted}
+          disableIssueCreation={disableIssueCreation}
+          enableQuickIssueCreate={enableQuickIssueCreate}
+          canEditProperties={canEditProperties}
+          quickAddCallback={quickAddCallback}
         />
       )}
     </div>

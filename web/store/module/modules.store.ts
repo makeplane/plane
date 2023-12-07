@@ -4,7 +4,7 @@ import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
 // types
 import { RootStore } from "../root";
-import { IIssue, IModule } from "types";
+import { IIssue, IModule, ILinkDetails } from "types";
 import {
   IIssueGroupWithSubGroupsStructure,
   IIssueGroupedStructure,
@@ -49,6 +49,22 @@ export interface IModuleStore {
     data: Partial<IModule>
   ) => Promise<IModule>;
   deleteModule: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
+
+  createModuleLink: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    data: Partial<ILinkDetails>
+  ) => Promise<ILinkDetails>;
+  updateModuleLink: (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    linkId: string,
+    data: Partial<ILinkDetails>
+  ) => Promise<ILinkDetails>;
+  deleteModuleLink: (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) => Promise<void>;
+
   addModuleToFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
   removeModuleFromFavorites: (workspaceSlug: string, projectId: string, moduleId: string) => Promise<void>;
   updateModuleGanttStructure: (
@@ -119,6 +135,11 @@ export class ModuleStore implements IModuleStore {
       createModule: action,
       updateModuleDetails: action,
       deleteModule: action,
+
+      createModuleLink: action,
+      updateModuleLink: action,
+      deleteModuleLink: action,
+
       addModuleToFavorites: action,
       removeModuleFromFavorites: action,
       updateModuleGanttStructure: action,
@@ -208,12 +229,7 @@ export class ModuleStore implements IModuleStore {
 
   createModule = async (workspaceSlug: string, projectId: string, data: Partial<IModule>) => {
     try {
-      const response = await this.moduleService.createModule(
-        workspaceSlug,
-        projectId,
-        data,
-        this.rootStore.user.currentUser
-      );
+      const response = await this.moduleService.createModule(workspaceSlug, projectId, data);
 
       runInAction(() => {
         this.modules = {
@@ -223,7 +239,7 @@ export class ModuleStore implements IModuleStore {
         this.loader = false;
         this.error = null;
       });
-
+      this.fetchModules(workspaceSlug, projectId);
       return response;
     } catch (error) {
       console.error("Failed to create module in module store", error);
@@ -255,9 +271,7 @@ export class ModuleStore implements IModuleStore {
           });
       });
 
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data, user);
+      const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
 
       return response;
     } catch (error) {
@@ -283,7 +297,7 @@ export class ModuleStore implements IModuleStore {
         };
       });
 
-      await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId, this.rootStore.user.currentUser);
+      await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId);
     } catch (error) {
       console.error("Failed to delete module in module store", error);
 
@@ -292,6 +306,130 @@ export class ModuleStore implements IModuleStore {
       runInAction(() => {
         this.error = error;
       });
+    }
+  };
+
+  createModuleLink = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    data: Partial<ILinkDetails>
+  ) => {
+    try {
+      const response = await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data);
+
+      runInAction(() => {
+        this.modules = {
+          ...this.modules,
+          [projectId]: this.modules[projectId]?.map((module) =>
+            module.id === moduleId ? { ...module, link_module: [response, ...module.link_module] } : module
+          ),
+        };
+        this.moduleDetails = {
+          ...this.moduleDetails,
+          [moduleId]: {
+            ...this.moduleDetails[moduleId],
+            link_module: [response, ...this.moduleDetails[moduleId].link_module],
+          },
+        };
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Failed to create module link in module store", error);
+
+      this.fetchModules(workspaceSlug, projectId);
+      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  updateModuleLink = async (
+    workspaceSlug: string,
+    projectId: string,
+    moduleId: string,
+    linkId: string,
+    data: Partial<ILinkDetails>
+  ) => {
+    try {
+      const response = await this.moduleService.updateModuleLink(workspaceSlug, projectId, moduleId, linkId, data);
+      const _modules = {
+        ...this.modules,
+        [projectId]: this.modules[projectId]?.map((module) =>
+          module.id === moduleId
+            ? {
+                ...module,
+                link_module: module.link_module.map((link) => (link.id === linkId ? response : link)),
+              }
+            : module
+        ),
+      };
+
+      const _moduleDetails = {
+        ...this.moduleDetails,
+        [moduleId]: {
+          ...this.moduleDetails[moduleId],
+          link_module: this.moduleDetails[moduleId].link_module.map((link) => (link.id === linkId ? response : link)),
+        },
+      };
+
+      runInAction(() => {
+        this.modules = _modules;
+        this.moduleDetails = _moduleDetails;
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Failed to update module link in module store", error);
+
+      this.fetchModules(workspaceSlug, projectId);
+      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  deleteModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) => {
+    try {
+      runInAction(() => {
+        this.modules = {
+          ...this.modules,
+          [projectId]: this.modules[projectId]?.map((module) =>
+            module.id === moduleId
+              ? { ...module, link_module: module.link_module.filter((link) => link.id !== linkId) }
+              : module
+          ),
+        };
+        this.moduleDetails = {
+          ...this.moduleDetails,
+          [moduleId]: {
+            ...this.moduleDetails[moduleId],
+            link_module: this.moduleDetails[moduleId].link_module.filter((link) => link.id !== linkId),
+          },
+        };
+      });
+
+      await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId);
+    } catch (error) {
+      console.error("Failed to delete module link in module store", error);
+
+      this.fetchModules(workspaceSlug, projectId);
+      this.fetchModuleDetails(workspaceSlug, projectId, moduleId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      throw error;
     }
   };
 

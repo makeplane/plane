@@ -113,7 +113,7 @@ export const ISSUE_EXTRA_OPTIONS: {
   title: string;
 }[] = [
   { key: "sub_issue", title: "Show sub-issues" }, // in spreadsheet its always false
-  { key: "show_empty_groups", title: "Show empty states" }, // filter on front-end
+  { key: "show_empty_groups", title: "Show empty groups" }, // filter on front-end
 ];
 
 export const ISSUE_LAYOUTS: {
@@ -239,7 +239,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        group_by: ["state_detail.group", "priority", "project", "labels"],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
@@ -251,23 +251,10 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
   },
   archived_issues: {
     list: {
-      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
+      filters: ["priority", "state", "assignees", "created_by", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: ["state_detail.group", "priority", "project", "labels", null],
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
-        type: [null, "active", "backlog"],
-      },
-      extra_options: {
-        access: true,
-        values: ["show_empty_groups"],
-      },
-    },
-    kanban: {
-      filters: ["priority", "state_group", "labels", "start_date", "target_date"],
-      display_properties: true,
-      display_filters: {
-        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        group_by: ["state", "state_detail.group", "priority", "labels", "assignees", "created_by", null],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
@@ -295,7 +282,7 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state_group", "labels", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        group_by: ["state_detail.group", "priority", "project", "labels", null],
+        group_by: ["state_detail.group", "priority", "project", "labels"],
         order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
@@ -310,7 +297,6 @@ export const ISSUE_DISPLAY_FILTERS_BY_LAYOUT: {
       filters: ["priority", "state_group", "labels", "assignees", "created_by", "project", "start_date", "target_date"],
       display_properties: true,
       display_filters: {
-        order_by: ["sort_order", "-created_at", "-updated_at", "start_date", "priority"],
         type: [null, "active", "backlog"],
       },
       extra_options: {

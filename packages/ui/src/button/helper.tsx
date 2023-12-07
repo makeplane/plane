@@ -49,9 +49,9 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-custom-primary-60`,
   },
   "outline-primary": {
-    default: `text-custom-primary-100 bg-custom-background-100 border border-custom-primary-100`,
-    hover: `hover:border-custom-primary-80 hover:bg-custom-primary-10`,
-    pressed: `focus:text-custom-primary-80 focus:bg-custom-primary-10 focus:border-custom-primary-80`,
+    default: `text-custom-primary-100 bg-transparent border border-custom-primary-100`,
+    hover: `hover:bg-custom-primary-100/20`,
+    pressed: `focus:text-custom-primary-100 focus:bg-custom-primary-100/30`,
     disabled: `cursor-not-allowed !text-custom-primary-60 !border-custom-primary-60 `,
   },
   "neutral-primary": {
@@ -80,7 +80,7 @@ export const buttonStyling: IButtonStyling = {
     disabled: `cursor-not-allowed !text-red-300`,
   },
   "outline-danger": {
-    default: `text-red-500 bg-custom-background-100 border border-red-500`,
+    default: `text-red-500 bg-transparent border border-red-500`,
     hover: `hover:text-red-400 hover:border-red-400`,
     pressed: `focus:text-red-400 focus:border-red-400`,
     disabled: `cursor-not-allowed !text-red-300 !border-red-300`,

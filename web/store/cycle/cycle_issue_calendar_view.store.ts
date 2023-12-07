@@ -76,7 +76,7 @@ export class CycleIssueCalendarViewStore implements ICycleIssueCalendarViewStore
         this.rootStore.cycleIssue.issues = { ...reorderedIssues };
       });
 
-      this.rootStore.issueDetail?.updateIssue(
+      this.rootStore.projectIssues.updateIssue(
         updateIssue.workspaceSlug,
         updateIssue.projectId,
         updateIssue.issueId,

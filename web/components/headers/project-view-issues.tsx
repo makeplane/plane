@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelection } from "components/issues";
 // ui
-import { Breadcrumbs, CustomMenu, PhotoFilterIcon } from "@plane/ui";
+import { Breadcrumbs, Button, CustomMenu, PhotoFilterIcon } from "@plane/ui";
 // helpers
 import { truncateText } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
@@ -14,81 +14,72 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EFilterType } from "store/issues/types";
+import { EProjectStore } from "store/command-palette.store";
+import { Plus } from "lucide-react";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug, projectId, viewId } = router.query;
+  const { workspaceSlug, projectId, viewId } = router.query as {
+    workspaceSlug: string;
+    projectId: string;
+    viewId: string;
+  };
 
   const {
-    issueFilter: issueFilterStore,
-    projectViewFilters: projectViewFiltersStore,
-    project: projectStore,
+    project: { currentProjectDetails },
+    projectLabel: { projectLabels },
     projectMember: { projectMembers },
     projectState: projectStateStore,
     projectViews: projectViewsStore,
+    viewIssuesFilter: { issueFilters, updateFilters },
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
-  const { currentProjectDetails } = projectStore;
-
-  const storedFilters = viewId ? projectViewFiltersStore.storedFilters[viewId.toString()] : undefined;
-
-  const activeLayout = issueFilterStore.userDisplayFilters.layout;
+  const activeLayout = issueFilters?.displayFilters?.layout;
 
   const handleLayoutChange = useCallback(
     (layout: TIssueLayouts) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          layout,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const handleFiltersUpdate = useCallback(
     (key: keyof IIssueFilterOptions, value: string | string[]) => {
-      if (!workspaceSlug || !viewId) return;
-
-      const newValues = storedFilters?.[key] ?? [];
+      if (!workspaceSlug || !projectId) return;
+      const newValues = issueFilters?.filters?.[key] ?? [];
 
       if (Array.isArray(value)) {
         value.forEach((val) => {
           if (!newValues.includes(val)) newValues.push(val);
         });
       } else {
-        if (storedFilters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
+        if (issueFilters?.filters?.[key]?.includes(value)) newValues.splice(newValues.indexOf(value), 1);
         else newValues.push(value);
       }
 
-      projectViewFiltersStore.updateStoredFilters(viewId.toString(), {
-        [key]: newValues,
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.FILTERS, { [key]: newValues }, viewId);
     },
-    [projectViewFiltersStore, storedFilters, viewId, workspaceSlug]
+    [workspaceSlug, projectId, viewId, issueFilters, updateFilters]
   );
 
-  const handleDisplayFiltersUpdate = useCallback(
+  const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-        display_filters: {
-          ...updatedDisplayFilter,
-        },
-      });
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, viewId, updateFilters]
   );
 
-  const handleDisplayPropertiesUpdate = useCallback(
+  const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !projectId) return;
-
-      issueFilterStore.updateDisplayProperties(workspaceSlug.toString(), projectId.toString(), property);
+      updateFilters(workspaceSlug, projectId, EFilterType.DISPLAY_PROPERTIES, property, viewId);
     },
-    [issueFilterStore, projectId, workspaceSlug]
+    [workspaceSlug, projectId, viewId, updateFilters]
   );
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
@@ -158,27 +149,37 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
         />
         <FiltersDropdown title="Filters" placement="bottom-end">
           <FilterSelection
-            filters={storedFilters ?? {}}
+            filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
-            labels={projectStore.labels?.[projectId?.toString() ?? ""] ?? undefined}
+            labels={projectLabels ?? undefined}
             members={projectMembers?.map((m) => m.member)}
-            states={projectStateStore.states?.[projectId?.toString() ?? ""] ?? undefined}
+            states={projectStateStore.states?.[projectId ?? ""] ?? undefined}
           />
         </FiltersDropdown>
         <FiltersDropdown title="Display" placement="bottom-end">
           <DisplayFiltersSelection
-            displayFilters={issueFilterStore.userDisplayFilters}
-            displayProperties={issueFilterStore.userDisplayProperties}
-            handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
-            handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_LAYOUT.issues[activeLayout] : undefined
             }
+            displayFilters={issueFilters?.displayFilters ?? {}}
+            handleDisplayFiltersUpdate={handleDisplayFilters}
+            displayProperties={issueFilters?.displayProperties ?? {}}
+            handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>
+        <Button
+          onClick={() => {
+            setTrackElement("PROJECT_VIEW_PAGE_HEADER");
+            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+          }}
+          size="sm"
+          prependIcon={<Plus />}
+        >
+          Add Issue
+        </Button>
       </div>
     </div>
   );

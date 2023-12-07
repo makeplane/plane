@@ -16,6 +16,7 @@ import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 import type { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
+import { EProjectStore } from "store/command-palette.store";
 
 export interface IssuesModalProps {
   data?: IIssue | null;
@@ -39,12 +40,23 @@ export interface IssuesModalProps {
     | "cycle"
   )[];
   onSubmit?: (data: Partial<IIssue>) => Promise<void>;
+  handleSubmit?: (data: Partial<IIssue>) => Promise<void>;
+  currentStore?: EProjectStore;
 }
 
 const issueDraftService = new IssueDraftService();
 
 export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((props) => {
-  const { data, handleClose, isOpen, prePopulateData: prePopulateDataProps, fieldsToShow = ["all"], onSubmit } = props;
+  const {
+    data,
+    handleClose,
+    isOpen,
+    prePopulateData: prePopulateDataProps,
+    fieldsToShow = ["all"],
+    onSubmit,
+    handleSubmit,
+    currentStore = EProjectStore.PROJECT,
+  } = props;
 
   // states
   const [createMore, setCreateMore] = useState(false);
@@ -54,18 +66,56 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   const [prePopulateData, setPreloadedData] = useState<Partial<IIssue>>({});
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId, moduleId } = router.query;
+  const { workspaceSlug, projectId, cycleId, moduleId } = router.query as {
+    workspaceSlug: string;
+    projectId: string | undefined;
+    cycleId: string | undefined;
+    moduleId: string | undefined;
+  };
 
   const {
     project: projectStore,
-    issue: issueStore,
-    issueDetail: issueDetailStore,
-    cycleIssue: cycleIssueStore,
-    moduleIssue: moduleIssueStore,
+    projectIssues: projectIssueStore,
+    viewIssues: projectViewIssueStore,
+    workspaceProfileIssues: profileIssueStore,
+    cycleIssues: cycleIssueStore,
+    moduleIssues: moduleIssueStore,
     user: userStore,
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace },
   } = useMobxStore();
 
   const user = userStore.currentUser;
+
+  const issueStores = {
+    [EProjectStore.PROJECT]: {
+      store: projectIssueStore,
+      dataIdToUpdate: activeProject,
+      viewId: undefined,
+    },
+    [EProjectStore.PROJECT_VIEW]: {
+      store: projectViewIssueStore,
+      dataIdToUpdate: activeProject,
+      viewId: undefined,
+    },
+    [EProjectStore.PROFILE]: {
+      store: profileIssueStore,
+      dataIdToUpdate: user?.id || undefined,
+      viewId: undefined,
+    },
+    [EProjectStore.CYCLE]: {
+      store: cycleIssueStore,
+      dataIdToUpdate: activeProject,
+      viewId: cycleId,
+    },
+    [EProjectStore.MODULE]: {
+      store: moduleIssueStore,
+      dataIdToUpdate: activeProject,
+      viewId: moduleId,
+    },
+  };
+
+  const { store: currentIssueStore, viewId, dataIdToUpdate } = issueStores[currentStore];
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
 
@@ -166,38 +216,55 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
     // in the url. This has the least priority.
     if (projects && projects.length > 0 && !activeProject)
       setActiveProject(projects?.find((p) => p.id === projectId)?.id ?? projects?.[0].id ?? null);
-  }, [activeProject, data, projectId, projects, isOpen]);
+  }, [data, projectId, projects, isOpen, activeProject]);
 
-  const addIssueToCycle = async (issueId: string, cycleId: string) => {
+  const addIssueToCycle = async (issue: IIssue, cycleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), activeProject, cycleId, [issueId]);
+    cycleIssueStore.addIssueToCycle(workspaceSlug, cycleId, [issue.id]);
   };
 
-  const addIssueToModule = async (issueId: string, moduleId: string) => {
+  const addIssueToModule = async (issue: IIssue, moduleId: string) => {
     if (!workspaceSlug || !activeProject) return;
 
-    moduleIssueStore.addIssueToModule(workspaceSlug.toString(), activeProject, moduleId, [issueId]);
+    moduleIssueStore.addIssueToModule(workspaceSlug, moduleId, [issue.id]);
   };
 
   const createIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject) return;
+    if (!workspaceSlug || !dataIdToUpdate) return;
 
-    await issueDetailStore
-      .createIssue(workspaceSlug.toString(), activeProject, payload)
+    await currentIssueStore
+      .createIssue(workspaceSlug, dataIdToUpdate, payload, viewId)
       .then(async (res) => {
-        issueStore.fetchIssues(workspaceSlug.toString(), activeProject);
+        if (!res) throw new Error();
 
-        if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res.id, payload.cycle);
-        if (payload.module && payload.module !== "") await addIssueToModule(res.id, payload.module);
+        if (handleSubmit) {
+          await handleSubmit(res);
+        } else {
+          currentIssueStore.fetchIssues(workspaceSlug, dataIdToUpdate, "mutation", viewId);
 
-        setToastAlert({
-          type: "success",
-          title: "Success!",
-          message: "Issue created successfully.",
-        });
+          if (payload.cycle && payload.cycle !== "") await addIssueToCycle(res, payload.cycle);
+          if (payload.module && payload.module !== "") await addIssueToModule(res, payload.module);
 
-        if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+          setToastAlert({
+            type: "success",
+            title: "Success!",
+            message: "Issue created successfully.",
+          });
+          postHogEventTracker(
+            "ISSUE_CREATED",
+            {
+              ...res,
+              state: "SUCCESS",
+            },
+            {
+              isGrouping: true,
+              groupType: "Workspace_metrics",
+              gorupId: currentWorkspace?.id!,
+            }
+          );
+          if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
+        }
       })
       .catch(() => {
         setToastAlert({
@@ -205,6 +272,17 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Error!",
           message: "Issue could not be created. Please try again.",
         });
+        postHogEventTracker(
+          "ISSUE_CREATED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!,
+          }
+        );
       });
 
     if (!createMore) onFormSubmitClose();
@@ -225,7 +303,6 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Success!",
           message: "Draft Issue created successfully.",
         });
-
         handleClose();
         setActiveProject(null);
         setFormDirtyState(null);
@@ -245,11 +322,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
   };
 
   const updateIssue = async (payload: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject || !data) return;
+    if (!workspaceSlug || !dataIdToUpdate || !data) return;
 
-    await issueDetailStore
-      .updateIssue(workspaceSlug.toString(), activeProject, data.id, payload)
-      .then(() => {
+    await currentIssueStore
+      .updateIssue(workspaceSlug, dataIdToUpdate, data.id, payload, viewId)
+      .then((res) => {
         if (!createMore) onFormSubmitClose();
 
         setToastAlert({
@@ -257,6 +334,18 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Success!",
           message: "Issue updated successfully.",
         });
+        postHogEventTracker(
+          "ISSUE_UPDATED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!,
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -264,11 +353,22 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           title: "Error!",
           message: "Issue could not be updated. Please try again.",
         });
+        postHogEventTracker(
+          "ISSUE_UPDATED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!,
+          }
+        );
       });
   };
 
   const handleFormSubmit = async (formData: Partial<IIssue>) => {
-    if (!workspaceSlug || !activeProject) return;
+    if (!workspaceSlug || !dataIdToUpdate || !currentStore) return;
 
     const payload: Partial<IIssue> = {
       ...formData,
@@ -313,7 +413,7 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
             <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="fixed inset-0 z-20 overflow-y-auto">
             <div className="my-10 flex items-center justify-center p-4 text-center sm:p-0 md:my-20">
               <Transition.Child
                 as={React.Fragment}

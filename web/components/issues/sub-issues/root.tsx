@@ -22,6 +22,7 @@ import { IUser, IIssue, ISearchIssueResponse } from "types";
 import { IssueService } from "services/issue";
 // fetch keys
 import { SUB_ISSUES } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface ISubIssuesRoot {
   parentIssue: IIssue;
@@ -43,8 +44,11 @@ const issueService = new IssueService();
 export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const { parentIssue, user } = props;
 
-  const { user: userStore, issue: issueStore, issueDetail: issueDetailStore } = useMobxStore();
-  const userRole = userStore.currentProjectRole;
+  const {
+    user: { currentProjectRole },
+    issue: { updateIssueStructure },
+    projectIssues: { updateIssue, removeIssue },
+  } = useMobxStore();
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -126,7 +130,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
   const removeIssueFromSubIssues = async (parentIssueId: string, issue: IIssue) => {
     if (!workspaceSlug || !projectId || !parentIssue || !issue?.id) return;
     issueService
-      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null }, user)
+      .patchIssue(workspaceSlug.toString(), projectId.toString(), issue.id, { parent: null })
       .then(async () => {
         if (parentIssueId) await mutate(SUB_ISSUES(parentIssueId));
         handleIssuesLoader({ key: "delete", issueId: issue?.id });
@@ -166,13 +170,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
         ...data,
       };
 
-      issueStore.updateIssueStructure(null, null, payload);
-      issueDetailStore.updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
+      updateIssueStructure(null, null, payload);
+      updateIssue(workspaceSlug.toString(), projectId.toString(), issue.id, data);
     },
-    [issueStore, issueDetailStore, projectId, user, workspaceSlug]
+    [updateIssueStructure, projectId, updateIssue, user, workspaceSlug]
   );
 
-  const isEditable = userRole === 5 || userRole === 10 ? false : true;
+  const isEditable = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const mutateSubIssues = (parentIssueId: string | null) => {
     if (parentIssueId) mutate(SUB_ISSUES(parentIssueId));
@@ -256,7 +260,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                     </>
                   }
                   buttonClassName="whitespace-nowrap"
-                  // position="left"
+                  placement="bottom-end"
                   noBorder
                   noChevron
                 >
@@ -292,7 +296,7 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                       </>
                     }
                     buttonClassName="whitespace-nowrap"
-                    // position="left"
+                    placement="bottom-end"
                     noBorder
                     noChevron
                   >
@@ -351,7 +355,8 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
             </>
           )}
           {isEditable &&
-            issueCrudOperation?.delete?.toggle &&
+            workspaceSlug &&
+            projectId &&
             issueCrudOperation?.delete?.issueId &&
             issueCrudOperation?.delete?.issue && (
               <DeleteIssueModal
@@ -361,6 +366,13 @@ export const SubIssuesRoot: React.FC<ISubIssuesRoot> = observer((props) => {
                   handleIssueCrudOperation("delete", null, null);
                 }}
                 data={issueCrudOperation?.delete?.issue}
+                onSubmit={async () => {
+                  await removeIssue(
+                    workspaceSlug.toString(),
+                    projectId.toString(),
+                    issueCrudOperation?.delete?.issue?.id ?? ""
+                  );
+                }}
               />
             )}
         </>

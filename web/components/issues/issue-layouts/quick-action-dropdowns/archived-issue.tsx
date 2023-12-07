@@ -9,15 +9,10 @@ import { DeleteArchivedIssueModal } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IQuickActionProps } from "../list/list-view-types";
 
-type Props = {
-  issue: IIssue;
-  handleDelete: () => Promise<void>;
-};
-
-export const ArchivedIssueQuickActions: React.FC<Props> = (props) => {
-  const { issue, handleDelete } = props;
+export const ArchivedIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+  const { issue, handleDelete, customActionButton } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -45,7 +40,7 @@ export const ArchivedIssueQuickActions: React.FC<Props> = (props) => {
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={handleDelete}
       />
-      <CustomMenu placement="bottom-start" ellipsis>
+      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

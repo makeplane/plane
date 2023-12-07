@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { Popover2 } from "@blueprintjs/popover2";
-import { MoreHorizontal, Pencil, Trash2, ChevronRight, Link } from "lucide-react";
-// hooks
-import useToast from "hooks/use-toast";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
 // components
 import { Tooltip } from "@plane/ui";
-// helpers
-import { copyUrlToClipboard } from "helpers/string.helper";
+// hooks
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // types
 import { IIssue, IIssueDisplayProperties } from "types";
 
@@ -16,16 +13,8 @@ type Props = {
   expanded: boolean;
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
-  handleEditIssue: (issue: IIssue) => void;
-  handleDeleteIssue: (issue: IIssue) => void;
-  setIssuePeekOverView: React.Dispatch<
-    React.SetStateAction<{
-      workspaceSlug: string;
-      projectId: string;
-      issueId: string;
-    } | null>
-  >;
-  disableUserActions: boolean;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  canEditProperties: (projectId: string | undefined) => boolean;
   nestingLevel: number;
 };
 
@@ -33,114 +22,63 @@ export const IssueColumn: React.FC<Props> = ({
   issue,
   expanded,
   handleToggleExpand,
-  setIssuePeekOverView,
   properties,
-  handleEditIssue,
-  handleDeleteIssue,
-  disableUserActions,
+  quickActions,
+  canEditProperties,
   nestingLevel,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+  // router
   const router = useRouter();
+  // states
+  const [isMenuActive, setIsMenuActive] = useState(false);
 
-  const { workspaceSlug } = router.query;
-
-  const { setToastAlert } = useToast();
-
-  const handleCopyText = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`).then(() => {
-      setToastAlert({
-        type: "success",
-        title: "Link Copied!",
-        message: "Issue link copied to clipboard.",
-      });
-    });
-  };
+  const menuActionRef = useRef<HTMLDivElement | null>(null);
 
   const handleIssuePeekOverview = (issue: IIssue) => {
     const { query } = router;
-    setIssuePeekOverView({
-      workspaceSlug: issue?.workspace_detail?.slug,
-      projectId: issue?.project_detail?.id,
-      issueId: issue?.id,
-    });
+
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssueId: issue?.id },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
 
   const paddingLeft = `${nestingLevel * 54}px`;
 
+  useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
+
+  const customActionButton = (
+    <div
+      ref={menuActionRef}
+      className={`w-full cursor-pointer text-custom-sidebar-text-400 rounded p-1 hover:bg-custom-background-80 ${
+        isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
+      }`}
+      onClick={() => setIsMenuActive(!isMenuActive)}
+    >
+      <MoreHorizontal className="h-3.5 w-3.5" />
+    </div>
+  );
+
   return (
     <>
-      <div className="group flex items-center w-[28rem] text-sm h-11 sticky top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
+      <div className="group flex items-center w-[28rem] text-sm h-11 top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
         {properties.key && (
           <div
-            className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-[96px]"
+            className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-min"
             style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
             <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
-              <span className="flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ">
+              <span
+                className={`flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ${
+                  isMenuActive ? "!opacity-0" : ""
+                } `}
+              >
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
 
-              {!disableUserActions && (
-                <div className="absolute top-0 left-2.5 opacity-0 group-hover:opacity-100">
-                  <Popover2
-                    isOpen={isOpen}
-                    canEscapeKeyClose
-                    onInteraction={(nextOpenState) => setIsOpen(nextOpenState)}
-                    content={
-                      <div className="flex flex-col whitespace-nowrap rounded-md border border-custom-border-100 p-1 text-xs shadow-lg focus:outline-none min-w-full bg-custom-background-100 space-y-0.5">
-                        <button
-                          type="button"
-                          className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
-                          onClick={() => {
-                            handleCopyText();
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Link className="h-3 w-3" />
-                            <span>Copy link</span>
-                          </div>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="hover:text-custom-text-200 w-full select-none gap-2 rounded p-1 text-left text-custom-text-200 hover:bg-custom-background-80"
-                          onClick={() => {
-                            handleEditIssue(issue);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Pencil className="h-3 w-3" />
-                            <span>Edit issue</span>
-                          </div>
-                        </button>
-
-                        <button
-                          type="button"
-                          className="w-full select-none gap-2 rounded p-1 text-left text-red-500 hover:bg-custom-background-80"
-                          onClick={() => {
-                            handleDeleteIssue(issue);
-                            setIsOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <Trash2 className="h-3 w-3" />
-                            <span>Delete issue</span>
-                          </div>
-                        </button>
-                      </div>
-                    }
-                    placement="bottom-start"
-                  >
-                    <MoreHorizontal className="h-5 w-5 text-custom-text-200" />
-                  </Popover2>
+              {canEditProperties(issue.project) && (
+                <div className={`absolute top-0 left-2.5 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+                  {quickActions(issue, customActionButton)}
                 </div>
               )}
             </div>

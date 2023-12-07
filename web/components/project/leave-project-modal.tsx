@@ -30,12 +30,15 @@ export interface ILeaveProjectModal {
 }
 
 export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
-  const { project, isOpen } = props;
+  const { project, isOpen, onClose } = props;
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    user: { leaveProject },
+    trackEvent: { postHogEventTracker }
+  } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
 
@@ -48,6 +51,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
 
   const handleClose = () => {
     reset({ ...defaultValues });
+    onClose();
   };
 
   const onSubmit = async (data: any) => {
@@ -56,11 +60,16 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
     if (data) {
       if (data.projectName === project?.name) {
         if (data.confirmLeave === "Leave Project") {
-          return projectStore
-            .leaveProject(workspaceSlug.toString(), project.id)
+          return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
               handleClose();
               router.push(`/${workspaceSlug}/projects`);
+              postHogEventTracker(
+                "PROJECT_MEMBER_LEAVE",
+                {
+                  state: "SUCCESS"
+                }
+              );
             })
             .catch(() => {
               setToastAlert({
@@ -68,6 +77,12 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                 title: "Error!",
                 message: "Something went wrong please try again later.",
               });
+              postHogEventTracker(
+                "PROJECT_MEMBER_LEAVE",
+                {
+                  state: "FAILED"
+                }
+              );
             });
         } else {
           setToastAlert({

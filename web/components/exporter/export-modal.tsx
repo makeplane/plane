@@ -63,7 +63,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
         multiple: multiple,
       };
       await projectExportService
-        .csvExport(workspaceSlug as string, payload, user)
+        .csvExport(workspaceSlug as string, payload)
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);

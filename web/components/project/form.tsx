@@ -28,7 +28,7 @@ const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, trackEvent: { postHogEventTracker }, workspace: { currentWorkspace } } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // form data
@@ -61,7 +61,16 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
     return projectStore
       .updateProject(workspaceSlug.toString(), project.id, payload)
-      .then(() => {
+      .then((res) => {
+        postHogEventTracker(
+          'PROJECT_UPDATED',
+          { ...res, state: "SUCCESS" },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: res.workspace
+          }
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -69,6 +78,17 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         });
       })
       .catch((error) => {
+        postHogEventTracker(
+          'PROJECT_UPDATED',
+          {
+            state: "FAILED"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -253,7 +273,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                   value={value}
                   onChange={onChange}
                   label={selectedNetwork?.label ?? "Select network"}
-                  className="!border-custom-border-200 !shadow-none font-medium"
+                  buttonClassName="!border-custom-border-200 !shadow-none font-medium rounded-md"
                   input
                   disabled={!isAdmin}
                   optionsClassName="w-full"

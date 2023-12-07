@@ -1,0 +1,60 @@
+{
+  "name": "@plane/editor-extensions",
+  "version": "0.1.0",
+  "description": "Package that powers Plane's Editor with extensions",
+  "private": true,
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist/**/*"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup --minify",
+    "dev": "tsup --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "next": "12.3.2",
+    "next-themes": "^0.2.1",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "dependencies": {
+    "@tiptap/react": "^2.1.7",
+    "@tiptap/core": "^2.1.7",
+    "@tiptap/suggestion": "^2.0.4",
+    "@plane/editor-types": "*",
+    "@plane/editor-core": "*",
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4",
+    "lucide-react": "^0.244.0",
+    "tippy.js": "^6.3.7",
+    "@tiptap/pm": "^2.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.3",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "eslint": "^7.32.0",
+    "postcss": "^8.4.29",
+    "tailwind-config-custom": "*",
+    "tsconfig": "*",
+    "tsup": "^7.2.0",
+    "typescript": "4.9.5"
+  },
+  "keywords": [
+    "editor",
+    "rich-text",
+    "markdown",
+    "nextjs",
+    "react"
+  ]
+}

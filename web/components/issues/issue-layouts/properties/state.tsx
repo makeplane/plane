@@ -15,9 +15,9 @@ import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
 
 export interface IIssuePropertyState {
-  view?: "profile" | "workspace" | "project";
   projectId: string | null;
-  value: IState;
+  value: any | string | null;
+  defaultOptions?: any;
   onChange: (state: IState) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -29,9 +29,9 @@ export interface IIssuePropertyState {
 
 export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props) => {
   const {
-    view,
     projectId,
     value,
+    defaultOptions = [],
     onChange,
     disabled,
     hideDropdownArrow = false,
@@ -49,10 +49,9 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectStates: IState[] = [];
-  const projectStatesByGroup = projectStateStore.groupedProjectStates;
-  if (projectStatesByGroup)
-    for (const group in projectStatesByGroup) projectStates.push(...projectStatesByGroup[group]);
+  let projectStates: IState[] = defaultOptions;
+  const storeStates = projectId ? projectStateStore.states[projectId] : [];
+  if (storeStates && storeStates.length > 0) projectStates = storeStates;
 
   const fetchProjectStates = () => {
     setIsLoading(true);
@@ -61,6 +60,9 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
         projectId &&
         projectStateStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
+
+  const selectedOption: IState | undefined =
+    (projectStates && value && projectStates?.find((state) => state.id === value)) || undefined;
 
   const dropdownOptions = projectStates?.map((state) => ({
     value: state.id,
@@ -91,10 +93,10 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       : dropdownOptions?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = (
-    <Tooltip tooltipHeading="State" tooltipContent={value?.name ?? ""} position="top">
+    <Tooltip tooltipHeading="State" tooltipContent={selectedOption?.name ?? ""} position="top">
       <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
-        {value && <StateGroupIcon stateGroup={value.group} color={value.color} />}
-        <span className="truncate line-clamp-1 inline-block w-auto max-w-[100px]">{value?.name ?? "State"}</span>
+        {selectedOption && <StateGroupIcon stateGroup={selectedOption?.group as any} color={selectedOption?.color} />}
+        <span className="truncate line-clamp-1 inline-block">{selectedOption?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -104,8 +106,8 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       {workspaceSlug && projectId && (
         <Combobox
           as="div"
-          className={`text-left w-auto max-w-full ${className}`}
-          value={value.id}
+          className={`flex-shrink-0 text-left w-auto max-w-full ${className}`}
+          value={selectedOption?.id}
           onChange={(data: string) => {
             const selectedState = projectStates?.find((state) => state.id === data);
             if (selectedState) onChange(selectedState);
@@ -119,7 +121,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
               className={`flex items-center justify-between h-5 gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
-              onClick={() => !projectStatesByGroup && fetchProjectStates()}
+              onClick={() => !storeStates && fetchProjectStates()}
             >
               {label}
               {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

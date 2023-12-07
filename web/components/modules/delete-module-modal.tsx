@@ -24,9 +24,9 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
-  const { workspaceSlug, projectId, moduleId } = router.query;
+  const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
 
-  const { module: moduleStore } = useMobxStore();
+  const { module: moduleStore, trackEvent: { postHogEventTracker } } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -43,13 +43,19 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
     await moduleStore
       .deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
-        if (moduleId) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
+        if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();
         setToastAlert({
           type: "success",
           title: "Success!",
           message: "Module deleted successfully.",
         });
+        postHogEventTracker(
+          "MODULE_DELETED",
+          {
+            state: 'SUCCESS'
+          }
+        );
       })
       .catch(() => {
         setToastAlert({
@@ -57,6 +63,12 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
           title: "Error!",
           message: "Module could not be deleted. Please try again.",
         });
+        postHogEventTracker(
+          "MODULE_DELETED",
+          {
+            state: 'FAILED'
+          }
+        );
       })
       .finally(() => {
         setIsDeleteLoading(false);
@@ -102,7 +114,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete module-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the
                           data related to the module will be permanently removed. This action cannot be undone.
                         </p>
                       </div>

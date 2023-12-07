@@ -2,14 +2,14 @@ import { Fragment } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
+import { mutate } from "swr";
 import { Check, ChevronDown, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
-// services
-import { AuthService } from "services/auth.service";
 // ui
 import { Avatar, Loader } from "@plane/ui";
 // types
@@ -40,11 +40,9 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
   {
     name: "Settings",
     icon: Settings,
-    link: `/${workspaceSlug}/me/profile`,
+    link: "/profile",
   },
 ];
-
-const authService = new AuthService();
 
 export const WorkspaceSidebarDropdown = observer(() => {
   const router = useRouter();
@@ -53,10 +51,12 @@ export const WorkspaceSidebarDropdown = observer(() => {
   const {
     theme: { sidebarCollapsed },
     workspace: { workspaces, currentWorkspace: activeWorkspace },
-    user: { currentUser, updateCurrentUser },
+    user: { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut },
+    trackEvent: { setTrackElement },
   } = useMobxStore();
   // hooks
   const { setToastAlert } = useToast();
+  const { setTheme } = useTheme();
 
   const handleWorkspaceNavigation = (workspace: IWorkspace) => {
     updateCurrentUser({
@@ -75,9 +75,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
 
   const handleSignOut = async () => {
-    await authService
-      .signOut()
+    await signOut()
       .then(() => {
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
       })
       .catch(() =>
@@ -90,39 +91,43 @@ export const WorkspaceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex items-center gap-x-8 gap-y-2 px-4 pt-4">
+    <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
       <Menu as="div" className="relative col-span-4 text-left flex-grow h-full truncate">
         {({ open }) => (
           <>
-            <Menu.Button className="text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
+            <Menu.Button className="group/menu-button text-custom-sidebar-text-200 rounded-md hover:bg-custom-sidebar-background-80 text-sm font-medium focus:outline-none w-full h-full truncate">
               <div
-                className={`flex items-center gap-x-2 rounded p-1 truncate ${sidebarCollapsed ? "justify-center" : ""}`}
+                className={`flex items-center  gap-x-2 rounded p-1 truncate ${
+                  sidebarCollapsed ? "justify-center" : "justify-between"
+                }`}
               >
-                <div
-                  className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
-                    !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
-                  }`}
-                >
-                  {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
-                    <img
-                      src={activeWorkspace.logo}
-                      className="absolute top-0 left-0 h-full w-full object-cover rounded"
-                      alt="Workspace Logo"
-                    />
-                  ) : (
-                    activeWorkspace?.name?.charAt(0) ?? "..."
+                <div className="flex items-center gap-2 truncate">
+                  <div
+                    className={`relative grid h-6 w-6 place-items-center uppercase flex-shrink-0 ${
+                      !activeWorkspace?.logo && "rounded bg-custom-primary-500 text-white"
+                    }`}
+                  >
+                    {activeWorkspace?.logo && activeWorkspace.logo !== "" ? (
+                      <img
+                        src={activeWorkspace.logo}
+                        className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                        alt="Workspace Logo"
+                      />
+                    ) : (
+                      activeWorkspace?.name?.charAt(0) ?? "..."
+                    )}
+                  </div>
+
+                  {!sidebarCollapsed && (
+                    <h4 className="text-custom-text-100 font-medium text-base truncate">
+                      {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
+                    </h4>
                   )}
                 </div>
 
                 {!sidebarCollapsed && (
-                  <h4 className="text-custom-text-100 font-medium text-base truncate">
-                    {activeWorkspace?.name ? activeWorkspace.name : "Loading..."}
-                  </h4>
-                )}
-
-                {!sidebarCollapsed && (
                   <ChevronDown
-                    className={`h-4 w-4 mx-1 flex-shrink-0 ${
+                    className={`hidden group-hover/menu-button:block h-4 w-4 mx-1 flex-shrink-0 ${
                       open ? "rotate-180" : ""
                     } text-custom-sidebar-text-400 duration-300`}
                   />
@@ -139,12 +144,11 @@ export const WorkspaceSidebarDropdown = observer(() => {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items
-                className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md
-              border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none"
-              >
-                <div className="flex flex-col items-start justify-start gap-3 p-3">
-                  <span className="text-sm font-medium text-custom-sidebar-text-200">Workspace</span>
+              <Menu.Items className="fixed left-4 z-20 mt-1 flex flex-col w-full max-w-[17rem] origin-top-left rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 shadow-lg outline-none">
+                <div className="flex flex-col items-start justify-start gap-3 px-3 max-h-96 overflow-y-scroll">
+                  <span className="sticky top-0 bg-custom-background-100 pt-3 z-10 w-full h-full text-sm font-medium text-custom-sidebar-text-200">
+                    Workspace
+                  </span>
                   {workspaces ? (
                     <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
                       {workspaces.length > 0 ? (
@@ -193,17 +197,20 @@ export const WorkspaceSidebarDropdown = observer(() => {
                       ) : (
                         <p>No workspace found!</p>
                       )}
-                      <Menu.Item
-                        as="button"
-                        type="button"
-                        onClick={() => {
-                          router.push("/create-workspace");
-                        }}
-                        className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Create Workspace
-                      </Menu.Item>
+                      <div className="sticky bottom-0 bg-custom-background-100 z-10 w-full h-full">
+                        <Menu.Item
+                          as="button"
+                          type="button"
+                          onClick={() => {
+                            setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
+                            router.push("/create-workspace");
+                          }}
+                          className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
+                        >
+                          <Plus className="h-4 w-4" />
+                          Create Workspace
+                        </Menu.Item>
+                      </div>
                     </div>
                   ) : (
                     <div className="w-full">
@@ -274,15 +281,15 @@ export const WorkspaceSidebarDropdown = observer(() => {
                 {profileLinks(workspaceSlug?.toString() ?? "", currentUser?.id ?? "").map((link, index) => (
                   <Menu.Item key={index} as="button" type="button">
                     <Link href={link.link}>
-                      <a className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
+                      <span className="flex w-full items-center gap-2 rounded px-2 py-1 hover:bg-custom-sidebar-background-80">
                         <link.icon className="h-4 w-4 stroke-[1.5]" />
                         {link.name}
-                      </a>
+                      </span>
                     </Link>
                   </Menu.Item>
                 ))}
               </div>
-              <div className="pt-2">
+              <div className={`pt-2 ${isUserInstanceAdmin ? "pb-2" : ""}`}>
                 <Menu.Item
                   as="button"
                   type="button"
@@ -293,6 +300,17 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   Sign out
                 </Menu.Item>
               </div>
+              {isUserInstanceAdmin && (
+                <div className="p-2 pb-0">
+                  <Menu.Item as="button" type="button" className="w-full">
+                    <Link href="/god-mode">
+                      <span className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                        Enter God Mode
+                      </span>
+                    </Link>
+                  </Menu.Item>
+                </div>
+              )}
             </Menu.Items>
           </Transition>
         </Menu>

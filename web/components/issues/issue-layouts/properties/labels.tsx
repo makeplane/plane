@@ -1,8 +1,6 @@
 import { Fragment, useState } from "react";
-
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-
 // hooks
 import { usePopper } from "react-popper";
 // components
@@ -12,11 +10,12 @@ import { Check, ChevronDown, Search } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
+import { IIssueLabel } from "types";
 
 export interface IIssuePropertyLabels {
-  view?: "profile" | "workspace" | "project";
   projectId: string | null;
   value: string[];
+  defaultOptions?: any;
   onChange: (data: string[]) => void;
   disabled?: boolean;
   hideDropdownArrow?: boolean;
@@ -30,9 +29,9 @@ export interface IIssuePropertyLabels {
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
   const {
-    view,
     projectId,
     value,
+    defaultOptions = [],
     onChange,
     disabled,
     hideDropdownArrow = false,
@@ -44,7 +43,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     noLabelBorder = false,
   } = props;
 
-  const { workspace: workspaceStore, project: projectStore }: RootStore = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    projectLabel: { fetchProjectLabels, labels },
+  }: RootStore = useMobxStore();
   const workspaceSlug = workspaceStore?.workspaceSlug;
 
   const [query, setQuery] = useState("");
@@ -53,15 +55,18 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
 
-  const projectLabels = projectId && projectStore?.labels?.[projectId];
-
-  const fetchProjectLabels = () => {
+  const fetchLabels = () => {
     setIsLoading(true);
-    if (workspaceSlug && projectId)
-      projectStore.fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
+    if (workspaceSlug && projectId) fetchProjectLabels(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
-  const options = (projectLabels ? projectLabels : []).map((label) => ({
+  if (!value) return null;
+
+  let projectLabels: IIssueLabel[] = defaultOptions;
+  const storeLabels = projectId && labels ? labels[projectId] : [];
+  if (storeLabels && storeLabels.length > 0) projectLabels = storeLabels;
+
+  const options = projectLabels.map((label) => ({
     value: label.id,
     query: label.name,
     content: (
@@ -97,7 +102,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
       {value.length > 0 ? (
         value.length <= maxRender ? (
           <>
-            {(projectLabels ? projectLabels : [])
+            {projectLabels
               ?.filter((l) => value.includes(l.id))
               .map((label) => (
                 <Tooltip position="top" tooltipHeading="Labels" tooltipContent={label.name ?? ""}>
@@ -125,7 +130,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             <Tooltip
               position="top"
               tooltipHeading="Labels"
-              tooltipContent={(projectLabels ? projectLabels : [])
+              tooltipContent={projectLabels
                 ?.filter((l) => value.includes(l.id))
                 .map((l) => l.name)
                 .join(", ")}
@@ -169,7 +174,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
               ? "cursor-pointer"
               : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
-          onClick={() => !projectLabels && fetchProjectLabels()}
+          onClick={() => !storeLabels && fetchLabels()}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
@@ -201,10 +206,10 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
                 <Combobox.Option
                   key={option.value}
                   value={option.value}
-                  className={({ active, selected }) =>
-                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
-                      active ? "bg-custom-background-80" : ""
-                    } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
+                  className={({ selected }) =>
+                    `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 hover:bg-custom-background-80 ${
+                      selected ? "text-custom-text-100" : "text-custom-text-200"
+                    }`
                   }
                 >
                   {({ selected }) => (

@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 // hooks
 import useReloadConfirmations from "hooks/use-reload-confirmation";
-import { useDebouncedCallback } from "use-debounce";
+import debounce from "lodash/debounce";
 // components
 import { TextArea } from "@plane/ui";
 import { RichTextEditor } from "@plane/rich-text-editor";
@@ -21,19 +21,21 @@ export interface IssueDetailsProps {
   issue: {
     name: string;
     description_html: string;
+    id: string;
     project_id?: string;
   };
   workspaceSlug: string;
   handleFormSubmit: (value: IssueDescriptionFormValues) => Promise<void>;
   isAllowed: boolean;
+  isSubmitting: "submitting" | "submitted" | "saved";
+  setIsSubmitting: (value: "submitting" | "submitted" | "saved") => void;
 }
 
 const fileService = new FileService();
 
 export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
-  const { issue, handleFormSubmit, workspaceSlug, isAllowed } = props;
+  const { issue, handleFormSubmit, workspaceSlug, isAllowed, isSubmitting, setIsSubmitting } = props;
   // states
-  const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [characterLimit, setCharacterLimit] = useState(false);
 
   const { setShowAlert } = useReloadConfirmations();
@@ -54,12 +56,17 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   });
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const issueTitleCurrentValue = watch("name");
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issue.id,
+    description_html: issue.description_html,
+  });
+
   useEffect(() => {
-    if (localTitleValue === "" && issueTitleCurrentValue !== "") {
-      setLocalTitleValue(issueTitleCurrentValue);
+    if (issue.id) {
+      setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
+      setLocalTitleValue(issue.name);
     }
-  }, [issueTitleCurrentValue, localTitleValue]);
+  }, [issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -82,7 +89,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
-  }, [isSubmitting, setShowAlert]);
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   // reset form values
   useEffect(() => {
@@ -93,7 +100,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     });
   }, [issue, reset]);
 
-  const debouncedFormSave = useDebouncedCallback(async () => {
+  const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
   }, 1500);
 
@@ -143,14 +150,17 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => (
+          render={({ field: { onChange } }) => (
             <RichTextEditor
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
-              value={value}
+              restoreFile={fileService.restoreImage}
+              value={localIssueDescription.description_html}
+              rerenderOnPropsChange={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
+              dragDropEnabled
               customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
               noBorder={!isAllowed}
               onChange={(description: Object, description_html: string) => {
@@ -164,13 +174,6 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
             />
           )}
         />
-        <div
-          className={`absolute right-5 bottom-5 text-xs text-custom-text-200 border border-custom-border-400 rounded-xl w-[6.5rem] py-1 z-10 flex items-center justify-center ${
-            isSubmitting === "saved" ? "fadeOut" : "fadeIn"
-          }`}
-        >
-          {isSubmitting === "submitting" ? "Saving..." : "Saved"}
-        </div>
       </div>
     </div>
   );

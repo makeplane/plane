@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
-
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -21,11 +19,6 @@ export const GlobalViewsHeader: React.FC = observer(() => {
 
   const { globalViews: globalViewsStore } = useMobxStore();
 
-  useSWR(
-    workspaceSlug ? `GLOBAL_VIEWS_LIST_${workspaceSlug.toString()}` : null,
-    workspaceSlug ? () => globalViewsStore.fetchAllGlobalViews(workspaceSlug.toString()) : null
-  );
-
   // bring the active view to the centre of the header
   useEffect(() => {
     if (!globalViewId) return;
@@ -42,7 +35,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
       <div className="group flex items-center px-4 w-full overflow-x-scroll relative border-b border-custom-border-200">
         {DEFAULT_GLOBAL_VIEWS_LIST.map((tab) => (
           <Link key={tab.key} href={`/${workspaceSlug}/workspace-views/${tab.key}`}>
-            <a
+            <span
               className={`border-b-2 min-w-min p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
                 isTabSelected(tab.key)
                   ? "border-custom-primary-100 text-custom-primary-100"
@@ -50,13 +43,13 @@ export const GlobalViewsHeader: React.FC = observer(() => {
               }`}
             >
               {tab.label}
-            </a>
+            </span>
           </Link>
         ))}
 
         {globalViewsStore.globalViewsList?.map((view) => (
           <Link key={view.id} href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-            <a
+            <span
               id={`global-view-${view.id}`}
               className={`border-b-2 p-3 text-sm font-medium outline-none whitespace-nowrap flex-shrink-0 ${
                 view.id === globalViewId
@@ -65,7 +58,7 @@ export const GlobalViewsHeader: React.FC = observer(() => {
               }`}
             >
               {view.name}
-            </a>
+            </span>
           </Link>
         ))}
 

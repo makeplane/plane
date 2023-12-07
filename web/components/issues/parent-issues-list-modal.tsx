@@ -173,12 +173,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                             key={issue.id}
                             value={issue}
                             className={({ active, selected }) =>
-                              `group flex items-center justify-between gap-2 cursor-pointer select-none rounded-md px-3 py-2 text-custom-text-200 ${
+                              `group flex items-center justify-between gap-2 cursor-pointer select-none rounded-md px-3 py-2 text-custom-text-200 w-full ${
                                 active ? "bg-custom-background-80 text-custom-text-100" : ""
                               } ${selected ? "text-custom-text-100" : ""}`
                             }
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-grow truncate">
                               <span
                                 className="block h-1.5 w-1.5 flex-shrink-0 rounded-full"
                                 style={{
@@ -188,12 +188,12 @@ export const ParentIssuesListModal: React.FC<Props> = ({
                               <span className="flex-shrink-0 text-xs">
                                 {issue.project__identifier}-{issue.sequence_id}
                               </span>{" "}
-                              {issue.name}
+                              <span className="truncate">{issue.name}</span>
                             </div>
                             <a
                               href={`/${workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`}
                               target="_blank"
-                              className="group-hover:block hidden relative z-1 text-custom-text-200 hover:text-custom-text-100"
+                              className="group-hover:block hidden flex-shrink-0 relative z-1 text-custom-text-200 hover:text-custom-text-100"
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
                             >

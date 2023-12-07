@@ -17,12 +17,13 @@ export interface IKanBanProperties {
   columnId: string;
   issue: IIssue;
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
-  displayProperties: IIssueDisplayProperties;
+  displayProperties: IIssueDisplayProperties | null;
   showEmptyGroup: boolean;
+  isReadOnly: boolean;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, showEmptyGroup } = props;
+  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, isReadOnly } = props;
 
   const handleState = (state: IState) => {
     handleIssues(
@@ -87,9 +88,10 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       {displayProperties && displayProperties?.state && (
         <IssuePropertyState
           projectId={issue?.project_detail?.id || null}
-          value={issue?.state_detail || null}
+          value={issue?.state || null}
+          defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
           onChange={handleState}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
@@ -99,39 +101,53 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
         <IssuePropertyPriority
           value={issue?.priority || null}
           onChange={handlePriority}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
 
       {/* label */}
-      {displayProperties && displayProperties?.labels && (showEmptyGroup || issue?.labels.length > 0) && (
+      {displayProperties && displayProperties?.labels && (
         <IssuePropertyLabels
           projectId={issue?.project_detail?.id || null}
           value={issue?.labels || null}
+          defaultOptions={issue?.label_details ? issue.label_details : []}
           onChange={handleLabel}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
 
       {/* start date */}
-      {displayProperties && displayProperties?.start_date && (showEmptyGroup || issue?.start_date) && (
+      {displayProperties && displayProperties?.start_date && (
         <IssuePropertyDate
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
-          disabled={false}
+          disabled={isReadOnly}
           placeHolder="Start date"
         />
       )}
 
       {/* target/due date */}
-      {displayProperties && displayProperties?.due_date && (showEmptyGroup || issue?.target_date) && (
+      {displayProperties && displayProperties?.due_date && (
         <IssuePropertyDate
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
-          disabled={false}
+          disabled={isReadOnly}
           placeHolder="Target date"
+        />
+      )}
+
+      {/* assignee */}
+      {displayProperties && displayProperties?.assignee && (
+        <IssuePropertyAssignee
+          projectId={issue?.project_detail?.id || null}
+          value={issue?.assignees || null}
+          defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
+          hideDropdownArrow
+          onChange={handleAssignee}
+          disabled={isReadOnly}
+          multiple
         />
       )}
 
@@ -141,14 +157,14 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           projectId={issue?.project_detail?.id || null}
           value={issue?.estimate_point || null}
           onChange={handleEstimate}
-          disabled={false}
+          disabled={isReadOnly}
           hideDropdownArrow
         />
       )}
 
       {/* extra render properties */}
       {/* sub-issues */}
-      {displayProperties && displayProperties?.sub_issue_count && (
+      {displayProperties && displayProperties?.sub_issue_count && !!issue?.sub_issues_count && (
         <Tooltip tooltipHeading="Sub-issues" tooltipContent={`${issue.sub_issues_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Layers className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -158,7 +174,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       )}
 
       {/* attachments */}
-      {displayProperties && displayProperties?.attachment_count && (
+      {displayProperties && displayProperties?.attachment_count && !!issue?.attachment_count && (
         <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
@@ -168,25 +184,13 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
       )}
 
       {/* link */}
-      {displayProperties && displayProperties?.link && (
+      {displayProperties && displayProperties?.link && !!issue?.link_count && (
         <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
           <div className="flex-shrink-0 border-[0.5px] border-custom-border-300 overflow-hidden rounded flex justify-center items-center gap-2 px-2.5 py-1 h-5">
             <Link className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-xs">{issue.link_count}</div>
           </div>
         </Tooltip>
-      )}
-
-      {/* assignee */}
-      {displayProperties && displayProperties?.assignee && (showEmptyGroup || issue?.assignees.length > 0) && (
-        <IssuePropertyAssignee
-          projectId={issue?.project_detail?.id || null}
-          value={issue?.assignees || null}
-          hideDropdownArrow
-          onChange={handleAssignee}
-          disabled={false}
-          multiple
-        />
       )}
     </div>
   );

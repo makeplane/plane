@@ -5,6 +5,7 @@ import { RootStore } from "../root";
 import { InboxService } from "services/inbox.service";
 // types
 import { IInbox, IInboxFilterOptions, IInboxQueryParams } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface IInboxFiltersStore {
   // states
@@ -132,7 +133,10 @@ export class InboxFiltersStore implements IInboxFiltersStore {
         };
       });
 
-      await this.inboxService.patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps });
+      const userRole = this.rootStore.user?.currentProjectRole || EUserWorkspaceRoles.GUEST;
+      if (userRole > EUserWorkspaceRoles.VIEWER) {
+        await this.inboxService.patchInbox(workspaceSlug, projectId, inboxId, { view_props: newViewProps });
+      }
     } catch (error) {
       runInAction(() => {
         this.error = error;

@@ -27,7 +27,7 @@ const defaultValues = {
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
   // store
-  const { project: projectStore } = useMobxStore();
+  const { project: projectStore, workspace: { currentWorkspace }, trackEvent: { postHogEventTracker } } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -62,6 +62,17 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         if (projectId && projectId.toString() === project.id) router.push(`/${workspaceSlug}/projects`);
 
         handleClose();
+        postHogEventTracker(
+          'PROJECT_DELETED',
+          {
+            state: "SUCCESS"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -69,6 +80,17 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         });
       })
       .catch(() => {
+        postHogEventTracker(
+          'PROJECT_DELETED',
+          {
+            state: "FAILED"
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
         setToastAlert({
           type: "error",
           title: "Error!",
@@ -139,6 +161,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           hasError={Boolean(errors.projectName)}
                           placeholder="Project name"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />
@@ -162,6 +185,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           hasError={Boolean(errors.confirmDelete)}
                           placeholder="Enter 'delete my project'"
                           className="mt-2 w-full"
+                          autoComplete="off"
                         />
                       )}
                     />

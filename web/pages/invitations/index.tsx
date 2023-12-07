@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { useTheme } from "next-themes";
+import { observer } from "mobx-react-lite";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { UserService } from "services/user.service";
@@ -30,14 +31,23 @@ import type { IWorkspaceMemberInvitation } from "types";
 import { ROLE } from "constants/workspace";
 // components
 import { EmptyState } from "components/common";
+// mobx-store
+import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const workspaceService = new WorkspaceService();
 const userService = new UserService();
 
-const UserInvitationsPage: NextPageWithLayout = () => {
+const UserInvitationsPage: NextPageWithLayout = observer(() => {
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
+
+  // store
+  const {
+    workspace: { workspaceSlug },
+    user: { currentUserSettings },
+    trackEvent: { postHogEventTracker }
+  } = useMobxStore();
 
   const router = useRouter();
 
@@ -50,6 +60,12 @@ const UserInvitationsPage: NextPageWithLayout = () => {
   const { data: invitations } = useSWR<IWorkspaceMemberInvitation[]>("USER_WORKSPACE_INVITATIONS", () =>
     workspaceService.userWorkspaceInvitations()
   );
+
+  const redirectWorkspaceSlug =
+    workspaceSlug ||
+    currentUserSettings?.workspace?.last_workspace_slug ||
+    currentUserSettings?.workspace?.fallback_workspace_slug ||
+    "";
 
   const handleInvitation = (workspace_invitation: IWorkspaceMemberInvitation, action: "accepted" | "withdraw") => {
     if (action === "accepted") {
@@ -73,10 +89,18 @@ const UserInvitationsPage: NextPageWithLayout = () => {
 
     workspaceService
       .joinWorkspaces({ invitations: invitationsRespond })
-      .then(() => {
+      .then((res) => {
         mutate("USER_WORKSPACES");
         const firstInviteId = invitationsRespond[0];
         const redirectWorkspace = invitations?.find((i) => i.id === firstInviteId)?.workspace;
+        postHogEventTracker(
+          "MEMBER_ACCEPTED",
+          {
+            ...res,
+            state: "SUCCESS",
+            accepted_from: "App"
+          }
+        );
         userService
           .updateUser({ last_workspace_id: redirectWorkspace?.id })
           .then(() => {
@@ -132,11 +156,10 @@ const UserInvitationsPage: NextPageWithLayout = () => {
                   return (
                     <div
                       key={invitation.id}
-                      className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${
-                        isSelected
+                      className={`flex cursor-pointer items-center gap-2 border py-5 px-3.5 rounded ${isSelected
                           ? "border-custom-primary-100"
                           : "border-custom-border-200 hover:bg-custom-background-80"
-                      }`}
+                        }`}
                       onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                     >
                       <div className="flex-shrink-0">
@@ -180,12 +203,12 @@ const UserInvitationsPage: NextPageWithLayout = () => {
                 >
                   Accept & Join
                 </Button>
-                <Link href="/">
-                  <a>
+                <Link href={`/${redirectWorkspaceSlug}`}>
+                  <span>
                     <Button variant="neutral-primary" size="md">
                       Go Home
                     </Button>
-                  </a>
+                  </span>
                 </Link>
               </div>
             </div>
@@ -197,7 +220,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
               description="You can see here if someone invites you to a workspace."
               image={emptyInvitation}
               primaryButton={{
-                text: "Back to Dashboard",
+                text: "Back to dashboard",
                 onClick: () => router.push("/"),
               }}
             />
@@ -206,7 +229,7 @@ const UserInvitationsPage: NextPageWithLayout = () => {
       ) : null}
     </div>
   );
-};
+});
 
 UserInvitationsPage.getLayout = function getLayout(page: ReactElement) {
   return (

@@ -87,7 +87,7 @@ type Props = {
 const integrationService = new IntegrationService();
 const githubIntegrationService = new GithubIntegrationService();
 
-export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
+export const GithubImporterRoot: React.FC<Props> = () => {
   const [currentStep, setCurrentStep] = useState<IIntegrationData>({
     state: "import-configure",
   });
@@ -147,7 +147,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
     };
 
     await githubIntegrationService
-      .createGithubServiceImport(workspaceSlug as string, payload, user)
+      .createGithubServiceImport(workspaceSlug as string, payload)
       .then(() => {
         router.push(`/${workspaceSlug}/settings/imports`);
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string));
@@ -163,12 +163,12 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
 
   return (
     <form onSubmit={handleSubmit(createGithubImporterService)}>
-      <div className="space-y-2">
+      <div className="space-y-2 mt-4">
         <Link href={`/${workspaceSlug}/settings/imports`}>
-          <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+          <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
             <ArrowLeft className="h-3 w-3" />
             <div>Cancel import & go back</div>
-          </div>
+          </span>
         </Link>
 
         <div className="space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
@@ -191,9 +191,7 @@ export const GithubImporterRoot: React.FC<Props> = ({ user }) => {
                     }`}
                   >
                     <integration.icon
-                      width="18px"
-                      height="18px"
-                      color={index <= activeIntegrationState() ? "#ffffff" : "#d1d5db"}
+                      className={`w-5 h-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
                     />
                   </div>
                   {index < integrationWorkflowData.length - 1 && (

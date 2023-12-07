@@ -9,12 +9,17 @@ import { CreateUpdateDraftIssueModal } from "components/issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
+import { EProjectStore } from "store/command-palette.store";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
 
-  const { theme: themeStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    theme: themeStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
 
@@ -50,7 +55,10 @@ export const WorkspaceSidebarQuickAction = observer(() => {
             className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none ${
               isSidebarCollapsed ? "justify-center" : ""
             }`}
-            onClick={() => commandPaletteStore.toggleCreateIssueModal(true)}
+            onClick={() => {
+              setTrackElement("APP_SIDEBAR_QUICK_ACTIONS");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+            }}
           >
             <PenSquare className="h-4 w-4 text-custom-sidebar-text-300" />
             {!isSidebarCollapsed && <span className="text-sm font-medium">New Issue</span>}

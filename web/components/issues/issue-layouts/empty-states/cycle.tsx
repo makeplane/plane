@@ -14,6 +14,7 @@ import { Button } from "@plane/ui";
 import emptyIssue from "public/empty-state/issue.svg";
 // types
 import { ISearchIssueResponse } from "types";
+import { EProjectStore } from "store/command-palette.store";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -26,7 +27,11 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
 
-  const { cycleIssue: cycleIssueStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    cycleIssues: cycleIssueStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -35,15 +40,13 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
 
     const issueIds = data.map((i) => i.id);
 
-    await cycleIssueStore
-      .addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds)
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Selected issues could not be added to the cycle. Please try again.",
-        });
+    await cycleIssueStore.addIssueToCycle(workspaceSlug.toString(), cycleId.toString(), issueIds).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Selected issues could not be added to the cycle. Please try again.",
       });
+    });
   };
 
   return (
@@ -62,7 +65,10 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
           primaryButton={{
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
-            onClick: () => commandPaletteStore.toggleCreateIssueModal(true),
+            onClick: () => {
+              setTrackElement("CYCLE_EMPTY_STATE");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+            },
           }}
           secondaryButton={
             <Button

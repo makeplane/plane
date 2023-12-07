@@ -4,7 +4,15 @@ import JiraLogo from "public/services/jira.svg";
 import CSVLogo from "public/services/csv.svg";
 import ExcelLogo from "public/services/excel.svg";
 import JSONLogo from "public/services/json.svg";
+// types
 import { TStaticViewTypes } from "types";
+
+export enum EUserWorkspaceRoles {
+  GUEST = 5,
+  VIEWER = 10,
+  MEMBER = 15,
+  ADMIN = 20,
+}
 
 export const ROLE = {
   5: "Guest",
@@ -92,17 +100,63 @@ export const DEFAULT_GLOBAL_VIEWS_LIST: {
 ];
 
 export const RESTRICTED_URLS = [
-  "api",
-  "installations",
   "404",
+  "accounts",
+  "api",
   "create-workspace",
   "error",
+  "god-mode",
+  "installations",
   "invitations",
-  "magic-sign-in",
   "onboarding",
   "profile",
-  "reset-password",
-  "sign-up",
   "spaces",
-  "workspace-member-invitation",
+  "workspace-invitations",
+];
+
+export const WORKSPACE_SETTINGS_LINKS: {
+  label: string;
+  href: string;
+  access: EUserWorkspaceRoles;
+}[] = [
+  {
+    label: "General",
+    href: `/settings`,
+    access: EUserWorkspaceRoles.GUEST,
+  },
+  {
+    label: "Members",
+    href: `/settings/members`,
+    access: EUserWorkspaceRoles.GUEST,
+  },
+  {
+    label: "Billing and plans",
+    href: `/settings/billing`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "Integrations",
+    href: `/settings/integrations`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "Imports",
+    href: `/settings/imports`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "Exports",
+    href: `/settings/exports`,
+    access: EUserWorkspaceRoles.MEMBER,
+  },
+  {
+    label: "Webhooks",
+    href: `/settings/webhooks`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
+  {
+    label: "API tokens",
+    href: `/settings/api-tokens`,
+    access: EUserWorkspaceRoles.ADMIN,
+  },
 ];

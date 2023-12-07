@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 // services
 import { IssueService, IssueArchiveService } from "services/issue";
 // hooks
-import useUserAuth from "hooks/use-user-auth";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -45,7 +44,6 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
   // states
   const [isRestoring, setIsRestoring] = useState(false);
   // hooks
-  const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
   const { data: issueDetails, mutate: mutateIssueDetails } = useSWR<IIssue | undefined>(
@@ -86,7 +84,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
       };
 
       await issueService
-        .patchIssue(workspaceSlug as string, projectId as string, archivedIssueId as string, payload, user)
+        .patchIssue(workspaceSlug as string, projectId as string, archivedIssueId as string, payload)
         .then(() => {
           mutateIssueDetails();
           mutate(PROJECT_ISSUES_ACTIVITY(archivedIssueId as string));
@@ -95,7 +93,7 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
           console.error(e);
         });
     },
-    [workspaceSlug, archivedIssueId, projectId, mutateIssueDetails, user]
+    [workspaceSlug, archivedIssueId, projectId, mutateIssueDetails]
   );
 
   useEffect(() => {

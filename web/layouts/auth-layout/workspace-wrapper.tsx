@@ -19,7 +19,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
     project: { fetchProjects },
     workspace: { fetchWorkspaceLabels },
-    workspaceMember: { fetchWorkspaceMembers },
+    workspaceMember: { fetchWorkspaceMembers, fetchWorkspaceUserProjectsRole },
   } = useMobxStore();
 
   // router
@@ -44,6 +44,11 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
+  );
+  // fetch workspace user projects role
+  useSWR(
+    workspaceSlug ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceUserProjectsRole(workspaceSlug.toString()) : null
   );
 
   // while data is being loaded
@@ -71,18 +76,18 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
             </div>
             <div className="flex items-center justify-center gap-2">
               <Link href="/invitations">
-                <a>
+                <span>
                   <Button variant="neutral-primary" size="sm">
                     Check pending invites
                   </Button>
-                </a>
+                </span>
               </Link>
               <Link href="/create-workspace">
-                <a>
+                <span>
                   <Button variant="primary" size="sm">
                     Create new workspace
                   </Button>
-                </a>
+                </span>
               </Link>
             </div>
           </div>

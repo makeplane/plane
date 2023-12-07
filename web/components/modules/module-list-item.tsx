@@ -128,7 +128,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <a className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
+        <div className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
           <div className="flex items-center gap-3 w-full truncate">
             <div className="flex items-center gap-4 truncate">
               <span className="flex-shrink-0">
@@ -139,6 +139,8 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
                     ) : (
                       <span className="text-sm text-custom-primary-100">{`!`}</span>
                     )
+                  ) : progress === 100 ? (
+                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
@@ -157,7 +159,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
             <div className="flex items-center justify-center">
               {moduleStatus && (
                 <span
-                  className={`flex items-center justify-center text-xs h-6 w-20 rounded-sm ${moduleStatus.textColor} ${moduleStatus.bgColor}`}
+                  className="flex items-center justify-center text-xs text-center h-6 w-20 rounded-sm"
+                  style={{
+                    color: moduleStatus.color,
+                    backgroundColor: `${moduleStatus.color}20`,
+                  }}
                 >
                   {moduleStatus.label}
                 </span>
@@ -219,7 +225,7 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               </CustomMenu.MenuItem>
             </CustomMenu>
           </div>
-        </a>
+        </div>
       </Link>
     </>
   );

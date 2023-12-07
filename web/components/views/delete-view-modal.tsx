@@ -104,7 +104,7 @@ export const DeleteProjectViewModal: React.FC<Props> = observer((props) => {
                       <div className="mt-2">
                         <p className="text-sm text-custom-text-200">
                           Are you sure you want to delete view-{" "}
-                          <span className="break-words font-medium text-custom-text-100">{data?.name}</span>? All of the
+                          <span className="break-all font-medium text-custom-text-100">{data?.name}</span>? All of the
                           data related to the view will be permanently removed. This action cannot be undone.
                         </p>
                       </div>

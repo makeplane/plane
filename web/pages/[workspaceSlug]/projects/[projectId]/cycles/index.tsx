@@ -11,10 +11,9 @@ import { AppLayout } from "layouts/app-layout";
 import { CyclesHeader } from "components/headers";
 import { CyclesView, ActiveCycleDetails, CycleCreateUpdateModal } from "components/cycles";
 // ui
-import { EmptyState } from "components/common";
 import { Tooltip } from "@plane/ui";
 // images
-import emptyCycle from "public/empty-state/cycle.svg";
+import emptyCycle from "public/empty-state/empty_cycles.webp";
 // types
 import { TCycleView, TCycleLayout } from "types";
 import { NextPageWithLayout } from "types/app";
@@ -22,12 +21,14 @@ import { NextPageWithLayout } from "types/app";
 import { CYCLE_TAB_LIST, CYCLE_VIEW_LAYOUTS } from "constants/cycle";
 // lib cookie
 import { setLocalStorage, getLocalStorage } from "lib/local-storage";
+import { NewEmptyState } from "components/common/new-empty-state";
+// TODO: use-local-storage  hook instead of lib file.
 
 const ProjectCyclesPage: NextPageWithLayout = observer(() => {
   const [createModal, setCreateModal] = useState(false);
   // store
-  const { project: projectStore, cycle: cycleStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const { cycle: cycleStore } = useMobxStore();
+  const { projectCycles } = cycleStore;
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekCycle } = router.query;
@@ -72,6 +73,7 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
 
   const cycleView = cycleStore?.cycleView;
   const cycleLayout = cycleStore?.cycleLayout;
+  const totalCycles = projectCycles?.length ?? 0;
 
   if (!workspaceSlug || !projectId) return null;
 
@@ -83,15 +85,21 @@ const ProjectCyclesPage: NextPageWithLayout = observer(() => {
         isOpen={createModal}
         handleClose={() => setCreateModal(false)}
       />
-      {currentProjectDetails?.total_cycles === 0 ? (
+      {totalCycles === 0 ? (
         <div className="h-full grid place-items-center">
-          <EmptyState
-            title="Plan your project with cycles"
-            description="Cycle is a custom time period in which a team works to complete items on their backlog."
+          <NewEmptyState
+            title="Group and timebox your work in Cycles."
+            description="Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team."
             image={emptyCycle}
+            comicBox={{
+              title: "Cycles are repetitive time-boxes.",
+              direction: "right",
+              description:
+                "A sprint, an iteration, and or any other term you use for weekly or fortnightly tracking of work is a cycle.",
+            }}
             primaryButton={{
               icon: <Plus className="h-4 w-4" />,
-              text: "New Cycle",
+              text: "Set your first cycle",
               onClick: () => {
                 setCreateModal(true);
               },

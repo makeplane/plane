@@ -8,10 +8,8 @@ import { ProjectService, ProjectMemberService } from "services/project";
 import { CycleService } from "services/cycle.service";
 import { ModuleService } from "services/module.service";
 import { ViewService } from "services/view.service";
-// hooks
-import useUserAuth from "hooks/use-user-auth";
 // types
-import { IIssueFilterOptions, IProjectMember, IUser, IIssueDisplayFilterOptions, IProjectViewProps } from "types";
+import { IIssueFilterOptions, IProjectMember, IIssueDisplayFilterOptions, IProjectViewProps } from "types";
 // fetch-keys
 import { CYCLE_DETAILS, MODULE_DETAILS, USER_PROJECT_VIEW, VIEW_DETAILS } from "constants/fetch-keys";
 
@@ -134,58 +132,22 @@ const saveDataToServer = async (workspaceSlug: string, projectId: string, state:
   });
 };
 
-const saveCycleFilters = async (
-  workspaceSlug: string,
-  projectId: string,
-  cycleId: string,
-  state: any,
-  user: IUser | undefined
-) => {
-  await cycleService.patchCycle(
-    workspaceSlug,
-    projectId,
-    cycleId,
-    {
-      ...state,
-    },
-    user
-  );
+const saveCycleFilters = async (workspaceSlug: string, projectId: string, cycleId: string, state: any) => {
+  await cycleService.patchCycle(workspaceSlug, projectId, cycleId, {
+    ...state,
+  });
 };
 
-const saveModuleFilters = async (
-  workspaceSlug: string,
-  projectId: string,
-  moduleId: string,
-  state: any,
-  user: IUser | undefined
-) => {
-  await moduleService.patchModule(
-    workspaceSlug,
-    projectId,
-    moduleId,
-    {
-      ...state,
-    },
-    user
-  );
+const saveModuleFilters = async (workspaceSlug: string, projectId: string, moduleId: string, state: any) => {
+  await moduleService.patchModule(workspaceSlug, projectId, moduleId, {
+    ...state,
+  });
 };
 
-const saveViewFilters = async (
-  workspaceSlug: string,
-  projectId: string,
-  viewId: string,
-  state: any,
-  user: IUser | undefined
-) => {
-  await viewService.patchView(
-    workspaceSlug,
-    projectId,
-    viewId,
-    {
-      ...state,
-    },
-    user
-  );
+const saveViewFilters = async (workspaceSlug: string, projectId: string, viewId: string, state: any) => {
+  await viewService.patchView(workspaceSlug, projectId, viewId, {
+    ...state,
+  });
 };
 
 const setNewDefault = async (workspaceSlug: string, projectId: string, state: any) => {
@@ -213,8 +175,6 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
 
   const router = useRouter();
   const { workspaceSlug, projectId, cycleId, moduleId, viewId } = router.query;
-
-  const { user } = useUserAuth();
 
   const { data: myViewProps, mutate: mutateMyViewProps } = useSWR(
     workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId as string) : null,
@@ -342,20 +302,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
 
-        saveCycleFilters(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          cycleId.toString(),
-          {
-            view_props: {
-              filters: {
-                ...state.filters,
-                ...property,
-              },
+        saveCycleFilters(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), {
+          view_props: {
+            filters: {
+              ...state.filters,
+              ...property,
             },
           },
-          user
-        );
+        });
       } else if (moduleId) {
         mutateModuleDetails((prevData: any) => {
           if (!prevData) return prevData;
@@ -371,20 +325,14 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
 
-        saveModuleFilters(
-          workspaceSlug.toString(),
-          projectId.toString(),
-          moduleId.toString(),
-          {
-            view_props: {
-              filters: {
-                ...state.filters,
-                ...property,
-              },
+        saveModuleFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), {
+          view_props: {
+            filters: {
+              ...state.filters,
+              ...property,
             },
           },
-          user
-        );
+        });
       } else if (viewId) {
         mutateViewDetails((prevData: any) => {
           if (!prevData) return prevData;
@@ -397,18 +345,12 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           };
         }, false);
         if (saveToServer)
-          saveViewFilters(
-            workspaceSlug as string,
-            projectId as string,
-            viewId as string,
-            {
-              query_data: {
-                ...state.filters,
-                ...property,
-              },
+          saveViewFilters(workspaceSlug as string, projectId as string, viewId as string, {
+            query_data: {
+              ...state.filters,
+              ...property,
             },
-            user
-          );
+          });
       } else {
         mutateMyViewProps((prevData: any) => {
           if (!prevData) return prevData;
@@ -445,7 +387,6 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
       mutateModuleDetails,
       viewId,
       mutateViewDetails,
-      user,
     ]
   );
 

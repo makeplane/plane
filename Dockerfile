@@ -43,8 +43,6 @@ FROM python:3.11.1-alpine3.17 AS backend
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 
-ENV DJANGO_SETTINGS_MODULE plane.settings.production
-ENV DOCKERIZED 1
 
 WORKDIR /code
 
@@ -81,7 +79,6 @@ COPY apiserver/manage.py manage.py
 COPY apiserver/plane plane/
 COPY apiserver/templates templates/
 
-COPY apiserver/gunicorn.config.py ./
 RUN apk --no-cache add "bash~=5.2"
 COPY apiserver/bin ./bin/
 

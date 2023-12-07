@@ -1,72 +1,59 @@
-import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { CalendarChart, ProjectIssueQuickActions } from "components/issues";
+import { ProjectIssueQuickActions } from "components/issues";
 // types
-import { IIssueGroupedStructure } from "store/issue";
 import { IIssue } from "types";
+import { EIssueActions } from "../../types";
+import { BaseCalendarRoot } from "../base-calendar-root";
 
 export const ProjectViewCalendarLayout: React.FC = observer(() => {
   const {
-    projectViewIssues: projectViewIssuesStore,
-    issueFilter: issueFilterStore,
-    issueDetail: issueDetailStore,
+    viewIssues: projectViewIssuesStore,
+    viewIssuesFilter: projectIssueViewFiltersStore,
     projectViewIssueCalendarView: projectViewIssueCalendarViewStore,
+    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, projectId } = router.query;
 
-  const onDragEnd = (result: DropResult) => {
-    if (!result) return;
-
-    // return if not dropped on the correct place
-    if (!result.destination) return;
-
-    // return if dropped on the same date
-    if (result.destination.droppableId === result.source.droppableId) return;
-
-    projectViewIssueCalendarViewStore?.handleDragDrop(result.source, result.destination);
-  };
-
-  const issues = projectViewIssuesStore.getIssues;
-
-  const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: "update" | "delete") => {
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      if (action === "update") {
-        projectViewIssuesStore.updateIssueStructure(date, null, issue);
-        issueDetailStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
-      } else {
-        projectViewIssuesStore.deleteIssue(date, null, issue);
-        issueDetailStore.deleteIssue(workspaceSlug.toString(), issue.project, issue.id);
-      }
+      await projectViewIssuesStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
-    [projectViewIssuesStore, issueDetailStore, workspaceSlug]
-  );
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
+
+      await projectViewIssuesStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+    },
+  };
+
+  const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
+    if (workspaceSlug && projectId)
+      handleCalenderDragDrop(
+        source,
+        destination,
+        workspaceSlug.toString(),
+        projectId.toString(),
+        projectViewIssuesStore,
+        issues,
+        issueWithIds
+      );
+  };
 
   return (
-    <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
-      <DragDropContext onDragEnd={onDragEnd}>
-        <CalendarChart
-          issues={issues as IIssueGroupedStructure | null}
-          layout={issueFilterStore.userDisplayFilters.calendar?.layout}
-          showWeekends={issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false}
-          handleIssues={handleIssues}
-          quickActions={(issue) => (
-            <ProjectIssueQuickActions
-              issue={issue}
-              handleDelete={async () => handleIssues(issue.target_date ?? "", issue, "delete")}
-              handleUpdate={async (data) => handleIssues(issue.target_date ?? "", data, "update")}
-            />
-          )}
-        />
-      </DragDropContext>
-    </div>
+    <BaseCalendarRoot
+      issueStore={projectViewIssuesStore}
+      issuesFilterStore={projectIssueViewFiltersStore}
+      calendarViewStore={projectViewIssueCalendarViewStore}
+      QuickActions={ProjectIssueQuickActions}
+      issueActions={issueActions}
+      handleDragDrop={handleDragDrop}
+    />
   );
 });

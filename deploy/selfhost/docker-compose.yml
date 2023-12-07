@@ -2,15 +2,20 @@ version: "3.8"
 
 x-app-env : &app-env
   environment:
-    - NGINX_PORT=${NGINX_PORT:-84}
+    - NGINX_PORT=${NGINX_PORT:-80}
+    - WEB_URL=${WEB_URL:-http://localhost}
     - DEBUG=${DEBUG:-0}
-    - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.selfhosted}
-    - NEXT_PUBLIC_ENABLE_OAUTH=${NEXT_PUBLIC_ENABLE_OAUTH:-0}
-    - NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL:-http://localhost/spaces}
+    - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.production} # deprecated
+    - NEXT_PUBLIC_ENABLE_OAUTH=${NEXT_PUBLIC_ENABLE_OAUTH:-0} # deprecated
+    - NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL:-http://localhost/spaces} # deprecated
     - SENTRY_DSN=${SENTRY_DSN:-""}
+    - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-"production"}
+    - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-""}
+    - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID:-""}
     - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET:-""}
-    - DOCKERIZED=${DOCKERIZED:-1}
-      # Gunicorn Workers
+    - DOCKERIZED=${DOCKERIZED:-1}  # deprecated
+    - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-""}
+    # Gunicorn Workers
     - GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
     #DB SETTINGS
     - PGHOST=${PGHOST:-plane-db}
@@ -24,24 +29,25 @@ x-app-env : &app-env
     - REDIS_HOST=${REDIS_HOST:-plane-redis}
     - REDIS_PORT=${REDIS_PORT:-6379}
     - REDIS_URL=${REDIS_URL:-redis://${REDIS_HOST}:6379/}
-    # EMAIL SETTINGS
+    # EMAIL SETTINGS - Deprecated can be configured through admin panel
     - EMAIL_HOST=${EMAIL_HOST:-""}
     - EMAIL_HOST_USER=${EMAIL_HOST_USER:-""}
     - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-""}
     - EMAIL_PORT=${EMAIL_PORT:-587}
-    - EMAIL_FROM=${EMAIL_FROM:-"Team Plane &lt;team@mailer.plane.so&gt;"}
+    - EMAIL_FROM=${EMAIL_FROM:-"Team Plane <team@mailer.plane.so>"}
     - EMAIL_USE_TLS=${EMAIL_USE_TLS:-1}
     - EMAIL_USE_SSL=${EMAIL_USE_SSL:-0}
     - DEFAULT_EMAIL=${DEFAULT_EMAIL:-captain@plane.so}
     - DEFAULT_PASSWORD=${DEFAULT_PASSWORD:-password123}
-    # OPENAI SETTINGS
+    # OPENAI SETTINGS - Deprecated can be configured through admin panel
     - OPENAI_API_BASE=${OPENAI_API_BASE:-https://api.openai.com/v1}
     - OPENAI_API_KEY=${OPENAI_API_KEY:-"sk-"}
     - GPT_ENGINE=${GPT_ENGINE:-"gpt-3.5-turbo"}
-    # LOGIN/SIGNUP SETTINGS
+    # LOGIN/SIGNUP SETTINGS - Deprecated can be configured through admin panel
     - ENABLE_SIGNUP=${ENABLE_SIGNUP:-1}
     - ENABLE_EMAIL_PASSWORD=${ENABLE_EMAIL_PASSWORD:-1}
     - ENABLE_MAGIC_LINK_LOGIN=${ENABLE_MAGIC_LINK_LOGIN:-0}
+    # Application secret
     - SECRET_KEY=${SECRET_KEY:-60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5}
     # DATA STORE SETTINGS
     - USE_MINIO=${USE_MINIO:-1}
@@ -54,6 +60,8 @@ x-app-env : &app-env
     - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-"secret-key"}
     - BUCKET_NAME=${BUCKET_NAME:-uploads}
     - FILE_SIZE_LIMIT=${FILE_SIZE_LIMIT:-5242880}
+
+
 
 services:
   web:
@@ -95,7 +103,6 @@ services:
 
   worker:
     <<: *app-env
-    container_name: bgworker
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
@@ -107,7 +114,6 @@ services:
 
   beat-worker:
     <<: *app-env
-    container_name: beatworker
     platform: linux/amd64
     image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
@@ -119,7 +125,6 @@ services:
 
   plane-db:
     <<: *app-env
-    container_name: plane-db
     image: postgres:15.2-alpine
     restart: unless-stopped
     command: postgres -c 'max_connections=1000'
@@ -128,7 +133,6 @@ services:
     
   plane-redis:
     <<: *app-env
-    container_name: plane-redis
     image: redis:6.2.7-alpine
     restart: unless-stopped
     volumes:
@@ -136,25 +140,15 @@ services:
 
   plane-minio:
     <<: *app-env
-    container_name: plane-minio
     image: minio/minio
     restart: unless-stopped
     command: server /export --console-address ":9090"
     volumes:
       - uploads:/export
 
-  createbuckets:
-    <<: *app-env
-    image: minio/mc
-    entrypoint: >
-      /bin/sh -c " /usr/bin/mc config host add plane-minio http://plane-minio:9000 \$AWS_ACCESS_KEY_ID \$AWS_SECRET_ACCESS_KEY; /usr/bin/mc mb plane-minio/\$AWS_S3_BUCKET_NAME; /usr/bin/mc anonymous set download plane-minio/\$AWS_S3_BUCKET_NAME; exit 0; "
-    depends_on:
-      - plane-minio
-
   # Comment this if you already have a reverse proxy running
   proxy:
     <<: *app-env
-    container_name: proxy
     platform: linux/amd64
     image: makeplane/plane-proxy:${APP_RELEASE:-latest}
     ports:

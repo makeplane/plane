@@ -1,31 +1,28 @@
 // services
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // type
 import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
+import { IIssueResponse } from "store/issues/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
-
-const trackEventService = new TrackEventService();
 
 export class IssueService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async createIssue(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<any> {
+  async createIssue(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, data)
-      .then((response) => {
-        trackEventService.trackIssueEvent(response.data, "ISSUE_CREATE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async getIssues(workspaceSlug: string, projectId: string): Promise<IIssue[]> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`)
+  async getIssues(workspaceSlug: string, projectId: string, queries?: any): Promise<IIssueResponse> {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/`, {
+      params: queries,
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -68,26 +65,10 @@ export class IssueService extends APIService {
     cycleId: string,
     data: {
       issues: string[];
-    },
-    user: IUser | undefined
+    }
   ) {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/cycles/${cycleId}/cycle-issues/`, data)
-      .then((response) => {
-        trackEventService.trackIssueMovedToCycleOrModuleEvent(
-          {
-            workspaceSlug,
-            workspaceName: response?.data?.[0]?.issue_detail?.workspace_detail?.name,
-            projectId,
-            projectIdentifier: response?.data?.[0]?.issue_detail?.project_detail?.identifier,
-            projectName: response?.data?.[0]?.issue_detail?.project_detail?.name,
-            issueId: response?.data?.[0]?.issue_detail?.id,
-            cycleId,
-          },
-          response.data.length > 1 ? "ISSUE_MOVED_TO_CYCLE_IN_BULK" : "ISSUE_MOVED_TO_CYCLE",
-          user as IUser
-        );
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -107,7 +88,6 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    user: IUser,
     data: {
       related_list: Array<{
         relation_type: "duplicate" | "relates_to" | "blocked_by";
@@ -117,29 +97,17 @@ export class IssueService extends APIService {
     }
   ) {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/`, data)
-      .then((response) => {
-        trackEventService.trackIssueRelationEvent(response.data, "ISSUE_RELATION_CREATE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
   }
 
-  async deleteIssueRelation(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    relationId: string,
-    user: IUser
-  ) {
+  async deleteIssueRelation(workspaceSlug: string, projectId: string, issueId: string, relationId: string) {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/issue-relation/${relationId}/`
     )
-      .then((response) => {
-        trackEventService.trackIssueRelationEvent(response.data, "ISSUE_RELATION_DELETE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;
       });
@@ -167,40 +135,25 @@ export class IssueService extends APIService {
       });
   }
 
-  async patchIssue(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    data: Partial<IIssue>,
-    user: IUser | undefined
-  ): Promise<any> {
+  async patchIssue(workspaceSlug: string, projectId: string, issueId: string, data: Partial<IIssue>): Promise<any> {
     return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/`, data)
-      .then((response) => {
-        trackEventService.trackIssueEvent(response.data, "ISSUE_UPDATE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string, user: IUser | undefined): Promise<any> {
+  async deleteIssue(workspaceSlug: string, projectId: string, issuesId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issuesId}/`)
-      .then((response) => {
-        trackEventService.trackIssueEvent({ issuesId }, "ISSUE_DELETE", user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any, user: IUser | undefined): Promise<any> {
+  async bulkDeleteIssues(workspaceSlug: string, projectId: string, data: any): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-delete-issues/`, data)
-      .then((response) => {
-        trackEventService.trackIssueBulkDeleteEvent(data, user as IUser);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

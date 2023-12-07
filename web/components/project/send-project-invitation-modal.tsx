@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { ChevronDown, Plus, X } from "lucide-react";
@@ -11,21 +10,17 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Avatar, Button, CustomSelect, CustomSearchSelect } from "@plane/ui";
 // services
 import { ProjectMemberService } from "services/project";
-import { WorkspaceService } from "services/workspace.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
-import { IUser, TUserProjectRole } from "types";
-// fetch-keys
-import { WORKSPACE_MEMBERS } from "constants/fetch-keys";
+import { IProjectMember, TUserProjectRole } from "types";
 // constants
-import { ROLE } from "constants/workspace";
+import { EUserWorkspaceRoles, ROLE } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  members: any[];
-  user: IUser | undefined;
+  members: IProjectMember[];
+  onClose: () => void;
   onSuccess: () => void;
 };
 
@@ -49,23 +44,21 @@ const defaultValues: FormValues = {
 
 // services
 const projectMemberService = new ProjectMemberService();
-const workspaceService = new WorkspaceService();
 
 export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
-  const { isOpen, setIsOpen, members, user, onSuccess } = props;
+  const { isOpen, members, onClose, onSuccess } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
-  const { user: userStore } = useMobxStore();
-  const userRole = userStore.currentProjectRole;
-
-  const { data: people } = useSWR(
-    workspaceSlug ? WORKSPACE_MEMBERS(workspaceSlug as string) : null,
-    workspaceSlug ? () => workspaceService.fetchWorkspaceMembers(workspaceSlug as string) : null
-  );
+  const {
+    user: { currentProjectRole },
+    workspaceMember: { workspaceMembers },
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace }
+  } = useMobxStore();
 
   const {
     formState: { errors, isSubmitting },
@@ -79,8 +72,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     name: "members",
   });
 
-  const uninvitedPeople = people?.filter((person) => {
-    const isInvited = members?.find((member) => member.memberId === person.member.id);
+  const uninvitedPeople = workspaceMembers?.filter((person) => {
+    const isInvited = members?.find((member) => member.member.id === person.member.id);
 
     return !isInvited;
   });
@@ -91,18 +84,39 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     const payload = { ...formData };
 
     await projectMemberService
-      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload, user)
-      .then(() => {
-        setIsOpen(false);
+      .bulkAddMembersToProject(workspaceSlug.toString(), projectId.toString(), payload)
+      .then((res) => {
+        onSuccess();
+        onClose();
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Member added successfully",
         });
-        onSuccess();
+        postHogEventTracker("MEMBER_ADDED",
+          {
+            ...res,
+            state: "SUCCESS",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .catch((error) => {
         console.log(error);
+        postHogEventTracker("MEMBER_ADDED",
+          {
+            state: "FAILED",
+          },
+          {
+            isGrouping: true,
+            groupType: "Workspace_metrics",
+            gorupId: currentWorkspace?.id!
+          }
+        );
       })
       .finally(() => {
         reset(defaultValues);
@@ -110,7 +124,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
   };
 
   const handleClose = () => {
-    setIsOpen(false);
+    onClose();
+
     const timeout = setTimeout(() => {
       reset(defaultValues);
       clearTimeout(timeout);
@@ -191,7 +206,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               name={`members.${index}.member_id`}
                               rules={{ required: "Please select a member" }}
                               render={({ field: { value, onChange } }) => {
-                                const selectedMember = people?.find((p) => p.member.id === value)?.member;
+                                const selectedMember = workspaceMembers?.find((p) => p.member.id === value)?.member;
 
                                 return (
                                   <CustomSearchSelect
@@ -246,7 +261,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                     width="w-full"
                                   >
                                     {Object.entries(ROLE).map(([key, label]) => {
-                                      if (parseInt(key) > (userRole ?? 5)) return null;
+                                      if (parseInt(key) > (currentProjectRole ?? EUserWorkspaceRoles.GUEST))
+                                        return null;
 
                                       return (
                                         <CustomSelect.Option key={key} value={key}>

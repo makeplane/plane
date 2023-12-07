@@ -250,7 +250,7 @@ export class CycleIssueStore implements ICycleIssueStore {
 
     if (newPayload.sort_order && payload.sort_order) newPayload.sort_order = payload.sort_order.newSortOrder;
 
-    this.rootStore.issueDetail.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
+    this.rootStore.projectIssues.updateIssue(workspaceSlug, issue.project, issue.id, newPayload);
   };
 
   deleteIssue = async (group_id: string | null, sub_group_id: string | null, issue: IIssue) => {
@@ -324,17 +324,9 @@ export class CycleIssueStore implements ICycleIssueStore {
 
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => {
     try {
-      const user = this.rootStore.user.currentUser ?? undefined;
-
-      await this.issueService.addIssueToCycle(
-        workspaceSlug,
-        projectId,
-        cycleId,
-        {
-          issues: issueIds,
-        },
-        user
-      );
+      await this.issueService.addIssueToCycle(workspaceSlug, projectId, cycleId, {
+        issues: issueIds,
+      });
 
       this.fetchIssues(workspaceSlug, projectId, cycleId);
     } catch (error) {

@@ -1,25 +1,26 @@
 import { observer } from "mobx-react-lite";
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
-import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabels, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueLabel, IState, IUserLite } from "types";
 
 type Props = {
   displayFilters: IIssueDisplayFilterOptions;
   displayProperties: IIssueDisplayProperties;
-  disableUserActions: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   expandedIssues: string[];
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
   handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
   issues: IIssue[] | undefined;
   members?: IUserLite[] | undefined;
-  labels?: IIssueLabels[] | undefined;
+  labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
 };
 
 export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
   const {
-    disableUserActions,
+    canEditProperties,
     displayFilters,
     displayProperties,
     expandedIssues,
@@ -31,12 +32,18 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
     states,
   } = props;
 
+  const {
+    project: { currentProjectDetails },
+  } = useMobxStore();
+
+  const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
+
   return (
     <>
       {displayProperties.state && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -48,7 +55,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.priority && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -59,7 +66,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.assignee && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -71,7 +78,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.labels && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -83,7 +90,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.start_date && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -94,7 +101,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.due_date && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -102,10 +109,10 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
           property="due_date"
         />
       )}
-      {displayProperties.estimate && (
+      {displayProperties.estimate && isEstimateEnabled && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -116,7 +123,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.created_on && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -127,7 +134,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.updated_on && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -138,7 +145,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.link && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -149,7 +156,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.attachment_count && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}
@@ -160,7 +167,7 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
       {displayProperties.sub_issue_count && (
         <SpreadsheetColumn
           displayFilters={displayFilters}
-          disableUserActions={disableUserActions}
+          canEditProperties={canEditProperties}
           expandedIssues={expandedIssues}
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
           handleUpdateIssue={handleUpdateIssue}

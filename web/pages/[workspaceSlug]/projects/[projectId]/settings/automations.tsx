@@ -1,14 +1,12 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
-import useSWR from "swr";
-// services
-import { ProjectService, ProjectMemberService } from "services/project";
+import { observer } from "mobx-react-lite";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
 // hooks
-import useUserAuth from "hooks/use-user-auth";
-import useProjectDetails from "hooks/use-project-details";
 import useToast from "hooks/use-toast";
 // components
 import { AutoArchiveAutomation, AutoCloseAutomation } from "components/automation";
@@ -16,45 +14,33 @@ import { ProjectSettingHeader } from "components/headers";
 // types
 import { NextPageWithLayout } from "types/app";
 import { IProject } from "types";
-// constant
-import { USER_PROJECT_VIEW } from "constants/fetch-keys";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-// services
-const projectService = new ProjectService();
-const projectMemberService = new ProjectMemberService();
-
-const AutomationSettingsPage: NextPageWithLayout = () => {
+const AutomationSettingsPage: NextPageWithLayout = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { user } = useUserAuth();
   const { setToastAlert } = useToast();
 
-  const { projectDetails } = useProjectDetails();
-
-  const { data: memberDetails } = useSWR(
-    workspaceSlug && projectId ? USER_PROJECT_VIEW(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => projectMemberService.projectMemberMe(workspaceSlug.toString(), projectId.toString())
-      : null
-  );
+  // store
+  const {
+    user: { currentProjectRole },
+    project: { currentProjectDetails: projectDetails, updateProject },
+  } = useMobxStore();
 
   const handleChange = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;
 
-    await projectService
-      .updateProject(workspaceSlug as string, projectId as string, formData, user)
-      .then(() => {})
-      .catch(() => {
-        setToastAlert({
-          type: "error",
-          title: "Error!",
-          message: "Something went wrong. Please try again.",
-        });
+    await updateProject(workspaceSlug.toString(), projectId.toString(), formData).catch(() => {
+      setToastAlert({
+        type: "error",
+        title: "Error!",
+        message: "Something went wrong. Please try again.",
       });
+    });
   };
 
-  const isAdmin = memberDetails?.role === 20;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
 
   return (
     <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
@@ -65,7 +51,7 @@ const AutomationSettingsPage: NextPageWithLayout = () => {
       <AutoCloseAutomation handleChange={handleChange} />
     </section>
   );
-};
+});
 
 AutomationSettingsPage.getLayout = function getLayout(page: ReactElement) {
   return (

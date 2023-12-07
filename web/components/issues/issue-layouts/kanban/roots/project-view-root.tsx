@@ -1,107 +1,73 @@
 import React from "react";
-import { DragDropContext } from "@hello-pangea/dnd";
 import { observer } from "mobx-react-lite";
-// components
-import { KanBanSwimLanes } from "../swimlanes";
-import { KanBan } from "../default";
+import { useRouter } from "next/router";
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
-// constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
+// constant
+import { IIssue } from "types";
+import { EIssueActions } from "../../types";
+import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
+// components
+import { BaseKanBanRoot } from "../base-kanban-root";
+import { EProjectStore } from "store/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
 
 export interface IViewKanBanLayout {}
 
 export const ProjectViewKanBanLayout: React.FC = observer(() => {
+  const router = useRouter();
+  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+
   const {
-    project: projectStore,
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    issue: issueStore,
-    issueFilter: issueFilterStore,
-    issueKanBanView: issueKanBanViewStore,
-  }: RootStore = useMobxStore();
+    viewIssues: projectViewIssuesStore,
+    viewIssuesFilter: projectIssueViewFiltersStore,
+    issueKanBanView: projectViewIssueKanBanViewStore,
+    kanBanHelpers: kanBanHelperStore,
+  } = useMobxStore();
 
-  const issues = issueStore?.getIssues;
+  const issueActions = {
+    [EIssueActions.UPDATE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
 
-  const sub_group_by: string | null = issueFilterStore?.userDisplayFilters?.sub_group_by || null;
+      await projectViewIssuesStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+    },
+    [EIssueActions.DELETE]: async (issue: IIssue) => {
+      if (!workspaceSlug) return;
 
-  const group_by: string | null = issueFilterStore?.userDisplayFilters?.group_by || null;
-
-  const display_properties = issueFilterStore?.userDisplayProperties || null;
-
-  const currentKanBanView: "swimlanes" | "default" = issueFilterStore?.userDisplayFilters?.sub_group_by
-    ? "swimlanes"
-    : "default";
-
-  const onDragEnd = (result: any) => {
-    if (!result) return;
-
-    if (
-      result.destination &&
-      result.source &&
-      result.destination.droppableId === result.source.droppableId &&
-      result.destination.index === result.source.index
-    )
-      return;
-
-    currentKanBanView === "default"
-      ? issueKanBanViewStore?.handleDragDrop(result.source, result.destination)
-      : issueKanBanViewStore?.handleSwimlaneDragDrop(result.source, result.destination);
+      await projectViewIssuesStore.removeIssue(workspaceSlug, issue.project, issue.id);
+    },
   };
 
-  const updateIssue = (sub_group_by: string | null, group_by: string | null, issue: any) => {
-    issueStore.updateIssueStructure(group_by, sub_group_by, issue);
-  };
+  const handleDragDrop = async (
+    source: any,
+    destination: any,
+    subGroupBy: string | null,
+    groupBy: string | null,
+    issues: IIssueResponse | undefined,
+    issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
+  ) =>
+    await kanBanHelperStore.handleDragDrop(
+      source,
+      destination,
+      workspaceSlug,
+      projectId,
+      projectViewIssuesStore,
+      subGroupBy,
+      groupBy,
+      issues,
+      issueWithIds
+    );
 
-  const states = projectStateStore?.projectStates || null;
-  const priorities = ISSUE_PRIORITIES || null;
-  const labels = projectStore?.projectLabels || null;
-  const stateGroups = ISSUE_STATE_GROUPS || null;
-  const projects = projectStateStore?.projectStates || null;
-  const estimates = null;
-
-  return null;
-
-  // return (
-  //   <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
-  //     <DragDropContext onDragEnd={onDragEnd}>
-  //       {currentKanBanView === "default" ? (
-  //         <KanBan
-  //           issues={issues}
-  //           sub_group_by={sub_group_by}
-  //           group_by={group_by}
-  //           handleIssues={updateIssue}
-  //           display_properties={display_properties}
-  //           kanBanToggle={() => {}}
-  //           handleKanBanToggle={() => {}}
-  //           states={states}
-  //           stateGroups={stateGroups}
-  //           priorities={priorities}
-  //           labels={labels}
-  //           members={members}
-  //           projects={projects}
-  //           estimates={estimates}
-  //         />
-  //       ) : (
-  //         <KanBanSwimLanes
-  //           issues={issues}
-  //           sub_group_by={sub_group_by}
-  //           group_by={group_by}
-  //           handleIssues={updateIssue}
-  //           display_properties={display_properties}
-  //           kanBanToggle={() => {}}
-  //           handleKanBanToggle={() => {}}
-  //           states={states}
-  //           stateGroups={stateGroups}
-  //           priorities={priorities}
-  //           labels={labels}
-  //           members={members}
-  //           projects={projects}
-  //           estimates={estimates}
-  //         />
-  //       )}
-  //     </DragDropContext>
-  //   </div>
-  // );
+  return (
+    <BaseKanBanRoot
+      issueActions={issueActions}
+      issuesFilterStore={projectIssueViewFiltersStore}
+      issueStore={projectViewIssuesStore}
+      kanbanViewStore={projectViewIssueKanBanViewStore}
+      showLoader={true}
+      QuickActions={ProjectIssueQuickActions}
+      currentStore={EProjectStore.PROJECT_VIEW}
+      handleDragDrop={handleDragDrop}
+    />
+  );
 });

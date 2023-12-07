@@ -38,21 +38,8 @@ export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
       const { selection } = state;
 
       const { empty } = selection;
-      const hasEditorFocus = view.hasFocus();
-
-      // if (typeof window !== "undefined") {
-      //   const selection: any = window?.getSelection();
-      //   if (selection.rangeCount !== 0) {
-      //     const range = selection.getRangeAt(0);
-      //     if (findTableAncestor(range.startContainer)) {
-      //       console.log("table");
-      //       return false;
-      //     }
-      //   }
-      // }
 
       if (
-        !hasEditorFocus ||
         empty ||
         !editor.isEditable ||
         editor.isActive("image") ||

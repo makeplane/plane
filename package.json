@@ -30,7 +30,7 @@
     "turbo": "^1.10.16"
   },
   "resolutions": {
-    "@types/react": "18.2.0"
+    "@types/react": "18.2.42"
   },
   "packageManager": "yarn@1.22.19"
 }

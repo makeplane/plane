@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 
 // components
-import { FilterHeader, FilterOption } from "components/issues";
+import { FilterOption } from "components/issues";
 // types
 import { IIssueDisplayFilterOptions, TIssueExtraOptions } from "types";
 // constants
@@ -20,33 +20,22 @@ type Props = {
 export const FilterExtraOptions: React.FC<Props> = observer((props) => {
   const { selectedExtraOptions, handleUpdate, enabledExtraOptions } = props;
 
-  const [previewEnabled, setPreviewEnabled] = useState(true);
-
   const isExtraOptionEnabled = (option: TIssueExtraOptions) => enabledExtraOptions.includes(option);
 
   return (
-    <>
-      <FilterHeader
-        title="Extra Options"
-        isPreviewEnabled={previewEnabled}
-        handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
-      />
-      {previewEnabled && (
-        <div>
-          {ISSUE_EXTRA_OPTIONS.map((option) => {
-            if (!isExtraOptionEnabled(option.key)) return null;
+    <div>
+      {ISSUE_EXTRA_OPTIONS.map((option) => {
+        if (!isExtraOptionEnabled(option.key)) return null;
 
-            return (
-              <FilterOption
-                key={option.key}
-                isChecked={selectedExtraOptions?.[option.key] ? true : false}
-                onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
-                title={option.title}
-              />
-            );
-          })}
-        </div>
-      )}
-    </>
+        return (
+          <FilterOption
+            key={option.key}
+            isChecked={selectedExtraOptions?.[option.key] ? true : false}
+            onClick={() => handleUpdate(option.key, !selectedExtraOptions?.[option.key])}
+            title={option.title}
+          />
+        );
+      })}
+    </div>
   );
 });

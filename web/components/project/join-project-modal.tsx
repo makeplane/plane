@@ -7,6 +7,7 @@ import { Button } from "@plane/ui";
 import type { IProject } from "types";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
+import { RootStore } from "store/root";
 
 // type
 type TJoinProjectModalProps = {
@@ -21,22 +22,23 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: projectStore,
+    user: { joinProject },
+  }: RootStore = useMobxStore();
   // router
   const router = useRouter();
 
   const handleJoin = () => {
     setIsJoiningLoading(true);
 
-    projectStore
-      .joinProject(workspaceSlug, [project.id])
+    joinProject(workspaceSlug, [project.id])
       .then(() => {
-        setIsJoiningLoading(false);
-
         router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+        projectStore.fetchProjects(workspaceSlug);
         handleClose();
       })
-      .catch(() => {
+      .finally(() => {
         setIsJoiningLoading(false);
       });
   };
@@ -73,8 +75,9 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                     Join Project?
                   </Dialog.Title>
                   <p>
-                    Are you sure you want to join the project <span className="font-semibold">{project?.name}</span>?
-                    Please click the &apos;Join Project&apos; button below to continue.
+                    Are you sure you want to join the project{" "}
+                    <span className="font-semibold break-words">{project?.name}</span>? Please click the &apos;Join
+                    Project&apos; button below to continue.
                   </p>
                   <div className="space-y-3" />
                 </div>

@@ -60,7 +60,7 @@ type Props = {
 // services
 const jiraImporterService = new JiraImporterService();
 
-export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
+export const JiraImporterRoot: React.FC<Props> = () => {
   const [currentStep, setCurrentStep] = useState<IJiraIntegrationData>({
     state: "import-configure",
   });
@@ -81,7 +81,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
     if (!workspaceSlug) return;
 
     await jiraImporterService
-      .createJiraImporter(workspaceSlug.toString(), data, user)
+      .createJiraImporter(workspaceSlug.toString(), data)
       .then(() => {
         mutate(IMPORTER_SERVICES_LIST(workspaceSlug.toString()));
         router.push(`/${workspaceSlug}/settings/imports`);
@@ -98,14 +98,14 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
   };
 
   return (
-    <div className="flex h-full flex-col space-y-2">
+    <div className="flex h-full flex-col space-y-2 mt-4">
       <Link href={`/${workspaceSlug}/settings/imports`}>
-        <div className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
+        <span className="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-custom-text-200 hover:text-custom-text-100">
           <div>
             <ArrowLeft className="h-3 w-3" />
           </div>
           <div>Cancel import & go back</div>
-        </div>
+        </span>
       </Link>
 
       <div className="flex h-full flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4">
@@ -136,9 +136,7 @@ export const JiraImporterRoot: React.FC<Props> = ({ user }) => {
                   }`}
                 >
                   <integration.icon
-                    width="18px"
-                    height="18px"
-                    color={index <= activeIntegrationState() ? "#ffffff" : "#d1d5db"}
+                    className={`w-5 h-5 ${index <= activeIntegrationState() ? "text-white" : "text-custom-text-400"}`}
                   />
                 </button>
                 {index < integrationWorkflowData.length - 1 && (

@@ -11,13 +11,15 @@ import { FileService } from "services/file.service";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteWorkspaceModal } from "components/workspace";
-import { ImageUploadModal } from "components/core";
+import { WorkspaceImageUploadModal } from "components/core";
 // ui
 import { Button, CustomSelect, Input, Spinner } from "@plane/ui";
+// helpers
+import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IWorkspace } from "types";
 // constants
-import { ORGANIZATION_SIZE } from "constants/workspace";
+import { EUserWorkspaceRoles, ORGANIZATION_SIZE } from "constants/workspace";
 
 const defaultValues: Partial<IWorkspace> = {
   name: "",
@@ -32,16 +34,15 @@ const fileService = new FileService();
 export const WorkspaceDetails: FC = observer(() => {
   // states
   const [deleteWorkspaceModal, setDeleteWorkspaceModal] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isImageUploading, setIsImageUploading] = useState(false);
   const [isImageRemoving, setIsImageRemoving] = useState(false);
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store
   const {
     workspace: { currentWorkspace, updateWorkspace },
     user: { currentWorkspaceRole },
+    trackEvent: { postHogEventTracker },
   } = useMobxStore();
-  const isAdmin = currentWorkspaceRole === 20;
+
   // hooks
   const { setToastAlert } = useToast();
   // form info
@@ -50,7 +51,6 @@ export const WorkspaceDetails: FC = observer(() => {
     control,
     reset,
     watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<IWorkspace>({
     defaultValues: { ...defaultValues, ...currentWorkspace },
@@ -66,18 +66,31 @@ export const WorkspaceDetails: FC = observer(() => {
     };
 
     await updateWorkspace(currentWorkspace.slug, payload)
-      .then(() =>
+      .then((res) => {
+        postHogEventTracker("WORKSPACE_UPDATED", {
+          ...res,
+          state: "SUCCESS",
+        });
         setToastAlert({
           title: "Success",
           type: "success",
           message: "Workspace updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+        });
+      })
+      .catch((err) => {
+        postHogEventTracker("WORKSPACE_UPDATED", {
+          state: "FAILED",
+        });
+        console.error(err);
+      });
   };
 
-  const handleDelete = (url: string | null | undefined) => {
-    if (!currentWorkspace || !url) return;
+  const handleRemoveLogo = () => {
+    if (!currentWorkspace) return;
+
+    const url = currentWorkspace.logo;
+
+    if (!url) return;
 
     setIsImageRemoving(true);
 
@@ -102,9 +115,22 @@ export const WorkspaceDetails: FC = observer(() => {
     });
   };
 
+  const handleCopyUrl = () => {
+    if (!currentWorkspace) return;
+
+    copyUrlToClipboard(`${currentWorkspace.slug}`).then(() => {
+      setToastAlert({
+        type: "success",
+        title: "Workspace URL copied to the clipboard.",
+      });
+    });
+  };
+
   useEffect(() => {
     if (currentWorkspace) reset({ ...currentWorkspace });
   }, [currentWorkspace, reset]);
+
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   if (!currentWorkspace)
     return (
@@ -116,22 +142,27 @@ export const WorkspaceDetails: FC = observer(() => {
   return (
     <>
       <DeleteWorkspaceModal
+        data={currentWorkspace}
         isOpen={deleteWorkspaceModal}
         onClose={() => setDeleteWorkspaceModal(false)}
-        data={currentWorkspace}
       />
-      <ImageUploadModal
-        isOpen={isImageUploadModalOpen}
-        onClose={() => setIsImageUploadModalOpen(false)}
-        isRemoving={isImageRemoving}
-        handleDelete={() => handleDelete(currentWorkspace?.logo)}
-        onSuccess={(imageUrl) => {
-          setIsImageUploading(true);
-          setValue("logo", imageUrl);
-          setIsImageUploadModalOpen(false);
-          handleSubmit(onSubmit)().then(() => setIsImageUploading(false));
-        }}
-        value={watch("logo")}
+      <Controller
+        control={control}
+        name="logo"
+        render={({ field: { onChange, value } }) => (
+          <WorkspaceImageUploadModal
+            isOpen={isImageUploadModalOpen}
+            onClose={() => setIsImageUploadModalOpen(false)}
+            isRemoving={isImageRemoving}
+            handleRemove={handleRemoveLogo}
+            onSuccess={(imageUrl) => {
+              onChange(imageUrl);
+              setIsImageUploadModalOpen(false);
+              handleSubmit(onSubmit)();
+            }}
+            value={value}
+          />
+        )}
       />
       <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
         <div className="flex gap-5 items-center pb-7 border-b border-custom-border-100">
@@ -154,14 +185,13 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold leading-6">{watch("name")}</h3>
-            <span className="text-sm tracking-tight">{`${
+            <button type="button" onClick={handleCopyUrl} className="text-sm tracking-tight">{`${
               typeof window !== "undefined" && window.location.origin.replace("http://", "").replace("https://", "")
-            }/${currentWorkspace.slug}`}</span>
-            <div className="flex item-center gap-2.5">
+            }/${currentWorkspace.slug}`}</button>
+            {isAdmin && (
               <button
                 className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
                 onClick={() => setIsImageUploadModalOpen(true)}
-                disabled={!isAdmin}
               >
                 {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                   <>
@@ -172,14 +202,14 @@ export const WorkspaceDetails: FC = observer(() => {
                   "Upload logo"
                 )}
               </button>
-            </div>
+            )}
           </div>
         </div>
 
         <div className="flex flex-col gap-8 my-10">
           <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
-            <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Workspace Name</h4>
+            <div className="flex flex-col gap-1">
+              <h4 className="text-sm">Workspace name</h4>
               <Controller
                 control={control}
                 name="name"
@@ -208,7 +238,7 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
 
             <div className="flex flex-col gap-1 ">
-              <h4 className="text-sm">Company Size</h4>
+              <h4 className="text-sm">Company size</h4>
               <Controller
                 name="organization_size"
                 control={control}
@@ -257,11 +287,13 @@ export const WorkspaceDetails: FC = observer(() => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between py-2">
-            <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting} disabled={!isAdmin}>
-              {isSubmitting ? "Updating..." : "Update Workspace"}
-            </Button>
-          </div>
+          {isAdmin && (
+            <div className="flex items-center justify-between py-2">
+              <Button variant="primary" onClick={handleSubmit(onSubmit)} loading={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Update Workspace"}
+              </Button>
+            </div>
+          )}
         </div>
         {isAdmin && (
           <Disclosure as="div" className="border-t border-custom-border-100">

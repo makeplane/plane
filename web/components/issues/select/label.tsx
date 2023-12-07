@@ -3,16 +3,13 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { Combobox, Transition } from "@headlessui/react";
 import { usePopper } from "react-popper";
-// services
-import { IssueLabelService } from "services/issue";
+import { observer } from "mobx-react-lite";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { IssueLabelsList } from "components/ui";
 // icons
 import { Check, Component, Plus, Search, Tag } from "lucide-react";
-// types
-import type { IIssueLabels } from "types";
-// fetch-keys
-import { PROJECT_ISSUE_LABELS } from "constants/fetch-keys";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -20,16 +17,21 @@ type Props = {
   onChange: (value: string[]) => void;
   projectId: string;
   label?: JSX.Element;
+  disabled?: boolean;
 };
 
-const issueLabelService = new IssueLabelService();
+export const IssueLabelSelect: React.FC<Props> = observer((props) => {
+  const { setIsOpen, value, onChange, projectId, label, disabled = false } = props;
 
-export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId, label }) => {
   // states
   const [query, setQuery] = useState("");
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const {
+    projectLabel: { labels, fetchProjectLabels },
+  } = useMobxStore();
 
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -38,18 +40,25 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
     placement: "bottom-start",
   });
 
-  const { data: issueLabels } = useSWR<IIssueLabels[]>(
-    projectId ? PROJECT_ISSUE_LABELS(projectId) : null,
-    workspaceSlug && projectId
-      ? () => issueLabelService.getProjectIssueLabels(workspaceSlug as string, projectId)
-      : null
+  const issueLabels = labels?.[projectId] || [];
+
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_ISSUE_LABELS_${projectId.toUpperCase()}` : null,
+    workspaceSlug && projectId ? () => fetchProjectLabels(workspaceSlug.toString(), projectId) : null
   );
 
   const filteredOptions =
     query === "" ? issueLabels : issueLabels?.filter((l) => l.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
-    <Combobox as="div" value={value} onChange={(val) => onChange(val)} className="relative flex-shrink-0" multiple>
+    <Combobox
+      as="div"
+      value={value}
+      onChange={(val) => onChange(val)}
+      className="relative flex-shrink-0"
+      multiple
+      disabled={disabled}
+    >
       {({ open }: any) => (
         <>
           <Combobox.Button as={Fragment}>
@@ -202,4 +211,4 @@ export const IssueLabelSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       )}
     </Combobox>
   );
-};
+});

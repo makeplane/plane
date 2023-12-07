@@ -1,5 +1,11 @@
 version = 1
 
+exclude_patterns = [  
+  "bin/**",  
+  "**/node_modules/",  
+  "**/*.min.js"  
+]
+
 [[analyzers]]
 name = "shell"
 

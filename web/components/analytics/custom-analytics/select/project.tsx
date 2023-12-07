@@ -34,7 +34,7 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
               .join(", ")
           : "All projects"
       }
-      optionsClassName="min-w-full"
+      optionsClassName="min-w-full max-w-[20rem]"
       multiple
     />
   );

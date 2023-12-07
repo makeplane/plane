@@ -36,6 +36,8 @@ module.exports = {
         "custom-sidebar-shadow-xl": "var(--color-sidebar-shadow-xl)",
         "custom-sidebar-shadow-2xl": "var(--color-sidebar-shadow-2xl)",
         "custom-sidebar-shadow-3xl": "var(--color-sidebar-shadow-3xl)",
+        "onbording-shadow-sm": "var(--color-onboarding-shadow-sm)",
+
       },
       colors: {
         custom: {
@@ -175,6 +177,25 @@ module.exports = {
             },
           },
           backdrop: "rgba(0, 0, 0, 0.25)",
+        },
+        onboarding: {
+          background: {
+            100: convertToRGB("--color-onboarding-background-100"),
+            200: convertToRGB("--color-onboarding-background-200"),
+            300: convertToRGB("--color-onboarding-background-300"),
+            400: convertToRGB("--color-onboarding-background-400"),
+          },
+          text: {
+            100: convertToRGB("--color-onboarding-text-100"),
+            200: convertToRGB("--color-onboarding-text-200"),
+            300: convertToRGB("--color-onboarding-text-300"),
+            400: convertToRGB("--color-onboarding-text-400"),
+          },
+          border: {
+            100: convertToRGB("--color-onboarding-border-100"),
+            200: convertToRGB("--color-onboarding-border-200"),
+            300: convertToRGB("--color-onboarding-border-300"),
+          },
         },
       },
       keyframes: {
@@ -352,6 +373,11 @@ module.exports = {
         72: "16.2rem",
         80: "18rem",
         96: "21.6rem",
+      },
+      backgroundImage: {
+        "onboarding-gradient-100": "var( --gradient-onboarding-100)",
+        "onboarding-gradient-200": "var( --gradient-onboarding-200)",
+        "onboarding-gradient-300": "var( --gradient-onboarding-300)",
       },
     },
     fontFamily: {

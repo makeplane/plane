@@ -12,6 +12,7 @@ import { GanttInlineCreateIssueForm, IssueGanttSidebarBlock } from "components/i
 import { findTotalDaysInRange } from "helpers/date-time.helper";
 // types
 import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
+import { IIssue } from "types";
 
 type Props = {
   title: string;
@@ -19,11 +20,18 @@ type Props = {
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
   enableQuickIssueCreate?: boolean;
+  quickAddCallback?: (
+    workspaceSlug: string,
+    projectId: string,
+    data: IIssue,
+    viewId?: string
+  ) => Promise<IIssue | undefined>;
+  viewId?: string;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, enableReorder, enableQuickIssueCreate } = props;
+  const { title, blockUpdateHandler, blocks, enableReorder, enableQuickIssueCreate, quickAddCallback, viewId } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -130,7 +138,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
                             )}
                             <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
                               <div className="flex-grow truncate">
-                                <IssueGanttSidebarBlock data={block.data} handleIssue={blockUpdateHandler} />
+                                <IssueGanttSidebarBlock data={block.data} />
                               </div>
                               <div className="flex-shrink-0 text-sm text-custom-text-200">
                                 {duration} day{duration > 1 ? "s" : ""}
@@ -152,7 +160,9 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-            {enableQuickIssueCreate && <GanttInlineCreateIssueForm />}
+            {enableQuickIssueCreate && (
+              <GanttInlineCreateIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
+            )}
           </div>
         )}
       </StrictModeDroppable>

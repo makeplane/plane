@@ -5,12 +5,11 @@ import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-// services
-import { MiscellaneousEventType, TrackEventService } from "services/track_event.service";
 // hooks
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {};
 
@@ -47,36 +46,18 @@ const PROJECT_FEATURES_LIST = [
   },
 ];
 
-const getEventType = (feature: string, toggle: boolean): MiscellaneousEventType => {
-  switch (feature) {
-    case "Cycles":
-      return toggle ? "TOGGLE_CYCLE_ON" : "TOGGLE_CYCLE_OFF";
-    case "Modules":
-      return toggle ? "TOGGLE_MODULE_ON" : "TOGGLE_MODULE_OFF";
-    case "Views":
-      return toggle ? "TOGGLE_VIEW_ON" : "TOGGLE_VIEW_OFF";
-    case "Pages":
-      return toggle ? "TOGGLE_PAGES_ON" : "TOGGLE_PAGES_OFF";
-    case "Inbox":
-      return toggle ? "TOGGLE_INBOX_ON" : "TOGGLE_INBOX_OFF";
-    default:
-      throw new Error("Invalid feature");
-  }
-};
-
-// services
-const trackEventService = new TrackEventService();
-
 export const ProjectFeaturesList: FC<Props> = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
+    workspace: { currentWorkspace },
     project: { currentProjectDetails, updateProject },
     user: { currentUser, currentProjectRole },
+    trackEvent: { setTrackElement, postHogEventTracker },
   } = useMobxStore();
-  const isAdmin = currentProjectRole === 20;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
 
@@ -109,17 +90,16 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
           <ToggleSwitch
             value={currentProjectDetails?.[feature.property as keyof IProject]}
             onChange={() => {
-              trackEventService.trackMiscellaneousEvent(
-                {
-                  workspaceId: (currentProjectDetails?.workspace as any)?.id,
-                  workspaceSlug,
-                  projectId,
-                  projectIdentifier: currentProjectDetails?.identifier,
-                  projectName: currentProjectDetails?.name,
-                },
-                getEventType(feature.title, !currentProjectDetails?.[feature.property as keyof IProject]),
-                currentUser
-              );
+              console.log(currentProjectDetails?.[feature.property as keyof IProject]);
+              setTrackElement("PROJECT_SETTINGS_FEATURES_PAGE");
+              postHogEventTracker(`TOGGLE_${feature.title.toUpperCase()}`, {
+                workspace_id: currentWorkspace?.id,
+                workspace_slug: currentWorkspace?.slug,
+                project_id: currentProjectDetails?.id,
+                project_name: currentProjectDetails?.name,
+                project_identifier: currentProjectDetails?.identifier,
+                enabled: !currentProjectDetails?.[feature.property as keyof IProject],
+              });
               handleSubmit({
                 [feature.property]: !currentProjectDetails?.[feature.property as keyof IProject],
               });

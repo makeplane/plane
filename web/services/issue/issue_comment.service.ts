@@ -1,11 +1,8 @@
 import { APIService } from "services/api.service";
-import { TrackEventService } from "services/track_event.service";
 // types
-import { IIssueComment, IUser } from "types";
+import { IIssueActivity } from "types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
-
-const trackEventService = new TrackEventService();
 
 export class IssueCommentService extends APIService {
   constructor() {
@@ -24,14 +21,10 @@ export class IssueCommentService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssueComment>,
-    user: IUser | undefined
+    data: Partial<IIssueActivity>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`, data)
-      .then((response) => {
-        trackEventService.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_CREATE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
@@ -42,43 +35,23 @@ export class IssueCommentService extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    data: Partial<IIssueComment>,
-    user: IUser | undefined
+    data: Partial<IIssueActivity>
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
       data
     )
-      .then((response) => {
-        trackEventService.trackIssueCommentEvent(response.data, "ISSUE_COMMENT_UPDATE", user);
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });
   }
 
-  async deleteIssueComment(
-    workspaceSlug: string,
-    projectId: string,
-    issueId: string,
-    commentId: string,
-    user: IUser | undefined
-  ): Promise<any> {
+  async deleteIssueComment(workspaceSlug: string, projectId: string, issueId: string, commentId: string): Promise<any> {
     return this.delete(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`
     )
-      .then((response) => {
-        trackEventService.trackIssueCommentEvent(
-          {
-            issueId,
-            commentId,
-          },
-          "ISSUE_COMMENT_DELETE",
-          user
-        );
-        return response?.data;
-      })
+      .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
       });

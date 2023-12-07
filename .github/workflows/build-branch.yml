@@ -1,62 +1,30 @@
-
 name: Branch Build
 
 on:
   pull_request:
-    types: 
+    types:
       - closed
-    branches: 
+    branches:
       - master
-      - release
+      - preview
       - qa
       - develop
+  release:
+    types: [released, prereleased]
 
 env:
-  TARGET_BRANCH: ${{ github.event.pull_request.base.ref }}
+  TARGET_BRANCH: ${{ github.event.pull_request.base.ref || github.event.release.target_commitish }}
 
 jobs:
-  branch_build_and_push:
-    if: ${{ (github.event_name == 'pull_request' && github.event.action =='closed' && github.event.pull_request.merged == true) }}
+  branch_build_setup:
+    if: ${{ (github.event_name == 'pull_request' && github.event.action =='closed' && github.event.pull_request.merged == true) || github.event_name == 'release' }}
     name: Build-Push Web/Space/API/Proxy Docker Image
     runs-on: ubuntu-20.04
 
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3.3.0
-        
-      # - name: Set Target Branch Name on PR close
-      #   if: ${{ github.event_name == 'pull_request' && github.event.action =='closed' }}
-      #   run: echo "TARGET_BRANCH=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
 
-      # - name: Set Target Branch Name on other than PR close
-      #   if: ${{ github.event_name == 'push' }}
-      #   run: echo "TARGET_BRANCH=${{ github.ref_name }}" >> $GITHUB_ENV
-      
-      - uses: ASzc/change-string-case-action@v2
-        id: gh_branch_upper_lower
-        with:
-          string: ${{env.TARGET_BRANCH}}
-
-      - uses: mad9000/actions-find-and-replace-string@2
-        id: gh_branch_replace_slash
-        with:
-          source: ${{ steps.gh_branch_upper_lower.outputs.lowercase }}
-          find: '/'        
-          replace: '-'
-
-      - uses: mad9000/actions-find-and-replace-string@2
-        id: gh_branch_replace_dot
-        with:
-          source: ${{ steps.gh_branch_replace_slash.outputs.value }}
-          find: '.'        
-          replace: ''
-          
-      - uses: mad9000/actions-find-and-replace-string@2
-        id: gh_branch_clean
-        with:
-          source: ${{ steps.gh_branch_replace_dot.outputs.value }}
-          find: '_'
-          replace: ''
       - name: Uploading Proxy Source
         uses: actions/upload-artifact@v3
         with:
@@ -77,7 +45,6 @@ jobs:
             !./nginx
             !./deploy
             !./space
-      
       - name: Uploading Space Source
         uses: actions/upload-artifact@v3
         with:
@@ -89,12 +56,24 @@ jobs:
             !./deploy
             !./web
     outputs:
-        gh_branch_name: ${{ steps.gh_branch_clean.outputs.value }}
+      gh_branch_name: ${{ env.TARGET_BRANCH }}
 
   branch_build_push_frontend:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_setup]
+    env:
+      FRONTEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
+      - name: Set Frontend Docker Tag 
+        run: |
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:${{ github.event.release.tag_name }}
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend:stable
+          else
+            TAG=${{ env.FRONTEND_TAG }}
+          fi
+          echo "FRONTEND_TAG=${TAG}" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
 
@@ -114,7 +93,7 @@ jobs:
           context: .
           file: ./web/Dockerfile.web
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-frontend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          tags: ${{ env.FRONTEND_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -123,8 +102,20 @@ jobs:
 
   branch_build_push_space:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_setup]
+    env:
+      SPACE_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
+      - name: Set Space Docker Tag 
+        run: |
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-space:${{ github.event.release.tag_name }}
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-space:stable
+          else
+            TAG=${{ env.SPACE_TAG }}
+          fi
+          echo "SPACE_TAG=${TAG}" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
 
@@ -144,7 +135,7 @@ jobs:
           context: .
           file: ./space/Dockerfile.space
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-space-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          tags: ${{ env.SPACE_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1
@@ -153,8 +144,20 @@ jobs:
 
   branch_build_push_backend:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_setup]
+    env:
+      BACKEND_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
+      - name: Set Backend Docker Tag 
+        run: |
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:${{ github.event.release.tag_name }}
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-backend:stable
+          else
+            TAG=${{ env.BACKEND_TAG }}
+          fi
+          echo "BACKEND_TAG=${TAG}" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
 
@@ -175,7 +178,7 @@ jobs:
           file: ./Dockerfile.api
           platforms: linux/amd64
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-backend-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          tags: ${{ env.BACKEND_TAG }}
         env:
           DOCKER_BUILDKIT: 1
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -183,8 +186,20 @@ jobs:
 
   branch_build_push_proxy:
     runs-on: ubuntu-20.04
-    needs: [ branch_build_and_push ]
+    needs: [branch_build_setup]
+    env:
+      PROXY_TAG: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ needs.branch_build_setup.outputs.gh_branch_name }}
     steps:
+      - name: Set Proxy Docker Tag 
+        run: |
+          if [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ] && [ "${{ github.event_name }}" == "release" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:latest,${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:${{ github.event.release.tag_name }}
+          elif [ "${{ needs.branch_build_setup.outputs.gh_branch_name }}" == "master" ]; then
+            TAG=${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy:stable
+          else
+            TAG=${{ env.PROXY_TAG }}
+          fi
+          echo "PROXY_TAG=${TAG}" >> $GITHUB_ENV
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.5.0
 
@@ -205,7 +220,7 @@ jobs:
           context: .
           file: ./Dockerfile
           platforms: linux/amd64
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/plane-proxy-private:${{ needs.branch_build_and_push.outputs.gh_branch_name }}
+          tags: ${{ env.PROXY_TAG }}
           push: true
         env:
           DOCKER_BUILDKIT: 1

@@ -10,15 +10,11 @@ import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+import { IQuickActionProps } from "../list/list-view-types";
+import { EProjectStore } from "store/command-palette.store";
 
-type Props = {
-  issue: IIssue;
-  handleDelete: () => Promise<void>;
-  handleUpdate: (data: IIssue) => Promise<void>;
-};
-
-export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
-  const { issue, handleDelete, handleUpdate } = props;
+export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
+  const { issue, handleDelete, handleUpdate, customActionButton } = props;
 
   const router = useRouter();
   const { workspaceSlug } = router.query;
@@ -58,10 +54,11 @@ export const ProjectIssueQuickActions: React.FC<Props> = (props) => {
         prePopulateData={!issueToEdit && createUpdateIssueModal ? { ...issue, name: `${issue.name} (copy)` } : {}}
         data={issueToEdit}
         onSubmit={async (data) => {
-          if (issueToEdit) handleUpdate({ ...issueToEdit, ...data });
+          if (issueToEdit && handleUpdate) handleUpdate({ ...issueToEdit, ...data });
         }}
+        currentStore={EProjectStore.PROJECT}
       />
-      <CustomMenu placement="bottom-start" ellipsis>
+      <CustomMenu placement="bottom-start" customButton={customActionButton} ellipsis>
         <CustomMenu.MenuItem
           onClick={(e) => {
             e.preventDefault();

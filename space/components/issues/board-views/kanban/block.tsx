@@ -13,22 +13,30 @@ import { IIssue } from "types/issue";
 import { RootStore } from "store/root";
 import { useRouter } from "next/router";
 
-export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
+export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
   const { project: projectStore, issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, board } = router.query;
+  const { workspace_slug, project_slug, board, priorities, states, labels } = router.query as {
+    workspace_slug: string;
+    project_slug: string;
+    board: string;
+    priorities: string;
+    states: string;
+    labels: string;
+  };
 
   const handleBlockClick = () => {
     issueDetailStore.setPeekId(issue.id);
+    const params: any = { board: board, peekId: issue.id };
+    if (states && states.length > 0) params.states = states;
+    if (priorities && priorities.length > 0) params.priorities = priorities;
+    if (labels && labels.length > 0) params.labels = labels;
     router.push(
       {
-        pathname: `/${workspace_slug?.toString()}/${project_slug}`,
-        query: {
-          board: board?.toString(),
-          peekId: issue.id,
-        },
+        pathname: `/${workspace_slug}/${project_slug}`,
+        query: { ...params },
       },
       undefined,
       { shallow: true }
@@ -43,7 +51,11 @@ export const IssueListBlock = observer(({ issue }: { issue: IIssue }) => {
       </div>
 
       {/* name */}
-      <h6 onClick={handleBlockClick} className="text-sm font-medium break-words line-clamp-2 cursor-pointer">
+      <h6
+        onClick={handleBlockClick}
+        role="button"
+        className="text-sm font-medium break-words line-clamp-2 cursor-pointer"
+      >
         {issue.name}
       </h6>
 

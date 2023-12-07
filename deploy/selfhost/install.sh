@@ -1,9 +1,8 @@
 #!/bin/bash
 
-BRANCH=${BRANCH:-master}
+BRANCH=master
 SCRIPT_DIR=$PWD
 PLANE_INSTALL_DIR=$PWD/plane-app
-mkdir -p $PLANE_INSTALL_DIR/archive
 
 function install(){
     echo 
@@ -28,7 +27,15 @@ function download(){
         mv $PLANE_INSTALL_DIR/variables-upgrade.env $PLANE_INSTALL_DIR/.env
     fi
 
+    if [ "$BRANCH" != "master" ];
+    then
+        cp $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/temp.yaml 
+        sed -e 's@${APP_RELEASE:-latest}@'"$BRANCH"'@g' \
+            $PLANE_INSTALL_DIR/temp.yaml > $PLANE_INSTALL_DIR/docker-compose.yaml
 
+        rm $PLANE_INSTALL_DIR/temp.yaml
+    fi
+    
     echo ""
     echo "Latest version is now available for you to use"
     echo ""
@@ -107,5 +114,11 @@ function askForAction(){
         echo "INVALID ACTION SUPPLIED"
     fi
 }
+
+if [ "$BRANCH" != "master" ];
+then
+    PLANE_INSTALL_DIR=$PWD/plane-app-$(echo $BRANCH | sed -r 's@(\/|" "|\.)@-@g')
+fi
+mkdir -p $PLANE_INSTALL_DIR/archive
 
 askForAction

@@ -1,11 +1,9 @@
 import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hook
 import useEstimateOption from "hooks/use-estimate-option";
-// services
-import { IssueLabelService } from "services/issue";
 // icons
 import { Tooltip, BlockedIcon, BlockerIcon, RelatedIcon, LayersIcon, DiceIcon } from "@plane/ui";
 import {
@@ -29,11 +27,7 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { capitalizeFirstLetter } from "helpers/string.helper";
 // types
 import { IIssueActivity } from "types";
-// fetch-keys
-import { WORKSPACE_LABELS } from "constants/fetch-keys";
-
-// services
-const issueLabelService = new IssueLabelService();
+import { useEffect } from "react";
 
 const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   const router = useRouter();
@@ -42,13 +36,20 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
   return (
     <Tooltip tooltipContent={activity.issue_detail ? activity.issue_detail.name : "This issue has been deleted"}>
       <a
-        href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
-        target="_blank"
-        rel="noopener noreferrer"
+        aria-disabled={activity.issue === null}
+        href={`${
+          activity.issue_detail
+            ? `/${workspaceSlug ?? activity.workspace_detail?.slug}/projects/${activity.project}/issues/${
+                activity.issue
+              }`
+            : "#"
+        }`}
+        target={activity.issue === null ? "_self" : "_blank"}
+        rel={activity.issue === null ? "" : "noopener noreferrer"}
         className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
-        <RocketIcon size={12} color="#6b7280" />
+        <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
       </a>
     </Tooltip>
   );
@@ -60,7 +61,9 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
 
   return (
     <a
-      href={`/${workspaceSlug}/profile/${activity.new_identifier ?? activity.old_identifier}`}
+      href={`/${workspaceSlug ?? activity.workspace_detail?.slug}/profile/${
+        activity.new_identifier ?? activity.old_identifier
+      }`}
       target="_blank"
       rel="noopener noreferrer"
       className="font-medium text-custom-text-100 inline-flex items-center hover:underline"
@@ -70,25 +73,27 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
   );
 };
 
-const LabelPill = ({ labelId }: { labelId: string }) => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; workspaceSlug: string }) => {
+  const {
+    workspace: { labels, fetchWorkspaceLabels },
+  } = useMobxStore();
 
-  const { data: labels } = useSWR(
-    workspaceSlug ? WORKSPACE_LABELS(workspaceSlug.toString()) : null,
-    workspaceSlug ? () => issueLabelService.getWorkspaceIssueLabels(workspaceSlug.toString()) : null
-  );
+  const workspaceLabels = labels[workspaceSlug];
+
+  useEffect(() => {
+    if (!workspaceLabels) fetchWorkspaceLabels(workspaceSlug);
+  }, [fetchWorkspaceLabels, workspaceLabels, workspaceSlug]);
 
   return (
     <span
-      className="h-1.5 w-1.5 rounded-full"
+      className="h-1.5 w-1.5 rounded-full flex-shrink-0"
       style={{
-        backgroundColor: labels?.find((l) => l.id === labelId)?.color ?? "#000000",
+        backgroundColor: workspaceLabels?.find((l) => l.id === labelId)?.color ?? "#000000",
       }}
       aria-hidden="true"
     />
   );
-};
+});
 
 const EstimatePoint = ({ point }: { point: string }) => {
   const { estimateValue, isEstimateActive } = useEstimateOption(Number(point));
@@ -221,6 +226,56 @@ const activityDetails: {
     },
     icon: <BlockedIcon height="12" width="12" color="#6b7280" />,
   },
+  cycles: {
+    message: (activity, showIssue, workspaceSlug) => {
+      if (activity.verb === "created")
+        return (
+          <>
+            <span className="flex-shrink-0">added this issue to the cycle </span>
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+            >
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+            </a>
+          </>
+        );
+      else if (activity.verb === "updated")
+        return (
+          <>
+            <span className="flex-shrink-0">set the cycle to </span>
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+            >
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+            </a>
+          </>
+        );
+      else
+        return (
+          <>
+            removed the issue from the cycle{" "}
+            <a
+              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+            >
+              <span className="truncate">{activity.old_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
+            </a>
+          </>
+        );
+    },
+    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
+  },
   duplicate: {
     message: (activity) => {
       if (activity.old_value === "")
@@ -239,74 +294,6 @@ const activityDetails: {
         );
     },
     icon: <CopyPlus size={12} color="#6b7280" />,
-  },
-  relates_to: {
-    message: (activity) => {
-      if (activity.old_value === "")
-        return (
-          <>
-            marked that this issue relates to{" "}
-            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
-          </>
-        );
-      else
-        return (
-          <>
-            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
-          </>
-        );
-    },
-    icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
-  },
-  cycles: {
-    message: (activity, showIssue, workspaceSlug) => {
-      if (activity.verb === "created")
-        return (
-          <>
-            added this issue to the cycle{" "}
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
-            >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
-            </a>
-          </>
-        );
-      else if (activity.verb === "updated")
-        return (
-          <>
-            set the cycle to{" "}
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
-            >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
-            </a>
-          </>
-        );
-      else
-        return (
-          <>
-            removed the issue from the cycle{" "}
-            <a
-              href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
-            >
-              {activity.old_value}
-              <RocketIcon size={12} color="#6b7280" />
-            </a>
-          </>
-        );
-    },
-    icon: <ContrastIcon size={12} color="#6b7280" aria-hidden="true" />,
   },
   description: {
     message: (activity, showIssue) => (
@@ -362,20 +349,20 @@ const activityDetails: {
     icon: <LayersIcon width={12} height={12} color="#6b7280" aria-hidden="true" />,
   },
   labels: {
-    message: (activity, showIssue) => {
+    message: (activity, showIssue, workspaceSlug) => {
       if (activity.old_value === "")
         return (
           <>
             added a new label{" "}
-            <span className="inline-flex items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
-              <LabelPill labelId={activity.new_identifier ?? ""} />
-              <span className="font-medium text-custom-text-100">{activity.new_value}</span>
+            <span className="inline-flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
+              <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
+              <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.new_value}</span>
             </span>
             {showIssue && (
-              <>
+              <span>
                 {" "}
                 to <IssueLink activity={activity} />
-              </>
+              </span>
             )}
           </>
         );
@@ -383,15 +370,15 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex items-center gap-3 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
-              <LabelPill labelId={activity.old_identifier ?? ""} />
-              <span className="font-medium text-custom-text-100">{activity.old_value}</span>
+            <span className="inline-flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
+              <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
+              <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.old_value}</span>
             </span>
             {showIssue && (
-              <>
+              <span>
                 {" "}
                 from <IssueLink activity={activity} />
-              </>
+              </span>
             )}
           </>
         );
@@ -479,10 +466,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -494,10 +481,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
-              {activity.new_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.new_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -509,10 +496,10 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
             >
-              {activity.old_value}
-              <RocketIcon size={12} color="#6b7280" />
+              <span className="truncate">{activity.old_value}</span>
+              <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
             </a>
           </>
         );
@@ -522,7 +509,7 @@ const activityDetails: {
   name: {
     message: (activity, showIssue) => (
       <>
-        set the name to {activity.new_value}
+        <span className="truncate">set the name to {activity.new_value}</span>
         {showIssue && (
           <>
             {" "}
@@ -582,6 +569,24 @@ const activityDetails: {
       </>
     ),
     icon: <SignalMediumIcon size={12} color="#6b7280" aria-hidden="true" />,
+  },
+  relates_to: {
+    message: (activity) => {
+      if (activity.old_value === "")
+        return (
+          <>
+            marked that this issue relates to{" "}
+            <span className="font-medium text-custom-text-100">{activity.new_value}</span>.
+          </>
+        );
+      else
+        return (
+          <>
+            removed the relation from <span className="font-medium text-custom-text-100">{activity.old_value}</span>.
+          </>
+        );
+    },
+    icon: <RelatedIcon height="12" width="12" color="#6b7280" />,
   },
   start_date: {
     message: (activity, showIssue) => {
@@ -672,7 +677,12 @@ export const ActivityIcon = ({ activity }: { activity: IIssueActivity }) => (
   <>{activityDetails[activity.field as keyof typeof activityDetails]?.icon}</>
 );
 
-export const ActivityMessage = ({ activity, showIssue = false }: { activity: IIssueActivity; showIssue?: boolean }) => {
+type ActivityMessageProps = {
+  activity: IIssueActivity;
+  showIssue?: boolean;
+};
+
+export const ActivityMessage = ({ activity, showIssue = false }: ActivityMessageProps) => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
@@ -681,7 +691,7 @@ export const ActivityMessage = ({ activity, showIssue = false }: { activity: IIs
       {activityDetails[activity.field as keyof typeof activityDetails]?.message(
         activity,
         showIssue,
-        workspaceSlug?.toString() ?? ""
+        workspaceSlug ? workspaceSlug.toString() : activity.workspace_detail?.slug ?? ""
       )}
     </>
   );

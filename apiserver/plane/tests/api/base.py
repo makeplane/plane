@@ -3,7 +3,7 @@ from rest_framework.test import APITestCase, APIClient
 
 # Module imports
 from plane.db.models import User
-from plane.api.views.authentication import get_tokens_for_user
+from plane.app.views.authentication import get_tokens_for_user
 
 
 class BaseAPITest(APITestCase):
