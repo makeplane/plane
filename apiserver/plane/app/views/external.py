@@ -1,6 +1,7 @@
 # Python imports
 import requests
 import os
+
 # Third party imports
 from openai import OpenAI
 from rest_framework.response import Response
@@ -15,8 +16,8 @@ from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project
 from plane.app.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
 from plane.utils.integrations.github import get_release_notes
-from plane.license.models import InstanceConfiguration
 from plane.license.utils.instance_value import get_configuration_value
+
 
 class GPTIntegrationEndpoint(BaseAPIView):
     permission_classes = [
@@ -24,14 +25,22 @@ class GPTIntegrationEndpoint(BaseAPIView):
     ]
 
     def post(self, request, slug, project_id):
+        OPENAI_API_KEY, GPT_ENGINE = get_configuration_value(
+            [
+                {
+                    "key": "OPENAI_API_KEY",
+                    "default": os.environ.get("OPENAI_API_KEY", None),
+                },
+                {
+                    "key": "GPT_ENGINE",
+                    "default": os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"),
+                },
+            ]
+        )
 
         # Get the configuration value
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        api_key = get_configuration_value(instance_configuration, "OPENAI_API_KEY", os.environ.get("OPENAI_API_KEY"))
-        gpt_engine = get_configuration_value(instance_configuration, "GPT_ENGINE", os.environ.get("GPT_ENGINE", "gpt-3.5-turbo"))
-
         # Check the keys
-        if not api_key or not gpt_engine:
+        if not OPENAI_API_KEY or not GPT_ENGINE:
             return Response(
                 {"error": "OpenAI API key and engine is required"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -48,11 +57,11 @@ class GPTIntegrationEndpoint(BaseAPIView):
         final_text = task + "\n" + prompt
 
         client = OpenAI(
-            api_key=api_key,
+            api_key=OPENAI_API_KEY,
         )
 
         response = client.chat.completions.create(
-            model=gpt_engine,
+            model=GPT_ENGINE,
             messages=[{"role": "user", "content": final_text}],
         )
 
@@ -79,13 +88,17 @@ class ReleaseNotesEndpoint(BaseAPIView):
 
 
 class UnsplashEndpoint(BaseAPIView):
-
     def get(self, request):
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
-        unsplash_access_key = get_configuration_value(instance_configuration, "UNSPLASH_ACCESS_KEY", os.environ.get("UNSPLASH_ACCESS_KEY"))
-
+        UNSPLASH_ACCESS_KEY, = get_configuration_value(
+            [
+                {
+                    "key": "UNSPLASH_ACCESS_KEY",
+                    "default": os.environ.get("UNSPLASH_ACCESS_KEY"),
+                }
+            ]
+        )
         # Check unsplash access key
-        if not unsplash_access_key:
+        if not UNSPLASH_ACCESS_KEY:
             return Response([], status=status.HTTP_200_OK)
 
         # Query parameters
@@ -94,9 +107,9 @@ class UnsplashEndpoint(BaseAPIView):
         per_page = request.GET.get("per_page", 20)
 
         url = (
-            f"https://api.unsplash.com/search/photos/?client_id={unsplash_access_key}&query={query}&page=${page}&per_page={per_page}"
+            f"https://api.unsplash.com/search/photos/?client_id={UNSPLASH_ACCESS_KEY}&query={query}&page=${page}&per_page={per_page}"
             if query
-            else f"https://api.unsplash.com/photos/?client_id={unsplash_access_key}&page={page}&per_page={per_page}"
+            else f"https://api.unsplash.com/photos/?client_id={UNSPLASH_ACCESS_KEY}&page={page}&per_page={per_page}"
         )
 
         headers = {
