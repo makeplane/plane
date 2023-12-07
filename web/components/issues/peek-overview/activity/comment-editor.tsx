@@ -11,16 +11,16 @@ import { LiteTextEditorWithRef } from "@plane/lite-text-editor";
 // ui
 import { Button } from "@plane/ui";
 // types
-import type { IIssueComment } from "types";
+import type { IIssueActivity } from "types";
 
-const defaultValues: Partial<IIssueComment> = {
+const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",
   comment_html: "",
 };
 
 type IIssueCommentEditor = {
   disabled?: boolean;
-  onSubmit: (data: IIssueComment) => Promise<void>;
+  onSubmit: (data: IIssueActivity) => Promise<void>;
   showAccessSpecifier?: boolean;
 };
 
@@ -60,9 +60,9 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
     formState: { isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<IIssueComment>({ defaultValues });
+  } = useForm<IIssueActivity>({ defaultValues });
 
-  const handleAddComment = async (formData: IIssueComment) => {
+  const handleAddComment = async (formData: IIssueActivity) => {
     if (!formData.comment_html || isSubmitting) return;
 
     await onSubmit(formData).then(() => {
@@ -99,7 +99,7 @@ export const IssueCommentEditor: React.FC<IIssueCommentEditor> = (props) => {
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier
-                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
                         : undefined
                     }
                     submitButton={

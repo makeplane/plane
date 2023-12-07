@@ -2,7 +2,7 @@ import { API_BASE_URL } from "helpers/common.helper";
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IssueReaction, IssueCommentReaction, IssueReactionForm, IssueCommentReactionForm } from "types";
+import type { IssueCommentReaction, IssueReactionForm, IssueCommentReactionForm, IIssueReaction } from "types";
 
 export class IssueReactionService extends APIService {
   constructor() {
@@ -22,7 +22,7 @@ export class IssueReactionService extends APIService {
       });
   }
 
-  async listIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<IssueReaction[]> {
+  async listIssueReactions(workspaceSlug: string, projectId: string, issueId: string): Promise<IIssueReaction[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/reactions/`)
       .then((response) => response?.data)
       .catch((error) => {

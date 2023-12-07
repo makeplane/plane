@@ -21,8 +21,8 @@ type Props = {
   members?: IUserLite[] | undefined;
   labels?: IIssueLabel[] | undefined;
   states?: IState[] | undefined;
-  quickActions: (issue: IIssue,customActionButton?: React.ReactElement) => React.ReactNode;
-  handleIssues: (issue: IIssue, action: EIssueActions) => void;
+  quickActions: (issue: IIssue, customActionButton: any) => React.ReactNode; // TODO: replace any with type
+  handleIssues: (issue: IIssue, action: EIssueActions) => Promise<void>;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (
     workspaceSlug: string,
@@ -189,7 +189,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate: any) => handleIssues(issueToUpdate, EIssueActions.UPDATE)}
+          handleIssue={async (issueToUpdate: any) => await handleIssues(issueToUpdate, EIssueActions.UPDATE)}
         />
       )}
     </div>

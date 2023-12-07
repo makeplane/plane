@@ -14,45 +14,49 @@ export const CycleCalendarLayout: React.FC = observer(() => {
     cycleIssues: cycleIssueStore,
     cycleIssuesFilter: cycleIssueFilterStore,
     cycleIssueCalendarView: cycleIssueCalendarViewStore,
-    calendarHelpers: calendarHelperStore,
+    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, projectId, cycleId } = router.query as {
-    workspaceSlug: string;
-    projectId: string;
-    cycleId: string;
-  };
+  const { workspaceSlug, projectId, cycleId } = router.query;
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
 
-      cycleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, cycleId);
+      await cycleIssueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue, cycleId.toString());
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug || !cycleId) return;
-      cycleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, cycleId);
+      await cycleIssueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id, cycleId.toString());
     },
     [EIssueActions.REMOVE]: async (issue: IIssue) => {
-      if (!workspaceSlug || !cycleId || !issue.bridge_id) return;
-      cycleIssueStore.removeIssueFromCycle(workspaceSlug, issue.project, cycleId, issue.id, issue.bridge_id);
+      if (!workspaceSlug || !cycleId || !projectId || !issue.bridge_id) return;
+      await cycleIssueStore.removeIssueFromCycle(
+        workspaceSlug.toString(),
+        issue.project,
+        cycleId.toString(),
+        issue.id,
+        issue.bridge_id
+      );
     },
   };
 
   const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (calendarHelperStore.handleDragDrop)
-      calendarHelperStore.handleDragDrop(
+    if (workspaceSlug && projectId && cycleId)
+      handleCalenderDragDrop(
         source,
         destination,
-        workspaceSlug,
-        projectId,
+        workspaceSlug.toString(),
+        projectId.toString(),
         cycleIssueStore,
         issues,
         issueWithIds,
-        cycleId
+        cycleId.toString()
       );
   };
+
+  if (!cycleId) return null;
 
   return (
     <BaseCalendarRoot
@@ -61,7 +65,7 @@ export const CycleCalendarLayout: React.FC = observer(() => {
       calendarViewStore={cycleIssueCalendarViewStore}
       QuickActions={CycleIssueQuickActions}
       issueActions={issueActions}
-      viewId={cycleId}
+      viewId={cycleId.toString()}
       handleDragDrop={handleDragDrop}
     />
   );

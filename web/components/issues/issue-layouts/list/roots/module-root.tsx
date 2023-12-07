@@ -22,17 +22,20 @@ export const ModuleListLayout: React.FC = observer(() => {
   const { moduleIssues: moduleIssueStore, moduleIssuesFilter: moduleIssueFilterStore } = useMobxStore();
 
   const issueActions = {
-    [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-      moduleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, moduleId);
+
+      await moduleIssueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue, moduleId);
     },
-    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !moduleId) return;
-      moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
+
+      await moduleIssueStore.removeIssue(workspaceSlug, issue.project, issue.id, moduleId);
     },
-    [EIssueActions.REMOVE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.REMOVE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !moduleId || !issue.bridge_id) return;
-      moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
+
+      await moduleIssueStore.removeIssueFromModule(workspaceSlug, issue.project, moduleId, issue.id, issue.bridge_id);
     },
   };
 
