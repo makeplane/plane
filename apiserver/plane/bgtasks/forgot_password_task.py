@@ -14,7 +14,6 @@ from celery import shared_task
 from sentry_sdk import capture_exception
 
 # Module imports
-from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_email_configuration
 
 
@@ -26,10 +25,6 @@ def forgot_password(first_name, email, uidb64, token, current_site):
         )
         abs_url = str(current_site) + relative_link
 
-        instance_configuration = InstanceConfiguration.objects.filter(
-            key__startswith="EMAIL_"
-        ).values("key", "value")
-
         (
             EMAIL_HOST,
             EMAIL_HOST_USER,
@@ -37,7 +32,7 @@ def forgot_password(first_name, email, uidb64, token, current_site):
             EMAIL_PORT,
             EMAIL_USE_TLS,
             EMAIL_FROM,
-        ) = get_email_configuration(instance_configuration=instance_configuration)
+        ) = get_email_configuration()
 
         subject = "A new password to your Plane account has been requested"
 
@@ -51,9 +46,6 @@ def forgot_password(first_name, email, uidb64, token, current_site):
 
         text_content = strip_tags(html_content)
 
-        instance_configuration = InstanceConfiguration.objects.filter(
-            key__startswith="EMAIL_"
-        ).values("key", "value")
         connection = get_connection(
             host=EMAIL_HOST,
             port=int(EMAIL_PORT),

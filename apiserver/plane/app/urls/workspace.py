@@ -65,6 +65,7 @@ urlpatterns = [
             {
                 "delete": "destroy",
                 "get": "retrieve",
+                "patch": "partial_update",
             }
         ),
         name="workspace-invitations",

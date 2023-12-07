@@ -287,7 +287,6 @@ CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",
     "plane.bgtasks.exporter_expired_task",
     "plane.bgtasks.file_asset_task",
-    "plane.license.bgtasks.instance_verification_task",
 )
 
 # Sentry Settings
@@ -328,12 +327,10 @@ USE_MINIO = int(os.environ.get("USE_MINIO", 0)) == 1
 POSTHOG_API_KEY = os.environ.get("POSTHOG_API_KEY", False)
 POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 
-# License engine base url
-LICENSE_ENGINE_BASE_URL = os.environ.get(
-    "LICENSE_ENGINE_BASE_URL", "https://control-center.plane.so"
-)
-
 # instance key
 INSTANCE_KEY = os.environ.get(
     "INSTANCE_KEY", "ae6517d563dfc13d8270bd45cf17b08f70b37d989128a9dab46ff687603333c3"
 )
+
+# Skip environment variable configuration
+SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"

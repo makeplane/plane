@@ -40,7 +40,7 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store
   const {
-    workspaceMember: { removeMember, updateMember, deleteWorkspaceInvitation },
+    workspaceMember: { removeMember, updateMember, updateMemberInvitation, deleteWorkspaceInvitation },
     user: { currentWorkspaceMemberInfo, currentWorkspaceRole, currentUser, currentUserSettings, leaveWorkspace },
   } = useMobxStore();
   // states
@@ -206,15 +206,26 @@ export const WorkspaceMembersListItem: FC<Props> = observer((props) => {
             onChange={(value: TUserWorkspaceRole | undefined) => {
               if (!workspaceSlug || !value) return;
 
-              updateMember(workspaceSlug.toString(), member.id, {
-                role: value,
-              }).catch(() => {
-                setToastAlert({
-                  type: "error",
-                  title: "Error!",
-                  message: "An error occurred while updating member role. Please try again.",
+              if (!member?.status)
+                updateMemberInvitation(workspaceSlug.toString(), member.id, {
+                  role: value,
+                }).catch(() => {
+                  setToastAlert({
+                    type: "error",
+                    title: "Error!",
+                    message: "An error occurred while updating member role. Please try again.",
+                  });
                 });
-              });
+              else
+                updateMember(workspaceSlug.toString(), member.id, {
+                  role: value,
+                }).catch(() => {
+                  setToastAlert({
+                    type: "error",
+                    title: "Error!",
+                    message: "An error occurred while updating member role. Please try again.",
+                  });
+                });
             }}
             disabled={!hasRoleChangeAccess}
             placement="bottom-end"
