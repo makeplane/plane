@@ -22,7 +22,7 @@ export interface IAssigneesHeader {
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
-export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="base" />;
+export const Icon = ({ user }: any) => <Avatar name={user.display_name} src={user.avatar} size="md" />;
 
 export const AssigneesHeader: FC<IAssigneesHeader> = observer((props) => {
   const {
