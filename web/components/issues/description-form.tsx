@@ -66,7 +66,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id, issue.name, issue.description_html]);
+  }, [issue.id]);
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
