@@ -17,7 +17,6 @@ from slack_sdk.errors import SlackApiError
 
 # Module imports
 from plane.db.models import Workspace, WorkspaceMemberInvite, User
-from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_email_configuration
 
 
@@ -37,9 +36,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         # The complete url including the domain
         abs_url = str(current_site) + relative_link
 
-        instance_configuration = InstanceConfiguration.objects.filter(
-            key__startswith="EMAIL_"
-        ).values("key", "value")
 
         (
             EMAIL_HOST,
@@ -48,7 +44,7 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
             EMAIL_PORT,
             EMAIL_USE_TLS,
             EMAIL_FROM,
-        ) = get_email_configuration(instance_configuration=instance_configuration)
+        ) = get_email_configuration()
 
         # Subject of the email
         subject = f"{user.first_name or user.display_name or user.email} has invited you to join them in {workspace.name} on Plane"
@@ -69,9 +65,6 @@ def workspace_invitation(email, workspace_id, token, current_site, invitor):
         workspace_member_invite.message = text_content
         workspace_member_invite.save()
 
-        instance_configuration = InstanceConfiguration.objects.filter(
-            key__startswith="EMAIL_"
-        ).values("key", "value")
         connection = get_connection(
             host=EMAIL_HOST,
             port=int(EMAIL_PORT),

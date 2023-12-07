@@ -27,7 +27,7 @@ from plane.db.models import (
     ProjectMember,
 )
 from plane.settings.redis import redis_instance
-from plane.license.models import InstanceConfiguration, Instance
+from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.event_tracking_task import auth_events
 
@@ -52,8 +52,6 @@ class SignUpEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
-
         email = request.data.get("email", False)
         password = request.data.get("password", False)
         ## Raise exception if any of the above are missing
@@ -73,14 +71,20 @@ class SignUpEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # get configuration values
+        # Get configuration values
+        ENABLE_SIGNUP, = get_configuration_value(
+            [
+                {
+                    "key": "ENABLE_SIGNUP",
+                    "default": os.environ.get("ENABLE_SIGNUP"),
+                },
+            ]
+        )
+
         # If the sign up is not enabled and the user does not have invite disallow him from creating the account
         if (
-            get_configuration_value(
-                instance_configuration,
-                "ENABLE_SIGNUP",
-                os.environ.get("ENABLE_SIGNUP", "0"),
-            )
-            == "0"
+            ENABLE_SIGNUP == "0"
             and not WorkspaceMemberInvite.objects.filter(
                 email=email,
             ).exists()
@@ -169,16 +173,17 @@ class SignInEndpoint(BaseAPIView):
 
         # Create the user
         else:
-            # Get the configurations
-            instance_configuration = InstanceConfiguration.objects.values("key", "value")
+            ENABLE_SIGNUP, = get_configuration_value(
+                [
+                    {
+                        "key": "ENABLE_SIGNUP",
+                        "default": os.environ.get("ENABLE_SIGNUP"),
+                    },
+                ]
+            )
             # Create the user
             if (
-                get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_SIGNUP",
-                    os.environ.get("ENABLE_SIGNUP", "0"),
-                )
-                == "0"
+                ENABLE_SIGNUP == "0"
                 and not WorkspaceMemberInvite.objects.filter(
                     email=email,
                 ).exists()
@@ -264,16 +269,15 @@ class SignInEndpoint(BaseAPIView):
         workspace_member_invites.delete()
         project_member_invites.delete()
         # Send event
-        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-            auth_events.delay(
-                user=user.id,
-                email=email,
-                user_agent=request.META.get("HTTP_USER_AGENT"),
-                ip=request.META.get("REMOTE_ADDR"),
-                event_name="SIGN_IN",
-                medium="EMAIL",
-                first_time=False,
-            )
+        auth_events.delay(
+            user=user.id,
+            email=email,
+            user_agent=request.META.get("HTTP_USER_AGENT"),
+            ip=request.META.get("REMOTE_ADDR"),
+            event_name="SIGN_IN",
+            medium="EMAIL",
+            first_time=False,
+        )
 
         access_token, refresh_token = get_tokens_for_user(user)
         data = {
@@ -347,16 +351,15 @@ class MagicSignInEndpoint(BaseAPIView):
                         status=status.HTTP_403_FORBIDDEN,
                     )
                 # Send event
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="MAGIC_LINK",
-                        first_time=False,
-                    )
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="MAGIC_LINK",
+                    first_time=False,
+                )
 
                 user.is_active = True
                 user.is_email_verified = True

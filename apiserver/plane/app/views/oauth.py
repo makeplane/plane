@@ -30,7 +30,7 @@ from plane.db.models import (
 )
 from plane.bgtasks.event_tracking_task import auth_events
 from .base import BaseAPIView
-from plane.license.models import InstanceConfiguration, Instance
+from plane.license.models import Instance
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -147,18 +147,20 @@ class OauthEndpoint(BaseAPIView):
             id_token = request.data.get("credential", False)
             client_id = request.data.get("clientId", False)
 
-            instance_configuration = InstanceConfiguration.objects.values(
-                "key", "value"
+            GOOGLE_CLIENT_ID, GITHUB_CLIENT_ID = get_configuration_value(
+                [
+                    {
+                        "key": "GOOGLE_CLIENT_ID",
+                        "default": os.environ.get("GOOGLE_CLIENT_ID"),
+                    },
+                    {
+                        "key": "GITHUB_CLIENT_ID",
+                        "default": os.environ.get("GITHUB_CLIENT_ID"),
+                    },
+                ]
             )
-            if not get_configuration_value(
-                instance_configuration,
-                "GOOGLE_CLIENT_ID",
-                os.environ.get("GOOGLE_CLIENT_ID"),
-            ) or not get_configuration_value(
-                instance_configuration,
-                "GITHUB_CLIENT_ID",
-                os.environ.get("GITHUB_CLIENT_ID"),
-            ):
+
+            if not GOOGLE_CLIENT_ID or not GITHUB_CLIENT_ID:
                 return Response(
                     {"error": "Github or Google login is not configured"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -278,16 +280,15 @@ class OauthEndpoint(BaseAPIView):
             )
 
             # Send event
-            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                auth_events.delay(
-                    user=user.id,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
-                    event_name="SIGN_IN",
-                    medium=medium.upper(),
-                    first_time=False,
-                )
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium=medium.upper(),
+                first_time=False,
+            )
 
             access_token, refresh_token = get_tokens_for_user(user)
 
@@ -298,17 +299,16 @@ class OauthEndpoint(BaseAPIView):
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            ## Signup Case
-            instance_configuration = InstanceConfiguration.objects.values(
-                "key", "value"
+            ENABLE_SIGNUP, = get_configuration_value(
+                [
+                    {
+                        "key": "ENABLE_SIGNUP",
+                        "default": os.environ.get("ENABLE_SIGNUP", "0"),
+                    }
+                ]
             )
             if (
-                get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_SIGNUP",
-                    os.environ.get("ENABLE_SIGNUP", "0"),
-                )
-                == "0"
+                ENABLE_SIGNUP == "0"
                 and not WorkspaceMemberInvite.objects.filter(
                     email=email,
                 ).exists()
@@ -411,16 +411,15 @@ class OauthEndpoint(BaseAPIView):
             project_member_invites.delete()
 
             # Send event
-            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                auth_events.delay(
-                    user=user.id,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
-                    event_name="SIGN_IN",
-                    medium=medium.upper(),
-                    first_time=True,
-                )
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium=medium.upper(),
+                first_time=True,
+            )
 
             SocialLoginConnection.objects.update_or_create(
                 medium=medium,
