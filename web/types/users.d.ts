@@ -162,6 +162,10 @@ export interface IUserProfileProjectSegregation {
   };
 }
 
+export interface IUserProjectsRole {
+  [project_id: string]: boolean;
+}
+
 // export interface ICurrentUser {
 //   id: readonly string;
 //   avatar: string;
