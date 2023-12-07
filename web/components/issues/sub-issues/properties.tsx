@@ -1,15 +1,11 @@
 import React from "react";
-import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueService } from "services/issue";
 // components
-import { ViewDueDateSelect, ViewStartDateSelect } from "components/issues";
 import { PrioritySelect } from "components/project";
 // types
-import { IUser, IIssue, IState } from "types";
+import { IIssue, IState } from "types";
 // fetch-keys
 import { SUB_ISSUES } from "constants/fetch-keys";
 import { IssuePropertyAssignee, IssuePropertyState } from "../issue-layouts/properties";
@@ -18,19 +14,14 @@ export interface IIssueProperty {
   workspaceSlug: string;
   parentIssue: IIssue;
   issue: IIssue;
-  user: IUser | undefined;
   editable: boolean;
 }
 
 // services
 const issueService = new IssueService();
 
-export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
-  const { workspaceSlug, parentIssue, issue, user, editable } = props;
-
-  const { issueFilter: issueFilterStore } = useMobxStore();
-
-  const displayProperties = issueFilterStore.userDisplayProperties ?? {};
+export const IssueProperty: React.FC<IIssueProperty> = (props) => {
+  const { workspaceSlug, parentIssue, issue, editable } = props;
 
   const handlePriorityChange = (data: any) => {
     partialUpdateIssue({ priority: data });
@@ -77,63 +68,30 @@ export const IssueProperty: React.FC<IIssueProperty> = observer((props) => {
   };
 
   return (
-    <div className="relative flex items-center gap-1">
-      {displayProperties.priority && (
-        <div className="flex-shrink-0">
-          <PrioritySelect
-            value={issue.priority}
-            onChange={handlePriorityChange}
-            hideDropdownArrow
-            disabled={!editable}
-          />
-        </div>
-      )}
+    <div className="relative flex items-center gap-2">
+      <div className="flex-shrink-0">
+        <PrioritySelect value={issue.priority} onChange={handlePriorityChange} hideDropdownArrow disabled={!editable} />
+      </div>
 
-      {displayProperties.state && (
-        <div className="flex-shrink-0">
-          <IssuePropertyState
-            projectId={issue?.project_detail?.id || null}
-            value={issue?.state_detail || null}
-            onChange={(data) => handleStateChange(data)}
-            disabled={false}
-            hideDropdownArrow
-          />
-        </div>
-      )}
+      <div className="flex-shrink-0">
+        <IssuePropertyState
+          projectId={issue?.project_detail?.id || null}
+          value={issue?.state || null}
+          onChange={(data) => handleStateChange(data)}
+          disabled={false}
+          hideDropdownArrow
+        />
+      </div>
 
-      {displayProperties.start_date && issue.start_date && (
-        <div className="flex-shrink-0 w-[104px]">
-          <ViewStartDateSelect
-            issue={issue}
-            onChange={(val) => partialUpdateIssue({ start_date: val })}
-            disabled={!editable}
-          />
-        </div>
-      )}
-
-      {displayProperties.due_date && issue.target_date && (
-        <div className="flex-shrink-0 w-[104px]">
-          {user && (
-            <ViewDueDateSelect
-              issue={issue}
-              onChange={(val) => partialUpdateIssue({ target_date: val })}
-              disabled={!editable}
-            />
-          )}
-        </div>
-      )}
-
-      {displayProperties.assignee && (
-        <div className="flex-shrink-0">
-          <IssuePropertyAssignee
-            projectId={issue?.project_detail?.id || null}
-            value={issue?.assignees || null}
-            hideDropdownArrow
-            onChange={(val) => handleAssigneeChange(val)}
-            disabled={false}
-          />
-        </div>
-      )}
+      <div className="flex-shrink-0">
+        <IssuePropertyAssignee
+          projectId={issue?.project_detail?.id || null}
+          value={issue?.assignees || null}
+          hideDropdownArrow
+          onChange={(val) => handleAssigneeChange(val)}
+          disabled={false}
+        />
+      </div>
     </div>
   );
-});
+};
