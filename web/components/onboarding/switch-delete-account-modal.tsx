@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { mutate } from "swr";
 import { useTheme } from "next-themes";
@@ -67,8 +67,10 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
           title: "Success!",
           message: "Account deleted successfully.",
         });
-        handleClose();
+        mutate("CURRENT_USER_DETAILS", null);
+        setTheme("system");
         router.push("/");
+        handleClose();
       })
       .catch((err) =>
         setToastAlert({
