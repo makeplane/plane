@@ -17,6 +17,7 @@ from plane.db.models import (
     ProjectDeployBoard,
     ProjectPublicMember,
 )
+from plane.utils.s3 import S3
 
 
 class ProjectSerializer(BaseSerializer):
@@ -78,6 +79,13 @@ class ProjectSerializer(BaseSerializer):
         # If not same fail update
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if S3.verify_s3_url(instance.cover_image):
+            s3 = S3()
+            data["cover_image"] = s3.refresh_url(instance.cover_image)
+        return data
+
 
 class ProjectLiteSerializer(BaseSerializer):
     class Meta:
@@ -92,6 +100,13 @@ class ProjectLiteSerializer(BaseSerializer):
             "description",
         ]
         read_only_fields = fields
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if S3.verify_s3_url(instance.cover_image):
+            s3 = S3()
+            data["cover_image"] = s3.refresh_url(instance.cover_image)
+        return data
 
 
 class ProjectDetailSerializer(BaseSerializer):
@@ -110,6 +125,13 @@ class ProjectDetailSerializer(BaseSerializer):
     class Meta:
         model = Project
         fields = "__all__"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if S3.verify_s3_url(instance.cover_image):
+            s3 = S3()
+            data["cover_image"] = s3.refresh_url(instance.cover_image)
+        return data
 
 
 class ProjectMemberSerializer(BaseSerializer):
@@ -178,12 +200,12 @@ class ProjectDeployBoardSerializer(BaseSerializer):
         fields = "__all__"
         read_only_fields = [
             "workspace",
-            "project", "anchor",
+            "project",
+            "anchor",
         ]
 
 
 class ProjectPublicMemberSerializer(BaseSerializer):
-
     class Meta:
         model = ProjectPublicMember
         fields = "__all__"
