@@ -95,6 +95,16 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
     class Meta:
         model = WorkspaceMemberInvite
         fields = "__all__"
+        read_only_fields = [
+            "id",
+            "email",
+            "token",
+            "workspace",
+            "message",
+            "responded_at",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class TeamSerializer(BaseSerializer):
