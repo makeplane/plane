@@ -34,7 +34,6 @@ export class TrackEventStore implements ITrackEventStore {
     group?: { isGrouping: boolean | null; groupType: string | null; gorupId: string | null } | null
   ) => {
     try {
-      console.log("POSTHOG_EVENT: ", eventName);
       let extras: any = {
         workspace_name: this.rootStore.workspace.currentWorkspace?.name ?? "",
         workspace_id: this.rootStore.workspace.currentWorkspace?.id ?? "",
@@ -70,9 +69,8 @@ export class TrackEventStore implements ITrackEventStore {
           element: this.trackElement ?? "",
         });
       }
-      console.log(payload);
     } catch (error) {
-      console.log(error);
+      throw error;
     }
     this.setTrackElement("");
   };

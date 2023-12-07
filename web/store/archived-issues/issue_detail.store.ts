@@ -173,7 +173,7 @@ export class ArchivedIssueDetailStore implements IArchivedIssueDetailStore {
     try {
       const issueResponse = await this.archivedIssueService.retrieveArchivedIssue(workspaceSlug, projectId, issueId);
       await this.rootStore.issueDetail.fetchIssueReactions(workspaceSlug, projectId, issueId);
-      await this.rootStore.issueDetail.fetchIssueComments(workspaceSlug, projectId, issueId);
+      await this.rootStore.issueDetail.fetchIssueActivity(workspaceSlug, projectId, issueId);
 
       runInAction(() => {
         this.loader = false;

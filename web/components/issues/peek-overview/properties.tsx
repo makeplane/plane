@@ -47,8 +47,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const {
     user: { currentProjectRole },
-    cycleIssues: cycleIssueStore,
-    moduleIssues: { addIssueToModule },
     issueDetail: { fetchPeekIssueDetails },
   } = useMobxStore();
 

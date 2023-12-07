@@ -14,32 +14,32 @@ export const ProjectViewCalendarLayout: React.FC = observer(() => {
     viewIssues: projectViewIssuesStore,
     viewIssuesFilter: projectIssueViewFiltersStore,
     projectViewIssueCalendarView: projectViewIssueCalendarViewStore,
-    calendarHelpers: calendarHelperStore,
+    calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      projectViewIssuesStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
+      await projectViewIssuesStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      projectViewIssuesStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
+      await projectViewIssuesStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
     },
   };
 
   const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    if (calendarHelperStore.handleDragDrop)
-      calendarHelperStore.handleDragDrop(
+    if (workspaceSlug && projectId)
+      handleCalenderDragDrop(
         source,
         destination,
-        workspaceSlug,
-        projectId,
+        workspaceSlug.toString(),
+        projectId.toString(),
         projectViewIssuesStore,
         issues,
         issueWithIds

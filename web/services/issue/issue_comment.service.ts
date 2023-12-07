@@ -1,6 +1,6 @@
 import { APIService } from "services/api.service";
 // types
-import { IIssueComment } from "types";
+import { IIssueActivity } from "types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -21,7 +21,7 @@ export class IssueCommentService extends APIService {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<IIssueComment>
+    data: Partial<IIssueActivity>
   ): Promise<any> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/`, data)
       .then((response) => response?.data)
@@ -35,7 +35,7 @@ export class IssueCommentService extends APIService {
     projectId: string,
     issueId: string,
     commentId: string,
-    data: Partial<IIssueComment>
+    data: Partial<IIssueActivity>
   ): Promise<any> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/comments/${commentId}/`,
