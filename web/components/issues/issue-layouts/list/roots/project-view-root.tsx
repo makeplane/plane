@@ -26,13 +26,15 @@ export const ProjectViewListLayout: React.FC = observer(() => {
   if (!workspaceSlug || !projectId) return null;
 
   const issueActions = {
-    [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
-      projectViewIssueStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
+
+      await projectViewIssueStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
     },
-    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
-      projectViewIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
+
+      await projectViewIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
     },
   };
 

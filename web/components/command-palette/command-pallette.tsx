@@ -34,6 +34,7 @@ export const CommandPalette: FC = observer(() => {
     theme: { toggleSidebar },
     user: { currentUser },
     trackEvent: { setTrackElement },
+    projectIssues: { removeIssue },
   } = useMobxStore();
   const {
     toggleCommandPaletteModal,
@@ -218,11 +219,15 @@ export const CommandPalette: FC = observer(() => {
         currentStore={createIssueStoreType}
       />
 
-      {issueId && issueDetails && (
+      {workspaceSlug && projectId && issueId && issueDetails && (
         <DeleteIssueModal
           handleClose={() => toggleDeleteIssueModal(false)}
           isOpen={isDeleteIssueModalOpen}
           data={issueDetails}
+          onSubmit={async () => {
+            await removeIssue(workspaceSlug.toString(), projectId.toString(), issueId.toString());
+            router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+          }}
         />
       )}
 

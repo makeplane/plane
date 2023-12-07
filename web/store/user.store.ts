@@ -374,6 +374,9 @@ class UserStore implements IUserStore {
   deactivateAccount = async () => {
     try {
       await this.userService.deactivateAccount();
+      this.currentUserError = null;
+      this.currentUser = null;
+      this.isUserLoggedIn = false;
     } catch (error) {
       throw error;
     }

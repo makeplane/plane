@@ -1,19 +1,22 @@
 import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
-// components
-import { TextArea } from "@plane/ui";
-import { IssueReaction } from "./reactions";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
-import debounce from "lodash/debounce";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
+// components
+import { IssuePeekOverviewReactions } from "components/issues";
+// ui
+import { TextArea } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IUser } from "types";
 // services
 import { FileService } from "services/file.service";
-import { useMobxStore } from "lib/mobx/store-provider";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const fileService = new FileService();
@@ -22,7 +25,7 @@ interface IPeekOverviewIssueDetails {
   workspaceSlug: string;
   issue: IIssue;
   issueReactions: any;
-  user: any;
+  user: IUser | null;
   issueUpdate: (issue: Partial<IIssue>) => void;
   issueReactionCreate: (reaction: string) => void;
   issueReactionRemove: (reaction: string) => void;
@@ -89,7 +92,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id]);
+  }, [issue.id, issue.description_html, issue.name]);
 
   const debouncedFormSave = debounce(async () => {
     handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
@@ -104,7 +107,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     } else if (isSubmitting === "submitting") {
       setShowAlert(true);
     }
-  }, [isSubmitting, setShowAlert]);
+  }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
   // reset form values
   useEffect(() => {
@@ -165,7 +168,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
         <Controller
           name="description_html"
           control={control}
-          render={({ field: { value, onChange } }) => (
+          render={({ field: { onChange } }) => (
             <RichTextEditor
               cancelUploadImage={fileService.cancelUpload}
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
@@ -190,7 +193,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           )}
         />
       </div>
-      <IssueReaction
+      <IssuePeekOverviewReactions
         issueReactions={issueReactions}
         user={user}
         issueReactionCreate={issueReactionCreate}

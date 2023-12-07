@@ -24,9 +24,10 @@ import { SubIssuesRoot } from "./sub-issues";
 // ui
 import { CustomMenu, LayersIcon, StateGroupIcon } from "@plane/ui";
 // types
-import { IIssue, IIssueComment } from "types";
+import { IIssue, IIssueActivity } from "types";
 // fetch-keys
 import { PROJECT_ISSUES_ACTIVITY, SUB_ISSUES } from "constants/fetch-keys";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
@@ -41,24 +42,22 @@ const issueCommentService = new IssueCommentService();
 
 export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { issueDetails, submitChanges, uneditable = false } = props;
-
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // mobx store
   const {
-    user: userStore,
+    user: { currentUser, currentProjectRole },
     project: projectStore,
     projectState: { states },
     trackEvent: { postHogEventTracker },
     workspace: { currentWorkspace }
   } = useMobxStore();
-  const user = userStore.currentUser ?? undefined;
-  const userRole = userStore.currentProjectRole;
+
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
   const currentIssueState = projectId
     ? states[projectId.toString()]?.find((s) => s.id === issueDetails.state)
@@ -67,7 +66,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   const { data: siblingIssues } = useSWR(
     workspaceSlug && projectId && issueDetails?.parent ? SUB_ISSUES(issueDetails.parent) : null,
     workspaceSlug && projectId && issueDetails?.parent
-      ? () => issueService.subIssues(workspaceSlug as string, projectId as string, issueDetails.parent ?? "")
+      ? () => issueService.subIssues(workspaceSlug.toString(), projectId.toString(), issueDetails.parent ?? "")
       : null
   );
   const siblingIssuesList = siblingIssues?.sub_issues.filter((i) => i.id !== issueDetails.id);
@@ -79,7 +78,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       : null
   );
 
-  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueComment>) => {
+  const handleCommentUpdate = async (commentId: string, data: Partial<IIssueActivity>) => {
     if (!workspaceSlug || !projectId || !issueId) return;
 
     await issueCommentService
@@ -103,7 +102,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
   };
 
   const handleCommentDelete = async (commentId: string) => {
-    if (!workspaceSlug || !projectId || !issueId || !user) return;
+    if (!workspaceSlug || !projectId || !issueId || !currentUser) return;
 
     mutateIssueActivity((prevData: any) => prevData?.filter((p: any) => p.id !== commentId), false);
 
@@ -126,8 +125,8 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       );
   };
 
-  const handleAddComment = async (formData: IIssueComment) => {
-    if (!workspaceSlug || !issueDetails || !user) return;
+  const handleAddComment = async (formData: IIssueActivity) => {
+    if (!workspaceSlug || !issueDetails || !currentUser) return;
 
     await issueCommentService
       .createIssueComment(workspaceSlug.toString(), issueDetails.project, issueDetails.id, formData)
@@ -155,7 +154,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
       );
   };
 
-  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -238,10 +237,16 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           isAllowed={isAllowed || !uneditable}
         />
 
-        <IssueReaction workspaceSlug={workspaceSlug} issueId={issueId} projectId={projectId} />
+        {workspaceSlug && projectId && (
+          <IssueReaction
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            issueId={issueDetails.id}
+          />
+        )}
 
         <div className="mt-2 space-y-2">
-          <SubIssuesRoot parentIssue={issueDetails} user={user} />
+          <SubIssuesRoot parentIssue={issueDetails} user={currentUser ?? undefined} />
         </div>
       </div>
       <div className="flex flex-col gap-3 py-3">

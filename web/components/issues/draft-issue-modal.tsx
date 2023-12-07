@@ -6,7 +6,7 @@ import { Dialog, Transition } from "@headlessui/react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import { IssueService, IssueDraftService } from "services/issue";
+import { IssueService } from "services/issue";
 import { ModuleService } from "services/module.service";
 // hooks
 import useToast from "hooks/use-toast";
