@@ -16,6 +16,7 @@ import { IIssueUnGroupedStructure } from "store/issue";
 import { EIssueActions } from "../types";
 
 import { EFilterType, TUnGroupedIssues } from "store/issues/types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   type?: TStaticViewTypes | null;
@@ -35,6 +36,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     globalViews: { fetchAllGlobalViews },
     workspaceGlobalIssues: { loader, getIssues, getIssuesIds, fetchIssues, updateIssue, removeIssue },
     workspaceGlobalIssuesFilter: { currentView, issueFilters, fetchFilters, updateFilters, setCurrentView },
+    workspaceMember: { currentWorkspaceUserProjectsRole },
   } = useMobxStore();
 
   useSWR(workspaceSlug ? `WORKSPACE_GLOBAL_VIEWS${workspaceSlug}` : null, async () => {
@@ -55,7 +57,13 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
     }
   );
 
-  const isEditingAllowed = false;
+  const canEditProperties = (projectId: string | undefined) => {
+    if (!projectId) return false;
+
+    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+
+    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  };
 
   const issuesResponse = getIssues;
   const issueIds = (getIssuesIds ?? []) as TUnGroupedIssues;
@@ -123,7 +131,7 @@ export const AllIssueLayoutRoot: React.FC<Props> = observer((props) => {
                 members={workspaceMembers?.map((m) => m.member)}
                 labels={workspaceLabels || undefined}
                 handleIssues={handleIssues}
-                disableUserActions={isEditingAllowed}
+                canEditProperties={canEditProperties}
                 viewId={currentIssueView}
               />
             </div>

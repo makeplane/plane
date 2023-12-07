@@ -31,7 +31,7 @@ type Props = {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   viewId?: string;
-  disableUserActions: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;
 };
 
@@ -48,7 +48,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     handleIssues,
     quickAddCallback,
     viewId,
-    disableUserActions,
+    canEditProperties,
     enableQuickCreateIssue,
   } = props;
   // states
@@ -114,7 +114,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                         setExpandedIssues={setExpandedIssues}
                         properties={displayProperties}
                         quickActions={quickActions}
-                        disableUserActions={disableUserActions}
+                        canEditProperties={canEditProperties}
                       />
                     ) : null
                   )}
@@ -124,7 +124,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
               <SpreadsheetColumnsList
                 displayFilters={displayFilters}
                 displayProperties={displayProperties}
-                disableUserActions={disableUserActions}
+                canEditProperties={canEditProperties}
                 expandedIssues={expandedIssues}
                 handleDisplayFilterUpdate={handleDisplayFilterUpdate}
                 handleUpdateIssue={(issue, data) => handleIssues({ ...issue, ...data }, EIssueActions.UPDATE)}

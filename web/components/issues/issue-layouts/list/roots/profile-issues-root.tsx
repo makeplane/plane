@@ -12,14 +12,18 @@ import { EIssueActions } from "../../types";
 import { BaseListRoot } from "../base-list-root";
 import { IProjectStore } from "store/project";
 import { EProjectStore } from "store/command-palette.store";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, userId } = router.query as { workspaceSlug: string; userId: string };
 
   // store
-  const { workspaceProfileIssuesFilter: profileIssueFiltersStore, workspaceProfileIssues: profileIssuesStore } =
-    useMobxStore();
+  const {
+    workspaceProfileIssuesFilter: profileIssueFiltersStore,
+    workspaceProfileIssues: profileIssuesStore,
+    workspaceMember: { currentWorkspaceUserProjectsRole },
+  } = useMobxStore();
 
   const issueActions = {
     [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
@@ -36,6 +40,17 @@ export const ProfileIssuesListLayout: FC = observer(() => {
 
   const getProjects = (projectStore: IProjectStore) => projectStore.workspaceProjects;
 
+  const canEditPropertiesBasedOnProject = (projectId: string) => {
+    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+
+    console.log(
+      projectId,
+      currentWorkspaceUserProjectsRole,
+      !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER
+    );
+    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  };
+
   return (
     <BaseListRoot
       issueFilterStore={profileIssueFiltersStore}
@@ -44,6 +59,7 @@ export const ProfileIssuesListLayout: FC = observer(() => {
       issueActions={issueActions}
       getProjects={getProjects}
       currentStore={EProjectStore.PROFILE}
+      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );
 });

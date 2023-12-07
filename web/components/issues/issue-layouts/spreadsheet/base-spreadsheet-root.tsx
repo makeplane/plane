@@ -34,10 +34,11 @@ interface IBaseSpreadsheetRoot {
     [EIssueActions.UPDATE]?: (issue: IIssue) => void;
     [EIssueActions.REMOVE]?: (issue: IIssue) => void;
   };
+  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
 }
 
 export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
-  const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions } = props;
+  const { issueFiltersStore, issueStore, viewId, QuickActions, issueActions, canEditPropertiesBasedOnProject } = props;
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
@@ -49,8 +50,17 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     user: userStore,
   } = useMobxStore();
 
+  const { enableInlineEditing, enableQuickAdd } = issueStore?.viewFlags || {};
+
   const { currentProjectRole } = userStore;
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
+  const canEditProperties = (projectId: string | undefined) => {
+    const isEditingAllowedBasedOnProject =
+      canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+
+    return enableInlineEditing && isEditingAllowedBasedOnProject;
+  };
 
   const issuesResponse = issueStore.getIssues;
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
@@ -106,10 +116,10 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       labels={projectLabels || undefined}
       states={projectId ? projectStateStore.states?.[projectId.toString()] : undefined}
       handleIssues={handleIssues}
-      disableUserActions={!isEditingAllowed}
+      canEditProperties={canEditProperties}
       quickAddCallback={issueStore.quickAddIssue}
       viewId={viewId}
-      enableQuickCreateIssue
+      enableQuickCreateIssue={enableQuickAdd}
     />
   );
 });
