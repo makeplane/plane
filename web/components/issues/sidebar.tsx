@@ -647,21 +647,23 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   </button>
                 )}
               </div>
-              <div className="mt-2 space-y-2">
-                {issueDetail?.issue_link && issueDetail.issue_link.length > 0 ? (
-                  <LinksList
-                    links={issueDetail.issue_link}
-                    handleDeleteLink={handleDeleteLink}
-                    handleEditLink={handleEditLink}
-                    userAuth={{
-                      isGuest: userRole === 5,
-                      isViewer: userRole === 10,
-                      isMember: userRole === 15,
-                      isOwner: userRole === 20,
-                    }}
-                  />
-                ) : null}
-              </div>
+              {issueDetail?.issue_link && issueDetail.issue_link.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  {
+                    <LinksList
+                      links={issueDetail.issue_link}
+                      handleDeleteLink={handleDeleteLink}
+                      handleEditLink={handleEditLink}
+                      userAuth={{
+                        isGuest: userRole === 5,
+                        isViewer: userRole === 10,
+                        isMember: userRole === 15,
+                        isOwner: userRole === 20,
+                      }}
+                    />
+                  }
+                </div>
+              )}
             </div>
           )}
         </div>
