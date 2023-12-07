@@ -631,7 +631,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
           )}
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
+            <div className={`py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <h4>Links</h4>
                 {isAllowed && (
