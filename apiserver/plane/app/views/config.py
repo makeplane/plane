@@ -20,60 +20,6 @@ class ConfigurationEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
-        print(
-            get_configuration_value(
-                [
-                    {
-                        "key": "GOOGLE_CLIENT_ID",
-                        "default": os.environ.get("GOOGLE_CLIENT_ID", None),
-                    },
-                    {
-                        "key": "GITHUB_CLIENT_ID",
-                        "default": os.environ.get("GITHUB_CLIENT_ID", None),
-                    },
-                    {
-                        "key": "GITHUB_APP_NAME",
-                        "default": os.environ.get("GITHUB_APP_NAME", None),
-                    },
-                    {
-                        "key": "EMAIL_HOST_USER",
-                        "default": os.environ.get("EMAIL_HOST_USER", None),
-                    },
-                    {
-                        "key": "EMAIL_HOST_PASSWORD",
-                        "default": os.environ.get("EMAIL_HOST_PASSWORD", None),
-                    },
-                    {
-                        "key": "ENABLE_MAGIC_LINK_LOGIN",
-                        "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
-                    },
-                    {
-                        "key": "ENABLE_EMAIL_PASSWORD",
-                        "default": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
-                    },
-                    {
-                        "key": "SLACK_CLIENT_ID",
-                        "default": os.environ.get("SLACK_CLIENT_ID", "1"),
-                    },
-                    {
-                        "key": "POSTHOG_API_KEY",
-                        "default": os.environ.get("POSTHOG_API_KEY", "1"),
-                    },
-                    {
-                        "key": "POSTHOG_HOST",
-                        "default": os.environ.get("POSTHOG_HOST", "1"),
-                    },
-                    {
-                        "key": "UNSPLASH_ACCESS_KEY",
-                        "default": os.environ.get("UNSPLASH_ACCESS_KEY", "1"),
-                    },
-                    {
-                        "key": "OPENAI_API_KEY",
-                        "default": os.environ.get("OPENAI_API_KEY", "1"),
-                    },
-                ]
-            )
-        )
 
         # Get all the configuration
         (
@@ -141,7 +87,7 @@ class ConfigurationEndpoint(BaseAPIView):
                 },
             ]
         )
-        print("hewllo")
+
         data = {}
         # Authentication
         data["google_client_id"] = GOOGLE_CLIENT_ID
