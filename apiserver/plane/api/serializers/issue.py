@@ -32,6 +32,7 @@ from plane.db.models import (
     IssueVote,
     IssueRelation,
 )
+from plane.utils.parse_html import parse_text_to_html, refresh_url_content
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -297,30 +298,19 @@ class IssueRelationSerializer(BaseSerializer):
 
     class Meta:
         model = IssueRelation
-        fields = [
-            "issue_detail",
-            "relation_type",
-            "related_issue",
-            "issue",
-            "id"
-        ]
+        fields = ["issue_detail", "relation_type", "related_issue", "issue", "id"]
         read_only_fields = [
             "workspace",
             "project",
         ]
+
 
 class RelatedIssueSerializer(BaseSerializer):
     issue_detail = IssueProjectLiteSerializer(read_only=True, source="issue")
 
     class Meta:
         model = IssueRelation
-        fields = [
-            "issue_detail",
-            "relation_type",
-            "related_issue",
-            "issue",
-            "id"
-        ]
+        fields = ["issue_detail", "relation_type", "related_issue", "issue", "id"]
         read_only_fields = [
             "workspace",
             "project",
@@ -438,9 +428,8 @@ class IssueAttachmentSerializer(BaseSerializer):
 
 
 class IssueReactionSerializer(BaseSerializer):
-    
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
-    
+
     class Meta:
         model = IssueReaction
         fields = "__all__"
@@ -473,7 +462,6 @@ class CommentReactionSerializer(BaseSerializer):
 
 
 class IssueVoteSerializer(BaseSerializer):
-
     actor_detail = UserLiteSerializer(read_only=True, source="actor")
 
     class Meta:
@@ -541,8 +529,12 @@ class IssueSerializer(BaseSerializer):
     parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
     label_details = LabelSerializer(read_only=True, source="labels", many=True)
     assignee_details = UserLiteSerializer(read_only=True, source="assignees", many=True)
-    related_issues = IssueRelationSerializer(read_only=True, source="issue_relation", many=True)
-    issue_relations = RelatedIssueSerializer(read_only=True, source="issue_related", many=True)
+    related_issues = IssueRelationSerializer(
+        read_only=True, source="issue_relation", many=True
+    )
+    issue_relations = RelatedIssueSerializer(
+        read_only=True, source="issue_related", many=True
+    )
     issue_cycle = IssueCycleDetailSerializer(read_only=True)
     issue_module = IssueModuleDetailSerializer(read_only=True)
     issue_link = IssueLinkSerializer(read_only=True, many=True)
@@ -561,6 +553,14 @@ class IssueSerializer(BaseSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        html = parse_text_to_html(instance.description_html)
+        data["description_html"] = str(refresh_url_content(html))
+
+        return data
 
 
 class IssueLiteSerializer(BaseSerializer):
@@ -591,11 +591,21 @@ class IssueLiteSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        html = parse_text_to_html(instance.description_html)
+        data["description_html"] = str(refresh_url_content(html))
+
+        return data
+
 
 class IssuePublicSerializer(BaseSerializer):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
-    reactions = IssueReactionSerializer(read_only=True, many=True, source="issue_reactions")
+    reactions = IssueReactionSerializer(
+        read_only=True, many=True, source="issue_reactions"
+    )
     votes = IssueVoteSerializer(read_only=True, many=True)
 
     class Meta:
@@ -616,7 +626,6 @@ class IssuePublicSerializer(BaseSerializer):
             "votes",
         ]
         read_only_fields = fields
-
 
 
 class IssueSubscriberSerializer(BaseSerializer):
