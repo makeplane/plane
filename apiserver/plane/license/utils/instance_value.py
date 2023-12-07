@@ -9,12 +9,6 @@ from plane.license.models import InstanceConfiguration
 from plane.license.utils.encryption import decrypt_data
 
 
-
-def create_lookup_dict(list_of_dicts):
-    return {item['key']: item for item in list_of_dicts}
-
-
-
 # Helper function to return value from the passed key
 def get_configuration_value(keys):
     environment_list = []
@@ -35,20 +29,17 @@ def get_configuration_value(keys):
                     break
             else:
                 environment_list.append(key.get("default"))
+    else:
+        # Get the configuration from os
+        for key in keys:
+            environment_list.append(os.environ.get(key.get("key"), key.get("default")))
 
     return tuple(environment_list)
 
 
 def get_email_configuration():
-    if settings.SKIP_ENV_VAR:
-        (
-            EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD,
-            EMAIL_HOST,
-            EMAIL_FROM,
-            EMAIL_USE_TLS,
-            EMAIL_PORT,
-        ) = get_configuration_value(
+    return (
+        get_configuration_value(
             [
                 {
                     "key": "EMAIL_HOST_USER",
@@ -63,42 +54,18 @@ def get_email_configuration():
                     "default": os.environ.get("EMAIL_HOST", None),
                 },
                 {
-                    "key": "EMAIL_FROM",
-                    "default": os.environ.get("EMAIL_FROM", None),
+                    "key": "EMAIL_PORT",
+                    "default": os.environ.get("EMAIL_PORT", 587),
                 },
                 {
                     "key": "EMAIL_USE_TLS",
                     "default": os.environ.get("EMAIL_USE_TLS", "1"),
                 },
                 {
-                    "key": "EMAIL_PORT",
-                    "default": os.environ.get("EMAIL_PORT", 587),
+                    "key": "EMAIL_FROM",
+                    "default": os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>"),
                 },
             ]
         )
-        return (
-            EMAIL_HOST,
-            EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD,
-            EMAIL_PORT,
-            EMAIL_USE_TLS,
-            EMAIL_FROM,
-        )
+    )
 
-    else:
-        # Get email configuration directly from os
-        EMAIL_HOST = os.environ.get("EMAIL_HOST")
-        EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-        EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-        EMAIL_PORT = os.environ.get("EMAIL_PORT", 587)
-        EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "1")
-        EMAIL_FROM = os.environ.get("EMAIL_FROM", "Team Plane <team@mailer.plane.so>")
-
-        return (
-            EMAIL_HOST,
-            EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD,
-            EMAIL_PORT,
-            EMAIL_USE_TLS,
-            EMAIL_FROM,
-        )

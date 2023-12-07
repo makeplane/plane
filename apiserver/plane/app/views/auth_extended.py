@@ -387,16 +387,15 @@ class EmailCheckEndpoint(BaseAPIView):
                 )
 
             # Send event
-            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                auth_events.delay(
-                    user=user.id,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
-                    event_name="SIGN_IN",
-                    medium="MAGIC_LINK",
-                    first_time=True,
-                )
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium="MAGIC_LINK",
+                first_time=True,
+            )
             key, token, current_attempt = generate_magic_token(email=email)
             if not current_attempt:
                 return Response(
@@ -420,16 +419,15 @@ class EmailCheckEndpoint(BaseAPIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="MAGIC_LINK",
-                        first_time=False,
-                    )
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="MAGIC_LINK",
+                    first_time=False,
+                )
 
                 # Generate magic token
                 key, token, current_attempt = generate_magic_token(email=email)
@@ -449,16 +447,15 @@ class EmailCheckEndpoint(BaseAPIView):
                     status=status.HTTP_200_OK,
                 )
             else:
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="EMAIL",
-                        first_time=False,
-                    )
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="EMAIL",
+                    first_time=False,
+                )
 
                 # User should enter password to login
                 return Response(
