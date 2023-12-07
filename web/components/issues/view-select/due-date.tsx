@@ -47,7 +47,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
       position={tooltipPosition}
     >
       <div
-        className={`group flex-shrink-0 relative max-w-[6.5rem] ${className} ${
+        className={`group flex-shrink-0 max-w-[6.5rem] ${className} ${
           issue.target_date === null
             ? ""
             : issue.target_date < new Date().toISOString()

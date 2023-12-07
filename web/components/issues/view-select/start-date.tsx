@@ -40,7 +40,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
       tooltipContent={issue.start_date ? renderShortDateWithYearFormat(issue.start_date) ?? "N/A" : "N/A"}
       position={tooltipPosition}
     >
-      <div className={`group flex-shrink-0 relative max-w-[6.5rem] ${className}`}>
+      <div className={`group flex-shrink-0 max-w-[6.5rem] ${className}`}>
         <CustomDatePicker
           value={issue?.start_date}
           onChange={onChange}
