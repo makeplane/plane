@@ -89,7 +89,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
         list.length > 0 &&
         list.map((_list: any) => (
           <div
-            className={`relative flex-shrink-0 flex flex-col ${!verticalAlignPosition(_list) ? `w-[340px]` : ``} group`}
+            className={`relative flex-shrink-0 flex flex-col ${
+              !verticalAlignPosition(_list) ? `w-[340px]` : ``
+            } group`}
           >
             {sub_group_by === null && (
               <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2]">
@@ -109,8 +111,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
             )}
 
             <div
-              className={`min-h-[150px] ${
-                verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
+              className={`${
+                verticalAlignPosition(_list) ? `min-h-[150px] w-[0px] overflow-hidden` : `w-full transition-all`
               }`}
             >
               <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
@@ -122,7 +124,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {issues ? (
+                    {issues && !verticalAlignPosition(_list) ? (
                       <KanbanIssueBlocksList
                         sub_group_id={sub_group_id}
                         columnId={getValueFromObject(_list, listKey) as string}
