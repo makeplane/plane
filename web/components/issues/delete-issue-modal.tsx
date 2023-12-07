@@ -29,7 +29,10 @@ export const DeleteIssueModal: React.FC<Props> = (props) => {
 
   const handleIssueDelete = async () => {
     setIsDeleteLoading(true);
-    if (onSubmit) await onSubmit().finally(() => setIsDeleteLoading(false));
+    if (onSubmit)
+      await onSubmit()
+        .then(() => onClose())
+        .finally(() => setIsDeleteLoading(false));
   };
 
   return (
