@@ -67,7 +67,7 @@ services:
   web:
     <<: *app-env
     platform: linux/amd64
-    image: makeplane/plane-frontend-ce:${APP_RELEASE:-latest}
+    image: makeplane/plane-frontend:${APP_RELEASE:-latest}
     restart: unless-stopped
     command: /usr/local/bin/start.sh web/server.js web
     deploy:
@@ -79,7 +79,7 @@ services:
   space:
     <<: *app-env
     platform: linux/amd64
-    image: makeplane/plane-space-ce:${APP_RELEASE:-latest}
+    image: makeplane/plane-space:${APP_RELEASE:-latest}
     restart: unless-stopped
     command: /usr/local/bin/start.sh space/server.js space
     deploy:
@@ -92,7 +92,7 @@ services:
   api:
     <<: *app-env
     platform: linux/amd64
-    image: makeplane/plane-backend-ce:${APP_RELEASE:-latest}
+    image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
     command: ./bin/takeoff
     deploy:
@@ -104,7 +104,7 @@ services:
   worker:
     <<: *app-env
     platform: linux/amd64
-    image: makeplane/plane-backend-ce:${APP_RELEASE:-latest}
+    image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
     command: ./bin/worker
     depends_on:
@@ -115,7 +115,7 @@ services:
   beat-worker:
     <<: *app-env
     platform: linux/amd64
-    image: makeplane/plane-backend-ce:${APP_RELEASE:-latest}
+    image: makeplane/plane-backend:${APP_RELEASE:-latest}
     restart: unless-stopped
     command: ./bin/beat
     depends_on:
@@ -150,7 +150,7 @@ services:
   proxy:
     <<: *app-env
     platform: linux/amd64
-    image: makeplane/plane-proxy-ce:${APP_RELEASE:-latest}
+    image: makeplane/plane-proxy:${APP_RELEASE:-latest}
     ports:
         - ${NGINX_PORT}:80
     depends_on:
