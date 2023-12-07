@@ -21,6 +21,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EFilterType } from "store/issues/types";
 import { EProjectStore } from "store/command-palette.store";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const CycleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);
@@ -42,6 +43,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
     cycleIssuesFilter: { issueFilters, updateFilters },
+    user: { currentProjectRole },
   } = useMobxStore();
 
   const activeLayout = projectIssueFiltersStore.issueFilters?.displayFilters?.layout;
@@ -98,6 +100,9 @@ export const CycleIssuesHeader: React.FC = observer(() => {
 
   const cyclesList = cycleStore.projectCycles;
   const cycleDetails = cycleId ? cycleStore.getCycleById(cycleId.toString()) : undefined;
+
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -190,16 +195,18 @@ export const CycleIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button
-            onClick={() => {
-              setTrackElement("CYCLE_PAGE_HEADER");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
-            Add Issue
-          </Button>
+          {canUserCreateIssue && (
+            <Button
+              onClick={() => {
+                setTrackElement("CYCLE_PAGE_HEADER");
+                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+              }}
+              size="sm"
+              prependIcon={<Plus />}
+            >
+              Add Issue
+            </Button>
+          )}
           <button
             type="button"
             className="grid h-7 w-7 place-items-center rounded p-1 outline-none hover:bg-custom-sidebar-background-80"

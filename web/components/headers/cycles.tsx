@@ -8,14 +8,23 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    project: projectStore,
+    user: { currentProjectRole },
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
   const { currentProjectDetails } = projectStore;
+
+  const canUserCreateCycle =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex w-full flex-shrink-0 flex-row items-center justify-between h-[3.75rem] gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -46,20 +55,21 @@ export const CyclesHeader: FC = observer(() => {
           </Breadcrumbs>
         </div>
       </div>
-      <div className="flex items-center gap-3">
-        <Button
-          variant="primary"
-          size="sm"
-          prependIcon={<Plus />}
-          onClick={() => {
-            setTrackElement("CYCLES_PAGE_HEADER");
-            commandPaletteStore.toggleCreateCycleModal(true);
-          }
-          }
-        >
-          Add Cycle
-        </Button>
-      </div>
+      {canUserCreateCycle && (
+        <div className="flex items-center gap-3">
+          <Button
+            variant="primary"
+            size="sm"
+            prependIcon={<Plus />}
+            onClick={() => {
+              setTrackElement("CYCLES_PAGE_HEADER");
+              commandPaletteStore.toggleCreateCycleModal(true);
+            }}
+          >
+            Add Cycle
+          </Button>
+        </div>
+      )}
     </div>
   );
 });
