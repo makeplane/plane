@@ -81,11 +81,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
 
   const {
-    user: userStore,
+    user: { currentUser, currentProjectRole },
     projectState: { states },
+    projectIssues: { removeIssue },
   } = useMobxStore();
-  const user = userStore.currentUser;
-  const userRole = userStore.currentProjectRole;
 
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, inboxIssueId } = router.query;
@@ -102,7 +101,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
 
   const handleCycleChange = useCallback(
     (cycleId: string) => {
-      if (!workspaceSlug || !projectId || !issueDetail || !user) return;
+      if (!workspaceSlug || !projectId || !issueDetail || !currentUser) return;
 
       issueService
         .addIssueToCycle(workspaceSlug as string, projectId as string, cycleId, {
@@ -112,12 +111,12 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
-    [workspaceSlug, projectId, issueId, issueDetail, user]
+    [workspaceSlug, projectId, issueId, issueDetail, currentUser]
   );
 
   const handleModuleChange = useCallback(
     (moduleId: string) => {
-      if (!workspaceSlug || !projectId || !issueDetail || !user) return;
+      if (!workspaceSlug || !projectId || !issueDetail || !currentUser) return;
 
       moduleService
         .addIssuesToModule(workspaceSlug as string, projectId as string, moduleId, {
@@ -127,7 +126,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           mutate(ISSUE_DETAILS(issueId as string));
         });
     },
-    [workspaceSlug, projectId, issueId, issueDetail, user]
+    [workspaceSlug, projectId, issueId, issueDetail, currentUser]
   );
 
   const handleCreateLink = async (formData: IIssueLink) => {
@@ -249,7 +248,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     setLinkModal(true);
   };
 
-  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const currentIssueState = projectId
     ? states[projectId.toString()]?.find((s) => s.id === issueDetail?.state)
@@ -268,8 +267,16 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
         createIssueLink={handleCreateLink}
         updateIssueLink={handleUpdateLink}
       />
-      {issueDetail && (
-        <DeleteIssueModal handleClose={() => setDeleteIssueModal(false)} isOpen={deleteIssueModal} data={issueDetail} />
+      {workspaceSlug && projectId && issueDetail && (
+        <DeleteIssueModal
+          handleClose={() => setDeleteIssueModal(false)}
+          isOpen={deleteIssueModal}
+          data={issueDetail}
+          onSubmit={async () => {
+            await removeIssue(workspaceSlug.toString(), projectId.toString(), issueDetail.id);
+            router.push(`/${workspaceSlug}/projects/${projectId}/issues`);
+          }}
+        />
       )}
       <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
@@ -288,8 +295,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </h4>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {issueDetail?.created_by !== user?.id &&
-              !issueDetail?.assignees.includes(user?.id ?? "") &&
+            {issueDetail?.created_by !== currentUser?.id &&
+              !issueDetail?.assignees.includes(currentUser?.id ?? "") &&
               !router.pathname.includes("[archivedIssueId]") &&
               (fieldsToShow.includes("all") || fieldsToShow.includes("subscribe")) && (
                 <Button
@@ -654,10 +661,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                     handleDeleteLink={handleDeleteLink}
                     handleEditLink={handleEditLink}
                     userAuth={{
-                      isGuest: userRole === 5,
-                      isViewer: userRole === 10,
-                      isMember: userRole === 15,
-                      isOwner: userRole === 20,
+                      isGuest: currentProjectRole === 5,
+                      isViewer: currentProjectRole === 10,
+                      isMember: currentProjectRole === 15,
+                      isOwner: currentProjectRole === 20,
                     }}
                   />
                 ) : null}
