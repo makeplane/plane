@@ -28,15 +28,22 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@plane/ui": "*",
     "@plane/editor-core": "*",
     "@plane/editor-extensions": "*",
     "@plane/editor-types": "*",
+    "@plane/ui": "*",
     "@tiptap/core": "^2.1.7",
     "@tiptap/extension-placeholder": "^2.1.11",
+    "@tiptap/pm": "^2.1.12",
+    "@tiptap/suggestion": "^2.1.12",
+    "@types/node": "18.15.3",
+    "@types/react": "^18.2.39",
+    "@types/react-dom": "18.0.11",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
-    "react-popper": "^2.3.0"
+    "react-popper": "^2.3.0",
+    "tippy.js": "^6.3.7",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

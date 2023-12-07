@@ -4,6 +4,8 @@ import { useState, forwardRef, useEffect } from "react";
 import { EditorHeader } from "../components/editor-header";
 import { PageRenderer } from "../components/page-renderer";
 import { SummarySideBar } from "../components/summary-side-bar";
+import { IssueWidgetExtension } from "../extensions/widgets/IssueEmbedWidget";
+import { IEmbedConfig } from "../extensions/widgets/IssueEmbedWidget/types";
 import { useEditorMarkings } from "../hooks/use-editor-markings";
 import { DocumentDetails } from "../types/editor-types";
 import {
@@ -15,6 +17,10 @@ import { getMenuOptions } from "../utils/menu-options";
 
 interface IDocumentReadOnlyEditor {
   value: string;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   noBorder: boolean;
   borderOnFocus: boolean;
   customClassName: string;
@@ -22,6 +28,12 @@ interface IDocumentReadOnlyEditor {
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
   pageDuplicationConfig?: IDuplicationConfig;
+  onActionCompleteHandler: (action: {
+    title: string;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }) => void;
+  embedConfig?: IEmbedConfig;
 }
 
 interface DocumentReadOnlyEditorProps extends IDocumentReadOnlyEditor {
@@ -43,6 +55,9 @@ const DocumentReadOnlyEditor = ({
   pageDuplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
+  embedConfig,
+  rerenderOnPropsChange,
+  onActionCompleteHandler,
 }: DocumentReadOnlyEditorProps) => {
   const router = useRouter();
   const [sidePeekVisible, setSidePeekVisible] = useState(true);
@@ -51,13 +66,17 @@ const DocumentReadOnlyEditor = ({
   const editor = useReadOnlyEditor({
     value,
     forwardedRef,
+    rerenderOnPropsChange,
+    extensions: [
+      IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig }),
+    ],
   });
 
   useEffect(() => {
     if (editor) {
       updateMarkings(editor.getJSON());
     }
-  }, [editor?.getJSON()]);
+  }, [editor]);
 
   if (!editor) {
     return null;
@@ -75,6 +94,7 @@ const DocumentReadOnlyEditor = ({
     pageArchiveConfig: pageArchiveConfig,
     pageLockConfig: pageLockConfig,
     duplicationConfig: pageDuplicationConfig,
+    onActionCompleteHandler,
   });
 
   return (
@@ -101,6 +121,8 @@ const DocumentReadOnlyEditor = ({
         </div>
         <div className="h-full w-full">
           <PageRenderer
+            updatePageTitle={() => Promise.resolve()}
+            readonly={true}
             editor={editor}
             editorClassNames={editorClassNames}
             documentDetails={documentDetails}
