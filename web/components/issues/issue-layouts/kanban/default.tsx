@@ -89,9 +89,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
         list.length > 0 &&
         list.map((_list: any) => (
           <div
-            className={`relative flex-shrink-0 flex flex-col ${
-              !verticalAlignPosition(_list) ? `w-[340px]` : ``
-            } group`}
+            className={`relative flex-shrink-0 flex flex-col ${!verticalAlignPosition(_list) ? `w-[340px]` : ``} group`}
           >
             {sub_group_by === null && (
               <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2]">
