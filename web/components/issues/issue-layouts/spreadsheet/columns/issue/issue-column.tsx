@@ -14,7 +14,7 @@ type Props = {
   handleToggleExpand: (issueId: string) => void;
   properties: IIssueDisplayProperties;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
-  disableUserActions: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   nestingLevel: number;
 };
 
@@ -24,7 +24,7 @@ export const IssueColumn: React.FC<Props> = ({
   handleToggleExpand,
   properties,
   quickActions,
-  disableUserActions,
+  canEditProperties,
   nestingLevel,
 }) => {
   // router
@@ -76,7 +76,7 @@ export const IssueColumn: React.FC<Props> = ({
                 {issue.project_detail?.identifier}-{issue.sequence_id}
               </span>
 
-              {!disableUserActions && (
+              {canEditProperties(issue.project) && (
                 <div className={`absolute top-0 left-2.5 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
                   {quickActions(issue, customActionButton)}
                 </div>

@@ -10,6 +10,7 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store/command-palette.store";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
@@ -18,6 +19,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
   const {
     workspaceProfileIssues: profileIssuesStore,
     workspaceProfileIssuesFilter: profileIssueFiltersStore,
+    workspaceMember: { currentWorkspaceUserProjectsRole },
     issueKanBanView: issueKanBanViewStore,
   } = useMobxStore();
 
@@ -34,6 +36,12 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
     },
   };
 
+  const canEditPropertiesBasedOnProject = (projectId: string) => {
+    const currentProjectRole = currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId];
+
+    return !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  };
+
   return (
     <BaseKanBanRoot
       issueActions={issueActions}
@@ -43,6 +51,7 @@ export const ProfileIssuesKanBanLayout: React.FC = observer(() => {
       showLoader={true}
       QuickActions={ProjectIssueQuickActions}
       currentStore={EProjectStore.PROFILE}
+      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
     />
   );
 });

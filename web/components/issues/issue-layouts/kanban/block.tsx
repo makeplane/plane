@@ -20,7 +20,7 @@ interface IssueBlockProps {
   handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
   quickActions: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
-  isReadOnly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 interface IssueDetailsBlockProps {
@@ -110,12 +110,14 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
     handleIssues,
     quickActions,
     displayProperties,
-    isReadOnly,
+    canEditProperties,
   } = props;
 
   let draggableId = issue.id;
   if (columnId) draggableId = `${draggableId}__${columnId}`;
   if (sub_group_id) draggableId = `${draggableId}__${sub_group_id}`;
+
+  const canEditIssueProperties = canEditProperties(issue.project);
 
   return (
     <>
@@ -143,7 +145,7 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
                 handleIssues={handleIssues}
                 quickActions={quickActions}
                 displayProperties={displayProperties}
-                isReadOnly={isReadOnly}
+                isReadOnly={!canEditIssueProperties}
               />
             </div>
           </div>

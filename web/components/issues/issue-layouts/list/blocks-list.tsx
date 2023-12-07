@@ -10,14 +10,14 @@ interface Props {
   columnId: string;
   issueIds: IGroupedIssues | TUnGroupedIssues | any;
   issues: IIssueResponse;
-  isReadonly?: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (group_by: string | null, issue: IIssue) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | undefined;
 }
 
 export const IssueBlocksList: FC<Props> = (props) => {
-  const { columnId, issueIds, issues, handleIssues, quickActions, displayProperties, isReadonly } = props;
+  const { columnId, issueIds, issues, handleIssues, quickActions, displayProperties, canEditProperties } = props;
 
   return (
     <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
@@ -31,7 +31,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
                 issue={issues[issueId]}
                 handleIssues={handleIssues}
                 quickActions={quickActions}
-                isReadonly={isReadonly}
+                canEditProperties={canEditProperties}
                 displayProperties={displayProperties}
               />
             )

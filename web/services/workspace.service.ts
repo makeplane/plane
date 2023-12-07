@@ -13,6 +13,7 @@ import {
   IProductUpdateResponse,
   IWorkspaceBulkInviteFormData,
   IWorkspaceViewProps,
+  IUserProjectsRole,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // store
@@ -262,6 +263,14 @@ export class WorkspaceService extends APIService {
     return this.get(`/api/workspaces/${workspaceSlug}/issues/`, {
       params,
     })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getWorkspaceUserProjectsRole(workspaceSlug: string): Promise<IUserProjectsRole> {
+    return this.get(`/api/users/me/workspaces/${workspaceSlug}/project-roles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
