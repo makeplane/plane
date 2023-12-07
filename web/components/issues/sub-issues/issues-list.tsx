@@ -26,7 +26,7 @@ export interface ISubIssuesRootList {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => Promise<void>;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
 }
 
 const issueService = new IssueService();

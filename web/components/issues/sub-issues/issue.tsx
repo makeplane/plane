@@ -28,7 +28,7 @@ export interface ISubIssues {
     issueId: string,
     issue?: IIssue | null
   ) => void;
-  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => Promise<void>;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({

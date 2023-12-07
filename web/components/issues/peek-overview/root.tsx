@@ -18,7 +18,7 @@ interface IIssuePeekOverview {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  handleIssue: (issue: Partial<IIssue>) => Promise<void>;
+  handleIssue: (issue: Partial<IIssue>) => void;
   isArchived?: boolean;
   children?: ReactNode;
 }
