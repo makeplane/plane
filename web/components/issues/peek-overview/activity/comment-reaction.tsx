@@ -2,7 +2,7 @@ import { FC } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // components
-import { IssueReaction } from "../reactions";
+import { IssuePeekOverviewReactions } from "components/issues";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
@@ -49,7 +49,7 @@ export const IssueCommentReaction: FC<IIssueCommentReaction> = observer((props) 
 
   return (
     <div>
-      <IssueReaction
+      <IssuePeekOverviewReactions
         issueReactions={issueReactions}
         user={user}
         issueReactionCreate={handleCommentReactionCreate}

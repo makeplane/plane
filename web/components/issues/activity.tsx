@@ -11,12 +11,12 @@ import { Loader, Tooltip } from "@plane/ui";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
 // types
-import { IIssueActivity, IIssueComment } from "types";
+import { IIssueActivity } from "types";
 import { History } from "lucide-react";
 
 type Props = {
   activity: IIssueActivity[] | undefined;
-  handleCommentUpdate: (commentId: string, data: Partial<IIssueComment>) => Promise<void>;
+  handleCommentUpdate: (commentId: string, data: Partial<IIssueActivity>) => Promise<void>;
   handleCommentDelete: (commentId: string) => Promise<void>;
   showAccessSpecifier?: boolean;
 };
@@ -130,7 +130,7 @@ export const IssueActivitySection: React.FC<Props> = ({
             return (
               <div key={activityItem.id} className="mt-4">
                 <CommentCard
-                  comment={activityItem as IIssueComment}
+                  comment={activityItem as IIssueActivity}
                   handleCommentDeletion={handleCommentDelete}
                   onSubmit={handleCommentUpdate}
                   showAccessSpecifier={showAccessSpecifier}

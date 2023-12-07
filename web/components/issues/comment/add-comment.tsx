@@ -11,17 +11,17 @@ import { Button } from "@plane/ui";
 import { Globe2, Lock } from "lucide-react";
 
 // types
-import type { IIssueComment } from "types";
+import type { IIssueActivity } from "types";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 
-const defaultValues: Partial<IIssueComment> = {
+const defaultValues: Partial<IIssueActivity> = {
   access: "INTERNAL",
   comment_html: "",
 };
 
 type Props = {
   disabled?: boolean;
-  onSubmit: (data: IIssueComment) => Promise<void>;
+  onSubmit: (data: IIssueActivity) => Promise<void>;
   showAccessSpecifier?: boolean;
 };
 
@@ -59,9 +59,9 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
     formState: { isSubmitting },
     handleSubmit,
     reset,
-  } = useForm<IIssueComment>({ defaultValues });
+  } = useForm<IIssueActivity>({ defaultValues });
 
-  const handleAddComment = async (formData: IIssueComment) => {
+  const handleAddComment = async (formData: IIssueActivity) => {
     if (!formData.comment_html || isSubmitting) return;
 
     await onSubmit(formData).then(() => {
@@ -96,7 +96,7 @@ export const AddComment: React.FC<Props> = ({ disabled = false, onSubmit, showAc
                     onChange={(comment_json: Object, comment_html: string) => onCommentChange(comment_html)}
                     commentAccessSpecifier={
                       showAccessSpecifier
-                        ? { accessValue, onAccessChange, showAccessSpecifier, commentAccess }
+                        ? { accessValue: accessValue ?? "INTERNAL", onAccessChange, showAccessSpecifier, commentAccess }
                         : undefined
                     }
                     mentionSuggestions={editorSuggestions.mentionSuggestions}

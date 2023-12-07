@@ -23,13 +23,15 @@ export const DraftIssueListLayout: FC = observer(() => {
   const { projectDraftIssuesFilter: projectIssuesFilterStore, projectDraftIssues: projectIssuesStore } = useMobxStore();
 
   const issueActions = {
-    [EIssueActions.UPDATE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.UPDATE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
-      projectIssuesStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
+
+      await projectIssuesStore.updateIssue(workspaceSlug, projectId, issue.id, issue);
     },
-    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
-      projectIssuesStore.removeIssue(workspaceSlug, projectId, issue.id);
+
+      await projectIssuesStore.removeIssue(workspaceSlug, projectId, issue.id);
     },
   };
 

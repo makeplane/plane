@@ -52,9 +52,9 @@ export interface IBaseKanBanLayout {
   kanbanViewStore: IIssueKanBanViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => void;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => void;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => void;
+    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
   };
   showLoader?: boolean;
   viewId?: string;
@@ -169,7 +169,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const handleIssues = useCallback(
     async (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => {
       if (issueActions[action]) {
-        issueActions[action]!(issue);
+        await issueActions[action]!(issue);
       }
     },
     [issueActions]
@@ -345,8 +345,8 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate) =>
-            handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, EIssueActions.UPDATE)
+          handleIssue={async (issueToUpdate) =>
+            await handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, EIssueActions.UPDATE)
           }
         />
       )}

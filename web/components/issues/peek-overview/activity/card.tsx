@@ -2,32 +2,34 @@ import { FC } from "react";
 import Link from "next/link";
 import { History } from "lucide-react";
 // packages
-import { Tooltip } from "@plane/ui";
+import { Loader, Tooltip } from "@plane/ui";
 // components
 import { ActivityIcon, ActivityMessage } from "components/core";
 import { IssueCommentCard } from "./comment-card";
 // helpers
 import { render24HourFormatTime, renderLongDateFormat, timeAgo } from "helpers/date-time.helper";
+// types
+import { IIssueActivity, IUser } from "types";
 
-interface IssueActivityCard {
+interface IIssueActivityCard {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  user: any;
-  issueComments: any;
+  user: IUser | null;
+  issueActivity: IIssueActivity[] | null;
   issueCommentUpdate: (comment: any) => void;
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
 }
 
-export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
+export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
   const {
     workspaceSlug,
     projectId,
     issueId,
     user,
-    issueComments,
+    issueActivity,
     issueCommentUpdate,
     issueCommentRemove,
     issueCommentReactionCreate,
@@ -37,9 +39,9 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
   return (
     <div className="flow-root">
       <ul role="list" className="-mb-4">
-        {issueComments &&
-          issueComments.length > 0 &&
-          issueComments.map((activityItem: any, index: any) => {
+        {issueActivity ? (
+          issueActivity.length > 0 &&
+          issueActivity.map((activityItem, index) => {
             // determines what type of action is performed
             const message = activityItem.field ? <ActivityMessage activity={activityItem} /> : "created the issue.";
 
@@ -47,7 +49,7 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
               return (
                 <li key={activityItem.id}>
                   <div className="relative pb-1">
-                    {issueComments.length > 1 && index !== issueComments.length - 1 ? (
+                    {issueActivity.length > 1 && index !== issueActivity.length - 1 ? (
                       <span
                         className="absolute top-5 left-5 -ml-[1.5px] h-full w-0.5 bg-custom-background-100"
                         aria-hidden="true"
@@ -114,7 +116,7 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
                   </div>
                 </li>
               );
-            } else if ("comment_json" in activityItem)
+            } else if ("comment_html" in activityItem)
               return (
                 <div key={activityItem.id} className="mt-4">
                   <IssueCommentCard
@@ -131,7 +133,15 @@ export const IssueActivityCard: FC<IssueActivityCard> = (props) => {
                   />
                 </div>
               );
-          })}
+          })
+        ) : (
+          <Loader className="space-y-3 mb-3">
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+            <Loader.Item height="20px" />
+          </Loader>
+        )}
       </ul>
     </div>
   );

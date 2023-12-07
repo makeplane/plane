@@ -54,11 +54,11 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const issues = issueIds.map((id) => issuesResponse?.[id]);
 
-  const updateIssue = (issue: IIssue, payload: IBlockUpdateData) => {
+  const updateIssue = async (issue: IIssue, payload: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
     //Todo fix sort order in the structure
-    issueStore.updateIssue(
+    await issueStore.updateIssue(
       workspaceSlug.toString(),
       issue.project,
       issue.id,
@@ -101,9 +101,9 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate) => {
+          handleIssue={async (issueToUpdate) => {
             // TODO: update the logic here
-            updateIssue(issueToUpdate as IIssue, {});
+            await updateIssue(issueToUpdate as IIssue, {});
           }}
         />
       )}
