@@ -18,8 +18,10 @@ const Index: NextPage = observer(() => {
   }: RootStore = useMobxStore();
 
   useEffect(() => {
-    if (next_path && currentUser?.onboarding_step?.profile_complete)
-      router.push(next_path.toString().replace(/[^a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]/g, ""));
+    if (next_path && currentUser?.onboarding_step?.profile_complete) {
+      const encodedPath = encodeURI(next_path.toString()); // Encode the URL
+      router.push(encodedPath);
+    }
   }, [router, next_path, currentUser]);
 
   return <LoginView />;
