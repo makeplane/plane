@@ -42,16 +42,16 @@ def get_email_configuration():
         get_configuration_value(
             [
                 {
+                    "key": "EMAIL_HOST",
+                    "default": os.environ.get("EMAIL_HOST"),
+                },
+                {
                     "key": "EMAIL_HOST_USER",
-                    "default": os.environ.get("EMAIL_HOST_USER", None),
+                    "default": os.environ.get("EMAIL_HOST_USER"),
                 },
                 {
                     "key": "EMAIL_HOST_PASSWORD",
-                    "default": os.environ.get("EMAIL_HOST_PASSWORD", None),
-                },
-                {
-                    "key": "EMAIL_HOST",
-                    "default": os.environ.get("EMAIL_HOST", None),
+                    "default": os.environ.get("EMAIL_HOST_PASSWORD"),
                 },
                 {
                     "key": "EMAIL_PORT",
