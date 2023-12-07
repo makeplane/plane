@@ -29,3 +29,19 @@ export const SubheadingComp = ({
     {subHeading}
   </p>
 );
+
+export const HeadingThreeComp = ({
+  heading,
+  onClick,
+}: {
+  heading: string;
+  onClick: (event: React.MouseEvent<HTMLParagraphElement, MouseEvent>) => void;
+}) => (
+  <p
+    onClick={onClick}
+    className="ml-8 mt-2 text-xs cursor-pointer font-medium tracking-tight text-gray-400 hover:text-custom-primary"
+    role="button"
+  >
+    {heading}
+  </p>
+);

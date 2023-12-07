@@ -24,7 +24,10 @@ export type IRichTextEditor = {
   noBorder?: boolean;
   borderOnFocus?: boolean;
   cancelUploadImage?: () => any;
-  text_html?: string;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange?: (json: any, html: string) => void;
@@ -49,7 +52,6 @@ interface EditorHandle {
 
 const RichTextEditor = ({
   onChange,
-  text_html,
   dragDropEnabled,
   debouncedUpdatesEnabled,
   setIsSubmitting,
@@ -65,6 +67,7 @@ const RichTextEditor = ({
   restoreFile,
   forwardedRef,
   mentionHighlights,
+  rerenderOnPropsChange,
   mentionSuggestions,
 }: RichTextEditorProps) => {
   const editor = useEditor({
@@ -78,7 +81,7 @@ const RichTextEditor = ({
     deleteFile,
     restoreFile,
     forwardedRef,
-    text_html,
+    rerenderOnPropsChange,
     extensions: RichTextEditorExtensions(
       uploadFile,
       setIsSubmitting,

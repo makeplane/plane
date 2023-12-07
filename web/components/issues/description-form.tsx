@@ -56,11 +56,16 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   });
 
   const [localTitleValue, setLocalTitleValue] = useState("");
-  const [localIssueDescription, setLocalIssueDescription] = useState("");
+  const [localIssueDescription, setLocalIssueDescription] = useState({
+    id: issue.id,
+    description_html: issue.description_html,
+  });
+
+  console.log("in form", localIssueDescription);
 
   useEffect(() => {
     if (issue.id) {
-      setLocalIssueDescription(issue.description_html);
+      setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
   }, [issue.id, issue.name, issue.description_html]);
@@ -153,8 +158,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
               uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
               deleteFile={fileService.deleteImage}
               restoreFile={fileService.restoreImage}
-              value={localIssueDescription}
-              text_html={localIssueDescription}
+              value={localIssueDescription.description_html}
+              rerenderOnPropsChange={localIssueDescription}
               setShouldShowAlert={setShowAlert}
               setIsSubmitting={setIsSubmitting}
               dragDropEnabled
