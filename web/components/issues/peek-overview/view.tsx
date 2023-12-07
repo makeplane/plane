@@ -3,16 +3,21 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 import { MoveRight, MoveDiagonal, Bell, Link2, Trash2 } from "lucide-react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { PeekOverviewIssueDetails } from "./issue-detail";
-import { PeekOverviewProperties } from "./properties";
-import { IssueComment } from "./activity";
+import {
+  DeleteArchivedIssueModal,
+  DeleteIssueModal,
+  IssueActivity,
+  IssueUpdateStatus,
+  PeekOverviewIssueDetails,
+  PeekOverviewProperties,
+} from "components/issues";
+// ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
-import { DeleteIssueModal, DeleteArchivedIssueModal, IssueUpdateStatus } from "components/issues/";
 // types
 import { IIssue } from "types";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -41,7 +46,7 @@ interface IIssueView {
 
 type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const peekOptions: { key: TPeekModes; icon: any; title: string }[] = [
+const PEEK_OPTIONS: { key: TPeekModes; icon: any; title: string }[] = [
   {
     key: "side-peek",
     icon: SidePanelIcon,
@@ -86,9 +91,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
   } = props;
 
   const router = useRouter();
-  const { peekIssueId } = router.query as { peekIssueId: string };
+  const { peekIssueId } = router.query;
 
-  const { user: userStore, issueDetail: issueDetailStore } = useMobxStore();
+  const {
+    user: { currentUser },
+    issueDetail: { fetchIssueSubscription, getIssueActivity, getIssueReactions, getIssueSubscription, setPeekId },
+  } = useMobxStore();
 
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
@@ -96,7 +104,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
   const updateRoutePeekId = () => {
     if (issueId != peekIssueId) {
-      issueDetailStore.setPeekId(issueId);
+      setPeekId(issueId);
       const { query } = router;
       router.push({
         pathname: router.pathname,
@@ -104,10 +112,13 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       });
     }
   };
+
   const removeRoutePeekId = () => {
     const { query } = router;
+
     if (query.peekIssueId) {
-      issueDetailStore.setPeekId(null);
+      setPeekId(null);
+
       delete query.peekIssueId;
       delete query.peekProjectId;
       router.push({
@@ -123,18 +134,16 @@ export const IssueView: FC<IIssueView> = observer((props) => {
       : null,
     async () => {
       if (workspaceSlug && projectId && issueId && peekIssueId && issueId === peekIssueId) {
-        await issueDetailStore.fetchIssueSubscription(workspaceSlug, projectId, issueId);
+        await fetchIssueSubscription(workspaceSlug, projectId, issueId);
       }
     }
   );
 
-  const issueReactions = issueDetailStore.getIssueReactions || [];
-  const issueComments = issueDetailStore.getIssueComments || [];
-  const issueSubscription = issueDetailStore.getIssueSubscription || [];
+  const issueReactions = getIssueReactions || [];
+  const issueActivity = getIssueActivity;
+  const issueSubscription = getIssueSubscription || [];
 
-  const user = userStore?.currentUser;
-
-  const currentMode = peekOptions.find((m) => m.key === peekMode);
+  const currentMode = PEEK_OPTIONS.find((m) => m.key === peekMode);
 
   return (
     <>
@@ -198,7 +207,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         </button>
                       }
                     >
-                      {peekOptions.map((mode) => (
+                      {PEEK_OPTIONS.map((mode) => (
                         <CustomSelect.Option key={mode.key} value={mode.key}>
                           <div
                             className={`flex items-center gap-1.5 ${
@@ -219,8 +228,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
               <div className="flex items-center gap-x-4">
                 <IssueUpdateStatus isSubmitting={isSubmitting} />
                 <div className="flex items-center gap-4">
-                  {issue?.created_by !== user?.id &&
-                    !issue?.assignees.includes(user?.id ?? "") &&
+                  {issue?.created_by !== currentUser?.id &&
+                    !issue?.assignees.includes(currentUser?.id ?? "") &&
                     !router.pathname.includes("[archivedIssueId]") && (
                       <Button
                         size="sm"
@@ -269,7 +278,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           issue={issue}
                           issueUpdate={issueUpdate}
                           issueReactions={issueReactions}
-                          user={user}
+                          user={currentUser}
                           issueReactionCreate={issueReactionCreate}
                           issueReactionRemove={issueReactionRemove}
                         />
@@ -280,12 +289,12 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           disableUserActions={disableUserActions}
                         />
 
-                        <IssueComment
+                        <IssueActivity
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          user={user}
-                          issueComments={issueComments}
+                          user={currentUser}
+                          issueActivity={issueActivity}
                           issueCommentCreate={issueCommentCreate}
                           issueCommentUpdate={issueCommentUpdate}
                           issueCommentRemove={issueCommentRemove}
@@ -305,17 +314,17 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                               issue={issue}
                               issueReactions={issueReactions}
                               issueUpdate={issueUpdate}
-                              user={user}
+                              user={currentUser}
                               issueReactionCreate={issueReactionCreate}
                               issueReactionRemove={issueReactionRemove}
                             />
 
-                            <IssueComment
+                            <IssueActivity
                               workspaceSlug={workspaceSlug}
                               projectId={projectId}
                               issueId={issueId}
-                              user={user}
-                              issueComments={issueComments}
+                              user={currentUser}
+                              issueActivity={issueActivity}
                               issueCommentCreate={issueCommentCreate}
                               issueCommentUpdate={issueCommentUpdate}
                               issueCommentRemove={issueCommentRemove}

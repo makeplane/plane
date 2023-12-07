@@ -12,20 +12,20 @@ import { IssueCommentReaction } from "./comment-reaction";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
-import type { IIssueComment } from "types";
+import type { IIssueActivity, IUser } from "types";
 
 // services
 const fileService = new FileService();
 
 type IIssueCommentCard = {
-  comment: IIssueComment;
+  comment: IIssueActivity;
   handleCommentDeletion: (comment: string) => void;
-  onSubmit: (data: Partial<IIssueComment>) => void;
+  onSubmit: (data: Partial<IIssueActivity>) => void;
   showAccessSpecifier?: boolean;
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  user: any;
+  user: IUser | null;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
 };
@@ -57,11 +57,11 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
     setFocus,
     watch,
     setValue,
-  } = useForm<IIssueComment>({
+  } = useForm<IIssueActivity>({
     defaultValues: comment,
   });
 
-  const formSubmit = (formData: Partial<IIssueComment>) => {
+  const formSubmit = (formData: Partial<IIssueActivity>) => {
     if (isSubmitting) return;
 
     setIsEditing(false);
@@ -119,13 +119,10 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
                 deleteFile={fileService.deleteImage}
                 restoreFile={fileService.restoreImage}
                 ref={editorRef}
-                value={watch("comment_html")}
+                value={watch("comment_html") ?? ""}
                 debouncedUpdatesEnabled={false}
                 customClassName="min-h-[50px] p-3 shadow-sm"
-                onChange={(comment_json: Object, comment_html: string) => {
-                  setValue("comment_json", comment_json);
-                  setValue("comment_html", comment_html);
-                }}
+                onChange={(comment_json: Object, comment_html: string) => setValue("comment_html", comment_html)}
                 mentionSuggestions={editorSuggestions.mentionSuggestions}
                 mentionHighlights={editorSuggestions.mentionHighlights}
               />
@@ -158,7 +155,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
             )}
             <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
-              value={comment.comment_html}
+              value={comment.comment_html ?? ""}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
               mentionHighlights={editorSuggestions.mentionHighlights}
             />

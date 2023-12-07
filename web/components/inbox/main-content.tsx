@@ -37,12 +37,9 @@ export const InboxMainContent: React.FC = observer(() => {
   const {
     inboxIssues: inboxIssuesStore,
     inboxIssueDetails: inboxIssueDetailsStore,
-    user: userStore,
+    user: { currentUser, currentProjectRole },
     projectState: { states },
   } = useMobxStore();
-
-  const user = userStore.currentUser;
-  const userRole = userStore.currentProjectRole;
 
   const { reset, control, watch } = useForm<IIssue>({
     defaultValues,
@@ -156,7 +153,7 @@ export const InboxMainContent: React.FC = observer(() => {
       </div>
     );
 
-  const isAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+  const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -249,12 +246,17 @@ export const InboxMainContent: React.FC = observer(() => {
                   id: issueDetails.id,
                 }}
                 handleFormSubmit={submitChanges}
-                isAllowed={isAllowed || user?.id === issueDetails.created_by}
+                isAllowed={isAllowed || currentUser?.id === issueDetails.created_by}
               />
             </div>
 
-            <IssueReaction projectId={projectId} workspaceSlug={workspaceSlug} issueId={issueDetails.id} />
-
+            {workspaceSlug && projectId && (
+              <IssueReaction
+                workspaceSlug={workspaceSlug.toString()}
+                projectId={projectId.toString()}
+                issueId={issueDetails.id}
+              />
+            )}
             <InboxIssueActivity issueDetails={issueDetails} />
           </div>
 

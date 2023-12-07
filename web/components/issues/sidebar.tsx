@@ -638,7 +638,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             </div>
           )}
           {(fieldsToShow.includes("all") || fieldsToShow.includes("link")) && (
-            <div className={`min-h-[116px] py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
+            <div className={`py-1 text-xs ${uneditable ? "opacity-60" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <h4>Links</h4>
                 {isAllowed && (
@@ -654,21 +654,23 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   </button>
                 )}
               </div>
-              <div className="mt-2 space-y-2">
-                {issueDetail?.issue_link && issueDetail.issue_link.length > 0 ? (
-                  <LinksList
-                    links={issueDetail.issue_link}
-                    handleDeleteLink={handleDeleteLink}
-                    handleEditLink={handleEditLink}
-                    userAuth={{
-                      isGuest: currentProjectRole === 5,
-                      isViewer: currentProjectRole === 10,
-                      isMember: currentProjectRole === 15,
-                      isOwner: currentProjectRole === 20,
-                    }}
-                  />
-                ) : null}
-              </div>
+              {issueDetail?.issue_link && issueDetail.issue_link.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  {
+                    <LinksList
+                      links={issueDetail.issue_link}
+                      handleDeleteLink={handleDeleteLink}
+                      handleEditLink={handleEditLink}
+                      userAuth={{
+                        isGuest: currentProjectRole === 5,
+                        isViewer: currentProjectRole === 10,
+                        isMember: currentProjectRole === 15,
+                        isOwner: currentProjectRole === 20,
+                      }}
+                    />
+                  }
+                </div>
+              )}
             </div>
           )}
         </div>

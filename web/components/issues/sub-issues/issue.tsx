@@ -65,7 +65,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
           workspaceSlug={workspaceSlug}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate) => handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
+          handleIssue={async (issueToUpdate) => await handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
         />
       )}
       <div>

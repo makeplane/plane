@@ -45,20 +45,18 @@ export const ProjectViewKanBanLayout: React.FC = observer(() => {
     groupBy: string | null,
     issues: IIssueResponse | undefined,
     issueWithIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined
-  ) => {
-    if (kanBanHelperStore.handleDragDrop)
-      return await kanBanHelperStore.handleDragDrop(
-        source,
-        destination,
-        workspaceSlug,
-        projectId,
-        projectViewIssuesStore,
-        subGroupBy,
-        groupBy,
-        issues,
-        issueWithIds
-      );
-  };
+  ) =>
+    await kanBanHelperStore.handleDragDrop(
+      source,
+      destination,
+      workspaceSlug,
+      projectId,
+      projectViewIssuesStore,
+      subGroupBy,
+      groupBy,
+      issues,
+      issueWithIds
+    );
 
   return (
     <BaseKanBanRoot

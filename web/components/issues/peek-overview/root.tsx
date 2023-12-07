@@ -1,17 +1,17 @@
-import { FC, Fragment, ReactNode, useEffect } from "react";
+import { FC, Fragment, ReactNode, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
 import useToast from "hooks/use-toast";
 // components
-import { IssueView } from "./view";
+import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IIssuePeekOverview {
@@ -30,27 +30,45 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { peekIssueId } = router.query;
 
   const {
-    user: userStore,
-    issue: issueStore,
-    issueDetail: issueDetailStore,
-    archivedIssueDetail: archivedIssueDetailStore,
-    archivedIssues: archivedIssuesStore,
-    project: projectStore,
+    user: { currentProjectRole },
+    issue: { removeIssueFromStructure },
+    issueDetail: {
+      createIssueComment,
+      updateIssueComment,
+      removeIssueComment,
+      creationIssueCommentReaction,
+      removeIssueCommentReaction,
+      createIssueReaction,
+      removeIssueReaction,
+      createIssueSubscription,
+      removeIssueSubscription,
+      getIssue,
+      loader,
+      fetchPeekIssueDetails,
+      setPeekId,
+      fetchIssueActivity,
+    },
+    archivedIssueDetail: {
+      getIssue: getArchivedIssue,
+      loader: archivedIssueLoader,
+      fetchPeekIssueDetails: fetchArchivedPeekIssueDetails,
+    },
+    archivedIssues: { deleteArchivedIssue },
+    project: { currentProjectDetails },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
-  const fetchIssueDetail = async () => {
+  const fetchIssueDetail = useCallback(async () => {
     if (workspaceSlug && projectId && peekIssueId) {
-      if (isArchived)
-        await archivedIssueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
-      else await issueDetailStore.fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      if (isArchived) await fetchArchivedPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
+      else await fetchPeekIssueDetails(workspaceSlug, projectId, peekIssueId as string);
     }
-  };
+  }, [fetchArchivedPeekIssueDetails, fetchPeekIssueDetails, workspaceSlug, projectId, peekIssueId, isArchived]);
 
   useEffect(() => {
     fetchIssueDetail();
-  }, [workspaceSlug, projectId, peekIssueId]);
+  }, [workspaceSlug, projectId, peekIssueId, fetchIssueDetail]);
 
   const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -72,44 +90,43 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     });
   };
 
-  const issue = isArchived ? archivedIssueDetailStore.getIssue : issueDetailStore.getIssue;
-  const isLoading = isArchived ? archivedIssueDetailStore.loader : issueDetailStore.loader;
+  const issue = isArchived ? getArchivedIssue : getIssue;
+  const isLoading = isArchived ? archivedIssueLoader : loader;
 
-  const issueUpdate = (_data: Partial<IIssue>) => {
-    if (handleIssue) handleIssue(_data);
+  const issueUpdate = async (_data: Partial<IIssue>) => {
+    if (handleIssue) {
+      await handleIssue(_data);
+      fetchIssueActivity(workspaceSlug, projectId, issueId);
+    }
   };
 
-  const issueReactionCreate = (reaction: string) =>
-    issueDetailStore.createIssueReaction(workspaceSlug, projectId, issueId, reaction);
+  const issueReactionCreate = (reaction: string) => createIssueReaction(workspaceSlug, projectId, issueId, reaction);
 
-  const issueReactionRemove = (reaction: string) =>
-    issueDetailStore.removeIssueReaction(workspaceSlug, projectId, issueId, reaction);
+  const issueReactionRemove = (reaction: string) => removeIssueReaction(workspaceSlug, projectId, issueId, reaction);
 
-  const issueCommentCreate = (comment: any) =>
-    issueDetailStore.createIssueComment(workspaceSlug, projectId, issueId, comment);
+  const issueCommentCreate = (comment: any) => createIssueComment(workspaceSlug, projectId, issueId, comment);
 
   const issueCommentUpdate = (comment: any) =>
-    issueDetailStore.updateIssueComment(workspaceSlug, projectId, issueId, comment?.id, comment);
+    updateIssueComment(workspaceSlug, projectId, issueId, comment?.id, comment);
 
-  const issueCommentRemove = (commentId: string) =>
-    issueDetailStore.removeIssueComment(workspaceSlug, projectId, issueId, commentId);
+  const issueCommentRemove = (commentId: string) => removeIssueComment(workspaceSlug, projectId, issueId, commentId);
 
   const issueCommentReactionCreate = (commentId: string, reaction: string) =>
-    issueDetailStore.creationIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
+    creationIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
 
   const issueCommentReactionRemove = (commentId: string, reaction: string) =>
-    issueDetailStore.removeIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
+    removeIssueCommentReaction(workspaceSlug, projectId, issueId, commentId, reaction);
 
-  const issueSubscriptionCreate = () => issueDetailStore.createIssueSubscription(workspaceSlug, projectId, issueId);
+  const issueSubscriptionCreate = () => createIssueSubscription(workspaceSlug, projectId, issueId);
 
-  const issueSubscriptionRemove = () => issueDetailStore.removeIssueSubscription(workspaceSlug, projectId, issueId);
+  const issueSubscriptionRemove = () => removeIssueSubscription(workspaceSlug, projectId, issueId);
 
   const handleDeleteIssue = async () => {
-    if (isArchived) await archivedIssuesStore.deleteArchivedIssue(workspaceSlug, projectId, issue!);
-    else await issueStore.removeIssueFromStructure(workspaceSlug, projectId, issue!);
+    if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
+    else removeIssueFromStructure(workspaceSlug, projectId, issue!);
     const { query } = router;
     if (query.peekIssueId) {
-      issueDetailStore.setPeekId(null);
+      setPeekId(null);
       delete query.peekIssueId;
       delete query.peekProjectId;
       router.push({
@@ -119,7 +136,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }
   };
 
-  const userRole = userStore.currentProjectRole ?? EUserWorkspaceRoles.GUEST;
+  const userRole = currentProjectRole ?? EUserWorkspaceRoles.GUEST;
 
   return (
     <Fragment>
@@ -144,7 +161,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issueSubscriptionRemove={issueSubscriptionRemove}
         handleDeleteIssue={handleDeleteIssue}
         disableUserActions={[5, 10].includes(userRole)}
-        showCommentAccessSpecifier={projectStore.currentProjectDetails?.is_deployed}
+        showCommentAccessSpecifier={currentProjectDetails?.is_deployed}
       >
         {children}
       </IssueView>

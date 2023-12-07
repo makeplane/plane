@@ -26,7 +26,7 @@ import { NextPageWithLayout } from "types/app";
 import { IPage, IIssue } from "types";
 // fetch-keys
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { IssuePeekOverview } from "components/issues/issue-peek-overview";
+import { IssuePeekOverview } from "components/issues/peek-overview";
 import { IssueService } from "services/issue";
 import useToast from "hooks/use-toast";
 import useReloadConfirmations from "hooks/use-reload-confirmation";

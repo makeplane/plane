@@ -31,9 +31,9 @@ interface IBaseCalendarRoot {
   calendarViewStore: IIssueCalendarViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
-    [EIssueActions.DELETE]: (issue: IIssue) => void;
-    [EIssueActions.UPDATE]?: (issue: IIssue) => void;
-    [EIssueActions.REMOVE]?: (issue: IIssue) => void;
+    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
   };
   viewId?: string;
   handleDragDrop: (source: any, destination: any, issues: any, issueWithIds: any) => void;
@@ -64,9 +64,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   };
 
   const handleIssues = useCallback(
-    (date: string, issue: IIssue, action: EIssueActions) => {
+    async (date: string, issue: IIssue, action: EIssueActions) => {
       if (issueActions[action]) {
-        issueActions[action]!(issue);
+        await issueActions[action]!(issue);
       }
     },
     [issueActions]
@@ -108,8 +108,8 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={(issueToUpdate) =>
-            handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, EIssueActions.UPDATE)
+          handleIssue={async (issueToUpdate) =>
+            await handleIssues(issueToUpdate.target_date ?? "", issueToUpdate as IIssue, EIssueActions.UPDATE)
           }
         />
       )}

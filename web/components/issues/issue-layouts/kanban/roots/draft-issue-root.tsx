@@ -14,7 +14,7 @@ export interface IKanBanLayout {}
 
 export const DraftKanBanLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { workspaceSlug } = router.query as { workspaceSlug: string };
+  const { workspaceSlug } = router.query;
 
   const {
     projectDraftIssues: issueStore,
@@ -26,12 +26,12 @@ export const DraftKanBanLayout: React.FC = observer(() => {
     [EIssueActions.UPDATE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      await issueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, issue);
     },
     [EIssueActions.DELETE]: async (issue: IIssue) => {
       if (!workspaceSlug) return;
 
-      await issueStore.removeIssue(workspaceSlug, issue.project, issue.id);
+      await issueStore.removeIssue(workspaceSlug.toString(), issue.project, issue.id);
     },
   };
 
