@@ -11,7 +11,6 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.license.models import InstanceConfiguration
 from plane.license.utils.instance_value import get_configuration_value
 
 
@@ -21,89 +20,101 @@ class ConfigurationEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+
+        # Get all the configuration
+        (
+            GOOGLE_CLIENT_ID,
+            GITHUB_CLIENT_ID,
+            GITHUB_APP_NAME,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            ENABLE_MAGIC_LINK_LOGIN,
+            ENABLE_EMAIL_PASSWORD,
+            SLACK_CLIENT_ID,
+            POSTHOG_API_KEY,
+            POSTHOG_HOST,
+            UNSPLASH_ACCESS_KEY,
+            OPENAI_API_KEY,
+        ) = get_configuration_value(
+            [
+                {
+                    "key": "GOOGLE_CLIENT_ID",
+                    "default": os.environ.get("GOOGLE_CLIENT_ID", None),
+                },
+                {
+                    "key": "GITHUB_CLIENT_ID",
+                    "default": os.environ.get("GITHUB_CLIENT_ID", None),
+                },
+                {
+                    "key": "GITHUB_APP_NAME",
+                    "default": os.environ.get("GITHUB_APP_NAME", None),
+                },
+                {
+                    "key": "EMAIL_HOST_USER",
+                    "default": os.environ.get("EMAIL_HOST_USER", None),
+                },
+                {
+                    "key": "EMAIL_HOST_PASSWORD",
+                    "default": os.environ.get("EMAIL_HOST_PASSWORD", None),
+                },
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN", "1"),
+                },
+                {
+                    "key": "ENABLE_EMAIL_PASSWORD",
+                    "default": os.environ.get("ENABLE_EMAIL_PASSWORD", "1"),
+                },
+                {
+                    "key": "SLACK_CLIENT_ID",
+                    "default": os.environ.get("SLACK_CLIENT_ID", "1"),
+                },
+                {
+                    "key": "POSTHOG_API_KEY",
+                    "default": os.environ.get("POSTHOG_API_KEY", "1"),
+                },
+                {
+                    "key": "POSTHOG_HOST",
+                    "default": os.environ.get("POSTHOG_HOST", "1"),
+                },
+                {
+                    "key": "UNSPLASH_ACCESS_KEY",
+                    "default": os.environ.get("UNSPLASH_ACCESS_KEY", "1"),
+                },
+                {
+                    "key": "OPENAI_API_KEY",
+                    "default": os.environ.get("OPENAI_API_KEY", "1"),
+                },
+            ]
+        )
 
         data = {}
         # Authentication
-        data["google_client_id"] = get_configuration_value(
-            instance_configuration,
-            "GOOGLE_CLIENT_ID",
-            os.environ.get("GOOGLE_CLIENT_ID", None),
-        )
-        data["github_client_id"] = get_configuration_value(
-            instance_configuration,
-            "GITHUB_CLIENT_ID",
-            os.environ.get("GITHUB_CLIENT_ID", None),
-        )
-        data["github_app_name"] = get_configuration_value(
-            instance_configuration,
-            "GITHUB_APP_NAME",
-            os.environ.get("GITHUB_APP_NAME", None),
-        )
+        data["google_client_id"] = GOOGLE_CLIENT_ID
+        data["github_client_id"] = GITHUB_CLIENT_ID
+        data["github_app_name"] = GITHUB_APP_NAME
         data["magic_login"] = (
-            bool(
-                get_configuration_value(
-                    instance_configuration,
-                    "EMAIL_HOST_USER",
-                    os.environ.get("EMAIL_HOST_USER", None),
-                ),
-            )
-            and bool(
-                get_configuration_value(
-                    instance_configuration,
-                    "EMAIL_HOST_PASSWORD",
-                    os.environ.get("EMAIL_HOST_PASSWORD", None),
-                )
-            )
-        ) and get_configuration_value(
-            instance_configuration, "ENABLE_MAGIC_LINK_LOGIN", "1"
-        ) == "1"
+            bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
+        ) and ENABLE_MAGIC_LINK_LOGIN == "1"
 
-        data["email_password_login"] = (
-            get_configuration_value(
-                instance_configuration, "ENABLE_EMAIL_PASSWORD", "1"
-            )
-            == "1"
-        )
+        data["email_password_login"] = ENABLE_EMAIL_PASSWORD == "1"
         # Slack client
-        data["slack_client_id"] = get_configuration_value(
-            instance_configuration,
-            "SLACK_CLIENT_ID",
-            os.environ.get("SLACK_CLIENT_ID", None),
-        )
+        data["slack_client_id"] = SLACK_CLIENT_ID
 
         # Posthog
-        data["posthog_api_key"] = get_configuration_value(
-            instance_configuration,
-            "POSTHOG_API_KEY",
-            os.environ.get("POSTHOG_API_KEY", None),
-        )
-        data["posthog_host"] = get_configuration_value(
-            instance_configuration,
-            "POSTHOG_HOST",
-            os.environ.get("POSTHOG_HOST", None),
-        )
+        data["posthog_api_key"] = POSTHOG_API_KEY
+        data["posthog_host"] = POSTHOG_HOST
 
         # Unsplash
-        data["has_unsplash_configured"] = bool(
-            get_configuration_value(
-                instance_configuration,
-                "UNSPLASH_ACCESS_KEY",
-                os.environ.get("UNSPLASH_ACCESS_KEY", None),
-            )
-        )
+        data["has_unsplash_configured"] = UNSPLASH_ACCESS_KEY
 
         # Open AI settings
-        data["has_openai_configured"] = bool(
-            get_configuration_value(
-                instance_configuration,
-                "OPENAI_API_KEY",
-                os.environ.get("OPENAI_API_KEY", None),
-            )
-        )
+        data["has_openai_configured"] = bool(OPENAI_API_KEY)
 
+        # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
+        # is self managed
         data["is_self_managed"] = bool(int(os.environ.get("IS_SELF_MANAGED", "1")))
 
         return Response(data, status=status.HTTP_200_OK)

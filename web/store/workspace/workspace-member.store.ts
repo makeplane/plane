@@ -19,6 +19,11 @@ export interface IWorkspaceMemberStore {
   updateMember: (workspaceSlug: string, memberId: string, data: Partial<IWorkspaceMember>) => Promise<void>;
   removeMember: (workspaceSlug: string, memberId: string) => Promise<void>;
   inviteMembersToWorkspace: (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => Promise<any>;
+  updateMemberInvitation: (
+    workspaceSlug: string,
+    memberId: string,
+    data: Partial<IWorkspaceMemberInvitation>
+  ) => Promise<void>;
   deleteWorkspaceInvitation: (workspaceSlug: string, memberId: string) => Promise<void>;
   // computed
   workspaceMembers: IWorkspaceMember[] | null;
@@ -53,6 +58,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       updateMember: action,
       removeMember: action,
       inviteMembersToWorkspace: action,
+      updateMemberInvitation: action,
       deleteWorkspaceInvitation: action,
       // computed
       workspaceMembers: computed,
@@ -179,6 +185,55 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       await this.workspaceService.inviteWorkspace(workspaceSlug, data);
       await this.fetchWorkspaceMemberInvitations(workspaceSlug);
     } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * update workspace member invitation using workspace slug and member id and data
+   * @param workspaceSlug
+   * @param memberId
+   * @param data
+   */
+  updateMemberInvitation = async (
+    workspaceSlug: string,
+    memberId: string,
+    data: Partial<IWorkspaceMemberInvitation>
+  ) => {
+    const originalMemberInvitations = [...this.memberInvitations?.[workspaceSlug]]; // in case of error, we will revert back to original members
+
+    const memberInvitations = [...this.memberInvitations?.[workspaceSlug]];
+
+    const index = memberInvitations.findIndex((m) => m.id === memberId);
+    memberInvitations[index] = { ...memberInvitations[index], ...data };
+
+    // optimistic update
+    runInAction(() => {
+      this.loader = true;
+      this.error = null;
+      this.memberInvitations = {
+        ...this.memberInvitations,
+        [workspaceSlug]: memberInvitations,
+      };
+    });
+
+    try {
+      await this.workspaceService.updateWorkspaceInvitation(workspaceSlug, memberId, data);
+
+      runInAction(() => {
+        this.loader = false;
+        this.error = null;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.loader = false;
+        this.error = error;
+        this.memberInvitations = {
+          ...this.memberInvitations,
+          [workspaceSlug]: originalMemberInvitations,
+        };
+      });
+
       throw error;
     }
   };

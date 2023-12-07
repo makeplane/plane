@@ -18,7 +18,6 @@ from sentry_sdk import capture_exception
 from plane.db.models import Issue
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
-from plane.license.models import InstanceConfiguration, Instance
 from plane.license.utils.instance_value import get_email_configuration
 
 row_mapping = {
@@ -52,11 +51,6 @@ def send_export_email(email, slug, csv_buffer, rows):
 
     csv_buffer.seek(0)
 
-    # Configure email connection from the database
-    instance_configuration = InstanceConfiguration.objects.filter(
-        key__startswith="EMAIL_"
-    ).values("key", "value")
-
     (
         EMAIL_HOST,
         EMAIL_HOST_USER,
@@ -64,7 +58,7 @@ def send_export_email(email, slug, csv_buffer, rows):
         EMAIL_PORT,
         EMAIL_USE_TLS,
         EMAIL_FROM,
-    ) = get_email_configuration(instance_configuration=instance_configuration)
+    ) = get_email_configuration()
 
     connection = get_connection(
         host=EMAIL_HOST,

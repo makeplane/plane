@@ -166,6 +166,18 @@ export class WorkspaceService extends APIService {
       });
   }
 
+  async updateWorkspaceInvitation(
+    workspaceSlug: string,
+    invitationId: string,
+    data: Partial<IWorkspaceMember>
+  ): Promise<any> {
+    return this.patch(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async deleteWorkspaceInvitations(workspaceSlug: string, invitationId: string): Promise<any> {
     return this.delete(`/api/workspaces/${workspaceSlug}/invitations/${invitationId}/`)
       .then((response) => response?.data)

@@ -34,7 +34,7 @@ from plane.app.serializers import (
 from plane.db.models import User, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.forgot_password_task import forgot_password
-from plane.license.models import Instance, InstanceConfiguration
+from plane.license.models import Instance
 from plane.settings.redis import redis_instance
 from plane.bgtasks.magic_link_code_task import magic_link
 from plane.bgtasks.event_tracking_task import auth_events
@@ -321,8 +321,19 @@ class EmailCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Get the configurations
-        instance_configuration = InstanceConfiguration.objects.values("key", "value")
+        # Get configuration values
+        ENABLE_SIGNUP, ENABLE_MAGIC_LINK_LOGIN = get_configuration_value(
+            [
+                {
+                    "key": "ENABLE_SIGNUP",
+                    "default": os.environ.get("ENABLE_SIGNUP"),
+                },
+                {
+                    "key": "ENABLE_MAGIC_LINK_LOGIN",
+                    "default": os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
+                },
+            ]
+        )
 
         email = request.data.get("email", False)
 
@@ -347,12 +358,7 @@ class EmailCheckEndpoint(BaseAPIView):
         if user is None:
             # Create the user
             if (
-                get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_SIGNUP",
-                    os.environ.get("ENABLE_SIGNUP", "0"),
-                )
-                == "0"
+                ENABLE_SIGNUP == "0"
                 and not WorkspaceMemberInvite.objects.filter(
                     email=email,
                 ).exists()
@@ -372,13 +378,8 @@ class EmailCheckEndpoint(BaseAPIView):
                 is_password_autoset=True,
             )
 
-
             if not bool(
-                get_configuration_value(
-                    instance_configuration,
-                    "ENABLE_MAGIC_LINK_LOGIN",
-                    os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
-                ),
+                ENABLE_MAGIC_LINK_LOGIN,
             ):
                 return Response(
                     {"error": "Magic link sign in is disabled."},
@@ -386,16 +387,15 @@ class EmailCheckEndpoint(BaseAPIView):
                 )
 
             # Send event
-            if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                auth_events.delay(
-                    user=user.id,
-                    email=email,
-                    user_agent=request.META.get("HTTP_USER_AGENT"),
-                    ip=request.META.get("REMOTE_ADDR"),
-                    event_name="SIGN_IN",
-                    medium="MAGIC_LINK",
-                    first_time=True,
-                )
+            auth_events.delay(
+                user=user.id,
+                email=email,
+                user_agent=request.META.get("HTTP_USER_AGENT"),
+                ip=request.META.get("REMOTE_ADDR"),
+                event_name="SIGN_IN",
+                medium="MAGIC_LINK",
+                first_time=True,
+            )
             key, token, current_attempt = generate_magic_token(email=email)
             if not current_attempt:
                 return Response(
@@ -413,28 +413,21 @@ class EmailCheckEndpoint(BaseAPIView):
         else:
             if user.is_password_autoset:
                 ## Generate a random token
-                if not bool(
-                    get_configuration_value(
-                        instance_configuration,
-                        "ENABLE_MAGIC_LINK_LOGIN",
-                        os.environ.get("ENABLE_MAGIC_LINK_LOGIN"),
-                    ),
-                ):
+                if not bool(ENABLE_MAGIC_LINK_LOGIN):
                     return Response(
                         {"error": "Magic link sign in is disabled."},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="MAGIC_LINK",
-                        first_time=False,
-                    )
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="MAGIC_LINK",
+                    first_time=False,
+                )
 
                 # Generate magic token
                 key, token, current_attempt = generate_magic_token(email=email)
@@ -454,16 +447,15 @@ class EmailCheckEndpoint(BaseAPIView):
                     status=status.HTTP_200_OK,
                 )
             else:
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="EMAIL",
-                        first_time=False,
-                    )
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="EMAIL",
+                    first_time=False,
+                )
 
                 # User should enter password to login
                 return Response(
