@@ -2,5 +2,16 @@
 *.pyc
 .env
 venv
-node_modules
+node_modules/
+**/node_modules/
 npm-debug.log
+.next/
+**/.next/
+.turbo/
+**/.turbo/
+build/
+**/build/
+out/
+**/out/
+dist/
+**/dist/

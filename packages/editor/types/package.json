@@ -17,7 +17,7 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup --minify",
     "dev": "tsup --watch",
     "check-types": "tsc --noEmit"
   },
