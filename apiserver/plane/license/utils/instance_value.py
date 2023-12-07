@@ -9,12 +9,6 @@ from plane.license.models import InstanceConfiguration
 from plane.license.utils.encryption import decrypt_data
 
 
-
-def create_lookup_dict(list_of_dicts):
-    return {item['key']: item for item in list_of_dicts}
-
-
-
 # Helper function to return value from the passed key
 def get_configuration_value(keys):
     environment_list = []
