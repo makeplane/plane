@@ -408,15 +408,14 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                     workspace_invite.delete()
                 
                 # Send event
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    workspace_invite_event.delay(
-                        user=user.id if user is not None else None,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="MEMBER_ACCEPTED",
-                        accepted_from="EMAIL",
-                    )
+                workspace_invite_event.delay(
+                    user=user.id if user is not None else None,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="MEMBER_ACCEPTED",
+                    accepted_from="EMAIL",
+                )
 
                 return Response(
                     {"message": "Workspace Invitation Accepted"},

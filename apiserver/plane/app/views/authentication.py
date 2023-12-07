@@ -73,7 +73,7 @@ class SignUpEndpoint(BaseAPIView):
 
         # get configuration values
         # Get configuration values
-        ENABLE_SIGNUP = get_configuration_value(
+        ENABLE_SIGNUP, = get_configuration_value(
             [
                 {
                     "key": "ENABLE_SIGNUP",
@@ -173,7 +173,7 @@ class SignInEndpoint(BaseAPIView):
 
         # Create the user
         else:
-            ENABLE_SIGNUP = get_configuration_value(
+            ENABLE_SIGNUP, = get_configuration_value(
                 [
                     {
                         "key": "ENABLE_SIGNUP",
@@ -269,16 +269,15 @@ class SignInEndpoint(BaseAPIView):
         workspace_member_invites.delete()
         project_member_invites.delete()
         # Send event
-        if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-            auth_events.delay(
-                user=user.id,
-                email=email,
-                user_agent=request.META.get("HTTP_USER_AGENT"),
-                ip=request.META.get("REMOTE_ADDR"),
-                event_name="SIGN_IN",
-                medium="EMAIL",
-                first_time=False,
-            )
+        auth_events.delay(
+            user=user.id,
+            email=email,
+            user_agent=request.META.get("HTTP_USER_AGENT"),
+            ip=request.META.get("REMOTE_ADDR"),
+            event_name="SIGN_IN",
+            medium="EMAIL",
+            first_time=False,
+        )
 
         access_token, refresh_token = get_tokens_for_user(user)
         data = {
@@ -352,16 +351,15 @@ class MagicSignInEndpoint(BaseAPIView):
                         status=status.HTTP_403_FORBIDDEN,
                     )
                 # Send event
-                if settings.POSTHOG_API_KEY and settings.POSTHOG_HOST:
-                    auth_events.delay(
-                        user=user.id,
-                        email=email,
-                        user_agent=request.META.get("HTTP_USER_AGENT"),
-                        ip=request.META.get("REMOTE_ADDR"),
-                        event_name="SIGN_IN",
-                        medium="MAGIC_LINK",
-                        first_time=False,
-                    )
+                auth_events.delay(
+                    user=user.id,
+                    email=email,
+                    user_agent=request.META.get("HTTP_USER_AGENT"),
+                    ip=request.META.get("REMOTE_ADDR"),
+                    event_name="SIGN_IN",
+                    medium="MAGIC_LINK",
+                    first_time=False,
+                )
 
                 user.is_active = True
                 user.is_email_verified = True
