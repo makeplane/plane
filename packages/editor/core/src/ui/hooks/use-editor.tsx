@@ -14,7 +14,10 @@ import {
 interface CustomEditorProps {
   uploadFile: UploadImage;
   restoreFile: RestoreImage;
-  text_html?: string;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
   setIsSubmitting?: (
@@ -38,7 +41,7 @@ export const useEditor = ({
   cancelUploadImage,
   editorProps = {},
   value,
-  text_html,
+  rerenderOnPropsChange,
   extensions = [],
   onStart,
   onChange,
@@ -79,7 +82,7 @@ export const useEditor = ({
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
     },
-    [text_html],
+    [rerenderOnPropsChange],
   );
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);

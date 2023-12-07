@@ -1,10 +1,5 @@
 import { useEditor as useCustomEditor, Editor } from "@tiptap/react";
-import {
-  useImperativeHandle,
-  useRef,
-  MutableRefObject,
-  useEffect,
-} from "react";
+import { useImperativeHandle, useRef, MutableRefObject } from "react";
 import { CoreReadOnlyEditorExtensions } from "../read-only/extensions";
 import { CoreReadOnlyEditorProps } from "../read-only/props";
 import { EditorProps } from "@tiptap/pm/view";
@@ -15,6 +10,10 @@ interface CustomReadOnlyEditorProps {
   forwardedRef?: any;
   extensions?: any;
   editorProps?: EditorProps;
+  rerenderOnPropsChange?: {
+    id: string;
+    description_html: string;
+  };
   mentionHighlights?: string[];
   mentionSuggestions?: IMentionSuggestion[];
 }
@@ -24,33 +23,29 @@ export const useReadOnlyEditor = ({
   forwardedRef,
   extensions = [],
   editorProps = {},
+  rerenderOnPropsChange,
   mentionHighlights,
   mentionSuggestions,
 }: CustomReadOnlyEditorProps) => {
-  const editor = useCustomEditor({
-    editable: false,
-    content:
-      typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
-    editorProps: {
-      ...CoreReadOnlyEditorProps,
-      ...editorProps,
+  const editor = useCustomEditor(
+    {
+      editable: false,
+      content:
+        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      editorProps: {
+        ...CoreReadOnlyEditorProps,
+        ...editorProps,
+      },
+      extensions: [
+        ...CoreReadOnlyEditorExtensions({
+          mentionSuggestions: mentionSuggestions ?? [],
+          mentionHighlights: mentionHighlights ?? [],
+        }),
+        ...extensions,
+      ],
     },
-    extensions: [
-      ...CoreReadOnlyEditorExtensions({
-        mentionSuggestions: mentionSuggestions ?? [],
-        mentionHighlights: mentionHighlights ?? [],
-      }),
-      ...extensions,
-    ],
-  });
-
-  const hasIntiliazedContent = useRef(false);
-  useEffect(() => {
-    if (editor && !value && !hasIntiliazedContent.current) {
-      editor.commands.setContent(value);
-      hasIntiliazedContent.current = true;
-    }
-  }, [value]);
+    [rerenderOnPropsChange],
+  );
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);
   editorRef.current = editor;

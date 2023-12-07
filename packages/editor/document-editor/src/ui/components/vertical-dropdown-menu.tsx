@@ -39,8 +39,8 @@ const VerticalDropdownItem = ({
 export const VerticalDropdownMenu = ({ items }: IVerticalDropdownMenuProps) => {
   return (
     <CustomMenu
-      maxHeight={"lg"}
-      className={"h-4"}
+      maxHeight={"md"}
+      className={"h-4.5 mt-1"}
       placement={"bottom-start"}
       optionsClassName={
         "border-custom-border border-r border-solid transition-all duration-200 ease-in-out "

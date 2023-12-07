@@ -25,6 +25,11 @@ export interface MenuOptionsProps {
   duplicationConfig?: IDuplicationConfig;
   pageLockConfig?: IPageLockConfig;
   pageArchiveConfig?: IPageArchiveConfig;
+  onActionCompleteHandler: (action: {
+    title: string;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+  }) => void;
 }
 
 export const getMenuOptions = ({
@@ -33,13 +38,21 @@ export const getMenuOptions = ({
   duplicationConfig,
   pageLockConfig,
   pageArchiveConfig,
+  onActionCompleteHandler,
 }: MenuOptionsProps) => {
   const KanbanMenuOptions: IVerticalDropdownItemProps[] = [
     {
       key: 1,
       type: "copy_markdown",
       Icon: ClipboardIcon,
-      action: () => copyMarkdownToClipboard(editor),
+      action: () => {
+        onActionCompleteHandler({
+          title: "Markdown Copied",
+          message: "Page Copied as Markdown",
+          type: "success",
+        });
+        copyMarkdownToClipboard(editor);
+      },
       label: "Copy markdown",
     },
     // {
@@ -53,7 +66,14 @@ export const getMenuOptions = ({
       key: 3,
       type: "copy_page_link",
       Icon: Link,
-      action: () => CopyPageLink(),
+      action: () => {
+        onActionCompleteHandler({
+          title: "Link Copied",
+          message: "Link to the page has been copied to clipboard",
+          type: "success",
+        });
+        CopyPageLink();
+      },
       label: "Copy page link",
     },
   ];
@@ -64,7 +84,25 @@ export const getMenuOptions = ({
       key: KanbanMenuOptions.length++,
       type: "duplicate_page",
       Icon: Copy,
-      action: duplicationConfig.action,
+      action: () => {
+        duplicationConfig
+          .action()
+          .then(() => {
+            onActionCompleteHandler({
+              title: "Page Copied",
+              message:
+                "Page has been copied as 'Copy of' followed by page title",
+              type: "success",
+            });
+          })
+          .catch(() => {
+            onActionCompleteHandler({
+              title: "Copy Failed",
+              message: "Sorry, page cannot be copied, please try again later.",
+              type: "error",
+            });
+          });
+      },
       label: "Make a copy",
     });
   }
@@ -75,7 +113,25 @@ export const getMenuOptions = ({
       type: pageLockConfig.is_locked ? "unlock_page" : "lock_page",
       Icon: pageLockConfig.is_locked ? Unlock : Lock,
       label: pageLockConfig.is_locked ? "Unlock page" : "Lock page",
-      action: pageLockConfig.action,
+      action: () => {
+        const state = pageLockConfig.is_locked ? "Unlocked" : "Locked";
+        pageLockConfig
+          .action()
+          .then(() => {
+            onActionCompleteHandler({
+              title: `Page ${state}`,
+              message: `Page has been ${state}, no one will be able to change the state of lock except you.`,
+              type: "success",
+            });
+          })
+          .catch(() => {
+            onActionCompleteHandler({
+              title: `Page cannot be ${state}`,
+              message: `Sorry, page cannot be ${state}, please try again later`,
+              type: "error",
+            });
+          });
+      },
     });
   }
 
@@ -86,7 +142,25 @@ export const getMenuOptions = ({
       type: pageArchiveConfig.is_archived ? "unarchive_page" : "archive_page",
       Icon: pageArchiveConfig.is_archived ? ArchiveRestoreIcon : Archive,
       label: pageArchiveConfig.is_archived ? "Restore page" : "Archive page",
-      action: pageArchiveConfig.action,
+      action: () => {
+        const state = pageArchiveConfig.is_archived ? "Unarchived" : "Archived";
+        pageArchiveConfig
+          .action()
+          .then(() => {
+            onActionCompleteHandler({
+              title: `Page ${state}`,
+              message: `Page has been ${state}, you can checkout all archived tab and can restore the page later.`,
+              type: "success",
+            });
+          })
+          .catch(() => {
+            onActionCompleteHandler({
+              title: `Page cannot be ${state}`,
+              message: `Sorry, page cannot be ${state}, please try again later.`,
+              type: "success",
+            });
+          });
+      },
     });
   }
 

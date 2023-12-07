@@ -48,7 +48,7 @@ export const InfoPopover: React.FC<Props> = (props) => {
       onMouseEnter={() => setIsPopoverOpen(true)}
       onMouseLeave={() => setIsPopoverOpen(false)}
     >
-      <button type="button" ref={setReferenceElement} className="block mt-1.5">
+      <button type="button" ref={setReferenceElement} className="block">
         <Info className="h-3.5 w-3.5" />
       </button>
       {isPopoverOpen && (
