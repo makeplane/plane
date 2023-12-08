@@ -24,9 +24,9 @@ interface ICalendarHeader {
 export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
   const { issuesFilterStore } = props;
 
-  const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
+  const { calendar: calendarStore } = useMobxStore();
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
 
