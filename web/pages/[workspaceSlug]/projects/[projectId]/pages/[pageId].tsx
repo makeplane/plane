@@ -152,6 +152,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     }
   }, [isSubmitting, setShowAlert]);
 
+  // adding pageDetails.description_html to dependency array causes
+  // editor rerendering on every save
   useEffect(() => {
     if (pageDetails?.description_html) {
       setLocalIssueDescription({ id: pageId as string, description_html: pageDetails.description_html });
