@@ -6,8 +6,24 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
-export const CalendarHeader: React.FC = observer(() => {
+interface ICalendarHeader {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+}
+
+export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
+  const { issuesFilterStore } = props;
+
   const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
 
   const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
@@ -91,7 +107,7 @@ export const CalendarHeader: React.FC = observer(() => {
         >
           Today
         </button>
-        <CalendarOptionsDropdown />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} />
       </div>
     </div>
   );

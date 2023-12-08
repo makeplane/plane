@@ -10,8 +10,19 @@ import { Spinner } from "@plane/ui";
 import { ICalendarWeek } from "./types";
 import { IIssue } from "types";
 import { IGroupedIssues, IIssueResponse } from "store/issues/types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
 type Props = {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
   issues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues;
   layout: "month" | "week" | undefined;
@@ -27,7 +38,8 @@ type Props = {
 };
 
 export const CalendarChart: React.FC<Props> = observer((props) => {
-  const { issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } = props;
+  const { issuesFilterStore, issues, groupedIssueIds, layout, showWeekends, quickActions, quickAddCallback, viewId } =
+    props;
 
   const { calendar: calendarStore } = useMobxStore();
 
@@ -45,7 +57,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
   return (
     <>
       <div className="h-full w-full flex flex-col overflow-hidden">
-        <CalendarHeader />
+        <CalendarHeader issuesFilterStore={issuesFilterStore} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" && (
@@ -53,6 +65,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays
+                    issuesFilterStore={issuesFilterStore}
                     key={weekIndex}
                     week={week}
                     issues={issues}
@@ -67,6 +80,7 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
           )}
           {layout === "week" && (
             <CalendarWeekDays
+              issuesFilterStore={issuesFilterStore}
               week={calendarStore.allDaysOfActiveWeek}
               issues={issues}
               groupedIssueIds={groupedIssueIds}
