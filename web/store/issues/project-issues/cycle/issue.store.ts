@@ -5,7 +5,7 @@ import { IssueBaseStore } from "store/issues";
 import { IssueService } from "services/issue";
 import { CycleService } from "services/cycle.service";
 // types
-import { CycleIssueResponse, TIssueGroupByOptions } from "types";
+import { TIssueGroupByOptions } from "types";
 import { IIssue } from "types/issues";
 import { IIssueResponse, TLoader, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues, ViewFlags } from "../../types";
 import { RootStore } from "store/root";
@@ -82,9 +82,6 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
   // service
   cycleService;
   issueService;
-
-  //projectId
-  currentProjectId: string | undefined;
 
   //viewData
   viewFlags = {
@@ -173,8 +170,6 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
 
     try {
       this.loader = loadType;
-
-      this.currentProjectId = projectId;
 
       const params = this.rootStore?.cycleIssuesFilter?.appliedFilters;
       const response = await this.cycleService.getCycleIssuesWithParams(workspaceSlug, projectId, cycleId, params);
@@ -322,9 +317,10 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
     fetchAfterAddition = true,
     projectId?: string
   ) => {
-    if (!this.currentProjectId && !projectId) return;
+    const activeProjectId = this.rootStore.project.projectId;
+    if (!activeProjectId && !projectId) return;
 
-    const projectIdToUpdate: string = this.currentProjectId || projectId || "";
+    const projectIdToUpdate: string = projectId || activeProjectId || "";
 
     try {
       const issueToCycle = await this.issueService.addIssueToCycle(workspaceSlug, projectIdToUpdate, cycleId, {

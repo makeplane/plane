@@ -48,10 +48,11 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const {
     user: { currentProjectRole },
     issueDetail: { fetchPeekIssueDetails },
+    project: { getProjectById },
   } = useMobxStore();
 
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
+  const { workspaceSlug, projectId } = router.query;
 
   const { setToastAlert } = useToast();
 
@@ -138,7 +139,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleCycleOrModuleChange = async () => {
     if (!workspaceSlug || !projectId) return;
 
-    await fetchPeekIssueDetails(workspaceSlug, projectId, issue.id);
+    await fetchPeekIssueDetails(workspaceSlug.toString(), projectId.toString(), issue.id);
   };
 
   const handleEditLink = (link: ILinkDetails) => {
@@ -166,6 +167,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         console.log(err);
       });
   };
+
+  const projectDetails = workspaceSlug ? getProjectById(workspaceSlug.toString(), issue.project) : null;
+  const isEstimateEnabled = projectDetails?.estimate;
 
   const minDate = issue.start_date ? new Date(issue.start_date) : null;
   minDate?.setDate(minDate.getDate());
@@ -230,19 +234,21 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
 
           {/* estimate */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
-              <Triangle className="h-4 w-4 flex-shrink-0 " />
-              <p>Estimate</p>
+          {isEstimateEnabled && (
+            <div className="flex items-center gap-2 w-full">
+              <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+                <Triangle className="h-4 w-4 flex-shrink-0 " />
+                <p>Estimate</p>
+              </div>
+              <div>
+                <SidebarEstimateSelect
+                  value={issue.estimate_point}
+                  onChange={handleEstimate}
+                  disabled={disableUserActions}
+                />
+              </div>
             </div>
-            <div>
-              <SidebarEstimateSelect
-                value={issue.estimate_point}
-                onChange={handleEstimate}
-                disabled={disableUserActions}
-              />
-            </div>
-          </div>
+          )}
 
           {/* start date */}
           <div className="flex items-center gap-2 w-full">

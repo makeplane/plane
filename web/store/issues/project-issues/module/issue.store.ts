@@ -76,8 +76,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
   moduleService;
   issueService;
 
-  currentProjectId: string | undefined;
-
   //viewData
   viewFlags = {
     enableQuickAdd: true,
@@ -162,7 +160,6 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
   ) => {
     if (!moduleId) return undefined;
 
-    this.currentProjectId = projectId;
     try {
       this.loader = loadType;
 
@@ -314,9 +311,10 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
     fetchAfterAddition = true,
     projectId?: string
   ) => {
-    if (!this.currentProjectId && !projectId) return;
+    const activeProjectId = this.rootStore.project.projectId;
+    if (!activeProjectId && !projectId) return;
 
-    const projectIdToUpdate: string = this.currentProjectId || projectId || "";
+    const projectIdToUpdate: string = projectId || activeProjectId || "";
 
     try {
       const issueToModule = await this.moduleService.addIssuesToModule(workspaceSlug, projectIdToUpdate, moduleId, {
