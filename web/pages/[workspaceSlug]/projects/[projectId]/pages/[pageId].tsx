@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, ReactElement } from "react";
+import React, { useEffect, useRef, useState, ReactElement, useCallback } from "react";
 import { useRouter } from "next/router";
 import useSWR, { MutatorOptions } from "swr";
 import { Controller, useForm } from "react-hook-form";
@@ -59,7 +59,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
 
   const { user } = useUser();
 
-  const { handleSubmit, reset, setValue, watch, getValues, control } = useForm<IPage>({
+  const { handleSubmit, setValue, watch, getValues, control } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
   });
 
@@ -328,9 +328,12 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     description_html: "",
   });
 
-  const debouncedFormSave = debounce(async () => {
-    handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit]
+  );
 
   if (error)
     return (
