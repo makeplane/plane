@@ -106,7 +106,7 @@ class ConfigurationEndpoint(BaseAPIView):
         data["posthog_host"] = POSTHOG_HOST
 
         # Unsplash
-        data["has_unsplash_configured"] = UNSPLASH_ACCESS_KEY
+        data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
         # Open AI settings
         data["has_openai_configured"] = bool(OPENAI_API_KEY)
