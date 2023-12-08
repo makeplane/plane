@@ -328,6 +328,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     description_html: "",
   });
 
+  // ADDING updatePage TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
   const debouncedFormSave = useCallback(
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
