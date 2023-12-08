@@ -48,7 +48,7 @@ export interface IGroupByKanBan {
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
-  isReadOnly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
@@ -75,9 +75,9 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
-    isReadOnly,
     currentStore,
     addIssuesToView,
+    canEditProperties,
   } = props;
 
   const verticalAlignPosition = (_list: any) =>
@@ -109,8 +109,8 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
             )}
 
             <div
-              className={`min-h-[150px] ${
-                verticalAlignPosition(_list) ? `w-[0px] overflow-hidden` : `w-full transition-all`
+              className={`${
+                verticalAlignPosition(_list) ? `min-h-[150px] w-[0px] overflow-hidden` : `w-full transition-all`
               }`}
             >
               <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
@@ -122,7 +122,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    {issues ? (
+                    {issues && !verticalAlignPosition(_list) ? (
                       <KanbanIssueBlocksList
                         sub_group_id={sub_group_id}
                         columnId={getValueFromObject(_list, listKey) as string}
@@ -133,7 +133,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                         handleIssues={handleIssues}
                         quickActions={quickActions}
                         displayProperties={displayProperties}
-                        isReadOnly={isReadOnly}
+                        canEditProperties={canEditProperties}
                       />
                     ) : (
                       isDragDisabled && (
@@ -216,7 +216,7 @@ export interface IKanBan {
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
-  isReadOnly: boolean;
+  canEditProperties: (projectId: string | undefined) => boolean;
 }
 
 export const KanBan: React.FC<IKanBan> = observer((props) => {
@@ -244,9 +244,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
     quickAddCallback,
     viewId,
     disableIssueCreation,
-    isReadOnly,
     currentStore,
     addIssuesToView,
+    canEditProperties,
   } = props;
 
   const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
@@ -276,9 +276,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
 
@@ -305,9 +305,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
 
@@ -334,9 +334,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
 
@@ -363,9 +363,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
 
@@ -392,9 +392,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
 
@@ -421,9 +421,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
 
@@ -450,9 +450,9 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
           quickAddCallback={quickAddCallback}
           viewId={viewId}
           disableIssueCreation={disableIssueCreation}
-          isReadOnly={isReadOnly}
           currentStore={currentStore}
           addIssuesToView={addIssuesToView}
+          canEditProperties={canEditProperties}
         />
       )}
     </div>

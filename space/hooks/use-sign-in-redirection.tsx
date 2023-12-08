@@ -30,7 +30,7 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
       if (isOnboard) {
         // if next_path is provided, redirect the user to that url
         if (next_path) router.push(next_path.toString());
-        else router.push("/login");
+        else router.push("/");
       } else {
         // if the user profile is not complete, redirect them to the onboarding page to complete their profile and then redirect them to the next path
         if (next_path) router.push(`/onboarding?next_path=${next_path}`);

@@ -19,7 +19,7 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
     user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
     project: { fetchProjects },
     workspace: { fetchWorkspaceLabels },
-    workspaceMember: { fetchWorkspaceMembers },
+    workspaceMember: { fetchWorkspaceMembers, fetchWorkspaceUserProjectsRole },
   } = useMobxStore();
 
   // router
@@ -44,6 +44,11 @@ export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) 
   useSWR(
     workspaceSlug ? `WORKSPACE_LABELS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWorkspaceLabels(workspaceSlug.toString()) : null
+  );
+  // fetch workspace user projects role
+  useSWR(
+    workspaceSlug ? `WORKSPACE_PROJECTS_ROLE_${workspaceSlug}` : null,
+    workspaceSlug ? () => fetchWorkspaceUserProjectsRole(workspaceSlug.toString()) : null
   );
 
   // while data is being loaded

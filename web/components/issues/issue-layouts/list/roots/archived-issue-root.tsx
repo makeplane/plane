@@ -21,10 +21,10 @@ export const ArchivedIssueListLayout: FC = observer(() => {
     useMobxStore();
 
   const issueActions = {
-    [EIssueActions.DELETE]: (group_by: string | null, issue: IIssue) => {
+    [EIssueActions.DELETE]: async (group_by: string | null, issue: IIssue) => {
       if (!workspaceSlug || !projectId) return;
 
-      archivedIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
+      await archivedIssueStore.removeIssue(workspaceSlug, projectId, issue.id);
     },
   };
 

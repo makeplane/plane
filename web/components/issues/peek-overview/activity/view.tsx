@@ -1,29 +1,30 @@
 import { FC } from "react";
 // components
-import { IssueActivityCard } from "./card";
-import { IssueCommentEditor } from "./comment-editor";
+import { IssueActivityCard, IssueCommentEditor } from "components/issues";
+// types
+import { IIssueActivity, IUser } from "types";
 
-interface IIssueComment {
+type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  user: any;
-  issueComments: any;
+  user: IUser | null;
+  issueActivity: IIssueActivity[] | null;
   issueCommentCreate: (comment: any) => void;
   issueCommentUpdate: (comment: any) => void;
   issueCommentRemove: (commentId: string) => void;
   issueCommentReactionCreate: (commentId: string, reaction: string) => void;
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
   showCommentAccessSpecifier: boolean;
-}
+};
 
-export const IssueComment: FC<IIssueComment> = (props) => {
+export const IssueActivity: FC<Props> = (props) => {
   const {
     workspaceSlug,
     projectId,
     issueId,
     user,
-    issueComments,
+    issueActivity,
     issueCommentCreate,
     issueCommentUpdate,
     issueCommentRemove,
@@ -47,7 +48,7 @@ export const IssueComment: FC<IIssueComment> = (props) => {
           projectId={projectId}
           issueId={issueId}
           user={user}
-          issueComments={issueComments}
+          issueActivity={issueActivity}
           issueCommentUpdate={issueCommentUpdate}
           issueCommentRemove={issueCommentRemove}
           issueCommentReactionCreate={issueCommentReactionCreate}
