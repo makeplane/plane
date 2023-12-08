@@ -61,6 +61,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     description_html: issue.description_html,
   });
 
+  // adding issue.description_html or issue.name to dependency array causes
+  // editor rerendering on every save
   useEffect(() => {
     if (issue.id) {
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
@@ -100,9 +102,13 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
     });
   }, [issue, reset]);
 
-  const debouncedFormSave = debounce(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit]
+  );
 
   return (
     <div className="relative">

@@ -14,7 +14,6 @@ export const CalendarLayout: React.FC = observer(() => {
 
   const {
     projectIssues: issueStore,
-    issueCalendarView: issueCalendarViewStore,
     projectIssuesFilter: projectIssueFiltersStore,
     calendarHelpers: { handleDragDrop: handleCalenderDragDrop },
   } = useMobxStore();
@@ -49,7 +48,6 @@ export const CalendarLayout: React.FC = observer(() => {
     <BaseCalendarRoot
       issueStore={issueStore}
       issuesFilterStore={projectIssueFiltersStore}
-      calendarViewStore={issueCalendarViewStore}
       QuickActions={ProjectIssueQuickActions}
       issueActions={issueActions}
       handleDragDrop={handleDragDrop}
