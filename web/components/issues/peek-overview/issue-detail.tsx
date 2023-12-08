@@ -87,16 +87,22 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     description_html: issue.description_html,
   });
 
+  // adding issue.description_html or issue.name to dependency array causes
+  // editor rerendering on every save
   useEffect(() => {
     if (issue.id) {
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id, issue.description_html, issue.name]);
+  }, [issue.id]);
 
-  const debouncedFormSave = debounce(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit]
+  );
 
   useEffect(() => {
     if (isSubmitting === "submitted") {

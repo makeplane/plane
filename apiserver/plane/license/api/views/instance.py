@@ -221,37 +221,6 @@ class InstanceAdminSignInEndpoint(BaseAPIView):
                 is_password_autoset=False,
             )
 
-        # if the current user is not using captain then add the current all users to workspace and projects
-        if user.email != "captain@plane.so":
-            # Add the current user also as a workspace member and project memeber to all the workspaces and projects
-            captain = User.objects.filter(email="captain@plane.so")
-            # Workspace members
-            workspace_members = WorkspaceMember.objects.filter(member=captain)
-            WorkspaceMember.objects.bulk_create(
-                [
-                    WorkspaceMember(
-                        workspace=member.workspace_id,
-                        member=user,
-                        role=member.role,
-                    )
-                    for member in workspace_members
-                ],
-                batch_size=100,
-            )
-            # project members
-            project_members = ProjectMember.objects.filter(member=captain)
-            ProjectMember.objects.bulk_create(
-                [
-                    ProjectMember(
-                        workspace=member.workspace_id,
-                        member=user,
-                        role=member.role,
-                    )
-                    for member in project_members
-                ],
-                batch_size=100,
-            )
-
         # settings last active for the user
         user.is_active = True
         user.last_active = timezone.now()

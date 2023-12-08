@@ -147,22 +147,22 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                   </div>
                 )}
               </Droppable>
-            </div>
 
-            <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky bottom-0 z-[0]">
-              {enableQuickIssueCreate && (
-                <KanBanQuickAddIssueForm
-                  formKey="name"
-                  groupId={getValueFromObject(_list, listKey) as string}
-                  subGroupId={sub_group_id}
-                  prePopulatedData={{
-                    ...(group_by && { [group_by]: getValueFromObject(_list, listKey) }),
-                    ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
-                  }}
-                  quickAddCallback={quickAddCallback}
-                  viewId={viewId}
-                />
-              )}
+              <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky bottom-0 z-[0]">
+                {enableQuickIssueCreate && (
+                  <KanBanQuickAddIssueForm
+                    formKey="name"
+                    groupId={getValueFromObject(_list, listKey) as string}
+                    subGroupId={sub_group_id}
+                    prePopulatedData={{
+                      ...(group_by && { [group_by]: getValueFromObject(_list, listKey) }),
+                      ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
+                    }}
+                    quickAddCallback={quickAddCallback}
+                    viewId={viewId}
+                  />
+                )}
+              </div>
             </div>
 
             {/* {isDragStarted && isDragDisabled && (

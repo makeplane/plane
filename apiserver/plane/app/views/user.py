@@ -49,6 +49,10 @@ class UserEndpoint(BaseViewSet):
         # Check all workspace user is active
         user = self.get_object()
 
+        # Instance admin check
+        if InstanceAdmin.objects.filter(user=user).exists():
+            return Response({"error": "You cannot deactivate your account since you are an instance admin"}, status=status.HTTP_400_BAD_REQUEST)
+
         projects_to_deactivate = []
         workspaces_to_deactivate = []
 

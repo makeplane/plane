@@ -1,6 +1,6 @@
 {
   "name": "@plane/editor-types",
-  "version": "0.1.0",
+  "version": "0.14.0",
   "description": "Package that powers Plane's Editor with extensions",
   "private": true,
   "main": "./dist/index.mjs",

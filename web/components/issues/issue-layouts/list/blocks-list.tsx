@@ -24,6 +24,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
       {issueIds && issueIds.length > 0 ? (
         issueIds.map(
           (issueId: string) =>
+            issueId != undefined &&
             issues[issueId] && (
               <IssueBlock
                 key={issues[issueId].id}
