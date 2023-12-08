@@ -1,6 +1,6 @@
 {
   "name": "web",
-  "version": "0.13.2",
+  "version": "0.14",
   "private": true,
   "scripts": {
     "dev": "turbo run develop",
