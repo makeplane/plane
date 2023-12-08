@@ -13,12 +13,29 @@ import { Check, ChevronUp } from "lucide-react";
 import { TCalendarLayouts } from "types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
+import { EFilterType } from "store/issues/types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
-export const CalendarOptionsDropdown: React.FC = observer(() => {
+interface ICalendarHeader {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+}
+
+export const CalendarOptionsDropdown: React.FC<ICalendarHeader> = observer((props) => {
+  const { issuesFilterStore } = props;
+
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
+  const { calendar: calendarStore } = useMobxStore();
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
@@ -35,18 +52,16 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
     ],
   });
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
-  const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
+  const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
   const handleLayoutChange = (layout: TCalendarLayouts) => {
     if (!workspaceSlug || !projectId) return;
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        calendar: {
-          ...issueFilterStore.userDisplayFilters.calendar,
-          layout,
-        },
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+      calendar: {
+        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+        layout,
       },
     });
 
@@ -56,16 +71,14 @@ export const CalendarOptionsDropdown: React.FC = observer(() => {
   };
 
   const handleToggleWeekends = () => {
-    const showWeekends = issueFilterStore.userDisplayFilters.calendar?.show_weekends ?? false;
+    const showWeekends = issuesFilterStore.issueFilters?.displayFilters?.calendar?.show_weekends ?? false;
 
     if (!workspaceSlug || !projectId) return;
 
-    issueFilterStore.updateUserFilters(workspaceSlug.toString(), projectId.toString(), {
-      display_filters: {
-        calendar: {
-          ...issueFilterStore.userDisplayFilters.calendar,
-          show_weekends: !showWeekends,
-        },
+    issuesFilterStore.updateFilters(workspaceSlug.toString(), projectId.toString(), EFilterType.DISPLAY_FILTERS, {
+      calendar: {
+        ...issuesFilterStore.issueFilters?.displayFilters?.calendar,
+        show_weekends: !showWeekends,
       },
     });
   };
