@@ -11,8 +11,19 @@ import { renderDateFormat } from "helpers/date-time.helper";
 import { MONTHS_LIST } from "constants/calendar";
 import { IIssue } from "types";
 import { IGroupedIssues, IIssueResponse } from "store/issues/types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
 type Props = {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
   date: ICalendarDate;
   issues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues;
@@ -28,11 +39,18 @@ type Props = {
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues, groupedIssueIds, quickActions, enableQuickIssueCreate, quickAddCallback, viewId } = props;
+  const {
+    issuesFilterStore,
+    date,
+    issues,
+    groupedIssueIds,
+    quickActions,
+    enableQuickIssueCreate,
+    quickAddCallback,
+    viewId,
+  } = props;
 
-  const { issueFilter: issueFilterStore } = useMobxStore();
-
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+  const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[renderDateFormat(date.date)] : null;
 
