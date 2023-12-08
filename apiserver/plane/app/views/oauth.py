@@ -86,7 +86,14 @@ def get_access_token(request_token: str, client_id: str) -> str:
     if not request_token:
         raise ValueError("The request token has to be supplied!")
 
-    CLIENT_SECRET = os.environ.get("GITHUB_CLIENT_SECRET")
+    (CLIENT_SECRET,) = get_configuration_value(
+        [
+            {
+                "key": "GITHUB_CLIENT_SECRET",
+                "default": os.environ.get("GITHUB_CLIENT_SECRET", None),
+            },
+        ]
+    )
 
     url = f"https://github.com/login/oauth/access_token?client_id={client_id}&client_secret={CLIENT_SECRET}&code={request_token}"
     headers = {"accept": "application/json"}
@@ -299,7 +306,7 @@ class OauthEndpoint(BaseAPIView):
             return Response(data, status=status.HTTP_200_OK)
 
         except User.DoesNotExist:
-            ENABLE_SIGNUP, = get_configuration_value(
+            (ENABLE_SIGNUP,) = get_configuration_value(
                 [
                     {
                         "key": "ENABLE_SIGNUP",
