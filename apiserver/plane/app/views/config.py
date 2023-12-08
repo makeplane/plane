@@ -90,8 +90,8 @@ class ConfigurationEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
-        data["google_client_id"] = GOOGLE_CLIENT_ID
-        data["github_client_id"] = GITHUB_CLIENT_ID
+        data["google_client_id"] = GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID else None
+        data["github_client_id"] = GITHUB_CLIENT_ID if GITHUB_CLIENT_ID else None
         data["github_app_name"] = GITHUB_APP_NAME
         data["magic_login"] = (
             bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
