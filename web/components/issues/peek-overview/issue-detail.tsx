@@ -96,9 +96,13 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     }
   }, [issue.id]);
 
-  const debouncedFormSave = debounce(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit]
+  );
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
