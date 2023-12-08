@@ -24,7 +24,10 @@ const cycleService = new CycleService();
 export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
   const { isOpen, handleClose, data, workspaceSlug, projectId } = props;
   // store
-  const { cycle: cycleStore, trackEvent: { postHogEventTracker } } = useMobxStore();
+  const {
+    cycle: cycleStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
   // states
   const [activeProject, setActiveProject] = useState<string>(projectId);
   // toast
@@ -41,26 +44,20 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           title: "Success!",
           message: "Cycle created successfully.",
         });
-        postHogEventTracker(
-          "CYCLE_CREATE",
-          {
-            ...res,
-            state: "SUCCESS",
-          }
-        );
+        postHogEventTracker("CYCLE_CREATE", {
+          ...res,
+          state: "SUCCESS",
+        });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in creating cycle. Please try again.",
+          message: err.detail ?? "Error in creating cycle. Please try again.",
         });
-        postHogEventTracker(
-          "CYCLE_CREATE",
-          {
-            state: "FAILED",
-          }
-        );
+        postHogEventTracker("CYCLE_CREATE", {
+          state: "FAILED",
+        });
       });
   };
 
@@ -76,11 +73,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Cycle updated successfully.",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in updating cycle. Please try again.",
+          message: err.detail ?? "Error in updating cycle. Please try again.",
         });
       });
   };

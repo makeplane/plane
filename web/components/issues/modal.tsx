@@ -266,11 +266,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
         }
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Issue could not be created. Please try again.",
+          message: err.detail ?? "Issue could not be created. Please try again.",
         });
         postHogEventTracker(
           "ISSUE_CREATED",
@@ -312,11 +312,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
 
         if (payload.parent && payload.parent !== "") mutate(SUB_ISSUES(payload.parent));
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Issue could not be created. Please try again.",
+          message: err.detail ?? "Issue could not be created. Please try again.",
         });
       });
   };
@@ -347,11 +347,11 @@ export const CreateUpdateIssueModal: React.FC<IssuesModalProps> = observer((prop
           }
         );
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Issue could not be updated. Please try again.",
+          message: err.detail ?? "Issue could not be updated. Please try again.",
         });
         postHogEventTracker(
           "ISSUE_UPDATED",

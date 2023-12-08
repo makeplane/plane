@@ -26,7 +26,7 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
   const {
     page: { createPage, updatePage },
     trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace }
+    workspace: { currentWorkspace },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -56,24 +56,25 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Page could not be created. Please try again.",
+          message: err.detail ?? "Page could not be created. Please try again.",
         });
-        postHogEventTracker("PAGE_CREATED",
+        postHogEventTracker(
+          "PAGE_CREATED",
           {
             state: "FAILED",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       });
@@ -90,7 +91,8 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           title: "Success!",
           message: "Page updated successfully.",
         });
-        postHogEventTracker("PAGE_UPDATED",
+        postHogEventTracker(
+          "PAGE_UPDATED",
           {
             ...res,
             state: "SUCCESS",
@@ -98,24 +100,25 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Page could not be updated. Please try again.",
+          message: err.detail ?? "Page could not be updated. Please try again.",
         });
-        postHogEventTracker("PAGE_UPDATED",
+        postHogEventTracker(
+          "PAGE_UPDATED",
           {
             state: "FAILED",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       });
