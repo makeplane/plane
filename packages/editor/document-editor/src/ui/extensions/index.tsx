@@ -15,12 +15,13 @@ export const DocumentEditorExtensions = (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void,
 ) => {
-  const additonalOptions: ISlashCommandItem[] = [
+  const additionalOptions: ISlashCommandItem[] = [
     {
-      title: "Issue Embed",
-      description: "Embed an issue from the project",
-      searchTerms: ["Issue", "Iss"],
-      icon: <LayersIcon height={"20px"} width={"20px"} />,
+      key: "issue_embed",
+      title: "Issue embed",
+      description: "Embed an issue from the project.",
+      searchTerms: ["issue", "link", "embed"],
+      icon: <LayersIcon className="h-3.5 w-3.5" />,
       command: ({ editor, range }) => {
         editor
           .chain()
@@ -35,7 +36,7 @@ export const DocumentEditorExtensions = (
   ];
 
   return [
-    SlashCommand(uploadFile, setIsSubmitting, additonalOptions),
+    SlashCommand(uploadFile, setIsSubmitting, additionalOptions),
     DragAndDrop,
     Placeholder.configure({
       placeholder: ({ node }) => {

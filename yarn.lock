@@ -6078,6 +6078,11 @@ lucide-react@^0.244.0:
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.244.0.tgz#9626f44881830280012dad23afda7ddbcffff24b"
   integrity sha512-PeDVbx5PlIRrVvdxiuSxPfBo7sK5qrL3LbvvRoGVNiHYRAkBm/48lKqoioxcmp0bgsyJs9lMw7CdtGFvnMJbVg==
 
+lucide-react@^0.249.0:
+  version "0.249.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.249.0.tgz#6914c70220d9bdd69015d7b2009fb358a716c909"
+  integrity sha512-vBvk6aEz7c/v3moYejn3CbIZ9jtn8aDhtT+N9nao71MycQqZB9QtQ0U0WEnB58856A5boKtSUEkjF9NwkM04gA==
+
 lucide-react@^0.293.0:
   version "0.293.0"
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.293.0.tgz#02703dbcc56bb38779f4e576cc03be8cc0046fcc"

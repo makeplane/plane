@@ -10,19 +10,23 @@ import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import type { UploadImage, ISlashCommandItem, CommandProps  } from "@plane/editor-types";
+import type {
+  UploadImage,
+  ISlashCommandItem,
+  CommandProps,
+} from "@plane/editor-types";
 import {
+  CaseSensitive,
+  Code2,
   Heading1,
   Heading2,
   Heading3,
+  ImageIcon,
   List,
   ListOrdered,
-  Text,
-  TextQuote,
-  Code,
+  ListTodo,
   MinusSquare,
-  CheckSquare,
-  ImageIcon,
+  Quote,
   Table,
 } from "lucide-react";
 import {
@@ -39,6 +43,7 @@ import {
 } from "@plane/editor-core";
 
 interface CommandItemProps {
+  key: string;
   title: string;
   description: string;
   icon: ReactNode;
@@ -83,146 +88,158 @@ const getSuggestionItems =
     setIsSubmitting?: (
       isSubmitting: "submitting" | "submitted" | "saved",
     ) => void,
-    additonalOptions?: Array<ISlashCommandItem>
+    additionalOptions?: Array<ISlashCommandItem>,
   ) =>
-    ({ query }: { query: string }) => {
-      let slashCommands: ISlashCommandItem[] = [
-        {
-          title: "Text",
-          description: "Just start typing with plain text.",
-          searchTerms: ["p", "paragraph"],
-          icon: <Text size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            editor
-              .chain()
-              .focus()
-              .deleteRange(range)
-              .toggleNode("paragraph", "paragraph")
-              .run();
-          },
+  ({ query }: { query: string }) => {
+    let slashCommands: ISlashCommandItem[] = [
+      {
+        key: "text",
+        title: "Text",
+        description: "Just start typing with plain text.",
+        searchTerms: ["p", "paragraph"],
+        icon: <CaseSensitive className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          editor
+            .chain()
+            .focus()
+            .deleteRange(range)
+            .toggleNode("paragraph", "paragraph")
+            .run();
         },
-        {
-          title: "Heading 1",
-          description: "Big section heading.",
-          searchTerms: ["title", "big", "large"],
-          icon: <Heading1 size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleHeadingOne(editor, range);
-          },
+      },
+      {
+        key: "heading_1",
+        title: "Heading 1",
+        description: "Big section heading.",
+        searchTerms: ["title", "big", "large"],
+        icon: <Heading1 className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingOne(editor, range);
         },
-        {
-          title: "Heading 2",
-          description: "Medium section heading.",
-          searchTerms: ["subtitle", "medium"],
-          icon: <Heading2 size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleHeadingTwo(editor, range);
-          },
+      },
+      {
+        key: "heading_2",
+        title: "Heading 2",
+        description: "Medium section heading.",
+        searchTerms: ["subtitle", "medium"],
+        icon: <Heading2 className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingTwo(editor, range);
         },
-        {
-          title: "Heading 3",
-          description: "Small section heading.",
-          searchTerms: ["subtitle", "small"],
-          icon: <Heading3 size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleHeadingThree(editor, range);
-          },
+      },
+      {
+        key: "heading_3",
+        title: "Heading 3",
+        description: "Small section heading.",
+        searchTerms: ["subtitle", "small"],
+        icon: <Heading3 className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleHeadingThree(editor, range);
         },
-        {
-          title: "To-do List",
-          description: "Track tasks with a to-do list.",
-          searchTerms: ["todo", "task", "list", "check", "checkbox"],
-          icon: <CheckSquare size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleTaskList(editor, range);
-          },
+      },
+      {
+        key: "todo_list",
+        title: "To do",
+        description: "Track tasks with a to-do list.",
+        searchTerms: ["todo", "task", "list", "check", "checkbox"],
+        icon: <ListTodo className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleTaskList(editor, range);
         },
-        {
-          title: "Bullet List",
-          description: "Create a simple bullet list.",
-          searchTerms: ["unordered", "point"],
-          icon: <List size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleBulletList(editor, range);
-          },
+      },
+      {
+        key: "bullet_list",
+        title: "Bullet list",
+        description: "Create a simple bullet list.",
+        searchTerms: ["unordered", "point"],
+        icon: <List className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleBulletList(editor, range);
         },
-        {
-          title: "Divider",
-          description: "Visually divide blocks",
-          searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
-          icon: <MinusSquare size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            // @ts-expect-error I have to move this to the core
-            editor.chain().focus().deleteRange(range).setHorizontalRule().run();
-          },
+      },
+      {
+        key: "numbered_list",
+        title: "Numbered list",
+        description: "Create a list with numbering.",
+        searchTerms: ["ordered"],
+        icon: <ListOrdered className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          toggleOrderedList(editor, range);
         },
-        {
-          title: "Table",
-          description: "Create a Table",
-          searchTerms: ["table", "cell", "db", "data", "tabular"],
-          icon: <Table size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            insertTableCommand(editor, range);
-          },
+      },
+      {
+        key: "table",
+        title: "Table",
+        description: "Create a table",
+        searchTerms: ["table", "cell", "db", "data", "tabular"],
+        icon: <Table className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          insertTableCommand(editor, range);
         },
-        {
-          title: "Numbered List",
-          description: "Create a list with numbering.",
-          searchTerms: ["ordered"],
-          icon: <ListOrdered size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            toggleOrderedList(editor, range);
-          },
+      },
+      {
+        key: "quote_block",
+        title: "Quote",
+        description: "Capture a quote.",
+        searchTerms: ["blockquote"],
+        icon: <Quote className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) =>
+          toggleBlockquote(editor, range),
+      },
+      {
+        key: "code_block",
+        title: "Code",
+        description: "Capture a code snippet.",
+        searchTerms: ["codeblock"],
+        icon: <Code2 className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) =>
+          // @ts-expect-error I have to move this to the core
+          editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
+      },
+      {
+        key: "image",
+        title: "Image",
+        description: "Upload an image from your computer.",
+        searchTerms: ["photo", "picture", "media"],
+        icon: <ImageIcon className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          insertImageCommand(editor, uploadFile, setIsSubmitting, range);
         },
-        {
-          title: "Quote",
-          description: "Capture a quote.",
-          searchTerms: ["blockquote"],
-          icon: <TextQuote size={18} />,
-          command: ({ editor, range }: CommandProps) =>
-            toggleBlockquote(editor, range),
+      },
+      {
+        key: "divider",
+        title: "Divider",
+        description: "Visually divide blocks.",
+        searchTerms: ["line", "divider", "horizontal", "rule", "separate"],
+        icon: <MinusSquare className="h-3.5 w-3.5" />,
+        command: ({ editor, range }: CommandProps) => {
+          // @ts-expect-error I have to move this to the core
+          editor.chain().focus().deleteRange(range).setHorizontalRule().run();
         },
-        {
-          title: "Code",
-          description: "Capture a code snippet.",
-          searchTerms: ["codeblock"],
-          icon: <Code size={18} />,
-          command: ({ editor, range }: CommandProps) =>
-            // @ts-expect-error I have to move this to the core
-            editor.chain().focus().deleteRange(range).toggleCodeBlock().run(),
-        },
-        {
-          title: "Image",
-          description: "Upload an image from your computer.",
-          searchTerms: ["photo", "picture", "media"],
-          icon: <ImageIcon size={18} />,
-          command: ({ editor, range }: CommandProps) => {
-            insertImageCommand(editor, uploadFile, setIsSubmitting, range);
-          },
-        },
-      ]
+      },
+    ];
 
-      if (additonalOptions) {
-        additonalOptions.map(item => {
-          slashCommands.push(item)
-        })
+    if (additionalOptions) {
+      additionalOptions.map((item) => {
+        slashCommands.push(item);
+      });
+    }
+
+    slashCommands = slashCommands.filter((item) => {
+      if (typeof query === "string" && query.length > 0) {
+        const search = query.toLowerCase();
+        return (
+          item.title.toLowerCase().includes(search) ||
+          item.description.toLowerCase().includes(search) ||
+          (item.searchTerms &&
+            item.searchTerms.some((term: string) => term.includes(search)))
+        );
       }
+      return true;
+    });
 
-      slashCommands = slashCommands.filter((item) => {
-        if (typeof query === "string" && query.length > 0) {
-          const search = query.toLowerCase();
-          return (
-            item.title.toLowerCase().includes(search) ||
-            item.description.toLowerCase().includes(search) ||
-            (item.searchTerms &&
-              item.searchTerms.some((term: string) => term.includes(search)))
-          );
-        }
-        return true;
-      })
-
-      return slashCommands
-    };
+    return slashCommands;
+  };
 
 export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   const containerHeight = container.offsetHeight;
@@ -303,27 +320,23 @@ const CommandList = ({
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="z-50 fixed h-auto max-h-[330px] w-72 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="z-50 fixed h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
     >
-      {items.map((item: CommandItemProps, index: number) => (
+      {items.map((item, index) => (
         <button
+          key={item.key}
           className={cn(
-            `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
+            `w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-primary-100/5`,
             {
-              "bg-custom-primary-100/5  text-custom-text-100":
-                index === selectedIndex,
+              "bg-custom-primary-100/5": index === selectedIndex,
             },
           )}
-          key={index}
           onClick={() => selectItem(index)}
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-md border border-custom-border-300 bg-custom-background-100">
+          <div className="flex-shrink-0 grid place-items-center">
             {item.icon}
           </div>
-          <div>
-            <p className="font-medium">{item.title}</p>
-            <p className="text-xs text-custom-text-300">{item.description}</p>
-          </div>
+          <p>{item.title}</p>
         </button>
       ))}
     </div>
@@ -383,11 +396,11 @@ export const SlashCommand = (
   setIsSubmitting?: (
     isSubmitting: "submitting" | "submitted" | "saved",
   ) => void,
-  additonalOptions?: Array<ISlashCommandItem>,
+  additionalOptions?: Array<ISlashCommandItem>,
 ) =>
   Command.configure({
     suggestion: {
-      items: getSuggestionItems(uploadFile, setIsSubmitting, additonalOptions),
+      items: getSuggestionItems(uploadFile, setIsSubmitting, additionalOptions),
       render: renderItems,
     },
   });
