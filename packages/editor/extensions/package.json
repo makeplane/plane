@@ -35,7 +35,7 @@
     "@plane/editor-core": "*",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
-    "lucide-react": "^0.249.0",
+    "lucide-react": "^0.293.0",
     "tippy.js": "^6.3.7",
     "@tiptap/pm": "^2.1.7"
   },
