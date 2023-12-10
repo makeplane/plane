@@ -98,8 +98,8 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
           value === issueCycle?.cycle_detail.id
             ? handleRemoveIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
             : handleCycleChange
-            ? handleCycleChange(value)
-            : handleCycleStoreChange(value);
+              ? handleCycleChange(value)
+              : handleCycleStoreChange(value);
         }}
         options={options}
         customButton={

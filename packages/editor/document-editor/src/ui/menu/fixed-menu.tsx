@@ -1,6 +1,5 @@
 import { Editor } from "@tiptap/react";
 import { BoldIcon } from "lucide-react";
-
 import {
   BoldItem,
   BulletListItem,

@@ -44,10 +44,10 @@ export const CustomRangeDatePicker: React.FC<Props> = ({
       renderAs === "input"
         ? "block px-3 py-2 text-sm focus:outline-none"
         : renderAs === "button"
-        ? `px-3 py-1 text-xs shadow-sm ${
-            disabled ? "" : "hover:bg-custom-background-80"
-          } duration-300 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary`
-        : ""
+          ? `px-3 py-1 text-xs shadow-sm ${
+              disabled ? "" : "hover:bg-custom-background-80"
+            } duration-300 focus:border-custom-primary focus:outline-none focus:ring-1 focus:ring-custom-primary`
+          : ""
     } ${error ? "border-red-500 bg-red-100" : ""} ${
       disabled ? "cursor-not-allowed" : "cursor-pointer"
     } w-full rounded-md border border-custom-border-200 bg-transparent caret-transparent ${className}`}

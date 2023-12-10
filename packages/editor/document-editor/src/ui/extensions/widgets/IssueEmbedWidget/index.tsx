@@ -7,6 +7,7 @@ interface IssueWidgetExtensionProps {
 
 export const IssueWidgetExtension = ({
   issueEmbedConfig,
-}: IssueWidgetExtensionProps) => IssueWidget.configure({
-  issueEmbedConfig,
-});
+}: IssueWidgetExtensionProps) =>
+  IssueWidget.configure({
+    issueEmbedConfig,
+  });

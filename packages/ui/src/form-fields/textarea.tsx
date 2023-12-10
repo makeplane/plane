@@ -55,8 +55,8 @@ const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
           mode === "primary"
             ? "rounded-md border-[0.5px] border-custom-border-200"
             : mode === "transparent"
-            ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
-            : ""
+              ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
+              : ""
         } ${hasError ? "border-red-500" : ""} ${
           hasError && mode === "primary" ? "bg-red-100" : ""
         } ${className}`}

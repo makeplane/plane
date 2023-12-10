@@ -157,7 +157,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                 </span>
                               ) : (
                                 <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
-                                  <span className="text-gray font-medium">{activityItem.actor_detail.display_name}</span>
+                                  <span className="text-gray font-medium">
+                                    {activityItem.actor_detail.display_name}
+                                  </span>
                                 </Link>
                               )}{" "}
                               <div className="flex gap-1 truncate">

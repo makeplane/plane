@@ -88,10 +88,11 @@ export const Invitations: React.FC<Props> = (props) => {
               return (
                 <div
                   key={invitation.id}
-                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${isSelected
+                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${
+                    isSelected
                       ? "border-custom-primary-100"
                       : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
-                    }`}
+                  }`}
                   onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                 >
                   <div className="flex-shrink-0">

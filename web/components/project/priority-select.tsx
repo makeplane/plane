@@ -72,10 +72,7 @@ export const PrioritySelect: React.FC<Props> = ({
   const label = (
     <Tooltip tooltipHeading="Priority" tooltipContent={selectedOption} position="top">
       <div className="flex items-center w-full gap-2">
-        <PriorityIcon
-          priority={value}
-          className={`h-3.5 w-3.5`}
-        />
+        <PriorityIcon priority={value} className={`h-3.5 w-3.5`} />
         {showTitle && <span className="capitalize text-xs">{value}</span>}
       </div>
     </Tooltip>
@@ -93,7 +90,9 @@ export const PrioritySelect: React.FC<Props> = ({
         <button
           ref={setReferenceElement}
           type="button"
-          className={`flex items-center justify-between gap-1 h-full w-full ${disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"} ${buttonClassName}`}
+          className={`flex items-center justify-between gap-1 h-full w-full ${
+            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
+          } ${buttonClassName}`}
         >
           {label}
           {!hideDropdownArrow && !disabled && <ChevronDown className="h-2.5 w-2.5" aria-hidden="true" />}

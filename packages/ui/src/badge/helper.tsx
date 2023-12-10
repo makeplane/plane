@@ -124,7 +124,7 @@ export const badgeStyling: IBadgeStyling = {
 export const getBadgeStyling = (
   variant: TBadgeVariant,
   size: TBadgeSizes,
-  disabled: boolean = false
+  disabled: boolean = false,
 ): string => {
   let _variant: string = ``;
   const currentVariant = badgeStyling[variant];

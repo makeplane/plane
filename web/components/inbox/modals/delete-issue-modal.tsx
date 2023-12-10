@@ -26,7 +26,11 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
   const router = useRouter();
   const { workspaceSlug, projectId, inboxId } = router.query;
 
-  const { inboxIssueDetails: inboxIssueDetailsStore, trackEvent: { postHogEventTracker }, workspace: { currentWorkspace } } = useMobxStore();
+  const {
+    inboxIssueDetails: inboxIssueDetailsStore,
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -56,9 +60,9 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
-        )
+        );
         // remove inboxIssueId from the url
         router.push({
           pathname: `/${workspaceSlug}/projects/${projectId}/inbox/${inboxId}`,
@@ -71,7 +75,7 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           type: "error",
           title: "Error!",
           message: "Issue could not be deleted. Please try again.",
-        })
+        });
         postHogEventTracker(
           "ISSUE_DELETED",
           {
@@ -80,11 +84,10 @@ export const DeleteInboxIssueModal: React.FC<Props> = observer(({ isOpen, onClos
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      )
+      })
       .finally(() => setIsDeleting(false));
   };
 

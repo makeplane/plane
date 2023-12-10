@@ -18,10 +18,7 @@ export const AppliedPriorityFilters: React.FC<Props> = observer((props) => {
     <>
       {values.map((priority) => (
         <div key={priority} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
-          <PriorityIcon
-            priority={priority as TIssuePriorities}
-            className={`h-3 w-3`}
-          />
+          <PriorityIcon priority={priority as TIssuePriorities} className={`h-3 w-3`} />
           {priority}
           <button
             type="button"

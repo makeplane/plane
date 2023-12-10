@@ -165,16 +165,16 @@ export const InboxMainContent: React.FC = observer(() => {
                 issueStatus === -2
                   ? "text-yellow-500 border-yellow-500 bg-yellow-500/10"
                   : issueStatus === -1
-                  ? "text-red-500 border-red-500 bg-red-500/10"
-                  : issueStatus === 0
-                  ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
                     ? "text-red-500 border-red-500 bg-red-500/10"
-                    : "text-custom-text-200 border-gray-500 bg-gray-500/10"
-                  : issueStatus === 1
-                  ? "text-green-500 border-green-500 bg-green-500/10"
-                  : issueStatus === 2
-                  ? "text-custom-text-200 border-gray-500 bg-gray-500/10"
-                  : ""
+                    : issueStatus === 0
+                      ? new Date(issueDetails.issue_inbox[0].snoozed_till ?? "") < new Date()
+                        ? "text-red-500 border-red-500 bg-red-500/10"
+                        : "text-custom-text-200 border-gray-500 bg-gray-500/10"
+                      : issueStatus === 1
+                        ? "text-green-500 border-green-500 bg-green-500/10"
+                        : issueStatus === 2
+                          ? "text-custom-text-200 border-gray-500 bg-gray-500/10"
+                          : ""
               }`}
             >
               {issueStatus === -2 ? (

@@ -30,7 +30,7 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
   // store
   const {
     projectState: { markStateAsDefault, moveStatePosition },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   // states
@@ -108,12 +108,10 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
             className={`group-hover:opacity-100 opacity-0 ${
               state.default || groupLength === 1 ? "cursor-not-allowed" : ""
             } grid place-items-center`}
-            onClick={
-              () => {
-                setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-                handleDeleteState()
-              }
-            }
+            onClick={() => {
+              setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+              handleDeleteState();
+            }}
             disabled={state.default || groupLength === 1}
           >
             {state.default ? (

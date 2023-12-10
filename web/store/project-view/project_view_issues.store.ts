@@ -134,8 +134,8 @@ export class ProjectViewIssuesStore implements IProjectViewIssuesStore {
         ? "groupWithSubGroups"
         : "grouped"
       : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
+        ? "ungrouped"
+        : null;
 
     return _issueState || null;
   }

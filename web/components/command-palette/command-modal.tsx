@@ -62,7 +62,7 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateIssueModal,
       toggleCreateProjectModal,
     },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   // router

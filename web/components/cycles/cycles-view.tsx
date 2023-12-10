@@ -34,10 +34,10 @@ export const CyclesView: FC<ICyclesView> = observer((props) => {
     filter === "completed"
       ? cycleStore.projectCompletedCycles
       : filter === "draft"
-      ? cycleStore.projectDraftCycles
-      : filter === "upcoming"
-      ? cycleStore.projectUpcomingCycles
-      : cycleStore.projectCycles;
+        ? cycleStore.projectDraftCycles
+        : filter === "upcoming"
+          ? cycleStore.projectUpcomingCycles
+          : cycleStore.projectCycles;
 
   return (
     <>

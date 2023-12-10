@@ -28,8 +28,8 @@ export const useEditorMarkings = () => {
               node.attrs.level === 1
                 ? ++h1Sequence
                 : node.attrs.level === 2
-                ? ++h2Sequence
-                : ++h3Sequence,
+                  ? ++h2Sequence
+                  : ++h3Sequence,
           });
         }
       });

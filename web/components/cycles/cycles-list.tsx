@@ -19,7 +19,10 @@ export interface ICyclesList {
 export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { cycles, filter, workspaceSlug, projectId } = props;
 
-  const { commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   return (
     <>
@@ -59,9 +62,8 @@ export const CyclesList: FC<ICyclesList> = observer((props) => {
                   className="text-custom-primary-100 text-sm outline-none"
                   onClick={() => {
                     setTrackElement("CYCLES_PAGE_EMPTY-STATE");
-                    commandPaletteStore.toggleCreateCycleModal(true)
-                  }
-                  }
+                    commandPaletteStore.toggleCreateCycleModal(true);
+                  }}
                 >
                   Create a new cycle
                 </button>

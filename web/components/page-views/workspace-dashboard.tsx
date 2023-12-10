@@ -37,18 +37,18 @@ export const WorkspaceDashboardView = observer(() => {
   );
 
   const handleTourCompleted = () => {
-    userStore.updateTourCompleted().then(() => {
-      postHogEventTracker(
-        "USER_TOUR_COMPLETE",
-        {
+    userStore
+      .updateTourCompleted()
+      .then(() => {
+        postHogEventTracker("USER_TOUR_COMPLETE", {
           user_id: user?.id,
           email: user?.email,
-          state: "SUCCESS"
-        }
-      )
-    }).catch((error) => {
-      console.log(error);
-    })
+          state: "SUCCESS",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (

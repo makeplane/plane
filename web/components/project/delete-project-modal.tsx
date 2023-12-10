@@ -27,7 +27,11 @@ const defaultValues = {
 export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
   const { isOpen, project, onClose } = props;
   // store
-  const { project: projectStore, workspace: { currentWorkspace }, trackEvent: { postHogEventTracker } } = useMobxStore();
+  const {
+    project: projectStore,
+    workspace: { currentWorkspace },
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -63,14 +67,14 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
 
         handleClose();
         postHogEventTracker(
-          'PROJECT_DELETED',
+          "PROJECT_DELETED",
           {
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({
@@ -81,14 +85,14 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
       })
       .catch(() => {
         postHogEventTracker(
-          'PROJECT_DELETED',
+          "PROJECT_DELETED",
           {
-            state: "FAILED"
+            state: "FAILED",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({

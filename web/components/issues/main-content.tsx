@@ -55,7 +55,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     project: projectStore,
     projectState: { states },
     trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace }
+    workspace: { currentWorkspace },
   } = useMobxStore();
 
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
@@ -89,16 +89,15 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           "COMMENT_UPDATED",
           {
             ...res,
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      );
+      });
   };
 
   const handleCommentDelete = async (commentId: string) => {
@@ -113,16 +112,15 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         postHogEventTracker(
           "COMMENT_DELETED",
           {
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      );
+      });
   };
 
   const handleAddComment = async (formData: IIssueActivity) => {
@@ -136,12 +134,12 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           "COMMENT_ADDED",
           {
             ...res,
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })

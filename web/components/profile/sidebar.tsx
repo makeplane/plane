@@ -149,8 +149,8 @@ export const ProfileSidebar = () => {
                                     completedIssuePercentage <= 35
                                       ? "bg-red-500/10 text-red-500"
                                       : completedIssuePercentage <= 70
-                                      ? "bg-yellow-500/10 text-yellow-500"
-                                      : "bg-green-500/10 text-green-500"
+                                        ? "bg-yellow-500/10 text-yellow-500"
+                                        : "bg-green-500/10 text-green-500"
                                   }`}
                                 >
                                   {completedIssuePercentage}%

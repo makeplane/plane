@@ -30,10 +30,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         mode === "primary"
           ? "rounded-md border-[0.5px] border-custom-border-200"
           : mode === "transparent"
-          ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary"
-          : mode === "true-transparent"
-          ? "rounded border-none bg-transparent ring-0"
-          : ""
+            ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-custom-primary"
+            : mode === "true-transparent"
+              ? "rounded border-none bg-transparent ring-0"
+              : ""
       } ${hasError ? "border-red-500" : ""} ${
         hasError && mode === "primary" ? "bg-red-500/20" : ""
       } ${

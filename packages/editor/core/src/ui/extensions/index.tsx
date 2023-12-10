@@ -35,7 +35,7 @@ export const CoreEditorExtensions = (
   },
   deleteFile: DeleteImage,
   restoreFile: RestoreImage,
-  cancelUploadImage?: () => any
+  cancelUploadImage?: () => any,
 ) => [
   StarterKit.configure({
     bulletList: {
@@ -112,6 +112,6 @@ export const CoreEditorExtensions = (
   Mentions(
     mentionConfig.mentionSuggestions,
     mentionConfig.mentionHighlights,
-    false
+    false,
   ),
 ];

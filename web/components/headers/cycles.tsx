@@ -14,7 +14,11 @@ export const CyclesHeader: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, commandPalette: commandPaletteStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   return (
@@ -54,8 +58,7 @@ export const CyclesHeader: FC = observer(() => {
           onClick={() => {
             setTrackElement("CYCLES_PAGE_HEADER");
             commandPaletteStore.toggleCreateCycleModal(true);
-          }
-          }
+          }}
         >
           Add Cycle
         </Button>

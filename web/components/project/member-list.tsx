@@ -19,7 +19,7 @@ export const ProjectMemberList: React.FC = observer(() => {
   // store
   const {
     projectMember: { projectMembers, fetchProjectMembers },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   // states
@@ -57,11 +57,12 @@ export const ProjectMemberList: React.FC = observer(() => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button variant="primary" onClick={() => {
-          setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
-          setInviteModal(true)
-        }
-        }
+        <Button
+          variant="primary"
+          onClick={() => {
+            setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
+            setInviteModal(true);
+          }}
         >
           Add Member
         </Button>

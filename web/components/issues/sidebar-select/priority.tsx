@@ -21,16 +21,20 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
           value === "urgent"
             ? "border-red-500/20 bg-red-500/20 text-red-500"
             : value === "high"
-            ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-            : value === "medium"
-            ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-            : value === "low"
-            ? "border-green-500/20 bg-green-500/20 text-green-500"
-            : "bg-custom-background-80 border-custom-border-200 text-custom-text-200"
+              ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+              : value === "medium"
+                ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                : value === "low"
+                  ? "border-green-500/20 bg-green-500/20 text-green-500"
+                  : "bg-custom-background-80 border-custom-border-200 text-custom-text-200"
         }`}
       >
         <span className="flex items-center justify-center h-4 w-4 overflow-hidden">
-          <PriorityIcon priority={value} transparentBg={true} className={`w-3.5 h-3.5 ${(value === "urgent" || value === "none") ? 'p-0.5' : '-mt-1'} `} />
+          <PriorityIcon
+            priority={value}
+            transparentBg={true}
+            className={`w-3.5 h-3.5 ${value === "urgent" || value === "none" ? "p-0.5" : "-mt-1"} `}
+          />
         </span>
         <span>{value ?? "None"}</span>
       </div>

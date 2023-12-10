@@ -21,12 +21,12 @@ export const CycleGanttBlock = ({ data }: { data: ICycle }) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : "",
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : "",
       }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/cycles/${data?.id}`)}
     >
@@ -65,12 +65,12 @@ export const CycleGanttSidebarBlock = ({ data }: { data: ICycle }) => {
           cycleStatus === "current"
             ? "#09a953"
             : cycleStatus === "upcoming"
-            ? "#f7ae59"
-            : cycleStatus === "completed"
-            ? "#3f76ff"
-            : cycleStatus === "draft"
-            ? "rgb(var(--color-text-200))"
-            : ""
+              ? "#f7ae59"
+              : cycleStatus === "completed"
+                ? "#3f76ff"
+                : cycleStatus === "draft"
+                  ? "rgb(var(--color-text-200))"
+                  : ""
         }`}
       />
       <h6 className="text-sm font-medium flex-grow truncate">{data?.name}</h6>

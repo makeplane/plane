@@ -5,4 +5,7 @@ export type {
   IMentionHighlight,
   IMentionSuggestion,
 } from "./types/mention-suggestion";
-export type { ISlashCommandItem, CommandProps } from "./types/slash-commands-suggestion"
+export type {
+  ISlashCommandItem,
+  CommandProps,
+} from "./types/slash-commands-suggestion";

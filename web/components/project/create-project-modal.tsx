@@ -133,17 +133,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
       .then((res) => {
         const newPayload = {
           ...res,
-          state: "SUCCESS"
-        }
-        postHogEventTracker(
-          "PROJECT_CREATED",
-          newPayload,
-          {
-            isGrouping: true,
-            groupType: "Workspace_metrics",
-            gorupId: res.workspace
-          }
-        )
+          state: "SUCCESS",
+        };
+        postHogEventTracker("PROJECT_CREATED", newPayload, {
+          isGrouping: true,
+          groupType: "Workspace_metrics",
+          gorupId: res.workspace,
+        });
         setToastAlert({
           type: "success",
           title: "Success!",
@@ -164,16 +160,15 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
           postHogEventTracker(
             "PROJECT_CREATED",
             {
-              state: "FAILED"
+              state: "FAILED",
             },
             {
               isGrouping: true,
               groupType: "Workspace_metrics",
-              gorupId: currentWorkspace?.id!
+              gorupId: currentWorkspace?.id!,
             }
-          )
-        }
-        );
+          );
+        });
       });
   };
 
@@ -397,7 +392,9 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
                           control={control}
                           render={({ field: { value, onChange } }) => (
                             <WorkspaceMemberSelect
-                              value={workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]}
+                              value={
+                                workspaceMembers?.filter((member: IWorkspaceMember) => member.member.id === value)[0]
+                              }
                               onChange={onChange}
                               options={workspaceMembers || []}
                               placeholder="Select Lead"

@@ -15,7 +15,11 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { commandPalette: commandPaletteStore, project: projectStore, trackEvent: { setTrackElement } } = useMobxStore();
+  const {
+    commandPalette: commandPaletteStore,
+    project: projectStore,
+    trackEvent: { setTrackElement },
+  } = useMobxStore();
 
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
@@ -30,8 +34,8 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
             icon: <Plus className="h-4 w-4" />,
             text: "New Project",
             onClick: () => {
-              setTrackElement("ALL_ISSUES_EMPTY_STATE")
-              commandPaletteStore.toggleCreateProjectModal(true)
+              setTrackElement("ALL_ISSUES_EMPTY_STATE");
+              commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}
         />
@@ -44,9 +48,9 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
             text: "New issue",
             icon: <PlusIcon className="h-3 w-3" strokeWidth={2} />,
             onClick: () => {
-              setTrackElement("ALL_ISSUES_EMPTY_STATE")
-              commandPaletteStore.toggleCreateIssueModal(true)
-            }
+              setTrackElement("ALL_ISSUES_EMPTY_STATE");
+              commandPaletteStore.toggleCreateIssueModal(true);
+            },
           }}
         />
       )}

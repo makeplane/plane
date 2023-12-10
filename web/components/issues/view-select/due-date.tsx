@@ -51,8 +51,8 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           issue.target_date === null
             ? ""
             : issue.target_date < new Date().toISOString()
-            ? "text-red-600"
-            : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
+              ? "text-red-600"
+              : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
         }`}
       >
         <CustomDatePicker

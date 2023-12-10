@@ -199,8 +199,8 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
               ? "Updating View..."
               : "Update View"
             : isSubmitting
-            ? "Creating View..."
-            : "Create View"}
+              ? "Creating View..."
+              : "Create View"}
         </Button>
       </div>
     </form>
