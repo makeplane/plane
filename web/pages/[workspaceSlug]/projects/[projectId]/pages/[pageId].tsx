@@ -82,7 +82,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         description_html: newDescription,
       })
       .then(() => {
-        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
+        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription }) as IPage, false);
       });
   };
 
@@ -112,7 +112,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     return issue as IIssue;
   };
 
-  const issueWidgetClickAction = (issueId: string, issueTitle: string) => {
+  const issueWidgetClickAction = (issueId: string) => {
     const url = new URL(router.asPath, window.location.origin);
     const params = new URLSearchParams(url.search);
 
@@ -158,15 +158,19 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     if (pageDetails?.description_html) {
       setLocalIssueDescription({ id: pageId as string, description_html: pageDetails.description_html });
     }
-  }, [pageDetails?.description_html]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageDetails?.description_html]); // TODO: Verify the exhaustive-deps warning
 
   function createObjectFromArray(keys: string[], options: any): any {
-    return keys.reduce((obj, key) => {
-      if (options[key] !== undefined) {
-        obj[key] = options[key];
-      }
-      return obj;
-    }, {} as { [key: string]: any });
+    return keys.reduce(
+      (obj, key) => {
+        if (options[key] !== undefined) {
+          obj[key] = options[key];
+        }
+        return obj;
+      },
+      {} as { [key: string]: any }
+    );
   }
 
   const mutatePageDetailsHelper = (
@@ -178,7 +182,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const commonSwrOptions: MutatorOptions = {
       revalidate: true,
       populateCache: false,
-      rollbackOnError: (e) => {
+      rollbackOnError: () => {
         onErrorAction();
         return true;
       },
@@ -329,6 +333,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
 
   // ADDING updatePage TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
@@ -409,11 +415,11 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                 }}
               />
             ) : (
-              <div className="h-full w-full relative overflow-hidden">
+              <div className="relative h-full w-full overflow-hidden">
                 <Controller
                   name="description_html"
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { onChange } }) => (
                     <DocumentEditorWithRef
                       isSubmitting={isSubmitting}
                       documentDetails={{
@@ -466,7 +472,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   <>
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-2.5 right-[68px]"
+                      className="absolute right-[68px] top-2.5 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                       onClick={() => setGptModal((prevData) => !prevData)}
                     >
                       <Sparkle className="h-4 w-4" />
@@ -502,7 +508,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
           </div>
         </div>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <Spinner />
         </div>
       )}

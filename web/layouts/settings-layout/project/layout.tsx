@@ -39,8 +39,8 @@ export const ProjectSettingLayout: FC<IProjectSettingLayout> = observer((props) 
       }
     />
   ) : (
-    <div className="flex gap-2 h-full w-full overflow-x-hidden overflow-y-scroll">
-      <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
+    <div className="flex h-full w-full gap-2 overflow-x-hidden overflow-y-scroll">
+      <div className="w-80 flex-shrink-0 overflow-y-hidden pt-8">
         <ProjectSettingsSidebar />
       </div>
       {children}

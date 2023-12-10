@@ -50,7 +50,7 @@ export const IssueColumn: React.FC<Props> = ({
   const customActionButton = (
     <div
       ref={menuActionRef}
-      className={`w-full cursor-pointer text-custom-sidebar-text-400 rounded p-1 hover:bg-custom-background-80 ${
+      className={`w-full cursor-pointer rounded p-1 text-custom-sidebar-text-400 hover:bg-custom-background-80 ${
         isMenuActive ? "bg-custom-background-80 text-custom-text-100" : "text-custom-text-200"
       }`}
       onClick={() => setIsMenuActive(!isMenuActive)}
@@ -61,13 +61,13 @@ export const IssueColumn: React.FC<Props> = ({
 
   return (
     <>
-      <div className="group flex items-center w-[28rem] text-sm h-11 top-0 bg-custom-background-100 truncate border-b border-custom-border-100">
+      <div className="group top-0 flex h-11 w-[28rem] items-center truncate border-b border-custom-border-100 bg-custom-background-100 text-sm">
         {properties.key && (
           <div
-            className="flex gap-1.5 px-4 pr-0 py-2.5 items-center min-w-min"
+            className="flex min-w-min items-center gap-1.5 px-4 py-2.5 pr-0"
             style={issue.parent && nestingLevel !== 0 ? { paddingLeft } : {}}
           >
-            <div className="relative flex items-center cursor-pointer text-xs text-center hover:text-custom-text-100">
+            <div className="relative flex cursor-pointer items-center text-center text-xs hover:text-custom-text-100">
               <span
                 className={`flex items-center justify-center font-medium opacity-100 group-hover:opacity-0 ${
                   isMenuActive ? "!opacity-0" : ""
@@ -77,16 +77,16 @@ export const IssueColumn: React.FC<Props> = ({
               </span>
 
               {canEditProperties(issue.project) && (
-                <div className={`absolute top-0 left-2.5 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
+                <div className={`absolute left-2.5 top-0 hidden group-hover:block ${isMenuActive ? "!block" : ""}`}>
                   {quickActions(issue, customActionButton)}
                 </div>
               )}
             </div>
 
             {issue.sub_issues_count > 0 && (
-              <div className="h-6 w-6 flex justify-center items-center">
+              <div className="flex h-6 w-6 items-center justify-center">
                 <button
-                  className="h-5 w-5 hover:bg-custom-background-90 hover:text-custom-text-100 rounded-sm cursor-pointer"
+                  className="h-5 w-5 cursor-pointer rounded-sm hover:bg-custom-background-90 hover:text-custom-text-100"
                   onClick={() => handleToggleExpand(issue.id)}
                 >
                   <ChevronRight className={`h-3.5 w-3.5 ${expanded ? "rotate-90" : ""}`} />
@@ -98,7 +98,7 @@ export const IssueColumn: React.FC<Props> = ({
         <div className="w-full overflow-hidden">
           <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
             <div
-              className="px-4 py-2.5 h-full w-full truncate text-custom-text-100 text-left cursor-pointer text-[0.825rem]"
+              className="h-full w-full cursor-pointer truncate px-4 py-2.5 text-left text-[0.825rem] text-custom-text-100"
               onClick={() => handleIssuePeekOverview(issue)}
             >
               {issue.name}

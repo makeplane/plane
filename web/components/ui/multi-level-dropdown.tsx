@@ -46,7 +46,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             <div>
               <Menu.Button
                 onClick={() => setOpenChildFor(null)}
-                className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none hover:text-custom-text-100 hover:bg-custom-background-90 ${
+                className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
                   open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
                 }`}
               >
@@ -65,7 +65,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
             >
               <Menu.Items
                 static
-                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 border border-custom-border-300 text-xs shadow-lg focus:outline-none"
+                className="absolute right-0 z-10 mt-1 w-36 origin-top-right select-none rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none"
               >
                 {options.map((option) => (
                   <div className="relative p-1" key={option.id}>
@@ -102,24 +102,24 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                     </Menu.Item>
                     {option.hasChildren && option.id === openChildFor && (
                       <div
-                        className={`absolute top-0 min-w-36 whitespace-nowrap origin-top-right select-none overflow-y-scroll rounded-md bg-custom-background-90 border border-custom-border-300 shadow-lg focus:outline-none ${
+                        className={`min-w-36 absolute top-0 origin-top-right select-none overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 shadow-lg focus:outline-none ${
                           direction === "left" ? "right-full -translate-x-1" : "left-full translate-x-1"
                         } ${
                           height === "sm"
                             ? "max-h-28"
                             : height === "md"
-                            ? "max-h-44"
-                            : height === "rg"
-                            ? "max-h-56"
-                            : height === "lg"
-                            ? "max-h-80"
-                            : ""
+                              ? "max-h-44"
+                              : height === "rg"
+                                ? "max-h-56"
+                                : height === "lg"
+                                  ? "max-h-80"
+                                  : ""
                         }`}
                       >
                         {option.children ? (
                           <div className="space-y-1 p-1">
                             {option.children.length === 0 ? (
-                              <p className="text-custom-text-200 text-center px-1 py-1.5">No {option.label} found</p> //if no children found, show this message.
+                              <p className="px-1 py-1.5 text-center text-custom-text-200">No {option.label} found</p> //if no children found, show this message.
                             ) : (
                               option.children.map((child) => {
                                 if (child.element) return child.element;
@@ -143,7 +143,7 @@ export const MultiLevelDropdown: React.FC<MultiLevelDropdownProps> = ({
                             )}
                           </div>
                         ) : (
-                          <Loader className="p-1 space-y-2">
+                          <Loader className="space-y-2 p-1">
                             <Loader.Item height="20px" />
                             <Loader.Item height="20px" />
                             <Loader.Item height="20px" />

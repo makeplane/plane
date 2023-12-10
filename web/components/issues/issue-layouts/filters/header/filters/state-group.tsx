@@ -54,7 +54,7 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
               {filteredOptions.length > 5 && (
                 <button
                   type="button"
-                  className="text-custom-primary-100 text-xs font-medium ml-8"
+                  className="ml-8 text-xs font-medium text-custom-primary-100"
                   onClick={handleViewToggle}
                 >
                   {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -62,7 +62,7 @@ export const FilterStateGroup: React.FC<Props> = observer((props) => {
               )}
             </>
           ) : (
-            <p className="text-xs text-custom-text-400 italic">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">No matches found</p>
           )}
         </div>
       )}

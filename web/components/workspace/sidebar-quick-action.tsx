@@ -39,20 +39,20 @@ export const WorkspaceSidebarQuickAction = observer(() => {
       />
 
       <div
-        className={`flex items-center justify-between w-full cursor-pointer px-4 mt-4 ${
+        className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
           isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
         }`}
       >
         <div
-          className={`relative flex items-center justify-between w-full rounded cursor-pointer px-2 gap-1 group ${
+          className={`group relative flex w-full cursor-pointer items-center justify-between gap-1 rounded px-2 ${
             isSidebarCollapsed
               ? "px-2 hover:bg-custom-sidebar-background-80"
-              : "px-3 shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
+              : "border-[0.5px] border-custom-border-200 px-3 shadow-custom-sidebar-shadow-2xs"
           }`}
         >
           <button
             type="button"
-            className={`relative flex items-center gap-2 flex-grow rounded flex-shrink-0 py-1.5 outline-none ${
+            className={`relative flex flex-shrink-0 flex-grow items-center gap-2 rounded py-1.5 outline-none ${
               isSidebarCollapsed ? "justify-center" : ""
             }`}
             onClick={() => {
@@ -70,27 +70,27 @@ export const WorkspaceSidebarQuickAction = observer(() => {
 
               <button
                 type="button"
-                className={`flex items-center justify-center rounded flex-shrink-0 py-1.5 ml-1.5 ${
+                className={`ml-1.5 flex flex-shrink-0 items-center justify-center rounded py-1.5 ${
                   isSidebarCollapsed ? "hidden" : "block"
                 }`}
               >
                 <ChevronDown
                   size={16}
-                  className="!text-custom-sidebar-text-300 transform transition-transform duration-300 group-hover:rotate-180 rotate-0"
+                  className="rotate-0 transform !text-custom-sidebar-text-300 transition-transform duration-300 group-hover:rotate-180"
                 />
               </button>
 
               <div
-                className={`fixed h-10 pt-2 w-[203px] left-4 opacity-0 group-hover:opacity-100 mt-0 pointer-events-none group-hover:pointer-events-auto ${
+                className={`pointer-events-none fixed left-4 mt-0 h-10 w-[203px] pt-2 opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 ${
                   isSidebarCollapsed ? "top-[5.5rem]" : "top-24"
                 }`}
               >
-                <div className="w-full h-full">
+                <div className="h-full w-full">
                   <button
                     onClick={() => setIsDraftIssueModalOpen(true)}
-                    className="w-full flex text-sm items-center rounded flex-shrink-0 py-[10px] px-3 bg-custom-background-100 shadow border-[0.5px] border-custom-border-300 text-custom-text-300"
+                    className="flex w-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 bg-custom-background-100 px-3 py-[10px] text-sm text-custom-text-300 shadow"
                   >
-                    <PenSquare size={16} className="!text-lg !leading-4 text-custom-sidebar-text-300 mr-2" />
+                    <PenSquare size={16} className="mr-2 !text-lg !leading-4 text-custom-sidebar-text-300" />
                     Last Drafted Issue
                   </button>
                 </div>
@@ -100,10 +100,10 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         </div>
 
         <button
-          className={`flex items-center justify-center rounded flex-shrink-0 p-2 outline-none ${
+          className={`flex flex-shrink-0 items-center justify-center rounded p-2 outline-none ${
             isSidebarCollapsed
               ? "hover:bg-custom-sidebar-background-80"
-              : "shadow-custom-sidebar-shadow-2xs border-[0.5px] border-custom-border-200"
+              : "border-[0.5px] border-custom-border-200 shadow-custom-sidebar-shadow-2xs"
           }`}
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >

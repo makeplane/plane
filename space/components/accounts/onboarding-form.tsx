@@ -77,14 +77,14 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
 
   return (
     <form
-      className="h-full w-full space-y-7 sm:space-y-10 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center"
+      className="h-full w-full space-y-7 overflow-y-auto sm:flex sm:flex-col sm:items-start sm:justify-center sm:space-y-10"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="relative sm:text-lg">
-        <div className="text-gray-800 absolute -top-1 -left-3">{'"'}</div>
+        <div className="absolute -left-3 -top-1 text-gray-800">{'"'}</div>
         <h5>Hey there 👋🏻</h5>
-        <h5 className="mt-5 mb-6">Let{"'"}s get you onboard!</h5>
-        <h4 className="text-xl sm:text-2xl font-semibold">Set up your Plane profile.</h4>
+        <h5 className="mb-6 mt-5">Let{"'"}s get you onboard!</h5>
+        <h4 className="text-xl font-semibold sm:text-2xl">Set up your Plane profile.</h4>
       </div>
 
       <div className="space-y-7 sm:w-3/4 md:w-2/5">
@@ -125,7 +125,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                 <Listbox as="div" value={value} onChange={onChange} className="relative flex-shrink-0 text-left">
                   <Listbox.Button
                     type="button"
-                    className={`flex items-center justify-between gap-1 w-full rounded-md border border-custom-border-300 shadow-sm duration-300 focus:outline-none px-3 py-2 text-sm`}
+                    className={`flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-300 px-3 py-2 text-sm shadow-sm duration-300 focus:outline-none`}
                   >
                     <span className={value ? "" : "text-custom-text-400"}>{value || "Select your role..."}</span>
                     <ChevronDown className="h-3 w-3" aria-hidden="true" strokeWidth={2} />
@@ -141,7 +141,7 @@ export const OnBoardingForm: React.FC<Props> = observer(({ user }) => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Listbox.Options
-                      className={`absolute z-10 border border-custom-border-300 mt-1 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none w-full max-h-36 left-0 origin-top-left`}
+                      className={`absolute left-0 z-10 mt-1 max-h-36 w-full origin-top-left overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none`}
                     >
                       <div className="space-y-1 p-2">
                         {USER_ROLES.map((role) => (

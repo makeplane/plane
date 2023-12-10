@@ -84,7 +84,7 @@ const IntegrationGuide = () => {
                   </div>
                   <div>
                     <h3 className="flex items-center gap-4 text-sm font-medium">{service.title}</h3>
-                    <p className="text-sm text-custom-text-200 tracking-tight">{service.description}</p>
+                    <p className="text-sm tracking-tight text-custom-text-200">{service.description}</p>
                   </div>
                 </div>
                 <div className="flex-shrink-0">
@@ -97,12 +97,12 @@ const IntegrationGuide = () => {
               </div>
             ))}
             <div>
-              <div className="flex items-center pt-7 pb-3.5 border-b border-custom-border-100">
+              <div className="flex items-center border-b border-custom-border-100 pb-3.5 pt-7">
                 <h3 className="flex gap-2 text-xl font-medium">
                   Previous Imports
                   <button
                     type="button"
-                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 py-1 px-1.5 text-xs outline-none"
+                    className="flex flex-shrink-0 items-center gap-1 rounded bg-custom-background-80 px-1.5 py-1 text-xs outline-none"
                     onClick={() => {
                       setRefreshing(true);
                       mutate(IMPORTER_SERVICES_LIST(workspaceSlug as string)).then(() => setRefreshing(false));
@@ -129,7 +129,7 @@ const IntegrationGuide = () => {
                       </div>
                     </div>
                   ) : (
-                    <p className="text-sm text-custom-text-200 px-4 py-6">No previous imports available.</p>
+                    <p className="px-4 py-6 text-sm text-custom-text-200">No previous imports available.</p>
                   )
                 ) : (
                   <Loader className="mt-6 grid grid-cols-1 gap-3">

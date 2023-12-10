@@ -62,15 +62,15 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
         Get on your flight deck
       </h1>
-      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-2.5">
+      <p className="mt-2.5 px-20 text-center text-sm text-onboarding-text-200">
         We have sent a link to <span className="font-semibold text-custom-primary-100">{email},</span> so you can set a
         password
       </p>
 
-      <form onSubmit={handleSubmit(handleSendNewLink)} className="mt-5 sm:w-96 mx-auto space-y-4">
+      <form onSubmit={handleSubmit(handleSendNewLink)} className="mx-auto mt-5 space-y-4 sm:w-96">
         <div className="space-y-1">
           <Controller
             control={control}
@@ -88,7 +88,7 @@ export const SetPasswordLink: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.email)}
                 placeholder="orville.wright@firstflight.com"
-                className="w-full h-[46px] text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
+                className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
                 disabled
               />
             )}

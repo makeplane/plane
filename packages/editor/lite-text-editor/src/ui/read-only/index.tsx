@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  EditorContainer,
-  EditorContentWrapper,
-  getEditorClassNames,
-  useReadOnlyEditor,
-} from "@plane/editor-core";
+import { EditorContainer, EditorContentWrapper, getEditorClassNames, useReadOnlyEditor } from "@plane/editor-core";
 
 interface ICoreReadOnlyEditor {
   value: string;
@@ -50,19 +45,15 @@ const LiteReadOnlyEditor = ({
   return (
     <EditorContainer editor={editor} editorClassNames={editorClassNames}>
       <div className="flex flex-col">
-        <EditorContentWrapper
-          editor={editor}
-          editorContentCustomClassNames={editorContentCustomClassNames}
-        />
+        <EditorContentWrapper editor={editor} editorContentCustomClassNames={editorContentCustomClassNames} />
       </div>
     </EditorContainer>
   );
 };
 
-const LiteReadOnlyEditorWithRef = React.forwardRef<
-  EditorHandle,
-  ICoreReadOnlyEditor
->((props, ref) => <LiteReadOnlyEditor {...props} forwardedRef={ref} />);
+const LiteReadOnlyEditorWithRef = React.forwardRef<EditorHandle, ICoreReadOnlyEditor>((props, ref) => (
+  <LiteReadOnlyEditor {...props} forwardedRef={ref} />
+));
 
 LiteReadOnlyEditorWithRef.displayName = "LiteReadOnlyEditorWithRef";
 

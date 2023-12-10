@@ -23,7 +23,7 @@ export const SubheadingComp = ({
 }) => (
   <p
     onClick={onClick}
-    className="ml-6 mt-2 text-xs cursor-pointer font-medium tracking-tight text-gray-400 hover:text-custom-primary"
+    className="ml-6 mt-2 cursor-pointer text-xs font-medium tracking-tight text-gray-400 hover:text-custom-primary"
     role="button"
   >
     {subHeading}
@@ -39,7 +39,7 @@ export const HeadingThreeComp = ({
 }) => (
   <p
     onClick={onClick}
-    className="ml-8 mt-2 text-xs cursor-pointer font-medium tracking-tight text-gray-400 hover:text-custom-primary"
+    className="ml-8 mt-2 cursor-pointer text-xs font-medium tracking-tight text-gray-400 hover:text-custom-primary"
     role="button"
   >
     {heading}

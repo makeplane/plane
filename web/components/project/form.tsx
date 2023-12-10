@@ -28,7 +28,11 @@ const projectService = new ProjectService();
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
   // store
-  const { project: projectStore, trackEvent: { postHogEventTracker }, workspace: { currentWorkspace } } = useMobxStore();
+  const {
+    project: projectStore,
+    trackEvent: { postHogEventTracker },
+    workspace: { currentWorkspace },
+  } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
   // form data
@@ -63,12 +67,12 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       .updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         postHogEventTracker(
-          'PROJECT_UPDATED',
+          "PROJECT_UPDATED",
           { ...res, state: "SUCCESS" },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: res.workspace
+            gorupId: res.workspace,
           }
         );
         setToastAlert({
@@ -79,14 +83,14 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
       })
       .catch((error) => {
         postHogEventTracker(
-          'PROJECT_UPDATED',
+          "PROJECT_UPDATED",
           {
-            state: "FAILED"
+            state: "FAILED",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({
@@ -131,14 +135,14 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="relative h-44 w-full mt-6">
-        <div className="absolute z-[1] inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+      <div className="relative mt-6 h-44 w-full">
+        <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/50 to-transparent" />
 
         <img src={watch("cover_image")!} alt={watch("cover_image")!} className="h-44 w-full rounded-md object-cover" />
-        <div className="flex items-end z-10 justify-between gap-3 absolute bottom-4 w-full px-4">
-          <div className="flex gap-3 flex-grow truncate">
-            <div className="flex items-center justify-center flex-shrink-0 bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
-              <div className="h-7 w-7 grid place-items-center">
+        <div className="absolute bottom-4 z-10 flex w-full items-end justify-between gap-3 px-4">
+          <div className="flex flex-grow gap-3 truncate">
+            <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
+              <div className="grid h-7 w-7 place-items-center">
                 <Controller
                   control={control}
                   name="emoji_and_icon"
@@ -153,8 +157,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 />
               </div>
             </div>
-            <div className="flex flex-col gap-1 text-white truncate">
-              <span className="text-lg font-semibold truncate">{watch("name")}</span>
+            <div className="flex flex-col gap-1 truncate text-white">
+              <span className="truncate text-lg font-semibold">{watch("name")}</span>
               <span className="flex items-center gap-2 text-sm">
                 <span>
                   {watch("identifier")} . {currentNetwork?.label}
@@ -163,7 +167,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             </div>
           </div>
 
-          <div className="flex justify-center flex-shrink-0">
+          <div className="flex flex-shrink-0 justify-center">
             <div>
               <Controller
                 control={control}
@@ -182,7 +186,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-8 my-8">
+      <div className="my-8 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Project Name</h4>
           <Controller
@@ -200,7 +204,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
-                className="!p-3 rounded-md font-medium"
+                className="rounded-md !p-3 font-medium"
                 placeholder="Project Name"
                 disabled={!isAdmin}
               />
@@ -228,8 +232,8 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           />
         </div>
 
-        <div className="flex items-center justify-between gap-10 w-full">
-          <div className="flex flex-col gap-1 w-1/2">
+        <div className="flex w-full items-center justify-between gap-10">
+          <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Identifier</h4>
             <Controller
               control={control}
@@ -263,7 +267,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             />
           </div>
 
-          <div className="flex flex-col gap-1 w-1/2">
+          <div className="flex w-1/2 flex-col gap-1">
             <h4 className="text-sm">Network</h4>
             <Controller
               name="network"
@@ -294,7 +298,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             <Button variant="primary" type="submit" loading={isSubmitting} disabled={!isAdmin}>
               {isSubmitting ? "Updating Project..." : "Update Project"}
             </Button>
-            <span className="text-sm text-custom-sidebar-text-400 italic">
+            <span className="text-sm italic text-custom-sidebar-text-400">
               Created on {renderShortDateWithYearFormat(project?.created_at)}
             </span>
           </>

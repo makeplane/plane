@@ -16,7 +16,7 @@ export const ProfilePriorityDistribution: React.FC<Props> = ({ userProfile }) =>
   <div className="flex flex-col space-y-2">
     <h3 className="text-lg font-medium">Issues by Priority</h3>
     {userProfile ? (
-      <div className="flex-grow border border-custom-border-100 rounded">
+      <div className="flex-grow rounded border border-custom-border-100">
         {userProfile.priority_distribution.length > 0 ? (
           <BarGraph
             data={userProfile.priority_distribution.map((priority) => ({

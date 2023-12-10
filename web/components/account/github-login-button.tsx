@@ -43,8 +43,8 @@ export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
         href={`https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${loginCallBackURL}&scope=read:user,user:email`}
       >
         <button
-          className={`flex w-full items-center justify-center gap-2 hover:bg-onboarding-background-300 rounded border px-2 text-sm font-medium text-custom-text-100 duration-300 h-[42px] ${
-            resolvedTheme === "dark" ? "bg-[#2F3135] border-[#43484F]" : "border-[#D9E4FF]"
+          className={`flex h-[42px] w-full items-center justify-center gap-2 rounded border px-2 text-sm font-medium text-custom-text-100 duration-300 hover:bg-onboarding-background-300 ${
+            resolvedTheme === "dark" ? "border-[#43484F] bg-[#2F3135]" : "border-[#D9E4FF]"
           }`}
         >
           <Image

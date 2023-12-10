@@ -90,8 +90,8 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
           projectId={projectId.toString()}
         />
       )}
-      <div className="space-y-5 p-6 h-full overflow-hidden flex flex-col">
-        <div className="flex gap-4 justify-between">
+      <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">
+        <div className="flex justify-between gap-4">
           <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
         </div>
         <Tab.Group
@@ -117,7 +117,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
           }}
         >
           <Tab.List as="div" className="mb-6 flex items-center justify-between">
-            <div className="flex gap-4 items-center flex-wrap">
+            <div className="flex flex-wrap items-center gap-4">
               {PAGE_TABS_LIST.map((tab) => (
                 <Tab
                   key={tab.key}
@@ -135,7 +135,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
             </div>
           </Tab.List>
           <Tab.Panels as={Fragment}>
-            <Tab.Panel as="div" className="h-full overflow-y-auto space-y-5">
+            <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
               <RecentPagesList />
             </Tab.Panel>
             <Tab.Panel as="div" className="h-full overflow-hidden">

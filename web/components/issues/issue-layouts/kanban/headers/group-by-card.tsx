@@ -100,17 +100,17 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
         />
       )}
       <div
-        className={`flex-shrink-0 relative flex gap-2 p-1.5 ${
-          verticalAlignPosition ? `flex-col items-center w-[44px]` : `flex-row items-center w-full`
+        className={`relative flex flex-shrink-0 gap-2 p-1.5 ${
+          verticalAlignPosition ? `w-[44px] flex-col items-center` : `w-full flex-row items-center`
         }`}
       >
-        <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center">
+        <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
           {icon ? icon : <Circle width={14} strokeWidth={2} />}
         </div>
 
-        <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `flex-row w-full`}`}>
+        <div className={`flex items-center gap-1 ${verticalAlignPosition ? `flex-col` : `w-full flex-row`}`}>
           <div
-            className={`font-medium line-clamp-1 text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
+            className={`line-clamp-1 font-medium text-custom-text-100 ${verticalAlignPosition ? `vertical-lr` : ``}`}
           >
             {title}
           </div>
@@ -121,7 +121,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
 
         {sub_group_by === null && (
           <div
-            className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+            className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
             onClick={() => handleKanBanToggle("groupByHeaderMinMax", column_id)}
           >
             {verticalAlignPosition ? (
@@ -137,7 +137,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
             <CustomMenu
               width="auto"
               customButton={
-                <span className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+                <span className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
                   <Plus height={14} width={14} strokeWidth={2} />
                 </span>
               }
@@ -151,7 +151,7 @@ export const HeaderGroupByCard: FC<IHeaderGroupByCard> = observer((props) => {
             </CustomMenu>
           ) : (
             <div
-              className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+              className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
               onClick={() => setIsOpen(true)}
             >
               <Plus width={14} strokeWidth={2} />

@@ -108,7 +108,7 @@ export const CycleDeleteModal: React.FC<ICycleDelete> = observer((props) => {
                   <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                     <div className="flex flex-col gap-6 p-6">
                       <div className="flex w-full items-center justify-start gap-4">
-                        <div className="flex-shrink-0 flex justify-center items-center rounded-full bg-red-500/20 w-12 h-12">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-500/20">
                           <AlertTriangle width={16} strokeWidth={2} className="text-red-600" />
                         </div>
                         <div className="text-xl font-medium 2xl:text-2xl">Delete Cycle</div>

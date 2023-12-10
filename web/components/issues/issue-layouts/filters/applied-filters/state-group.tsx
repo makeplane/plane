@@ -16,7 +16,7 @@ export const AppliedStateGroupFilters: React.FC<Props> = observer((props) => {
   return (
     <>
       {values.map((stateGroup) => (
-        <div key={stateGroup} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
+        <div key={stateGroup} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
           <StateGroupIcon stateGroup={stateGroup as TStateGroups} height="12px" width="12px" />
           {stateGroup}
           <button

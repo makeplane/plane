@@ -57,7 +57,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-3 justify-between gap-x-12 gap-y-8 w-full">
+      <div className="grid-col grid w-full grid-cols-1 justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Client ID</h4>
           <Controller
@@ -73,7 +73,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
                 ref={ref}
                 hasError={Boolean(errors.GOOGLE_CLIENT_ID)}
                 placeholder="840195096245-0p2tstej9j5nc4l8o1ah2dqondscqc1g.apps.googleusercontent.com"
-                className="rounded-md font-medium w-full"
+                className="w-full rounded-md font-medium"
               />
             )}
           />
@@ -93,7 +93,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
           <h4 className="text-sm">JavaScript origin URL</h4>
           <Button
             variant="neutral-primary"
-            className="py-2 flex justify-between items-center"
+            className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);
               setToastAlert({
@@ -103,7 +103,7 @@ export const InstanceGoogleConfigForm: FC<IInstanceGoogleConfigForm> = (props) =
               });
             }}
           >
-            <p className="font-medium text-sm">{originURL}</p>
+            <p className="text-sm font-medium">{originURL}</p>
             <Copy size={18} color="#B9B9B9" />
           </Button>
           <p className="text-xs text-custom-text-400">

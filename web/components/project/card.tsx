@@ -99,10 +99,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
           if (project.is_member) router.push(`/${workspaceSlug?.toString()}/projects/${project.id}/issues`);
           else setJoinProjectModal(true);
         }}
-        className="flex flex-col rounded bg-custom-background-100 border border-custom-border-200 cursor-pointer"
+        className="flex cursor-pointer flex-col rounded border border-custom-border-200 bg-custom-background-100"
       >
         <div className="relative h-[118px] w-full rounded-t ">
-          <div className="absolute z-[1] inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+          <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/60 to-transparent" />
 
           <img
             src={
@@ -110,23 +110,23 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
             }
             alt={project.name}
-            className="absolute top-0 left-0 h-full w-full object-cover rounded-t"
+            className="absolute left-0 top-0 h-full w-full rounded-t object-cover"
           />
 
-          <div className="absolute h-10 w-full bottom-4 z-10 flex items-center justify-between gap-3 px-4">
-            <div className="flex items-center gap-2.5 flex-grow truncate">
-              <div className="h-9 w-9 flex item-center justify-center rounded bg-white/90 flex-shrink-0">
+          <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
+            <div className="flex flex-grow items-center gap-2.5 truncate">
+              <div className="item-center flex h-9 w-9 flex-shrink-0 justify-center rounded bg-white/90">
                 <span className="flex items-center justify-center">
                   {project.emoji
                     ? renderEmoji(project.emoji)
                     : project.icon_prop
-                    ? renderEmoji(project.icon_prop)
-                    : null}
+                      ? renderEmoji(project.icon_prop)
+                      : null}
                 </span>
               </div>
 
-              <div className="flex flex-col gap-0.5 justify-between w-full truncate">
-                <h3 className="text-white font-semibold truncate">{project.name}</h3>
+              <div className="flex w-full flex-col justify-between gap-0.5 truncate">
+                <h3 className="truncate font-semibold text-white">{project.name}</h3>
                 <span className="flex items-center gap-1.5">
                   <p className="text-xs font-medium text-white">{project.identifier} </p>
                   {project.network === 0 && <Lock className="h-2.5 w-2.5 text-white " />}
@@ -134,9 +134,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               </div>
             </div>
 
-            <div className="flex items-center h-full gap-2 flex-shrink-0">
+            <div className="flex h-full flex-shrink-0 items-center gap-2">
               <button
-                className="flex items-center justify-center h-6 w-6 rounded bg-white/10"
+                className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
@@ -146,7 +146,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                 <LinkIcon className="h-3 w-3 text-white" />
               </button>
               <button
-                className="flex items-center justify-center h-6 w-6 rounded bg-white/10"
+                className="flex h-6 w-6 items-center justify-center rounded bg-white/10"
                 onClick={(e) => {
                   if (project.is_favorite) {
                     e.preventDefault();
@@ -167,9 +167,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
           </div>
         </div>
 
-        <div className="h-[104px] w-full flex flex-col justify-between p-4 rounded-b">
-          <p className="text-sm text-custom-text-300 break-words line-clamp-2">{project.description}</p>
-          <div className="flex item-center justify-between">
+        <div className="flex h-[104px] w-full flex-col justify-between rounded-b p-4">
+          <p className="line-clamp-2 break-words text-sm text-custom-text-300">{project.description}</p>
+          <div className="item-center flex justify-between">
             <Tooltip
               tooltipHeading="Members"
               tooltipContent={
@@ -178,7 +178,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
               position="top"
             >
               {projectMembersIds.length > 0 ? (
-                <div className="flex items-center cursor-pointer gap-2 text-custom-text-200">
+                <div className="flex cursor-pointer items-center gap-2 text-custom-text-200">
                   <AvatarGroup showTooltip={false}>
                     {projectMembersIds.map((memberId) => {
                       const member = project.members?.find((m) => m.member_id === memberId);
@@ -195,7 +195,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
             </Tooltip>
             {(isOwner || isMember) && (
               <button
-                className="flex items-center justify-center p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200 rounded"
+                className="flex items-center justify-center rounded p-1 text-custom-text-400 hover:bg-custom-background-80 hover:text-custom-text-200"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();

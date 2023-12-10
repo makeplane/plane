@@ -418,10 +418,10 @@ export const IssueViewContextProvider: React.FC<{ children: React.ReactNode }> =
           ...(cycleId
             ? cycleDetails?.view_props.filters
             : moduleId
-            ? moduleDetails?.view_props.filters
-            : viewId
-            ? viewDetails?.query_data
-            : myViewProps?.view_props?.filters),
+              ? moduleDetails?.view_props.filters
+              : viewId
+                ? viewDetails?.query_data
+                : myViewProps?.view_props?.filters),
         } as any,
       },
     });

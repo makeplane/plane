@@ -49,7 +49,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
   const router = useRouter();
 
-  const { workspace: workspaceStore, trackEvent: { postHogEventTracker } } = useMobxStore();
+  const {
+    workspace: workspaceStore,
+    trackEvent: { postHogEventTracker },
+  } = useMobxStore();
 
   const { setToastAlert } = useToast();
 
@@ -71,13 +74,10 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           await workspaceStore
             .createWorkspace(formData)
             .then(async (res) => {
-              postHogEventTracker(
-                "WORKSPACE_CREATED",
-                {
-                  ...res,
-                  state: "SUCCESS"
-                },
-              )
+              postHogEventTracker("WORKSPACE_CREATED", {
+                ...res,
+                state: "SUCCESS",
+              });
               setToastAlert({
                 type: "success",
                 title: "Success!",
@@ -86,21 +86,16 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
 
               if (onSubmit) await onSubmit(res);
             })
-            .catch(() =>
-            {
+            .catch(() => {
               setToastAlert({
                 type: "error",
                 title: "Error!",
                 message: "Workspace could not be created. Please try again.",
-              })
-              postHogEventTracker(
-                "WORKSPACE_CREATED",
-                {
-                  state: "FAILED"
-                },
-              )
-            }
-            );
+              });
+              postHogEventTracker("WORKSPACE_CREATED", {
+                state: "FAILED",
+              });
+            });
         } else setSlugError(true);
       })
       .catch(() => {
@@ -109,12 +104,9 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
           title: "Error!",
           message: "Some error occurred while creating workspace. Please try again.",
         });
-        postHogEventTracker(
-          "WORKSPACE_CREATED",
-          {
-            state: "FAILED"
-          },
-        )
+        postHogEventTracker("WORKSPACE_CREATED", {
+          state: "FAILED",
+        });
       });
   };
 
@@ -183,7 +175,7 @@ export const CreateWorkspaceForm: FC<Props> = observer((props) => {
                   ref={ref}
                   hasError={Boolean(errors.slug)}
                   placeholder="Enter workspace url..."
-                  className="block rounded-md bg-transparent py-2 !px-0 text-sm w-full border-none"
+                  className="block w-full rounded-md border-none bg-transparent !px-0 py-2 text-sm"
                 />
               )}
             />

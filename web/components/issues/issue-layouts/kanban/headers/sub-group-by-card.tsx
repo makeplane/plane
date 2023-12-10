@@ -15,9 +15,9 @@ interface IHeaderSubGroupByCard {
 
 export const HeaderSubGroupByCard = observer(
   ({ icon, title, count, column_id, kanBanToggle, handleKanBanToggle }: IHeaderSubGroupByCard) => (
-    <div className={`flex-shrink-0 relative flex gap-2 rounded-sm flex-row items-center w-full p-1.5`}>
+    <div className={`relative flex w-full flex-shrink-0 flex-row items-center gap-2 rounded-sm p-1.5`}>
       <div
-        className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+        className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
         onClick={() => handleKanBanToggle("subgroupByIssuesVisibility", column_id)}
       >
         {kanBanToggle?.subgroupByIssuesVisibility.includes(column_id) ? (
@@ -27,11 +27,11 @@ export const HeaderSubGroupByCard = observer(
         )}
       </div>
 
-      <div className="flex-shrink-0 w-[20px] h-[20px] rounded-sm overflow-hidden flex justify-center items-center">
+      <div className="flex h-[20px] w-[20px] flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
         {icon ? icon : <Circle width={14} strokeWidth={2} />}
       </div>
 
-      <div className="flex-shrink-0 flex items-center gap-1 text-sm">
+      <div className="flex flex-shrink-0 items-center gap-1 text-sm">
         <div className="line-clamp-1 text-custom-text-100">{title}</div>
         <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
       </div>

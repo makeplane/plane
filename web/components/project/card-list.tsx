@@ -41,9 +41,9 @@ export const ProjectCardList: FC<IProjectCardList> = observer((props) => {
   return (
     <>
       {projects.length > 0 ? (
-        <div className="h-full w-full p-8 overflow-y-auto">
+        <div className="h-full w-full overflow-y-auto p-8">
           {projectStore.searchedProjects.length == 0 ? (
-            <div className="w-full text-center text-custom-text-400 mt-10">No matching projects</div>
+            <div className="mt-10 w-full text-center text-custom-text-400">No matching projects</div>
           ) : (
             <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
               {projectStore.searchedProjects.map((project) => (

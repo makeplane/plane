@@ -65,11 +65,11 @@ export const ShortcutCommandsList: React.FC<Props> = (props) => {
                         {shortcut.keys.split(",").map((key) => (
                           <div key={key} className="flex items-center gap-1">
                             {key === "Ctrl" ? (
-                              <div className="grid place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 h-6 min-w-[1.5rem] px-1.5">
+                              <div className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5">
                                 <Command className="h-2.5 w-2.5 text-custom-text-200" />
                               </div>
                             ) : (
-                              <kbd className="grid place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 h-6 min-w-[1.5rem] px-1.5 text-[10px] text-custom-text-200">
+                              <kbd className="grid h-6 min-w-[1.5rem] place-items-center rounded-sm border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 text-[10px] text-custom-text-200">
                                 {key}
                               </kbd>
                             )}

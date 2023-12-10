@@ -99,8 +99,8 @@ export class ProfileIssueStore implements IProfileIssueStore {
           : "grouped"
         : "ungrouped"
       : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
+        ? "ungrouped"
+        : null;
 
     return _issueState || null;
   }

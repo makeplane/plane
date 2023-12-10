@@ -21,21 +21,13 @@ interface NodeSelectorProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export const NodeSelector: FC<NodeSelectorProps> = ({
-  editor,
-  isOpen,
-  setIsOpen,
-}) => {
+export const NodeSelector: FC<NodeSelectorProps> = ({ editor, isOpen, setIsOpen }) => {
   const items: BubbleMenuItem[] = [
     {
       name: "Text",
       icon: TextIcon,
-      command: () =>
-        editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
-      isActive: () =>
-        editor.isActive("paragraph") &&
-        !editor.isActive("bulletList") &&
-        !editor.isActive("orderedList"),
+      command: () => editor.chain().focus().toggleNode("paragraph", "paragraph").run(),
+      isActive: () => editor.isActive("paragraph") && !editor.isActive("bulletList") && !editor.isActive("orderedList"),
     },
     HeadingOneItem(editor),
     HeadingTwoItem(editor),
@@ -75,9 +67,8 @@ export const NodeSelector: FC<NodeSelectorProps> = ({
               className={cn(
                 "flex items-center justify-between rounded-sm px-2 py-1 text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100",
                 {
-                  "bg-custom-primary-100/5 text-custom-text-100":
-                    activeItem.name === item.name,
-                },
+                  "bg-custom-primary-100/5 text-custom-text-100": activeItem.name === item.name,
+                }
               )}
             >
               <div className="flex items-center space-x-2">

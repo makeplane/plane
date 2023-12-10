@@ -114,7 +114,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pt-5 pb-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
@@ -174,7 +174,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
                           </>
                         )}
                       </Popover>
-                      <div className="flex w-full flex-col gap-0.5 justify-center">
+                      <div className="flex w-full flex-col justify-center gap-0.5">
                         <Controller
                           control={control}
                           name="name"
@@ -192,7 +192,7 @@ export const CreateLabelModal: React.FC<Props> = observer((props) => {
                               tabIndex={1}
                               hasError={Boolean(errors.name)}
                               placeholder="Label title"
-                              className="resize-none text-xl w-full"
+                              className="w-full resize-none text-xl"
                             />
                           )}
                         />

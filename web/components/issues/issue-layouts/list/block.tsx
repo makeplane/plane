@@ -38,26 +38,26 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
 
   return (
     <>
-      <div className="text-sm p-3 relative bg-custom-background-100 flex items-center gap-3">
+      <div className="relative flex items-center gap-3 bg-custom-background-100 p-3 text-sm">
         {displayProperties && displayProperties?.key && (
-          <div className="flex-shrink-0 text-xs text-custom-text-300 font-medium">
+          <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
             {issue?.project_detail?.identifier}-{issue.sequence_id}
           </div>
         )}
 
         {issue?.tempId !== undefined && (
-          <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
+          <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
         )}
         <Tooltip tooltipHeading="Title" tooltipContent={issue.name}>
           <div
-            className="line-clamp-1 text-sm font-medium text-custom-text-100 w-full cursor-pointer"
+            className="line-clamp-1 w-full cursor-pointer text-sm font-medium text-custom-text-100"
             onClick={handleIssuePeekOverview}
           >
             {issue.name}
           </div>
         </Tooltip>
 
-        <div className="ml-auto flex-shrink-0 flex items-center gap-2">
+        <div className="ml-auto flex flex-shrink-0 items-center gap-2">
           {!issue?.tempId ? (
             <>
               <ListProperties
@@ -70,8 +70,8 @@ export const IssueBlock: React.FC<IssueBlockProps> = (props) => {
               {quickActions(!columnId && columnId === "null" ? null : columnId, issue)}
             </>
           ) : (
-            <div className="w-4 h-4">
-              <Spinner className="w-4 h-4" />
+            <div className="h-4 w-4">
+              <Spinner className="h-4 w-4" />
             </div>
           )}
         </div>

@@ -149,7 +149,7 @@ export const IssueCommentCard: React.FC<IIssueCommentCard> = (props) => {
 
           <div className={`relative ${isEditing ? "hidden" : ""}`}>
             {showAccessSpecifier && (
-              <div className="absolute top-1 right-1.5 z-[1] text-custom-text-300">
+              <div className="absolute right-1.5 top-1 z-[1] text-custom-text-300">
                 {comment.access === "INTERNAL" ? <Lock className="h-3 w-3" /> : <Globe2 className="h-3 w-3" />}
               </div>
             )}

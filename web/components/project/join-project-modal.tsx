@@ -76,7 +76,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                   </Dialog.Title>
                   <p>
                     Are you sure you want to join the project{" "}
-                    <span className="font-semibold break-words">{project?.name}</span>? Please click the &apos;Join
+                    <span className="break-words font-semibold">{project?.name}</span>? Please click the &apos;Join
                     Project&apos; button below to continue.
                   </p>
                   <div className="space-y-3" />

@@ -58,7 +58,7 @@ export const PageForm: React.FC<Props> = (props) => {
                   ref={ref}
                   hasError={Boolean(errors.name)}
                   placeholder="Title"
-                  className="resize-none text-lg w-full"
+                  className="w-full resize-none text-lg"
                 />
               )}
             />
@@ -71,18 +71,18 @@ export const PageForm: React.FC<Props> = (props) => {
           name="access"
           render={({ field: { value, onChange } }) => (
             <div className="flex items-center gap-2">
-              <div className="flex-shrink-0 flex items-stretch gap-0.5 border-[0.5px] border-custom-border-200 rounded p-1">
+              <div className="flex flex-shrink-0 items-stretch gap-0.5 rounded border-[0.5px] border-custom-border-200 p-1">
                 {PAGE_ACCESS_SPECIFIERS.map((access) => (
                   <Tooltip key={access.key} tooltipContent={access.label}>
                     <button
                       type="button"
                       onClick={() => onChange(access.key)}
-                      className={`aspect-square grid place-items-center p-1 rounded-sm hover:bg-custom-background-90 ${
+                      className={`grid aspect-square place-items-center rounded-sm p-1 hover:bg-custom-background-90 ${
                         value === access.key ? "bg-custom-background-90" : ""
                       }`}
                     >
                       <access.icon
-                        className={`w-3.5 h-3.5 ${
+                        className={`h-3.5 w-3.5 ${
                           value === access.key ? "text-custom-text-100" : "text-custom-text-400"
                         }`}
                         strokeWidth={2}

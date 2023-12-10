@@ -336,7 +336,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         ref={ref}
                         hasError={Boolean(errors.name)}
                         placeholder="Issue Title"
-                        className="resize-none text-xl w-full focus:border-blue-400"
+                        className="w-full resize-none text-xl focus:border-blue-400"
                       />
                     )}
                   />
@@ -344,7 +344,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               )}
               {(fieldsToShow.includes("all") || fieldsToShow.includes("description")) && (
                 <div className="relative">
-                  <div className="absolute bottom-3.5 right-3.5 z-10 border-0.5 flex rounded bg-custom-background-80">
+                  <div className="border-0.5 absolute bottom-3.5 right-3.5 z-10 flex rounded bg-custom-background-80">
                     {issueName && issueName !== "" && (
                       <button
                         type="button"
@@ -546,7 +546,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                         customButton={
                           <button
                             type="button"
-                            className="flex items-center justify-between gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                            className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
                           >
                             <div className="flex items-center gap-1 text-custom-text-200">
                               <LayoutPanelTop className="h-3 w-3 flex-shrink-0" />
@@ -570,7 +570,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                     ) : (
                       <button
                         type="button"
-                        className="flex items-center justify-between gap-1 w-min cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+                        className="flex w-min cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
                         onClick={() => setParentIssueListModalOpen(true)}
                       >
                         <div className="flex items-center gap-1 text-custom-text-300">
@@ -613,7 +613,7 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
               <span className="text-xs">Create more</span>
             </div>
           )}
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="ml-auto flex items-center gap-2">
             <Button
               variant="neutral-primary"
               size="sm"
@@ -629,8 +629,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                   ? "Updating Issue..."
                   : "Update Issue"
                 : isSubmitting
-                ? "Adding Issue..."
-                : "Add Issue"}
+                  ? "Adding Issue..."
+                  : "Add Issue"}
             </Button>
           </div>
         </div>

@@ -87,8 +87,8 @@ export const UserDetails: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="w-full h-full space-y-7 sm:space-y-10 overflow-y-auto flex ">
-      <div className="h-full fixed hidden lg:block w-1/5 max-w-[320px]">
+    <div className="flex h-full w-full space-y-7 overflow-y-auto sm:space-y-10 ">
+      <div className="fixed hidden h-full w-1/5 max-w-[320px] lg:block">
         <Controller
           control={control}
           name="first_name"
@@ -118,27 +118,27 @@ export const UserDetails: React.FC<Props> = observer((props) => {
           />
         )}
       />
-      <div className="lg:w-2/3 w-full flex flex-col justify-between ml-auto ">
-        <div className="flex lg:w-4/5 md:px-0 px-7 pt-3 mx-auto flex-col">
-          <form onSubmit={handleSubmit(onSubmit)} className="md:w-11/12  ml-auto">
-            <div className="flex justify-between items-center">
-              <p className="font-semibold text-xl sm:text-2xl">What do we call you? </p>
+      <div className="ml-auto flex w-full flex-col justify-between lg:w-2/3 ">
+        <div className="mx-auto flex flex-col px-7 pt-3 md:px-0 lg:w-4/5">
+          <form onSubmit={handleSubmit(onSubmit)} className="ml-auto  md:w-11/12">
+            <div className="flex items-center justify-between">
+              <p className="text-xl font-semibold sm:text-2xl">What do we call you? </p>
               <OnboardingStepIndicator step={2} />
             </div>
-            <div className="flex mt-6 w-full ">
+            <div className="mt-6 flex w-full ">
               <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                 {!watch("avatar") || watch("avatar") === "" ? (
-                  <div className="h-16 hover:cursor-pointer justify-center items-center flex w-16 rounded-full flex-shrink-0 mr-3 relative bg-onboarding-background-300">
-                    <div className="h-6 w-6 flex justify-center items-center bottom-1 border border-onboarding-border-100 -right-1 bg-onboarding-background-100 rounded-full absolute">
+                  <div className="relative mr-3 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full bg-onboarding-background-300 hover:cursor-pointer">
+                    <div className="absolute -right-1 bottom-1 flex h-6 w-6 items-center justify-center rounded-full border border-onboarding-border-100 bg-onboarding-background-100">
                       <Camera className="h-4 w-4 stroke-onboarding-background-400" />
                     </div>
-                    <User2 className="h-10 w-10 stroke-onboarding-background-300 fill-onboarding-background-400" />
+                    <User2 className="h-10 w-10 fill-onboarding-background-400 stroke-onboarding-background-300" />
                   </div>
                 ) : (
-                  <div className="relative h-16 w-16 overflow-hidden mr-3">
+                  <div className="relative mr-3 h-16 w-16 overflow-hidden">
                     <img
                       src={watch("avatar")}
-                      className="absolute top-0 left-0 h-full w-full object-cover rounded-full"
+                      className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
                       onClick={() => setIsImageUploadModalOpen(true)}
                       alt={user?.display_name}
                     />
@@ -146,7 +146,7 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                 )}
               </button>
 
-              <div className="my-2 bg-onboarding-background-200 w-full mr-10 rounded-md flex text-sm">
+              <div className="my-2 mr-10 flex w-full rounded-md bg-onboarding-background-200 text-sm">
                 <Controller
                   control={control}
                   name="first_name"
@@ -171,34 +171,34 @@ export const UserDetails: React.FC<Props> = observer((props) => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your full name..."
-                      className="w-full focus:border-custom-primary-100 border-onboarding-border-100"
+                      className="w-full border-onboarding-border-100 focus:border-custom-primary-100"
                     />
                   )}
                 />
               </div>
             </div>
-            <div className="mt-14 mb-10">
+            <div className="mb-10 mt-14">
               <Controller
                 control={control}
                 name="first_name"
                 render={({ field: { value } }) => (
-                  <p className="font-medium text-onboarding-text-200 text-xl sm:text-2xl p-0">
+                  <p className="p-0 text-xl font-medium text-onboarding-text-200 sm:text-2xl">
                     And how will you use Plane{value.length > 0 ? ", " : ""}
                     {value}?
                   </p>
                 )}
               />
 
-              <p className="font-medium text-onboarding-text-300 text-sm my-3">Choose just one</p>
+              <p className="my-3 text-sm font-medium text-onboarding-text-300">Choose just one</p>
 
               <Controller
                 control={control}
                 name="use_case"
                 render={({ field: { value, onChange } }) => (
-                  <div className="flex flex-wrap break-all overflow-auto">
+                  <div className="flex flex-wrap overflow-auto break-all">
                     {USE_CASES.map((useCase) => (
                       <div
-                        className={`border mb-3 hover:cursor-pointer hover:bg-onboarding-background-300/30 flex-shrink-0 ${
+                        className={`mb-3 flex-shrink-0 border hover:cursor-pointer hover:bg-onboarding-background-300/30 ${
                           value === useCase ? "border-custom-primary-100" : "border-onboarding-border-100"
                         } mr-3 rounded-sm p-3 text-sm font-medium`}
                         onClick={() => onChange(useCase)}
@@ -216,8 +216,8 @@ export const UserDetails: React.FC<Props> = observer((props) => {
             </Button>
           </form>
         </div>
-        <div className="md:w-11/12 relative flex justify-end  bottom-0 ml-auto">
-          <Image src={IssuesSvg} className="w-2/3 h-[w-2/3] object-cover" alt="issue-image" />
+        <div className="relative bottom-0 ml-auto flex  justify-end md:w-11/12">
+          <Image src={IssuesSvg} className="h-[w-2/3] w-2/3 object-cover" alt="issue-image" />
         </div>
       </div>
     </div>

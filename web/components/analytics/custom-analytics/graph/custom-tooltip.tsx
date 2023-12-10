@@ -60,8 +60,8 @@ export const CustomTooltip: React.FC<Props> = ({ datum, analytics, params }) => 
               ? "capitalize"
               : ""
             : params.x_axis === "priority" || params.x_axis === "state__group"
-            ? "capitalize"
-            : ""
+              ? "capitalize"
+              : ""
         }`}
       >
         {params.segment === "assignees__id" ? renderAssigneeName(tooltipValue.toString()) : tooltipValue}:

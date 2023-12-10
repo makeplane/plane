@@ -15,21 +15,14 @@ export const useEditorMarkings = () => {
       nodes.forEach((node) => {
         if (
           node.type === "heading" &&
-          (node.attrs.level === 1 ||
-            node.attrs.level === 2 ||
-            node.attrs.level === 3) &&
+          (node.attrs.level === 1 || node.attrs.level === 2 || node.attrs.level === 3) &&
           node.content
         ) {
           tempMarkings.push({
             type: "heading",
             level: node.attrs.level,
             text: node.content[0].text,
-            sequence:
-              node.attrs.level === 1
-                ? ++h1Sequence
-                : node.attrs.level === 2
-                ? ++h2Sequence
-                : ++h3Sequence,
+            sequence: node.attrs.level === 1 ? ++h1Sequence : node.attrs.level === 2 ? ++h2Sequence : ++h3Sequence,
           });
         }
       });

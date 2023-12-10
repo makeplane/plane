@@ -5,10 +5,8 @@ import { UploadImage } from "@plane/editor-types";
 
 export const RichTextEditorExtensions = (
   uploadFile: UploadImage,
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void,
-  dragDropEnabled?: boolean,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+  dragDropEnabled?: boolean
 ) => [
   SlashCommand(uploadFile, setIsSubmitting),
   dragDropEnabled === true && DragAndDrop,

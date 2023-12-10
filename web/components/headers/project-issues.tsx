@@ -94,8 +94,8 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex items-center gap-2 flex-grow w-full whitespace-nowrap overflow-ellipsis">
+      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex w-full flex-grow items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <div className="block md:hidden">
             <button
               type="button"
@@ -116,7 +116,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                         {renderEmoji(currentProjectDetails.emoji)}
                       </span>
                     ) : currentProjectDetails?.icon_prop ? (
-                      <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                      <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
                         {renderEmoji(currentProjectDetails.icon_prop)}
                       </div>
                     ) : (
@@ -144,13 +144,13 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           {currentProjectDetails?.is_deployed && deployUrl && (
             <a
               href={`${deployUrl}/${workspaceSlug}/${currentProjectDetails?.id}`}
-              className="group bg-custom-primary-100/10 text-custom-primary-100 px-2.5 py-1 text-xs flex items-center gap-1.5 rounded font-medium"
+              className="group flex items-center gap-1.5 rounded bg-custom-primary-100/10 px-2.5 py-1 text-xs font-medium text-custom-primary-100"
               target="_blank"
               rel="noopener noreferrer"
             >
               <Circle className="h-1.5 w-1.5 fill-custom-primary-100" strokeWidth={2} />
               Public
-              <ExternalLink className="h-3 w-3 hidden group-hover:block" strokeWidth={2} />
+              <ExternalLink className="hidden h-3 w-3 group-hover:block" strokeWidth={2} />
             </a>
           )}
         </div>
@@ -189,7 +189,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
                 <Button variant="neutral-primary" size="sm" className="relative">
                   Inbox
                   {inboxDetails.pending_issue_count > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full text-custom-text-100 bg-custom-sidebar-background-80 border border-custom-sidebar-border-200">
+                    <span className="absolute -right-1.5 -top-1.5 h-4 w-4 rounded-full border border-custom-sidebar-border-200 bg-custom-sidebar-background-80 text-custom-text-100">
                       {inboxDetails.pending_issue_count}
                     </span>
                   )}

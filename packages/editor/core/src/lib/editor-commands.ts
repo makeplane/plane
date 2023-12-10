@@ -4,35 +4,17 @@ import { startImageUpload } from "../ui/plugins/upload-image";
 import { findTableAncestor } from "./utils";
 
 export const toggleHeadingOne = (editor: Editor, range?: Range) => {
-  if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .setNode("heading", { level: 1 })
-      .run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 1 }).run();
   else editor.chain().focus().toggleHeading({ level: 1 }).run();
 };
 
 export const toggleHeadingTwo = (editor: Editor, range?: Range) => {
-  if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .setNode("heading", { level: 2 })
-      .run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 2 }).run();
   else editor.chain().focus().toggleHeading({ level: 2 }).run();
 };
 
 export const toggleHeadingThree = (editor: Editor, range?: Range) => {
-  if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .setNode("heading", { level: 3 })
-      .run();
+  if (range) editor.chain().focus().deleteRange(range).setNode("heading", { level: 3 }).run();
   else editor.chain().focus().toggleHeading({ level: 3 }).run();
 };
 
@@ -57,8 +39,7 @@ export const toggleCodeBlock = (editor: Editor, range?: Range) => {
 };
 
 export const toggleOrderedList = (editor: Editor, range?: Range) => {
-  if (range)
-    editor.chain().focus().deleteRange(range).toggleOrderedList().run();
+  if (range) editor.chain().focus().deleteRange(range).toggleOrderedList().run();
   else editor.chain().focus().toggleOrderedList().run();
 };
 
@@ -78,21 +59,8 @@ export const toggleStrike = (editor: Editor, range?: Range) => {
 };
 
 export const toggleBlockquote = (editor: Editor, range?: Range) => {
-  if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .toggleNode("paragraph", "paragraph")
-      .toggleBlockquote()
-      .run();
-  else
-    editor
-      .chain()
-      .focus()
-      .toggleNode("paragraph", "paragraph")
-      .toggleBlockquote()
-      .run();
+  if (range) editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").toggleBlockquote().run();
+  else editor.chain().focus().toggleNode("paragraph", "paragraph").toggleBlockquote().run();
 };
 
 export const insertTableCommand = (editor: Editor, range?: Range) => {
@@ -105,19 +73,8 @@ export const insertTableCommand = (editor: Editor, range?: Range) => {
       }
     }
   }
-  if (range)
-    editor
-      .chain()
-      .focus()
-      .deleteRange(range)
-      .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-      .run();
-  else
-    editor
-      .chain()
-      .focus()
-      .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-      .run();
+  if (range) editor.chain().focus().deleteRange(range).insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
+  else editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();
 };
 
 export const unsetLinkEditor = (editor: Editor) => {
@@ -131,10 +88,8 @@ export const setLinkEditor = (editor: Editor, url: string) => {
 export const insertImageCommand = (
   editor: Editor,
   uploadFile: UploadImage,
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void,
-  range?: Range,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+  range?: Range
 ) => {
   if (range) editor.chain().focus().deleteRange(range).run();
   const input = document.createElement("input");

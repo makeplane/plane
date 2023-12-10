@@ -74,7 +74,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   return (
     <>
-      <div className="w-full h-full">
+      <div className="h-full w-full">
         <GanttChartRoot
           border={false}
           title="Issues"

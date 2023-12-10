@@ -61,7 +61,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                 <div className="relative pb-1">
                   {activity.length > 1 && index !== activity.length - 1 ? (
                     <span
-                      className="absolute top-5 left-5 -ml-px h-full w-0.5 bg-custom-background-80"
+                      className="absolute left-5 top-5 -ml-px h-full w-0.5 bg-custom-background-80"
                       aria-hidden="true"
                     />
                   ) : null}
@@ -82,7 +82,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                                 alt={activityItem.actor_detail.display_name}
                                 height={24}
                                 width={24}
-                                className="rounded-full h-full w-full object-cover"
+                                className="h-full w-full rounded-full object-cover"
                               />
                             ) : (
                               <div
@@ -98,7 +98,7 @@ export const IssueActivitySection: React.FC<Props> = ({
                       </div>
                     </div>
                     <div className="min-w-0 flex-1 py-3">
-                      <div className="text-xs text-custom-text-200 break-words">
+                      <div className="break-words text-xs text-custom-text-200">
                         {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                           <span className="text-gray font-medium">Plane</span>
                         ) : activityItem.actor_detail.is_bot ? (

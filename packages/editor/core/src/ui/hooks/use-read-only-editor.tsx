@@ -30,8 +30,7 @@ export const useReadOnlyEditor = ({
   const editor = useCustomEditor(
     {
       editable: false,
-      content:
-        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
       editorProps: {
         ...CoreReadOnlyEditorProps,
         ...editorProps,
@@ -44,7 +43,7 @@ export const useReadOnlyEditor = ({
         ...extensions,
       ],
     },
-    [rerenderOnPropsChange],
+    [rerenderOnPropsChange]
   );
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);

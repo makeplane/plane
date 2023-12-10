@@ -13,12 +13,12 @@ export const IssueUpdateStatus: React.FC<Props> = (props) => {
   return (
     <>
       {issueDetail && (
-        <h4 className="text-lg text-custom-text-300 font-medium mr-4">
+        <h4 className="mr-4 text-lg font-medium text-custom-text-300">
           {issueDetail.project_detail?.identifier}-{issueDetail.sequence_id}
         </h4>
       )}
       <div
-        className={`flex transition-all duration-300 items-center gap-x-2 ${
+        className={`flex items-center gap-x-2 transition-all duration-300 ${
           isSubmitting === "saved" ? "fadeOut" : "fadeIn"
         }`}
       >

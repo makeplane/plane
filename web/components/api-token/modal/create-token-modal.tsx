@@ -102,7 +102,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="h-full w-full grid place-items-center text-center p-4">
+          <div className="grid h-full w-full place-items-center p-4 text-center">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -112,7 +112,7 @@ export const CreateApiTokenModal: React.FC<Props> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 text-left shadow-custom-shadow-md transition-all px-4 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 p-5 px-4 text-left shadow-custom-shadow-md transition-all sm:w-full sm:max-w-2xl">
                 {generatedToken ? (
                   <GeneratedTokenDetails handleClose={handleClose} tokenDetails={generatedToken} />
                 ) : (

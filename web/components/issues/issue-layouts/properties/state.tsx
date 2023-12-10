@@ -68,9 +68,9 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     value: state.id,
     query: state.name,
     content: (
-      <div className="flex items-center gap-2 w-full overflow-hidden">
+      <div className="flex w-full items-center gap-2 overflow-hidden">
         <StateGroupIcon stateGroup={state.group} color={state.color} />
-        <div className="truncate inline-block line-clamp-1 w-full">{state.name}</div>
+        <div className="line-clamp-1 inline-block w-full truncate">{state.name}</div>
       </div>
     ),
   }));
@@ -94,9 +94,9 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
 
   const label = (
     <Tooltip tooltipHeading="State" tooltipContent={selectedOption?.name ?? ""} position="top">
-      <div className="flex items-center cursor-pointer w-full gap-2 text-custom-text-200">
+      <div className="flex w-full cursor-pointer items-center gap-2 text-custom-text-200">
         {selectedOption && <StateGroupIcon stateGroup={selectedOption?.group as any} color={selectedOption?.color} />}
-        <span className="truncate line-clamp-1 inline-block">{selectedOption?.name ?? "State"}</span>
+        <span className="line-clamp-1 inline-block truncate">{selectedOption?.name ?? "State"}</span>
       </div>
     </Tooltip>
   );
@@ -106,7 +106,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
       {workspaceSlug && projectId && (
         <Combobox
           as="div"
-          className={`flex-shrink-0 text-left w-auto max-w-full ${className}`}
+          className={`w-auto max-w-full flex-shrink-0 text-left ${className}`}
           value={selectedOption?.id}
           onChange={(data: string) => {
             const selectedState = projectStates?.find((state) => state.id === data);
@@ -118,7 +118,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between h-5 gap-1 w-full text-xs px-2.5 py-1 rounded border-[0.5px] border-custom-border-300 ${
+              className={`flex h-5 w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
               onClick={() => !storeStates && fetchProjectStates()}
@@ -129,7 +129,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
           </Combobox.Button>
           <Combobox.Options className="fixed z-10">
             <div
-              className={`border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+              className={`my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
               ref={setPopperElement}
               style={styles.popper}
               {...attributes.popper}
@@ -137,14 +137,14 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
               <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
                 <Search className="h-3.5 w-3.5 text-custom-text-300" />
                 <Combobox.Input
-                  className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+                  className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search"
                   displayValue={(assigned: any) => assigned?.name}
                 />
               </div>
-              <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+              <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
                 {isLoading ? (
                   <p className="text-center text-custom-text-200">Loading...</p>
                 ) : filteredOptions.length > 0 ? (
@@ -153,7 +153,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                           active ? "bg-custom-background-80" : ""
                         } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }

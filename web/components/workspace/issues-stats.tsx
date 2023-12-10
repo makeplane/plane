@@ -17,7 +17,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
   const { workspaceSlug } = router.query;
   return (
     <div className="grid grid-cols-1 rounded-[10px] border border-custom-border-200 bg-custom-background-100 lg:grid-cols-3">
-      <div className="grid grid-cols-1 divide-y divide-custom-border-200 border-b border-custom-border-200 lg:border-r lg:border-b-0">
+      <div className="grid grid-cols-1 divide-y divide-custom-border-200 border-b border-custom-border-200 lg:border-b-0 lg:border-r">
         <div className="flex">
           <div className="basis-1/2 p-4">
             <h4 className="text-sm">Issues assigned to you</h4>
@@ -77,7 +77,7 @@ export const IssuesStats: React.FC<Props> = ({ data }) => {
         </div>
       </div>
       <div className="p-4 lg:col-span-2">
-        <h3 className="mb-2 font-semibold capitalize flex items-center gap-2">
+        <h3 className="mb-2 flex items-center gap-2 font-semibold capitalize">
           Activity Graph
           <Tooltip
             tooltipContent="Your profile activity graph is a record of actions you've performed on issues across the workspace."

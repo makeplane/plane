@@ -39,8 +39,8 @@ export const IssueActivity: FC<Props> = (props) => {
   };
 
   return (
-    <div className="flex flex-col gap-3 border-t py-6 border-custom-border-200">
-      <div className="font-medium text-lg">Activity</div>
+    <div className="flex flex-col gap-3 border-t border-custom-border-200 py-6">
+      <div className="text-lg font-medium">Activity</div>
 
       <div className="space-y-2">
         <IssueActivityCard

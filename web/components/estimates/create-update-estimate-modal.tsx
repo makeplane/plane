@@ -233,7 +233,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                               ref={ref}
                               hasError={Boolean(errors.name)}
                               placeholder="Title"
-                              className="resize-none text-xl w-full"
+                              className="w-full resize-none text-xl"
                             />
                           )}
                         />
@@ -278,7 +278,7 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                                         id={`value${i + 1}`}
                                         name={`value${i + 1}`}
                                         placeholder={`Point ${i + 1}`}
-                                        className="rounded-l-none w-full"
+                                        className="w-full rounded-l-none"
                                         hasError={Boolean(errors[`value${i + 1}` as keyof FormValues])}
                                       />
                                     )}
@@ -299,8 +299,8 @@ export const CreateUpdateEstimateModal: React.FC<Props> = observer((props) => {
                             ? "Updating Estimate..."
                             : "Update Estimate"
                           : isSubmitting
-                          ? "Creating Estimate..."
-                          : "Create Estimate"}
+                            ? "Creating Estimate..."
+                            : "Create Estimate"}
                       </Button>
                     </div>
                   </form>

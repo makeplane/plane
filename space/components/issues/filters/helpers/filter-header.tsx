@@ -9,11 +9,11 @@ interface IFilterHeader {
 }
 
 export const FilterHeader = ({ title, isPreviewEnabled, handleIsPreviewEnabled }: IFilterHeader) => (
-  <div className="flex items-center justify-between gap-2 bg-custom-background-100 sticky top-0">
-    <div className="text-custom-text-300 text-xs font-medium flex-grow truncate">{title}</div>
+  <div className="sticky top-0 flex items-center justify-between gap-2 bg-custom-background-100">
+    <div className="flex-grow truncate text-xs font-medium text-custom-text-300">{title}</div>
     <button
       type="button"
-      className="flex-shrink-0 w-5 h-5 grid place-items-center rounded hover:bg-custom-background-80"
+      className="grid h-5 w-5 flex-shrink-0 place-items-center rounded hover:bg-custom-background-80"
       onClick={handleIsPreviewEnabled}
     >
       {isPreviewEnabled ? <ChevronUp size={14} /> : <ChevronDown size={14} />}

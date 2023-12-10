@@ -57,7 +57,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
     user: { currentProjectRole },
     workspaceMember: { workspaceMembers },
     trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace }
+    workspace: { currentWorkspace },
   } = useMobxStore();
 
   const {
@@ -93,7 +93,8 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           type: "success",
           message: "Member added successfully",
         });
-        postHogEventTracker("MEMBER_ADDED",
+        postHogEventTracker(
+          "MEMBER_ADDED",
           {
             ...res,
             state: "SUCCESS",
@@ -101,20 +102,21 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })
       .catch((error) => {
         console.log(error);
-        postHogEventTracker("MEMBER_ADDED",
+        postHogEventTracker(
+          "MEMBER_ADDED",
           {
             state: "FAILED",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })
@@ -177,7 +179,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-full p-4 text-center">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={React.Fragment}
               enter="ease-out duration-300"
@@ -197,10 +199,10 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                       <p className="text-sm text-custom-text-200">Invite members to work on your project.</p>
                     </div>
 
-                    <div className="space-y-4 mb-3">
+                    <div className="mb-3 space-y-4">
                       {fields.map((field, index) => (
-                        <div key={field.id} className="group grid grid-cols-12 gap-x-4 mb-1 text-sm items-start">
-                          <div className="flex flex-col gap-1 col-span-7">
+                        <div key={field.id} className="group mb-1 grid grid-cols-12 items-start gap-x-4 text-sm">
+                          <div className="col-span-7 flex flex-col gap-1">
                             <Controller
                               control={control}
                               name={`members.${index}.member_id`}
@@ -212,7 +214,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                   <CustomSearchSelect
                                     value={value}
                                     customButton={
-                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2 text-sm text-left">
+                                      <button className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-2 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
                                         {value && value !== "" ? (
                                           <div className="flex items-center gap-2">
                                             <Avatar name={selectedMember?.display_name} src={selectedMember?.avatar} />
@@ -234,14 +236,14 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                               }}
                             />
                             {errors.members && errors.members[index]?.member_id && (
-                              <span className="text-sm px-1 text-red-500">
+                              <span className="px-1 text-sm text-red-500">
                                 {errors.members[index]?.member_id?.message}
                               </span>
                             )}
                           </div>
 
-                          <div className="flex items-center justify-between gap-2 col-span-5">
-                            <div className="flex flex-col gap-1 w-full">
+                          <div className="col-span-5 flex items-center justify-between gap-2">
+                            <div className="flex w-full flex-col gap-1">
                               <Controller
                                 name={`members.${index}.role`}
                                 control={control}
@@ -250,7 +252,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                   <CustomSelect
                                     {...field}
                                     customButton={
-                                      <div className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 shadow-sm duration-300 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-80 focus:outline-none px-3 py-2.5 text-sm text-left">
+                                      <div className="flex w-full items-center justify-between gap-1 rounded-md border border-custom-border-200 px-3 py-2.5 text-left text-sm text-custom-text-200 shadow-sm duration-300 hover:bg-custom-background-80 hover:text-custom-text-100 focus:outline-none">
                                         <span className="capitalize">
                                           {field.value ? ROLE[field.value] : "Select role"}
                                         </span>
@@ -274,16 +276,16 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                                 )}
                               />
                               {errors.members && errors.members[index]?.role && (
-                                <span className="text-sm px-1 text-red-500">
+                                <span className="px-1 text-sm text-red-500">
                                   {errors.members[index]?.role?.message}
                                 </span>
                               )}
                             </div>
-                            <div className="flex flex-item w-6">
+                            <div className="flex-item flex w-6">
                               {fields.length > 1 && (
                                 <button
                                   type="button"
-                                  className="self-center place-items-center rounded"
+                                  className="place-items-center self-center rounded"
                                   onClick={() => remove(index)}
                                 >
                                   <X className="h-4 w-4 text-custom-text-200" />
@@ -299,7 +301,7 @@ export const SendProjectInvitationModal: React.FC<Props> = observer((props) => {
                   <div className="mt-5 flex items-center justify-between gap-2">
                     <button
                       type="button"
-                      className="flex items-center gap-2 outline-custom-primary bg-transparent text-custom-primary text-sm font-medium py-2 pr-3"
+                      className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-medium text-custom-primary outline-custom-primary"
                       onClick={appendField}
                     >
                       <Plus className="h-4 w-4" />

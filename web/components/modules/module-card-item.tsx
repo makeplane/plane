@@ -59,8 +59,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
-      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-      : `${module.completed_issues}/${moduleTotalIssues} Issues`
+        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+        : `${module.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -139,16 +139,16 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
       )}
       <DeleteModuleModal data={module} isOpen={deleteModal} onClose={() => setDeleteModal(false)} />
       <Link href={`/${workspaceSlug}/projects/${module.project}/modules/${module.id}`}>
-        <div className="flex flex-col justify-between p-4 h-44 w-full min-w-[250px]  text-sm rounded bg-custom-background-100 border border-custom-border-100 hover:shadow-md">
+        <div className="flex h-44 w-full min-w-[250px] flex-col justify-between rounded  border border-custom-border-100 bg-custom-background-100 p-4 text-sm hover:shadow-md">
           <div>
             <div className="flex items-center justify-between gap-2">
               <Tooltip tooltipContent={module.name} position="top">
-                <span className="text-base font-medium truncate">{module.name}</span>
+                <span className="truncate text-base font-medium">{module.name}</span>
               </Tooltip>
               <div className="flex items-center gap-2">
                 {moduleStatus && (
                   <span
-                    className="flex items-center justify-center text-xs text-center h-6 w-20 rounded-sm"
+                    className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
                     style={{
                       color: moduleStatus.color,
                       backgroundColor: `${moduleStatus.color}20`,
@@ -172,7 +172,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               </div>
               {module.members_detail.length > 0 && (
                 <Tooltip tooltipContent={`${module.members_detail.length} Members`}>
-                  <div className="flex items-center gap-1 cursor-default">
+                  <div className="flex cursor-default items-center gap-1">
                     <AvatarGroup showTooltip={false}>
                       {module.members_detail.map((member) => (
                         <Avatar key={member.id} name={member.display_name} src={member.avatar} />
@@ -187,7 +187,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               tooltipContent={isNaN(completionPercentage) ? "0" : `${completionPercentage.toFixed(0)}%`}
               position="top-left"
             >
-              <div className="flex items-center w-full">
+              <div className="flex w-full items-center">
                 <div
                   className="bar relative h-1.5 w-full rounded bg-custom-background-90"
                   style={{
@@ -195,7 +195,7 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                   }}
                 >
                   <div
-                    className="absolute top-0 left-0 h-1.5 rounded bg-blue-600 duration-300"
+                    className="absolute left-0 top-0 h-1.5 rounded bg-blue-600 duration-300"
                     style={{
                       width: `${isNaN(completionPercentage) ? 0 : completionPercentage.toFixed(0)}%`,
                     }}
@@ -216,10 +216,10 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
 
-              <div className="flex items-center gap-1.5 z-10">
+              <div className="z-10 flex items-center gap-1.5">
                 {module.is_favorite ? (
                   <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />
+                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
                   </button>
                 ) : (
                   <button type="button" onClick={handleAddToFavorites}>

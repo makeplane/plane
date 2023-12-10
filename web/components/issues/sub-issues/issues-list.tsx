@@ -88,7 +88,7 @@ export const SubIssuesRootList: React.FC<ISubIssuesRootList> = ({
           ))}
 
         <div
-          className={`absolute top-0 bottom-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
+          className={`absolute bottom-0 top-0  ${spacingLeft > 10 ? `border-l border-custom-border-100` : ``}`}
           style={{ left: `${spacingLeft - 12}px` }}
         />
       </div>

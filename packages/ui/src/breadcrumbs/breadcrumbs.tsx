@@ -12,13 +12,10 @@ type BreadcrumbsProps = {
 const Breadcrumbs = ({ children }: BreadcrumbsProps) => (
   <div className="flex items-center space-x-2">
     {React.Children.map(children, (child, index) => (
-      <div key={index} className="flex items-center flex-wrap gap-2.5">
+      <div key={index} className="flex flex-wrap items-center gap-2.5">
         {child}
         {index !== React.Children.count(children) - 1 && (
-          <ChevronRight
-            className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400"
-            aria-hidden="true"
-          />
+          <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-custom-text-400" aria-hidden="true" />
         )}
       </div>
     ))}
@@ -41,31 +38,21 @@ const BreadcrumbItem: React.FC<Props> = (props) => {
       ) : (
         <Tooltip tooltipContent={label} position="bottom">
           <li className="flex items-center space-x-2">
-            <div className="flex items-center flex-wrap gap-2.5">
+            <div className="flex flex-wrap items-center gap-2.5">
               {link ? (
                 <a
                   className="flex items-center gap-1 text-sm font-medium text-custom-text-300 hover:text-custom-text-100"
                   href={link}
                 >
                   {icon && (
-                    <div className="overflow-hidden w-5 h-5 flex justify-center items-center !text-[1rem]">
-                      {icon}
-                    </div>
+                    <div className="flex h-5 w-5 items-center justify-center overflow-hidden !text-[1rem]">{icon}</div>
                   )}
-                  <div className="relative block overflow-hidden truncate line-clamp-1 max-w-[150px]">
-                    {label}
-                  </div>
+                  <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
                 </a>
               ) : (
-                <div className="flex items-center gap-1 text-sm font-medium text-custom-text-100 cursor-default">
-                  {icon && (
-                    <div className="overflow-hidden w-5 h-5 flex justify-center items-center">
-                      {icon}
-                    </div>
-                  )}
-                  <div className="relative block overflow-hidden truncate line-clamp-1 max-w-[150px]">
-                    {label}
-                  </div>
+                <div className="flex cursor-default items-center gap-1 text-sm font-medium text-custom-text-100">
+                  {icon && <div className="flex h-5 w-5 items-center justify-center overflow-hidden">{icon}</div>}
+                  <div className="relative line-clamp-1 block max-w-[150px] overflow-hidden truncate">{label}</div>
                 </div>
               )}
             </div>

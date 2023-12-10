@@ -30,7 +30,7 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
   // store
   const {
     projectState: { markStateAsDefault, moveStatePosition },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   // states
@@ -82,7 +82,7 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
           </button>
         )}
 
-        <div className=" items-center gap-2.5 hidden group-hover:flex">
+        <div className=" hidden items-center gap-2.5 group-hover:flex">
           {state.default ? (
             <span className="text-xs text-custom-text-200">Default</span>
           ) : (
@@ -97,7 +97,7 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
           )}
           <button
             type="button"
-            className="grid place-items-center group-hover:opacity-100 opacity-0"
+            className="grid place-items-center opacity-0 group-hover:opacity-100"
             onClick={handleEditState}
           >
             <Pencil className="h-3.5 w-3.5 text-custom-text-200" />
@@ -105,15 +105,13 @@ export const ProjectSettingListItem: React.FC<Props> = observer((props) => {
 
           <button
             type="button"
-            className={`group-hover:opacity-100 opacity-0 ${
+            className={`opacity-0 group-hover:opacity-100 ${
               state.default || groupLength === 1 ? "cursor-not-allowed" : ""
             } grid place-items-center`}
-            onClick={
-              () => {
-                setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
-                handleDeleteState()
-              }
-            }
+            onClick={() => {
+              setTrackElement("PROJECT_SETTINGS_STATE_PAGE");
+              handleDeleteState();
+            }}
             disabled={state.default || groupLength === 1}
           >
             {state.default ? (

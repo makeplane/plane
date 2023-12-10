@@ -99,17 +99,13 @@ export const buttonStyling: IButtonStyling = {
   },
 };
 
-export const getButtonStyling = (
-  variant: TButtonVariant,
-  size: TButtonSizes,
-  disabled: boolean = false,
-): string => {
+export const getButtonStyling = (variant: TButtonVariant, size: TButtonSizes, disabled: boolean = false): string => {
   let _variant: string = ``;
   const currentVariant = buttonStyling[variant];
 
-  _variant = `${currentVariant.default} ${
-    disabled ? currentVariant.disabled : currentVariant.hover
-  } ${currentVariant.pressed}`;
+  _variant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover} ${
+    currentVariant.pressed
+  }`;
 
   let _size: string = ``;
   if (size) _size = buttonSizeStyling[size];

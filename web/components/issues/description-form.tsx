@@ -68,7 +68,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issue.id]); // TODO: verify the exhaustive-deps warning
 
   const handleDescriptionFormSubmit = useCallback(
     async (formData: Partial<IIssue>) => {
@@ -103,6 +104,8 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
   }, [issue, reset]);
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
       handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
@@ -143,7 +146,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
         )}
         {characterLimit && isAllowed && (
-          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
+          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200">
             <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
               {watch("name").length}
             </span>

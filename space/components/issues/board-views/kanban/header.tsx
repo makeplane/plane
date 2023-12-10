@@ -18,12 +18,12 @@ export const IssueKanBanHeader = observer(({ state }: { state: IIssueState }) =>
   if (stateGroup === null) return <></>;
 
   return (
-    <div className="pb-2 px-2 flex items-center gap-2">
-      <div className="w-3.5 h-3.5 flex justify-center items-center flex-shrink-0">
+    <div className="flex items-center gap-2 px-2 pb-2">
+      <div className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
-      <div className="font-semibold text-custom-text-200 capitalize mr-1 truncate">{state?.name}</div>
-      <span className="text-custom-text-300 rounded-full flex-shrink-0">
+      <div className="mr-1 truncate font-semibold capitalize text-custom-text-200">{state?.name}</div>
+      <span className="flex-shrink-0 rounded-full text-custom-text-300">
         {store.issue.getCountOfIssuesByState(state.id)}
       </span>
     </div>

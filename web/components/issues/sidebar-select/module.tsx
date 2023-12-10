@@ -68,10 +68,10 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
     query: module.name,
     content: (
       <div className="flex items-center gap-1.5 truncate">
-        <span className="flex justify-center items-center flex-shrink-0 w-3.5 h-3.5">
+        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
           <DiceIcon />
         </span>
-        <span className="truncate flex-grow">{module.name}</span>
+        <span className="flex-grow truncate">{module.name}</span>
       </div>
     ),
   }));
@@ -88,8 +88,8 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
           value === issueModule?.module_detail.id
             ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
             : handleModuleChange
-            ? handleModuleChange(value)
-            : handleModuleStoreChange(value);
+              ? handleModuleChange(value)
+              : handleModuleStoreChange(value);
         }}
         options={options}
         customButton={
@@ -100,7 +100,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
             >
               <button
                 type="button"
-                className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex items-center ${
+                className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
                   disableSelect ? "cursor-not-allowed" : ""
                 } max-w-[10rem]`}
               >
@@ -122,7 +122,7 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
         noChevron
         disabled={disableSelect}
       />
-      {isUpdating && <Spinner className="w-4 h-4" />}
+      {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );
 });

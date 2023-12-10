@@ -17,8 +17,8 @@ export const WorkspaceDashboardHeader = () => {
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} setIsOpen={setIsProductUpdatesModalOpen} />
-      <div className="relative flex w-full flex-shrink-0 flex-row z-10 h-[3.75rem] items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
-        <div className="flex items-center gap-2 whitespace-nowrap overflow-ellipsis">
+      <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+        <div className="flex items-center gap-2 overflow-ellipsis whitespace-nowrap">
           <div>
             <Breadcrumbs>
               <Breadcrumbs.BreadcrumbItem
@@ -34,13 +34,13 @@ export const WorkspaceDashboardHeader = () => {
             href="https://plane.so/changelog"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded flex-shrink-0"
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"
           >
             <Zap size={14} strokeWidth={2} fill="rgb(var(--color-text-100))" />
             {"What's New?"}
           </a>
           <a
-            className="flex items-center gap-1.5 bg-custom-background-80 text-xs font-medium py-1.5 px-3 rounded flex-shrink-0"
+            className="flex flex-shrink-0 items-center gap-1.5 rounded bg-custom-background-80 px-3 py-1.5 text-xs font-medium"
             href="https://github.com/makeplane/plane"
             target="_blank"
             rel="noopener noreferrer"

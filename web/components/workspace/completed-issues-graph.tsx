@@ -41,7 +41,7 @@ export const CompletedIssuesGraph: React.FC<Props> = ({ month, issues, setMonth 
       </div>
       <div className="rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-8 pl-4">
         {data.every((item) => item.completed_count === 0) ? (
-          <div className="flex items-center justify-center h-72">
+          <div className="flex h-72 items-center justify-center">
             <h4 className="text-[#d687ff]">No issues closed this month</h4>
           </div>
         ) : (

@@ -74,14 +74,14 @@ export const EmailForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
         Get on your flight deck
       </h1>
-      <p className="text-center text-sm text-onboarding-text-200 mt-2.5">
+      <p className="mt-2.5 text-center text-sm text-onboarding-text-200">
         Create or join a workspace. Start with your e-mail.
       </p>
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="mt-8 sm:w-96 mx-auto space-y-4">
+      <form onSubmit={handleSubmit(handleFormSubmit)} className="mx-auto mt-8 space-y-4 sm:w-96">
         <div className="space-y-1">
           <Controller
             control={control}
@@ -91,7 +91,7 @@ export const EmailForm: React.FC<Props> = (props) => {
               validate: (value) => checkEmailValidity(value) || "Email is invalid",
             }}
             render={({ field: { value, onChange, ref } }) => (
-              <div className="flex items-center relative rounded-md bg-onboarding-background-200">
+              <div className="relative flex items-center rounded-md bg-onboarding-background-200">
                 <Input
                   id="email"
                   name="email"
@@ -101,11 +101,11 @@ export const EmailForm: React.FC<Props> = (props) => {
                   ref={ref}
                   hasError={Boolean(errors.email)}
                   placeholder="orville.wright@firstflight.com"
-                  className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+                  className="h-[46px] w-full border border-onboarding-border-100 pr-12 placeholder:text-onboarding-text-400"
                 />
                 {value.length > 0 && (
                   <XCircle
-                    className="h-5 w-5 absolute stroke-custom-text-400 hover:cursor-pointer right-3"
+                    className="absolute right-3 h-5 w-5 stroke-custom-text-400 hover:cursor-pointer"
                     onClick={() => onChange("")}
                   />
                 )}

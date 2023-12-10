@@ -88,7 +88,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
         {(droppableProvided) => (
           <div
             id={`gantt-sidebar-${cycleId}`}
-            className="max-h-full overflow-y-auto pl-2.5 mt-3"
+            className="mt-3 max-h-full overflow-y-auto pl-2.5"
             ref={droppableProvided.innerRef}
             {...droppableProvided.droppableProps}
           >
@@ -106,7 +106,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                     >
                       {(provided, snapshot) => (
                         <div
-                          className={`h-11 ${snapshot.isDragging ? "bg-custom-background-80 rounded" : ""}`}
+                          className={`h-11 ${snapshot.isDragging ? "rounded bg-custom-background-80" : ""}`}
                           onMouseEnter={() => updateActiveBlock(block)}
                           onMouseLeave={() => updateActiveBlock(null)}
                           ref={provided.innerRef}
@@ -114,21 +114,21 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                         >
                           <div
                             id={`sidebar-block-${block.id}`}
-                            className={`group h-full w-full flex items-center gap-2 rounded-l px-2 pr-4 ${
+                            className={`group flex h-full w-full items-center gap-2 rounded-l px-2 pr-4 ${
                               activeBlock?.id === block.id ? "bg-custom-background-80" : ""
                             }`}
                           >
                             {enableReorder && (
                               <button
                                 type="button"
-                                className="rounded p-0.5 text-custom-sidebar-text-200 flex flex-shrink-0 opacity-0 group-hover:opacity-100"
+                                className="flex flex-shrink-0 rounded p-0.5 text-custom-sidebar-text-200 opacity-0 group-hover:opacity-100"
                                 {...provided.dragHandleProps}
                               >
                                 <MoreVertical className="h-3.5 w-3.5" />
-                                <MoreVertical className="h-3.5 w-3.5 -ml-5" />
+                                <MoreVertical className="-ml-5 h-3.5 w-3.5" />
                               </button>
                             )}
-                            <div className="flex-grow truncate h-full flex items-center justify-between gap-2">
+                            <div className="flex h-full flex-grow items-center justify-between gap-2 truncate">
                               <div className="flex-grow truncate">
                                 <IssueGanttSidebarBlock data={block.data} />
                               </div>
@@ -143,7 +143,7 @@ export const ProjectViewGanttSidebar: React.FC<Props> = (props) => {
                   );
                 })
               ) : (
-                <Loader className="pr-2 space-y-3">
+                <Loader className="space-y-3 pr-2">
                   <Loader.Item height="34px" />
                   <Loader.Item height="34px" />
                   <Loader.Item height="34px" />
