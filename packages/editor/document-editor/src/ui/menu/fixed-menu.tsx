@@ -1,5 +1,4 @@
 import { Editor } from "@tiptap/react";
-import { BoldIcon } from "lucide-react";
 import {
   BoldItem,
   BulletListItem,
@@ -17,15 +16,11 @@ import {
   HeadingTwoItem,
   HeadingThreeItem,
   findTableAncestor,
+  EditorMenuItem,
 } from "@plane/editor-core";
 import { UploadImage } from "@plane/editor-types";
 
-export interface BubbleMenuItem {
-  name: string;
-  isActive: () => boolean;
-  command: () => void;
-  icon: typeof BoldIcon;
-}
+export type BubbleMenuItem = EditorMenuItem;
 
 type EditorBubbleMenuProps = {
   editor: Editor;
