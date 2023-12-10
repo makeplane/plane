@@ -2,13 +2,7 @@ import { cn } from "@plane/editor-core";
 import { Editor } from "@tiptap/core";
 import tippy from "tippy.js";
 import { ReactRenderer } from "@tiptap/react";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { PriorityIcon } from "@plane/ui";
 
 const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
@@ -62,9 +56,7 @@ const IssueSuggestionList = ({
     let newDisplayedItems: { [key: string]: IssueSuggestionProps[] } = {};
     let totalLength = 0;
     sections.forEach((section) => {
-      newDisplayedItems[section] = items
-        .filter((item) => item.state === section)
-        .slice(0, 5);
+      newDisplayedItems[section] = items.filter((item) => item.state === section).slice(0, 5);
 
       totalLength += newDisplayedItems[section].length;
     });
@@ -79,7 +71,7 @@ const IssueSuggestionList = ({
         command(item);
       }
     },
-    [command, displayedItems, currentSection],
+    [command, displayedItems, currentSection]
   );
 
   useEffect(() => {
@@ -93,22 +85,17 @@ const IssueSuggestionList = ({
         // }
         if (e.key === "ArrowUp") {
           setSelectedIndex(
-            (selectedIndex + displayedItems[currentSection].length - 1) %
-              displayedItems[currentSection].length,
+            (selectedIndex + displayedItems[currentSection].length - 1) % displayedItems[currentSection].length
           );
           return true;
         }
         if (e.key === "ArrowDown") {
-          const nextIndex =
-            (selectedIndex + 1) % displayedItems[currentSection].length;
+          const nextIndex = (selectedIndex + 1) % displayedItems[currentSection].length;
           setSelectedIndex(nextIndex);
           if (nextIndex === 4) {
             const nextItems = items
               .filter((item) => item.state === currentSection)
-              .slice(
-                displayedItems[currentSection].length,
-                displayedItems[currentSection].length + 5,
-              );
+              .slice(displayedItems[currentSection].length, displayedItems[currentSection].length + 5);
             setDisplayedItems((prevItems) => ({
               ...prevItems,
               [currentSection]: [...prevItems[currentSection], ...nextItems],
@@ -138,29 +125,17 @@ const IssueSuggestionList = ({
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [
-    displayedItems,
-    selectedIndex,
-    setSelectedIndex,
-    selectItem,
-    currentSection,
-  ]);
+  }, [displayedItems, selectedIndex, setSelectedIndex, selectItem, currentSection]);
 
   useLayoutEffect(() => {
     const container = commandListContainer?.current;
     if (container) {
-      const sectionContainer = container?.querySelector(
-        `#${currentSection}-container`,
-      ) as HTMLDivElement;
+      const sectionContainer = container?.querySelector(`#${currentSection}-container`) as HTMLDivElement;
       if (sectionContainer) {
         updateScrollView(container, sectionContainer);
       }
-      const sectionScrollContainer = container?.querySelector(
-        `#${currentSection}`,
-      ) as HTMLElement;
-      const item = sectionScrollContainer?.children[
-        selectedIndex
-      ] as HTMLElement;
+      const sectionScrollContainer = container?.querySelector(`#${currentSection}`) as HTMLElement;
+      const item = sectionScrollContainer?.children[selectedIndex] as HTMLElement;
       if (item && sectionScrollContainer) {
         updateScrollView(sectionScrollContainer, item);
       }
@@ -171,56 +146,41 @@ const IssueSuggestionList = ({
     <div
       id="issue-list-container"
       ref={commandListContainer}
-      className="z-[10] fixed max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
+      className="fixed z-[10] max-h-80 w-60 overflow-y-auto overflow-x-hidden rounded-md border border-custom-border-100 bg-custom-background-100 px-1 shadow-custom-shadow-xs transition-all"
     >
       {sections.map((section) => {
         const sectionItems = displayedItems[section];
         return (
           sectionItems &&
           sectionItems.length > 0 && (
-            <div
-              className={"h-full w-full flex flex-col"}
-              key={`${section}-container`}
-              id={`${section}-container`}
-            >
+            <div className={"flex h-full w-full flex-col"} key={`${section}-container`} id={`${section}-container`}>
               <h6
                 className={
-                  "sticky top-0 z-[10] bg-custom-background-100 text-xs text-custom-text-400 font-medium px-2 py-1"
+                  "sticky top-0 z-[10] bg-custom-background-100 px-2 py-1 text-xs font-medium text-custom-text-400"
                 }
               >
                 {section}
               </h6>
-              <div
-                key={section}
-                id={section}
-                className={"max-h-[140px] overflow-y-scroll overflow-x-hidden"}
-              >
-                {sectionItems.map(
-                  (item: IssueSuggestionProps, index: number) => (
-                    <button
-                      className={cn(
-                        `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
-                        {
-                          "bg-custom-primary-100/5  text-custom-text-100":
-                            section === currentSection &&
-                            index === selectedIndex,
-                        },
-                      )}
-                      key={index}
-                      onClick={() => selectItem(index)}
-                    >
-                      <h5 className="text-xs text-custom-text-300 whitespace-nowrap">
-                        {item.identifier}
-                      </h5>
-                      <PriorityIcon priority={item.priority} />
-                      <div>
-                        <p className="flex-grow text-xs truncate">
-                          {item.title}
-                        </p>
-                      </div>
-                    </button>
-                  ),
-                )}
+              <div key={section} id={section} className={"max-h-[140px] overflow-x-hidden overflow-y-scroll"}>
+                {sectionItems.map((item: IssueSuggestionProps, index: number) => (
+                  <button
+                    className={cn(
+                      `flex w-full items-center space-x-2 rounded-md px-2 py-1 text-left text-sm text-custom-text-200 hover:bg-custom-primary-100/5 hover:text-custom-text-100`,
+                      {
+                        "bg-custom-primary-100/5  text-custom-text-100":
+                          section === currentSection && index === selectedIndex,
+                      }
+                    )}
+                    key={index}
+                    onClick={() => selectItem(index)}
+                  >
+                    <h5 className="whitespace-nowrap text-xs text-custom-text-300">{item.identifier}</h5>
+                    <PriorityIcon priority={item.priority} />
+                    <div>
+                      <p className="flex-grow truncate text-xs">{item.title}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           )

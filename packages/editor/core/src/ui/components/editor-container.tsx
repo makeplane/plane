@@ -7,11 +7,7 @@ interface EditorContainerProps {
   children: ReactNode;
 }
 
-export const EditorContainer = ({
-  editor,
-  editorClassNames,
-  children,
-}: EditorContainerProps) => (
+export const EditorContainer = ({ editor, editorClassNames, children }: EditorContainerProps) => (
   <div
     id="editor-container"
     onClick={() => {

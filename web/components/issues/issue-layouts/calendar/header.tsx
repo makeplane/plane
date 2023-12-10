@@ -89,7 +89,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 px-3 mb-4">
+    <div className="mb-4 flex items-center justify-between gap-2 px-3">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
           <ChevronLeft size={16} strokeWidth={2} />
@@ -102,7 +102,7 @@ export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="px-2.5 py-1 text-xs bg-custom-background-80 rounded font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
           onClick={handleToday}
         >
           Today

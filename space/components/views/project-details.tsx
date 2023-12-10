@@ -72,7 +72,7 @@ export const ProjectDetailsView = observer(() => {
             </div>
           ) : (
             projectStore?.activeBoard && (
-              <div className="relative w-full h-full overflow-hidden flex flex-col">
+              <div className="relative flex h-full w-full flex-col overflow-hidden">
                 {/* applied filters */}
                 <IssueAppliedFilters />
 

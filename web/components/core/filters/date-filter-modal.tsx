@@ -119,10 +119,10 @@ export const DateFilterModal: React.FC<Props> = ({ title, handleClose, isOpen, o
                     )}
                   </div>
                   {watch("filterType") === "range" && (
-                    <h6 className="text-xs flex items-center gap-1">
+                    <h6 className="flex items-center gap-1 text-xs">
                       <span className="text-custom-text-200">After:</span>
                       <span>{renderShortDateWithYearFormat(watch("date1"))}</span>
-                      <span className="text-custom-text-200 ml-1">Before:</span>
+                      <span className="ml-1 text-custom-text-200">Before:</span>
                       {!isInvalid && <span>{renderShortDateWithYearFormat(watch("date2"))}</span>}
                     </h6>
                   )}

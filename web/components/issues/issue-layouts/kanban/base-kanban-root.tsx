@@ -226,25 +226,25 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
       />
 
       {showLoader && issueStore?.loader === "init-loader" && (
-        <div className="fixed top-16 right-2 z-30 bg-custom-background-80 shadow-custom-shadow-sm w-10 h-10 rounded flex justify-center items-center">
-          <Spinner className="w-5 h-5" />
+        <div className="fixed right-2 top-16 z-30 flex h-10 w-10 items-center justify-center rounded bg-custom-background-80 shadow-custom-shadow-sm">
+          <Spinner className="h-5 w-5" />
         </div>
       )}
 
-      <div className={`relative min-w-full w-max min-h-full h-max bg-custom-background-90 px-3`}>
+      <div className={`relative h-max min-h-full w-max min-w-full bg-custom-background-90 px-3`}>
         <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
           <div
             className={`fixed left-1/2 -translate-x-1/2 ${
               isDragStarted ? "z-40" : ""
-            } w-72 top-3 flex items-center justify-center mx-3`}
+            } top-3 mx-3 flex w-72 items-center justify-center`}
           >
             <Droppable droppableId="issue-trash-box" isDropDisabled={!isDragStarted}>
               {(provided, snapshot) => (
                 <div
                   className={`${
                     isDragStarted ? `opacity-100` : `opacity-0`
-                  } w-full flex items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
-                    snapshot.isDraggingOver ? "bg-red-500 blur-2xl opacity-70" : ""
+                  } flex w-full items-center justify-center rounded border-2 border-red-500/20 bg-custom-background-100 px-3 py-5 text-xs font-medium italic text-red-500 ${
+                    snapshot.isDraggingOver ? "bg-red-500 opacity-70 blur-2xl" : ""
                   } transition duration-300`}
                   ref={provided.innerRef}
                   {...provided.droppableProps}

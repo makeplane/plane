@@ -44,10 +44,10 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
     query: project.name,
     content: (
       <div className="flex items-center gap-1.5 truncate">
-        <span className="grid place-items-center flex-shrink-0">
+        <span className="grid flex-shrink-0 place-items-center">
           {project.emoji ? renderEmoji(project.emoji) : project.icon_prop ? renderEmoji(project.icon_prop) : null}
         </span>
-        <span className="truncate flex-grow">{project.name}</span>
+        <span className="flex-grow truncate">{project.name}</span>
       </div>
     ),
   }));
@@ -57,12 +57,12 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
 
   const label = selectedProject ? (
     <div className="flex items-center gap-1.5">
-      <span className="flex items-center h-3 w-3">
+      <span className="flex h-3 w-3 items-center">
         {selectedProject.emoji
           ? renderEmoji(selectedProject.emoji)
           : selectedProject.icon_prop
-          ? renderEmoji(selectedProject.icon_prop)
-          : null}
+            ? renderEmoji(selectedProject.icon_prop)
+            : null}
       </span>
       <div className="truncate">{selectedProject.identifier}</div>
     </div>
@@ -78,14 +78,14 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
         <button
           ref={setReferenceElement}
           type="button"
-          className="flex items-center justify-center gap-1 w-full text-xs px-2 py-1 rounded text-custom-text-300  border-[0.5px] border-custom-border-300   hover:bg-custom-background-80"
+          className="flex w-full items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1  text-xs text-custom-text-300   hover:bg-custom-background-80"
         >
           {label}
         </button>
       </Combobox.Button>
       <Combobox.Options>
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1`}
+          className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -93,14 +93,14 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
           <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
             <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Combobox.Input
-              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
               displayValue={(assigned: any) => assigned?.name}
             />
           </div>
-          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+          <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
@@ -108,7 +108,7 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                         active && !selected ? "bg-custom-background-80" : ""
                       } w-full truncate ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }

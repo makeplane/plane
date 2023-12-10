@@ -138,10 +138,10 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
     <>
       <SwitchOrDeleteAccountModal isOpen={showDeleteAccountModal} onClose={() => setShowDeleteAccountModal(false)} />
       {user && step !== null ? (
-        <div className={`bg-onboarding-gradient-100 h-full flex flex-col fixed w-full`}>
-          <div className="sm:pt-14 sm:pb-8 py-10 px-4 sm:px-7 md:px-14 lg:pl-28 lg:pr-24 flex items-center">
-            <div className="w-full flex items-center justify-between font-semibold ">
-              <div className="text-3xl flex items-center gap-x-1">
+        <div className={`fixed flex h-full w-full flex-col bg-onboarding-gradient-100`}>
+          <div className="flex items-center px-4 py-10 sm:px-7 sm:pb-8 sm:pt-14 md:px-14 lg:pl-28 lg:pr-24">
+            <div className="flex w-full items-center justify-between font-semibold ">
+              <div className="flex items-center gap-x-1 text-3xl">
                 <Image src={BluePlaneLogoWithoutText} alt="Plane Logo" height={30} width={30} />
                 Plane
               </div>
@@ -151,15 +151,15 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                   control={control}
                   name="full_name"
                   render={({ field: { value } }) => (
-                    <div className="pr-4 flex gap-x-2 items-center">
+                    <div className="flex items-center gap-x-2 pr-4">
                       {step != 1 && (
                         <Avatar
                           name={
                             currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                              ? value
-                              : currentUser?.email
+                                ? value
+                                : currentUser?.email
                           }
                           src={currentUser?.avatar}
                           size={35}
@@ -170,12 +170,12 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                       )}
                       <div>
                         {step != 1 && (
-                          <p className="text-sm text-custom-text-200 font-medium">
+                          <p className="text-sm font-medium text-custom-text-200">
                             {currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                              ? value
-                              : null}
+                                ? value
+                                : null}
                           </p>
                         )}
 
@@ -195,7 +195,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             <Menu.Items className={"absolute min-w-full"}>
                               <Menu.Item as="div">
                                 <div
-                                  className="hover:cursor-pointer bg-onboarding-background-200 mr-auto mt-2 rounded-md font-normal text-red-400 text-base p-3 shadow-sm border border-red-400"
+                                  className="mr-auto mt-2 rounded-md border border-red-400 bg-onboarding-background-200 p-3 text-base font-normal text-red-400 shadow-sm hover:cursor-pointer"
                                   onClick={() => {
                                     setShowDeleteAccountModal(true);
                                   }}
@@ -213,8 +213,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
               </div>
             </div>
           </div>
-          <div className="w-full h-full lg:w-4/5 xl:w-3/4 bg-onboarding-gradient-100 pt-4 px-4 sm:w-4/5 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 overflow-auto">
-            <div className={`h-full w-full bg-onboarding-gradient-200 rounded-t-md overflow-auto`}>
+          <div className="mx-auto h-full w-full overflow-auto rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 lg:w-4/5 xl:w-3/4">
+            <div className={`h-full w-full overflow-auto rounded-t-md bg-onboarding-gradient-200`}>
               {step === 1 ? (
                 <JoinWorkspaces
                   setTryDiffAccount={() => {
@@ -237,7 +237,7 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
           </div>
         </div>
       ) : (
-        <div className="h-screen w-full grid place-items-center">
+        <div className="grid h-screen w-full place-items-center">
           <Spinner />
         </div>
       )}

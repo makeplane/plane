@@ -8,7 +8,7 @@ import { Loader } from "@plane/ui";
 import { IIssueLabel } from "types/issue";
 
 const LabelIcons = ({ color }: { color: string }) => (
-  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
 );
 
 type Props = {
@@ -59,7 +59,7 @@ export const FilterLabels: React.FC<Props> = (props) => {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="text-custom-primary-100 text-xs font-medium ml-8"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -67,7 +67,7 @@ export const FilterLabels: React.FC<Props> = (props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

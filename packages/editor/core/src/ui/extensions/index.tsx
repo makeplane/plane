@@ -22,11 +22,7 @@ import { CustomKeymap } from "./keymap";
 import { CustomCodeBlock } from "./code";
 import { CustomQuoteExtension } from "./quote";
 import { ListKeymap } from "./custom-list-keymap";
-import {
-  IMentionSuggestion,
-  DeleteImage,
-  RestoreImage,
-} from "@plane/editor-types";
+import { IMentionSuggestion, DeleteImage, RestoreImage } from "@plane/editor-types";
 
 export const CoreEditorExtensions = (
   mentionConfig: {
@@ -109,9 +105,5 @@ export const CoreEditorExtensions = (
   TableHeader,
   TableCell,
   TableRow,
-  Mentions(
-    mentionConfig.mentionSuggestions,
-    mentionConfig.mentionHighlights,
-    false
-  ),
+  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, false),
 ];

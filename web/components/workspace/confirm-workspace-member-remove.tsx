@@ -62,13 +62,13 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem] bg-custom-background-100">
-                <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]">
+                <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </div>
-                    <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                         {currentUser?.id === data?.memberId ? "Leave workspace?" : `Remove ${data?.display_name}?`}
                       </Dialog.Title>
@@ -99,8 +99,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving..."
                         : "Leave"
                       : isRemoving
-                      ? "Removing..."
-                      : "Remove"}
+                        ? "Removing..."
+                        : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

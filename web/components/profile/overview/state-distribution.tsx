@@ -18,9 +18,9 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
   return (
     <div className="flex flex-col space-y-2">
       <h3 className="text-lg font-medium">Issues by State</h3>
-      <div className="flex-grow border border-custom-border-100 rounded p-7">
+      <div className="flex-grow rounded border border-custom-border-100 p-7">
         {userProfile.state_distribution.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+          <div className="grid grid-cols-1 gap-x-6 md:grid-cols-2">
             <div>
               <PieGraph
                 data={
@@ -42,7 +42,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                 colors={(datum) => datum.data.color}
                 tooltip={(datum) => (
                   <div className="flex items-center gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 p-2 text-xs">
-                    <span className="text-custom-text-200 capitalize">{datum.datum.label} issues:</span>{" "}
+                    <span className="capitalize text-custom-text-200">{datum.datum.label} issues:</span>{" "}
                     {datum.datum.value}
                   </div>
                 )}
@@ -55,7 +55,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
               />
             </div>
             <div className="flex items-center">
-              <div className="space-y-4 w-full">
+              <div className="w-full space-y-4">
                 {stateDistribution.map((group) => (
                   <div key={group.state_group} className="flex items-center justify-between gap-2 text-xs">
                     <div className="flex items-center gap-1.5">
@@ -65,7 +65,7 @@ export const ProfileStateDistribution: React.FC<Props> = ({ stateDistribution, u
                           backgroundColor: STATE_GROUP_COLORS[group.state_group],
                         }}
                       />
-                      <div className="capitalize whitespace-nowrap">{group.state_group}</div>
+                      <div className="whitespace-nowrap capitalize">{group.state_group}</div>
                     </div>
                     <div>{group.state_count}</div>
                   </div>

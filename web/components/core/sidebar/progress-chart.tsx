@@ -67,7 +67,7 @@ const ProgressChart: React.FC<Props> = ({ distribution, startDate, endDate, tota
   };
 
   return (
-    <div className="w-full flex justify-center items-center">
+    <div className="flex w-full items-center justify-center">
       <LineGraph
         animate
         curve="monotoneX"

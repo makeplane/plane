@@ -15,22 +15,14 @@ interface ImageNode extends ProseMirrorNode {
 const deleteKey = new PluginKey("delete-image");
 const IMAGE_NODE_TYPE = "image";
 
-const ImageExtension = (
-  deleteImage: DeleteImage,
-  restoreFile: RestoreImage,
-  cancelUploadImage?: () => any,
-) =>
+const ImageExtension = (deleteImage: DeleteImage, restoreFile: RestoreImage, cancelUploadImage?: () => any) =>
   ImageExt.extend({
     addProseMirrorPlugins() {
       return [
         UploadImagesPlugin(cancelUploadImage),
         new Plugin({
           key: deleteKey,
-          appendTransaction: (
-            transactions: readonly Transaction[],
-            oldState: EditorState,
-            newState: EditorState,
-          ) => {
+          appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
             const newImageSources = new Set<string>();
             newState.doc.descendants((node) => {
               if (node.type.name === IMAGE_NODE_TYPE) {
@@ -67,11 +59,7 @@ const ImageExtension = (
         }),
         new Plugin({
           key: new PluginKey("imageRestoration"),
-          appendTransaction: (
-            transactions: readonly Transaction[],
-            oldState: EditorState,
-            newState: EditorState,
-          ) => {
+          appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
             const oldImageSources = new Set<string>();
             oldState.doc.descendants((node) => {
               if (node.type.name === IMAGE_NODE_TYPE) {

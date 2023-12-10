@@ -21,30 +21,30 @@ export const ApiTokenListItem: React.FC<Props> = (props) => {
   return (
     <>
       <DeleteApiTokenModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} tokenId={token.id} />
-      <div className="group relative border-b border-custom-border-200 flex flex-col justify-center py-3 px-4">
+      <div className="group relative flex flex-col justify-center border-b border-custom-border-200 px-4 py-3">
         <Tooltip tooltipContent="Delete token">
           <button
             onClick={() => setDeleteModalOpen(true)}
-            className="hidden group-hover:grid absolute right-4 place-items-center"
+            className="absolute right-4 hidden place-items-center group-hover:grid"
           >
             <XCircle className="h-4 w-4 text-red-500" />
           </button>
         </Tooltip>
-        <div className="flex items-center w-4/5">
-          <h5 className="text-sm font-medium truncate">{token.label}</h5>
+        <div className="flex w-4/5 items-center">
+          <h5 className="truncate text-sm font-medium">{token.label}</h5>
           <span
             className={`${
               token.is_active ? "bg-green-500/10 text-green-500" : "bg-custom-background-80 text-custom-text-400"
-            } flex items-center px-2 h-4 rounded-sm max-h-fit ml-2 text-xs font-medium`}
+            } ml-2 flex h-4 max-h-fit items-center rounded-sm px-2 text-xs font-medium`}
           >
             {token.is_active ? "Active" : "Expired"}
           </span>
         </div>
-        <div className="flex flex-col justify-center w-full mt-1">
+        <div className="mt-1 flex w-full flex-col justify-center">
           {token.description.trim() !== "" && (
-            <p className="text-sm mb-1 break-words max-w-[70%]">{token.description}</p>
+            <p className="mb-1 max-w-[70%] break-words text-sm">{token.description}</p>
           )}
-          <p className="text-xs mb-1 leading-6 text-custom-text-400">
+          <p className="mb-1 text-xs leading-6 text-custom-text-400">
             {token.is_active
               ? token.expired_at
                 ? `Expires ${renderFormattedDate(token.expired_at!)}`

@@ -120,7 +120,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
             <span
               className={`flex ${
                 isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-              } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
+              } items-center gap-2 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
             >
               Select Label
             </span>
@@ -132,7 +132,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
             type="button"
             className={`flex ${
               isNotAllowed || uneditable ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-            } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
+            } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
             onClick={() => setCreateLabelForm((prevData) => !prevData)}
             disabled={uneditable}
           >

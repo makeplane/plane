@@ -9,15 +9,7 @@ export const IssueEmbedSuggestions = Extension.create({
   addOptions() {
     return {
       suggestion: {
-        command: ({
-          editor,
-          range,
-          props,
-        }: {
-          editor: Editor;
-          range: Range;
-          props: any;
-        }) => {
+        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
         },
       },

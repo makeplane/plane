@@ -27,7 +27,7 @@
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
-    "turbo": "^1.10.16"
+    "turbo": "^1.11.1"
   },
   "resolutions": {
     "@types/react": "18.2.42"

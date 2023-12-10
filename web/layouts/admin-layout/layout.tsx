@@ -28,7 +28,7 @@ export const InstanceAdminLayout: FC<IInstanceAdminLayout> = observer((props) =>
         <AdminAuthWrapper>
           <div className="relative flex h-screen w-full overflow-hidden">
             <InstanceAdminSidebar />
-            <main className="relative flex flex-col h-full w-full overflow-hidden bg-custom-background-100">
+            <main className="relative flex h-full w-full flex-col overflow-hidden bg-custom-background-100">
               <InstanceAdminHeader />
               <div className="h-full w-full overflow-hidden px-10 py-12">
                 <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll">

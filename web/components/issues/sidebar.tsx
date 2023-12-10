@@ -278,7 +278,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           }}
         />
       )}
-      <div className="h-full w-full flex flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
+      <div className="flex h-full w-full flex-col divide-y-2 divide-custom-border-200 overflow-hidden">
         <div className="flex items-center justify-between px-5 pb-3">
           <div className="flex items-center gap-x-2">
             {currentIssueState ? (
@@ -290,7 +290,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
             ) : inboxIssueId ? (
               <StateGroupIcon className="h-4 w-4" stateGroup="backlog" color="#ff7700" />
             ) : null}
-            <h4 className="text-lg text-custom-text-300 font-medium">
+            <h4 className="text-lg font-medium text-custom-text-300">
               {issueDetail?.project_detail?.identifier}-{issueDetail?.sequence_id}
             </h4>
           </div>
@@ -333,7 +333,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
           </div>
         </div>
 
-        <div className="h-full w-full px-5 overflow-y-auto">
+        <div className="h-full w-full overflow-y-auto px-5">
           <div className={`divide-y-2 divide-custom-border-200 ${uneditable ? "opacity-60" : ""}`}>
             {showFirstSection && (
               <div className="py-1">
@@ -546,7 +546,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                                 start_date: val,
                               })
                             }
-                            className="bg-custom-background-80 border-none"
+                            className="border-none bg-custom-background-80"
                             maxDate={maxDate ?? undefined}
                             disabled={!isAllowed || uneditable}
                           />
@@ -574,7 +574,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                                 target_date: val,
                               })
                             }
-                            className="bg-custom-background-80 border-none"
+                            className="border-none bg-custom-background-80"
                             minDate={minDate ?? undefined}
                             disabled={!isAllowed || uneditable}
                           />

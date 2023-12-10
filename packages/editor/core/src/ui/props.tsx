@@ -5,9 +5,7 @@ import { startImageUpload } from "./plugins/upload-image";
 
 export function CoreEditorProps(
   uploadFile: UploadImage,
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ): EditorProps {
   return {
     attributes: {
@@ -34,11 +32,7 @@ export function CoreEditorProps(
           }
         }
       }
-      if (
-        event.clipboardData &&
-        event.clipboardData.files &&
-        event.clipboardData.files[0]
-      ) {
+      if (event.clipboardData && event.clipboardData.files && event.clipboardData.files[0]) {
         event.preventDefault();
         const file = event.clipboardData.files[0];
         const pos = view.state.selection.from;
@@ -57,12 +51,7 @@ export function CoreEditorProps(
           }
         }
       }
-      if (
-        !moved &&
-        event.dataTransfer &&
-        event.dataTransfer.files &&
-        event.dataTransfer.files[0]
-      ) {
+      if (!moved && event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0]) {
         event.preventDefault();
         const file = event.dataTransfer.files[0];
         const coordinates = view.posAtCoords({
@@ -70,13 +59,7 @@ export function CoreEditorProps(
           top: event.clientY,
         });
         if (coordinates) {
-          startImageUpload(
-            file,
-            view,
-            coordinates.pos - 1,
-            uploadFile,
-            setIsSubmitting,
-          );
+          startImageUpload(file, view, coordinates.pos - 1, uploadFile, setIsSubmitting);
         }
         return true;
       }

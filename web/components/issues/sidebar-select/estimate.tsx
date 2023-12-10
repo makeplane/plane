@@ -21,7 +21,7 @@ export const SidebarEstimateSelect: React.FC<Props> = ({ value, onChange, disabl
     <CustomSelect
       value={value}
       customButton={
-        <div className="flex items-center gap-1.5 text-xs bg-custom-background-80 rounded px-2.5 py-0.5">
+        <div className="flex items-center gap-1.5 rounded bg-custom-background-80 px-2.5 py-0.5 text-xs">
           {currentEstimate ? (
             <>
               <Triangle className={`h-3 w-3 ${value !== null ? "text-custom-text-100" : "text-custom-text-200"}`} />

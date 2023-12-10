@@ -30,22 +30,22 @@ export const GlobalViewListItem: React.FC<Props> = observer((props) => {
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
+      <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/workspace-views/${view.id}`}>
-          <div className="flex items-center justify-between relative rounded p-4 w-full">
-            <div className="flex items-center justify-between w-full">
+          <div className="relative flex w-full items-center justify-between rounded p-4">
+            <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="grid place-items-center h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
+                <div className="grid h-10 w-10 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
                   <PhotoFilterIcon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col">
-                  <p className="truncate text-sm leading-4 font-medium">{truncateText(view.name, 75)}</p>
+                  <p className="truncate text-sm font-medium leading-4">{truncateText(view.name, 75)}</p>
                   {view?.description && <p className="text-xs text-custom-text-200">{view.description}</p>}
                 </div>
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 hidden group-hover:block">
+                  <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
                   <CustomMenu width="auto" ellipsis>

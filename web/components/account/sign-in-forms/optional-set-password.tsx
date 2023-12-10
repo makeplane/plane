@@ -39,12 +39,12 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">Set a password</h1>
-      <p className="text-center text-sm text-onboarding-text-200 px-20 mt-2.5">
+      <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">Set a password</h1>
+      <p className="mt-2.5 px-20 text-center text-sm text-onboarding-text-200">
         If you{"'"}d like to do away with codes, set a password here.
       </p>
 
-      <form className="mt-5 sm:w-96 mx-auto space-y-4">
+      <form className="mx-auto mt-5 space-y-4 sm:w-96">
         <Controller
           control={control}
           name="email"
@@ -62,7 +62,7 @@ export const OptionalSetPasswordForm: React.FC<Props> = (props) => {
               ref={ref}
               hasError={Boolean(errors.email)}
               placeholder="orville.wright@firstflight.com"
-              className="w-full h-[46px] text-onboarding-text-400 border border-onboarding-border-100 pr-12"
+              className="h-[46px] w-full border border-onboarding-border-100 pr-12 text-onboarding-text-400"
               disabled
             />
           )}

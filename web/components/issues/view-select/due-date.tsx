@@ -47,12 +47,12 @@ export const ViewDueDateSelect: React.FC<Props> = ({
       position={tooltipPosition}
     >
       <div
-        className={`group flex-shrink-0 max-w-[6.5rem] ${className} ${
+        className={`group max-w-[6.5rem] flex-shrink-0 ${className} ${
           issue.target_date === null
             ? ""
             : issue.target_date < new Date().toISOString()
-            ? "text-red-600"
-            : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
+              ? "text-red-600"
+              : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
         }`}
       >
         <CustomDatePicker
@@ -61,7 +61,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           className={`bg-transparent ${issue?.target_date ? "w-[6.5rem]" : "w-[5rem] text-center"}`}
           customInput={
             <div
-              className={`flex items-center justify-center gap-2 px-2 py-1 text-xs cursor-pointer rounded border border-custom-border-200 shadow-sm duration-200 hover:bg-custom-background-80 ${
+              className={`flex cursor-pointer items-center justify-center gap-2 rounded border border-custom-border-200 px-2 py-1 text-xs shadow-sm duration-200 hover:bg-custom-background-80 ${
                 issue.target_date ? "pr-6 text-custom-text-300" : "text-custom-text-400"
               }`}
             >

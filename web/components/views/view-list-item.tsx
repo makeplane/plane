@@ -55,22 +55,22 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
         />
       )}
       <DeleteProjectViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
-      <div className="group hover:bg-custom-background-90 border-b border-custom-border-200">
+      <div className="group border-b border-custom-border-200 hover:bg-custom-background-90">
         <Link href={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}>
-          <div className="flex items-center justify-between relative rounded p-4 w-full">
-            <div className="flex items-center justify-between w-full">
+          <div className="relative flex w-full items-center justify-between rounded p-4">
+            <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-4 overflow-hidden">
-                <div className="grid place-items-center flex-shrink-0 h-10 w-10 rounded bg-custom-background-90 group-hover:bg-custom-background-100">
+                <div className="grid h-10 w-10 flex-shrink-0 place-items-center rounded bg-custom-background-90 group-hover:bg-custom-background-100">
                   <PhotoFilterIcon className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col overflow-hidden ">
-                  <p className="text-sm leading-4 font-medium truncate  break-all">{view.name}</p>
-                  {view?.description && <p className="text-xs text-custom-text-200 break-all">{view.description}</p>}
+                  <p className="truncate break-all text-sm font-medium  leading-4">{view.name}</p>
+                  {view?.description && <p className="break-all text-xs text-custom-text-200">{view.description}</p>}
                 </div>
               </div>
               <div className="ml-2 flex flex-shrink-0">
                 <div className="flex items-center gap-4">
-                  <p className="rounded bg-custom-background-80 py-1 px-2 text-xs text-custom-text-200 hidden group-hover:block">
+                  <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
 
@@ -84,7 +84,7 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                       }}
                       className="grid place-items-center"
                     >
-                      <StarIcon className="h-3.5 w-3.5 text-orange-400 fill-orange-400" strokeWidth={2} />
+                      <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
                     </button>
                   ) : (
                     <button

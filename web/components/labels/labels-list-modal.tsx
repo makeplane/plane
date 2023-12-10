@@ -88,7 +88,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
               <Combobox>
                 <div className="relative m-1">
                   <Search
-                    className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                    className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                     aria-hidden="true"
                   />
                   <Combobox.Input
@@ -102,7 +102,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                   {filteredLabels.length > 0 && (
                     <li className="p-2">
                       {query === "" && (
-                        <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
+                        <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Labels</h2>
                       )}
                       <ul className="text-sm text-gray-700">
                         {filteredLabels.map((label) => {
@@ -144,7 +144,7 @@ export const LabelsListModal: React.FC<Props> = observer((props) => {
                 </Combobox.Options>
 
                 {query !== "" && filteredLabels.length === 0 && (
-                  <div className="py-14 px-6 text-center sm:px-14">
+                  <div className="px-6 py-14 text-center sm:px-14">
                     <LayerStackIcon
                       className="mx-auto h-6 w-6 text-custom-text-100 text-opacity-40"
                       aria-hidden="true"

@@ -38,7 +38,7 @@ type Props = {
 };
 
 export const WebhookIndividualEventOptions = ({ control }: Props) => (
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 gap-y-8 px-6">
+  <div className="grid grid-cols-1 gap-x-4 gap-y-8 px-6 lg:grid-cols-2">
     {INDIVIDUAL_WEBHOOK_OPTIONS.map((option) => (
       <Controller
         key={option.key}
@@ -58,7 +58,7 @@ export const WebhookIndividualEventOptions = ({ control }: Props) => (
                 {option.label}
               </label>
             </div>
-            <p className="text-xs text-custom-text-300 ml-6 mt-0.5">{option.description}</p>
+            <p className="ml-6 mt-0.5 text-xs text-custom-text-300">{option.description}</p>
           </div>
         )}
       />

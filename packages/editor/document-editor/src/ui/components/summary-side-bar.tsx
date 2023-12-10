@@ -8,14 +8,10 @@ interface ISummarySideBarProps {
   sidePeekVisible: boolean;
 }
 
-export const SummarySideBar = ({
-  editor,
-  markings,
-  sidePeekVisible,
-}: ISummarySideBarProps) => {
+export const SummarySideBar = ({ editor, markings, sidePeekVisible }: ISummarySideBarProps) => {
   return (
     <div
-      className={`h-full p-5 transition-all duration-200 transform overflow-hidden ${
+      className={`h-full transform overflow-hidden p-5 transition-all duration-200 ${
         sidePeekVisible ? "translate-x-0" : "-translate-x-full"
       }`}
     >

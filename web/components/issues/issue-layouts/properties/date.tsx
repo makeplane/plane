@@ -42,13 +42,13 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
           <>
             <Popover.Button
               ref={dropdownBtn}
-              className={`px-2.5 py-1 h-5 flex items-center rounded border-[0.5px] border-custom-border-300 duration-300 outline-none w-full ${
+              className={`flex h-5 w-full items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 outline-none duration-300 ${
                 disabled
-                  ? "cursor-not-allowed text-custom-text-200 pointer-events-none"
+                  ? "pointer-events-none cursor-not-allowed text-custom-text-200"
                   : "cursor-pointer hover:bg-custom-background-80"
               }`}
             >
-              <div className="overflow-hidden flex justify-center items-center gap-2">
+              <div className="flex items-center justify-center gap-2 overflow-hidden">
                 <Calendar className="h-3 w-3" strokeWidth={2} />
                 {value && (
                   <>
@@ -57,7 +57,7 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
                     </Tooltip>
 
                     <div
-                      className="flex-shrink-0 flex justify-center items-center"
+                      className="flex flex-shrink-0 items-center justify-center"
                       onClick={() => {
                         if (onChange) onChange(null);
                       }}
@@ -69,10 +69,10 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
               </div>
             </Popover.Button>
 
-            <div className={`${open ? "fixed z-20 top-0 left-0 h-full w-full cursor-auto" : ""}`}>
+            <div className={`${open ? "fixed left-0 top-0 z-20 h-full w-full cursor-auto" : ""}`}>
               <Popover.Panel
                 ref={dropdownOptions}
-                className={`absolute z-10 rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none whitespace-nowrap mt-1`}
+                className={`absolute z-10 mt-1 whitespace-nowrap rounded bg-custom-background-100 text-xs shadow-lg focus:outline-none`}
               >
                 {({ close }) => (
                   <DatePicker

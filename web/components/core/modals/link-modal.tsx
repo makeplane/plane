@@ -99,7 +99,7 @@ export const LinkModal: FC<Props> = (props) => {
                       </Dialog.Title>
                       <div className="mt-2 space-y-3">
                         <div>
-                          <label htmlFor="url" className="text-custom-text-200 mb-2">
+                          <label htmlFor="url" className="mb-2 text-custom-text-200">
                             URL
                           </label>
                           <Controller
@@ -124,7 +124,7 @@ export const LinkModal: FC<Props> = (props) => {
                           />
                         </div>
                         <div>
-                          <label htmlFor="title" className="text-custom-text-200 mb-2">
+                          <label htmlFor="title" className="mb-2 text-custom-text-200">
                             {`Title (optional)`}
                           </label>
                           <Controller
@@ -158,8 +158,8 @@ export const LinkModal: FC<Props> = (props) => {
                           ? "Updating Link..."
                           : "Update Link"
                         : isSubmitting
-                        ? "Adding Link..."
-                        : "Add Link"}
+                          ? "Adding Link..."
+                          : "Add Link"}
                     </Button>
                   </div>
                 </form>

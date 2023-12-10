@@ -43,7 +43,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
     query: project.name + project.identifier,
     content: (
       <div className="flex items-center gap-2">
-        <span className="text-custom-text-200 text-[0.65rem]">{project.identifier}</span>
+        <span className="text-[0.65rem] text-custom-text-200">{project.identifier}</span>
         {project.name}
       </div>
     ),
@@ -144,10 +144,10 @@ export const Exporter: React.FC<Props> = observer((props) => {
                   </div>
                   <div
                     onClick={() => setMultiple(!multiple)}
-                    className="flex items-center gap-2 max-w-min cursor-pointer"
+                    className="flex max-w-min cursor-pointer items-center gap-2"
                   >
                     <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
-                    <div className="text-sm whitespace-nowrap">Export the data into separate files</div>
+                    <div className="whitespace-nowrap text-sm">Export the data into separate files</div>
                   </div>
                   <div className="flex justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={handleClose}>

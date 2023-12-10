@@ -55,7 +55,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     project: projectStore,
     projectState: { states },
     trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace }
+    workspace: { currentWorkspace },
   } = useMobxStore();
 
   const projectDetails = projectId ? projectStore.project_details[projectId.toString()] : undefined;
@@ -89,16 +89,15 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           "COMMENT_UPDATED",
           {
             ...res,
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      );
+      });
   };
 
   const handleCommentDelete = async (commentId: string) => {
@@ -113,16 +112,15 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
         postHogEventTracker(
           "COMMENT_DELETED",
           {
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
-      }
-      );
+      });
   };
 
   const handleAddComment = async (formData: IIssueActivity) => {
@@ -136,12 +134,12 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
           "COMMENT_ADDED",
           {
             ...res,
-            state: "SUCCESS"
+            state: "SUCCESS",
           },
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!
+            gorupId: currentWorkspace?.id!,
           }
         );
       })
@@ -160,7 +158,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
     <>
       <div className="rounded-lg">
         {issueDetails?.parent ? (
-          <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md bg-custom-background-80 border border-custom-border-300 py-1 px-2.5 text-xs">
+          <div className="mb-5 flex w-min items-center gap-3 whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-80 px-2.5 py-1 text-xs">
             <Link
               href={`/${workspaceSlug}/projects/${issueDetails.parent_detail?.project_detail.id}/issues/${issueDetails.parent}`}
             >
@@ -186,7 +184,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
               {siblingIssuesList ? (
                 siblingIssuesList.length > 0 ? (
                   <>
-                    <h2 className="mb-1 text-custom-text-200 text-xs font-medium px-2 pb-1 border-b border-custom-border-300">
+                    <h2 className="mb-1 border-b border-custom-border-300 px-2 pb-1 text-xs font-medium text-custom-text-200">
                       Sibling issues
                     </h2>
                     {siblingIssuesList.map((issue) => (
@@ -203,14 +201,14 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
                     ))}
                   </>
                 ) : (
-                  <p className="flex items-center gap-2 whitespace-nowrap px-1 text-left text-xs text-custom-text-200 py-1">
+                  <p className="flex items-center gap-2 whitespace-nowrap px-1 py-1 text-left text-xs text-custom-text-200">
                     No sibling issues
                   </p>
                 )
               ) : null}
               <CustomMenu.MenuItem
                 onClick={() => submitChanges({ parent: null })}
-                className="flex items-center gap-2 text-red-500 py-2"
+                className="flex items-center gap-2 py-2 text-red-500"
               >
                 <MinusCircle className="h-4 w-4" />
                 <span> Remove Parent Issue</span>
@@ -218,10 +216,10 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             </CustomMenu>
           </div>
         ) : null}
-        <div className="flex items-center mb-5">
+        <div className="mb-5 flex items-center">
           {currentIssueState && (
             <StateGroupIcon
-              className="h-4 w-4 mr-3"
+              className="mr-3 h-4 w-4"
               stateGroup={currentIssueState.group}
               color={currentIssueState.color}
             />

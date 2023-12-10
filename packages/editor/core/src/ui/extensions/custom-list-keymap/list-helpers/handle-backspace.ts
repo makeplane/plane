@@ -4,11 +4,7 @@ import { Node } from "@tiptap/pm/model";
 import { findListItemPos } from "./find-list-item-pos";
 import { hasListBefore } from "./has-list-before";
 
-export const handleBackspace = (
-  editor: Editor,
-  name: string,
-  parentListTypes: string[],
-) => {
+export const handleBackspace = (editor: Editor, name: string, parentListTypes: string[]) => {
   // this is required to still handle the undo handling
   if (editor.commands.undoInputRule()) {
     return true;
@@ -23,10 +19,7 @@ export const handleBackspace = (
   // if the current item is NOT inside a list item &
   // the previous item is a list (orderedList or bulletList)
   // move the cursor into the list and delete the current item
-  if (
-    !isNodeActive(editor.state, name) &&
-    hasListBefore(editor.state, name, parentListTypes)
-  ) {
+  if (!isNodeActive(editor.state, name) && hasListBefore(editor.state, name, parentListTypes)) {
     const { $anchor } = editor.state.selection;
 
     const $listPos = editor.state.doc.resolve($anchor.before() - 1);
@@ -45,16 +38,11 @@ export const handleBackspace = (
       return false;
     }
 
-    const $lastItemPos = editor.state.doc.resolve(
-      $listPos.start() + lastItem.pos + 1,
-    );
+    const $lastItemPos = editor.state.doc.resolve($listPos.start() + lastItem.pos + 1);
 
     return editor
       .chain()
-      .cut(
-        { from: $anchor.start() - 1, to: $anchor.end() + 1 },
-        $lastItemPos.end(),
-      )
+      .cut({ from: $anchor.start() - 1, to: $anchor.end() + 1 }, $lastItemPos.end())
       .joinForward()
       .run();
   }

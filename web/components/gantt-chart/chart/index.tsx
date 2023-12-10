@@ -213,15 +213,15 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
   return (
     <div
       className={`${
-        fullScreenMode ? `fixed top-0 bottom-0 left-0 right-0 z-[999999] bg-custom-background-100` : `relative`
+        fullScreenMode ? `fixed bottom-0 left-0 right-0 top-0 z-[999999] bg-custom-background-100` : `relative`
       } ${
         border ? `border border-custom-border-200` : ``
-      } flex h-full flex-col rounded-sm select-none bg-custom-background-100 shadow`}
+      } flex h-full select-none flex-col rounded-sm bg-custom-background-100 shadow`}
     >
       {/* chart header */}
       <div className="flex w-full flex-shrink-0 flex-wrap items-center gap-2 whitespace-nowrap px-2.5 py-2">
         {title && (
-          <div className="text-lg font-medium flex gap-2 items-center">
+          <div className="flex items-center gap-2 text-lg font-medium">
             <div>{title}</div>
             {/* <div className="text-xs rounded-full px-2 py-1 font-bold border border-custom-primary/75 bg-custom-primary/5 text-custom-text-100">
               Gantt View Beta
@@ -231,9 +231,9 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
 
         <div className="ml-auto">
           {blocks === null ? (
-            <div className="text-sm font-medium ml-auto">Loading...</div>
+            <div className="ml-auto text-sm font-medium">Loading...</div>
           ) : (
-            <div className="text-sm font-medium ml-auto">
+            <div className="ml-auto text-sm font-medium">
               {blocks.length} {loaderTitle}
             </div>
           )}
@@ -266,7 +266,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
         </div>
 
         <div
-          className="transition-all border border-custom-border-200 p-1 flex justify-center items-center cursor-pointer rounded-sm hover:bg-custom-background-80"
+          className="flex cursor-pointer items-center justify-center rounded-sm border border-custom-border-200 p-1 transition-all hover:bg-custom-background-80"
           onClick={() => setFullScreenMode((prevData) => !prevData)}
         >
           {fullScreenMode ? <Shrink className="h-4 w-4" /> : <Expand className="h-4 w-4" />}
@@ -280,8 +280,8 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           bottomSpacing ? "mb-8" : ""
         }`}
       >
-        <div id="gantt-sidebar" className="h-full w-1/4 flex flex-col border-r border-custom-border-200">
-          <div className="h-[60px] border-b border-custom-border-200 box-border flex-shrink-0 flex items-end justify-between gap-2 text-sm text-custom-text-300 font-medium pb-2 pl-10 pr-4">
+        <div id="gantt-sidebar" className="flex h-full w-1/4 flex-col border-r border-custom-border-200">
+          <div className="box-border flex h-[60px] flex-shrink-0 items-end justify-between gap-2 border-b border-custom-border-200 pb-2 pl-10 pr-4 text-sm font-medium text-custom-text-300">
             <h6>{title}</h6>
             <h6>Duration</h6>
           </div>
@@ -289,7 +289,7 @@ export const ChartViewRoot: FC<ChartViewRootProps> = ({
           {sidebarToRender && sidebarToRender({ title, blockUpdateHandler, blocks, enableReorder })}
         </div>
         <div
-          className="relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto horizontal-scroll-enable"
+          className="horizontal-scroll-enable relative flex h-full w-full flex-1 flex-col overflow-hidden overflow-x-auto"
           id="scroll-container"
           onScroll={onScroll}
         >

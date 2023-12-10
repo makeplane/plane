@@ -28,8 +28,8 @@ const FeaturesSettingsPage: NextPageWithLayout = () => {
   const isAdmin = memberDetails?.role === 20;
 
   return (
-    <section className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-      <div className="flex items-center py-3.5 border-b border-custom-border-100">
+    <section className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+      <div className="flex items-center border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium">Features</h3>
       </div>
       <ProjectFeaturesList />

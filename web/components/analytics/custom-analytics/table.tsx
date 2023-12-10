@@ -26,7 +26,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
         <table className="min-w-full divide-y divide-custom-border-200 whitespace-nowrap border-y border-custom-border-200">
           <thead className="bg-custom-background-80">
             <tr className="divide-x divide-custom-border-200 text-sm text-custom-text-100">
-              <th scope="col" className="py-3 px-2.5 text-left font-medium">
+              <th scope="col" className="px-2.5 py-3 text-left font-medium">
                 {ANALYTICS_X_AXIS_VALUES.find((v) => v.value === params.x_axis)?.label}
               </th>
               {params.segment ? (
@@ -54,7 +54,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                   </th>
                 ))
               ) : (
-                <th scope="col" className="py-3 px-2.5 text-left font-medium sm:pr-0">
+                <th scope="col" className="px-2.5 py-3 text-left font-medium sm:pr-0">
                   {ANALYTICS_Y_AXIS_VALUES.find((v) => v.value === params.y_axis)?.label}
                 </th>
               )}
@@ -64,7 +64,7 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
             {barGraphData.data.map((item, index) => (
               <tr key={`table-row-${index}`} className="divide-x divide-custom-border-200 text-xs text-custom-text-200">
                 <td
-                  className={`flex items-center gap-2 whitespace-nowrap py-2 px-2.5 font-medium ${
+                  className={`flex items-center gap-2 whitespace-nowrap px-2.5 py-2 font-medium ${
                     params.x_axis === "priority" || params.x_axis === "state__group" ? "capitalize" : ""
                   }`}
                 >
@@ -82,12 +82,12 @@ export const AnalyticsTable: React.FC<Props> = ({ analytics, barGraphData, param
                 </td>
                 {params.segment ? (
                   barGraphData.xAxisKeys.map((key, index) => (
-                    <td key={`segment-value-${index}`} className="whitespace-nowrap py-2 px-2.5 sm:pr-0">
+                    <td key={`segment-value-${index}`} className="whitespace-nowrap px-2.5 py-2 sm:pr-0">
                       {item[key] ?? 0}
                     </td>
                   ))
                 ) : (
-                  <td className="whitespace-nowrap py-2 px-2.5 sm:pr-0">{item[yAxisKey]}</td>
+                  <td className="whitespace-nowrap px-2.5 py-2 sm:pr-0">{item[yAxisKey]}</td>
                 )}
               </tr>
             ))}

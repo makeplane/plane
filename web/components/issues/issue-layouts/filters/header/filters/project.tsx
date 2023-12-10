@@ -56,11 +56,11 @@ export const FilterProjects: React.FC<Props> = (props) => {
                           {renderEmoji(project.emoji)}
                         </span>
                       ) : project.icon_prop ? (
-                        <div className="grid place-items-center flex-shrink-0 -my-1">
+                        <div className="-my-1 grid flex-shrink-0 place-items-center">
                           {renderEmoji(project.icon_prop)}
                         </div>
                       ) : (
-                        <span className="grid mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                        <span className="mr-1 grid flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                           {project?.name.charAt(0)}
                         </span>
                       )
@@ -71,7 +71,7 @@ export const FilterProjects: React.FC<Props> = (props) => {
                 {filteredOptions.length > 5 && (
                   <button
                     type="button"
-                    className="text-custom-primary-100 text-xs font-medium ml-8"
+                    className="ml-8 text-xs font-medium text-custom-primary-100"
                     onClick={handleViewToggle}
                   >
                     {itemsToRender === filteredOptions.length ? "View less" : "View all"}
@@ -79,7 +79,7 @@ export const FilterProjects: React.FC<Props> = (props) => {
                 )}
               </>
             ) : (
-              <p className="text-xs text-custom-text-400 italic">No matches found</p>
+              <p className="text-xs italic text-custom-text-400">No matches found</p>
             )
           ) : (
             <Loader className="space-y-2">

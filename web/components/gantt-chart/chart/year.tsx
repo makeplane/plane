@@ -29,14 +29,14 @@ export const YearChartView: FC<any> = () => {
                       style={{ width: `${currentViewData?.data.width}px` }}
                     >
                       <div
-                        className={`flex-shrink-0 border-b py-1 text-center text-sm capitalize font-medium ${
-                          _item?.today ? `text-red-500 border-red-500` : `border-custom-border-200`
+                        className={`flex-shrink-0 border-b py-1 text-center text-sm font-medium capitalize ${
+                          _item?.today ? `border-red-500 text-red-500` : `border-custom-border-200`
                         }`}
                       >
                         <div>{_item.title}</div>
                       </div>
-                      <div className={`relative h-full w-full flex-1 flex justify-center`}>
-                        {_item?.today && <div className="absolute top-0 bottom-0 border border-red-500"> </div>}
+                      <div className={`relative flex h-full w-full flex-1 justify-center`}>
+                        {_item?.today && <div className="absolute bottom-0 top-0 border border-red-500"> </div>}
                       </div>
                     </div>
                   ))}

@@ -61,25 +61,25 @@ export const InstanceSidebarDropdown = observer(() => {
   };
 
   return (
-    <div className="flex items-center gap-x-5 gap-y-2 px-4 py-3.5 max-h-[3.75rem] border-b border-custom-sidebar-border-200">
-      <div className="w-full h-full truncate">
+    <div className="flex max-h-[3.75rem] items-center gap-x-5 gap-y-2 border-b border-custom-sidebar-border-200 px-4 py-3.5">
+      <div className="h-full w-full truncate">
         <div
-          className={`flex flex-grow items-center gap-x-2 rounded py-1 truncate ${
+          className={`flex flex-grow items-center gap-x-2 truncate rounded py-1 ${
             sidebarCollapsed ? "justify-center" : ""
           }`}
         >
-          <div className="flex-shrink-0 flex items-center justify-center h-7 w-7 rounded bg-custom-sidebar-background-80">
+          <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-custom-sidebar-background-80">
             <UserCog2 className="h-5 w-5 text-custom-text-200" />
           </div>
 
           {!sidebarCollapsed && (
             <div className="flex w-full gap-2">
-              <h4 className="grow text-custom-text-200 font-medium text-base truncate">Instance admin</h4>
+              <h4 className="grow truncate text-base font-medium text-custom-text-200">Instance admin</h4>
               <Tooltip position="bottom-left" tooltipContent="Exit God Mode">
                 <div className="flex-shrink-0">
                   <Link href={`/${redirectWorkspaceSlug}`}>
                     <span>
-                      <LogIn className="h-5 w-5 text-custom-text-200 rotate-180" />
+                      <LogIn className="h-5 w-5 rotate-180 text-custom-text-200" />
                     </span>
                   </Link>
                 </div>
@@ -111,8 +111,8 @@ export const InstanceSidebarDropdown = observer(() => {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items
-              className="absolute left-0 z-20 mt-1.5 flex flex-col w-52 rounded-md
-          border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 divide-y divide-custom-sidebar-border-100 shadow-lg text-xs outline-none"
+              className="absolute left-0 z-20 mt-1.5 flex w-52 flex-col divide-y
+          divide-custom-sidebar-border-100 rounded-md border border-custom-sidebar-border-200 bg-custom-sidebar-background-100 px-1 py-2 text-xs shadow-lg outline-none"
             >
               <div className="flex flex-col gap-2.5 pb-2">
                 <span className="px-2 text-custom-sidebar-text-200">{currentUser?.email}</span>
@@ -142,7 +142,7 @@ export const InstanceSidebarDropdown = observer(() => {
               <div className="p-2 pb-0">
                 <Menu.Item as="button" type="button" className="w-full">
                   <Link href={`/${redirectWorkspaceSlug}`}>
-                    <span className="flex w-full items-center justify-center rounded px-2 py-1 text-sm font-medium text-custom-primary-100 hover:text-custom-primary-200 bg-custom-primary-100/20 hover:bg-custom-primary-100/30">
+                    <span className="flex w-full items-center justify-center rounded bg-custom-primary-100/20 px-2 py-1 text-sm font-medium text-custom-primary-100 hover:bg-custom-primary-100/30 hover:text-custom-primary-200">
                       Exit God Mode
                     </span>
                   </Link>

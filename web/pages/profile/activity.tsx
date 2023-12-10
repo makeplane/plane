@@ -29,12 +29,12 @@ const ProfileActivityPage: NextPageWithLayout = () => {
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
-    <section className="h-full w-full lg:w-3/5 mx-auto px-8 pb-8 mt-16 flex flex-col overflow-hidden">
-      <div className="flex items-center pb-3.5 border-b border-custom-border-100">
+    <section className="mx-auto mt-16 flex h-full w-full flex-col overflow-hidden px-8 pb-8 lg:w-3/5">
+      <div className="flex items-center border-b border-custom-border-100 pb-3.5">
         <h3 className="text-xl font-medium">Activity</h3>
       </div>
       {userActivity ? (
-        <div className="flex flex-col gap-2 h-full w-full overflow-y-auto">
+        <div className="flex h-full w-full flex-col gap-2 overflow-y-auto">
           <ul role="list" className="-mb-4">
             {userActivity.results.map((activityItem: any) => {
               if (activityItem.field === "comment") {
@@ -134,7 +134,7 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                       alt={activityItem.actor_detail.display_name}
                                       height={24}
                                       width={24}
-                                      className="rounded-full h-full w-full object-cover"
+                                      className="h-full w-full rounded-full object-cover"
                                     />
                                   ) : (
                                     <div
@@ -147,8 +147,8 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="min-w-0 flex-1 py-4 border-b border-custom-border-100">
-                            <div className="text-sm text-custom-text-200 break-words flex gap-1">
+                          <div className="min-w-0 flex-1 border-b border-custom-border-100 py-4">
+                            <div className="flex gap-1 break-words text-sm text-custom-text-200">
                               {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                                 <span className="text-gray font-medium">Plane</span>
                               ) : activityItem.actor_detail.is_bot ? (
@@ -157,12 +157,14 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                 </span>
                               ) : (
                                 <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
-                                  <span className="text-gray font-medium">{activityItem.actor_detail.display_name}</span>
+                                  <span className="text-gray font-medium">
+                                    {activityItem.actor_detail.display_name}
+                                  </span>
                                 </Link>
                               )}{" "}
                               <div className="flex gap-1 truncate">
                                 {message}{" "}
-                                <span className="whitespace-nowrap flex-shrink-0">
+                                <span className="flex-shrink-0 whitespace-nowrap">
                                   {timeAgo(activityItem.created_at)}
                                 </span>
                               </div>

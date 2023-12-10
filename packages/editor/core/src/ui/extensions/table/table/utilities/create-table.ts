@@ -8,7 +8,7 @@ export function createTable(
   rowsCount: number,
   colsCount: number,
   withHeaderRow: boolean,
-  cellContent?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>,
+  cellContent?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>
 ): ProsemirrorNode {
   const types = getTableNodeTypes(schema);
   const headerCells: ProsemirrorNode[] = [];
@@ -33,12 +33,7 @@ export function createTable(
   const rows: ProsemirrorNode[] = [];
 
   for (let index = 0; index < rowsCount; index += 1) {
-    rows.push(
-      types.row.createChecked(
-        null,
-        withHeaderRow && index === 0 ? headerCells : cells,
-      ),
-    );
+    rows.push(types.row.createChecked(null, withHeaderRow && index === 0 ? headerCells : cells));
   }
 
   return types.table.createChecked(null, rows);

@@ -8,7 +8,7 @@ import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
 
-export const GanttChartBlocks: FC<{
+export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
   blockToRender: (data: any) => React.ReactNode;
@@ -16,15 +16,19 @@ export const GanttChartBlocks: FC<{
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
-}> = ({
-  itemsContainerWidth,
-  blocks,
-  blockToRender,
-  blockUpdateHandler,
-  enableBlockLeftResize,
-  enableBlockRightResize,
-  enableBlockMove,
-}) => {
+};
+
+export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
+  const {
+    itemsContainerWidth,
+    blocks,
+    blockToRender,
+    blockUpdateHandler,
+    enableBlockLeftResize,
+    enableBlockRightResize,
+    enableBlockMove,
+  } = props;
+
   const { activeBlock, dispatch } = useChart();
 
   // update the active block on hover

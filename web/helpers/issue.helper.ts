@@ -186,13 +186,13 @@ export const createIssuePayload: (
     assignees: Array.isArray(formData.assignees)
       ? formData.assignees
       : formData.assignees && formData.assignees !== "none" && formData.assignees !== null
-      ? [formData.assignees]
-      : [],
+        ? [formData.assignees]
+        : [],
     labels: Array.isArray(formData.labels)
       ? formData.labels
       : formData.labels && formData.labels !== "none" && formData.labels !== null
-      ? [formData.labels]
-      : [],
+        ? [formData.labels]
+        : [],
   } as IIssue;
 
   return payload;
