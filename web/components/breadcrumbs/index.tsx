@@ -13,7 +13,7 @@ const Breadcrumbs = ({ children }: BreadcrumbsProps) => {
 
   return (
     <>
-      <div className="flex items-center flex-grow w-full whitespace-nowrap overflow-hidden overflow-ellipsis">
+      <div className="flex w-full flex-grow items-center overflow-hidden overflow-ellipsis whitespace-nowrap">
         <button
           type="button"
           className="group grid h-7 w-7 flex-shrink-0 cursor-pointer place-items-center rounded border border-custom-sidebar-border-200 text-center text-sm hover:bg-custom-sidebar-background-90"
@@ -53,7 +53,7 @@ const BreadcrumbItem: React.FC<BreadcrumbItemProps> = ({
         </span>
       </Link>
     ) : (
-      <div className={`px-3 text-sm truncate ${unshrinkTitle ? "flex-shrink-0" : ""}`}>
+      <div className={`truncate px-3 text-sm ${unshrinkTitle ? "flex-shrink-0" : ""}`}>
         <p className={`truncate ${icon ? "flex items-center gap-2" : ""}`}>
           {icon}
           <span className="break-words">{title}</span>

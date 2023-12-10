@@ -111,7 +111,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
   return (
     <Transition.Root show={isOpen} as={React.Fragment} afterLeave={() => setQuery("")} appear>
       <Dialog as="div" className="relative z-20" onClose={handleClose}>
-        <div className="fixed inset-0 bg-custom-backdrop transition-opacity z-20 overflow-y-auto p-4 sm:p-6 md:p-20">
+        <div className="fixed inset-0 z-20 overflow-y-auto bg-custom-backdrop p-4 transition-opacity sm:p-6 md:p-20">
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -121,7 +121,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="relative flex items-center justify-center w-full ">
+            <Dialog.Panel className="relative flex w-full items-center justify-center ">
               <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <form>
                   <Combobox
@@ -137,7 +137,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
                   >
                     <div className="relative m-1">
                       <Search
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
@@ -155,7 +155,7 @@ export const BulkDeleteIssuesModal: React.FC<Props> = (props) => {
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">
+                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">
                               Select issues to delete
                             </h2>
                           )}

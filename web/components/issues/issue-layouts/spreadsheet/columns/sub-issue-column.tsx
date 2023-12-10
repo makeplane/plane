@@ -18,7 +18,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className="flex items-center px-2.5 py-1 text-xs h-full w-full">
+      <div className="flex h-full w-full items-center px-2.5 py-1 text-xs">
         {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
       </div>
 

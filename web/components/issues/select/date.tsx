@@ -30,7 +30,7 @@ export const IssueDateSelect: FC<Props> = ({ label, maxDate, minDate, onChange, 
           <Popover.Button>
             <div
               ref={setReferenceElement}
-              className="flex items-center justify-center gap-1 w-full cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200 px-2 py-1 text-xs hover:bg-custom-background-80"
+              className="flex w-full cursor-pointer items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200 hover:bg-custom-background-80"
             >
               {value ? (
                 <>
@@ -60,7 +60,7 @@ export const IssueDateSelect: FC<Props> = ({ label, maxDate, minDate, onChange, 
           >
             <Popover.Panel>
               <div
-                className="absolute top-10 -left-10 z-20 transform overflow-hidden"
+                className="absolute -left-10 top-10 z-20 transform overflow-hidden"
                 ref={setPopperElement}
                 style={styles.popper}
                 {...attributes.popper}

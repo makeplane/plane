@@ -1,12 +1,6 @@
 import { TextSelection } from "prosemirror-state";
 
-import {
-  InputRule,
-  mergeAttributes,
-  Node,
-  nodeInputRule,
-  wrappingInputRule,
-} from "@tiptap/core";
+import { InputRule, mergeAttributes, Node, nodeInputRule, wrappingInputRule } from "@tiptap/core";
 
 /**
  * Extension based on:
@@ -83,8 +77,7 @@ export default Node.create<HorizontalRuleOptions>({
                     tr.setSelection(TextSelection.create(tr.doc, $to.pos));
                   } else {
                     // add node after horizontal rule if it’s the end of the document
-                    const node =
-                      $to.parent.type.contentMatch.defaultType?.create();
+                    const node = $to.parent.type.contentMatch.defaultType?.create();
 
                     if (node) {
                       tr.insert(posAfter, node);

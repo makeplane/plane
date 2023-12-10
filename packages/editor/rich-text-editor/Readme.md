@@ -41,9 +41,7 @@ The `@plane/rich-text-editor` package extends from the `editor-core` package, in
   debouncedUpdatesEnabled={true}
   setShouldShowAlert={setShowAlert}
   setIsSubmitting={setIsSubmitting}
-  customClassName={
-    isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"
-  }
+  customClassName={isAllowed ? "min-h-[150px] shadow-sm" : "!p-0 !pt-2 text-custom-text-200"}
   noBorder={!isAllowed}
   onChange={(description: Object, description_html: string) => {
     setShowAlert(true);
@@ -96,8 +94,5 @@ return (
 Here is an example of how to use the `RichReadOnlyEditor` component
 
 ```tsx
-<RichReadOnlyEditor
-  value={issueDetails.description_html}
-  customClassName="p-3 min-h-[50px] shadow-sm"
-/>
+<RichReadOnlyEditor value={issueDetails.description_html} customClassName="p-3 min-h-[50px] shadow-sm" />
 ```

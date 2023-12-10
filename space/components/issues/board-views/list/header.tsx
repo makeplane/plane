@@ -18,12 +18,12 @@ export const IssueListHeader = observer(({ state }: { state: IIssueState }) => {
   if (stateGroup === null) return <></>;
 
   return (
-    <div className="p-3 flex items-center gap-2">
-      <div className="w-3.5 h-3.5 flex justify-center items-center">
+    <div className="flex items-center gap-2 p-3">
+      <div className="flex h-3.5 w-3.5 items-center justify-center">
         <StateGroupIcon stateGroup={state.group} color={state.color} height="14" width="14" />
       </div>
-      <div className="font-medium capitalize mr-1">{state?.name}</div>
-      <div className="text-custom-text-200 text-sm font-medium">{store.issue.getCountOfIssuesByState(state.id)}</div>
+      <div className="mr-1 font-medium capitalize">{state?.name}</div>
+      <div className="text-sm font-medium text-custom-text-200">{store.issue.getCountOfIssuesByState(state.id)}</div>
     </div>
   );
 });

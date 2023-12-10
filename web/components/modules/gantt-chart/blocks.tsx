@@ -15,11 +15,11 @@ export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
 
   return (
     <div
-      className="relative flex items-center w-full h-full rounded"
+      className="relative flex h-full w-full items-center rounded"
       style={{ backgroundColor: MODULE_STATUS.find((s) => s.value === data?.status)?.color }}
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/modules/${data?.id}`)}
     >
-      <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">
@@ -31,7 +31,7 @@ export const ModuleGanttBlock = ({ data }: { data: IModule }) => {
         }
         position="top-left"
       >
-        <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">{data?.name}</div>
+        <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
       </Tooltip>
     </div>
   );
@@ -43,11 +43,11 @@ export const ModuleGanttSidebarBlock = ({ data }: { data: IModule }) => {
 
   return (
     <div
-      className="relative w-full flex items-center gap-2 h-full"
+      className="relative flex h-full w-full items-center gap-2"
       onClick={() => router.push(`/${workspaceSlug}/projects/${data?.project}/modules/${data.id}`)}
     >
       <ModuleStatusIcon status={data?.status ?? "backlog"} height="16px" width="16px" />
-      <h6 className="text-sm font-medium flex-grow truncate">{data.name}</h6>
+      <h6 className="flex-grow truncate text-sm font-medium">{data.name}</h6>
     </div>
   );
 };

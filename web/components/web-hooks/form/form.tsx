@@ -161,7 +161,7 @@ export const WebhookForm: FC<Props> = observer((props) => {
         <div className="mt-4">
           {webhookEventType === "individual" && <WebhookIndividualEventOptions control={control} />}
         </div>
-        <div className="space-y-8 mt-8">
+        <div className="mt-8 space-y-8">
           {data && <WebhookSecretKey data={data} />}
           <Button type="submit" loading={isSubmitting}>
             {data ? (isSubmitting ? "Updating..." : "Update") : isSubmitting ? "Creating..." : "Create"}

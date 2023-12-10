@@ -43,24 +43,22 @@ function absoluteRect(node: Element) {
 }
 
 function nodeDOMAtCoords(coords: { x: number; y: number }) {
-  return document
-    .elementsFromPoint(coords.x, coords.y)
-    .find((elem: Element) => {
-      return (
-        elem.parentElement?.matches?.(".ProseMirror") ||
-        elem.matches(
-          [
-            "li",
-            "p:not(:first-child)",
-            "pre",
-            "blockquote",
-            "h1, h2, h3",
-            "[data-type=horizontalRule]",
-            ".tableWrapper",
-          ].join(", "),
-        )
-      );
-    });
+  return document.elementsFromPoint(coords.x, coords.y).find((elem: Element) => {
+    return (
+      elem.parentElement?.matches?.(".ProseMirror") ||
+      elem.matches(
+        [
+          "li",
+          "p:not(:first-child)",
+          "pre",
+          "blockquote",
+          "h1, h2, h3",
+          "[data-type=horizontalRule]",
+          ".tableWrapper",
+        ].join(", ")
+      )
+    );
+  });
 }
 
 function nodePosAtDOM(node: Element, view: EditorView) {
@@ -104,9 +102,7 @@ function DragHandle(options: DragHandleOptions) {
     const nodePos = nodePosAtDOM(node, view);
     if (nodePos === null || nodePos === undefined || nodePos < 0) return;
 
-    view.dispatch(
-      view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)),
-    );
+    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
 
     const slice = view.state.selection.content();
     const { dom, text } = __serializeForClipboard(view, slice);
@@ -137,9 +133,7 @@ function DragHandle(options: DragHandleOptions) {
 
     if (nodePos === null || nodePos === undefined || nodePos < 0) return;
 
-    view.dispatch(
-      view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)),
-    );
+    view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
   }
 
   let dragHandleElement: HTMLElement | null = null;

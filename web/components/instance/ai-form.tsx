@@ -57,7 +57,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
 
   return (
     <>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-3 items-center justify-between gap-x-16 gap-y-8 w-full">
+      <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-3">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">GPT_ENGINE</h4>
           <Controller
@@ -73,7 +73,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
                 ref={ref}
                 hasError={Boolean(errors.GPT_ENGINE)}
                 placeholder="gpt-3.5-turbo"
-                className="rounded-md font-medium w-full"
+                className="w-full rounded-md font-medium"
               />
             )}
           />
@@ -106,7 +106,7 @@ export const InstanceAIForm: FC<IInstanceAIForm> = (props) => {
                   ref={ref}
                   hasError={Boolean(errors.OPENAI_API_KEY)}
                   placeholder="sk-asddassdfasdefqsdfasd23das3dasdcasd"
-                  className="rounded-md font-medium w-full !pr-10"
+                  className="w-full rounded-md !pr-10 font-medium"
                 />
               )}
             />

@@ -42,7 +42,7 @@ export const FilterPriority: React.FC<Props> = observer((props) => {
               />
             ))
           ) : (
-            <p className="text-xs text-custom-text-400 italic">No matches found</p>
+            <p className="text-xs italic text-custom-text-400">No matches found</p>
           )}
         </div>
       )}

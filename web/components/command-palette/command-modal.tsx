@@ -62,7 +62,7 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateIssueModal,
       toggleCreateProjectModal,
     },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   // router
@@ -160,7 +160,7 @@ export const CommandModal: React.FC = observer(() => {
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <Dialog.Panel className="relative flex items-center justify-center w-full ">
+            <Dialog.Panel className="relative flex w-full items-center justify-center ">
               <div className="w-full max-w-2xl transform divide-y divide-custom-border-200 divide-opacity-10 rounded-lg bg-custom-background-100 shadow-custom-shadow-md transition-all">
                 <Command
                   filter={(value, search) => {
@@ -182,8 +182,8 @@ export const CommandModal: React.FC = observer(() => {
                   }}
                 >
                   <div
-                    className={`flex sm:items-center gap-4 p-3 pb-0 ${
-                      issueDetails ? "flex-col sm:flex-row justify-between" : "justify-end"
+                    className={`flex gap-4 p-3 pb-0 sm:items-center ${
+                      issueDetails ? "flex-col justify-between sm:flex-row" : "justify-end"
                     }`}
                   >
                     {issueDetails && (
@@ -193,7 +193,7 @@ export const CommandModal: React.FC = observer(() => {
                     )}
                     {projectId && (
                       <Tooltip tooltipContent="Toggle workspace level search">
-                        <div className="flex-shrink-0 self-end sm:self-center flex items-center gap-1 text-xs cursor-pointer">
+                        <div className="flex flex-shrink-0 cursor-pointer items-center gap-1 self-end text-xs sm:self-center">
                           <button
                             type="button"
                             onClick={() => setIsWorkspaceLevel((prevData) => !prevData)}
@@ -211,12 +211,12 @@ export const CommandModal: React.FC = observer(() => {
                   </div>
                   <div className="relative">
                     <Search
-                      className="pointer-events-none absolute top-1/2 -translate-y-1/2 left-4 h-4 w-4 text-custom-text-200"
+                      className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-custom-text-200"
                       aria-hidden="true"
                       strokeWidth={2}
                     />
                     <Command.Input
-                      className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-custom-text-100 placeholder:text-custom-text-400 outline-none focus:ring-0 text-sm"
+                      className="w-full border-0 border-b border-custom-border-200 bg-transparent p-4 pl-11 text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
                       placeholder={placeholder}
                       value={searchTerm}
                       onValueChange={(e) => setSearchTerm(e)}
@@ -227,7 +227,7 @@ export const CommandModal: React.FC = observer(() => {
 
                   <Command.List className="max-h-96 overflow-scroll p-2">
                     {searchTerm !== "" && (
-                      <h5 className="text-xs text-custom-text-100 mx-[3px] my-4">
+                      <h5 className="mx-[3px] my-4 text-xs text-custom-text-100">
                         Search results for{" "}
                         <span className="font-medium">
                           {'"'}
@@ -239,7 +239,7 @@ export const CommandModal: React.FC = observer(() => {
                     )}
 
                     {!isLoading && resultsCount === 0 && searchTerm !== "" && debouncedSearchTerm !== "" && (
-                      <div className="my-4 text-center text-custom-text-200 text-sm">No results found.</div>
+                      <div className="my-4 text-center text-sm text-custom-text-200">No results found.</div>
                     )}
 
                     {(isLoading || isSearching) && (

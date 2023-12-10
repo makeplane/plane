@@ -107,7 +107,7 @@ export const DeleteApiTokenModal: FC<Props> = (props) => {
                       be undone.
                     </p>
                   </span>
-                  <div className="flex justify-end mt-2 gap-2">
+                  <div className="mt-2 flex justify-end gap-2">
                     <Button variant="neutral-primary" onClick={handleClose} size="sm">
                       Cancel
                     </Button>

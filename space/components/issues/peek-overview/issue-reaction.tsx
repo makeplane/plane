@@ -5,17 +5,17 @@ export const IssueReactions: React.FC = () => {
   const { project: projectStore } = useMobxStore();
 
   return (
-    <div className="flex gap-3 items-center mt-4">
+    <div className="mt-4 flex items-center gap-3">
       {projectStore?.deploySettings?.votes && (
         <>
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <IssueVotes />
           </div>
-          <div className="w-0.5 h-8 bg-custom-background-200" />
+          <div className="h-8 w-0.5 bg-custom-background-200" />
         </>
       )}
       {projectStore?.deploySettings?.reactions && (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <IssueEmojiReactions />
         </div>
       )}

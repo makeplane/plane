@@ -1,12 +1,6 @@
 import { TextSelection } from "@tiptap/pm/state";
 
-import {
-  callOrReturn,
-  getExtensionField,
-  mergeAttributes,
-  Node,
-  ParentConfig,
-} from "@tiptap/core";
+import { callOrReturn, getExtensionField, mergeAttributes, Node, ParentConfig } from "@tiptap/core";
 import {
   addColumnAfter,
   addColumnBefore,
@@ -44,11 +38,7 @@ export interface TableOptions {
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     table: {
-      insertTable: (options?: {
-        rows?: number;
-        cols?: number;
-        withHeaderRow?: boolean;
-      }) => ReturnType;
+      insertTable: (options?: { rows?: number; cols?: number; withHeaderRow?: boolean }) => ReturnType;
       addColumnBefore: () => ReturnType;
       addColumnAfter: () => ReturnType;
       deleteColumn: () => ReturnType;
@@ -66,10 +56,7 @@ declare module "@tiptap/core" {
       goToNextCell: () => ReturnType;
       goToPreviousCell: () => ReturnType;
       fixTables: () => ReturnType;
-      setCellSelection: (position: {
-        anchorCell: number;
-        headCell?: number;
-      }) => ReturnType;
+      setCellSelection: (position: { anchorCell: number; headCell?: number }) => ReturnType;
     };
   }
 
@@ -114,11 +101,7 @@ export default Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return [
-      "table",
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
-      ["tbody", 0],
-    ];
+    return ["table", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), ["tbody", 0]];
   },
 
   addCommands() {
@@ -220,11 +203,7 @@ export default Node.create({
         (position) =>
         ({ tr, dispatch }) => {
           if (dispatch) {
-            const selection = CellSelection.create(
-              tr.doc,
-              position.anchorCell,
-              position.headCell,
-            );
+            const selection = CellSelection.create(tr.doc, position.anchorCell, position.headCell);
 
             // @ts-ignore
             tr.setSelection(selection);
@@ -260,13 +239,7 @@ export default Node.create({
     return ({ editor, getPos, node, decorations }) => {
       const { cellMinWidth } = this.options;
 
-      return new TableView(
-        node,
-        cellMinWidth,
-        decorations,
-        editor,
-        getPos as () => number,
-      );
+      return new TableView(node, cellMinWidth, decorations, editor, getPos as () => number);
     };
   },
 
@@ -289,7 +262,7 @@ export default Node.create({
 
           // @ts-ignore
           lastColumnResizable: this.options.lastColumnResizable,
-        }),
+        })
       );
     }
 
@@ -304,9 +277,7 @@ export default Node.create({
     };
 
     return {
-      tableRole: callOrReturn(
-        getExtensionField(extension, "tableRole", context),
-      ),
+      tableRole: callOrReturn(getExtensionField(extension, "tableRole", context)),
     };
   },
 });

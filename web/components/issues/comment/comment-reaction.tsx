@@ -44,7 +44,7 @@ export const CommentReaction: FC<Props> = (props) => {
   };
 
   return (
-    <div className="flex gap-1.5 items-center mt-2">
+    <div className="mt-2 flex items-center gap-1.5">
       {!readonly && (
         <ReactionSelector
           size="md"
@@ -69,7 +69,7 @@ export const CommentReaction: FC<Props> = (props) => {
                 handleReactionClick(reaction);
               }}
               key={reaction}
-              className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
+              className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                 commentReactions?.some((r: IssueCommentReaction) => r.actor === user?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10"
                   : "bg-custom-background-80"

@@ -46,11 +46,11 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
     >
       <Tab.List
         as="div"
-        className="flex sticky top-0 z-10 bg-custom-background-100 w-full px-4 pt-4 pb-1 flex-wrap items-center justify-start gap-4 text-sm"
+        className="sticky top-0 z-10 flex w-full flex-wrap items-center justify-start gap-4 bg-custom-background-100 px-4 pb-1 pt-4 text-sm"
       >
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-200 ${
+            `rounded-3xl border border-custom-border-200 px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -59,7 +59,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
         </Tab>
         <Tab
           className={({ selected }) =>
-            `px-3 py-1 text-custom-text-100 rounded-3xl border border-custom-border-200 ${
+            `rounded-3xl border border-custom-border-200 px-3 py-1 text-custom-text-100 ${
               selected ? " bg-custom-primary text-white" : "  hover:bg-custom-background-80"
             }`
           }
@@ -69,7 +69,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
       </Tab.List>
       {cycle && cycle.total_issues > 0 ? (
         <Tab.Panels as={Fragment}>
-          <Tab.Panel as="div" className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4">
+          <Tab.Panel as="div" className="w-full items-center gap-1 overflow-y-scroll p-4 text-custom-text-200">
             {cycle.distribution?.assignees?.map((assignee, index) => {
               if (assignee.assignee_id)
                 return (
@@ -104,7 +104,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
                 );
             })}
           </Tab.Panel>
-          <Tab.Panel as="div" className="w-full gap-1 overflow-y-scroll items-center text-custom-text-200 p-4">
+          <Tab.Panel as="div" className="w-full items-center gap-1 overflow-y-scroll p-4 text-custom-text-200">
             {cycle.distribution?.labels?.map((label, index) => (
               <SingleProgressStats
                 key={label.label_id ?? `no-label-${index}`}
@@ -126,7 +126,7 @@ export const ActiveCycleProgressStats: React.FC<Props> = ({ cycle }) => {
           </Tab.Panel>
         </Tab.Panels>
       ) : (
-        <div className="grid place-items-center text-custom-text-200 text-sm text-center mt-4">
+        <div className="mt-4 grid place-items-center text-center text-sm text-custom-text-200">
           No issues present in the cycle.
         </div>
       )}

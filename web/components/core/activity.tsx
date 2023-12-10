@@ -46,7 +46,7 @@ const IssueLink = ({ activity }: { activity: IIssueActivity }) => {
         }`}
         target={activity.issue === null ? "_self" : "_blank"}
         rel={activity.issue === null ? "" : "noopener noreferrer"}
-        className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+        className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
       >
         {activity.issue_detail ? `${activity.project_detail.identifier}-${activity.issue_detail.sequence_id}` : "Issue"}
         <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -66,7 +66,7 @@ const UserLink = ({ activity }: { activity: IIssueActivity }) => {
       }`}
       target="_blank"
       rel="noopener noreferrer"
-      className="font-medium text-custom-text-100 inline-flex items-center hover:underline"
+      className="inline-flex items-center font-medium text-custom-text-100 hover:underline"
     >
       {activity.new_value && activity.new_value !== "" ? activity.new_value : activity.old_value}
     </a>
@@ -86,7 +86,7 @@ const LabelPill = observer(({ labelId, workspaceSlug }: { labelId: string; works
 
   return (
     <span
-      className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
       style={{
         backgroundColor: workspaceLabels?.find((l) => l.id === labelId)?.color ?? "#000000",
       }}
@@ -160,7 +160,7 @@ const activityDetails: {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               attachment
               <RocketIcon size={12} color="#6b7280" />
@@ -236,7 +236,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -251,7 +251,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -266,7 +266,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/cycles/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -354,9 +354,9 @@ const activityDetails: {
         return (
           <>
             added a new label{" "}
-            <span className="inline-flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
+            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.new_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.new_value}</span>
+              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.new_value}</span>
             </span>
             {showIssue && (
               <span>
@@ -370,9 +370,9 @@ const activityDetails: {
         return (
           <>
             removed the label{" "}
-            <span className="inline-flex truncate items-center gap-2 rounded-full border border-custom-border-300 px-2 py-0.5 text-xs w-min whitespace-nowrap">
+            <span className="inline-flex w-min items-center gap-2 truncate whitespace-nowrap rounded-full border border-custom-border-300 px-2 py-0.5 text-xs">
               <LabelPill labelId={activity.old_identifier ?? ""} workspaceSlug={workspaceSlug} />
-              <span className="font-medium flex-shrink truncate text-custom-text-100">{activity.old_value}</span>
+              <span className="flex-shrink truncate font-medium text-custom-text-100">{activity.old_value}</span>
             </span>
             {showIssue && (
               <span>
@@ -395,7 +395,7 @@ const activityDetails: {
               href={`${activity.new_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
               <RocketIcon size={12} color="#6b7280" />
@@ -417,7 +417,7 @@ const activityDetails: {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
               <RocketIcon size={12} color="#6b7280" />
@@ -439,7 +439,7 @@ const activityDetails: {
               href={`${activity.old_value}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+              className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
             >
               link
               <RocketIcon size={12} color="#6b7280" />
@@ -466,7 +466,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -481,7 +481,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.new_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.new_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />
@@ -496,7 +496,7 @@ const activityDetails: {
               href={`/${workspaceSlug}/projects/${activity.project}/modules/${activity.old_identifier}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-custom-text-100 inline-flex items-center truncate gap-1 hover:underline"
+              className="inline-flex items-center gap-1 truncate font-medium text-custom-text-100 hover:underline"
             >
               <span className="truncate">{activity.old_value}</span>
               <RocketIcon size={12} color="#6b7280" className="flex-shrink-0" />

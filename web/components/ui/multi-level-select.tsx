@@ -121,8 +121,8 @@ export const MultiLevelSelect: React.FC<TMultipleSelectProps> = ({
                             <div
                               className={`absolute h-0 w-0 border-t-8 border-custom-border-200 ${
                                 direction === "right"
-                                  ? "top-0 left-0 -translate-x-2 border-r-8 border-b-8 border-b-transparent border-t-transparent border-l-transparent"
-                                  : "top-0 right-0 translate-x-2 border-l-8 border-b-8 border-b-transparent border-t-transparent border-r-transparent"
+                                  ? "left-0 top-0 -translate-x-2 border-b-8 border-r-8 border-b-transparent border-l-transparent border-t-transparent"
+                                  : "right-0 top-0 translate-x-2 border-b-8 border-l-8 border-b-transparent border-r-transparent border-t-transparent"
                               }`}
                             />
                           </div>

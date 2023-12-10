@@ -64,7 +64,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
           <Combobox.Button as={Fragment}>
             <div
               ref={setReferenceElement}
-              className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200"
+              className="flex cursor-pointer items-center gap-2 text-xs text-custom-text-200"
             >
               {label ? (
                 label
@@ -106,7 +106,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                 <div className="flex w-full items-center justify-start rounded-sm  border-[0.6px] border-custom-border-200 bg-custom-background-90 px-2">
                   <Search className="h-3 w-3 text-custom-text-200" />
                   <Combobox.Input
-                    className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 focus:outline-none"
+                    className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 focus:outline-none"
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search for label..."
                     displayValue={(assigned: any) => assigned?.name}
@@ -195,7 +195,7 @@ export const IssueLabelSelect: React.FC<Props> = observer((props) => {
                   )}
                   <button
                     type="button"
-                    className="flex w-full select-none items-center rounded py-2 px-1 hover:bg-custom-background-80"
+                    className="flex w-full select-none items-center rounded px-1 py-2 hover:bg-custom-background-80"
                     onClick={() => setIsOpen(true)}
                   >
                     <span className="flex items-center justify-start gap-1 text-custom-text-200">

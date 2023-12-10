@@ -74,14 +74,14 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       {list &&
         list.length > 0 &&
         list.map(
           (_list: any) =>
             validateEmptyIssueGroups(is_list ? issueIds : issueIds?.[getValueFromObject(_list, listKey) as string]) && (
-              <div key={getValueFromObject(_list, listKey) as string} className={`flex-shrink-0 flex flex-col`}>
-                <div className="flex-shrink-0 w-full py-1 sticky top-0 z-[2] px-3 bg-custom-background-90 border-b border-custom-border-200">
+              <div key={getValueFromObject(_list, listKey) as string} className={`flex flex-shrink-0 flex-col`}>
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 border-b border-custom-border-200 bg-custom-background-90 px-3 py-1">
                   <ListGroupByHeaderRoot
                     column_id={getValueFromObject(_list, listKey) as string}
                     column_value={_list}
@@ -110,7 +110,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                 )}
 
                 {enableIssueQuickAdd && (
-                  <div className="flex-shrink-0 w-full sticky bottom-0 z-[1]">
+                  <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, getValueFromObject(_list, listKey))}
                       quickAddCallback={quickAddCallback}
@@ -178,7 +178,7 @@ export const List: React.FC<IList> = (props) => {
   } = props;
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       {group_by === null && (
         <GroupByList
           issueIds={issueIds as TUnGroupedIssues}

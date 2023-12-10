@@ -130,7 +130,7 @@ const IssueNavbar = observer(() => {
                 {renderEmoji(projectStore.project.emoji)}
               </span>
             ) : projectStore.project?.icon_prop ? (
-              <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
                 {renderEmoji(projectStore.project.icon_prop)}
               </div>
             ) : (

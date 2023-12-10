@@ -2,10 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const LayersIcon: React.FC<ISvgIcons> = ({
-  className = "text-current",
-  ...rest
-}) => (
+export const LayersIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
   <svg
     viewBox="0 0 24 24"
     className={`${className} stroke-2`}
@@ -33,12 +30,7 @@ export const LayersIcon: React.FC<ISvgIcons> = ({
     </g>
     <defs>
       <clipPath id="clip0_7258_81938">
-        <rect
-          width="24"
-          height="24"
-          fill="white"
-          transform="translate(24) rotate(90)"
-        />
+        <rect width="24" height="24" fill="white" transform="translate(24) rotate(90)" />
       </clipPath>
     </defs>
   </svg>

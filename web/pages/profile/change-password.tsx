@@ -91,7 +91,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
 
   if (isPageLoading)
     return (
-      <div className="grid place-items-center h-screen w-full">
+      <div className="grid h-screen w-full place-items-center">
         <Spinner />
       </div>
     );
@@ -99,10 +99,10 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   return (
     <form
       onSubmit={handleSubmit(handleChangePassword)}
-      className="flex flex-col gap-8 h-full w-full lg:w-3/5 mx-auto px-8 pb-8 mt-16"
+      className="mx-auto mt-16 flex h-full w-full flex-col gap-8 px-8 pb-8 lg:w-3/5"
     >
       <h3 className="text-xl font-medium">Change password</h3>
-      <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
+      <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
         <div className="flex flex-col gap-1 ">
           <h4 className="text-sm">Current password</h4>
           <Controller
@@ -118,12 +118,12 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
                 value={value}
                 onChange={onChange}
                 placeholder="Old password"
-                className="rounded-md font-medium w-full"
+                className="w-full rounded-md font-medium"
                 hasError={Boolean(errors.old_password)}
               />
             )}
           />
-          {errors.old_password && <span className="text-red-500 text-xs">{errors.old_password.message}</span>}
+          {errors.old_password && <span className="text-xs text-red-500">{errors.old_password.message}</span>}
         </div>
 
         <div className="flex flex-col gap-1 ">
@@ -146,7 +146,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
               />
             )}
           />
-          {errors.new_password && <span className="text-red-500 text-xs">{errors.new_password.message}</span>}
+          {errors.new_password && <span className="text-xs text-red-500">{errors.new_password.message}</span>}
         </div>
 
         <div className="flex flex-col gap-1 ">
@@ -169,7 +169,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
               />
             )}
           />
-          {errors.confirm_password && <span className="text-red-500 text-xs">{errors.confirm_password.message}</span>}
+          {errors.confirm_password && <span className="text-xs text-red-500">{errors.confirm_password.message}</span>}
         </div>
       </div>
 

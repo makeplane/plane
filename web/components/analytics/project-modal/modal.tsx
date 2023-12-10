@@ -39,7 +39,7 @@ export const ProjectAnalyticsModal: React.FC<Props> = observer((props) => {
           >
             {/* TODO: fix full screen mode */}
             <Dialog.Panel
-              className={`fixed z-20 bg-custom-background-100 top-0 right-0 h-full shadow-custom-shadow-md ${
+              className={`fixed right-0 top-0 z-20 h-full bg-custom-background-100 shadow-custom-shadow-md ${
                 fullScreen ? "w-full p-2" : "w-1/2"
               }`}
             >

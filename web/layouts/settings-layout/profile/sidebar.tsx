@@ -97,30 +97,30 @@ export const ProfileLayoutSidebar = observer(() => {
 
   return (
     <div
-      className={`fixed md:relative inset-y-0 flex flex-col bg-custom-sidebar-background-100 h-full flex-shrink-0 flex-grow-0 border-r border-custom-sidebar-border-200 z-20 duration-300 ${
+      className={`fixed inset-y-0 z-20 flex h-full flex-shrink-0 flex-grow-0 flex-col border-r border-custom-sidebar-border-200 bg-custom-sidebar-background-100 duration-300 md:relative ${
         sidebarCollapsed ? "" : "md:w-[280px]"
       } ${sidebarCollapsed ? "left-0" : "-left-full md:left-0"}`}
     >
-      <div className="h-full w-full flex flex-col gap-y-4">
+      <div className="flex h-full w-full flex-col gap-y-4">
         <Link href={`/${redirectWorkspaceSlug}`}>
           <div
-            className={`flex-shrink-0 flex items-center gap-2 px-4 pt-4 truncate ${
+            className={`flex flex-shrink-0 items-center gap-2 truncate px-4 pt-4 ${
               sidebarCollapsed ? "justify-center" : ""
             }`}
           >
-            <span className="flex-shrink-0 grid place-items-center h-5 w-5">
+            <span className="grid h-5 w-5 flex-shrink-0 place-items-center">
               <ChevronLeft className="h-5 w-5" strokeWidth={1} />
             </span>
             {!sidebarCollapsed && (
-              <h4 className="text-custom-text-200 font-semibold text-lg truncate">Profile settings</h4>
+              <h4 className="truncate text-lg font-semibold text-custom-text-200">Profile settings</h4>
             )}
           </div>
         </Link>
-        <div className="flex-shrink-0 flex flex-col overflow-x-hidden px-4">
+        <div className="flex flex-shrink-0 flex-col overflow-x-hidden px-4">
           {!sidebarCollapsed && (
-            <h6 className="rounded text-custom-sidebar-text-400 px-1.5 text-sm font-semibold">Your account</h6>
+            <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Your account</h6>
           )}
-          <div className="space-y-1.5 mt-2 h-full overflow-y-auto">
+          <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
             {PROFILE_ACTION_LINKS.map((link) => {
               if (link.key === "change-password" && currentUser?.is_password_autoset) return null;
 
@@ -145,32 +145,32 @@ export const ProfileLayoutSidebar = observer(() => {
         </div>
         <div className="flex flex-col overflow-x-hidden px-4">
           {!sidebarCollapsed && (
-            <h6 className="rounded text-custom-sidebar-text-400 px-1.5 text-sm font-semibold">Workspaces</h6>
+            <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
           {workspaces && workspaces.length > 0 && (
-            <div className="space-y-1.5 mt-2 h-full overflow-y-auto">
+            <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
               {workspaces.map((workspace) => (
                 <Link
                   key={workspace.id}
                   href={`/${workspace.slug}`}
-                  className={`flex items-center flex-grow truncate cursor-pointer select-none text-left text-sm font-medium ${
+                  className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${
                     sidebarCollapsed ? "justify-center" : `justify-between`
                   }`}
                 >
                   <span
-                    className={`flex items-center flex-grow w-full truncate gap-x-2 px-3 py-1 hover:bg-custom-sidebar-background-80 rounded-md ${
+                    className={`flex w-full flex-grow items-center gap-x-2 truncate rounded-md px-3 py-1 hover:bg-custom-sidebar-background-80 ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
                     <span
-                      className={`relative flex h-6 w-6 items-center justify-center  p-2 text-xs uppercase flex-shrink-0 ${
+                      className={`relative flex h-6 w-6 flex-shrink-0 items-center  justify-center p-2 text-xs uppercase ${
                         !workspace?.logo && "rounded bg-custom-primary-500 text-white"
                       }`}
                     >
                       {workspace?.logo && workspace.logo !== "" ? (
                         <img
                           src={workspace.logo}
-                          className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                          className="absolute left-0 top-0 h-full w-full rounded object-cover"
                           alt="Workspace Logo"
                         />
                       ) : (
@@ -178,7 +178,7 @@ export const ProfileLayoutSidebar = observer(() => {
                       )}
                     </span>
                     {!sidebarCollapsed && (
-                      <p className="truncate text-custom-sidebar-text-200 text-sm">{workspace.name}</p>
+                      <p className="truncate text-sm text-custom-sidebar-text-200">{workspace.name}</p>
                     )}
                   </span>
                 </Link>
@@ -190,7 +190,7 @@ export const ProfileLayoutSidebar = observer(() => {
               <Link className="block w-full" key={link.key} href={link.href}>
                 <Tooltip tooltipContent={link.label} position="right" className="ml-2" disabled={!sidebarCollapsed}>
                   <div
-                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
+                    className={`group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium text-custom-sidebar-text-200 outline-none hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80 ${
                       sidebarCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -202,7 +202,7 @@ export const ProfileLayoutSidebar = observer(() => {
             ))}
           </div>
         </div>
-        <div className="flex-shrink-0 flex-grow flex items-end px-6 py-2">
+        <div className="flex flex-shrink-0 flex-grow items-end px-6 py-2">
           <div
             className={`flex w-full ${
               sidebarCollapsed ? "flex-col justify-center gap-2" : "items-center justify-between gap-2"
@@ -211,7 +211,7 @@ export const ProfileLayoutSidebar = observer(() => {
             <button
               type="button"
               onClick={handleSignOut}
-              className="text-sm text-red-500 flex items-center justify-center gap-2 font-medium"
+              className="flex items-center justify-center gap-2 text-sm font-medium text-red-500"
               disabled={isSigningOut}
             >
               <LogOut className="h-3.5 w-3.5" />
@@ -219,14 +219,14 @@ export const ProfileLayoutSidebar = observer(() => {
             </button>
             <button
               type="button"
-              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none md:hidden"
+              className="grid place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:hidden"
               onClick={() => toggleSidebar()}
             >
               <MoveLeft className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
-              className={`hidden md:grid place-items-center rounded-md p-1.5 text-custom-text-200 hover:text-custom-text-100 hover:bg-custom-background-90 outline-none ml-auto ${
+              className={`ml-auto hidden place-items-center rounded-md p-1.5 text-custom-text-200 outline-none hover:bg-custom-background-90 hover:text-custom-text-100 md:grid ${
                 sidebarCollapsed ? "w-full" : ""
               }`}
               onClick={() => toggleSidebar()}

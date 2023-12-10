@@ -46,14 +46,14 @@ export const IssueListBlock: FC<{ issue: IIssue }> = observer((props) => {
   };
 
   return (
-    <div className="flex items-center p-3 relative gap-10 bg-custom-background-100">
-      <div className="relative flex items-center gap-3 w-full flex-grow overflow-hidden">
+    <div className="relative flex items-center gap-10 bg-custom-background-100 p-3">
+      <div className="relative flex w-full flex-grow items-center gap-3 overflow-hidden">
         {/* id */}
-        <div className="flex-shrink-0 text-xs text-custom-text-300 font-medium">
+        <div className="flex-shrink-0 text-xs font-medium text-custom-text-300">
           {projectStore?.project?.identifier}-{issue?.sequence_id}
         </div>
         {/* name */}
-        <div onClick={handleBlockClick} className="font-medium text-sm truncate flex-grow cursor-pointer">
+        <div onClick={handleBlockClick} className="flex-grow cursor-pointer truncate text-sm font-medium">
           {issue.name}
         </div>
       </div>

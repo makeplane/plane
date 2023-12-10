@@ -2,10 +2,7 @@ import * as React from "react";
 
 import { ISvgIcons } from "./type";
 
-export const PhotoFilterIcon: React.FC<ISvgIcons> = ({
-  className = "text-current",
-  ...rest
-}) => (
+export const PhotoFilterIcon: React.FC<ISvgIcons> = ({ className = "text-current", ...rest }) => (
   <svg
     viewBox="0 0 24 24"
     className={`${className} stroke-2`}

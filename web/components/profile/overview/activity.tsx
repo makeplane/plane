@@ -34,7 +34,7 @@ export const ProfileActivity = () => {
   return (
     <div className="space-y-2">
       <h3 className="text-lg font-medium">Recent Activity</h3>
-      <div className="border border-custom-border-100 rounded p-6">
+      <div className="rounded border border-custom-border-100 p-6">
         {userProfileActivity ? (
           userProfileActivity.results.length > 0 ? (
             <div className="space-y-5">
@@ -67,7 +67,7 @@ export const ProfileActivity = () => {
                             href={`/${workspaceSlug}/projects/${activity.project}/issues/${activity.issue}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-medium text-custom-text-100 inline-flex items-center gap-1 hover:underline"
+                            className="inline-flex items-center gap-1 font-medium text-custom-text-100 hover:underline"
                           >
                             Issue
                             <Rocket className="h-3 w-3" />

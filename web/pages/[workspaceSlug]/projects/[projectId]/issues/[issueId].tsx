@@ -117,10 +117,10 @@ const IssueDetailsPage: NextPageWithLayout = () => {
         />
       ) : issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
-          <div className="w-2/3 h-full overflow-y-auto space-y-5 divide-y-2 divide-custom-border-300 p-5">
+          <div className="h-full w-2/3 space-y-5 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
             <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} />
           </div>
-          <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 py-5 overflow-hidden">
+          <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 py-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

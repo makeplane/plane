@@ -16,19 +16,19 @@ export const FilterOption: React.FC<Props> = (props) => {
   return (
     <button
       type="button"
-      className="flex items-center gap-2 rounded hover:bg-custom-background-80 w-full p-1.5"
+      className="flex w-full items-center gap-2 rounded p-1.5 hover:bg-custom-background-80"
       onClick={onClick}
     >
       <div
-        className={`flex-shrink-0 w-3 h-3 grid place-items-center bg-custom-background-90 border ${
-          isChecked ? "bg-custom-primary-100 border-custom-primary-100 text-white" : "border-custom-border-300"
+        className={`grid h-3 w-3 flex-shrink-0 place-items-center border bg-custom-background-90 ${
+          isChecked ? "border-custom-primary-100 bg-custom-primary-100 text-white" : "border-custom-border-300"
         } ${multiple ? "rounded-sm" : "rounded-full"}`}
       >
         {isChecked && <Check size={10} strokeWidth={3} />}
       </div>
       <div className="flex items-center gap-2 truncate">
-        {icon && <div className="flex-shrink-0 grid place-items-center w-5">{icon}</div>}
-        <div className="flex-grow truncate text-custom-text-200 text-xs">{title}</div>
+        {icon && <div className="grid w-5 flex-shrink-0 place-items-center">{icon}</div>}
+        <div className="flex-grow truncate text-xs text-custom-text-200">{title}</div>
       </div>
     </button>
   );

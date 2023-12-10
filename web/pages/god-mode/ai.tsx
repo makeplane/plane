@@ -24,21 +24,21 @@ const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="pb-3 mb-2 border-b border-custom-border-100">
-        <div className="text-custom-text-100 font-medium text-xl pb-1">AI features for all your workspaces</div>
-        <div className="text-custom-text-300 font-normal text-sm">
+      <div className="mb-2 border-b border-custom-border-100 pb-3">
+        <div className="pb-1 text-xl font-medium text-custom-text-100">AI features for all your workspaces</div>
+        <div className="text-sm font-normal text-custom-text-300">
           Configure your AI API credentials so Plane AI features are turned on for all your workspaces.
         </div>
       </div>
       {formattedConfig ? (
         <>
           <div>
-            <div className="text-custom-text-100 font-medium text-xl pb-1">OpenAI</div>
-            <div className="text-custom-text-300 font-normal text-sm">If you use ChatGPT, this is for you.</div>
+            <div className="pb-1 text-xl font-medium text-custom-text-100">OpenAI</div>
+            <div className="text-sm font-normal text-custom-text-300">If you use ChatGPT, this is for you.</div>
           </div>
           <InstanceAIForm config={formattedConfig} />
-          <div className="flex my-2">
-            <div className="flex items-center gap-2 px-4 py-2 text-xs text-custom-primary-200 bg-custom-primary-100/10 border border-custom-primary-100/20 rounded">
+          <div className="my-2 flex">
+            <div className="flex items-center gap-2 rounded border border-custom-primary-100/20 bg-custom-primary-100/10 px-4 py-2 text-xs text-custom-primary-200">
               <Lightbulb height="14" width="14" />
               <div>If you have a preferred AI models vendor, please get in touch with us.</div>
             </div>
@@ -46,7 +46,7 @@ const InstanceAdminAIPage: NextPageWithLayout = observer(() => {
         </>
       ) : (
         <Loader className="space-y-4">
-          <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-4">
             <Loader.Item height="50px" />
             <Loader.Item height="50px" />
           </div>

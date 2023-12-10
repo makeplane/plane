@@ -115,8 +115,8 @@ export class CycleIssueStore implements ICycleIssueStore {
         ? "groupWithSubGroups"
         : "grouped"
       : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
+        ? "ungrouped"
+        : null;
 
     return _issueState || null;
   }

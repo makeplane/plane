@@ -24,7 +24,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, e
       <ViewStartDateSelect
         issue={issue}
         onChange={(val) => onChange({ start_date: val })}
-        className="flex items-center px-2.5 py-1 !h-full !w-full max-w-full"
+        className="flex !h-full !w-full max-w-full items-center px-2.5 py-1"
         noBorder
         disabled={disabled}
       />

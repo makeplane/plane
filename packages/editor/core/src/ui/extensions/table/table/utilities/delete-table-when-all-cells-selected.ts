@@ -1,13 +1,8 @@
-import {
-  findParentNodeClosestToPos,
-  KeyboardShortcutCommand,
-} from "@tiptap/core";
+import { findParentNodeClosestToPos, KeyboardShortcutCommand } from "@tiptap/core";
 
 import { isCellSelection } from "./is-cell-selection";
 
-export const deleteTableWhenAllCellsSelected: KeyboardShortcutCommand = ({
-  editor,
-}) => {
+export const deleteTableWhenAllCellsSelected: KeyboardShortcutCommand = ({ editor }) => {
   const { selection } = editor.state;
 
   if (!isCellSelection(selection)) {
@@ -15,10 +10,7 @@ export const deleteTableWhenAllCellsSelected: KeyboardShortcutCommand = ({
   }
 
   let cellCount = 0;
-  const table = findParentNodeClosestToPos(
-    selection.ranges[0].$from,
-    (node) => node.type.name === "table",
-  );
+  const table = findParentNodeClosestToPos(selection.ranges[0].$from, (node) => node.type.name === "table");
 
   table?.node.descendants((node) => {
     if (node.type.name === "table") {

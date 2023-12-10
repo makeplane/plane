@@ -37,8 +37,8 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="h-full w-full flex justify-center mt-10 p-4">
-        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
       </div>
     );
 
@@ -47,13 +47,13 @@ const WorkspaceIntegrationsPage: NextPageWithLayout = observer(() => {
   );
 
   return (
-    <section className="pr-9 py-8 w-full overflow-y-auto">
+    <section className="w-full overflow-y-auto py-8 pr-9">
       <IntegrationAndImportExportBanner bannerName="Integrations" />
       <div>
         {appIntegrations ? (
           appIntegrations.map((integration) => <SingleIntegrationCard key={integration.id} integration={integration} />)
         ) : (
-          <Loader className="space-y-2.5 mt-4">
+          <Loader className="mt-4 space-y-2.5">
             <Loader.Item height="89px" />
             <Loader.Item height="89px" />
           </Loader>

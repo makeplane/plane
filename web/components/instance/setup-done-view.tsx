@@ -30,23 +30,23 @@ export const InstanceSetupDone = () => {
 
   return (
     <div className="h-full w-full overflow-hidden">
-      <div className="bg-onboarding-gradient-100 h-full w-full pt-12 overflow-hidden">
-        <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 overflow-hidden">
-          <div className="flex flex-col items-center relative px-7 sm:px-0 bg-onboarding-gradient-200 h-full rounded-t-md overflow-y-auto pb-8">
-            <div className="flex py-10 justify-center">
+      <div className="h-full w-full overflow-hidden bg-onboarding-gradient-100 pt-12">
+        <div className="mx-auto h-full overflow-hidden rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3">
+          <div className="relative flex h-full flex-col items-center overflow-y-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-8 sm:px-0">
+            <div className="flex justify-center py-10">
               <div className="h-[30px]">
                 <Image src={planeLogo} className="h-full w-full" alt="Plane logo" />
               </div>
             </div>
 
-            <div className="grid place-items-center my-8">
+            <div className="my-8 grid place-items-center">
               <div className="w-[444px]">
                 <Image src={instanceSetupDone} className="h-full w-full" alt="image" />
               </div>
             </div>
 
-            <div className="flex flex-col gap-8 items-center w-full sm:px-4">
-              <div className="bg-purple-500/20 border border-purple-500 py-2.5 px-3 rounded text-center space-y-3">
+            <div className="flex w-full flex-col items-center gap-8 sm:px-4">
+              <div className="space-y-3 rounded border border-purple-500 bg-purple-500/20 px-3 py-2.5 text-center">
                 <h6 className="text-base font-semibold">
                   Your instance is now ready for more security, more controls, and more intelligence.
                 </h6>

@@ -71,19 +71,19 @@ export const SubIssues: React.FC<ISubIssues> = ({
       <div>
         {issue && (
           <div
-            className="relative flex items-center gap-2 py-1 px-2 w-full h-full hover:bg-custom-background-90 group transition-all border-b border-custom-border-100"
+            className="group relative flex h-full w-full items-center gap-2 border-b border-custom-border-100 px-2 py-1 transition-all hover:bg-custom-background-90"
             style={{ paddingLeft: `${spacingLeft}px` }}
           >
-            <div className="flex-shrink-0 w-[22px] h-[22px]">
+            <div className="h-[22px] w-[22px] flex-shrink-0">
               {issue?.sub_issues_count > 0 && (
                 <>
                   {issuesLoader.sub_issues.includes(issue?.id) ? (
-                    <div className="w-full h-full flex justify-center items-center rounded-sm bg-custom-background-80 transition-all cursor-not-allowed">
+                    <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
                       <Loader width={14} strokeWidth={2} className="animate-spin" />
                     </div>
                   ) : (
                     <div
-                      className="w-full h-full flex justify-center items-center rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer"
+                      className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-custom-background-80"
                       onClick={() => handleIssuesLoader({ key: "visibility", issueId: issue?.id })}
                     >
                       {issuesLoader && issuesLoader.visibility.includes(issue?.id) ? (
@@ -97,9 +97,9 @@ export const SubIssues: React.FC<ISubIssues> = ({
               )}
             </div>
 
-            <div className="w-full flex items-center gap-2 cursor-pointer" onClick={handleIssuePeekOverview}>
+            <div className="flex w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
               <div
-                className="flex-shrink-0 w-[6px] h-[6px] rounded-full"
+                className="h-[6px] w-[6px] flex-shrink-0 rounded-full"
                 style={{
                   backgroundColor: issue.state_detail.color,
                 }}
@@ -108,7 +108,7 @@ export const SubIssues: React.FC<ISubIssues> = ({
                 {issue.project_detail.identifier}-{issue?.sequence_id}
               </div>
               <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
-                <div className="line-clamp-1 text-xs text-custom-text-100 pr-2">{issue?.name}</div>
+                <div className="line-clamp-1 pr-2 text-xs text-custom-text-100">{issue?.name}</div>
               </Tooltip>
             </div>
 
@@ -155,12 +155,12 @@ export const SubIssues: React.FC<ISubIssues> = ({
             {editable && (
               <>
                 {issuesLoader.delete.includes(issue?.id) ? (
-                  <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm bg-red-200/10 text-red-500 transition-all cursor-not-allowed overflow-hidden flex justify-center items-center">
+                  <div className="flex h-[22px] w-[22px] flex-shrink-0 cursor-not-allowed items-center justify-center overflow-hidden rounded-sm bg-red-200/10 text-red-500 transition-all">
                     <Loader width={14} strokeWidth={2} className="animate-spin" />
                   </div>
                 ) : (
                   <div
-                    className="flex-shrink-0 invisible group-hover:visible w-[22px] h-[22px] rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer overflow-hidden flex justify-center items-center"
+                    className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
                     onClick={() => {
                       handleIssuesLoader({ key: "delete", issueId: issue?.id });
                       removeIssueFromSubIssues(parentIssue?.id, issue);

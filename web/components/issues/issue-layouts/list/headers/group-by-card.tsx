@@ -57,14 +57,14 @@ export const HeaderGroupByCard = observer(
 
     return (
       <>
-        <div className="flex-shrink-0 relative flex gap-2 py-1.5 flex-row items-center w-full">
-          <div className="flex-shrink-0 w-5 h-5 rounded-sm overflow-hidden flex justify-center items-center">
+        <div className="relative flex w-full flex-shrink-0 flex-row items-center gap-2 py-1.5">
+          <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
             {icon ? icon : <CircleDashed className="h-3.5 w-3.5" strokeWidth={2} />}
           </div>
 
-          <div className="flex items-center gap-1 flex-row w-full">
-            <div className="font-medium line-clamp-1 text-custom-text-100">{title}</div>
-            <div className="text-sm font-medium text-custom-text-300 pl-2">{count || 0}</div>
+          <div className="flex w-full flex-row items-center gap-1">
+            <div className="line-clamp-1 font-medium text-custom-text-100">{title}</div>
+            <div className="pl-2 text-sm font-medium text-custom-text-300">{count || 0}</div>
           </div>
 
           {!disableIssueCreation &&
@@ -72,7 +72,7 @@ export const HeaderGroupByCard = observer(
               <CustomMenu
                 width="auto"
                 customButton={
-                  <span className="flex-shrink-0 w-5 h-5 rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all">
+                  <span className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80">
                     <Plus className="h-3.5 w-3.5" strokeWidth={2} />
                   </span>
                 }
@@ -86,7 +86,7 @@ export const HeaderGroupByCard = observer(
               </CustomMenu>
             ) : (
               <div
-                className="flex-shrink-0 w-5 h-5 rounded-sm overflow-hidden flex justify-center items-center hover:bg-custom-background-80 cursor-pointer transition-all"
+                className="flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80"
                 onClick={() => setIsOpen(true)}
               >
                 <Plus width={14} strokeWidth={2} />

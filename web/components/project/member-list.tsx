@@ -19,7 +19,7 @@ export const ProjectMemberList: React.FC = observer(() => {
   // store
   const {
     projectMember: { projectMembers, fetchProjectMembers },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
 
   // states
@@ -45,23 +45,24 @@ export const ProjectMemberList: React.FC = observer(() => {
         }}
       />
 
-      <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-100">
+      <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5">
         <h4 className="text-xl font-medium">Members</h4>
-        <div className="flex gap-1 items-center justify-start ml-auto text-custom-text-400 rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
+        <div className="ml-auto flex items-center justify-start gap-1 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5 text-custom-text-400">
           <Search className="h-3.5 w-3.5" />
           <input
-            className="max-w-[234px] w-full border-none bg-transparent text-sm focus:outline-none"
+            className="w-full max-w-[234px] border-none bg-transparent text-sm focus:outline-none"
             placeholder="Search"
             value={searchQuery}
             autoFocus
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <Button variant="primary" onClick={() => {
-          setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
-          setInviteModal(true)
-        }
-        }
+        <Button
+          variant="primary"
+          onClick={() => {
+            setTrackElement("PROJECT_SETTINGS_MEMBERS_PAGE_HEADER");
+            setInviteModal(true);
+          }}
         >
           Add Member
         </Button>
@@ -79,7 +80,7 @@ export const ProjectMemberList: React.FC = observer(() => {
             ? searchedMembers.map((member) => <ProjectMemberListItem key={member.id} member={member} />)
             : null}
           {searchedMembers.length === 0 && (
-            <h4 className="text-md text-custom-text-400 text-center mt-20">No matching member</h4>
+            <h4 className="text-md mt-20 text-center text-custom-text-400">No matching member</h4>
           )}
         </div>
       )}

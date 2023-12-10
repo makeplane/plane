@@ -161,7 +161,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
                       </div>
                       <div>
                         <TwitterPicker
-                          className={`!absolute top-4 left-4 z-10 m-2 ${openColorPicker ? "block" : "hidden"}`}
+                          className={`!absolute left-4 top-4 z-10 m-2 ${openColorPicker ? "block" : "hidden"}`}
                           color={activeColor}
                           onChange={(color) => {
                             setActiveColor(color.hex);
@@ -173,7 +173,7 @@ const EmojiIconPicker: React.FC<Props> = (props) => {
                       </div>
                     </div>
                     <hr className="mb-1 h-[1px] w-full border-custom-border-200" />
-                    <div className="mt-1 ml-1 grid grid-cols-8 gap-x-2 gap-y-3">
+                    <div className="ml-1 mt-1 grid grid-cols-8 gap-x-2 gap-y-3">
                       {icons.material_rounded.map((icon, index) => (
                         <button
                           key={`${icon.name}-${index}`}

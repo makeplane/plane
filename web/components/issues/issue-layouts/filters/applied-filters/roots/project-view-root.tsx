@@ -105,7 +105,7 @@ export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
       {appliedFilters &&
         viewDetails?.query_data &&
         areFiltersDifferent(appliedFilters, viewDetails?.query_data ?? {}) && (
-          <div className="flex items-center justify-center flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center justify-center">
             <Button variant="primary" size="sm" onClick={handleUpdateView}>
               Update view
             </Button>

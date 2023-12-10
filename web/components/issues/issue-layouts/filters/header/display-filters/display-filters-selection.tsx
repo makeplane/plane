@@ -35,7 +35,7 @@ export const DisplayFiltersSelection: React.FC<Props> = observer((props) => {
     Object.keys(layoutDisplayFiltersOptions?.display_filters ?? {}).includes(displayFilter);
 
   return (
-    <div className="w-full h-full overflow-hidden overflow-y-auto relative px-2.5 divide-y divide-custom-border-200">
+    <div className="relative h-full w-full divide-y divide-custom-border-200 overflow-hidden overflow-y-auto px-2.5">
       {/* display properties */}
       {layoutDisplayFiltersOptions?.display_properties && (
         <div className="py-2">

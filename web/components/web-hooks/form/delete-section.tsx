@@ -13,7 +13,7 @@ export const WebhookDeleteSection: React.FC<Props> = (props) => {
     <Disclosure as="div" className="border-t border-custom-border-200">
       {({ open }) => (
         <div className="w-full">
-          <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+          <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
             <span className="text-lg tracking-tight">Danger zone</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </Disclosure.Button>
