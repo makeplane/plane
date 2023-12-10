@@ -192,8 +192,8 @@ export const ModuleForm: React.FC<Props> = ({
               ? "Updating Module..."
               : "Update Module"
             : isSubmitting
-            ? "Creating Module..."
-            : "Create Module"}
+              ? "Creating Module..."
+              : "Create Module"}
         </Button>
       </div>
     </form>

@@ -28,10 +28,10 @@ const ToastAlerts = () => {
               alert.type === "success"
                 ? "bg-[#06d6a0]"
                 : alert.type === "error"
-                ? "bg-[#ef476f]"
-                : alert.type === "warning"
-                ? "bg-[#e98601]"
-                : "bg-[#1B9aaa]"
+                  ? "bg-[#ef476f]"
+                  : alert.type === "warning"
+                    ? "bg-[#e98601]"
+                    : "bg-[#1B9aaa]"
             }`}
           >
             <div className="flex items-center gap-x-3">

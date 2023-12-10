@@ -61,8 +61,8 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
         {selectedProject.emoji
           ? renderEmoji(selectedProject.emoji)
           : selectedProject.icon_prop
-          ? renderEmoji(selectedProject.icon_prop)
-          : null}
+            ? renderEmoji(selectedProject.icon_prop)
+            : null}
       </span>
       <div className="truncate">{selectedProject.identifier}</div>
     </div>

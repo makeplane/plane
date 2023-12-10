@@ -84,12 +84,12 @@ export const PeekOverviewIssueProperties: React.FC<Props> = ({ issueDetails, mod
                 priority?.key === "urgent"
                   ? "border-red-500/20 bg-red-500/20 text-red-500"
                   : priority?.key === "high"
-                  ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-                  : priority?.key === "medium"
-                  ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-                  : priority?.key === "low"
-                  ? "border-green-500/20 bg-green-500/20 text-green-500"
-                  : "border-custom-border-200 bg-custom-background-80"
+                    ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+                    : priority?.key === "medium"
+                      ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                      : priority?.key === "low"
+                        ? "border-green-500/20 bg-green-500/20 text-green-500"
+                        : "border-custom-border-200 bg-custom-background-80"
               }`}
             >
               {priority && (

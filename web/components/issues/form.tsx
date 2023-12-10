@@ -629,8 +629,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                   ? "Updating Issue..."
                   : "Update Issue"
                 : isSubmitting
-                ? "Adding Issue..."
-                : "Add Issue"}
+                  ? "Adding Issue..."
+                  : "Add Issue"}
             </Button>
           </div>
         </div>

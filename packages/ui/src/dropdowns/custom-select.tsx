@@ -78,12 +78,12 @@ const CustomSelect = (props: ICustomSelectProps) => {
             maxHeight === "lg"
               ? "max-h-60"
               : maxHeight === "md"
-              ? "max-h-48"
-              : maxHeight === "rg"
-              ? "max-h-36"
-              : maxHeight === "sm"
-              ? "max-h-28"
-              : ""
+                ? "max-h-48"
+                : maxHeight === "rg"
+                  ? "max-h-36"
+                  : maxHeight === "sm"
+                    ? "max-h-28"
+                    : ""
           } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}

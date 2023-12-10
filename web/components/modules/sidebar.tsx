@@ -256,10 +256,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     moduleDetails.total_issues === 0
       ? "0 Issue"
       : moduleDetails.total_issues === moduleDetails.completed_issues
-      ? moduleDetails.total_issues > 1
-        ? `${moduleDetails.total_issues}`
-        : `${moduleDetails.total_issues}`
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+        ? moduleDetails.total_issues > 1
+          ? `${moduleDetails.total_issues}`
+          : `${moduleDetails.total_issues}`
+        : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   return (
     <>

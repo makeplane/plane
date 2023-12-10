@@ -88,8 +88,8 @@ export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
           value === issueModule?.module_detail.id
             ? handleRemoveIssueFromModule(issueModule?.id ?? "", issueModule?.module ?? "")
             : handleModuleChange
-            ? handleModuleChange(value)
-            : handleModuleStoreChange(value);
+              ? handleModuleChange(value)
+              : handleModuleStoreChange(value);
         }}
         options={options}
         customButton={

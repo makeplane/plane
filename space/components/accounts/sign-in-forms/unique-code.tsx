@@ -234,8 +234,8 @@ export const UniqueCodeForm: React.FC<Props> = (props) => {
               {resendTimerCode > 0
                 ? `Request new code in ${resendTimerCode}s`
                 : isRequestingNewCode
-                ? "Requesting new code"
-                : "Request new code"}
+                  ? "Requesting new code"
+                  : "Request new code"}
             </button>
           </div>
         </div>

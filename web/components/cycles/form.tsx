@@ -145,8 +145,8 @@ export const CycleForm: React.FC<Props> = (props) => {
               ? "Updating Cycle..."
               : "Update Cycle"
             : isSubmitting
-            ? "Creating Cycle..."
-            : "Create Cycle"}
+              ? "Creating Cycle..."
+              : "Create Cycle"}
         </Button>
       </div>
     </form>

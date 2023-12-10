@@ -281,10 +281,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     cycleDetails.total_issues === 0
       ? "0 Issue"
       : cycleDetails.total_issues === cycleDetails.completed_issues
-      ? cycleDetails.total_issues > 1
-        ? `${cycleDetails.total_issues}`
-        : `${cycleDetails.total_issues}`
-      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+        ? cycleDetails.total_issues > 1
+          ? `${cycleDetails.total_issues}`
+          : `${cycleDetails.total_issues}`
+        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   return (
     <>

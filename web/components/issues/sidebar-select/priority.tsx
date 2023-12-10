@@ -21,12 +21,12 @@ export const SidebarPrioritySelect: React.FC<Props> = ({ value, onChange, disabl
           value === "urgent"
             ? "border-red-500/20 bg-red-500/20 text-red-500"
             : value === "high"
-            ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
-            : value === "medium"
-            ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
-            : value === "low"
-            ? "border-green-500/20 bg-green-500/20 text-green-500"
-            : "border-custom-border-200 bg-custom-background-80 text-custom-text-200"
+              ? "border-orange-500/20 bg-orange-500/20 text-orange-500"
+              : value === "medium"
+                ? "border-yellow-500/20 bg-yellow-500/20 text-yellow-500"
+                : value === "low"
+                  ? "border-green-500/20 bg-green-500/20 text-green-500"
+                  : "border-custom-border-200 bg-custom-background-80 text-custom-text-200"
         }`}
       >
         <span className="flex h-4 w-4 items-center justify-center overflow-hidden">
