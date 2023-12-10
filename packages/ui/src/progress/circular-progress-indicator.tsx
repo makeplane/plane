@@ -1,4 +1,4 @@
-import React, { Children } from "react";
+import React from "react";
 
 interface ICircularProgressIndicator {
   size: number;
@@ -8,9 +8,7 @@ interface ICircularProgressIndicator {
   children?: React.ReactNode;
 }
 
-export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
-  props,
-) => {
+export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (props) => {
   const { size = 40, percentage = 25, strokeWidth = 6, children } = props;
 
   const sqSize = size;
@@ -41,17 +39,8 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
           >
             <feFlood flood-opacity="0" result="BackgroundImageFix" />
             <feGaussianBlur in="BackgroundImageFix" stdDeviation="2" />
-            <feComposite
-              in2="SourceAlpha"
-              operator="in"
-              result="effect1_backgroundBlur_377_19141"
-            />
-            <feBlend
-              mode="normal"
-              in="SourceGraphic"
-              in2="effect1_backgroundBlur_377_19141"
-              result="shape"
-            />
+            <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_377_19141" />
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_377_19141" result="shape" />
             <feColorMatrix
               in="SourceAlpha"
               type="matrix"
@@ -61,19 +50,12 @@ export const CircularProgressIndicator: React.FC<ICircularProgressIndicator> = (
             <feOffset dx="1" dy="1" />
             <feGaussianBlur stdDeviation="2" />
             <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-            <feColorMatrix
-              type="matrix"
-              values="0 0 0 0 0.63125 0 0 0 0 0.6625 0 0 0 0 0.75 0 0 0 0.35 0"
-            />
-            <feBlend
-              mode="normal"
-              in2="shape"
-              result="effect2_innerShadow_377_19141"
-            />
+            <feColorMatrix type="matrix" values="0 0 0 0 0.63125 0 0 0 0 0.6625 0 0 0 0 0.75 0 0 0 0.35 0" />
+            <feBlend mode="normal" in2="shape" result="effect2_innerShadow_377_19141" />
           </filter>
         </defs>
         <circle
-          className="stroke-custom-primary-100 fill-none "
+          className="fill-none stroke-custom-primary-100 "
           cx={size / 2}
           cy={size / 2}
           r={radius}
