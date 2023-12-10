@@ -30,11 +30,11 @@
   },
   "dependencies": {
     "@plane/editor-core": "*",
-    "@tiptap/core": "^2.1.11",
-    "@plane/editor-types": "*",
     "@plane/editor-extensions": "*",
+    "@plane/editor-types": "*",
+    "@tiptap/core": "^2.1.11",
     "@tiptap/extension-placeholder": "^2.1.11",
-    "lucide-react": "^0.244.0"
+    "lucide-react": "^0.294.0"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

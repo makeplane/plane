@@ -27,7 +27,7 @@
     "dotenv": "^16.3.1",
     "js-cookie": "^3.0.1",
     "lowlight": "^2.9.0",
-    "lucide-react": "^0.293.0",
+    "lucide-react": "^0.294.0",
     "mobx": "^6.10.0",
     "mobx-react-lite": "^4.0.3",
     "next": "^14.0.3",

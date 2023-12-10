@@ -55,7 +55,7 @@
     "highlight.js": "^11.8.0",
     "jsx-dom-cjs": "^8.0.3",
     "lowlight": "^3.0.0",
-    "lucide-react": "^0.244.0",
+    "lucide-react": "^0.294.0",
     "react-moveable": "^0.54.2",
     "tailwind-merge": "^1.14.0",
     "tippy.js": "^6.3.7",
