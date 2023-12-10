@@ -21,7 +21,7 @@ export const AppliedStateFilters: React.FC<Props> = (props) => {
         if (!stateDetails) return null;
 
         return (
-          <div key={stateId} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
+          <div key={stateId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             <StateGroupIcon color={stateDetails.color} stateGroup={stateDetails.group} height="12px" width="12px" />
             {stateDetails.name}
             <button

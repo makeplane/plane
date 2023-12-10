@@ -46,7 +46,7 @@ export const PagesListView: FC<IPagesListView> = observer(({ pages }) => {
   return (
     <>
       {pages && workspaceSlug && projectId ? (
-        <div className="space-y-4 h-full overflow-y-auto">
+        <div className="h-full space-y-4 overflow-y-auto">
           {pages.length > 0 ? (
             <ul role="list" className="divide-y divide-custom-border-200">
               {pages.map((page) => (

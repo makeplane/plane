@@ -64,7 +64,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
         </>
       ) : (
         !isDragDisabled && (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
+          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
             {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
           </div>
         )

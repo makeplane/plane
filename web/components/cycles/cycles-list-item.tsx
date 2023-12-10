@@ -153,19 +153,19 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
         projectId={projectId}
       />
       <Link href={`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`}>
-        <div className="group flex items-center justify-between gap-5 px-5 py-6 h-16 w-full text-sm bg-custom-background-100 border-b border-custom-border-100 hover:bg-custom-background-90">
-          <div className="flex items-center gap-3 w-full truncate">
+        <div className="group flex h-16 w-full items-center justify-between gap-5 border-b border-custom-border-100 bg-custom-background-100 px-5 py-6 text-sm hover:bg-custom-background-90">
+          <div className="flex w-full items-center gap-3 truncate">
             <div className="flex items-center gap-4 truncate">
               <span className="flex-shrink-0">
                 <CircularProgressIndicator size={38} percentage={progress}>
                   {isCompleted ? (
                     progress === 100 ? (
-                      <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                      <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
                     ) : (
                       <span className="text-sm text-custom-primary-100">{`!`}</span>
                     )
                   ) : progress === 100 ? (
-                    <Check className="h-3 w-3 text-custom-primary-100 stroke-[2]" />
+                    <Check className="h-3 w-3 stroke-[2] text-custom-primary-100" />
                   ) : (
                     <span className="text-xs text-custom-text-300">{`${progress}%`}</span>
                   )}
@@ -177,20 +177,20 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                   <CycleGroupIcon cycleGroup={cycleStatus} className="h-3.5 w-3.5" />
                 </span>
                 <Tooltip tooltipContent={cycle.name} position="top">
-                  <span className="text-base font-medium truncate">{cycle.name}</span>
+                  <span className="truncate text-base font-medium">{cycle.name}</span>
                 </Tooltip>
               </div>
             </div>
-            <button onClick={openCycleOverview} className="flex-shrink-0 hidden group-hover:flex z-10">
+            <button onClick={openCycleOverview} className="z-10 hidden flex-shrink-0 group-hover:flex">
               <Info className="h-4 w-4 text-custom-text-400" />
             </button>
           </div>
 
-          <div className="flex items-center gap-2.5 justify-end w-full md:w-auto md:flex-shrink-0 ">
+          <div className="flex w-full items-center justify-end gap-2.5 md:w-auto md:flex-shrink-0 ">
             <div className="flex items-center justify-center">
               {currentCycle && (
                 <span
-                  className="flex items-center justify-center text-xs text-center h-6 w-20 rounded-sm"
+                  className="flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs"
                   style={{
                     color: currentCycle.color,
                     backgroundColor: `${currentCycle.color}20`,
@@ -204,7 +204,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             </div>
 
             {renderDate && (
-              <span className="flex items-center justify-center gap-2 w-28 text-xs text-custom-text-300">
+              <span className="flex w-28 items-center justify-center gap-2 text-xs text-custom-text-300">
                 {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
                 {" - "}
                 {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
@@ -212,7 +212,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
             )}
 
             <Tooltip tooltipContent={`${cycle.assignees.length} Members`}>
-              <div className="flex items-center justify-center gap-1 cursor-default w-16">
+              <div className="flex w-16 cursor-default items-center justify-center gap-1">
                 {cycle.assignees.length > 0 ? (
                   <AvatarGroup showTooltip={false}>
                     {cycle.assignees.map((assignee) => (
@@ -220,7 +220,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                     ))}
                   </AvatarGroup>
                 ) : (
-                  <span className="flex items-end justify-center h-5 w-5 bg-custom-background-80 rounded-full border border-dashed border-custom-text-400">
+                  <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
                     <User2 className="h-4 w-4 text-custom-text-400" />
                   </span>
                 )}
@@ -229,7 +229,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
 
             {cycle.is_favorite ? (
               <button type="button" onClick={handleRemoveFromFavorites}>
-                <Star className="h-3.5 w-3.5 text-amber-500 fill-current" />
+                <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
               </button>
             ) : (
               <button type="button" onClick={handleAddToFavorites}>

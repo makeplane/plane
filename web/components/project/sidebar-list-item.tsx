@@ -140,7 +140,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
         {({ open }) => (
           <>
             <div
-              className={`group relative text-custom-sidebar-text-10 px-2 py-1 w-full flex items-center hover:bg-custom-sidebar-background-80 rounded-md ${
+              className={`group relative flex w-full items-center rounded-md px-2 py-1 text-custom-sidebar-text-10 hover:bg-custom-sidebar-background-80 ${
                 snapshot?.isDragging ? "opacity-60" : ""
               } ${isMenuActive ? "!bg-custom-sidebar-background-80" : ""}`}
             >
@@ -151,9 +151,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                 >
                   <button
                     type="button"
-                    className={`absolute top-1/2 -translate-y-1/2 -left-2.5 hidden rounded p-0.5 text-custom-sidebar-text-400 ${
+                    className={`absolute -left-2.5 top-1/2 hidden -translate-y-1/2 rounded p-0.5 text-custom-sidebar-text-400 ${
                       isCollapsed ? "" : "group-hover:!flex"
-                    } ${project.sort_order === null ? "opacity-60 cursor-not-allowed" : ""} ${
+                    } ${project.sort_order === null ? "cursor-not-allowed opacity-60" : ""} ${
                       isMenuActive ? "!flex" : ""
                     }`}
                     {...provided?.dragHandleProps}
@@ -166,12 +166,12 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               <Tooltip tooltipContent={`${project.name}`} position="right" className="ml-2" disabled={!isCollapsed}>
                 <Disclosure.Button
                   as="div"
-                  className={`flex items-center flex-grow truncate cursor-pointer select-none text-left text-sm font-medium ${
+                  className={`flex flex-grow cursor-pointer select-none items-center truncate text-left text-sm font-medium ${
                     isCollapsed ? "justify-center" : `justify-between`
                   }`}
                 >
                   <div
-                    className={`flex items-center flex-grow w-full truncate gap-x-2 ${
+                    className={`flex w-full flex-grow items-center gap-x-2 truncate ${
                       isCollapsed ? "justify-center" : ""
                     }`}
                   >
@@ -180,7 +180,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                         {renderEmoji(project.emoji)}
                       </span>
                     ) : project.icon_prop ? (
-                      <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                      <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
                         {renderEmoji(project.icon_prop)}
                       </div>
                     ) : (
@@ -193,9 +193,9 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   </div>
                   {!isCollapsed && (
                     <ChevronDown
-                      className={`h-4 w-4 flex-shrink-0 hidden ${open ? "rotate-180" : ""} ${
+                      className={`hidden h-4 w-4 flex-shrink-0 ${open ? "rotate-180" : ""} ${
                         isMenuActive ? "!block" : ""
-                      }  group-hover:!block mb-0.5 text-custom-sidebar-text-400 duration-300`}
+                      }  mb-0.5 text-custom-sidebar-text-400 duration-300 group-hover:!block`}
                     />
                   )}
                 </Disclosure.Button>
@@ -206,13 +206,13 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   customButton={
                     <div
                       ref={actionSectionRef}
-                      className="w-full cursor-pointer text-custom-sidebar-text-400 px-1 mt-1.5 my-auto duration-300"
+                      className="my-auto mt-1.5 w-full cursor-pointer px-1 text-custom-sidebar-text-400 duration-300"
                       onClick={() => setIsMenuActive(!isMenuActive)}
                     >
                       <MoreHorizontal className="h-3.5 w-3.5" />
                     </div>
                   }
-                  className={`hidden group-hover:block flex-shrink-0 ${isMenuActive ? "!block" : ""}`}
+                  className={`hidden flex-shrink-0 group-hover:block ${isMenuActive ? "!block" : ""}`}
                   buttonClassName="!text-custom-sidebar-text-400 hover:text-custom-sidebar-text-400"
                   ellipsis
                   placement="bottom-start"
@@ -228,7 +228,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {project.is_favorite && (
                     <CustomMenu.MenuItem onClick={handleRemoveFromFavorites}>
                       <span className="flex items-center justify-start gap-2">
-                        <Star className="h-3.5 w-3.5 stroke-[1.5] text-orange-400 fill-orange-400" />
+                        <Star className="h-3.5 w-3.5 fill-orange-400 stroke-[1.5] text-orange-400" />
                         <span>Remove from favorites</span>
                       </span>
                     </CustomMenu.MenuItem>
@@ -243,8 +243,8 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                   {/* publish project settings */}
                   {isAdmin && (
                     <CustomMenu.MenuItem onClick={() => setPublishModal(true)}>
-                      <div className="flex-shrink-0 relative flex items-center justify-start gap-2">
-                        <div className="rounded transition-all w-4 h-4 flex justify-center items-center text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80 duration-300 cursor-pointer">
+                      <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
+                        <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded text-custom-sidebar-text-200 transition-all duration-300 hover:bg-custom-sidebar-background-80">
                           <Share2 className="h-3.5 w-3.5 stroke-[1.5]" />
                         </div>
                         <div>{project.is_deployed ? "Publish settings" : "Publish"}</div>
@@ -300,7 +300,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className={`space-y-1 mt-1 ${isCollapsed ? "" : "ml-[2.25rem]"}`}>
+              <Disclosure.Panel className={`mt-1 space-y-1 ${isCollapsed ? "" : "ml-[2.25rem]"}`}>
                 {navigation(workspaceSlug as string, project?.id).map((item) => {
                   if (
                     (item.name === "Cycles" && !project.cycle_view) ||
@@ -320,7 +320,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
                           disabled={!isCollapsed}
                         >
                           <div
-                            className={`group flex items-center rounded-md px-2 py-1.5 gap-2.5 text-xs font-medium outline-none ${
+                            className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-xs font-medium outline-none ${
                               router.asPath.includes(item.href)
                                 ? "bg-custom-primary-100/10 text-custom-primary-100"
                                 : "text-custom-sidebar-text-300 hover:bg-custom-sidebar-background-80 focus:bg-custom-sidebar-background-80"

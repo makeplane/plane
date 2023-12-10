@@ -97,7 +97,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
         onClose={() => setSelectDeleteLabel(null)}
       />
 
-      <div className="flex items-center py-3.5 border-b border-custom-border-100 justify-between">
+      <div className="flex items-center justify-between border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium">Labels</h3>
         <Button variant="primary" onClick={newLabel} size="sm">
           Add label

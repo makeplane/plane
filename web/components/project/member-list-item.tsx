@@ -85,13 +85,13 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
                 <img
                   src={memberDetails.avatar}
                   alt={memberDetails.display_name || memberDetails.email}
-                  className="absolute top-0 left-0 h-full w-full object-cover rounded"
+                  className="absolute left-0 top-0 h-full w-full rounded object-cover"
                 />
               </span>
             </Link>
           ) : (
             <Link href={`/${workspaceSlug}/profile/${memberDetails.id}`}>
-              <span className="relative flex h-10 w-10 items-center justify-center rounded p-4 capitalize bg-gray-700 text-white">
+              <span className="relative flex h-10 w-10 items-center justify-center rounded bg-gray-700 p-4 capitalize text-white">
                 {(memberDetails.display_name ?? memberDetails.email ?? "?")[0]}
               </span>
             </Link>
@@ -118,9 +118,9 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
         <div className="flex items-center gap-2 text-xs">
           <CustomSelect
             customButton={
-              <div className="flex item-center gap-1 px-2 py-0.5 rounded">
+              <div className="item-center flex gap-1 rounded px-2 py-0.5">
                 <span
-                  className={`flex items-center text-xs font-medium rounded ${
+                  className={`flex items-center rounded text-xs font-medium ${
                     memberDetails.id !== currentProjectMemberInfo?.id ? "" : "text-custom-sidebar-text-400"
                   }`}
                 >
@@ -177,7 +177,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               <button
                 type="button"
                 onClick={() => setRemoveMemberModal(true)}
-                className="opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                className="pointer-events-none opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
               >
                 <XCircle className="h-3.5 w-3.5 text-red-500" strokeWidth={2} />
               </button>

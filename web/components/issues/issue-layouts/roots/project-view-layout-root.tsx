@@ -39,16 +39,16 @@ export const ProjectViewLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout;
 
   return (
-    <div className="relative h-full w-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ProjectViewAppliedFiltersRoot />
 
       {loader === "init-loader" ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
-          <div className="w-full h-full relative overflow-auto">
+          <div className="relative h-full w-full overflow-auto">
             {activeLayout === "list" ? (
               <ProjectViewListLayout />
             ) : activeLayout === "kanban" ? (

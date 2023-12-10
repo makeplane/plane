@@ -24,7 +24,7 @@ export const GlobalViewEmptyState: React.FC = observer(() => {
   const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
 
   return (
-    <div className="h-full w-full grid place-items-center">
+    <div className="grid h-full w-full place-items-center">
       {!projects || projects?.length === 0 ? (
         <EmptyState
           image={emptyProject}

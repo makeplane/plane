@@ -22,7 +22,7 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
   const { appliedFilters, handleRemoveAllFilters, handleRemoveFilter, states } = props;
 
   return (
-    <div className="flex items-stretch gap-2 flex-wrap bg-custom-background-100">
+    <div className="flex flex-wrap items-stretch gap-2 bg-custom-background-100">
       {Object.entries(appliedFilters).map(([key, value]) => {
         const filterKey = key as keyof IIssueFilterOptions;
 
@@ -31,10 +31,10 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
         return (
           <div
             key={filterKey}
-            className="capitalize py-1 px-2 border border-custom-border-200 rounded-md flex items-center gap-2 flex-wrap"
+            className="flex flex-wrap items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 capitalize"
           >
             <span className="text-xs text-custom-text-300">{replaceUnderscoreIfSnakeCase(filterKey)}</span>
-            <div className="flex items-center gap-1 flex-wrap">
+            <div className="flex flex-wrap items-center gap-1">
               {filterKey === "priority" && (
                 <AppliedPriorityFilters handleRemove={(val) => handleRemoveFilter("priority", val)} values={value} />
               )}
@@ -69,7 +69,7 @@ export const AppliedFiltersList: React.FC<Props> = (props) => {
       <button
         type="button"
         onClick={handleRemoveAllFilters}
-        className="flex items-center gap-2 text-xs border border-custom-border-200 py-1 px-2 rounded-md text-custom-text-300 hover:text-custom-text-200"
+        className="flex items-center gap-2 rounded-md border border-custom-border-200 px-2 py-1 text-xs text-custom-text-300 hover:text-custom-text-200"
       >
         Clear all
         <X size={12} strokeWidth={2} />

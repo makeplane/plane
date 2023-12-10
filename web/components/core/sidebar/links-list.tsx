@@ -35,14 +35,14 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
     <>
       {links.map((link) => (
         <div key={link.id} className="relative flex flex-col rounded-md bg-custom-background-90 p-2.5">
-          <div className="flex items-start justify-between gap-2 w-full">
-            <div className="flex items-start truncate gap-2">
+          <div className="flex w-full items-start justify-between gap-2">
+            <div className="flex items-start gap-2 truncate">
               <span className="py-1">
                 <LinkIcon className="h-3 w-3 flex-shrink-0" />
               </span>
               <Tooltip tooltipContent={link.title && link.title !== "" ? link.title : link.url}>
                 <span
-                  className="text-xs truncate cursor-pointer"
+                  className="cursor-pointer truncate text-xs"
                   onClick={() => copyToClipboard(link.title && link.title !== "" ? link.title : link.url)}
                 >
                   {link.title && link.title !== "" ? link.title : link.url}
@@ -51,7 +51,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
             </div>
 
             {!isNotAllowed && (
-              <div className="flex items-center gap-2 flex-shrink-0 z-[1]">
+              <div className="z-[1] flex flex-shrink-0 items-center gap-2">
                 <button
                   type="button"
                   className="flex items-center justify-center p-1 hover:bg-custom-background-80"
@@ -61,7 +61,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                     handleEditLink(link);
                   }}
                 >
-                  <Pencil className="h-3 w-3 text-custom-text-200 stroke-[1.5]" />
+                  <Pencil className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
                 </button>
                 <a
                   href={link.url}
@@ -69,7 +69,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
                   rel="noopener noreferrer"
                   className="flex items-center justify-center p-1 hover:bg-custom-background-80"
                 >
-                  <ExternalLinkIcon className="h-3 w-3 text-custom-text-200 stroke-[1.5]" />
+                  <ExternalLinkIcon className="h-3 w-3 stroke-[1.5] text-custom-text-200" />
                 </a>
                 <button
                   type="button"
@@ -86,7 +86,7 @@ export const LinksList: React.FC<Props> = ({ links, handleDeleteLink, handleEdit
             )}
           </div>
           <div className="px-5">
-            <p className="text-xs mt-0.5 text-custom-text-300 stroke-[1.5]">
+            <p className="mt-0.5 stroke-[1.5] text-xs text-custom-text-300">
               Added {timeAgo(link.created_at)}
               <br />
               by{" "}

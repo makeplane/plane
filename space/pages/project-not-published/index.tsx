@@ -3,10 +3,10 @@ import Image from "next/image";
 import projectNotPublishedImage from "public/project-not-published.svg";
 
 const CustomProjectNotPublishedError = () => (
-  <div className="relative w-screen min-h-screen h-full flex justify-center items-center py-5">
+  <div className="relative flex h-full min-h-screen w-screen items-center justify-center py-5">
     <div className="max-w-[700px] space-y-5">
-      <div className="flex items-center flex-col gap-3 text-center">
-        <div className="relative w-[240px] h-[240px]">
+      <div className="flex flex-col items-center gap-3 text-center">
+        <div className="relative h-[240px] w-[240px]">
           <Image src={projectNotPublishedImage} layout="fill" alt="404- Page not found" />
         </div>
         <div className="text-xl font-medium">
@@ -17,10 +17,10 @@ const CustomProjectNotPublishedError = () => (
         </div>
       </div>
 
-      <div className="text-center flex justify-center items-center">
+      <div className="flex items-center justify-center text-center">
         <a
           href={`https://app.plane.so/`}
-          className="transition-all border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 hover:text-gray-800 cursor-pointer p-1.5 px-2.5 rounded-sm text-sm font-medium hover:scale-105 select-none"
+          className="cursor-pointer select-none rounded-sm border border-gray-200 bg-gray-50 p-1.5 px-2.5 text-sm font-medium text-gray-700 transition-all hover:scale-105 hover:bg-gray-100 hover:text-gray-800"
         >
           Go to your Workspace
         </a>

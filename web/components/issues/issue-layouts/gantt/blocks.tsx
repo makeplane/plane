@@ -20,11 +20,11 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
 
   return (
     <div
-      className="flex items-center relative h-full w-full rounded cursor-pointer"
+      className="relative flex h-full w-full cursor-pointer items-center rounded"
       style={{ backgroundColor: data?.state_detail?.color }}
       onClick={handleIssuePeekOverview}
     >
-      <div className="absolute top-0 left-0 h-full w-full bg-custom-background-100/50" />
+      <div className="absolute left-0 top-0 h-full w-full bg-custom-background-100/50" />
       <Tooltip
         tooltipContent={
           <div className="space-y-1">
@@ -37,7 +37,7 @@ export const IssueGanttBlock = ({ data }: { data: IIssue }) => {
         position="top-left"
       >
         <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
-          <div className="relative text-custom-text-100 text-sm truncate py-1 px-2.5 w-full">{data?.name}</div>
+          <div className="relative w-full truncate px-2.5 py-1 text-sm text-custom-text-100">{data?.name}</div>
         </Tooltip>
       </Tooltip>
     </div>
@@ -58,13 +58,13 @@ export const IssueGanttSidebarBlock = ({ data }: { data: IIssue }) => {
   };
 
   return (
-    <div className="relative w-full flex items-center gap-2 h-full cursor-pointer" onClick={handleIssuePeekOverview}>
+    <div className="relative flex h-full w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
       <StateGroupIcon stateGroup={data?.state_detail?.group} color={data?.state_detail?.color} />
-      <div className="text-xs text-custom-text-300 flex-shrink-0">
+      <div className="flex-shrink-0 text-xs text-custom-text-300">
         {data?.project_detail?.identifier} {data?.sequence_id}
       </div>
       <Tooltip tooltipHeading="Title" tooltipContent={data.name}>
-        <span className="text-sm font-medium flex-grow truncate">{data?.name}</span>
+        <span className="flex-grow truncate text-sm font-medium">{data?.name}</span>
       </Tooltip>
     </div>
   );

@@ -143,7 +143,7 @@ export const IssueDescriptionForm: FC<IssueDetailsProps> = (props) => {
           <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
         )}
         {characterLimit && isAllowed && (
-          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
+          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200">
             <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
               {watch("name").length}
             </span>

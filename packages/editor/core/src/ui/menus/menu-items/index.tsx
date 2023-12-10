@@ -134,9 +134,7 @@ export const TableItem = (editor: Editor): EditorMenuItem => ({
 export const ImageItem = (
   editor: Editor,
   uploadFile: UploadImage,
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ): EditorMenuItem => ({
   name: "image",
   isActive: () => editor?.isActive("image"),

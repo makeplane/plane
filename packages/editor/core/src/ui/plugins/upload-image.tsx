@@ -21,10 +21,7 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
           const placeholder = document.createElement("div");
           placeholder.setAttribute("class", "img-placeholder");
           const image = document.createElement("img");
-          image.setAttribute(
-            "class",
-            "opacity-10 rounded-lg border border-custom-border-300",
-          );
+          image.setAttribute("class", "opacity-10 rounded-lg border border-custom-border-300");
           image.src = src;
           placeholder.appendChild(image);
 
@@ -42,10 +39,7 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
           // Create an SVG element from the SVG string
           const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-circle"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
           const parser = new DOMParser();
-          const svgElement = parser.parseFromString(
-            svgString,
-            "image/svg+xml",
-          ).documentElement;
+          const svgElement = parser.parseFromString(svgString, "image/svg+xml").documentElement;
 
           cancelButton.appendChild(svgElement);
           placeholder.appendChild(cancelButton);
@@ -54,13 +48,7 @@ const UploadImagesPlugin = (cancelUploadImage?: () => any) =>
           });
           set = set.add(tr.doc, [deco]);
         } else if (action && action.remove) {
-          set = set.remove(
-            set.find(
-              undefined,
-              undefined,
-              (spec) => spec.id == action.remove.id,
-            ),
-          );
+          set = set.remove(set.find(undefined, undefined, (spec) => spec.id == action.remove.id));
         }
         return set;
       },
@@ -76,11 +64,7 @@ export default UploadImagesPlugin;
 
 function findPlaceholder(state: EditorState, id: {}) {
   const decos = uploadKey.getState(state);
-  const found = decos.find(
-    undefined,
-    undefined,
-    (spec: { id: number | undefined }) => spec.id == id,
-  );
+  const found = decos.find(undefined, undefined, (spec: { id: number | undefined }) => spec.id == id);
   return found.length ? found[0].from : null;
 }
 
@@ -96,9 +80,7 @@ export async function startImageUpload(
   view: EditorView,
   pos: number,
   uploadFile: UploadImage,
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void
 ) {
   if (!file) {
     alert("No file selected. Please select a file to upload.");
@@ -151,9 +133,7 @@ export async function startImageUpload(
     const imageSrc = typeof src === "object" ? reader.result : src;
 
     const node = schema.nodes.image.create({ src: imageSrc });
-    const transaction = view.state.tr
-      .replaceWith(pos, pos, node)
-      .setMeta(uploadKey, { remove: { id } });
+    const transaction = view.state.tr.replaceWith(pos, pos, node).setMeta(uploadKey, { remove: { id } });
     view.dispatch(transaction);
   } catch (error) {
     console.error("Upload error: ", error);
@@ -161,10 +141,7 @@ export async function startImageUpload(
   }
 }
 
-const UploadImageHandler = (
-  file: File,
-  uploadFile: UploadImage,
-): Promise<string> => {
+const UploadImageHandler = (file: File, uploadFile: UploadImage): Promise<string> => {
   try {
     return new Promise(async (resolve, reject) => {
       try {

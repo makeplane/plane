@@ -39,14 +39,11 @@ export const ProgressBar: React.FC<Props> = ({
     const DIRECTION = -1;
     // Rotation Calc
     const primaryRotationAngle = (maxValue - 1) * (360 / maxValue);
-    const rotationAngle =
-      -1 * DIRECTION * primaryRotationAngle +
-      i * DIRECTION * primaryRotationAngle;
+    const rotationAngle = -1 * DIRECTION * primaryRotationAngle + i * DIRECTION * primaryRotationAngle;
     const rotationTransformation = `rotate(${rotationAngle}, ${radius}, ${radius})`;
     const pieValue = calculatePieValue(maxValue);
     const dValue = generatePie(pieValue);
-    const fillColor =
-      value > 0 && i <= value ? activeStrokeColor : inactiveStrokeColor;
+    const fillColor = value > 0 && i <= value ? activeStrokeColor : inactiveStrokeColor;
 
     return (
       <path
@@ -60,18 +57,12 @@ export const ProgressBar: React.FC<Props> = ({
   };
 
   // combining the Pies
-  const renderOuterCircle = () =>
-    [...Array(maxValue + 1)].map((e, i) => renderPie(i));
+  const renderOuterCircle = () => [...Array(maxValue + 1)].map((e, i) => renderPie(i));
 
   return (
     <svg width={radius * 2} height={radius * 2}>
       {renderOuterCircle()}
-      <circle
-        r={radius - strokeWidth}
-        cx={radius}
-        cy={radius}
-        className="progress-bar"
-      />
+      <circle r={radius - strokeWidth} cx={radius} cy={radius} className="progress-bar" />
     </svg>
   );
 };

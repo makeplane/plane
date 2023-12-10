@@ -131,7 +131,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
   return (
     <div>
       <div className="group relative grid grid-cols-11 gap-4">
-        <div className="col-span-7 bg-onboarding-background-200 rounded-md">
+        <div className="col-span-7 rounded-md bg-onboarding-background-200">
           <Controller
             control={control}
             name={`emails.${index}.email`}
@@ -154,12 +154,12 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                 ref={ref}
                 hasError={Boolean(errors.emails?.[index]?.email)}
                 placeholder={placeholderEmails[index % placeholderEmails.length]}
-                className="text-xs sm:text-sm w-full h-12 placeholder:text-onboarding-text-400 border-onboarding-border-100"
+                className="h-12 w-full border-onboarding-border-100 text-xs placeholder:text-onboarding-text-400 sm:text-sm"
               />
             )}
           />
         </div>
-        <div className="col-span-3 bg-onboarding-background-200 rounded-md border items-center flex border-onboarding-border-100">
+        <div className="col-span-3 flex items-center rounded-md border border-onboarding-border-100 bg-onboarding-background-200">
           <Controller
             control={control}
             name={`emails.${index}.role`}
@@ -173,13 +173,13 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                   setIsDropdownOpen(false);
                   setValue(`emails.${index}.role_active`, true);
                 }}
-                className="flex-shrink-0 text-left w-full"
+                className="w-full flex-shrink-0 text-left"
               >
                 <Listbox.Button
                   type="button"
                   ref={buttonRef}
                   onClick={() => setIsDropdownOpen((prev) => !prev)}
-                  className="flex items-center px-2.5 h-11 py-2 text-xs justify-between gap-1 w-full rounded-md duration-300"
+                  className="flex h-11 w-full items-center justify-between gap-1 rounded-md px-2.5 py-2 text-xs duration-300"
                 >
                   <span
                     className={`text-xs ${
@@ -212,7 +212,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
                 >
                   <Listbox.Options
                     ref={dropdownRef}
-                    className="fixed w-36 z-10 border border-onboarding-border-100 mt-1 overflow-y-auto rounded-md bg-onboarding-background-200 text-xs shadow-lg focus:outline-none max-h-48"
+                    className="fixed z-10 mt-1 max-h-48 w-36 overflow-y-auto rounded-md border border-onboarding-border-100 bg-onboarding-background-200 text-xs shadow-lg focus:outline-none"
                   >
                     <div className="space-y-1 p-2">
                       {Object.entries(ROLE).map(([key, value]) => (
@@ -243,7 +243,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
         {fields.length > 1 && (
           <button
             type="button"
-            className="hidden group-hover:grid self-center place-items-center rounded ml-3"
+            className="ml-3 hidden place-items-center self-center rounded group-hover:grid"
             onClick={() => remove(index)}
           >
             <XCircle className="h-3.5 w-3.5 text-custom-text-400" />
@@ -253,7 +253,7 @@ const InviteMemberForm: React.FC<InviteMemberFormProps> = (props) => {
       {email && !emailRegex.test(email) && (
         <div className="">
           <span className="text-sm">🤥</span>{" "}
-          <span className="text-xs text-red-500 mt-1">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-xs text-red-500">That doesn{"'"}t look like an email address.</span>
         </div>
       )}
     </div>
@@ -344,59 +344,59 @@ export const InviteMembers: React.FC<Props> = (props) => {
   return (
     <div className="flex w-full py-14 ">
       <div
-        className={`fixed ml-16 hidden lg:block w-1/5 p-4 pb-40 h-fit rounded bg-onboarding-gradient-300 border-x border-t border-onboarding-border-300 border-opacity-10`}
+        className={`fixed ml-16 hidden h-fit w-1/5 rounded border-x border-t border-onboarding-border-300 border-opacity-10 bg-onboarding-gradient-300 p-4 pb-40 lg:block`}
       >
-        <p className="text-base text-onboarding-text-400 font-semibold">Members</p>
+        <p className="text-base font-semibold text-onboarding-text-400">Members</p>
 
         {Array.from({ length: 4 }).map(() => (
-          <div className="flex items-center gap-2 mt-6">
-            <div className="h-8 w-8 flex justify-center items-center flex-shrink-0 rounded-full">
+          <div className="mt-6 flex items-center gap-2">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full">
               <Image src={resolvedTheme === "dark" ? userDark : userLight} alt="user" className="object-cover" />
             </div>
             <div className="w-full">
-              <div className="rounded-md h-2.5 bg-onboarding-background-400 my-2  w-1/2" />
-              <div className="rounded-md h-2 bg-onboarding-background-100 w-1/3" />
+              <div className="my-2 h-2.5 w-1/2 rounded-md  bg-onboarding-background-400" />
+              <div className="h-2 w-1/3 rounded-md bg-onboarding-background-100" />
             </div>
           </div>
         ))}
 
-        <div className="mt-20 relative">
-          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full shadow-onbording-shadow-sm gap-x-2 border border-onboarding-border-100 w-full mt-1 right-24">
-            <div className="w-10 h-10 flex-shrink-0 rounded-full bg-custom-primary-10">
+        <div className="relative mt-20">
+          <div className="absolute right-24 mt-1 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onbording-shadow-sm">
+            <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user2} alt="user" />
             </div>
             <div>
               <p className="text-sm font-medium">Murphy cooper</p>
-              <p className="text-onboarding-text-400 text-sm">murphy@plane.so</p>
+              <p className="text-sm text-onboarding-text-400">murphy@plane.so</p>
             </div>
           </div>
 
-          <div className="flex absolute bg-onboarding-background-200 p-2 rounded-full shadow-onbording-shadow-sm gap-x-2 border border-onboarding-border-100 w-full right-12 mt-16">
-            <div className="w-10 h-10 flex-shrink-0 rounded-full bg-custom-primary-10">
+          <div className="absolute right-12 mt-16 flex w-full gap-x-2 rounded-full border border-onboarding-border-100 bg-onboarding-background-200 p-2 shadow-onbording-shadow-sm">
+            <div className="h-10 w-10 flex-shrink-0 rounded-full bg-custom-primary-10">
               <Image src={user1} alt="user" />
             </div>
             <div>
               <p className="text-sm font-medium">Else Thompson</p>
-              <p className="text-onboarding-text-400 text-sm">Elsa@plane.so</p>
+              <p className="text-sm text-onboarding-text-400">Elsa@plane.so</p>
             </div>
           </div>
         </div>
       </div>
-      <div className="lg:w-2/3 w-full ml-auto ">
+      <div className="ml-auto w-full lg:w-2/3 ">
         <form
-          className="px-7 lg:px-0 ml-auto w-full lg:w-5/6 space-y-7 sm:space-y-10 mx-auto"
+          className="mx-auto ml-auto w-full space-y-7 px-7 sm:space-y-10 lg:w-5/6 lg:px-0"
           onSubmit={handleSubmit(onSubmit)}
           onKeyDown={(e) => {
             if (e.code === "Enter") e.preventDefault();
           }}
         >
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl sm:text-2xl font-semibold">Invite your team to work with you</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold sm:text-2xl">Invite your team to work with you</h2>
             <OnboardingStepIndicator step={3} />
           </div>
 
-          <div className="xl:w-5/6 w-full text-sm">
-            <div className="space-y-3 sm:space-y-4 mb-3">
+          <div className="w-full text-sm xl:w-5/6">
+            <div className="mb-3 space-y-3 sm:space-y-4">
               {fields.map((field, index) => (
                 <InviteMemberForm
                   watch={watch}
@@ -416,7 +416,7 @@ export const InviteMembers: React.FC<Props> = (props) => {
             </div>
             <button
               type="button"
-              className="flex items-center gap-2 outline-custom-primary-100 bg-transparent text-custom-primary-100 text-sm font-semibold py-2 pr-3"
+              className="flex items-center gap-2 bg-transparent py-2 pr-3 text-sm font-semibold text-custom-primary-100 outline-custom-primary-100"
               onClick={appendField}
             >
               <Plus className="h-3 w-3" />

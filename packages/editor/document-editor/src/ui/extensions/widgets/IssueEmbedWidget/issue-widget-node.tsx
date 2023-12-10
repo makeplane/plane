@@ -35,10 +35,7 @@ export const IssueWidget = Node.create({
 
   addNodeView() {
     return ReactNodeViewRenderer((props: Object) => (
-      <IssueWidgetCard
-        {...props}
-        issueEmbedConfig={this.options.issueEmbedConfig}
-      />
+      <IssueWidgetCard {...props} issueEmbedConfig={this.options.issueEmbedConfig} />
     ));
   },
 

@@ -20,7 +20,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
   const { columnId, issueIds, issues, handleIssues, quickActions, displayProperties, canEditProperties } = props;
 
   return (
-    <div className="w-full h-full relative divide-y-[0.5px] divide-custom-border-200">
+    <div className="relative h-full w-full divide-y-[0.5px] divide-custom-border-200">
       {issueIds && issueIds.length > 0 ? (
         issueIds.map(
           (issueId: string) =>
@@ -38,7 +38,7 @@ export const IssueBlocksList: FC<Props> = (props) => {
             )
         )
       ) : (
-        <div className="bg-custom-background-100 text-custom-text-400 text-sm p-3">No issues</div>
+        <div className="bg-custom-background-100 p-3 text-sm text-custom-text-400">No issues</div>
       )}
     </div>
   );

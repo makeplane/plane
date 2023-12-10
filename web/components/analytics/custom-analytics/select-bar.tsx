@@ -30,7 +30,7 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
   return (
     <div
       className={`grid items-center gap-4 px-5 py-2.5 ${isProjectLevel ? "grid-cols-3" : "grid-cols-2"} ${
-        fullScreen ? "lg:grid-cols-4 md:py-5" : ""
+        fullScreen ? "md:py-5 lg:grid-cols-4" : ""
       }`}
     >
       {!isProjectLevel && (

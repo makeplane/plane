@@ -168,18 +168,18 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
         )}
       />
       <DeactivateAccountModal isOpen={deactivateAccountModal} onClose={() => setDeactivateAccountModal(false)} />
-      <div className="h-full w-full lg:w-3/5 mx-auto flex flex-col px-8 pb-8 mt-16 space-y-10 overflow-y-auto">
+      <div className="mx-auto mt-16 flex h-full w-full flex-col space-y-10 overflow-y-auto px-8 pb-8 lg:w-3/5">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-8 w-full">
+          <div className="flex w-full flex-col gap-8">
             <div className="relative h-44 w-full">
               <img
                 src={watch("cover_image") ?? "https://images.unsplash.com/photo-1506383796573-caf02b4a79ab"}
                 className="h-44 w-full rounded-lg object-cover"
                 alt={myProfile?.first_name ?? "Cover image"}
               />
-              <div className="flex items-end justify-between absolute left-8 -bottom-6">
+              <div className="absolute -bottom-6 left-8 flex items-end justify-between">
                 <div className="flex gap-3">
-                  <div className="flex items-center justify-center bg-custom-background-90 h-16 w-16 rounded-lg">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-custom-background-90">
                     <button type="button" onClick={() => setIsImageUploadModalOpen(true)}>
                       {!watch("avatar") || watch("avatar") === "" ? (
                         <div className="h-16 w-16 rounded-md bg-custom-background-80 p-2">
@@ -189,7 +189,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                         <div className="relative h-16 w-16 overflow-hidden">
                           <img
                             src={watch("avatar")}
-                            className="absolute top-0 left-0 h-full w-full object-cover rounded-lg"
+                            className="absolute left-0 top-0 h-full w-full rounded-lg object-cover"
                             onClick={() => setIsImageUploadModalOpen(true)}
                             alt={myProfile.display_name}
                             role="button"
@@ -201,7 +201,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                 </div>
               </div>
 
-              <div className="flex absolute right-3 bottom-3">
+              <div className="absolute bottom-3 right-3 flex">
                 <Controller
                   control={control}
                   name="cover_image"
@@ -217,9 +217,9 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </div>
             </div>
 
-            <div className="flex item-center justify-between px-8 mt-4">
+            <div className="item-center mt-4 flex justify-between px-8">
               <div className="flex flex-col">
-                <div className="flex item-center text-lg font-semibold text-custom-text-100">
+                <div className="item-center flex text-lg font-semibold text-custom-text-100">
                   <span>{`${watch("first_name")} ${watch("last_name")}`}</span>
                 </div>
                 <span className="text-sm tracking-tight">{watch("email")}</span>
@@ -233,7 +233,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
               </Link> */}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 px-8">
+            <div className="grid grid-cols-1 gap-6 px-8 lg:grid-cols-2 2xl:grid-cols-3">
               <div className="flex flex-col gap-1">
                 <h4 className="text-sm">First name</h4>
                 <Controller
@@ -249,7 +249,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.first_name)}
                       placeholder="Enter your first name"
-                      className="rounded-md w-full"
+                      className="w-full rounded-md"
                     />
                   )}
                 />
@@ -271,7 +271,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.last_name)}
                       placeholder="Enter your last name"
-                      className="rounded-md w-full"
+                      className="w-full rounded-md"
                     />
                   )}
                 />
@@ -292,7 +292,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
                       ref={ref}
                       hasError={Boolean(errors.email)}
                       placeholder="Enter your email"
-                      className="rounded-md w-full"
+                      className="w-full rounded-md"
                       disabled
                     />
                   )}
@@ -397,7 +397,7 @@ const ProfileSettingsPage: NextPageWithLayout = () => {
         <Disclosure as="div" className="border-t border-custom-border-100 px-8">
           {({ open }) => (
             <>
-              <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+              <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
                 <span className="text-lg tracking-tight">Deactivate account</span>
                 <ChevronDown className={`h-5 w-5 transition-all ${open ? "rotate-180" : ""}`} />
               </Disclosure.Button>

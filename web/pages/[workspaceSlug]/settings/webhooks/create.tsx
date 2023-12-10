@@ -20,13 +20,13 @@ const CreateWebhookPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="h-full w-full flex justify-center mt-10 p-4">
-        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
       </div>
     );
 
   return (
-    <div className="w-full overflow-y-auto py-8 pr-9 pl-1">
+    <div className="w-full overflow-y-auto py-8 pl-1 pr-9">
       <WebhookForm />
     </div>
   );

@@ -82,7 +82,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
         description_html: newDescription,
       })
       .then(() => {
-        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription }) as IPage, false);
+        mutatePageDetails((prevData) => ({ ...prevData, description_html: newDescription } as IPage), false);
       });
   };
 
@@ -161,15 +161,12 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   }, [pageDetails?.description_html]);
 
   function createObjectFromArray(keys: string[], options: any): any {
-    return keys.reduce(
-      (obj, key) => {
-        if (options[key] !== undefined) {
-          obj[key] = options[key];
-        }
-        return obj;
-      },
-      {} as { [key: string]: any }
-    );
+    return keys.reduce((obj, key) => {
+      if (options[key] !== undefined) {
+        obj[key] = options[key];
+      }
+      return obj;
+    }, {} as { [key: string]: any });
   }
 
   const mutatePageDetailsHelper = (
@@ -412,7 +409,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                 }}
               />
             ) : (
-              <div className="h-full w-full relative overflow-hidden">
+              <div className="relative h-full w-full overflow-hidden">
                 <Controller
                   name="description_html"
                   control={control}
@@ -469,7 +466,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                   <>
                     <button
                       type="button"
-                      className="flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90 absolute top-2.5 right-[68px]"
+                      className="absolute right-[68px] top-2.5 flex items-center gap-1 rounded px-1.5 py-1 text-xs hover:bg-custom-background-90"
                       onClick={() => setGptModal((prevData) => !prevData)}
                     >
                       <Sparkle className="h-4 w-4" />
@@ -505,7 +502,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
           </div>
         </div>
       ) : (
-        <div className="h-full w-full grid place-items-center">
+        <div className="grid h-full w-full place-items-center">
           <Spinner />
         </div>
       )}

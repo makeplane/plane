@@ -86,7 +86,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
 
   return (
-    <div className="relative w-full flex items-center z-10 h-[3.75rem] justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+    <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
       <div className="flex items-center gap-2">
         <Breadcrumbs>
           <Breadcrumbs.BreadcrumbItem
@@ -98,7 +98,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
                   {renderEmoji(currentProjectDetails.emoji)}
                 </span>
               ) : currentProjectDetails?.icon_prop ? (
-                <div className="h-7 w-7 flex-shrink-0 grid place-items-center">
+                <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
                   {renderEmoji(currentProjectDetails.icon_prop)}
                 </div>
               ) : (

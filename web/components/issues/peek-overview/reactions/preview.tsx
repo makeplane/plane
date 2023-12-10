@@ -26,7 +26,7 @@ export const IssueReactionPreview: FC<IIssueReactionPreview> = (props) => {
               type="button"
               onClick={() => handleReaction(reaction)}
               key={reaction}
-              className={`flex items-center gap-1.5 text-custom-text-100 text-sm h-full px-2 py-1 rounded ${
+              className={`flex h-full items-center gap-1.5 rounded px-2 py-1 text-sm text-custom-text-100 ${
                 isUserReacted(issueReactions[reaction])
                   ? `bg-custom-primary-100/10 hover:bg-custom-primary-100/30`
                   : `bg-custom-background-90 hover:bg-custom-background-100/30`

@@ -48,7 +48,7 @@ const Inputs = (props: any) => {
       {...register("name", {
         required: "Issue title is required.",
       })}
-      className="w-full px-2 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+      className="w-full rounded-md bg-transparent px-2 text-sm font-medium leading-5 text-custom-text-200 outline-none"
     />
   );
 };
@@ -147,17 +147,17 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       {isOpen && (
         <form
           ref={ref}
-          className="flex py-3 px-2 border-[0.5px] border-custom-border-100 mr-2.5 items-center rounded gap-x-2 bg-custom-background-100 shadow-custom-shadow-2xs"
+          className="mr-2.5 flex items-center gap-x-2 rounded border-[0.5px] border-custom-border-100 bg-custom-background-100 px-2 py-3 shadow-custom-shadow-2xs"
           onSubmit={handleSubmit(onSubmitHandler)}
         >
-          <div className="w-3 h-3 rounded-full border border-custom-border-1000 flex-shrink-0" />
+          <div className="h-3 w-3 flex-shrink-0 rounded-full border border-custom-border-1000" />
           <h4 className="text-xs text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
           <Inputs register={register} setFocus={setFocus} />
         </form>
       )}
 
       {isOpen && (
-        <p className="text-xs ml-3 mt-3 italic text-custom-text-200">
+        <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
           Press {"'"}Enter{"'"} to add another issue
         </p>
       )}
@@ -165,7 +165,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
       {!isOpen && (
         <button
           type="button"
-          className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1 rounded-md"
+          className="flex items-center gap-x-[6px] rounded-md px-2 py-1 text-custom-primary-100"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />

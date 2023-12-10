@@ -30,9 +30,7 @@ export interface BubbleMenuItem {
 type EditorBubbleMenuProps = {
   editor: Editor;
   uploadFile: UploadImage;
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void;
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
 };
 
 export const FixedMenu = (props: EditorBubbleMenuProps) => {
@@ -48,15 +46,9 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
     StrikeThroughItem(editor),
   ];
 
-  const listItems: BubbleMenuItem[] = [
-    BulletListItem(editor),
-    NumberedListItem(editor),
-  ];
+  const listItems: BubbleMenuItem[] = [BulletListItem(editor), NumberedListItem(editor)];
 
-  const userActionItems: BubbleMenuItem[] = [
-    QuoteItem(editor),
-    CodeItem(editor),
-  ];
+  const userActionItems: BubbleMenuItem[] = [QuoteItem(editor), CodeItem(editor)];
 
   function getComplexItems(): BubbleMenuItem[] {
     const items: BubbleMenuItem[] = [TableItem(editor)];
@@ -98,10 +90,10 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "h-7 w-7 grid place-items-center text-custom-text-300 hover:bg-custom-background-80 rounded",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "text-custom-text-100 bg-custom-background-80": item.isActive(),
-              },
+                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+              }
             )}
           >
             <item.icon className="h-4 w-4" />
@@ -115,10 +107,10 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "h-7 w-7 grid place-items-center text-custom-text-300 hover:bg-custom-background-80 rounded",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "text-custom-text-100 bg-custom-background-80": item.isActive(),
-              },
+                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+              }
             )}
           >
             <item.icon
@@ -136,10 +128,10 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "h-7 w-7 grid place-items-center text-custom-text-300 hover:bg-custom-background-80 rounded",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "text-custom-text-100 bg-custom-background-80": item.isActive(),
-              },
+                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+              }
             )}
           >
             <item.icon
@@ -157,10 +149,10 @@ export const FixedMenu = (props: EditorBubbleMenuProps) => {
             type="button"
             onClick={item.command}
             className={cn(
-              "h-7 w-7 grid place-items-center text-custom-text-300 hover:bg-custom-background-80 rounded",
+              "grid h-7 w-7 place-items-center rounded text-custom-text-300 hover:bg-custom-background-80",
               {
-                "text-custom-text-100 bg-custom-background-80": item.isActive(),
-              },
+                "bg-custom-background-80 text-custom-text-100": item.isActive(),
+              }
             )}
           >
             <item.icon

@@ -15,11 +15,7 @@ interface ImageNode extends ProseMirrorNode {
 const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
   new Plugin({
     key: deleteKey,
-    appendTransaction: (
-      transactions: readonly Transaction[],
-      oldState: EditorState,
-      newState: EditorState,
-    ) => {
+    appendTransaction: (transactions: readonly Transaction[], oldState: EditorState, newState: EditorState) => {
       const newImageSources = new Set<string>();
       newState.doc.descendants((node) => {
         if (node.type.name === IMAGE_NODE_TYPE) {
@@ -59,10 +55,7 @@ const TrackImageDeletionPlugin = (deleteImage: DeleteImage): Plugin =>
 
 export default TrackImageDeletionPlugin;
 
-export async function onNodeDeleted(
-  src: string,
-  deleteImage: DeleteImage,
-): Promise<void> {
+export async function onNodeDeleted(src: string, deleteImage: DeleteImage): Promise<void> {
   try {
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
     const resStatus = await deleteImage(assetUrlWithWorkspaceId);
@@ -74,10 +67,7 @@ export async function onNodeDeleted(
   }
 }
 
-export async function onNodeRestored(
-  src: string,
-  restoreImage: RestoreImage,
-): Promise<void> {
+export async function onNodeRestored(src: string, restoreImage: RestoreImage): Promise<void> {
   try {
     const assetUrlWithWorkspaceId = new URL(src).pathname.substring(1);
     const resStatus = await restoreImage(assetUrlWithWorkspaceId);

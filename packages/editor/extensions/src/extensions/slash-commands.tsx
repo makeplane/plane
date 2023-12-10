@@ -1,20 +1,9 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  ReactNode,
-  useRef,
-  useLayoutEffect,
-} from "react";
+import { useState, useEffect, useCallback, ReactNode, useRef, useLayoutEffect } from "react";
 import { Editor, Range, Extension } from "@tiptap/core";
 import Suggestion from "@tiptap/suggestion";
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import type {
-  UploadImage,
-  ISlashCommandItem,
-  CommandProps,
-} from "@plane/editor-types";
+import type { UploadImage, ISlashCommandItem, CommandProps } from "@plane/editor-types";
 import {
   CaseSensitive,
   Code2,
@@ -55,15 +44,7 @@ const Command = Extension.create({
     return {
       suggestion: {
         char: "/",
-        command: ({
-          editor,
-          range,
-          props,
-        }: {
-          editor: Editor;
-          range: Range;
-          props: any;
-        }) => {
+        command: ({ editor, range, props }: { editor: Editor; range: Range; props: any }) => {
           props.command({ editor, range });
         },
       },
@@ -85,10 +66,8 @@ const Command = Extension.create({
 const getSuggestionItems =
   (
     uploadFile: UploadImage,
-    setIsSubmitting?: (
-      isSubmitting: "submitting" | "submitted" | "saved",
-    ) => void,
-    additionalOptions?: Array<ISlashCommandItem>,
+    setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+    additionalOptions?: Array<ISlashCommandItem>
   ) =>
   ({ query }: { query: string }) => {
     let slashCommands: ISlashCommandItem[] = [
@@ -99,12 +78,7 @@ const getSuggestionItems =
         searchTerms: ["p", "paragraph"],
         icon: <CaseSensitive className="h-3.5 w-3.5" />,
         command: ({ editor, range }: CommandProps) => {
-          editor
-            .chain()
-            .focus()
-            .deleteRange(range)
-            .toggleNode("paragraph", "paragraph")
-            .run();
+          editor.chain().focus().deleteRange(range).toggleNode("paragraph", "paragraph").run();
         },
       },
       {
@@ -183,8 +157,7 @@ const getSuggestionItems =
         description: "Capture a quote.",
         searchTerms: ["blockquote"],
         icon: <Quote className="h-3.5 w-3.5" />,
-        command: ({ editor, range }: CommandProps) =>
-          toggleBlockquote(editor, range),
+        command: ({ editor, range }: CommandProps) => toggleBlockquote(editor, range),
       },
       {
         key: "code_block",
@@ -231,8 +204,7 @@ const getSuggestionItems =
         return (
           item.title.toLowerCase().includes(search) ||
           item.description.toLowerCase().includes(search) ||
-          (item.searchTerms &&
-            item.searchTerms.some((term: string) => term.includes(search)))
+          (item.searchTerms && item.searchTerms.some((term: string) => term.includes(search)))
         );
       }
       return true;
@@ -255,15 +227,7 @@ export const updateScrollView = (container: HTMLElement, item: HTMLElement) => {
   }
 };
 
-const CommandList = ({
-  items,
-  command,
-}: {
-  items: CommandItemProps[];
-  command: any;
-  editor: any;
-  range: any;
-}) => {
+const CommandList = ({ items, command }: { items: CommandItemProps[]; command: any; editor: any; range: any }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = useCallback(
@@ -273,7 +237,7 @@ const CommandList = ({
         command(item);
       }
     },
-    [command, items],
+    [command, items]
   );
 
   useEffect(() => {
@@ -320,22 +284,20 @@ const CommandList = ({
     <div
       id="slash-command"
       ref={commandListContainer}
-      className="z-50 fixed h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
+      className="fixed z-50 h-auto max-h-[330px] w-52 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-100 px-1 py-2 shadow-md transition-all"
     >
       {items.map((item, index) => (
         <button
           key={item.key}
           className={cn(
-            `w-full flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-primary-100/5`,
+            `flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-sm text-custom-text-100 hover:bg-custom-primary-100/5`,
             {
               "bg-custom-primary-100/5": index === selectedIndex,
-            },
+            }
           )}
           onClick={() => selectItem(index)}
         >
-          <div className="flex-shrink-0 grid place-items-center">
-            {item.icon}
-          </div>
+          <div className="grid flex-shrink-0 place-items-center">{item.icon}</div>
           <p>{item.title}</p>
         </button>
       ))}
@@ -393,10 +355,8 @@ const renderItems = () => {
 
 export const SlashCommand = (
   uploadFile: UploadImage,
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void,
-  additionalOptions?: Array<ISlashCommandItem>,
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void,
+  additionalOptions?: Array<ISlashCommandItem>
 ) =>
   Command.configure({
     suggestion: {

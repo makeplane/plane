@@ -22,10 +22,6 @@ export default Node.create<TableRowOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return [
-      "tr",
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
-      0,
-    ];
+    return ["tr", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
   },
 });

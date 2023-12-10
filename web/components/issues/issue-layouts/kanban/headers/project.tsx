@@ -22,7 +22,7 @@ export interface IProjectHeader {
   addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 
-const Icon = ({ emoji }: any) => <div className="w-6 h-6">{renderEmoji(emoji)}</div>;
+const Icon = ({ emoji }: any) => <div className="h-6 w-6">{renderEmoji(emoji)}</div>;
 
 export const ProjectHeader: FC<IProjectHeader> = observer((props) => {
   const {

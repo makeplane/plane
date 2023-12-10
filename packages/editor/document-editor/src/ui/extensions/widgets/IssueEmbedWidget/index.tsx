@@ -5,9 +5,7 @@ interface IssueWidgetExtensionProps {
   issueEmbedConfig?: IIssueEmbedConfig;
 }
 
-export const IssueWidgetExtension = ({
-  issueEmbedConfig,
-}: IssueWidgetExtensionProps) =>
+export const IssueWidgetExtension = ({ issueEmbedConfig }: IssueWidgetExtensionProps) =>
   IssueWidget.configure({
     issueEmbedConfig,
   });

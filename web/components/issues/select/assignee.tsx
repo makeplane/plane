@@ -43,7 +43,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
       onChange={onChange}
       options={options}
       customButton={
-        <div className="flex items-center gap-2 cursor-pointer text-xs text-custom-text-200">
+        <div className="flex cursor-pointer items-center gap-2 text-xs text-custom-text-200">
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="-my-0.5 flex items-center justify-center gap-2">
               <AvatarGroup showTooltip={false}>
@@ -57,7 +57,7 @@ export const IssueAssigneeSelect: React.FC<Props> = ({ projectId, value = [], on
               </AvatarGroup>
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-1 w-full text-custom-text-300 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs">
+            <div className="flex w-full items-center justify-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-300">
               <UserGroupIcon className="h-3 w-3" />
               <span>Assignee</span>
             </div>

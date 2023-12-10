@@ -48,7 +48,7 @@ export const InstanceAdminSidebarMenu = () => {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col gap-2.5 py-6 px-4 h-full w-full overflow-y-auto">
+    <div className="flex h-full w-full flex-col gap-2.5 overflow-y-auto px-4 py-6">
       {INSTANCE_ADMIN_LINKS.map((item, index) => {
         const isActive = item.name === "Settings" ? router.asPath.includes(item.href) : router.asPath === item.href;
 

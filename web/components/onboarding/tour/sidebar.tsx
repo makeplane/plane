@@ -36,8 +36,8 @@ type Props = {
 };
 
 export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
-  <div className="hidden lg:block col-span-3 p-8 bg-custom-background-90">
-    <h3 className="font-medium text-lg">
+  <div className="col-span-3 hidden bg-custom-background-90 p-8 lg:block">
+    <h3 className="text-lg font-medium">
       Let{"'"}s get started!
       <br />
       Get more out of Plane.
@@ -46,10 +46,10 @@ export const TourSidebar: React.FC<Props> = ({ step, setStep }) => (
       {sidebarOptions.map((option) => (
         <h5
           key={option.key}
-          className={`pr-2 py-0.5 pl-3 flex items-center gap-2 capitalize font-medium text-sm border-l-[3px] cursor-pointer ${
+          className={`flex cursor-pointer items-center gap-2 border-l-[3px] py-0.5 pl-3 pr-2 text-sm font-medium capitalize ${
             step === option.key
-              ? "text-custom-primary-100 border-custom-primary-100"
-              : "text-custom-text-200 border-transparent"
+              ? "border-custom-primary-100 text-custom-primary-100"
+              : "border-transparent text-custom-text-200"
           }`}
           onClick={() => setStep(option.key)}
           role="button"

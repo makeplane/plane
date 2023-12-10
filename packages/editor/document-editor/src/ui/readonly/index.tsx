@@ -8,11 +8,7 @@ import { IssueWidgetExtension } from "../extensions/widgets/IssueEmbedWidget";
 import { IEmbedConfig } from "../extensions/widgets/IssueEmbedWidget/types";
 import { useEditorMarkings } from "../hooks/use-editor-markings";
 import { DocumentDetails } from "../types/editor-types";
-import {
-  IPageArchiveConfig,
-  IPageLockConfig,
-  IDuplicationConfig,
-} from "../types/menu-actions";
+import { IPageArchiveConfig, IPageLockConfig, IDuplicationConfig } from "../types/menu-actions";
 import { getMenuOptions } from "../utils/menu-options";
 
 interface IDocumentReadOnlyEditor {
@@ -67,9 +63,7 @@ const DocumentReadOnlyEditor = ({
     value,
     forwardedRef,
     rerenderOnPropsChange,
-    extensions: [
-      IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig }),
-    ],
+    extensions: [IssueWidgetExtension({ issueEmbedConfig: embedConfig?.issueEmbedConfig })],
   });
 
   useEffect(() => {
@@ -98,7 +92,7 @@ const DocumentReadOnlyEditor = ({
   });
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden">
       <EditorHeader
         isLocked={!pageLockConfig ? false : pageLockConfig.is_locked}
         isArchived={!pageArchiveConfig ? false : pageArchiveConfig.is_archived}
@@ -111,13 +105,9 @@ const DocumentReadOnlyEditor = ({
         documentDetails={documentDetails}
         archivedAt={pageArchiveConfig && pageArchiveConfig.archived_at}
       />
-      <div className="h-full w-full flex overflow-y-auto">
-        <div className="flex-shrink-0 h-full w-56 lg:w-80 sticky top-0">
-          <SummarySideBar
-            editor={editor}
-            markings={markings}
-            sidePeekVisible={sidePeekVisible}
-          />
+      <div className="flex h-full w-full overflow-y-auto">
+        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-80">
+          <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
         <div className="h-full w-full">
           <PageRenderer
@@ -128,16 +118,15 @@ const DocumentReadOnlyEditor = ({
             documentDetails={documentDetails}
           />
         </div>
-        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-80" />
+        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-80" />
       </div>
     </div>
   );
 };
 
-const DocumentReadOnlyEditorWithRef = forwardRef<
-  EditorHandle,
-  IDocumentReadOnlyEditor
->((props, ref) => <DocumentReadOnlyEditor {...props} forwardedRef={ref} />);
+const DocumentReadOnlyEditorWithRef = forwardRef<EditorHandle, IDocumentReadOnlyEditor>((props, ref) => (
+  <DocumentReadOnlyEditor {...props} forwardedRef={ref} />
+));
 
 DocumentReadOnlyEditorWithRef.displayName = "DocumentReadOnlyEditorWithRef";
 

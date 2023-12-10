@@ -40,7 +40,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
-    <div className="flex items-center group">
+    <div className="group flex items-center">
       <div className="flex items-center">
         <DragHandle isDragging={isDragging} dragHandleProps={dragHandleProps} />
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
@@ -70,7 +70,7 @@ export const LabelItemBlock = (props: ILabelItemBlock) => {
         {!isLabelGroup && (
           <div className="py-0.5">
             <button className="flex h-4 w-4 items-center justify-start gap-2" onClick={() => handleLabelDelete(label)}>
-              <X className="h-4 w-4  text-custom-sidebar-text-400 flex-shrink-0" />
+              <X className="h-4 w-4  flex-shrink-0 text-custom-sidebar-text-400" />
             </button>
           </div>
         )}

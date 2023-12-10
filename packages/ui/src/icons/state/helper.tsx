@@ -6,12 +6,7 @@ export interface IStateGroupIcon {
   width?: string;
 }
 
-export type TStateGroups =
-  | "backlog"
-  | "unstarted"
-  | "started"
-  | "completed"
-  | "cancelled";
+export type TStateGroups = "backlog" | "unstarted" | "started" | "completed" | "cancelled";
 
 export const STATE_GROUP_COLORS: {
   [key in TStateGroups]: string;

@@ -287,7 +287,7 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
                     />
                   );
                 else if (!value || !watch("description_html"))
-                  return <div className="h-32 w-full flex items-center justify-center text-custom-text-200 text-sm" />;
+                  return <div className="flex h-32 w-full items-center justify-center text-sm text-custom-text-200" />;
 
                 return (
                   <RichTextEditorWithRef

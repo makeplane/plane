@@ -8,16 +8,10 @@ interface EditorContentProps {
   children?: ReactNode;
 }
 
-export const EditorContentWrapper = ({
-  editor,
-  editorContentCustomClassNames = "",
-  children,
-}: EditorContentProps) => (
+export const EditorContentWrapper = ({ editor, editorContentCustomClassNames = "", children }: EditorContentProps) => (
   <div className={`contentEditor ${editorContentCustomClassNames}`}>
     <EditorContent editor={editor} />
-    {editor?.isActive("image") && editor?.isEditable && (
-      <ImageResizer editor={editor} />
-    )}
+    {editor?.isActive("image") && editor?.isEditable && <ImageResizer editor={editor} />}
     {children}
   </div>
 );

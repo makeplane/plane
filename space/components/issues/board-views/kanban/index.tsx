@@ -17,24 +17,24 @@ export const IssueKanbanView = observer(() => {
   const store: RootStore = useMobxStore();
 
   return (
-    <div className="relative w-full h-full overflow-hidden overflow-x-auto flex gap-3">
+    <div className="relative flex h-full w-full gap-3 overflow-hidden overflow-x-auto">
       {store?.issue?.states &&
         store?.issue?.states.length > 0 &&
         store?.issue?.states.map((_state: IIssueState) => (
-          <div key={_state.id} className="flex-shrink-0 relative w-[340px] h-full flex flex-col">
+          <div key={_state.id} className="relative flex h-full w-[340px] flex-shrink-0 flex-col">
             <div className="flex-shrink-0">
               <IssueKanBanHeader state={_state} />
             </div>
-            <div className="w-full h-full overflow-hidden overflow-y-auto hide-vertical-scrollbar">
+            <div className="hide-vertical-scrollbar h-full w-full overflow-hidden overflow-y-auto">
               {store.issue.getFilteredIssuesByState(_state.id) &&
               store.issue.getFilteredIssuesByState(_state.id).length > 0 ? (
-                <div className="space-y-3 pb-2 px-2">
+                <div className="space-y-3 px-2 pb-2">
                   {store.issue.getFilteredIssuesByState(_state.id).map((_issue: IIssue) => (
                     <IssueKanBanBlock key={_issue.id} issue={_issue} />
                   ))}
                 </div>
               ) : (
-                <div className="flex justify-center items-center gap-2 pt-10 text-center text-sm text-custom-text-200 font-medium">
+                <div className="flex items-center justify-center gap-2 pt-10 text-center text-sm font-medium text-custom-text-200">
                   <Icon iconName="stack" />
                   No issues in this state
                 </div>

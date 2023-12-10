@@ -10,11 +10,7 @@ export const getNextListDepth = (typeOrName: string, state: EditorState) => {
     return false;
   }
 
-  const [, depth] = getNodeAtPosition(
-    state,
-    typeOrName,
-    listItemPos.$pos.pos + 4,
-  );
+  const [, depth] = getNodeAtPosition(state, typeOrName, listItemPos.$pos.pos + 4);
 
   return depth;
 };
