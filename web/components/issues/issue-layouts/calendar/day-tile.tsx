@@ -1,8 +1,5 @@
 import { observer } from "mobx-react-lite";
 import { Droppable } from "@hello-pangea/dnd";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
 // helpers

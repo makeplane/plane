@@ -112,7 +112,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     return issue as IIssue;
   };
 
-  const issueWidgetClickAction = (issueId: string, issueTitle: string) => {
+  const issueWidgetClickAction = (issueId: string) => {
     const url = new URL(router.asPath, window.location.origin);
     const params = new URLSearchParams(url.search);
 
@@ -158,7 +158,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     if (pageDetails?.description_html) {
       setLocalIssueDescription({ id: pageId as string, description_html: pageDetails.description_html });
     }
-  }, [pageDetails?.description_html]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageDetails?.description_html]); // TODO: Verify the exhaustive-deps warning
 
   function createObjectFromArray(keys: string[], options: any): any {
     return keys.reduce((obj, key) => {
@@ -178,7 +179,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     const commonSwrOptions: MutatorOptions = {
       revalidate: true,
       populateCache: false,
-      rollbackOnError: (e) => {
+      rollbackOnError: () => {
         onErrorAction();
         return true;
       },
@@ -329,6 +330,8 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   });
 
   // ADDING updatePage TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
       handleSubmit(updatePage)().finally(() => setIsSubmitting("submitted"));
@@ -413,7 +416,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
                 <Controller
                   name="description_html"
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { onChange } }) => (
                     <DocumentEditorWithRef
                       isSubmitting={isSubmitting}
                       documentDetails={{

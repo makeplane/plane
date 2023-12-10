@@ -94,9 +94,12 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issue.id]); // TODO: Verify the exhaustive-deps warning
 
   // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFormSave = useCallback(
     debounce(async () => {
       handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
