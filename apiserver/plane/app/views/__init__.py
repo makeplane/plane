@@ -133,7 +133,7 @@ from .page import (
     SubPagesEndpoint,
 )
 
-from .search import GlobalSearchEndpoint, IssueSearchEndpoint
+from .search import GlobalSearchEndpoint, IssueSearchEndpoint, SearchEndpoint
 
 
 from .external import GPTIntegrationEndpoint, ReleaseNotesEndpoint, UnsplashEndpoint

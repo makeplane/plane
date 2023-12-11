@@ -54,6 +54,7 @@ class PageLog(ProjectBaseModel):
         ("file", "File"),
         ("link", "Link"),
         ("cycle","Cycle"),
+        ("project", "Project"),
         ("module", "Module"),
         ("back_link", "Back Link"),
         ("forward_link", "Forward Link"),
