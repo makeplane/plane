@@ -29,7 +29,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         value={issue.labels}
         defaultOptions={issue?.label_details ? issue.label_details : []}
         onChange={(data) => onChange({ labels: data })}
-        className="h-full w-full"
+        className="h-11 w-full"
         buttonClassName="px-2.5 h-full"
         hideDropdownArrow
         maxRender={1}
@@ -42,14 +42,16 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetLabelColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            labels={labels}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetLabelColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              labels={labels}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );

@@ -18,7 +18,7 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className="flex h-full w-full items-center px-2.5 py-1 text-xs">
+      <div className="flex h-11 w-full items-center px-2.5 py-1 text-xs">
         {issue.sub_issues_count} {issue.sub_issues_count === 1 ? "sub-issue" : "sub-issues"}
       </div>
 
@@ -27,7 +27,9 @@ export const SpreadsheetSubIssueColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetSubIssueColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          <div className={`h-11`}>
+            <SpreadsheetSubIssueColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          </div>
         ))}
     </>
   );

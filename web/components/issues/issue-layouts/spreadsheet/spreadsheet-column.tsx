@@ -159,13 +159,13 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
         </CustomMenu>
       </div>
 
-      <div className="h-full w-full min-w-[8rem]">
+      <div className="h-full w-full divide-y-[0.5px] border-b-[0.5px] min-w-[8rem]">
         {issues?.map((issue) => {
           const disableUserActions = !canEditProperties(issue.project);
           return (
             <div
               key={`${property}-${issue.id}`}
-              className={`h-11 border-b-[0.5px] border-custom-border-200 ${
+              className={`h-fit divide-y-[0.5px] border-custom-border-200 ${
                 disableUserActions ? "" : "cursor-pointer hover:bg-custom-background-80"
               }`}
             >

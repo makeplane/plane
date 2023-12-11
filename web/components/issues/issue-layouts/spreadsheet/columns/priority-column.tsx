@@ -24,7 +24,7 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
       <PrioritySelect
         value={issue.priority}
         onChange={(data) => onChange({ priority: data })}
-        className="h-full w-full"
+        className="h-11 w-full"
         buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
         showTitle
         highlightUrgentPriority={false}
@@ -37,13 +37,15 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetPriorityColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetPriorityColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );
