@@ -31,9 +31,9 @@ export const CalendarLayout: React.FC = observer(() => {
     },
   };
 
-  const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
+  const handleDragDrop = async (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
     if (workspaceSlug && projectId)
-      handleCalenderDragDrop(
+      await handleCalenderDragDrop(
         source,
         destination,
         workspaceSlug.toString(),

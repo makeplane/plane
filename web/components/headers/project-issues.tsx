@@ -14,6 +14,7 @@ import { Breadcrumbs, Button, LayersIcon } from "@plane/ui";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 import { EFilterType } from "store_legacy/issues/types";
@@ -36,6 +37,7 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
     // issue filters
     projectIssuesFilter: { issueFilters, updateFilters },
     projectIssues: {},
+    user: { currentProjectRole },
   } = useMobxStore();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
@@ -86,6 +88,9 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
   const inboxDetails = projectId ? inboxStore.inboxesList?.[projectId]?.[0] : undefined;
 
   const deployUrl = process.env.NEXT_PUBLIC_DEPLOY_URL;
+
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -200,16 +205,18 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
           <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
             Analytics
           </Button>
-          <Button
-            onClick={() => {
-              setTrackElement("PROJECT_PAGE_HEADER");
-              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
-            }}
-            size="sm"
-            prependIcon={<Plus />}
-          >
-            Add Issue
-          </Button>
+          {canUserCreateIssue && (
+            <Button
+              onClick={() => {
+                setTrackElement("PROJECT_PAGE_HEADER");
+                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+              }}
+              size="sm"
+              prependIcon={<Plus />}
+            >
+              Add Issue
+            </Button>
+          )}
         </div>
       </div>
     </>

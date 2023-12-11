@@ -19,6 +19,7 @@ import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper"
 import { IModule } from "types";
 // constants
 import { MODULE_STATUS } from "constants/module";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   module: IModule;
@@ -35,7 +36,11 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { module: moduleStore } = useMobxStore();
+  const { module: moduleStore, user: userStore } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const moduleTotalIssues =
     module.backlog_issues +
@@ -59,8 +64,8 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
     ? !moduleTotalIssues || moduleTotalIssues === 0
       ? "0 Issue"
       : moduleTotalIssues === module.completed_issues
-        ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
-        : `${module.completed_issues}/${moduleTotalIssues} Issues`
+      ? `${moduleTotalIssues} Issue${moduleTotalIssues > 1 ? "s" : ""}`
+      : `${module.completed_issues}/${moduleTotalIssues} Issues`
     : "0 Issue";
 
   const handleAddToFavorites = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -217,28 +222,34 @@ export const ModuleCardItem: React.FC<Props> = observer((props) => {
               )}
 
               <div className="z-10 flex items-center gap-1.5">
-                {module.is_favorite ? (
-                  <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                  </button>
-                ) : (
-                  <button type="button" onClick={handleAddToFavorites}>
-                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                  </button>
-                )}
+                {isEditingAllowed &&
+                  (module.is_favorite ? (
+                    <button type="button" onClick={handleRemoveFromFavorites}>
+                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleAddToFavorites}>
+                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                    </button>
+                  ))}
+
                 <CustomMenu width="auto" ellipsis className="z-10">
-                  <CustomMenu.MenuItem onClick={handleEditModule}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Pencil className="h-3 w-3" />
-                      <span>Edit module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                    <span className="flex items-center justify-start gap-2">
-                      <Trash2 className="h-3 w-3" />
-                      <span>Delete module</span>
-                    </span>
-                  </CustomMenu.MenuItem>
+                  {isEditingAllowed && (
+                    <>
+                      <CustomMenu.MenuItem onClick={handleEditModule}>
+                        <span className="flex items-center justify-start gap-2">
+                          <Pencil className="h-3 w-3" />
+                          <span>Edit module</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                      <CustomMenu.MenuItem onClick={handleDeleteModule}>
+                        <span className="flex items-center justify-start gap-2">
+                          <Trash2 className="h-3 w-3" />
+                          <span>Delete module</span>
+                        </span>
+                      </CustomMenu.MenuItem>
+                    </>
+                  )}
                   <CustomMenu.MenuItem onClick={handleCopyText}>
                     <span className="flex items-center justify-start gap-2">
                       <LinkIcon className="h-3 w-3" />

@@ -20,7 +20,11 @@ export const LatestFeatureBlock = () => {
           </Link>
         </p>
       </div>
-      <div className="mx-auto mt-8 overflow-hidden rounded-md border border-onboarding-border-200 bg-onboarding-background-100 object-cover sm:h-52 sm:w-96">
+      <div
+        className={`mx-auto mt-8 overflow-hidden rounded-md border border-onboarding-border-200 object-cover sm:h-52 sm:w-96 ${
+          resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
+        }`}
+      >
         <div className="h-[90%]">
           <Image
             src={latestFeatures}

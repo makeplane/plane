@@ -1,6 +1,6 @@
 import { TIssueOrderByOptions } from "types";
 import { LayersIcon, DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
-import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip } from "lucide-react";
+import { CalendarDays, Link2, Signal, Tag, Triangle, Paperclip, CalendarClock, CalendarCheck } from "lucide-react";
 import { FC } from "react";
 import { ISvgIcons } from "@plane/ui/src/icons/type";
 
@@ -36,7 +36,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "target_date",
     descendingOrderTitle: "Old",
-    icon: CalendarDays,
+    icon: CalendarCheck,
   },
   estimate: {
     title: "Estimate",
@@ -68,7 +68,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     ascendingOrderTitle: "New",
     descendingOrderKey: "start_date",
     descendingOrderTitle: "Old",
-    icon: CalendarDays,
+    icon: CalendarClock,
   },
   state: {
     title: "State",

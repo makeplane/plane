@@ -124,7 +124,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
           disabled={isReadOnly}
-          placeHolder="Start date"
+          type="start_date"
         />
       )}
 
@@ -134,7 +134,7 @@ export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) =>
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
           disabled={isReadOnly}
-          placeHolder="Target date"
+          type="target_date"
         />
       )}
 

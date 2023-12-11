@@ -154,6 +154,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
   const userCanChangeAccess = isCurrentUserOwner;
   const userCanArchive = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
   const userCanDelete = isCurrentUserOwner || currentProjectRole === EUserWorkspaceRoles.ADMIN;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -208,17 +209,19 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                     <p className="text-sm text-custom-text-200">{render24HourFormatTime(page.updated_at)}</p>
                   </Tooltip>
                 )}
-                <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
-                  {page.is_favorite ? (
-                    <button type="button" onClick={handleRemoveFromFavorites}>
-                      <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
-                    </button>
-                  ) : (
-                    <button type="button" onClick={handleAddToFavorites}>
-                      <Star className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </Tooltip>
+                {isEditingAllowed && (
+                  <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
+                    {page.is_favorite ? (
+                      <button type="button" onClick={handleRemoveFromFavorites}>
+                        <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
+                      </button>
+                    ) : (
+                      <button type="button" onClick={handleAddToFavorites}>
+                        <Star className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </Tooltip>
+                )}
                 {userCanChangeAccess && (
                   <Tooltip
                     tooltipContent={`${
@@ -255,7 +258,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                           </div>
                         </CustomMenu.MenuItem>
                       )}
-                      {userCanDelete && (
+                      {userCanDelete && isEditingAllowed && (
                         <CustomMenu.MenuItem onClick={handleDeletePage}>
                           <div className="flex items-center gap-2">
                             <Trash2 className="h-3 w-3" />
@@ -266,7 +269,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                     </>
                   ) : (
                     <>
-                      {userCanEdit && (
+                      {userCanEdit && isEditingAllowed && (
                         <CustomMenu.MenuItem onClick={handleEditPage}>
                           <div className="flex items-center gap-2">
                             <Pencil className="h-3 w-3" />
@@ -274,7 +277,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                           </div>
                         </CustomMenu.MenuItem>
                       )}
-                      {userCanArchive && (
+                      {userCanArchive && isEditingAllowed && (
                         <CustomMenu.MenuItem onClick={handleArchivePage}>
                           <div className="flex items-center gap-2">
                             <Archive className="h-3 w-3" />

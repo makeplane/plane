@@ -156,7 +156,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                   {activityItem.actor_detail.first_name} Bot
                                 </span>
                               ) : (
-                                <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
+                                <Link
+                                  href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
+                                >
                                   <span className="text-gray font-medium">
                                     {activityItem.actor_detail.display_name}
                                   </span>

@@ -1,12 +1,12 @@
 import { FC, useEffect, useRef, useCallback, useState } from "react";
 import Script from "next/script";
 
-export interface IGoogleLoginButton {
+type Props = {
   clientId: string;
   handleSignIn: React.Dispatch<any>;
-}
+};
 
-export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
+export const GoogleSignInButton: FC<Props> = (props) => {
   const { handleSignIn, clientId } = props;
   // refs
   const googleSignInButton = useRef<HTMLDivElement>(null);
@@ -30,6 +30,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
           size: "large",
           logo_alignment: "center",
           text: "signin_with",
+          width: 384,
         } as GsiButtonConfiguration // customization attributes
       );
     } catch (err) {
@@ -53,7 +54,7 @@ export const GoogleLoginButton: FC<IGoogleLoginButton> = (props) => {
   return (
     <>
       <Script src="https://accounts.google.com/gsi/client" async defer onLoad={loadScript} />
-      <div className="w-full overflow-hidden rounded" id="googleSignInButton" ref={googleSignInButton} />
+      <div className="!w-full overflow-hidden rounded" id="googleSignInButton" ref={googleSignInButton} />
     </>
   );
 };

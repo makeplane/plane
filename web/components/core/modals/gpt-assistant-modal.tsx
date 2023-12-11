@@ -9,7 +9,7 @@ import useToast from "hooks/use-toast";
 // ui
 import { Button, Input } from "@plane/ui";
 // components
-import { RichReadOnlyEditor, RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
+import { RichReadOnlyEditorWithRef } from "@plane/rich-text-editor";
 // types
 import { IIssue, IPageBlock } from "types";
 
@@ -42,6 +42,7 @@ export const GptAssistantModal: React.FC<Props> = (props) => {
   const { workspaceSlug } = router.query;
 
   const editorRef = useRef<any>(null);
+  const responseRef = useRef<any>(null);
 
   const { setToastAlert } = useToast();
 
@@ -115,6 +116,10 @@ export const GptAssistantModal: React.FC<Props> = (props) => {
     editorRef.current?.setEditorValue(htmlContent ?? `<p>${content}</p>`);
   }, [htmlContent, editorRef, content]);
 
+  useEffect(() => {
+    responseRef.current?.setEditorValue(`<p>${response}</p>`);
+  }, [response, responseRef]);
+
   return (
     <div
       className={`absolute ${inset} z-20 flex w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
@@ -137,11 +142,12 @@ export const GptAssistantModal: React.FC<Props> = (props) => {
         {response !== "" && (
           <div className="page-block-section text-sm">
             Response:
-            <RichReadOnlyEditor
+            <RichReadOnlyEditorWithRef
               value={`<p>${response}</p>`}
               customClassName="-mx-3 -my-3"
               noBorder
               borderOnFocus={false}
+              ref={responseRef}
             />
           </div>
         )}

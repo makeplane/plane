@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { Plus } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
@@ -14,9 +15,10 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
+import { EUserWorkspaceRoles } from "constants/workspace";
+
 import { EFilterType } from "store_legacy/issues/types";
 import { EProjectStore } from "store_legacy/command-palette.store";
-import { Plus } from "lucide-react";
 
 export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const router = useRouter();
@@ -35,6 +37,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
     viewIssuesFilter: { issueFilters, updateFilters },
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentProjectRole },
   } = useMobxStore();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
@@ -84,6 +87,9 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
+
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -170,16 +176,18 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>
-        <Button
-          onClick={() => {
-            setTrackElement("PROJECT_VIEW_PAGE_HEADER");
-            commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
-          }}
-          size="sm"
-          prependIcon={<Plus />}
-        >
-          Add Issue
-        </Button>
+        {
+          <Button
+            onClick={() => {
+              setTrackElement("PROJECT_VIEW_PAGE_HEADER");
+              commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT_VIEW);
+            }}
+            size="sm"
+            prependIcon={<Plus />}
+          >
+            Add Issue
+          </Button>
+        }
       </div>
     </div>
   );
