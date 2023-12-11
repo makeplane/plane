@@ -111,7 +111,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
               <Dialog.Panel
                 className={`relative transform overflow-hidden rounded-lg bg-onboarding-background-200 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-[40rem]`}
               >
-                <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div>
                     <div className="flex items-center gap-x-4">
                       <div
@@ -127,18 +127,18 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
                     </div>
 
                     <div className="mt-6 px-4">
-                      <ul className="text-onboarding-text-300 list-disc font-normal text-base">
+                      <ul className="list-disc text-base font-normal text-onboarding-text-300">
                         <li>Delete this account if you have another and won{"'"}t use this account.</li>
                         <li>Switch to another account if you{"'"}d like to come back to this account another time.</li>
                       </ul>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-end gap-3 p-4 mb-2 sm:px-6">
+                <div className="mb-2 flex items-center justify-end gap-3 p-4 sm:px-6">
                   <button
                     onClick={handleSwitchAccount}
                     disabled={switchingAccount}
-                    className={`${resolvedTheme === "dark" ? "bg-[#2F3135]" : ""} px-4 py-1.5 text-sm rounded-sm`}
+                    className={`${resolvedTheme === "dark" ? "bg-[#2F3135]" : ""} rounded-sm px-4 py-1.5 text-sm`}
                   >
                     {switchingAccount ? "Switching..." : "Switch account"}
                   </button>
@@ -147,7 +147,7 @@ export const SwitchOrDeleteAccountModal: React.FC<Props> = (props) => {
                     onClick={handleDeactivateAccount}
                     className={`${
                       resolvedTheme === "dark" ? "bg-[#2F3135]" : ""
-                    } px-4 py-1.5 text-sm border border-red-500 rounded-sm text-red-500`}
+                    } rounded-sm border border-red-500 px-4 py-1.5 text-sm text-red-500`}
                   >
                     {isDeactivating ? "Deleting..." : "Delete account"}
                   </button>

@@ -30,7 +30,7 @@ export const ProjectSidebarList: FC = observer(() => {
     theme: { sidebarCollapsed },
     project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
   // router
   const router = useRouter();
@@ -112,8 +112,9 @@ export const ProjectSidebarList: FC = observer(() => {
       )}
       <div
         ref={containerRef}
-        className={`h-full overflow-y-auto px-4 space-y-2 ${isScrolled ? "border-t border-custom-sidebar-border-300" : ""
-          }`}
+        className={`h-full space-y-2 overflow-y-auto px-4 ${
+          isScrolled ? "border-t border-custom-sidebar-border-300" : ""
+        }`}
       >
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="favorite-projects">
@@ -124,23 +125,23 @@ export const ProjectSidebarList: FC = observer(() => {
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
-                          <div className="group flex justify-between items-center text-xs p-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
+                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex items-center gap-1 px-1.5 text-sm font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
+                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
                             >
                               Favorites
                               {open ? (
-                                <ChevronDown className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                                <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               )}
                             </Disclosure.Button>
                             <button
-                              className="group-hover:opacity-100 opacity-0"
+                              className="opacity-0 group-hover:opacity-100"
                               onClick={() => {
-                                setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK")
+                                setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
                                 setIsFavoriteProjectCreate(true);
                                 setIsProjectModalOpen(true);
                               }}
@@ -199,21 +200,21 @@ export const ProjectSidebarList: FC = observer(() => {
                     {({ open }) => (
                       <>
                         {!isCollapsed && (
-                          <div className="group flex justify-between items-center text-xs p-1.5 rounded text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80 w-full">
+                          <div className="group flex w-full items-center justify-between rounded p-1.5 text-xs text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80">
                             <Disclosure.Button
                               as="button"
                               type="button"
-                              className="group flex items-center gap-1 px-1.5 text-sm font-semibold text-custom-sidebar-text-400 text-left hover:bg-custom-sidebar-background-80 rounded w-full whitespace-nowrap"
+                              className="group flex w-full items-center gap-1 whitespace-nowrap rounded px-1.5 text-left text-sm font-semibold text-custom-sidebar-text-400 hover:bg-custom-sidebar-background-80"
                             >
                               Projects
                               {open ? (
-                                <ChevronDown className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                                <ChevronDown className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               ) : (
-                                <ChevronRight className="h-3 w-3 group-hover:opacity-100 opacity-0" />
+                                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               )}
                             </Disclosure.Button>
                             <button
-                              className="group-hover:opacity-100 opacity-0"
+                              className="opacity-0 group-hover:opacity-100"
                               onClick={() => {
                                 setIsFavoriteProjectCreate(false);
                                 setIsProjectModalOpen(true);
@@ -265,9 +266,8 @@ export const ProjectSidebarList: FC = observer(() => {
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
             onClick={() => {
               setTrackElement("APP_SIDEBAR");
-              toggleCreateProjectModal(true)
-            }
-            }
+              toggleCreateProjectModal(true);
+            }}
           >
             <Plus className="h-5 w-5" />
             {!isCollapsed && "Add Project"}

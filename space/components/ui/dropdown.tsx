@@ -52,9 +52,9 @@ const DropdownList: React.FC<DropDownListProps> = (props) => {
       >
         <Popover.Panel
           ref={ref}
-          className="absolute left-1/2 -translate-x-full z-10 mt-1 max-w-[9rem] origin-top-right select-none rounded-md bg-custom-background-90 border border-custom-border-300 text-xs shadow-lg focus:outline-none"
+          className="absolute left-1/2 z-10 mt-1 max-w-[9rem] origin-top-right -translate-x-full select-none rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none"
         >
-          <div className="w-full text-sm rounded-md shadow-lg">
+          <div className="w-full rounded-md text-sm shadow-lg">
             {items.map((item, index) => (
               <DropdownItem key={index} item={item} />
             ))}
@@ -72,7 +72,7 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="w-full group relative flex gap-x-6 rounded-lg p-1">
+    <div className="group relative flex w-full gap-x-6 rounded-lg p-1">
       {(!as_ || as_ === "button" || as_ === "div") && (
         <button
           type="button"
@@ -83,11 +83,11 @@ const DropdownItem: React.FC<DropdownItemProps> = (props) => {
             }
             setOpen((prev) => !prev);
           }}
-          className={`w-full flex items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80 ${
+          className={`flex w-full items-center gap-1 rounded px-1 py-1.5 text-custom-text-200 hover:bg-custom-background-80 ${
             isSelected ? "bg-custom-background-80" : ""
           }`}
         >
-          {children && <ChevronLeft className="h-4 w-4 transition-transform transform" strokeWidth={2} />}
+          {children && <ChevronLeft className="h-4 w-4 transform transition-transform" strokeWidth={2} />}
           {!children && <span />}
           <span className="truncate text-xs">{display}</span>
           <Check className={`h-3 w-3 opacity-0 ${isSelected ? "opacity-100" : ""}`} strokeWidth={2} />
@@ -109,7 +109,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
       {({ open }) => (
         <>
           <Popover.Button
-            className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5 text-xs shadow-sm duration-300 focus:outline-none hover:text-custom-text-100 hover:bg-custom-background-90 ${
+            className={`group flex items-center justify-between gap-2 rounded-md border border-custom-border-200 px-3 py-1.5 text-xs shadow-sm duration-300 hover:bg-custom-background-90 hover:text-custom-text-100 focus:outline-none ${
               open ? "bg-custom-background-90 text-custom-text-100" : "text-custom-text-200"
             }`}
           >
@@ -125,7 +125,7 @@ const Dropdown: React.FC<DropdownProps> = (props) => {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
-            <Popover.Panel className="absolute left-full -translate-x-full z-10 mt-1 w-36 origin-top-right select-none rounded-md bg-custom-background-90 border border-custom-border-300 text-xs shadow-lg focus:outline-none">
+            <Popover.Panel className="absolute left-full z-10 mt-1 w-36 origin-top-right -translate-x-full select-none rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none">
               <div className="w-full">
                 {items.map((item, index) => (
                   <DropdownItem key={index} item={item} />

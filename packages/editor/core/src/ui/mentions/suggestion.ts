@@ -7,11 +7,7 @@ import { IMentionSuggestion } from "@plane/editor-types";
 
 const Suggestion = (suggestions: IMentionSuggestion[]) => ({
   items: ({ query }: { query: string }) =>
-    suggestions
-      .filter((suggestion) =>
-        suggestion.title.toLowerCase().startsWith(query.toLowerCase()),
-      )
-      .slice(0, 5),
+    suggestions.filter((suggestion) => suggestion.title.toLowerCase().startsWith(query.toLowerCase())).slice(0, 5),
   render: () => {
     let reactRenderer: ReactRenderer | null = null;
     let popup: any | null = null;

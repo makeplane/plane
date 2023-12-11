@@ -90,8 +90,8 @@ class ConfigurationEndpoint(BaseAPIView):
 
         data = {}
         # Authentication
-        data["google_client_id"] = GOOGLE_CLIENT_ID
-        data["github_client_id"] = GITHUB_CLIENT_ID
+        data["google_client_id"] = GOOGLE_CLIENT_ID if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_ID != "\"\"" else None
+        data["github_client_id"] = GITHUB_CLIENT_ID if GITHUB_CLIENT_ID and GITHUB_CLIENT_ID != "\"\"" else None
         data["github_app_name"] = GITHUB_APP_NAME
         data["magic_login"] = (
             bool(EMAIL_HOST_USER) and bool(EMAIL_HOST_PASSWORD)
@@ -106,7 +106,7 @@ class ConfigurationEndpoint(BaseAPIView):
         data["posthog_host"] = POSTHOG_HOST
 
         # Unsplash
-        data["has_unsplash_configured"] = UNSPLASH_ACCESS_KEY
+        data["has_unsplash_configured"] = bool(UNSPLASH_ACCESS_KEY)
 
         # Open AI settings
         data["has_openai_configured"] = bool(OPENAI_API_KEY)

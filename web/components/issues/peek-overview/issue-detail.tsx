@@ -87,16 +87,25 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     description_html: issue.description_html,
   });
 
+  // adding issue.description_html or issue.name to dependency array causes
+  // editor rerendering on every save
   useEffect(() => {
     if (issue.id) {
       setLocalIssueDescription({ id: issue.id, description_html: issue.description_html });
       setLocalTitleValue(issue.name);
     }
-  }, [issue.id, issue.description_html, issue.name]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [issue.id]); // TODO: Verify the exhaustive-deps warning
 
-  const debouncedFormSave = debounce(async () => {
-    handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
-  }, 1500);
+  // ADDING handleDescriptionFormSubmit TO DEPENDENCY ARRAY PRODUCES ADVERSE EFFECTS
+  // TODO: Verify the exhaustive-deps warning
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedFormSave = useCallback(
+    debounce(async () => {
+      handleSubmit(handleDescriptionFormSubmit)().finally(() => setIsSubmitting("submitted"));
+    }, 1500),
+    [handleSubmit]
+  );
 
   useEffect(() => {
     if (isSubmitting === "submitted") {
@@ -120,7 +129,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
 
   return (
     <>
-      <span className="font-medium text-base text-custom-text-400">
+      <span className="text-base font-medium text-custom-text-400">
         {issue?.project_detail?.identifier}-{issue?.sequence_id}
       </span>
 
@@ -144,7 +153,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
                   debouncedFormSave();
                 }}
                 required={true}
-                className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  text-xl outline-none ring-0 focus:ring-1 focus:ring-custom-primary !p-0 focus:!px-3 focus:!py-2"
+                className="min-h-10 block w-full resize-none overflow-hidden rounded border-none bg-transparent  !p-0 text-xl outline-none ring-0 focus:!px-3 focus:!py-2 focus:ring-1 focus:ring-custom-primary"
                 hasError={Boolean(errors?.description)}
                 role="textbox"
                 disabled={!true}
@@ -155,7 +164,7 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
           <h4 className="break-words text-2xl font-semibold">{issue.name}</h4>
         )}
         {characterLimit && true && (
-          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 text-custom-text-200 p-0.5 text-xs">
+          <div className="pointer-events-none absolute bottom-1 right-1 z-[2] rounded bg-custom-background-100 p-0.5 text-xs text-custom-text-200">
             <span className={`${watch("name").length === 0 || watch("name").length > 255 ? "text-red-500" : ""}`}>
               {watch("name").length}
             </span>

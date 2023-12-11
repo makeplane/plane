@@ -58,14 +58,14 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           }/${notification.data.issue.id}`
         );
       }}
-      className={`group w-full flex items-center gap-4 p-3 pl-6 relative cursor-pointer ${
+      className={`group relative flex w-full cursor-pointer items-center gap-4 p-3 pl-6 ${
         notification.read_at === null ? "bg-custom-primary-70/5" : "hover:bg-custom-background-200"
       }`}
     >
       {notification.read_at === null && (
-        <span className="absolute top-1/2 left-2 -translate-y-1/2 w-1.5 h-1.5 bg-custom-primary-100 rounded-full" />
+        <span className="absolute left-2 top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-custom-primary-100" />
       )}
-      <div className="relative w-12 h-12 rounded-full">
+      <div className="relative h-12 w-12 rounded-full">
         {notification.triggered_by_details.avatar && notification.triggered_by_details.avatar !== "" ? (
           <div className="h-12 w-12 rounded-full">
             <Image
@@ -77,8 +77,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             />
           </div>
         ) : (
-          <div className="w-12 h-12 bg-custom-background-80 rounded-full flex justify-center items-center">
-            <span className="text-custom-text-100 font-medium text-lg">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-custom-background-80">
+            <span className="text-lg font-medium text-custom-text-100">
               {notification.triggered_by_details.is_bot ? (
                 notification.triggered_by_details.first_name?.[0]?.toUpperCase()
               ) : notification.triggered_by_details.display_name?.[0] ? (
@@ -90,9 +90,9 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
           </div>
         )}
       </div>
-      <div className="space-y-2.5 w-full overflow-hidden">
+      <div className="w-full space-y-2.5 overflow-hidden">
         {!notification.message ? (
-          <div className="text-sm w-full break-words">
+          <div className="w-full break-words text-sm">
             <span className="font-semibold">
               {notification.triggered_by_details.is_bot
                 ? notification.triggered_by_details.first_name
@@ -102,8 +102,8 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             {notification.data.issue_activity.field === "comment"
               ? "commented"
               : notification.data.issue_activity.field === "None"
-              ? null
-              : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
+                ? null
+                : replaceUnderscoreIfSnakeCase(notification.data.issue_activity.field)}{" "}
             {notification.data.issue_activity.field !== "comment" && notification.data.issue_activity.field !== "None"
               ? "to"
               : ""}
@@ -135,7 +135,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             </span>
           </div>
         ) : (
-          <div className="text-sm w-full break-words">
+          <div className="w-full break-words text-sm">
             <span className="semi-bold">{notification.message}</span>
           </div>
         )}
@@ -148,18 +148,18 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
             )}
           </p>
           {notification.snoozed_till ? (
-            <p className="text-custom-text-300 flex items-center justify-end gap-x-1 flex-shrink-0">
+            <p className="flex flex-shrink-0 items-center justify-end gap-x-1 text-custom-text-300">
               <Clock className="h-4 w-4" />
               <span>
                 Till {renderShortDate(notification.snoozed_till)}, {render12HourFormatTime(notification.snoozed_till)}
               </span>
             </p>
           ) : (
-            <p className="text-custom-text-300 flex-shrink-0">{formatDateDistance(notification.created_at)}</p>
+            <p className="flex-shrink-0 text-custom-text-300">{formatDateDistance(notification.created_at)}</p>
           )}
         </div>
       </div>
-      <div className="absolute py-1 gap-x-3 right-3 top-3 hidden group-hover:flex">
+      <div className="absolute right-3 top-3 hidden gap-x-3 py-1 group-hover:flex">
         {[
           {
             id: 1,
@@ -200,7 +200,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
                 item.onClick();
               }}
               key={item.id}
-              className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded outline-none"
+              className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm outline-none hover:bg-custom-background-100"
             >
               {item.icon}
             </button>
@@ -214,7 +214,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = (props) => {
               e.stopPropagation();
             }}
             customButton={
-              <div className="text-sm flex w-full items-center gap-x-2 bg-custom-background-80 hover:bg-custom-background-100 p-0.5 rounded">
+              <div className="flex w-full items-center gap-x-2 rounded bg-custom-background-80 p-0.5 text-sm hover:bg-custom-background-100">
                 <Clock className="h-3.5 w-3.5 text-custom-text-300" />
               </div>
             }

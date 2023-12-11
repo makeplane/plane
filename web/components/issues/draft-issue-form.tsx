@@ -381,7 +381,7 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
                         ref={ref}
                         hasError={Boolean(errors.name)}
                         placeholder="Title"
-                        className="resize-none text-xl w-full"
+                        className="w-full resize-none text-xl"
                       />
                     )}
                   />

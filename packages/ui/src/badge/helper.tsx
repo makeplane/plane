@@ -121,17 +121,11 @@ export const badgeStyling: IBadgeStyling = {
   },
 };
 
-export const getBadgeStyling = (
-  variant: TBadgeVariant,
-  size: TBadgeSizes,
-  disabled: boolean = false
-): string => {
+export const getBadgeStyling = (variant: TBadgeVariant, size: TBadgeSizes, disabled: boolean = false): string => {
   let _variant: string = ``;
   const currentVariant = badgeStyling[variant];
 
-  _variant = `${currentVariant.default} ${
-    disabled ? currentVariant.disabled : currentVariant.hover
-  }`;
+  _variant = `${currentVariant.default} ${disabled ? currentVariant.disabled : currentVariant.hover}`;
 
   let _size: string = ``;
   if (size) _size = badgeSizeStyling[size];

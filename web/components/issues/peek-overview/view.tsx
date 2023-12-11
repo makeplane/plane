@@ -172,10 +172,10 @@ export const IssueView: FC<IIssueView> = observer((props) => {
 
         {issueId === peekIssueId && (
           <div
-            className={`fixed z-20 overflow-hidden bg-custom-background-100 flex flex-col transition-all duration-300 border border-custom-border-200 rounded 
-          ${peekMode === "side-peek" ? `w-full md:w-[50%] top-0 right-0 bottom-0` : ``}
-          ${peekMode === "modal" ? `top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] w-5/6 h-5/6` : ``}
-          ${peekMode === "full-screen" ? `top-0 right-0 bottom-0 left-0 m-4` : ``}
+            className={`fixed z-20 flex flex-col overflow-hidden rounded border border-custom-border-200 bg-custom-background-100 transition-all duration-300 
+          ${peekMode === "side-peek" ? `bottom-0 right-0 top-0 w-full md:w-[50%]` : ``}
+          ${peekMode === "modal" ? `left-[50%] top-[50%] h-5/6 w-5/6 -translate-x-[50%] -translate-y-[50%]` : ``}
+          ${peekMode === "full-screen" ? `bottom-0 left-0 right-0 top-0 m-4` : ``}
           `}
             style={{
               boxShadow:
@@ -197,7 +197,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                   <MoveDiagonal className="h-4 w-4 text-custom-text-400 hover:text-custom-text-200" />
                 </button>
                 {currentMode && (
-                  <div className="flex-shrink-0 flex items-center gap-2">
+                  <div className="flex flex-shrink-0 items-center gap-2">
                     <CustomSelect
                       value={currentMode}
                       onChange={(val: any) => setPeekMode(val)}
@@ -216,7 +216,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                                 : "text-custom-text-400 hover:text-custom-text-200"
                             }`}
                           >
-                            <mode.icon className="h-4 w-4 flex-shrink-0 -my-1" />
+                            <mode.icon className="-my-1 h-4 w-4 flex-shrink-0" />
                             {mode.title}
                           </div>
                         </CustomSelect.Option>
@@ -246,7 +246,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                       </Button>
                     )}
                   <button onClick={handleCopyText}>
-                    <Link2 className="h-4 w-4 text-custom-text-300 hover:text-custom-text-200 -rotate-45" />
+                    <Link2 className="h-4 w-4 -rotate-45 text-custom-text-300 hover:text-custom-text-200" />
                   </button>
                   {!disableUserActions && (
                     <button onClick={() => setDeleteIssueModal(true)}>
@@ -258,18 +258,18 @@ export const IssueView: FC<IIssueView> = observer((props) => {
             </div>
 
             {/* content */}
-            <div className="relative w-full h-full overflow-hidden overflow-y-auto">
+            <div className="relative h-full w-full overflow-hidden overflow-y-auto">
               {isLoading && !issue ? (
-                <div className="h-full w-full flex items-center justify-center">
+                <div className="flex h-full w-full items-center justify-center">
                   <Spinner />
                 </div>
               ) : (
                 issue && (
                   <>
                     {["side-peek", "modal"].includes(peekMode) ? (
-                      <div className="relative flex flex-col gap-3 py-5 px-8">
+                      <div className="relative flex flex-col gap-3 px-8 py-5">
                         {isArchived && (
-                          <div className="absolute top-0 left-0 h-full min-h-full w-full z-[9] flex items-center justify-center bg-custom-background-100 opacity-60" />
+                          <div className="absolute left-0 top-0 z-[9] flex h-full min-h-full w-full items-center justify-center bg-custom-background-100 opacity-60" />
                         )}
                         <PeekOverviewIssueDetails
                           setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -304,8 +304,8 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         />
                       </div>
                     ) : (
-                      <div className={`overflow-auto w-full h-full flex ${isArchived ? "opacity-60" : ""}`}>
-                        <div className="relative w-full h-full space-y-6 p-4 py-5 overflow-auto">
+                      <div className={`flex h-full w-full overflow-auto ${isArchived ? "opacity-60" : ""}`}>
+                        <div className="relative h-full w-full space-y-6 overflow-auto p-4 py-5">
                           <div className={isArchived ? "pointer-events-none" : ""}>
                             <PeekOverviewIssueDetails
                               setIsSubmitting={(value) => setIsSubmitting(value)}
@@ -335,7 +335,7 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           </div>
                         </div>
                         <div
-                          className={`flex-shrink-0 !w-[400px] h-full border-l border-custom-border-200 p-4 py-5 ${
+                          className={`h-full !w-[400px] flex-shrink-0 border-l border-custom-border-200 p-4 py-5 ${
                             isArchived ? "pointer-events-none" : ""
                           }`}
                         >

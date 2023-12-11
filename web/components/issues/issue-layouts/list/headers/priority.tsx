@@ -16,25 +16,25 @@ export interface IPriorityHeader {
 }
 
 const Icon = ({ priority }: any) => (
-  <div className="w-full h-full">
+  <div className="h-full w-full">
     {priority === "urgent" ? (
-      <div className="border border-red-500 bg-red-500 text-white w-full h-full overflow-hidden flex justify-center items-center rounded-sm">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-sm border border-red-500 bg-red-500 text-white">
         <AlertCircle size={14} strokeWidth={2} />
       </div>
     ) : priority === "high" ? (
-      <div className="border border-red-500/20 bg-red-500/10 text-red-500 w-full h-full overflow-hidden flex justify-center items-center rounded-sm">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-sm border border-red-500/20 bg-red-500/10 text-red-500">
         <SignalHigh size={14} strokeWidth={2} className="pl-[3px]" />
       </div>
     ) : priority === "medium" ? (
-      <div className="border border-orange-500/20 bg-orange-500/10 text-orange-500 w-full h-full overflow-hidden flex justify-center items-center rounded-sm">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-sm border border-orange-500/20 bg-orange-500/10 text-orange-500">
         <SignalMedium size={14} strokeWidth={2} className="pl-[3px]" />
       </div>
     ) : priority === "low" ? (
-      <div className="border border-green-500/20 bg-green-500/10 text-green-500 w-full h-full overflow-hidden flex justify-center items-center rounded-sm">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-sm border border-green-500/20 bg-green-500/10 text-green-500">
         <SignalLow size={14} strokeWidth={2} className="pl-[3px]" />
       </div>
     ) : (
-      <div className="border border-custom-border-400/20 bg-custom-text-400/10 text-custom-text-400 w-full h-full overflow-hidden flex justify-center items-center rounded-sm">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-sm border border-custom-border-400/20 bg-custom-text-400/10 text-custom-text-400">
         <Ban size={14} strokeWidth={2} />
       </div>
     )}

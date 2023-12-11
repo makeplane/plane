@@ -41,8 +41,8 @@ export const ModulesListView: React.FC = observer(() => {
         <>
           {modulesView === "list" && (
             <div className="h-full overflow-y-auto">
-              <div className="flex justify-between h-full w-full">
-                <div className="flex flex-col h-full w-full overflow-y-auto">
+              <div className="flex h-full w-full justify-between">
+                <div className="flex h-full w-full flex-col overflow-y-auto">
                   {modulesList.map((module) => (
                     <ModuleListItem key={module.id} module={module} />
                   ))}
@@ -56,9 +56,9 @@ export const ModulesListView: React.FC = observer(() => {
           )}
           {modulesView === "grid" && (
             <div className="h-full w-full">
-              <div className="flex justify-between h-full w-full">
+              <div className="flex h-full w-full justify-between">
                 <div
-                  className={`grid grid-cols-1 gap-6 p-8 h-full w-full overflow-y-auto ${
+                  className={`grid h-full w-full grid-cols-1 gap-6 overflow-y-auto p-8 ${
                     peekModule
                       ? "lg:grid-cols-1 xl:grid-cols-2 3xl:grid-cols-3"
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"

@@ -12,11 +12,7 @@ import {
 } from "lucide-react";
 import { NextRouter } from "next/router";
 import { IVerticalDropdownItemProps } from "../components/vertical-dropdown-menu";
-import {
-  IDuplicationConfig,
-  IPageArchiveConfig,
-  IPageLockConfig,
-} from "../types/menu-actions";
+import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "../types/menu-actions";
 import { copyMarkdownToClipboard, CopyPageLink } from "./menu-actions";
 
 export interface MenuOptionsProps {
@@ -90,8 +86,7 @@ export const getMenuOptions = ({
           .then(() => {
             onActionCompleteHandler({
               title: "Page Copied",
-              message:
-                "Page has been copied as 'Copy of' followed by page title",
+              message: "Page has been copied as 'Copy of' followed by page title",
               type: "success",
             });
           })

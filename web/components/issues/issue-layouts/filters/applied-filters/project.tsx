@@ -23,13 +23,13 @@ export const AppliedProjectFilters: React.FC<Props> = observer((props) => {
         if (!projectDetails) return null;
 
         return (
-          <div key={projectId} className="text-xs flex items-center gap-1 bg-custom-background-80 p-1 rounded">
+          <div key={projectId} className="flex items-center gap-1 rounded bg-custom-background-80 p-1 text-xs">
             {projectDetails.emoji ? (
               <span className="grid flex-shrink-0 place-items-center">{renderEmoji(projectDetails.emoji)}</span>
             ) : projectDetails.icon_prop ? (
-              <div className="grid place-items-center flex-shrink-0 -my-1">{renderEmoji(projectDetails.icon_prop)}</div>
+              <div className="-my-1 grid flex-shrink-0 place-items-center">{renderEmoji(projectDetails.icon_prop)}</div>
             ) : (
-              <span className="grid mr-1 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+              <span className="mr-1 grid flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
                 {projectDetails?.name.charAt(0)}
               </span>
             )}

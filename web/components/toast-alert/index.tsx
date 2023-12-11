@@ -10,10 +10,10 @@ const ToastAlerts = () => {
   if (!alerts) return null;
 
   return (
-    <div className="pointer-events-none fixed top-5 right-5 z-50 h-full w-80 space-y-5 overflow-hidden">
+    <div className="pointer-events-none fixed right-5 top-5 z-50 h-full w-80 space-y-5 overflow-hidden">
       {alerts.map((alert) => (
         <div className="relative overflow-hidden rounded-md text-white" key={alert.id}>
-          <div className="absolute top-1 right-1">
+          <div className="absolute right-1 top-1">
             <button
               type="button"
               className="pointer-events-auto inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2"
@@ -28,10 +28,10 @@ const ToastAlerts = () => {
               alert.type === "success"
                 ? "bg-[#06d6a0]"
                 : alert.type === "error"
-                ? "bg-[#ef476f]"
-                : alert.type === "warning"
-                ? "bg-[#e98601]"
-                : "bg-[#1B9aaa]"
+                  ? "bg-[#ef476f]"
+                  : alert.type === "warning"
+                    ? "bg-[#e98601]"
+                    : "bg-[#1B9aaa]"
             }`}
           >
             <div className="flex items-center gap-x-3">

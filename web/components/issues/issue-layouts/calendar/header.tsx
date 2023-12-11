@@ -6,11 +6,27 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { CalendarMonthsDropdown, CalendarOptionsDropdown } from "components/issues";
 // icons
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
-export const CalendarHeader: React.FC = observer(() => {
-  const { issueFilter: issueFilterStore, calendar: calendarStore } = useMobxStore();
+interface ICalendarHeader {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
+}
 
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+export const CalendarHeader: React.FC<ICalendarHeader> = observer((props) => {
+  const { issuesFilterStore } = props;
+
+  const { calendar: calendarStore } = useMobxStore();
+
+  const calendarLayout = issuesFilterStore.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const { activeMonthDate, activeWeekDate } = calendarStore.calendarFilters;
 
@@ -73,7 +89,7 @@ export const CalendarHeader: React.FC = observer(() => {
   };
 
   return (
-    <div className="flex items-center justify-between gap-2 px-3 mb-4">
+    <div className="mb-4 flex items-center justify-between gap-2 px-3">
       <div className="flex items-center gap-1.5">
         <button type="button" className="grid place-items-center" onClick={handlePrevious}>
           <ChevronLeft size={16} strokeWidth={2} />
@@ -86,12 +102,12 @@ export const CalendarHeader: React.FC = observer(() => {
       <div className="flex items-center gap-1.5">
         <button
           type="button"
-          className="px-2.5 py-1 text-xs bg-custom-background-80 rounded font-medium text-custom-text-200 hover:text-custom-text-100"
+          className="rounded bg-custom-background-80 px-2.5 py-1 text-xs font-medium text-custom-text-200 hover:text-custom-text-100"
           onClick={handleToday}
         >
           Today
         </button>
-        <CalendarOptionsDropdown />
+        <CalendarOptionsDropdown issuesFilterStore={issuesFilterStore} />
       </div>
     </div>
   );

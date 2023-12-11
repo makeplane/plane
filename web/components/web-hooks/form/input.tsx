@@ -10,10 +10,10 @@ export const WebhookInput: React.FC<Props> = (props) => {
 
   return (
     <>
-      <h6 className="font-medium text-sm">Payload URL</h6>
+      <h6 className="text-sm font-medium">Payload URL</h6>
       <Input
         type="url"
-        className="w-full h-11"
+        className="h-11 w-full"
         onChange={(e) => onChange(e.target.value)}
         value={value}
         autoComplete="off"

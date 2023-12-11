@@ -83,7 +83,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl p-6">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100 p-6 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex w-full items-center justify-start gap-6">
                   <span className="place-items-center rounded-full bg-red-500/20 p-4">
                     <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
@@ -93,7 +93,7 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
                   </span>
                 </div>
 
-                <p className="text-sm text-custom-text-200 mt-4">
+                <p className="mt-4 text-sm text-custom-text-200">
                   Are you sure you want to delete this webhook? Future events will not be delivered to this webhook.
                   This action cannot be undone.
                 </p>

@@ -41,7 +41,7 @@ const Inputs = (props: any) => {
 
   return (
     <>
-      <h4 className="text-xs w-20 leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+      <h4 className="w-20 text-xs leading-5 text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
       <input
         type="text"
         autoComplete="off"
@@ -49,7 +49,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full py-3 rounded-md bg-transparent text-sm leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent py-3 text-sm leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -188,7 +188,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex border-[0.5px] border-t-0 border-custom-border-100 px-4 items-center gap-x-5 bg-custom-background-100 shadow-custom-shadow-sm z-10"
+            className="z-10 flex items-center gap-x-5 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-4 shadow-custom-shadow-sm"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>
@@ -196,7 +196,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
       )}
 
       {isOpen && (
-        <p className="text-xs ml-3 mt-3 italic text-custom-text-200">
+        <p className="ml-3 mt-3 text-xs italic text-custom-text-200">
           Press {"'"}Enter{"'"} to add another issue
         </p>
       )}
@@ -205,7 +205,7 @@ export const SpreadsheetQuickAddIssueForm: React.FC<Props> = observer((props) =>
         <div className="flex items-center">
           <button
             type="button"
-            className="flex items-center gap-x-[6px] text-custom-primary-100 px-2 pt-3 rounded-md"
+            className="flex items-center gap-x-[6px] rounded-md px-2 pt-3 text-custom-primary-100"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />

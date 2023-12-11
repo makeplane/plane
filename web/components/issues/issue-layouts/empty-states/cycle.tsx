@@ -57,7 +57,7 @@ export const CycleEmptyState: React.FC<Props> = observer((props) => {
         searchParams={{ cycle: true }}
         handleOnSubmit={handleAddIssuesToCycle}
       />
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <EmptyState
           title="Cycle issues will appear here"
           description="Issues help you track individual pieces of work. With Issues, keep track of what's going on, who is working on it, and what's done."

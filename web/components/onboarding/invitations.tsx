@@ -79,7 +79,7 @@ export const Invitations: React.FC<Props> = (props) => {
   return invitations && invitations.length > 0 ? (
     <div>
       <div className="space-y-4 md:w-2/3 ">
-        <p className="font-semibold pb-2 text-xl sm:text-2xl">Choose a workspace to join </p>
+        <p className="pb-2 text-xl font-semibold sm:text-2xl">Choose a workspace to join </p>
         <div>
           {invitations &&
             invitations.length > 0 &&
@@ -88,14 +88,15 @@ export const Invitations: React.FC<Props> = (props) => {
               return (
                 <div
                   key={invitation.id}
-                  className={`flex cursor-pointer items-center gap-2 border p-3.5 rounded ${isSelected
+                  className={`flex cursor-pointer items-center gap-2 rounded border p-3.5 ${
+                    isSelected
                       ? "border-custom-primary-100"
                       : "border-onboarding-border-200 hover:bg-onboarding-background-300/30"
-                    }`}
+                  }`}
                   onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
                 >
                   <div className="flex-shrink-0">
-                    <div className="grid place-items-center h-9 w-9 rounded">
+                    <div className="grid h-9 w-9 place-items-center rounded">
                       {invitation.workspace.logo && invitation.workspace.logo !== "" ? (
                         <img
                           src={invitation.workspace.logo}
@@ -105,7 +106,7 @@ export const Invitations: React.FC<Props> = (props) => {
                           alt={invitation.workspace.name}
                         />
                       ) : (
-                        <span className="grid place-items-center h-9 w-9 py-1.5 px-3 rounded bg-gray-700 uppercase text-white">
+                        <span className="grid h-9 w-9 place-items-center rounded bg-gray-700 px-3 py-1.5 uppercase text-white">
                           {invitation.workspace.name[0]}
                         </span>
                       )}
@@ -127,20 +128,20 @@ export const Invitations: React.FC<Props> = (props) => {
           {isJoiningWorkspaces ? "Joining..." : "Join your team"}
         </Button>
       </div>
-      <div className="py-3 px-4 mt-8 bg-onboarding-background-300/30 rounded-sm flex justify-between items-center">
+      <div className="mt-8 flex items-center justify-between rounded-sm bg-onboarding-background-300/30 px-4 py-3">
         <div className="flex items-center">
-          <Search className="h-4 w-4  mr-2" />
+          <Search className="mr-2 h-4  w-4" />
           <span className="text-sm text-custom-text-200">Don&apos;t see your workspace?</span>
         </div>
 
         <div>
           <div
-            className="bg-onboarding-background-200 py-3 text-center hover:cursor-pointer text-custom-text-200 rounded-md text-sm font-medium border border-custom-border-200"
+            className="rounded-md border border-custom-border-200 bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
             onClick={setTryDiffAccount}
           >
             Try a different email address
           </div>
-          <p className="text-xs mt-2 text-custom-text-300">
+          <p className="mt-2 text-xs text-custom-text-300">
             Your right e-mail address could be from a Google or GitHub login.
           </p>
         </div>
@@ -152,18 +153,18 @@ export const Invitations: React.FC<Props> = (props) => {
 };
 
 const EmptyInvitation = ({ email, setTryDiffAccount }: { email: string; setTryDiffAccount: () => void }) => (
-  <div className="items-center md:w-4/5 bg-onboarding-background-300/30 my-16 border-onboarding-border-200 py-5 px-10 rounded border justify-center ">
-    <p className="text-lg text-onboarding-text-300 text-center font-semibold">Is your team already on Plane?</p>
-    <p className="text-sm text-onboarding-text-300 mt-6 text-center">
+  <div className="my-16 items-center justify-center rounded border border-onboarding-border-200 bg-onboarding-background-300/30 px-10 py-5 md:w-4/5 ">
+    <p className="text-center text-lg font-semibold text-onboarding-text-300">Is your team already on Plane?</p>
+    <p className="mt-6 text-center text-sm text-onboarding-text-300">
       We couldn’t find any existing workspaces for the email address {email}
     </p>
     <div
-      className="bg-onboarding-background-200 mt-6 py-3 text-center hover:cursor-pointer text-custom-text-200 rounded-md text-sm font-medium border border-custom-border-200"
+      className="mt-6 rounded-md border border-custom-border-200 bg-onboarding-background-200 py-3 text-center text-sm font-medium text-custom-text-200 hover:cursor-pointer"
       onClick={setTryDiffAccount}
     >
       Try a different email address
     </div>
-    <p className="text-xs mt-2 text-center text-custom-text-300">
+    <p className="mt-2 text-center text-xs text-custom-text-300">
       Your right e-mail address could be from a Google or GitHub login.
     </p>
   </div>

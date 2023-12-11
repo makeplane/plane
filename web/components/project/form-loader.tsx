@@ -6,26 +6,26 @@ export interface IProjectDetailsFormLoader {}
 
 export const ProjectDetailsFormLoader: FC<IProjectDetailsFormLoader> = () => (
   <>
-    <div className="relative h-44 w-full mt-6">
+    <div className="relative mt-6 h-44 w-full">
       <Loader>
         <Loader.Item height="auto" width="46px" />
       </Loader>
-      <div className="flex items-end justify-between gap-3 absolute bottom-4 w-full px-4">
-        <div className="flex gap-3 flex-grow truncate">
-          <div className="flex items-center justify-center flex-shrink-0 bg-custom-background-90 h-[52px] w-[52px] rounded-lg">
+      <div className="absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
+        <div className="flex flex-grow gap-3 truncate">
+          <div className="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-custom-background-90">
             <Loader>
               <Loader.Item height="46px" width="46px" />
             </Loader>
           </div>
         </div>
-        <div className="flex justify-center flex-shrink-0">
+        <div className="flex flex-shrink-0 justify-center">
           <Loader>
             <Loader.Item height="32px" width="108px" />
           </Loader>
         </div>
       </div>
     </div>
-    <div className="flex flex-col gap-8 my-8">
+    <div className="my-8 flex flex-col gap-8">
       <div className="flex flex-col gap-1">
         <h4 className="text-sm">Project Name</h4>
         <Loader>
@@ -38,14 +38,14 @@ export const ProjectDetailsFormLoader: FC<IProjectDetailsFormLoader> = () => (
           <Loader.Item height="102px" width="full" />
         </Loader>
       </div>
-      <div className="flex items-center justify-between gap-10 w-full">
-        <div className="flex flex-col gap-1 w-1/2">
+      <div className="flex w-full items-center justify-between gap-10">
+        <div className="flex w-1/2 flex-col gap-1">
           <h4 className="text-sm">Identifier</h4>
           <Loader>
             <Loader.Item height="36px" width="100%" />
           </Loader>
         </div>
-        <div className="flex flex-col gap-1 w-1/2">
+        <div className="flex w-1/2 flex-col gap-1">
           <h4 className="text-sm">Network</h4>
           <Loader className="w-full">
             <Loader.Item height="46px" width="100%" />

@@ -45,8 +45,7 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
     },
     code: {
       HTMLAttributes: {
-        class:
-          "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
+        class: "rounded-md bg-custom-primary-30 mx-1 px-1 py-1 font-mono font-medium text-custom-text-1000",
         spellcheck: "false",
       },
     },
@@ -94,9 +93,5 @@ export const CoreReadOnlyEditorExtensions = (mentionConfig: {
   TableHeader,
   TableCell,
   TableRow,
-  Mentions(
-    mentionConfig.mentionSuggestions,
-    mentionConfig.mentionHighlights,
-    true,
-  ),
+  Mentions(mentionConfig.mentionSuggestions, mentionConfig.mentionHighlights, true),
 ];

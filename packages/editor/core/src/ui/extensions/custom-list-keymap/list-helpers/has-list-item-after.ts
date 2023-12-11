@@ -1,9 +1,6 @@
 import { EditorState } from "@tiptap/pm/state";
 
-export const hasListItemAfter = (
-  typeOrName: string,
-  state: EditorState,
-): boolean => {
+export const hasListItemAfter = (typeOrName: string, state: EditorState): boolean => {
   const { $anchor } = state.selection;
 
   const $targetPos = state.doc.resolve($anchor.pos - $anchor.parentOffset - 2);

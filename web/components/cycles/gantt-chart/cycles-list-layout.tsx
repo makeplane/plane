@@ -79,7 +79,7 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
   const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
 
   return (
-    <div className="w-full h-full overflow-y-auto">
+    <div className="h-full w-full overflow-y-auto">
       <GanttChartRoot
         title="Cycles"
         loaderTitle="Cycles"

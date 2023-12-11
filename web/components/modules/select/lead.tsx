@@ -63,7 +63,7 @@ export const ModuleLeadSelect: React.FC<Props> = ({ value, onChange }) => {
       footerOption={
         <Combobox.Option
           value=""
-          className="flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5  text-custom-text-200"
+          className="flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5  text-custom-text-200"
         >
           <span className="flex items-center justify-start gap-1 text-custom-text-200">
             <span>No Lead</span>

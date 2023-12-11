@@ -49,8 +49,8 @@ export const CustomAnalytics: React.FC<Props> = observer((props) => {
   const isProjectLevel = projectId ? true : false;
 
   return (
-    <div className={`overflow-hidden flex flex-col-reverse ${fullScreen ? "md:grid md:grid-cols-4 md:h-full" : ""}`}>
-      <div className="col-span-3 flex flex-col h-full overflow-hidden">
+    <div className={`flex flex-col-reverse overflow-hidden ${fullScreen ? "md:grid md:h-full md:grid-cols-4" : ""}`}>
+      <div className="col-span-3 flex h-full flex-col overflow-hidden">
         <CustomAnalyticsSelectBar
           control={control}
           setValue={setValue}

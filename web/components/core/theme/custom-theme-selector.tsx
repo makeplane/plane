@@ -101,7 +101,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                     />
                   )}
                 />
-                {errors.background && <p className="text-xs text-red-500 mt-1">{errors.background.message}</p>}
+                {errors.background && <p className="mt-1 text-xs text-red-500">{errors.background.message}</p>}
               </div>
             </div>
 
@@ -127,7 +127,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                     />
                   )}
                 />
-                {errors.text && <p className="text-xs text-red-500 mt-1">{errors.text.message}</p>}
+                {errors.text && <p className="mt-1 text-xs text-red-500">{errors.text.message}</p>}
               </div>
             </div>
 
@@ -153,7 +153,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                     />
                   )}
                 />
-                {errors.primary && <p className="text-xs text-red-500 mt-1">{errors.primary.message}</p>}
+                {errors.primary && <p className="mt-1 text-xs text-red-500">{errors.primary.message}</p>}
               </div>
             </div>
 
@@ -180,7 +180,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                   )}
                 />
                 {errors.sidebarBackground && (
-                  <p className="text-xs text-red-500 mt-1">{errors.sidebarBackground.message}</p>
+                  <p className="mt-1 text-xs text-red-500">{errors.sidebarBackground.message}</p>
                 )}
               </div>
             </div>
@@ -207,7 +207,7 @@ export const CustomThemeSelector: React.FC = observer(() => {
                     />
                   )}
                 />
-                {errors.sidebarText && <p className="text-xs text-red-500 mt-1">{errors.sidebarText.message}</p>}
+                {errors.sidebarText && <p className="mt-1 text-xs text-red-500">{errors.sidebarText.message}</p>}
               </div>
             </div>
           </div>

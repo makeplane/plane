@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/makeplane/plane.git",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "license": "AGPL-3.0",
   "private": true,
   "workspaces": [
@@ -27,7 +27,7 @@
     "prettier": "latest",
     "prettier-plugin-tailwindcss": "^0.5.4",
     "tailwindcss": "^3.3.3",
-    "turbo": "^1.10.16"
+    "turbo": "^1.11.1"
   },
   "resolutions": {
     "@types/react": "18.2.42"

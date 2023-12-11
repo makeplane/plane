@@ -36,7 +36,7 @@ export const ShortcutsModal: FC<Props> = (props) => {
           <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed h-full w-full inset-0 z-20 overflow-y-auto">
+        <div className="fixed inset-0 z-20 h-full w-full overflow-y-auto">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -47,8 +47,8 @@ export const ShortcutsModal: FC<Props> = (props) => {
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
             <Dialog.Panel className="h-full w-full">
-              <div className="h-full w-full grid place-items-center p-5">
-                <div className="flex flex-col rounded-lg bg-custom-background-100  shadow-custom-shadow-md transition-all p-5 space-y-4 h-[61vh] w-full sm:w-[28rem] overflow-hidden">
+              <div className="grid h-full w-full place-items-center p-5">
+                <div className="flex h-[61vh] w-full flex-col  space-y-4 overflow-hidden rounded-lg bg-custom-background-100 p-5 shadow-custom-shadow-md transition-all sm:w-[28rem]">
                   <Dialog.Title as="h3" className="flex justify-between">
                     <span className="text-lg font-medium">Keyboard shortcuts</span>
                     <button type="button" onClick={handleClose}>

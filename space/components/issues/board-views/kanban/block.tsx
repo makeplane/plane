@@ -44,9 +44,9 @@ export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
   };
 
   return (
-    <div className="py-2 px-3 flex flex-col gap-1.5 bg-custom-background-100 rounded shadow-custom-shadow-2xs border-[0.5px] border-custom-border-200 space-y-2 text-sm">
+    <div className="flex flex-col gap-1.5 space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs">
       {/* id */}
-      <div className="text-xs text-custom-text-300 break-words">
+      <div className="break-words text-xs text-custom-text-300">
         {projectStore?.project?.identifier}-{issue?.sequence_id}
       </div>
 
@@ -54,12 +54,12 @@ export const IssueKanBanBlock = observer(({ issue }: { issue: IIssue }) => {
       <h6
         onClick={handleBlockClick}
         role="button"
-        className="text-sm font-medium break-words line-clamp-2 cursor-pointer"
+        className="line-clamp-2 cursor-pointer break-words text-sm font-medium"
       >
         {issue.name}
       </h6>
 
-      <div className="relative flex-grow flex items-end gap-2 w-full overflow-x-scroll hide-horizontal-scrollbar">
+      <div className="hide-horizontal-scrollbar relative flex w-full flex-grow items-end gap-2 overflow-x-scroll">
         {/* priority */}
         {issue?.priority && (
           <div className="flex-shrink-0">

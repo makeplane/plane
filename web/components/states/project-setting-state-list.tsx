@@ -23,7 +23,7 @@ export const ProjectSettingStateList: React.FC = observer(() => {
   // store
   const {
     projectState: { groupedProjectStates, projectStates, fetchProjectStates },
-    trackEvent: { setTrackElement }
+    trackEvent: { setTrackElement },
   } = useMobxStore();
   // state
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
@@ -55,15 +55,14 @@ export const ProjectSettingStateList: React.FC = observer(() => {
             {Object.keys(orderedStateGroups).map((group) => (
               <div key={group} className="flex flex-col gap-2">
                 <div className="flex w-full justify-between">
-                  <h4 className="text-base font-medium text-custom-text-200 capitalize">{group}</h4>
+                  <h4 className="text-base font-medium capitalize text-custom-text-200">{group}</h4>
                   <button
                     type="button"
-                    className="flex items-center gap-2 text-custom-primary-100 px-2 hover:text-custom-primary-200 outline-none"
+                    className="flex items-center gap-2 px-2 text-custom-primary-100 outline-none hover:text-custom-primary-200"
                     onClick={() => {
                       setTrackElement("PROJECT_SETTINGS_STATES_PAGE");
-                      setActiveGroup(group as keyof StateGroup)
-                    }
-                    }
+                      setActiveGroup(group as keyof StateGroup);
+                    }}
                   >
                     <Plus className="h-4 w-4" />
                   </button>

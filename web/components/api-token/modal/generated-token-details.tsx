@@ -41,7 +41,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
       <button
         type="button"
         onClick={() => copyApiToken(tokenDetails.token ?? "")}
-        className="mt-4 w-full border-[0.5px] border-custom-border-200 py-2 px-3 flex items-center justify-between font-medium rounded-md text-sm outline-none"
+        className="mt-4 flex w-full items-center justify-between rounded-md border-[0.5px] border-custom-border-200 px-3 py-2 text-sm font-medium outline-none"
       >
         {tokenDetails.token}
         <Tooltip tooltipContent="Copy secret key">
@@ -49,7 +49,7 @@ export const GeneratedTokenDetails: React.FC<Props> = (props) => {
         </Tooltip>
       </button>
       <div className="mt-6 flex items-center justify-between">
-        <p className="text-custom-text-400 text-xs">
+        <p className="text-xs text-custom-text-400">
           {tokenDetails.expired_at ? `Expires ${renderFormattedDate(tokenDetails.expired_at)}` : "Never expires"}
         </p>
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>

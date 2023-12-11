@@ -66,7 +66,7 @@ export const NotificationPopover = observer(() => {
             <>
               <Tooltip tooltipContent="Notifications" position="right" className="ml-2" disabled={!isSidebarCollapsed}>
                 <Popover.Button
-                  className={`relative group flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
+                  className={`group relative flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium outline-none ${
                     isActive
                       ? "bg-custom-primary-100/10 text-custom-primary-100"
                       : "text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"
@@ -76,9 +76,9 @@ export const NotificationPopover = observer(() => {
                   {isSidebarCollapsed ? null : <span>Notifications</span>}
                   {totalNotificationCount && totalNotificationCount > 0 ? (
                     isSidebarCollapsed ? (
-                      <span className="absolute right-3.5 top-2 h-2 w-2 bg-custom-primary-300 rounded-full" />
+                      <span className="absolute right-3.5 top-2 h-2 w-2 rounded-full bg-custom-primary-300" />
                     ) : (
-                      <span className="ml-auto bg-custom-primary-300 rounded-full text-xs text-white px-1.5">
+                      <span className="ml-auto rounded-full bg-custom-primary-300 px-1.5 text-xs text-white">
                         {getNumberCount(totalNotificationCount)}
                       </span>
                     )
@@ -94,7 +94,7 @@ export const NotificationPopover = observer(() => {
                 leaveFrom="opacity-100 translate-y-0"
                 leaveTo="opacity-0 translate-y-1"
               >
-                <Popover.Panel className="absolute bg-custom-background-100 flex flex-col left-0 md:left-full ml-8 z-10 -top-36 md:w-[36rem] w-[20rem] h-[50vh] border border-custom-border-300 shadow-lg rounded-xl">
+                <Popover.Panel className="absolute -top-36 left-0 z-10 ml-8 flex h-[50vh] w-[20rem] flex-col rounded-xl border border-custom-border-300 bg-custom-background-100 shadow-lg md:left-full md:w-[36rem]">
                   <NotificationHeader
                     notificationCount={notificationCount}
                     notificationMutate={notificationMutate}
@@ -129,7 +129,7 @@ export const NotificationPopover = observer(() => {
                           ))}
                         </div>
                         {isLoadingMore && (
-                          <div className="my-6 flex justify-center items-center text-sm">
+                          <div className="my-6 flex items-center justify-center text-sm">
                             <div role="status">
                               <svg
                                 aria-hidden="true"
@@ -155,7 +155,7 @@ export const NotificationPopover = observer(() => {
                         {hasMore && !isLoadingMore && (
                           <button
                             type="button"
-                            className="text-custom-primary-100 my-6 flex justify-center items-center w-full text-sm font-medium"
+                            className="my-6 flex w-full items-center justify-center text-sm font-medium text-custom-primary-100"
                             disabled={isLoadingMore}
                             onClick={() => {
                               setSize((prev) => prev + 1);
@@ -166,7 +166,7 @@ export const NotificationPopover = observer(() => {
                         )}
                       </div>
                     ) : (
-                      <div className="grid h-full w-full place-items-center overflow-hidden scale-75">
+                      <div className="grid h-full w-full scale-75 place-items-center overflow-hidden">
                         <EmptyState
                           title="You're updated with all the notifications"
                           description="You have read all the notifications."
@@ -175,7 +175,7 @@ export const NotificationPopover = observer(() => {
                       </div>
                     )
                   ) : (
-                    <Loader className="p-5 space-y-4 overflow-y-auto">
+                    <Loader className="space-y-4 overflow-y-auto p-5">
                       <Loader.Item height="50px" />
                       <Loader.Item height="50px" />
                       <Loader.Item height="50px" />

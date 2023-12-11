@@ -256,10 +256,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     moduleDetails.total_issues === 0
       ? "0 Issue"
       : moduleDetails.total_issues === moduleDetails.completed_issues
-      ? moduleDetails.total_issues > 1
-        ? `${moduleDetails.total_issues}`
-        : `${moduleDetails.total_issues}`
-      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+        ? moduleDetails.total_issues > 1
+          ? `${moduleDetails.total_issues}`
+          : `${moduleDetails.total_issues}`
+        : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   return (
     <>
@@ -277,13 +277,13 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       <DeleteModuleModal isOpen={moduleDeleteModal} onClose={() => setModuleDeleteModal(false)} data={moduleDetails} />
 
       <>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex w-full items-center justify-between">
           <div>
             <button
-              className="flex items-center justify-center h-5 w-5 rounded-full bg-custom-border-300"
+              className="flex h-5 w-5 items-center justify-center rounded-full bg-custom-border-300"
               onClick={() => handleClose()}
             >
-              <ChevronRight className="h-3 w-3 text-white stroke-2" />
+              <ChevronRight className="h-3 w-3 stroke-2 text-white" />
             </button>
           </div>
           <div className="flex items-center gap-3.5">
@@ -302,7 +302,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         <div className="flex flex-col gap-3">
-          <h4 className="text-xl font-semibold break-words w-full text-custom-text-100">{moduleDetails.name}</h4>
+          <h4 className="w-full break-words text-xl font-semibold text-custom-text-100">{moduleDetails.name}</h4>
           <div className="flex items-center gap-5">
             <Controller
               control={control}
@@ -311,7 +311,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex items-center cursor-default justify-center text-sm h-6 w-20 rounded-sm ${moduleStatus?.textColor} ${moduleStatus?.bgColor}`}
+                      className={`flex h-6 w-20 cursor-default items-center justify-center rounded-sm text-sm ${moduleStatus?.textColor} ${moduleStatus?.bgColor}`}
                     >
                       {moduleStatus?.label ?? "Backlog"}
                     </span>
@@ -335,7 +335,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="relative flex h-full w-52 items-center gap-2.5">
               <Popover className="flex h-full items-center justify-center rounded-lg">
-                <Popover.Button className="text-sm text-custom-text-300 font-medium cursor-default">
+                <Popover.Button className="cursor-default text-sm font-medium text-custom-text-300">
                   {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
                 </Popover.Button>
 
@@ -348,7 +348,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute top-10 -right-5 z-20  transform overflow-hidden">
+                  <Popover.Panel className="absolute -right-5 top-10 z-20  transform overflow-hidden">
                     <CustomRangeDatePicker
                       value={watch("start_date") ? watch("start_date") : moduleDetails?.start_date}
                       onChange={(val) => {
@@ -367,7 +367,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <MoveRight className="h-4 w-4 text-custom-text-300" />
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <>
-                  <Popover.Button className="text-sm text-custom-text-300 font-medium cursor-default">
+                  <Popover.Button className="cursor-default text-sm font-medium text-custom-text-300">
                     {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
                   </Popover.Button>
 
@@ -380,7 +380,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    <Popover.Panel className="absolute top-10 -right-5 z-20 transform overflow-hidden">
+                    <Popover.Panel className="absolute -right-5 top-10 z-20 transform overflow-hidden">
                       <CustomRangeDatePicker
                         value={watch("target_date") ? watch("target_date") : moduleDetails?.target_date}
                         onChange={(val) => {
@@ -402,12 +402,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         </div>
 
         {moduleDetails.description && (
-          <span className="whitespace-normal text-sm leading-5 py-2.5 text-custom-text-200 break-words w-full">
+          <span className="w-full whitespace-normal break-words py-2.5 text-sm leading-5 text-custom-text-200">
             {moduleDetails.description}
           </span>
         )}
 
-        <div className="flex flex-col gap-5 pt-2.5 pb-6">
+        <div className="flex flex-col gap-5 pb-6 pt-2.5">
           <Controller
             control={control}
             name="lead"
@@ -438,14 +438,14 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <LayersIcon className="h-4 w-4" />
               <span className="text-base">Issues</span>
             </div>
-            <div className="flex items-center w-1/2">
-              <span className="text-sm text-custom-text-300 px-1.5">{issueCount}</span>
+            <div className="flex w-1/2 items-center">
+              <span className="px-1.5 text-sm text-custom-text-300">{issueCount}</span>
             </div>
           </div>
         </div>
 
         <div className="flex flex-col">
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
             <Disclosure defaultOpen>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
@@ -459,7 +459,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
                     <div className="flex items-center gap-2.5">
                       {progressPercentage ? (
-                        <span className="flex items-center justify-center h-5 w-9 rounded text-xs font-medium text-amber-500 bg-amber-50">
+                        <span className="flex h-5 w-9 items-center justify-center rounded bg-amber-50 text-xs font-medium text-amber-500">
                           {progressPercentage ? `${progressPercentage}%` : ""}
                         </span>
                       ) : (
@@ -507,7 +507,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           ""
                         )}
                         {moduleDetails.total_issues > 0 && (
-                          <div className="h-full w-full pt-5 border-t border-custom-border-200">
+                          <div className="h-full w-full border-t border-custom-border-200 pt-5">
                             <SidebarProgressStats
                               distribution={moduleDetails.distribution}
                               groupedIssues={{
@@ -531,7 +531,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             </Disclosure>
           </div>
 
-          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 py-5 px-1.5">
+          <div className="flex w-full flex-col items-center justify-start gap-2 border-t border-custom-border-200 px-1.5 py-5">
             <Disclosure>
               {({ open }) => (
                 <div className={`relative  flex  h-full w-full flex-col ${open ? "" : "flex-row"}`}>
@@ -546,10 +546,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   </Disclosure.Button>
                   <Transition show={open}>
                     <Disclosure.Panel>
-                      <div className="flex flex-col w-full mt-2 space-y-3 h-72 overflow-y-auto">
+                      <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {userRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
-                            <div className="flex items-center justify-end w-full">
+                            <div className="flex w-full items-center justify-end">
                               <button
                                 className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
                                 onClick={() => setModuleLinkModal(true)}
@@ -574,8 +574,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                         ) : (
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <Info className="h-3.5 w-3.5 text-custom-text-300 stroke-[1.5]" />
-                              <span className="text-xs text-custom-text-300 p-0.5">No links added yet</span>
+                              <Info className="h-3.5 w-3.5 stroke-[1.5] text-custom-text-300" />
+                              <span className="p-0.5 text-xs text-custom-text-300">No links added yet</span>
                             </div>
                             <button
                               className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"

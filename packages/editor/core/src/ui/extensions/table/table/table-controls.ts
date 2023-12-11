@@ -20,15 +20,12 @@ export function tableControls() {
         mousemove: (view, event) => {
           const pluginState = key.getState(view.state);
 
-          if (
-            !(event.target as HTMLElement).closest(".tableWrapper") &&
-            pluginState.values.hoveredTable
-          ) {
+          if (!(event.target as HTMLElement).closest(".tableWrapper") && pluginState.values.hoveredTable) {
             return view.dispatch(
               view.state.tr.setMeta(key, {
                 setHoveredTable: null,
                 setHoveredCell: null,
-              }),
+              })
             );
           }
 
@@ -40,13 +37,11 @@ export function tableControls() {
           if (!pos) return;
 
           const table = findParentNode((node) => node.type.name === "table")(
-            TextSelection.create(view.state.doc, pos.pos),
+            TextSelection.create(view.state.doc, pos.pos)
           );
-          const cell = findParentNode(
-            (node) =>
-              node.type.name === "tableCell" ||
-              node.type.name === "tableHeader",
-          )(TextSelection.create(view.state.doc, pos.pos));
+          const cell = findParentNode((node) => node.type.name === "tableCell" || node.type.name === "tableHeader")(
+            TextSelection.create(view.state.doc, pos.pos)
+          );
 
           if (!table || !cell) return;
 
@@ -55,7 +50,7 @@ export function tableControls() {
               view.state.tr.setMeta(key, {
                 setHoveredTable: table,
                 setHoveredCell: cell,
-              }),
+              })
             );
           }
         },
@@ -68,12 +63,7 @@ export function tableControls() {
 
         const { hoveredTable, hoveredCell } = pluginState.values;
         const docSize = state.doc.content.size;
-        if (
-          hoveredTable &&
-          hoveredCell &&
-          hoveredTable.pos < docSize &&
-          hoveredCell.pos < docSize
-        ) {
+        if (hoveredTable && hoveredCell && hoveredTable.pos < docSize && hoveredCell.pos < docSize) {
           const decorations = [
             Decoration.node(
               hoveredTable.pos,
@@ -82,7 +72,7 @@ export function tableControls() {
               {
                 hoveredTable,
                 hoveredCell,
-              },
+              }
             ),
           ];
 

@@ -77,20 +77,20 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
   const propertyDetails = SPREADSHEET_PROPERTY_DETAILS[property];
 
   return (
-    <div className="flex flex-col h-max w-full max-w-max bg-custom-background-100">
-      <div className="flex items-center min-w-[8rem] px-4 py-1 text-sm font-medium z-[1] h-11 w-full sticky top-0 bg-custom-background-90 border border-l-0 border-custom-border-100">
+    <div className="flex h-max w-full max-w-max flex-col bg-custom-background-100">
+      <div className="sticky top-0 z-[1] flex h-11 w-full min-w-[8rem] items-center border border-l-0 border-custom-border-100 bg-custom-background-90 px-4 py-1 text-sm font-medium">
         <CustomMenu
           customButtonClassName="!w-full"
           className="!w-full"
           customButton={
-            <div className="flex items-center justify-between gap-1.5 cursor-pointer text-sm text-custom-text-200 hover:text-custom-text-100 w-full py-2">
+            <div className="flex w-full cursor-pointer items-center justify-between gap-1.5 py-2 text-sm text-custom-text-200 hover:text-custom-text-100">
               <div className="flex items-center gap-1.5">
                 {<propertyDetails.icon className="h-4 w-4 text-custom-text-400" />}
                 {propertyDetails.title}
               </div>
-              <div className="flex ml-3">
+              <div className="ml-3 flex">
                 {activeSortingProperty === property && (
-                  <div className="rounded-full flex items-center justify-center h-3.5 w-3.5">
+                  <div className="flex h-3.5 w-3.5 items-center justify-center rounded-full">
                     <ListFilter className="h-3 w-3" />
                   </div>
                 )}
@@ -103,13 +103,13 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
         >
           <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.ascendingOrderKey, property)}>
             <div
-              className={`flex gap-1.5 px-1 items-center justify-between ${
+              className={`flex items-center justify-between gap-1.5 px-1 ${
                 selectedMenuItem === `${propertyDetails.ascendingOrderKey}_${property}`
                   ? "text-custom-text-100"
                   : "text-custom-text-200 hover:text-custom-text-100"
               }`}
             >
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <ArrowDownWideNarrow className="h-3 w-3 stroke-[1.5]" />
                 <span>{propertyDetails.ascendingOrderTitle}</span>
                 <MoveRight className="h-3 w-3" />
@@ -123,13 +123,13 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
           </CustomMenu.MenuItem>
           <CustomMenu.MenuItem onClick={() => handleOrderBy(propertyDetails.descendingOrderKey, property)}>
             <div
-              className={`flex gap-1.5 px-1 items-center justify-between ${
+              className={`flex items-center justify-between gap-1.5 px-1 ${
                 selectedMenuItem === `${propertyDetails.descendingOrderKey}_${property}`
                   ? "text-custom-text-100"
                   : "text-custom-text-200 hover:text-custom-text-100"
               }`}
             >
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <ArrowUpNarrowWide className="h-3 w-3 stroke-[1.5]" />
                 <span>{propertyDetails.descendingOrderTitle}</span>
                 <MoveRight className="h-3 w-3" />
@@ -159,7 +159,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
         </CustomMenu>
       </div>
 
-      <div className="h-full min-w-[8rem] w-full">
+      <div className="h-full w-full min-w-[8rem]">
         {issues?.map((issue) => {
           const disableUserActions = !canEditProperties(issue.project);
           return (

@@ -12,7 +12,7 @@ export const AlertLabel = (props: IAlertLabelProps) => {
 
   return (
     <div
-      className={`h-7 flex items-center gap-2 font-medium py-0.5 px-3 rounded-full text-xs ${backgroundColor} ${textColor}`}
+      className={`flex h-7 items-center gap-2 rounded-full px-3 py-0.5 text-xs font-medium ${backgroundColor} ${textColor}`}
     >
       {Icon && <Icon className="h-3 w-3" />}
       <span>{label}</span>

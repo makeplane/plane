@@ -1,5 +1,5 @@
 const WorkspaceProjectPage = () => (
-  <div className="relative w-screen h-screen flex justify-center items-center text-5xl">Plane Workspace Space</div>
+  <div className="relative flex h-screen w-screen items-center justify-center text-5xl">Plane Workspace Space</div>
 );
 
 export default WorkspaceProjectPage;

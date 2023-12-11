@@ -16,7 +16,6 @@ import {
   IViewIssuesFilterStore,
   IViewIssuesStore,
 } from "store/issues";
-import { IIssueCalendarViewStore } from "store/issue";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
 import { IGroupedIssues } from "store/issues/types";
@@ -28,7 +27,6 @@ interface IBaseCalendarRoot {
     | IModuleIssuesFilterStore
     | ICycleIssuesFilterStore
     | IViewIssuesFilterStore;
-  calendarViewStore: IIssueCalendarViewStore;
   QuickActions: FC<IQuickActionProps>;
   issueActions: {
     [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
@@ -74,16 +72,17 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
 
   return (
     <>
-      <div className="h-full w-full pt-4 bg-custom-background-100 overflow-hidden">
+      <div className="h-full w-full overflow-hidden bg-custom-background-100 pt-4">
         <DragDropContext onDragEnd={onDragEnd}>
           <CalendarChart
+            issuesFilterStore={issuesFilterStore}
             issues={issues}
             groupedIssueIds={groupedIssueIds}
             layout={displayFilters?.calendar?.layout}
             showWeekends={displayFilters?.calendar?.show_weekends ?? false}
             quickActions={(issue, customActionButton) => (
               <QuickActions
-              customActionButton={customActionButton}
+                customActionButton={customActionButton}
                 issue={issue}
                 handleDelete={async () => handleIssues(issue.target_date ?? "", issue, EIssueActions.DELETE)}
                 handleUpdate={

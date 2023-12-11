@@ -79,7 +79,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
     >
       <Tab.List
         as="div"
-        className={`flex w-full items-center gap-2 justify-between rounded-md ${
+        className={`flex w-full items-center justify-between gap-2 rounded-md ${
           noBackground ? "" : "bg-custom-background-90"
         } p-0.5
         ${module ? "text-xs" : "text-sm"}`}
@@ -125,7 +125,7 @@ export const SidebarProgressStats: React.FC<Props> = ({
         </Tab>
       </Tab.List>
       <Tab.Panels className="flex w-full items-center justify-between text-custom-text-200">
-        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
+        <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
           {distribution.assignees.length > 0 ? (
             distribution.assignees.map((assignee, index) => {
               if (assignee.assignee_id)
@@ -174,15 +174,15 @@ export const SidebarProgressStats: React.FC<Props> = ({
                 );
             })
           ) : (
-            <div className="flex flex-col items-center justify-center gap-2 h-full">
-              <div className="flex items-center justify-center h-20 w-20 bg-custom-background-80 rounded-full">
+            <div className="flex h-full flex-col items-center justify-center gap-2">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
                 <Image src={emptyMembers} className="h-12 w-12" alt="empty members" />
               </div>
               <h6 className="text-base text-custom-text-300">No assignees yet</h6>
             </div>
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
+        <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
           {distribution.labels.length > 0 ? (
             distribution.labels.map((label, index) => (
               <SingleProgressStats
@@ -214,15 +214,15 @@ export const SidebarProgressStats: React.FC<Props> = ({
               />
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center gap-2 h-full">
-              <div className="flex items-center justify-center h-20 w-20 bg-custom-background-80 rounded-full">
+            <div className="flex h-full flex-col items-center justify-center gap-2">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-custom-background-80">
                 <Image src={emptyLabel} className="h-12 w-12" alt="empty label" />
               </div>
               <h6 className="text-base text-custom-text-300">No labels yet</h6>
             </div>
           )}
         </Tab.Panel>
-        <Tab.Panel as="div" className="flex flex-col gap-1.5 pt-3.5 w-full h-44 overflow-y-auto">
+        <Tab.Panel as="div" className="flex h-44 w-full flex-col gap-1.5 overflow-y-auto pt-3.5">
           {Object.keys(groupedIssues).map((group, index) => (
             <SingleProgressStats
               key={index}

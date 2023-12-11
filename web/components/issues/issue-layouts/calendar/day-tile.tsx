@@ -1,8 +1,5 @@
 import { observer } from "mobx-react-lite";
 import { Droppable } from "@hello-pangea/dnd";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CalendarIssueBlocks, ICalendarDate, CalendarQuickAddIssueForm } from "components/issues";
 // helpers
@@ -11,8 +8,19 @@ import { renderDateFormat } from "helpers/date-time.helper";
 import { MONTHS_LIST } from "constants/calendar";
 import { IIssue } from "types";
 import { IGroupedIssues, IIssueResponse } from "store/issues/types";
+import {
+  ICycleIssuesFilterStore,
+  IModuleIssuesFilterStore,
+  IProjectIssuesFilterStore,
+  IViewIssuesFilterStore,
+} from "store/issues";
 
 type Props = {
+  issuesFilterStore:
+    | IProjectIssuesFilterStore
+    | IModuleIssuesFilterStore
+    | ICycleIssuesFilterStore
+    | IViewIssuesFilterStore;
   date: ICalendarDate;
   issues: IIssueResponse | undefined;
   groupedIssueIds: IGroupedIssues;
@@ -28,20 +36,27 @@ type Props = {
 };
 
 export const CalendarDayTile: React.FC<Props> = observer((props) => {
-  const { date, issues, groupedIssueIds, quickActions, enableQuickIssueCreate, quickAddCallback, viewId } = props;
+  const {
+    issuesFilterStore,
+    date,
+    issues,
+    groupedIssueIds,
+    quickActions,
+    enableQuickIssueCreate,
+    quickAddCallback,
+    viewId,
+  } = props;
 
-  const { issueFilter: issueFilterStore } = useMobxStore();
-
-  const calendarLayout = issueFilterStore.userDisplayFilters.calendar?.layout ?? "month";
+  const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[renderDateFormat(date.date)] : null;
 
   return (
     <>
-      <div className="group w-full h-full relative flex flex-col bg-custom-background-90">
+      <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
         {/* header */}
         <div
-          className={`text-xs text-right flex-shrink-0 py-1 px-2 ${
+          className={`flex-shrink-0 px-2 py-1 text-right text-xs ${
             calendarLayout === "month" // if month layout, highlight current month days
               ? date.is_current_month
                 ? "font-medium"
@@ -58,11 +73,11 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
         </div>
 
         {/* content */}
-        <div className="w-full h-full">
+        <div className="h-full w-full">
           <Droppable droppableId={renderDateFormat(date.date)} isDropDisabled={false}>
             {(provided, snapshot) => (
               <div
-                className={`h-full w-full overflow-y-auto select-none ${
+                className={`h-full w-full select-none overflow-y-auto ${
                   snapshot.isDraggingOver || date.date.getDay() === 0 || date.date.getDay() === 6
                     ? "bg-custom-background-90"
                     : "bg-custom-background-100"
@@ -72,7 +87,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
               >
                 <CalendarIssueBlocks issues={issues} issueIdList={issueIdList} quickActions={quickActions} />
                 {enableQuickIssueCreate && (
-                  <div className="py-1 px-2">
+                  <div className="px-2 py-1">
                     <CalendarQuickAddIssueForm
                       formKey="target_date"
                       groupId={renderDateFormat(date.date)}

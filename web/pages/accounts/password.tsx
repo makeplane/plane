@@ -77,21 +77,21 @@ const HomePage: NextPageWithLayout = () => {
   };
 
   return (
-    <div className="bg-onboarding-gradient-100 h-full w-full">
-      <div className="flex items-center justify-between sm:py-5 px-8 pb-4 sm:px-16 lg:px-28 ">
-        <div className="flex gap-x-2 py-10 items-center">
+    <div className="h-full w-full bg-onboarding-gradient-100">
+      <div className="flex items-center justify-between px-8 pb-4 sm:px-16 sm:py-5 lg:px-28 ">
+        <div className="flex items-center gap-x-2 py-10">
           <Image src={BluePlaneLogoWithoutText} height={30} width={30} alt="Plane Logo" className="mr-2" />
-          <span className="font-semibold text-2xl sm:text-3xl">Plane</span>
+          <span className="text-2xl font-semibold sm:text-3xl">Plane</span>
         </div>
       </div>
 
-      <div className="h-full bg-onboarding-gradient-100 md:w-2/3 sm:w-4/5 px-4 pt-4 rounded-t-md mx-auto shadow-sm border-x border-t border-custom-border-200 ">
-        <div className="px-7 sm:px-0 bg-onboarding-gradient-200 h-full pt-24 pb-56 rounded-t-md overflow-auto">
-          <div className="sm:w-96 mx-auto flex flex-col divide-y divide-custom-border-200">
-            <h1 className="text-center text-2xl sm:text-2.5xl font-medium text-onboarding-text-100">
+      <div className="mx-auto h-full rounded-t-md border-x border-t border-custom-border-200 bg-onboarding-gradient-100 px-4 pt-4 shadow-sm sm:w-4/5 md:w-2/3 ">
+        <div className="h-full overflow-auto rounded-t-md bg-onboarding-gradient-200 px-7 pb-56 pt-24 sm:px-0">
+          <div className="mx-auto flex flex-col divide-y divide-custom-border-200 sm:w-96">
+            <h1 className="sm:text-2.5xl text-center text-2xl font-medium text-onboarding-text-100">
               Let{"'"}s get a new password
             </h1>
-            <form onSubmit={handleSubmit(handleResetPassword)} className="mt-11 sm:w-96 mx-auto space-y-4">
+            <form onSubmit={handleSubmit(handleResetPassword)} className="mx-auto mt-11 space-y-4 sm:w-96">
               <Controller
                 control={control}
                 name="email"
@@ -109,7 +109,7 @@ const HomePage: NextPageWithLayout = () => {
                     ref={ref}
                     hasError={Boolean(errors.email)}
                     placeholder="orville.wright@firstflight.com"
-                    className="w-full h-[46px] text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
+                    className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 text-onboarding-text-400"
                     disabled
                   />
                 )}
@@ -128,12 +128,12 @@ const HomePage: NextPageWithLayout = () => {
                       onChange={onChange}
                       hasError={Boolean(errors.password)}
                       placeholder="Choose password"
-                      className="w-full h-[46px] placeholder:text-onboarding-text-400 border border-onboarding-border-100 pr-12 !bg-onboarding-background-200"
+                      className="h-[46px] w-full border border-onboarding-border-100 !bg-onboarding-background-200 pr-12 placeholder:text-onboarding-text-400"
                       minLength={8}
                     />
                   )}
                 />
-                <p className="text-xs text-onboarding-text-200 mt-3">
+                <p className="mt-3 text-xs text-onboarding-text-200">
                   Whatever you choose now will be your account{"'"}s password until you change it.
                 </p>
               </div>
@@ -155,21 +155,21 @@ const HomePage: NextPageWithLayout = () => {
               </p>
             </form>
           </div>
-          <div className="flex py-2 bg-onboarding-background-100 border border-onboarding-border-200 mx-auto rounded-[3.5px] sm:w-96 mt-16">
-            <Lightbulb className="h-7 w-7 mr-2 mx-3" />
-            <p className="text-sm text-left text-onboarding-text-100">
+          <div className="mx-auto mt-16 flex rounded-[3.5px] border border-onboarding-border-200 bg-onboarding-background-100 py-2 sm:w-96">
+            <Lightbulb className="mx-3 mr-2 h-7 w-7" />
+            <p className="text-left text-sm text-onboarding-text-100">
               Try the latest features, like Tiptap editor, to write compelling responses.{" "}
               <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
-                <span className="font-medium text-sm underline hover:cursor-pointer">See new features</span>
+                <span className="text-sm font-medium underline hover:cursor-pointer">See new features</span>
               </Link>
             </p>
           </div>
-          <div className="border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 overflow-hidden">
+          <div className="mx-auto mt-8 overflow-hidden rounded-md border border-onboarding-border-200 bg-onboarding-background-100 object-cover sm:h-52 sm:w-96">
             <div className="h-[90%]">
               <Image
                 src={latestFeatures}
                 alt="Plane Issues"
-                className={`rounded-md h-full ml-8 -mt-2 ${
+                className={`-mt-2 ml-8 h-full rounded-md ${
                   resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
                 } `}
               />

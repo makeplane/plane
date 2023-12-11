@@ -98,7 +98,7 @@ export const IssuePeekOverview: React.FC<Props> = observer(() => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity z-20" />
+            <div className="fixed inset-0 z-20 bg-custom-backdrop bg-opacity-50 transition-opacity" />
           </Transition.Child>
           <Transition.Child
             as={React.Fragment}

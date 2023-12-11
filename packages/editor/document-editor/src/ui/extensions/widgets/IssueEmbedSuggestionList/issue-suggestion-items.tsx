@@ -1,8 +1,6 @@
 import { IIssueListSuggestion } from ".";
 
-export const getIssueSuggestionItems = (
-  issueSuggestions: Array<IIssueListSuggestion>,
-) => {
+export const getIssueSuggestionItems = (issueSuggestions: Array<IIssueListSuggestion>) => {
   return ({ query }: { query: string }) => {
     const search = query.toLowerCase();
     const filteredSuggestions = issueSuggestions.filter((item) => {

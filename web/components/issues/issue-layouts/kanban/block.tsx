@@ -57,7 +57,7 @@ const KanbanIssueDetailsBlock: React.FC<IssueDetailsBlockProps> = (props) => {
     <>
       {displayProperties && displayProperties?.key && (
         <div className="relative">
-          <div className="text-xs line-clamp-1 text-custom-text-300">
+          <div className="line-clamp-1 text-xs text-custom-text-300">
             {issue.project_detail.identifier}-{issue.sequence_id}
           </div>
           <div className="absolute -top-1 right-0 hidden group-hover/kanban-block:block">
@@ -130,10 +130,10 @@ export const KanbanIssueBlock: React.FC<IssueBlockProps> = (props) => {
             ref={provided.innerRef}
           >
             {issue.tempId !== undefined && (
-              <div className="absolute top-0 left-0 w-full h-full animate-pulse bg-custom-background-100/20 z-[99999]" />
+              <div className="absolute left-0 top-0 z-[99999] h-full w-full animate-pulse bg-custom-background-100/20" />
             )}
             <div
-              className={`text-sm rounded py-2 px-3 shadow-custom-shadow-2xs space-y-2 border-[0.5px] border-custom-border-200 transition-all bg-custom-background-100 ${
+              className={`space-y-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-3 py-2 text-sm shadow-custom-shadow-2xs transition-all ${
                 isDragDisabled ? "" : "hover:cursor-grab"
               } ${snapshot.isDragging ? `border-custom-primary-100` : `border-transparent`}`}
             >

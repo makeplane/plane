@@ -6,12 +6,7 @@ export interface ISpinner extends React.SVGAttributes<SVGElement> {
   className?: string | undefined;
 }
 
-export const Spinner: React.FC<ISpinner> = ({
-  height = "32px",
-  width = "32px",
-  className = "",
-  ...rest
-}) => (
+export const Spinner: React.FC<ISpinner> = ({ height = "32px", width = "32px", className = "" }) => (
   <div role="status">
     <svg
       aria-hidden="true"

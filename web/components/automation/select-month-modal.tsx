@@ -68,14 +68,14 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pt-5 pb-4 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 px-4 pb-4 pt-5 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6">
                 <form onSubmit={handleSubmit(onSubmit)}>
                   <div>
                     <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-custom-text-100">
                       Customise Time Range
                     </Dialog.Title>
                     <div className="mt-8 flex items-center gap-2">
-                      <div className="flex w-full flex-col gap-1 justify-center">
+                      <div className="flex w-full flex-col justify-center gap-1">
                         {type === "auto-close" ? (
                           <>
                             <Controller
@@ -87,7 +87,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                 max: 12,
                               }}
                               render={({ field: { value, onChange, ref } }) => (
-                                <div className="relative flex flex-col gap-1 justify-center w-full">
+                                <div className="relative flex w-full flex-col justify-center gap-1">
                                   <Input
                                     id="close_in"
                                     name="close_in"
@@ -97,15 +97,15 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     ref={ref}
                                     hasError={Boolean(errors.close_in)}
                                     placeholder="Enter Months"
-                                    className="border-custom-border-200 w-full"
+                                    className="w-full border-custom-border-200"
                                   />
-                                  <span className="absolute text-sm text-custom-text-200 top-2.5 right-8">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>
                               )}
                             />
 
                             {errors.close_in && (
-                              <span className="text-sm px-1 text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
                             )}
                           </>
                         ) : (
@@ -119,7 +119,7 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                 max: 12,
                               }}
                               render={({ field: { value, onChange, ref } }) => (
-                                <div className="relative flex flex-col gap-1 justify-center w-full">
+                                <div className="relative flex w-full flex-col justify-center gap-1">
                                   <Input
                                     id="archive_in"
                                     name="archive_in"
@@ -129,14 +129,14 @@ export const SelectMonthModal: React.FC<Props> = ({ type, initialValues, isOpen,
                                     ref={ref}
                                     hasError={Boolean(errors.archive_in)}
                                     placeholder="Enter Months"
-                                    className="border-custom-border-200 w-full"
+                                    className="w-full border-custom-border-200"
                                   />
-                                  <span className="absolute text-sm text-custom-text-200 top-2.5 right-8">Months</span>
+                                  <span className="absolute right-8 top-2.5 text-sm text-custom-text-200">Months</span>
                                 </div>
                               )}
                             />
                             {errors.archive_in && (
-                              <span className="text-sm px-1 text-red-500">Select a month between 1 and 12.</span>
+                              <span className="px-1 text-sm text-red-500">Select a month between 1 and 12.</span>
                             )}
                           </>
                         )}

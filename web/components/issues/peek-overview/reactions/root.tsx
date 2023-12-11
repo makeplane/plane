@@ -24,7 +24,7 @@ export const IssuePeekOverviewReactions: FC<IIssueReaction> = (props) => {
   };
 
   return (
-    <div className="relative flex items-center flex-wrap gap-2">
+    <div className="relative flex flex-wrap items-center gap-2">
       <IssueReactionSelector onSelect={handleReaction} position={position} />
       <IssueReactionPreview issueReactions={issueReactions} user={user} handleReaction={handleReaction} />
     </div>

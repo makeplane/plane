@@ -59,7 +59,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-3 justify-between gap-x-12 gap-y-8 w-full">
+      <div className="grid-col grid w-full grid-cols-1 justify-between gap-x-12 gap-y-8 lg:grid-cols-3">
         <div className="flex flex-col gap-1">
           <h4 className="text-sm">Client ID</h4>
           <Controller
@@ -75,7 +75,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
                 ref={ref}
                 hasError={Boolean(errors.GITHUB_CLIENT_ID)}
                 placeholder="70a44354520df8bd9bcd"
-                className="rounded-md font-medium w-full"
+                className="w-full rounded-md font-medium"
               />
             )}
           />
@@ -107,7 +107,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
                   ref={ref}
                   hasError={Boolean(errors.GITHUB_CLIENT_SECRET)}
                   placeholder="9b0050f94ec1b744e32ce79ea4ffacd40d4119cb"
-                  className="rounded-md font-medium w-full !pr-10"
+                  className="w-full rounded-md !pr-10 font-medium"
                 />
               )}
             />
@@ -144,7 +144,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
           <h4 className="text-sm">Origin URL</h4>
           <Button
             variant="neutral-primary"
-            className="py-2 flex justify-between items-center"
+            className="flex items-center justify-between py-2"
             onClick={() => {
               navigator.clipboard.writeText(originURL);
               setToastAlert({
@@ -154,7 +154,7 @@ export const InstanceGithubConfigForm: FC<IInstanceGithubConfigForm> = (props) =
               });
             }}
           >
-            <p className="font-medium text-sm">{originURL}</p>
+            <p className="text-sm font-medium">{originURL}</p>
             <Copy size={18} color="#B9B9B9" />
           </Button>
           <p className="text-xs text-custom-text-400">

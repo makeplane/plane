@@ -168,7 +168,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
         <Link href={`/${workspaceSlug}/projects/${projectId}/pages/${page.id}`}>
           <div className="relative rounded p-4 text-custom-text-200 hover:bg-custom-background-80">
             <div className="flex items-center justify-between">
-              <div className="flex overflow-hidden items-center gap-2">
+              <div className="flex items-center gap-2 overflow-hidden">
                 <FileText className="h-4 w-4 shrink-0" />
                 <p className="mr-2 truncate text-sm text-custom-text-100">{page.name}</p>
                 {page.label_details.length > 0 &&
@@ -211,7 +211,7 @@ export const PagesListItem: FC<IPagesListItem> = observer((props) => {
                 <Tooltip tooltipContent={`${page.is_favorite ? "Remove from favorites" : "Mark as favorite"}`}>
                   {page.is_favorite ? (
                     <button type="button" onClick={handleRemoveFromFavorites}>
-                      <Star className="h-3.5 w-3.5 text-orange-400 fill-orange-400" />
+                      <Star className="h-3.5 w-3.5 fill-orange-400 text-orange-400" />
                     </button>
                   ) : (
                     <button type="button" onClick={handleAddToFavorites}>

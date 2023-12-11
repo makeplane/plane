@@ -6,11 +6,9 @@ type Props = {
   noTooltip?: boolean;
 };
 
-export const LinearProgressIndicator: React.FC<Props> = ({
-  data,
-  noTooltip = false,
-}) => {
+export const LinearProgressIndicator: React.FC<Props> = ({ data, noTooltip = false }) => {
   const total = data.reduce((acc: any, cur: any) => acc + cur.value, 0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let progress = 0;
 
   const bars = data.map((item: any) => {
@@ -23,10 +21,7 @@ export const LinearProgressIndicator: React.FC<Props> = ({
     if (noTooltip) return <div style={style} />;
     else
       return (
-        <Tooltip
-          key={item.id}
-          tooltipContent={`${item.name} ${Math.round(item.value)}%`}
-        >
+        <Tooltip key={item.id} tooltipContent={`${item.name} ${Math.round(item.value)}%`}>
           <div style={style} />
         </Tooltip>
       );

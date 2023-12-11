@@ -1,17 +1,13 @@
 import * as React from "react";
 
-export interface TextAreaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   mode?: "primary" | "transparent";
   hasError?: boolean;
   className?: string;
 }
 
 // Updates the height of a <textarea> when the value changes.
-const useAutoSizeTextArea = (
-  textAreaRef: HTMLTextAreaElement | null,
-  value: any,
-) => {
+const useAutoSizeTextArea = (textAreaRef: HTMLTextAreaElement | null, value: any) => {
   React.useEffect(() => {
     if (textAreaRef) {
       // We need to reset the height momentarily to get the correct scrollHeight for the textarea
@@ -25,45 +21,43 @@ const useAutoSizeTextArea = (
   }, [textAreaRef, value]);
 };
 
-const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  (props, ref) => {
-    const {
-      id,
-      name,
-      value = "",
-      rows = 1,
-      cols = 1,
-      mode = "primary",
-      hasError = false,
-      className = "",
-      ...rest
-    } = props;
+const TextArea = React.forwardRef<HTMLTextAreaElement, TextAreaProps>((props, ref) => {
+  const {
+    id,
+    name,
+    value = "",
+    rows = 1,
+    cols = 1,
+    mode = "primary",
+    hasError = false,
+    className = "",
+    ...rest
+  } = props;
 
-    const textAreaRef = React.useRef<any>(ref);
+  const textAreaRef = React.useRef<any>(ref);
 
-    ref && useAutoSizeTextArea(textAreaRef?.current, value);
+  useAutoSizeTextArea(textAreaRef?.current, value);
 
-    return (
-      <textarea
-        id={id}
-        name={name}
-        ref={textAreaRef}
-        value={value}
-        rows={rows}
-        cols={cols}
-        className={`no-scrollbar w-full bg-transparent placeholder-custom-text-400 px-3 py-2 outline-none ${
-          mode === "primary"
-            ? "rounded-md border-[0.5px] border-custom-border-200"
-            : mode === "transparent"
-            ? "rounded border-none bg-transparent ring-0 transition-all focus:ring-1 focus:ring-theme"
+  return (
+    <textarea
+      id={id}
+      name={name}
+      ref={textAreaRef}
+      value={value}
+      rows={rows}
+      cols={cols}
+      className={`no-scrollbar w-full bg-transparent px-3 py-2 placeholder-custom-text-400 outline-none ${
+        mode === "primary"
+          ? "rounded-md border-[0.5px] border-custom-border-200"
+          : mode === "transparent"
+            ? "focus:ring-theme rounded border-none bg-transparent ring-0 transition-all focus:ring-1"
             : ""
-        } ${hasError ? "border-red-500" : ""} ${
-          hasError && mode === "primary" ? "bg-red-100" : ""
-        } ${className}`}
-        {...rest}
-      />
-    );
-  },
-);
+      } ${hasError ? "border-red-500" : ""} ${hasError && mode === "primary" ? "bg-red-100" : ""} ${className}`}
+      {...rest}
+    />
+  );
+});
+
+TextArea.displayName = "TextArea";
 
 export { TextArea };

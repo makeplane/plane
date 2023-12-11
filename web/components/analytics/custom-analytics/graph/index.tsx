@@ -101,8 +101,8 @@ export const AnalyticsGraph: React.FC<Props> = ({ analytics, barGraphData, param
                               ? generateDisplayName(datum.value, analytics, params, "x_axis")[0].toUpperCase()
                               : "?"
                             : datum.value && datum.value !== "None"
-                            ? `${datum.value}`.toUpperCase()[0]
-                            : "?"}
+                              ? `${datum.value}`.toUpperCase()[0]
+                              : "?"}
                         </text>
                       </g>
                     </Tooltip>

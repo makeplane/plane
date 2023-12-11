@@ -18,34 +18,32 @@ export interface IIssueListSuggestion {
 }
 
 export const IssueSuggestions = (suggestions: any[]) => {
-  const mappedSuggestions: IIssueListSuggestion[] = suggestions.map(
-    (suggestion): IIssueListSuggestion => {
-      let transactionId = uuidv4();
-      return {
-        title: suggestion.name,
-        priority: suggestion.priority.toString(),
-        identifier: `${suggestion.project_detail.identifier}-${suggestion.sequence_id}`,
-        state: suggestion.state_detail.name,
-        command: ({ editor, range }) => {
-          editor
-            .chain()
-            .focus()
-            .insertContentAt(range, {
-              type: "issue-embed-component",
-              attrs: {
-                entity_identifier: suggestion.id,
-                id: transactionId,
-                title: suggestion.name,
-                project_identifier: suggestion.project_detail.identifier,
-                sequence_id: suggestion.sequence_id,
-                entity_name: "issue",
-              },
-            })
-            .run();
-        },
-      };
-    },
-  );
+  const mappedSuggestions: IIssueListSuggestion[] = suggestions.map((suggestion): IIssueListSuggestion => {
+    let transactionId = uuidv4();
+    return {
+      title: suggestion.name,
+      priority: suggestion.priority.toString(),
+      identifier: `${suggestion.project_detail.identifier}-${suggestion.sequence_id}`,
+      state: suggestion.state_detail.name,
+      command: ({ editor, range }) => {
+        editor
+          .chain()
+          .focus()
+          .insertContentAt(range, {
+            type: "issue-embed-component",
+            attrs: {
+              entity_identifier: suggestion.id,
+              id: transactionId,
+              title: suggestion.name,
+              project_identifier: suggestion.project_detail.identifier,
+              sequence_id: suggestion.sequence_id,
+              entity_name: "issue",
+            },
+          })
+          .run();
+      },
+    };
+  });
 
   return IssueEmbedSuggestions.configure({
     suggestion: {
