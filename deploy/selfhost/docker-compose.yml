@@ -6,7 +6,6 @@ x-app-env : &app-env
     - WEB_URL=${WEB_URL:-http://localhost}
     - DEBUG=${DEBUG:-0}
     - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE:-plane.settings.production} # deprecated
-    - NEXT_PUBLIC_ENABLE_OAUTH=${NEXT_PUBLIC_ENABLE_OAUTH:-0} # deprecated
     - NEXT_PUBLIC_DEPLOY_URL=${NEXT_PUBLIC_DEPLOY_URL:-http://localhost/spaces} # deprecated
     - SENTRY_DSN=${SENTRY_DSN:-""}
     - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT:-"production"}
