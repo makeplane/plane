@@ -14,8 +14,8 @@ type Props = {
   handleClose: () => void;
   data?: ILinkDetails | null;
   status: boolean;
-  createIssueLink: (formData: Partial<ILinkDetails>) => Promise<ILinkDetails>;
-  updateIssueLink: (formData: Partial<ILinkDetails>, linkId: string) => Promise<ILinkDetails>;
+  createIssueLink: (formData: IIssueLink | ModuleLink) => Promise<ILinkDetails> | Promise<void> | void;
+  updateIssueLink: (formData: IIssueLink | ModuleLink, linkId: string) => Promise<ILinkDetails> | Promise<void> | void;
 };
 
 const defaultValues: IIssueLink | ModuleLink = {
@@ -31,7 +31,7 @@ export const LinkModal: FC<Props> = (props) => {
     handleSubmit,
     control,
     reset,
-  } = useForm<ModuleLink>({
+  } = useForm<IIssueLink | ModuleLink>({
     defaultValues,
   });
 

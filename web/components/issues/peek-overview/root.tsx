@@ -10,7 +10,7 @@ import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue, ILinkDetails } from "types";
+import { IIssue, IIssueLink } from "types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -124,10 +124,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueSubscriptionRemove = () => removeIssueSubscription(workspaceSlug, projectId, issueId);
 
-  const issueLinkCreate = (formData: Partial<ILinkDetails>) =>
-    createIssueLink(workspaceSlug, projectId, issueId, formData);
+  const issueLinkCreate = (formData: IIssueLink) => createIssueLink(workspaceSlug, projectId, issueId, formData);
 
-  const issueLinkUpdate = (formData: Partial<ILinkDetails>, linkId: string) =>
+  const issueLinkUpdate = (formData: IIssueLink, linkId: string) =>
     updateIssueLink(workspaceSlug, projectId, issueId, linkId, formData);
 
   const issueLinkDelete = (linkId: string) => deleteIssueLink(workspaceSlug, projectId, issueId, linkId);

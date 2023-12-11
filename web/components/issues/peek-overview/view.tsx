@@ -17,7 +17,7 @@ import {
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
-import { IIssue, ILinkDetails } from "types";
+import { IIssue, IIssueLink, ILinkDetails } from "types";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -38,8 +38,8 @@ interface IIssueView {
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
   issueSubscriptionCreate: () => void;
   issueSubscriptionRemove: () => void;
-  issueLinkCreate: (formData: Partial<ILinkDetails>) => Promise<ILinkDetails>;
-  issueLinkUpdate: (formData: Partial<ILinkDetails>, linkId: string) => Promise<ILinkDetails>;
+  issueLinkCreate: (formData: IIssueLink) => Promise<ILinkDetails>;
+  issueLinkUpdate: (formData: IIssueLink, linkId: string) => Promise<ILinkDetails>;
   issueLinkDelete: (linkId: string) => Promise<void>;
   handleDeleteIssue: () => Promise<void>;
   children: ReactNode;

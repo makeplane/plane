@@ -4,7 +4,7 @@ import { IssueService, IssueReactionService, IssueCommentService } from "service
 import { NotificationService } from "services/notification.service";
 // types
 import { RootStore } from "../root";
-import type { IIssue, IIssueActivity, ILinkDetails } from "types";
+import type { IIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
 
@@ -55,14 +55,14 @@ export interface IIssueDetailStore {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<ILinkDetails>
+    data: IIssueLink
   ) => Promise<ILinkDetails>;
   updateIssueLink: (
     workspaceSlug: string,
     projectId: string,
     issueId: string,
     linkId: string,
-    data: Partial<ILinkDetails>
+    data: IIssueLink
   ) => Promise<ILinkDetails>;
   deleteIssueLink: (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => Promise<void>;
 
@@ -609,7 +609,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     }
   };
 
-  createIssueLink = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<ILinkDetails>) => {
+  createIssueLink = async (workspaceSlug: string, projectId: string, issueId: string, data: IIssueLink) => {
     try {
       const response = await this.issueService.createIssueLink(workspaceSlug, projectId, issueId, data);
 
@@ -642,7 +642,7 @@ export class IssueDetailStore implements IIssueDetailStore {
     projectId: string,
     issueId: string,
     linkId: string,
-    data: Partial<ILinkDetails>
+    data: IIssueLink
   ) => {
     try {
       const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);

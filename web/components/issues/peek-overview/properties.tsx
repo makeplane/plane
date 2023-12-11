@@ -21,15 +21,15 @@ import {
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { IIssue, TIssuePriorities, ILinkDetails } from "types";
+import { IIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
   issueUpdate: (issue: Partial<IIssue>) => void;
-  issueLinkCreate: (data: Partial<ILinkDetails>) => Promise<ILinkDetails>;
-  issueLinkUpdate: (data: Partial<ILinkDetails>, linkId: string) => Promise<ILinkDetails>;
+  issueLinkCreate: (data: IIssueLink) => Promise<ILinkDetails>;
+  issueLinkUpdate: (data: IIssueLink, linkId: string) => Promise<ILinkDetails>;
   issueLinkDelete: (linkId: string) => Promise<void>;
   disableUserActions: boolean;
 }
