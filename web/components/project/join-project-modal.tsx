@@ -7,7 +7,7 @@ import { Button } from "@plane/ui";
 import type { IProject } from "types";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 
 // type
 type TJoinProjectModalProps = {

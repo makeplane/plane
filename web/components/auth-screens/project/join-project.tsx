@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 // ui
 import { Button } from "@plane/ui";
 // icons

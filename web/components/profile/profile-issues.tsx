@@ -9,7 +9,7 @@ import { ProfileIssuesAppliedFiltersRoot } from "components/issues";
 import { Spinner } from "@plane/ui";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 
 interface IProfileIssuesPage {
   type: "assigned" | "subscribed" | "created";

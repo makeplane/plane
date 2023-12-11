@@ -15,10 +15,10 @@ import {
   IProjectIssuesStore,
   IViewIssuesFilterStore,
   IViewIssuesStore,
-} from "store/issues";
+} from "store_legacy/issues";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EIssueActions } from "../types";
-import { IGroupedIssues } from "store/issues/types";
+import { IGroupedIssues } from "store_legacy/issues/types";
 
 interface IBaseCalendarRoot {
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;

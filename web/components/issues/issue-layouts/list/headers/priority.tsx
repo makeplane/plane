@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { AlertCircle, SignalHigh, SignalMedium, SignalLow, Ban } from "lucide-react";
 // components
 import { HeaderGroupByCard } from "./group-by-card";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { IIssue } from "types";
 
 export interface IPriorityHeader {

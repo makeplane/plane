@@ -13,13 +13,13 @@ import { Check, ChevronUp } from "lucide-react";
 import { TCalendarLayouts } from "types";
 // constants
 import { CALENDAR_LAYOUTS } from "constants/calendar";
-import { EFilterType } from "store/issues/types";
+import { EFilterType } from "store_legacy/issues/types";
 import {
   ICycleIssuesFilterStore,
   IModuleIssuesFilterStore,
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
-} from "store/issues";
+} from "store_legacy/issues";
 
 interface ICalendarHeader {
   issuesFilterStore:

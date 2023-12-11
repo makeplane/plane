@@ -10,7 +10,7 @@ import { Button } from "@plane/ui";
 import { areFiltersDifferent } from "helpers/filter.helper";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { EFilterType } from "store_legacy/issues/types";
 
 export const ProjectViewAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();

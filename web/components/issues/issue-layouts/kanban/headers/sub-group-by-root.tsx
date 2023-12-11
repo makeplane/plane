@@ -7,7 +7,7 @@ import { AssigneesHeader } from "./assignee";
 import { PriorityHeader } from "./priority";
 import { LabelHeader } from "./label";
 import { CreatedByHeader } from "./created_by";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { IIssue } from "types";
 
 export interface IKanBanSubGroupByHeaderRoot {

@@ -1,5 +1,5 @@
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 
 const useEditorSuggestions = () => {
   const { mentionsStore }: RootStore = useMobxStore();

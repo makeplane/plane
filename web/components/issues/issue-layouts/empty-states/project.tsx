@@ -6,7 +6,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { NewEmptyState } from "components/common/new-empty-state";
 // assets
 import emptyIssue from "public/empty-state/empty_issues.webp";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ProjectEmptyState: React.FC = observer(() => {
   const {

@@ -3,16 +3,16 @@ import { observer } from "mobx-react-lite";
 
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 // constants
 import { useRouter } from "next/router";
 import { EIssueActions } from "../../types";
-import { IProjectStore } from "store/project";
+import { IProjectStore } from "store_legacy/project";
 import { IIssue } from "types";
 // components
 import { BaseListRoot } from "../base-list-root";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export interface IViewListLayout {}
 

@@ -9,8 +9,8 @@ import { EIssueActions } from "../../types";
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EProjectStore } from "store/command-palette.store";
-import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
+import { EProjectStore } from "store_legacy/command-palette.store";
+import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 
 export interface IViewKanBanLayout {}
 

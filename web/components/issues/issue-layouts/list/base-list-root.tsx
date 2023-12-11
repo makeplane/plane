@@ -3,7 +3,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { ISSUE_PRIORITIES, ISSUE_STATE_GROUPS } from "constants/issue";
 import { FC } from "react";
 import { IIssue, IProject } from "types";
-import { IProjectStore } from "store/project";
+import { IProjectStore } from "store_legacy/project";
 import { Spinner } from "@plane/ui";
 import { IQuickActionProps } from "./list-view-types";
 import {
@@ -19,10 +19,10 @@ import {
   IProjectIssuesStore,
   IViewIssuesFilterStore,
   IViewIssuesStore,
-} from "store/issues";
+} from "store_legacy/issues";
 import { observer } from "mobx-react-lite";
-import { IIssueResponse } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
+import { IIssueResponse } from "store_legacy/issues/types";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { IssuePeekOverview } from "components/issues";
 import { useRouter } from "next/router";
 import { EUserWorkspaceRoles } from "constants/workspace";

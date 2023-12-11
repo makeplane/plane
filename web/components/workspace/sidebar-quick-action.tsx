@@ -9,7 +9,7 @@ import { CreateUpdateDraftIssueModal } from "components/issues";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 import { observer } from "mobx-react-lite";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
   // states

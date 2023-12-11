@@ -11,7 +11,7 @@ import { copyUrlToClipboard } from "helpers/string.helper";
 // types
 import { IIssue } from "types";
 import { IQuickActionProps } from "../list/list-view-types";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, customActionButton } = props;

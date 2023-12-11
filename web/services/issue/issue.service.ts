@@ -2,7 +2,7 @@
 import { APIService } from "services/api.service";
 // type
 import type { IUser, IIssue, IIssueActivity, ISubIssueResponse, IIssueDisplayProperties } from "types";
-import { IIssueResponse } from "store/issues/types";
+import { IIssueResponse } from "store_legacy/issues/types";
 // helper
 import { API_BASE_URL } from "helpers/common.helper";
 

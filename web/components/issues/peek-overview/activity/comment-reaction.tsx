@@ -6,7 +6,7 @@ import { IssuePeekOverviewReactions } from "components/issues";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
 // types
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 
 interface IIssueCommentReaction {
   workspaceSlug: string;

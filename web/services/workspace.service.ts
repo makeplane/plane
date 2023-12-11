@@ -17,8 +17,8 @@ import {
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
 // store
-import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store/issue";
-import { IIssueResponse } from "store/issues/types";
+import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store_legacy/issue";
+import { IIssueResponse } from "store_legacy/issues/types";
 
 export class WorkspaceService extends APIService {
   constructor() {
