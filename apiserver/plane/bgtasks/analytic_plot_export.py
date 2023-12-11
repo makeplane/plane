@@ -373,7 +373,7 @@ def generate_non_segmented_rows(
     return [tuple(row_zero)] + rows
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def analytic_export_task(email, data, slug):
     try:
         filters = issue_filters(data, "POST")

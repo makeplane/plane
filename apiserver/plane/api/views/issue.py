@@ -207,14 +207,18 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             serializer.save()
 
             # Track the issue
-            issue_activity.delay(
-                type="issue.activity.created",
-                requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
-                issue_id=str(serializer.data.get("id", None)),
-                project_id=str(project_id),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
+            issue_activity.apply_async(
+                args=[],  # If no positional arguments are required
+                kwargs={
+                    'type': "issue.activity.created",
+                    'requested_data': json.dumps(self.request.data, cls=DjangoJSONEncoder),
+                    'actor_id': str(request.user.id),
+                    'issue_id': str(serializer.data.get("id", None)),
+                    'project_id': str(project_id),
+                    'current_instance': None,
+                    'epoch': int(timezone.now().timestamp()),
+                },
+                routing_key='external',
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -228,14 +232,18 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
         serializer = IssueSerializer(issue, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            issue_activity.delay(
-                type="issue.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(request.user.id),
-                issue_id=str(pk),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
+            issue_activity.apply_async(
+                args=[],
+                kwargs={
+                    'type': "issue.activity.updated",
+                    'requested_data': requested_data,
+                    'actor_id': str(request.user.id),
+                    'issue_id': str(pk),
+                    'project_id': str(project_id),
+                    'current_instance': current_instance,
+                    'epoch': int(timezone.now().timestamp()),
+                },
+                routing_key='external',
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -246,14 +254,19 @@ class IssueAPIEndpoint(WebhookMixin, BaseAPIView):
             IssueSerializer(issue).data, cls=DjangoJSONEncoder
         )
         issue.delete()
-        issue_activity.delay(
-            type="issue.activity.deleted",
-            requested_data=json.dumps({"issue_id": str(pk)}),
-            actor_id=str(request.user.id),
-            issue_id=str(pk),
-            project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
+        issue_activity.apply_async(
+            args=[],
+            kwargs={
+                'type': "issue.activity.deleted",
+                'requested_data': json.dumps({"issue_id": str(pk)}),
+                'actor_id': str(request.user.id),
+                'issue_id': str(pk),
+                'project_id': str(project_id),
+                'current_instance': current_instance,
+                'epoch': int(timezone.now().timestamp()),
+            },
+            routing_key='your_routing_key',
+            queue='your_queue_name'
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -309,7 +322,11 @@ class LabelAPIEndpoint(BaseAPIView):
                 ).data,
             )
         label = self.get_queryset().get(pk=pk)
-        serializer = LabelSerializer(label, fields=self.fields, expand=self.expand,)
+        serializer = LabelSerializer(
+            label,
+            fields=self.fields,
+            expand=self.expand,
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, slug, project_id, pk=None):
@@ -319,7 +336,6 @@ class LabelAPIEndpoint(BaseAPIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
     def delete(self, request, slug, project_id, pk=None):
         label = self.get_queryset().get(pk=pk)
@@ -384,14 +400,18 @@ class IssueLinkAPIEndpoint(BaseAPIView):
                 project_id=project_id,
                 issue_id=issue_id,
             )
-            issue_activity.delay(
-                type="link.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("issue_id")),
-                project_id=str(self.kwargs.get("project_id")),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
+            issue_activity.apply_async(
+                args=[],  # If no positional arguments are required
+                kwargs={
+                    'type': "link.activity.created",
+                    'requested_data': json.dumps(serializer.data, cls=DjangoJSONEncoder),
+                    'actor_id': str(self.request.user.id),
+                    'issue_id': str(self.kwargs.get("issue_id")),
+                    'project_id': str(self.kwargs.get("project_id")),
+                    'current_instance': None,
+                    'epoch': int(timezone.now().timestamp()),
+                },
+                routing_key='external',
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -408,14 +428,18 @@ class IssueLinkAPIEndpoint(BaseAPIView):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            issue_activity.delay(
-                type="link.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(request.user.id),
-                issue_id=str(issue_id),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
+            issue_activity.apply_async(
+                args=[],  # If no positional arguments are required
+                kwargs={
+                    'type': "link.activity.updated",
+                    'requested_data': requested_data,
+                    'actor_id': str(request.user.id),
+                    'issue_id': str(issue_id),
+                    'project_id': str(project_id),
+                    'current_instance': current_instance,
+                    'epoch': int(timezone.now().timestamp()),
+                },
+                routing_key='external',
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -428,14 +452,18 @@ class IssueLinkAPIEndpoint(BaseAPIView):
             IssueLinkSerializer(issue_link).data,
             cls=DjangoJSONEncoder,
         )
-        issue_activity.delay(
-            type="link.activity.deleted",
-            requested_data=json.dumps({"link_id": str(pk)}),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
-            project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
+        issue_activity.apply_async(
+            args=[],  # If no positional arguments are required
+            kwargs={
+                'type': "link.activity.deleted",
+                'requested_data': json.dumps({"link_id": str(pk)}),
+                'actor_id': str(request.user.id),
+                'issue_id': str(issue_id),
+                'project_id': str(project_id),
+                'current_instance': current_instance,
+                'epoch': int(timezone.now().timestamp()),
+            },
+            routing_key='external',
         )
         issue_link.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -507,14 +535,20 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
                 issue_id=issue_id,
                 actor=request.user,
             )
-            issue_activity.delay(
-                type="comment.activity.created",
-                requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                actor_id=str(self.request.user.id),
-                issue_id=str(self.kwargs.get("issue_id")),
-                project_id=str(self.kwargs.get("project_id")),
-                current_instance=None,
-                epoch=int(timezone.now().timestamp()),
+            issue_activity.apply_async(
+                args=[],
+                kwargs={
+                    "type": "comment.activity.created",
+                    "requested_data": json.dumps(
+                        serializer.data, cls=DjangoJSONEncoder
+                    ),
+                    "actor_id": str(self.request.user.id),
+                    "issue_id": str(self.kwargs.get("issue_id")),
+                    "project_id": str(self.kwargs.get("project_id")),
+                    "current_instance": None,
+                    "epoch": int(timezone.now().timestamp()),
+                },
+                routing_key="external",
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -533,14 +567,18 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
         )
         if serializer.is_valid():
             serializer.save()
-            issue_activity.delay(
-                type="comment.activity.updated",
-                requested_data=requested_data,
-                actor_id=str(request.user.id),
-                issue_id=str(issue_id),
-                project_id=str(project_id),
-                current_instance=current_instance,
-                epoch=int(timezone.now().timestamp()),
+            issue_activity.apply_async(
+                args=[],
+                kwargs={
+                    "type": "comment.activity.updated",
+                    "requested_data": requested_data,
+                    "actor_id": str(request.user.id),
+                    "issue_id": str(issue_id),
+                    "project_id": str(project_id),
+                    "current_instance": current_instance,
+                    "epoch": int(timezone.now().timestamp()),
+                },
+                routing_key="external",
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -554,14 +592,18 @@ class IssueCommentAPIEndpoint(WebhookMixin, BaseAPIView):
             cls=DjangoJSONEncoder,
         )
         issue_comment.delete()
-        issue_activity.delay(
-            type="comment.activity.deleted",
-            requested_data=json.dumps({"comment_id": str(pk)}),
-            actor_id=str(request.user.id),
-            issue_id=str(issue_id),
-            project_id=str(project_id),
-            current_instance=current_instance,
-            epoch=int(timezone.now().timestamp()),
+        issue_activity.apply_async(
+            args=[],  # If no positional arguments are required
+            kwargs={
+                "type": "comment.activity.deleted",
+                "requested_data": json.dumps({"comment_id": str(pk)}),
+                "actor_id": str(request.user.id),
+                "issue_id": str(issue_id),
+                "project_id": str(project_id),
+                "current_instance": current_instance,
+                "epoch": int(timezone.now().timestamp()),
+            },
+            routing_key="external",
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -582,7 +624,7 @@ class IssueActivityAPIEndpoint(BaseAPIView):
             )
             .select_related("actor", "workspace", "issue", "project")
         ).order_by(request.GET.get("order_by", "created_at"))
- 
+
         if pk:
             issue_activities = issue_activities.get(pk=pk)
             serializer = IssueActivitySerializer(issue_activities)

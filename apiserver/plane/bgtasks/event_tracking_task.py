@@ -29,7 +29,7 @@ def posthogConfiguration():
         return None, None
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def auth_events(user, email, user_agent, ip, event_name, medium, first_time):
     try:
         POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()
@@ -54,7 +54,7 @@ def auth_events(user, email, user_agent, ip, event_name, medium, first_time):
         capture_exception(e)
  
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def workspace_invite_event(user, email, user_agent, ip, event_name, accepted_from):
     try:
         POSTHOG_API_KEY, POSTHOG_HOST = posthogConfiguration()

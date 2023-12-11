@@ -148,6 +148,9 @@ else:
 REDIS_URL = os.environ.get("REDIS_URL")
 REDIS_SSL = REDIS_URL and "rediss" in REDIS_URL
 
+# RabbitMq Config
+RABBITMQ_URL = os.environ.get("RABBITMQ_URL")
+
 if REDIS_SSL:
     CACHES = {
         "default": {
@@ -272,16 +275,19 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 
-if REDIS_SSL:
-    redis_url = os.environ.get("REDIS_URL")
-    broker_url = (
-        f"{redis_url}?ssl_cert_reqs={ssl.CERT_NONE.name}&ssl_ca_certs={certifi.where()}"
-    )
-    CELERY_BROKER_URL = broker_url
-    CELERY_RESULT_BACKEND = broker_url
-else:
-    CELERY_BROKER_URL = REDIS_URL
-    CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_BROKER_URL = RABBITMQ_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+
+CELERY_QUEUES = {
+    'internal_tasks': {
+        'exchange': 'internal_exchange',
+        'routing_key': 'internal'
+    },
+    'external_tasks': {
+        'exchange': 'external_exchange',
+        'routing_key': 'external'
+    },
+}
 
 CELERY_IMPORTS = (
     "plane.bgtasks.issue_automation_task",

@@ -17,7 +17,7 @@ from sentry_sdk import capture_exception
 from plane.license.utils.instance_value import get_email_configuration
 
 
-@shared_task
+@shared_task(queue='internal_tasks')
 def magic_link(email, key, token, current_site):
     try:
         (
