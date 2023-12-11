@@ -33,7 +33,7 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const [isPageLoading, setIsPageLoading] = useState(true);
 
   const {
-    appConfig: { envConfig },
+    user: { currentUser },
   } = useMobxStore();
 
   const router = useRouter();
@@ -74,20 +74,11 @@ const ChangePasswordPage: NextPageWithLayout = observer(() => {
   };
 
   useEffect(() => {
-    if (!envConfig) return;
+    if (!currentUser) return;
 
-    const enableEmailPassword =
-      envConfig?.email_password_login ||
-      !(
-        envConfig?.email_password_login ||
-        envConfig?.magic_login ||
-        envConfig?.google_client_id ||
-        envConfig?.github_client_id
-      );
-
-    if (!enableEmailPassword) router.push("/profile");
+    if (currentUser.is_password_autoset) router.push("/profile");
     else setIsPageLoading(false);
-  }, [envConfig, router]);
+  }, [currentUser, router]);
 
   if (isPageLoading)
     return (
