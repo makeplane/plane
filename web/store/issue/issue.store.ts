@@ -108,8 +108,8 @@ export class IssueStore implements IIssueStore {
           : "grouped"
         : "ungrouped"
       : ungroupedLayouts.includes(issueLayout)
-      ? "ungrouped"
-      : null;
+        ? "ungrouped"
+        : null;
 
     return _issueState || null;
   }

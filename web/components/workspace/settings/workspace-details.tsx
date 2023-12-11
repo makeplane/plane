@@ -134,7 +134,7 @@ export const WorkspaceDetails: FC = observer(() => {
 
   if (!currentWorkspace)
     return (
-      <div className="grid place-items-center h-full w-full px-4 sm:px-0">
+      <div className="grid h-full w-full place-items-center px-4 sm:px-0">
         <Spinner />
       </div>
     );
@@ -164,15 +164,15 @@ export const WorkspaceDetails: FC = observer(() => {
           />
         )}
       />
-      <div className={`pr-9 py-8 w-full overflow-y-auto ${isAdmin ? "" : "opacity-60"}`}>
-        <div className="flex gap-5 items-center pb-7 border-b border-custom-border-100">
+      <div className={`w-full overflow-y-auto py-8 pr-9 ${isAdmin ? "" : "opacity-60"}`}>
+        <div className="flex items-center gap-5 border-b border-custom-border-100 pb-7">
           <div className="flex flex-col gap-1">
             <button type="button" onClick={() => setIsImageUploadModalOpen(true)} disabled={!isAdmin}>
               {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
                 <div className="relative mx-auto flex h-14 w-14">
                   <img
                     src={watch("logo")!}
-                    className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
+                    className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
                     alt="Workspace Logo"
                   />
                 </div>
@@ -190,7 +190,7 @@ export const WorkspaceDetails: FC = observer(() => {
             }/${currentWorkspace.slug}`}</button>
             {isAdmin && (
               <button
-                className="flex items-center gap-1.5 text-xs text-left text-custom-primary-100 font-medium"
+                className="flex items-center gap-1.5 text-left text-xs font-medium text-custom-primary-100"
                 onClick={() => setIsImageUploadModalOpen(true)}
               >
                 {watch("logo") && watch("logo") !== null && watch("logo") !== "" ? (
@@ -206,8 +206,8 @@ export const WorkspaceDetails: FC = observer(() => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-8 my-10">
-          <div className="grid grid-col grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 items-center justify-between gap-10 w-full">
+        <div className="my-10 flex flex-col gap-8">
+          <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-10 xl:grid-cols-2 2xl:grid-cols-3">
             <div className="flex flex-col gap-1">
               <h4 className="text-sm">Workspace name</h4>
               <Controller
@@ -230,7 +230,7 @@ export const WorkspaceDetails: FC = observer(() => {
                     ref={ref}
                     hasError={Boolean(errors.name)}
                     placeholder="Name"
-                    className="rounded-md font-medium w-full"
+                    className="w-full rounded-md font-medium"
                     disabled={!isAdmin}
                   />
                 )}
@@ -299,7 +299,7 @@ export const WorkspaceDetails: FC = observer(() => {
           <Disclosure as="div" className="border-t border-custom-border-100">
             {({ open }) => (
               <div className="w-full">
-                <Disclosure.Button as="button" type="button" className="flex items-center justify-between w-full py-4">
+                <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between py-4">
                   <span className="text-lg tracking-tight">Delete Workspace</span>
                   {/* <Icon iconName={open ? "expand_less" : "expand_more"} className="!text-2xl" /> */}
                   {open ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}

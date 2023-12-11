@@ -11,21 +11,21 @@ export const LatestFeatureBlock = () => {
 
   return (
     <>
-      <div className="flex py-2 bg-onboarding-background-100 border border-onboarding-border-200 mx-auto rounded-[3.5px] sm:w-96 mt-16">
-        <Lightbulb className="h-7 w-7 mr-2 mx-3" />
-        <p className="text-sm text-left text-onboarding-text-100">
+      <div className="mx-auto mt-16 flex rounded-[3.5px] border border-onboarding-border-200 bg-onboarding-background-100 py-2 sm:w-96">
+        <Lightbulb className="mx-3 mr-2 h-7 w-7" />
+        <p className="text-left text-sm text-onboarding-text-100">
           Pages gets a facelift! Write anything and use Galileo to help you start.{" "}
           <Link href="https://plane.so/changelog" target="_blank" rel="noopener noreferrer">
-            <span className="font-medium text-sm underline hover:cursor-pointer">Learn more</span>
+            <span className="text-sm font-medium underline hover:cursor-pointer">Learn more</span>
           </Link>
         </p>
       </div>
-      <div className="border border-onboarding-border-200 sm:w-96 sm:h-52 object-cover mt-8 mx-auto rounded-md bg-onboarding-background-100 overflow-hidden">
+      <div className="mx-auto mt-8 overflow-hidden rounded-md border border-onboarding-border-200 bg-onboarding-background-100 object-cover sm:h-52 sm:w-96">
         <div className="h-[90%]">
           <Image
             src={latestFeatures}
             alt="Plane Issues"
-            className={`rounded-md h-full ml-10 -mt-2 ${
+            className={`-mt-2 ml-10 h-full rounded-md ${
               resolvedTheme === "dark" ? "bg-onboarding-background-100" : "bg-custom-primary-70"
             } `}
           />

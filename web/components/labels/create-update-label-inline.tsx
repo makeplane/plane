@@ -128,7 +128,7 @@ export const CreateUpdateLabelInline = observer(
           e.preventDefault();
           handleSubmit(isUpdating ? handleLabelUpdate : handleLabelCreate)();
         }}
-        className={`flex scroll-m-8 items-center gap-2 bg-custom-background-100 w-full ${labelForm ? "" : "hidden"}`}
+        className={`flex w-full scroll-m-8 items-center gap-2 bg-custom-background-100 ${labelForm ? "" : "hidden"}`}
       >
         <div className="flex-shrink-0">
           <Popover className="relative z-10 flex h-full w-full items-center justify-center">
@@ -156,7 +156,7 @@ export const CreateUpdateLabelInline = observer(
                   leaveFrom="opacity-100 translate-y-0"
                   leaveTo="opacity-0 translate-y-1"
                 >
-                  <Popover.Panel className="absolute top-full left-0 z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
+                  <Popover.Panel className="absolute left-0 top-full z-20 mt-3 w-screen max-w-xs px-2 sm:px-0">
                     <Controller
                       name="color"
                       control={control}

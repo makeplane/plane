@@ -78,10 +78,10 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
     query: cycle.name,
     content: (
       <div className="flex items-center gap-1.5 truncate">
-        <span className="flex justify-center items-center flex-shrink-0 w-3.5 h-3.5">
+        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
           <ContrastIcon />
         </span>
-        <span className="truncate flex-grow">{cycle.name}</span>
+        <span className="flex-grow truncate">{cycle.name}</span>
       </div>
     ),
   }));
@@ -98,8 +98,8 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
           value === issueCycle?.cycle_detail.id
             ? handleRemoveIssueFromCycle(issueCycle?.id ?? "", issueCycle?.cycle ?? "")
             : handleCycleChange
-            ? handleCycleChange(value)
-            : handleCycleStoreChange(value);
+              ? handleCycleChange(value)
+              : handleCycleStoreChange(value);
         }}
         options={options}
         customButton={
@@ -107,7 +107,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
             <Tooltip position="left" tooltipContent={`${issueCycle ? issueCycle.cycle_detail.name : "No cycle"}`}>
               <button
                 type="button"
-                className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 w-full flex items-center ${
+                className={`flex w-full items-center rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
                   disableSelect ? "cursor-not-allowed" : ""
                 } max-w-[10rem]`}
               >
@@ -127,7 +127,7 @@ export const SidebarCycleSelect: React.FC<Props> = (props) => {
         noChevron
         disabled={disableSelect}
       />
-      {isUpdating && <Spinner className="w-4 h-4" />}
+      {isUpdating && <Spinner className="h-4 w-4" />}
     </div>
   );
 };

@@ -42,14 +42,14 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="h-full w-full flex justify-center mt-10 p-4">
-        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
       </div>
     );
 
   if (!currentWebhook)
     return (
-      <div className="h-full w-full grid place-items-center p-4">
+      <div className="grid h-full w-full place-items-center p-4">
         <Spinner />
       </div>
     );
@@ -57,7 +57,7 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   return (
     <>
       <DeleteWebhookModal isOpen={deleteWebhookModal} onClose={() => setDeleteWebhookModal(false)} />
-      <div className="w-full overflow-y-auto py-8 pr-9 space-y-8">
+      <div className="w-full space-y-8 overflow-y-auto py-8 pr-9">
         <WebhookForm data={currentWebhook} />
         {currentWebhook && <WebhookDeleteSection openDeleteModal={() => setDeleteWebhookModal(true)} />}
       </div>

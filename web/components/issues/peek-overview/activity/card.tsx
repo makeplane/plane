@@ -51,7 +51,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                   <div className="relative pb-1">
                     {issueActivity.length > 1 && index !== issueActivity.length - 1 ? (
                       <span
-                        className="absolute top-5 left-5 -ml-[1.5px] h-full w-0.5 bg-custom-background-100"
+                        className="absolute left-5 top-5 -ml-[1.5px] h-full w-0.5 bg-custom-background-100"
                         aria-hidden="true"
                       />
                     ) : null}
@@ -72,7 +72,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                                   alt={activityItem.actor_detail.display_name}
                                   height={24}
                                   width={24}
-                                  className="rounded-full h-full w-full object-cover"
+                                  className="h-full w-full rounded-full object-cover"
                                 />
                               ) : (
                                 <div
@@ -88,7 +88,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
                         </div>
                       </div>
                       <div className="min-w-0 flex-1 py-3">
-                        <div className="text-xs text-custom-text-200 break-words">
+                        <div className="break-words text-xs text-custom-text-200">
                           {activityItem.field === "archived_at" && activityItem.new_value !== "restore" ? (
                             <span className="text-gray font-medium">Plane</span>
                           ) : activityItem.actor_detail.is_bot ? (
@@ -135,7 +135,7 @@ export const IssueActivityCard: FC<IIssueActivityCard> = (props) => {
               );
           })
         ) : (
-          <Loader className="space-y-3 mb-3">
+          <Loader className="mb-3 space-y-3">
             <Loader.Item height="20px" />
             <Loader.Item height="20px" />
             <Loader.Item height="20px" />

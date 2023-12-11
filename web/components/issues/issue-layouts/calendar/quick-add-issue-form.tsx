@@ -50,7 +50,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full pr-2 py-1.5 rounded-md bg-transparent text-xs font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent py-1.5 pr-2 text-xs font-medium leading-5 text-custom-text-200 outline-none"
       />
     </>
   );
@@ -151,13 +151,13 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       {isOpen && (
         <div
           ref={ref}
-          className={`transition-all z-20 w-full ${
-            isOpen ? "opacity-100 scale-100" : "opacity-0 pointer-events-none scale-95"
+          className={`z-20 w-full transition-all ${
+            isOpen ? "scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"
           }`}
         >
           <form
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex w-full px-2 border-[0.5px] border-custom-border-200 rounded z-50 items-center gap-x-2 bg-custom-background-100 shadow-custom-shadow-2xs transition-opacity"
+            className="z-50 flex w-full items-center gap-x-2 rounded border-[0.5px] border-custom-border-200 bg-custom-background-100 px-2 shadow-custom-shadow-2xs transition-opacity"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetails={projectDetail} />
           </form>
@@ -165,10 +165,10 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
       )}
 
       {!isOpen && (
-        <div className="hidden group-hover:block border-[0.5px] border-custom-border-200 rounded">
+        <div className="hidden rounded border-[0.5px] border-custom-border-200 group-hover:block">
           <button
             type="button"
-            className="w-full flex items-center gap-x-[6px] text-custom-primary-100 px-2 py-1.5 rounded-md"
+            className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
             onClick={() => setIsOpen(true)}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />

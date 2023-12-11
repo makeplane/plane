@@ -22,7 +22,7 @@ export interface IStateGroupHeader {
 }
 
 export const Icon = ({ stateGroup, color }: { stateGroup: any; color?: any }) => (
-  <div className="w-3.5 h-3.5 rounded-full">
+  <div className="h-3.5 w-3.5 rounded-full">
     <StateGroupIcon stateGroup={stateGroup} color={color || null} width="14" height="14" />
   </div>
 );

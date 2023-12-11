@@ -84,15 +84,15 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     kanBanToggle?.groupByHeaderMinMax.includes(getValueFromObject(_list, listKey) as string);
 
   return (
-    <div className="relative w-full h-full flex gap-3">
+    <div className="relative flex h-full w-full gap-3">
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (
           <div
-            className={`relative flex-shrink-0 flex flex-col ${!verticalAlignPosition(_list) ? `w-[340px]` : ``} group`}
+            className={`relative flex flex-shrink-0 flex-col ${!verticalAlignPosition(_list) ? `w-[340px]` : ``} group`}
           >
             {sub_group_by === null && (
-              <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky top-0 z-[2]">
+              <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
                 <KanBanGroupByHeaderRoot
                   column_id={getValueFromObject(_list, listKey) as string}
                   column_value={_list}
@@ -116,7 +116,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               <Droppable droppableId={`${getValueFromObject(_list, listKey) as string}__${sub_group_id}`}>
                 {(provided: any, snapshot: any) => (
                   <div
-                    className={`w-full h-full relative transition-all ${
+                    className={`relative h-full w-full transition-all ${
                       snapshot.isDraggingOver ? `bg-custom-background-80` : ``
                     }`}
                     {...provided.droppableProps}
@@ -137,7 +137,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                       />
                     ) : (
                       isDragDisabled && (
-                        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center text-sm">
+                        <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center text-sm">
                           {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
                         </div>
                       )
@@ -148,7 +148,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
                 )}
               </Droppable>
 
-              <div className="flex-shrink-0 w-full bg-custom-background-90 py-1 sticky bottom-0 z-[0]">
+              <div className="sticky bottom-0 z-[0] w-full flex-shrink-0 bg-custom-background-90 py-1">
                 {enableQuickIssueCreate && (
                   <KanBanQuickAddIssueForm
                     formKey="name"
@@ -252,7 +252,7 @@ export const KanBan: React.FC<IKanBan> = observer((props) => {
   const { issueKanBanView: issueKanBanViewStore } = useMobxStore();
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative h-full w-full">
       {group_by && group_by === "project" && (
         <GroupByKanBan
           issues={issues}

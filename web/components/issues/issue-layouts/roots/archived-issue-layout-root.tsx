@@ -24,9 +24,9 @@ export const ArchivedIssueLayoutRoot: React.FC = observer(() => {
   });
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ArchivedIssueAppliedFiltersRoot />
-      <div className="w-full h-full overflow-auto">
+      <div className="h-full w-full overflow-auto">
         <ArchivedIssueListLayout />
       </div>
     </div>

@@ -80,7 +80,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
   return (
     <>
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
-      <div className="relative w-full flex items-center z-10 h-[3.75rem] justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div>
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -97,13 +97,13 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
           </Breadcrumbs>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 p-1 rounded bg-custom-background-80">
+          <div className="flex items-center gap-1 rounded bg-custom-background-80 p-1">
             {GLOBAL_VIEW_LAYOUTS.map((layout) => (
               <Link key={layout.key} href={`/${workspaceSlug}/${layout.link}`}>
                 <span>
                   <Tooltip tooltipContent={layout.title}>
                     <div
-                      className={`w-7 h-[22px] rounded grid place-items-center transition-all hover:bg-custom-background-100 overflow-hidden group ${
+                      className={`group grid h-[22px] w-7 place-items-center overflow-hidden rounded transition-all hover:bg-custom-background-100 ${
                         activeLayout === layout.key ? "bg-custom-background-100 shadow-custom-shadow-2xs" : ""
                       }`}
                     >

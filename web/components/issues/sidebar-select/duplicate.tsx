@@ -152,7 +152,7 @@ export const SidebarDuplicateSelect: React.FC<Props> = (props) => {
           </div>
           <button
             type="button"
-            className={`bg-custom-background-80 text-xs text-custom-text-200 rounded px-2.5 py-0.5 ${
+            className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs text-custom-text-200 ${
               disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-80"
             }`}
             onClick={() => setIsDuplicateModalOpen(true)}

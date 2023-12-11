@@ -95,14 +95,14 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
           <div className="text-sm font-medium">Secret key</div>
           <div className="text-xs text-custom-text-400">Generate a token to sign-in to the webhook payload</div>
           <div className="flex items-center gap-4">
-            <div className="self-stretch flex items-center justify-between py-1.5 px-2 rounded min-w-[30rem] max-w-lg border border-custom-border-200">
-              <div className="overflow-hidden font-medium select-none">
+            <div className="flex min-w-[30rem] max-w-lg items-center justify-between self-stretch rounded border border-custom-border-200 px-2 py-1.5">
+              <div className="select-none overflow-hidden font-medium">
                 {shouldShowKey ? (
                   <p className="text-xs">{webhookSecretKey}</p>
                 ) : (
                   <div className="flex items-center gap-1.5">
                     {[...Array(30)].map((_, index) => (
-                      <div key={index} className="w-1 h-1 bg-custom-text-400 rounded-full" />
+                      <div key={index} className="h-1 w-1 rounded-full bg-custom-text-400" />
                     ))}
                   </div>
                 )}
@@ -111,8 +111,8 @@ export const WebhookSecretKey: FC<Props> = observer((props) => {
                 <div className="flex items-center gap-2">
                   {SECRET_KEY_OPTIONS.map((option) => (
                     <Tooltip key={option.key} tooltipContent={option.label}>
-                      <button type="button" className="flex-shrink-0 grid place-items-center" onClick={option.onClick}>
-                        <option.Icon className="text-custom-text-400 h-3 w-3" />
+                      <button type="button" className="grid flex-shrink-0 place-items-center" onClick={option.onClick}>
+                        <option.Icon className="h-3 w-3 text-custom-text-400" />
                       </button>
                     </Tooltip>
                   ))}

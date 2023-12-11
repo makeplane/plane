@@ -58,12 +58,12 @@ export const CycleLayoutRoot: React.FC = observer(() => {
     <>
       <TransferIssuesModal handleClose={() => setTransferIssuesModal(false)} isOpen={transferIssuesModal} />
 
-      <div className="relative w-full h-full flex flex-col overflow-hidden">
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
         {cycleStatus === "completed" && <TransferIssues handleClick={() => setTransferIssuesModal(true)} />}
         <CycleAppliedFiltersRoot />
 
         {loader === "init-loader" || !getIssues ? (
-          <div className="w-full h-full flex justify-center items-center">
+          <div className="flex h-full w-full items-center justify-center">
             <Spinner />
           </div>
         ) : (

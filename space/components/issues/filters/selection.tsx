@@ -26,13 +26,13 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
   const isFilterEnabled = (filter: keyof IIssueFilterOptions) => layoutDisplayFiltersOptions?.filters.includes(filter);
 
   return (
-    <div className="w-full h-full flex flex-col overflow-hidden">
-      <div className="p-2.5 pb-0 bg-custom-background-100">
-        <div className="bg-custom-background-90 border-[0.5px] border-custom-border-200 text-xs rounded flex items-center gap-1.5 px-1.5 py-1">
+    <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="bg-custom-background-100 p-2.5 pb-0">
+        <div className="flex items-center gap-1.5 rounded border-[0.5px] border-custom-border-200 bg-custom-background-90 px-1.5 py-1 text-xs">
           <Search className="text-custom-text-400" size={12} strokeWidth={2} />
           <input
             type="text"
-            className="bg-custom-background-90 placeholder:text-custom-text-400 w-full outline-none"
+            className="w-full bg-custom-background-90 outline-none placeholder:text-custom-text-400"
             placeholder="Search"
             value={filtersSearchQuery}
             onChange={(e) => setFiltersSearchQuery(e.target.value)}
@@ -45,7 +45,7 @@ export const FilterSelection: React.FC<Props> = observer((props) => {
           )}
         </div>
       </div>
-      <div className="w-full h-full divide-y divide-custom-border-200 px-2.5 overflow-y-auto">
+      <div className="h-full w-full divide-y divide-custom-border-200 overflow-y-auto px-2.5">
         {/* priority */}
         {isFilterEnabled("priority") && (
           <div className="py-2">

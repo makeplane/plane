@@ -142,26 +142,26 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
 
     return (
       <div
-        className={`px-5 py-2.5 flex items-center justify-between space-y-2 ${
+        className={`flex items-center justify-between space-y-2 px-5 py-2.5 ${
           fullScreen
-            ? "border-l border-custom-border-200 md:h-full md:border-l md:border-custom-border-200 md:space-y-4 overflow-hidden md:flex-col md:items-start md:py-5"
+            ? "overflow-hidden border-l border-custom-border-200 md:h-full md:flex-col md:items-start md:space-y-4 md:border-l md:border-custom-border-200 md:py-5"
             : ""
         }`}
       >
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
             <LayersIcon height={14} width={14} />
             {analytics ? analytics.total : "..."} Issues
           </div>
           {isProjectLevel && (
-            <div className="flex items-center gap-1 bg-custom-background-80 rounded-md px-3 py-1 text-custom-text-200 text-xs">
+            <div className="flex items-center gap-1 rounded-md bg-custom-background-80 px-3 py-1 text-xs text-custom-text-200">
               <CalendarDays className="h-3.5 w-3.5" />
               {renderShortDate(
                 (cycleId
                   ? cycleDetails?.created_at
                   : moduleId
-                  ? moduleDetails?.created_at
-                  : projectDetails?.created_at) ?? ""
+                    ? moduleDetails?.created_at
+                    : projectDetails?.created_at) ?? ""
               )}
             </div>
           )}
@@ -178,7 +178,7 @@ export const CustomAnalyticsSidebar: React.FC<Props> = observer(
             </>
           ) : null}
         </div>
-        <div className="flex items-center gap-2 flex-wrap justify-self-end">
+        <div className="flex flex-wrap items-center gap-2 justify-self-end">
           <Button
             variant="neutral-primary"
             prependIcon={<RefreshCw className="h-3.5 w-3.5" />}

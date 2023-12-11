@@ -198,7 +198,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
     return (
       <div
-        className="border border-custom-border-100 bg-custom-background-100 text-xs px-2 min-w-[30px] h-[30px] rounded flex justify-center items-center hover:bg-custom-background-90 cursor-pointer"
+        className="flex h-[30px] min-w-[30px] cursor-pointer items-center justify-center rounded border border-custom-border-100 bg-custom-background-100 px-2 text-xs hover:bg-custom-background-90"
         onClick={() => copyText()}
       >
         {status ? "Copied" : "Copy Link"}
@@ -290,11 +290,11 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all w-full sm:w-3/5 lg:w-1/2 xl:w-2/5">
+              <Dialog.Panel className="w-full transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:w-3/5 lg:w-1/2 xl:w-2/5">
                 <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                   {/* heading */}
-                  <div className="px-6 pt-4 flex items-center justify-between gap-2">
-                    <h5 className="font-semibold text-xl inline-block">Publish</h5>
+                  <div className="flex items-center justify-between gap-2 px-6 pt-4">
+                    <h5 className="inline-block text-xl font-semibold">Publish</h5>
                     {project.is_deployed && (
                       <Button
                         variant="danger"
@@ -308,7 +308,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
 
                   {/* content */}
                   {projectPublishStore.fetchSettingsLoader ? (
-                    <Loader className="px-6 space-y-4">
+                    <Loader className="space-y-4 px-6">
                       <Loader.Item height="30px" />
                       <Loader.Item height="30px" />
                       <Loader.Item height="30px" />
@@ -318,16 +318,16 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     <div className="px-6">
                       {project.is_deployed && (
                         <>
-                          <div className="border border-custom-border-100 bg-custom-background-80 rounded-md px-3 py-2 relative flex gap-2 items-center">
-                            <div className="truncate flex-grow text-sm">
+                          <div className="relative flex items-center gap-2 rounded-md border border-custom-border-100 bg-custom-background-80 px-3 py-2">
+                            <div className="flex-grow truncate text-sm">
                               {`${plane_deploy_url}/${workspaceSlug}/${project.id}`}
                             </div>
-                            <div className="flex-shrink-0 relative flex items-center gap-1">
+                            <div className="relative flex flex-shrink-0 items-center gap-1">
                               <CopyLinkToClipboard copy_link={`${plane_deploy_url}/${workspaceSlug}/${project.id}`} />
                             </div>
                           </div>
-                          <div className="flex items-center gap-1 text-custom-primary-100 mt-3">
-                            <div className="w-5 h-5 overflow-hidden flex items-center">
+                          <div className="mt-3 flex items-center gap-1 text-custom-primary-100">
+                            <div className="flex h-5 w-5 items-center overflow-hidden">
                               <CircleDot className="h-5 w-5" />
                             </div>
                             <div className="text-sm">This project is live on web</div>
@@ -335,8 +335,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                         </>
                       )}
 
-                      <div className="space-y-4 mt-6">
-                        <div className="relative flex justify-between items-center gap-2">
+                      <div className="mt-6 space-y-4">
+                        <div className="relative flex items-center justify-between gap-2">
                           <div className="text-sm">Views</div>
                           <Controller
                             control={control}
@@ -357,7 +357,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                   {viewOptions.map((option) => (
                                     <div
                                       key={option.key}
-                                      className={`relative flex items-center gap-2 justify-between p-1 m-1 px-2 cursor-pointer rounded-sm text-custom-text-200 ${
+                                      className={`relative m-1 flex cursor-pointer items-center justify-between gap-2 rounded-sm p-1 px-2 text-custom-text-200 ${
                                         value.includes(option.key)
                                           ? "bg-custom-background-80 text-custom-text-100"
                                           : "hover:bg-custom-background-80 hover:text-custom-text-100"
@@ -377,7 +377,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                                       }}
                                     >
                                       <div className="text-sm">{option.label}</div>
-                                      <div className={`w-4 h-4 relative flex justify-center items-center`}>
+                                      <div className={`relative flex h-4 w-4 items-center justify-center`}>
                                         {value.length > 0 && value.includes(option.key) && (
                                           <Check className="h-5 w-5" />
                                         )}
@@ -389,7 +389,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                             )}
                           />
                         </div>
-                        <div className="relative flex justify-between items-center gap-2">
+                        <div className="relative flex items-center justify-between gap-2">
                           <div className="text-sm">Allow comments</div>
                           <Controller
                             control={control}
@@ -406,7 +406,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                             )}
                           />
                         </div>
-                        <div className="relative flex justify-between items-center gap-2">
+                        <div className="relative flex items-center justify-between gap-2">
                           <div className="text-sm">Allow reactions</div>
                           <Controller
                             control={control}
@@ -423,7 +423,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                             )}
                           />
                         </div>
-                        <div className="relative flex justify-between items-center gap-2">
+                        <div className="relative flex items-center justify-between gap-2">
                           <div className="text-sm">Allow voting</div>
                           <Controller
                             control={control}
@@ -457,8 +457,8 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                   )}
 
                   {/* modal handlers */}
-                  <div className="border-t border-custom-border-200 px-6 py-5 relative flex justify-between items-center">
-                    <div className="flex items-center gap-1 text-custom-text-400 text-sm">
+                  <div className="relative flex items-center justify-between border-t border-custom-border-200 px-6 py-5">
+                    <div className="flex items-center gap-1 text-sm text-custom-text-400">
                       <Globe2 className="h-4 w-4" />
                       <div className="text-sm">Anyone with the link can access</div>
                     </div>

@@ -34,23 +34,23 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="h-full w-full flex justify-center mt-10 p-4">
-        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
       </div>
     );
 
   if (!webhooks)
     return (
-      <div className="h-full w-full grid place-items-center p-4">
+      <div className="grid h-full w-full place-items-center p-4">
         <Spinner />
       </div>
     );
 
   return (
-    <div className="h-full w-full py-8 pr-9 overflow-hidden">
+    <div className="h-full w-full overflow-hidden py-8 pr-9">
       {Object.keys(webhooks).length > 0 ? (
-        <div className="h-full w-full flex flex-col">
-          <div className="flex items-center justify-between gap-4 pb-3.5 border-b border-custom-border-200">
+        <div className="flex h-full w-full flex-col">
+          <div className="flex items-center justify-between gap-4 border-b border-custom-border-200 pb-3.5">
             <div className="text-xl font-medium">Webhooks</div>
             <Link href={`/${workspaceSlug}/settings/webhooks/create`}>
               <Button variant="primary" size="sm">

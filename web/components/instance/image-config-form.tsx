@@ -55,8 +55,8 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
 
   return (
     <>
-      <div className="grid grid-col grid-cols-1 lg:grid-cols-2 items-center justify-between gap-x-16 gap-y-8 w-full">
-        <div className="flex flex-col gap-1 max-w-md">
+      <div className="grid-col grid w-full grid-cols-1 items-center justify-between gap-x-16 gap-y-8 lg:grid-cols-2">
+        <div className="flex max-w-md flex-col gap-1">
           <h4 className="text-sm">Access key from your Unsplash account</h4>
           <div className="relative">
             <Controller
@@ -72,7 +72,7 @@ export const InstanceImageConfigForm: FC<IInstanceImageConfigForm> = (props) => 
                   ref={ref}
                   hasError={Boolean(errors.UNSPLASH_ACCESS_KEY)}
                   placeholder="oXgq-sdfadsaeweqasdfasdf3234234rassd"
-                  className="rounded-md font-medium w-full !pr-10"
+                  className="w-full rounded-md !pr-10 font-medium"
                 />
               )}
             />

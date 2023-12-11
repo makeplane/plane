@@ -120,11 +120,11 @@ export const BaseListRoot = observer((props: IBaseListRoot) => {
   return (
     <>
       {issueStore?.loader === "init-loader" ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
-        <div className={`relative w-full h-full bg-custom-background-90`}>
+        <div className={`relative h-full w-full bg-custom-background-90`}>
           <List
             issues={issues as unknown as IIssueResponse}
             group_by={group_by}

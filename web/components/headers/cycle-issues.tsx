@@ -106,7 +106,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
         onClose={() => setAnalyticsModal(false)}
         cycleDetails={cycleDetails ?? undefined}
       />
-      <div className="relative w-full flex items-center z-10 h-[3.75rem] justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
+      <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
         <div className="flex items-center gap-2">
           <Breadcrumbs>
             <Breadcrumbs.BreadcrumbItem
@@ -117,7 +117,7 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                 ) : currentProjectDetails?.icon_prop ? (
                   renderEmoji(currentProjectDetails.icon_prop)
                 ) : (
-                  <span className="flex items-center justify-center h-4 w-4 rounded bg-gray-700 uppercase text-white">
+                  <span className="flex h-4 w-4 items-center justify-center rounded bg-gray-700 uppercase text-white">
                     {currentProjectDetails?.name.charAt(0)}
                   </span>
                 )

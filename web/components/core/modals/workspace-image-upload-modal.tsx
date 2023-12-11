@@ -137,14 +137,14 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                           <>
                             <button
                               type="button"
-                              className="absolute top-0 right-0 z-40 translate-x-1/2 -translate-y-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
+                              className="absolute right-0 top-0 z-40 -translate-y-1/2 translate-x-1/2 rounded bg-custom-background-90 px-2 py-0.5 text-xs font-medium text-custom-text-200"
                             >
                               Edit
                             </button>
                             <img
                               src={image ? URL.createObjectURL(image) : value ? value : ""}
                               alt="image"
-                              className="absolute top-0 left-0 h-full w-full object-cover rounded-md"
+                              className="absolute left-0 top-0 h-full w-full rounded-md object-cover"
                             />
                           </>
                         ) : (
@@ -168,7 +168,7 @@ export const WorkspaceImageUploadModal: React.FC<Props> = observer((props) => {
                     )}
                   </div>
                 </div>
-                <p className="my-4 text-custom-text-200 text-sm">
+                <p className="my-4 text-sm text-custom-text-200">
                   File formats supported- .jpeg, .jpg, .png, .webp, .svg
                 </p>
                 <div className="flex items-center justify-between">

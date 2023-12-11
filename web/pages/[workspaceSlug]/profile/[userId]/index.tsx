@@ -42,10 +42,10 @@ const ProfileOverviewPage: NextPageWithLayout = () => {
   });
 
   return (
-    <div className="h-full w-full px-5 md:px-9 py-5 space-y-7 overflow-y-auto">
+    <div className="h-full w-full space-y-7 overflow-y-auto px-5 py-5 md:px-9">
       <ProfileStats userProfile={userProfile} />
       <ProfileWorkload stateDistribution={stateDistribution} />
-      <div className="grid grid-cols-1 xl:grid-cols-2 items-stretch gap-5">
+      <div className="grid grid-cols-1 items-stretch gap-5 xl:grid-cols-2">
         <ProfilePriorityDistribution userProfile={userProfile} />
         <ProfileStateDistribution stateDistribution={stateDistribution} userProfile={userProfile} />
       </div>

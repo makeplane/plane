@@ -82,7 +82,7 @@ export const CreateBlock: FC<Props> = () => {
   return (
     <div className="relative">
       <form
-        className="relative flex flex-col items-center justify-between h-32 rounded border-2 border-custom-border-200 p-2"
+        className="relative flex h-32 flex-col items-center justify-between rounded border-2 border-custom-border-200 p-2"
         onSubmit={handleSubmit(createPageBlock)}
       >
         <div className="flex min-h-full w-full">
@@ -99,14 +99,14 @@ export const CreateBlock: FC<Props> = () => {
                 onKeyDown={handleKeyDown}
                 maxLength={255}
                 onChange={onChange}
-                className="min-h-full block w-full resize-none overflow-hidden border-none bg-transparent !px-1 !py-1 text-sm font-medium"
+                className="block min-h-full w-full resize-none overflow-hidden border-none bg-transparent !px-1 !py-1 text-sm font-medium"
                 hasError={Boolean(errors?.name)}
               />
             )}
           />
         </div>
 
-        <div className="absolute right-2 bottom-2 flex items-center p-1">
+        <div className="absolute bottom-2 right-2 flex items-center p-1">
           <button type="submit">
             <SendHorizonal className="h-5 w-5 text-custom-text-100" />
           </button>

@@ -53,7 +53,7 @@ export const InboxFiltersList = observer(() => {
   if (!filters || filtersLength <= 0) return null;
 
   return (
-    <div className="flex items-center gap-2 flex-wrap text-[0.65rem] p-3">
+    <div className="flex flex-wrap items-center gap-2 p-3 text-[0.65rem]">
       {Object.keys(filters).map((key) => {
         const filterKey = key as keyof IInboxFilterOptions;
 
@@ -77,12 +77,12 @@ export const InboxFiltersList = observer(() => {
                             priority === "urgent"
                               ? "bg-red-500/20 text-red-500"
                               : priority === "high"
-                              ? "bg-orange-500/20 text-orange-500"
-                              : priority === "medium"
-                              ? "bg-yellow-500/20 text-yellow-500"
-                              : priority === "low"
-                              ? "bg-green-500/20 text-green-500"
-                              : "bg-custom-background-90 text-custom-text-200"
+                                ? "bg-orange-500/20 text-orange-500"
+                                : priority === "medium"
+                                  ? "bg-yellow-500/20 text-yellow-500"
+                                  : priority === "low"
+                                    ? "bg-green-500/20 text-green-500"
+                                    : "bg-custom-background-90 text-custom-text-200"
                           }`}
                         >
                           <span>
@@ -117,7 +117,7 @@ export const InboxFiltersList = observer(() => {
                       {filters.inbox_status?.map((status) => (
                         <div
                           key={status}
-                          className="inline-flex items-center gap-x-1 rounded-full px-2 py-0.5 capitalize bg-custom-background-90 text-custom-text-200"
+                          className="inline-flex items-center gap-x-1 rounded-full bg-custom-background-90 px-2 py-0.5 capitalize text-custom-text-200"
                         >
                           <span>{INBOX_STATUS.find((s) => s.value === status)?.label}</span>
                           <button

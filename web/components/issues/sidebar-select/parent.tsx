@@ -34,7 +34,7 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
       />
       <button
         type="button"
-        className={`bg-custom-background-80 text-xs rounded px-2.5 py-0.5 ${
+        className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
           disabled ? "cursor-not-allowed" : "cursor-pointer "
         }`}
         onClick={() => setIsParentModalOpen(true)}

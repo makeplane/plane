@@ -49,19 +49,19 @@ export const CalendarChart: React.FC<Props> = observer((props) => {
 
   if (!calendarPayload)
     return (
-      <div className="h-full w-full grid place-items-center">
+      <div className="grid h-full w-full place-items-center">
         <Spinner />
       </div>
     );
 
   return (
     <>
-      <div className="h-full w-full flex flex-col overflow-hidden">
+      <div className="flex h-full w-full flex-col overflow-hidden">
         <CalendarHeader issuesFilterStore={issuesFilterStore} />
         <CalendarWeekHeader isLoading={!issues} showWeekends={showWeekends} />
         <div className="h-full w-full overflow-y-auto">
           {layout === "month" && (
-            <div className="h-full w-full grid grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
+            <div className="grid h-full w-full grid-cols-1 divide-y-[0.5px] divide-custom-border-200">
               {allWeeksOfActiveMonth &&
                 Object.values(allWeeksOfActiveMonth).map((week: ICalendarWeek, weekIndex) => (
                   <CalendarWeekDays

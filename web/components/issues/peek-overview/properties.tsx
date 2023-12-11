@@ -191,10 +191,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         updateIssueLink={handleUpdateLink}
       />
       <div className="flex flex-col">
-        <div className="flex flex-col gap-5 py-5 w-full">
+        <div className="flex w-full flex-col gap-5 py-5">
           {/* state */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <DoubleCircleIcon className="h-4 w-4 flex-shrink-0" />
               <p>State</p>
             </div>
@@ -204,8 +204,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
 
           {/* assignee */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
               <p>Assignees</p>
             </div>
@@ -219,8 +219,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
 
           {/* priority */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <Signal className="h-4 w-4 flex-shrink-0" />
               <p>Priority</p>
             </div>
@@ -235,8 +235,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           {/* estimate */}
           {isEstimateEnabled && (
-            <div className="flex items-center gap-2 w-full">
-              <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+            <div className="flex w-full items-center gap-2">
+              <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
                 <Triangle className="h-4 w-4 flex-shrink-0 " />
                 <p>Estimate</p>
               </div>
@@ -251,8 +251,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           )}
 
           {/* start date */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Start date</p>
             </div>
@@ -261,7 +261,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 placeholder="Start date"
                 value={issue.start_date}
                 onChange={handleStartDate}
-                className="bg-custom-background-80 !rounded border-none !px-2.5 !py-0.5"
+                className="!rounded border-none bg-custom-background-80 !px-2.5 !py-0.5"
                 maxDate={maxDate ?? undefined}
                 disabled={disableUserActions}
               />
@@ -269,8 +269,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
 
           {/* due date */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <CalendarDays className="h-4 w-4 flex-shrink-0" />
               <p>Due date</p>
             </div>
@@ -279,7 +279,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                 placeholder="Due date"
                 value={issue.target_date}
                 onChange={handleTargetDate}
-                className="bg-custom-background-80 !rounded border-none !px-2.5 !py-0.5"
+                className="!rounded border-none bg-custom-background-80 !px-2.5 !py-0.5"
                 minDate={minDate ?? undefined}
                 disabled={disableUserActions}
               />
@@ -287,8 +287,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
           </div>
 
           {/* parent */}
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <LayoutPanelTop className="h-4 w-4 flex-shrink-0" />
               <p>Parent</p>
             </div>
@@ -300,9 +300,9 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <span className="border-t border-custom-border-200" />
 
-        <div className="flex flex-col gap-5 py-5 w-full">
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+        <div className="flex w-full flex-col gap-5 py-5">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <ContrastIcon className="h-4 w-4 flex-shrink-0" />
               <p>Cycle</p>
             </div>
@@ -315,8 +315,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             </div>
           </div>
 
-          <div className="flex items-center gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-center gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <DiceIcon className="h-4 w-4 flex-shrink-0" />
               <p>Module</p>
             </div>
@@ -328,12 +328,12 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               />
             </div>
           </div>
-          <div className="flex items-start gap-2 w-full">
-            <div className="flex items-center gap-2 w-40 text-sm flex-shrink-0">
+          <div className="flex w-full items-start gap-2">
+            <div className="flex w-40 flex-shrink-0 items-center gap-2 text-sm">
               <Tag className="h-4 w-4 flex-shrink-0" />
               <p>Label</p>
             </div>
-            <div className="flex flex-col gap-3 w-full">
+            <div className="flex w-full flex-col gap-3">
               <SidebarLabelSelect
                 issueDetails={issue}
                 labelList={issue.labels}
@@ -347,10 +347,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
         <span className="border-t border-custom-border-200" />
 
-        <div className="flex flex-col gap-5 pt-5 w-full">
-          <div className="flex flex-col gap-2 w-full">
-            <div className="flex items-center gap-2 w-80">
-              <div className="flex items-center gap-2 w-40 text-sm">
+        <div className="flex w-full flex-col gap-5 pt-5">
+          <div className="flex w-full flex-col gap-2">
+            <div className="flex w-80 items-center gap-2">
+              <div className="flex w-40 items-center gap-2 text-sm">
                 <Link2 className="h-4 w-4 flex-shrink-0" />
                 <p>Links</p>
               </div>
@@ -360,7 +360,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
                     type="button"
                     className={`flex ${
                       disableUserActions ? "cursor-not-allowed" : "cursor-pointer hover:bg-custom-background-90"
-                    } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs hover:text-custom-text-200 text-custom-text-300`}
+                    } items-center gap-1 rounded-2xl border border-custom-border-100 px-2 py-0.5 text-xs text-custom-text-300 hover:text-custom-text-200`}
                     onClick={() => setLinkModal(true)}
                     disabled={false}
                   >

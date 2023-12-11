@@ -40,7 +40,7 @@ export const IssueReaction: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="flex gap-1.5 items-center mt-4">
+    <div className="mt-4 flex items-center gap-1.5">
       <ReactionSelector
         size="md"
         position="top"
@@ -58,7 +58,7 @@ export const IssueReaction: React.FC<Props> = observer((props) => {
                 handleReactionClick(reaction);
               }}
               key={reaction}
-              className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
+              className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                 reactions?.some((r) => r.actor === currentUser?.id && r.reaction === reaction)
                   ? "bg-custom-primary-100/10"
                   : "bg-custom-background-80"

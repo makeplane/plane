@@ -30,7 +30,7 @@ const Inputs = (props: any) => {
         {...register("name", {
           required: "Issue title is required.",
         })}
-        className="w-full px-2 pl-0 py-1.5 rounded-md bg-transparent text-sm font-medium leading-5 text-custom-text-200 outline-none"
+        className="w-full rounded-md bg-transparent px-2 py-1.5 pl-0 text-sm font-medium leading-5 text-custom-text-200 outline-none"
       />
     </div>
   );
@@ -130,15 +130,15 @@ export const KanBanQuickAddIssueForm: React.FC<IKanBanQuickAddIssueForm> = obser
           <form
             ref={ref}
             onSubmit={handleSubmit(onSubmitHandler)}
-            className="flex items-center gap-x-3 border-[0.5px] w-full border-t-0 border-custom-border-100 px-3 bg-custom-background-100"
+            className="flex w-full items-center gap-x-3 border-[0.5px] border-t-0 border-custom-border-100 bg-custom-background-100 px-3"
           >
             <Inputs formKey={formKey} register={register} setFocus={setFocus} projectDetail={projectDetail} />
           </form>
-          <div className="text-xs italic text-custom-text-200 px-3 py-2">{`Press 'Enter' to add another issue`}</div>
+          <div className="px-3 py-2 text-xs italic text-custom-text-200">{`Press 'Enter' to add another issue`}</div>
         </div>
       ) : (
         <div
-          className="w-full flex items-center text-custom-primary-100 p-3 py-3 cursor-pointer gap-2"
+          className="flex w-full cursor-pointer items-center gap-2 p-3 py-3 text-custom-primary-100"
           onClick={() => setIsOpen(true)}
         >
           <PlusIcon className="h-3.5 w-3.5 stroke-2" />

@@ -47,11 +47,11 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   };
 
   return (
-    <div className="relative w-full min-h-full h-max flex items-center">
+    <div className="relative flex h-max min-h-full w-full items-center">
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (
-          <div className="flex-shrink-0 flex flex-col w-[340px]">
+          <div className="flex w-[340px] flex-shrink-0 flex-col">
             <KanBanGroupByHeaderRoot
               column_id={getValueFromObject(_list, listKey) as string}
               column_value={_list}
@@ -142,13 +142,13 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   };
 
   return (
-    <div className="relative w-full min-h-full h-max">
+    <div className="relative h-max min-h-full w-full">
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (
-          <div className="flex-shrink-0 flex flex-col">
-            <div className="sticky top-[50px] w-full z-[1] bg-custom-background-90 flex items-center py-1">
-              <div className="flex-shrink-0 sticky left-0 bg-custom-background-90 pr-2">
+          <div className="flex flex-shrink-0 flex-col">
+            <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
+              <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
                 <KanBanSubGroupByHeaderRoot
                   column_id={getValueFromObject(_list, listKey) as string}
                   column_value={_list}
@@ -161,7 +161,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   addIssuesToView={addIssuesToView}
                 />
               </div>
-              <div className="w-full border-b border-custom-border-400 border-dashed" />
+              <div className="w-full border-b border-dashed border-custom-border-400" />
             </div>
             {!kanBanToggle?.subgroupByIssuesVisibility.includes(getValueFromObject(_list, listKey) as string) && (
               <div className="relative">
@@ -265,7 +265,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-[2] bg-custom-background-90 h-[50px]">
+      <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90">
         {group_by && group_by === "project" && (
           <SubGroupSwimlaneHeader
             issues={issues}

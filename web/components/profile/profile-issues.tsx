@@ -44,13 +44,13 @@ export const ProfileIssuesPage = observer((props: IProfileIssuesPage) => {
   return (
     <>
       {loader === "init-loader" ? (
-        <div className="flex justify-center items-center w-full h-full">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (
         <>
           <ProfileIssuesAppliedFiltersRoot />
-          <div className="w-full h-full relative overflow-auto -z-1">
+          <div className="-z-1 relative h-full w-full overflow-auto">
             {activeLayout === "list" ? (
               <ProfileIssuesListLayout />
             ) : activeLayout === "kanban" ? (

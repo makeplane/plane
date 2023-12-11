@@ -44,11 +44,11 @@ export const ModuleLayoutRoot: React.FC = observer(() => {
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   return (
-    <div className="relative w-full h-full flex flex-col overflow-hidden">
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
       <ModuleAppliedFiltersRoot />
 
       {loader === "init-loader" || !getIssues ? (
-        <div className="w-full h-full flex justify-center items-center">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       ) : (

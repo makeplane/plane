@@ -30,15 +30,13 @@ const IssueWidgetCard = (props) => {
       {loading == 0 ? (
         <div
           onClick={completeIssueEmbedAction}
-          className="cursor-pointer w-full space-y-2 border-[0.5px] border-custom-border-200 rounded-md p-3 shadow-custom-shadow-2xs"
+          className="w-full cursor-pointer space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs"
         >
           <h5 className="text-xs text-custom-text-300">
             {issueDetails.project_detail.identifier}-{issueDetails.sequence_id}
           </h5>
-          <h4 className="break-words text-sm font-medium">
-            {issueDetails.name}
-          </h4>
-          <div className="flex items-center flex-wrap gap-x-3 gap-y-2">
+          <h4 className="break-words text-sm font-medium">{issueDetails.name}</h4>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <div>
               <PriorityIcon priority={issueDetails.priority} />
             </div>
@@ -46,18 +44,13 @@ const IssueWidgetCard = (props) => {
               <AvatarGroup size="sm">
                 {issueDetails.assignee_details.map((assignee) => {
                   return (
-                    <Avatar
-                      key={assignee.id}
-                      name={assignee.display_name}
-                      src={assignee.avatar}
-                      className={"m-0"}
-                    />
+                    <Avatar key={assignee.id} name={assignee.display_name} src={assignee.avatar} className={"m-0"} />
                   );
                 })}
               </AvatarGroup>
             </div>
             {issueDetails.target_date && (
-              <div className="rounded flex px-2.5 py-1 items-center border-[0.5px] border-custom-border-300 gap-1 text-custom-text-100 text-xs h-5">
+              <div className="flex h-5 items-center gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs text-custom-text-100">
                 <Calendar className="h-3 w-3" strokeWidth={1.5} />
                 {new Date(issueDetails.target_date).toLocaleDateString()}
               </div>
@@ -65,17 +58,15 @@ const IssueWidgetCard = (props) => {
           </div>
         </div>
       ) : loading == -1 ? (
-        <div className="flex gap-[8px] items-center pb-[10px] pt-[10px] pl-[13px] rounded border-[#D97706] border-2 bg-[#FFFBEB] text-[#D97706]">
+        <div className="flex items-center gap-[8px] rounded border-2 border-[#D97706] bg-[#FFFBEB] pb-[10px] pl-[13px] pt-[10px] text-[#D97706]">
           <AlertTriangle color={"#D97706"} />
-          {
-            "This Issue embed is not found in any project. It can no longer be updated or accessed from here."
-          }
+          {"This Issue embed is not found in any project. It can no longer be updated or accessed from here."}
         </div>
       ) : (
-        <div className="w-full space-y-2 border-[0.5px] border-custom-border-200 rounded-md p-3 shadow-custom-shadow-2xs">
+        <div className="w-full space-y-2 rounded-md border-[0.5px] border-custom-border-200 p-3 shadow-custom-shadow-2xs">
           <Loader className={"px-6"}>
             <Loader.Item height={"30px"} />
-            <div className={"space-y-2 mt-3"}>
+            <div className={"mt-3 space-y-2"}>
               <Loader.Item height={"20px"} width={"70%"} />
               <Loader.Item height={"20px"} width={"60%"} />
             </div>

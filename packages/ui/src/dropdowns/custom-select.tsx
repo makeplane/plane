@@ -27,11 +27,8 @@ const CustomSelect = (props: ICustomSelectProps) => {
     value,
     width = "auto",
   } = props;
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(
-    null,
-  );
+  const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: placement ?? "bottom-start",
@@ -52,9 +49,7 @@ const CustomSelect = (props: ICustomSelectProps) => {
               ref={setReferenceElement}
               type="button"
               className={`flex items-center justify-between gap-1 text-xs ${
-                disabled
-                  ? "cursor-not-allowed text-custom-text-200"
-                  : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${customButtonClassName}`}
             >
               {customButton}
@@ -65,37 +60,31 @@ const CustomSelect = (props: ICustomSelectProps) => {
             <button
               ref={setReferenceElement}
               type="button"
-              className={`flex items-center justify-between gap-1 w-full rounded border-[0.5px] border-custom-border-300 ${
+              className={`flex w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 ${
                 input ? "px-3 py-2 text-sm" : "px-2 py-1 text-xs"
               } ${
-                disabled
-                  ? "cursor-not-allowed text-custom-text-200"
-                  : "cursor-pointer hover:bg-custom-background-80"
+                disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
             >
               {label}
-              {!noChevron && !disabled && (
-                <ChevronDown className="h-3 w-3" aria-hidden="true" />
-              )}
+              {!noChevron && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}
             </button>
           </Listbox.Button>
         )}
       </>
       <Listbox.Options>
         <div
-          className={`z-10 border border-custom-border-300 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-custom-shadow-rg focus:outline-none my-1 ${
+          className={`z-10 my-1 overflow-y-auto rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-custom-shadow-rg focus:outline-none ${
             maxHeight === "lg"
               ? "max-h-60"
               : maxHeight === "md"
-              ? "max-h-48"
-              : maxHeight === "rg"
-              ? "max-h-36"
-              : maxHeight === "sm"
-              ? "max-h-28"
-              : ""
-          } ${
-            width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width
-          } ${optionsClassName}`}
+                ? "max-h-48"
+                : maxHeight === "rg"
+                  ? "max-h-36"
+                  : maxHeight === "sm"
+                    ? "max-h-28"
+                    : ""
+          } ${width === "auto" ? "min-w-[8rem] whitespace-nowrap" : width} ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -115,9 +104,7 @@ const Option = (props: ICustomSelectItemProps) => {
       className={({ active, selected }) =>
         `cursor-pointer select-none truncate rounded px-1 py-1.5 ${
           active || selected ? "bg-custom-background-80" : ""
-        } ${
-          selected ? "text-custom-text-100" : "text-custom-text-200"
-        } ${className}`
+        } ${selected ? "text-custom-text-100" : "text-custom-text-200"} ${className}`
       }
     >
       {({ selected }) => (

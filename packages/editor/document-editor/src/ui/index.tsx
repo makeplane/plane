@@ -2,11 +2,7 @@
 import React, { useState } from "react";
 import { getEditorClassNames, useEditor } from "@plane/editor-core";
 import { DocumentEditorExtensions } from "./extensions";
-import {
-  IDuplicationConfig,
-  IPageArchiveConfig,
-  IPageLockConfig,
-} from "./types/menu-actions";
+import { IDuplicationConfig, IPageArchiveConfig, IPageLockConfig } from "./types/menu-actions";
 import { EditorHeader } from "./components/editor-header";
 import { useEditorMarkings } from "./hooks/use-editor-markings";
 import { SummarySideBar } from "./components/summary-side-bar";
@@ -41,9 +37,7 @@ interface IDocumentEditor {
   customClassName?: string;
   editorContentCustomClassNames?: string;
   onChange: (json: any, html: string) => void;
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void;
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   forwardedRef?: any;
   updatePageTitle: (title: string) => Promise<void>;
@@ -118,11 +112,7 @@ const DocumentEditor = ({
     cancelUploadImage,
     rerenderOnPropsChange,
     forwardedRef,
-    extensions: DocumentEditorExtensions(
-      uploadFile,
-      embedConfig?.issueEmbedConfig,
-      setIsSubmitting,
-    ),
+    extensions: DocumentEditorExtensions(uploadFile, embedConfig?.issueEmbedConfig, setIsSubmitting),
   });
 
   if (!editor) {
@@ -147,7 +137,7 @@ const DocumentEditor = ({
   if (!editor) return null;
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden">
+    <div className="flex h-full w-full flex-col overflow-hidden">
       <EditorHeader
         readonly={false}
         KanbanMenuOptions={KanbanMenuOptions}
@@ -163,13 +153,9 @@ const DocumentEditor = ({
         documentDetails={documentDetails}
         isSubmitting={isSubmitting}
       />
-      <div className="h-full w-full flex overflow-y-auto">
-        <div className="flex-shrink-0 h-full w-56 lg:w-72 sticky top-0">
-          <SummarySideBar
-            editor={editor}
-            markings={markings}
-            sidePeekVisible={sidePeekVisible}
-          />
+      <div className="flex h-full w-full overflow-y-auto">
+        <div className="sticky top-0 h-full w-56 flex-shrink-0 lg:w-72">
+          <SummarySideBar editor={editor} markings={markings} sidePeekVisible={sidePeekVisible} />
         </div>
         <div className="h-full w-[calc(100%-14rem)] lg:w-[calc(100%-18rem-18rem)]">
           <PageRenderer
@@ -181,15 +167,15 @@ const DocumentEditor = ({
             updatePageTitle={updatePageTitle}
           />
         </div>
-        <div className="hidden lg:block flex-shrink-0 w-56 lg:w-72" />
+        <div className="hidden w-56 flex-shrink-0 lg:block lg:w-72" />
       </div>
     </div>
   );
 };
 
-const DocumentEditorWithRef = React.forwardRef<EditorHandle, IDocumentEditor>(
-  (props, ref) => <DocumentEditor {...props} forwardedRef={ref} />,
-);
+const DocumentEditorWithRef = React.forwardRef<EditorHandle, IDocumentEditor>((props, ref) => (
+  <DocumentEditor {...props} forwardedRef={ref} />
+));
 
 DocumentEditorWithRef.displayName = "DocumentEditorWithRef";
 

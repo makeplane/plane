@@ -57,22 +57,16 @@ export const AvatarGroup: React.FC<Props> = (props) => {
   return (
     <div className={`flex ${sizeInfo.spacing}`}>
       {avatarsWithUpdatedProps.map((avatar, index) => (
-        <div
-          key={index}
-          className="ring-1 ring-custom-background-100 rounded-full"
-        >
+        <div key={index} className="rounded-full ring-1 ring-custom-background-100">
           {avatar}
         </div>
       ))}
       {maxAvatarsToRender < totalAvatars && (
-        <Tooltip
-          tooltipContent={`${totalAvatars} total`}
-          disabled={!showTooltip}
-        >
+        <Tooltip tooltipContent={`${totalAvatars} total`} disabled={!showTooltip}>
           <div
             className={`${
               !isAValidNumber(size) ? sizeInfo.avatarSize : ""
-            } ring-1 ring-custom-background-100 bg-custom-primary-10 text-custom-primary-100 rounded-full grid place-items-center text-[9px]`}
+            } grid place-items-center rounded-full bg-custom-primary-10 text-[9px] text-custom-primary-100 ring-1 ring-custom-background-100`}
             style={
               isAValidNumber(size)
                 ? {

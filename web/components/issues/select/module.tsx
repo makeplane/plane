@@ -43,10 +43,10 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
     query: module.name,
     content: (
       <div className="flex items-center gap-1.5 truncate">
-        <span className="flex justify-center items-center flex-shrink-0 w-3.5 h-3.5">
+        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
           <DiceIcon />
         </span>
-        <span className="truncate flex-grow">{module.name}</span>
+        <span className="flex-grow truncate">{module.name}</span>
       </div>
     ),
   }));
@@ -55,9 +55,9 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
 
   const label = selectedModule ? (
-    <div className="flex items-center w-full gap-1 text-custom-text-200">
+    <div className="flex w-full items-center gap-1 text-custom-text-200">
       <DiceIcon className="h-3 w-3 flex-shrink-0" />
-      <span className="truncate max-w-[160px]">{selectedModule.name}</span>
+      <span className="max-w-[160px] truncate">{selectedModule.name}</span>
     </div>
   ) : (
     <div className="flex items-center gap-1 text-custom-text-300">
@@ -72,7 +72,7 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
         <button
           ref={setReferenceElement}
           type="button"
-          className="flex items-center justify-between gap-1 w-full text-xs px-2 py-1 cursor-pointer rounded border-[0.5px] border-custom-border-300 text-custom-text-200  hover:bg-custom-background-80"
+          className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200  hover:bg-custom-background-80"
           onClick={fetchModules}
         >
           {label}
@@ -80,7 +80,7 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
       </Combobox.Button>
       <Combobox.Options>
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1`}
+          className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -88,14 +88,14 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
           <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
             <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Combobox.Input
-              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
               displayValue={(assigned: any) => assigned?.name}
             />
           </div>
-          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+          <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
                 <>
@@ -104,7 +104,7 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
                       key={option.value}
                       value={option.value}
                       className={({ active, selected }) =>
-                        `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                        `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                           active && !selected ? "bg-custom-background-80" : ""
                         } w-full truncate ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                       }
@@ -123,11 +123,11 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
                     className={({ active }) =>
                       `flex items-center justify-between gap-2 ${
                         active ? "bg-custom-background-80" : ""
-                      }  cursor-pointer select-none truncate rounded px-1 py-1.5 w-full text-custom-text-100`
+                      }  w-full cursor-pointer select-none truncate rounded px-1 py-1.5 text-custom-text-100`
                     }
                   >
                     <div className="flex items-center gap-1.5 truncate">
-                      <span className="truncate flex-grow">None</span>
+                      <span className="flex-grow truncate">None</span>
                     </div>
                   </Combobox.Option>
                 </>

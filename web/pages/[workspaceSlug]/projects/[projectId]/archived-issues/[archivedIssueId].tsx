@@ -134,15 +134,15 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
     <>
       {issueDetails && projectId ? (
         <div className="flex h-full overflow-hidden">
-          <div className="w-2/3 h-full overflow-y-auto space-y-2 divide-y-2 divide-custom-border-300 p-5">
+          <div className="h-full w-2/3 space-y-2 divide-y-2 divide-custom-border-300 overflow-y-auto p-5">
             {issueDetails.archived_at && (
-              <div className="flex items-center justify-between gap-2 px-2.5 py-2 text-sm border rounded-md text-custom-text-200 border-custom-border-200 bg-custom-background-90">
-                <div className="flex gap-2 items-center">
+              <div className="flex items-center justify-between gap-2 rounded-md border border-custom-border-200 bg-custom-background-90 px-2.5 py-2 text-sm text-custom-text-200">
+                <div className="flex items-center gap-2">
                   <ArchiveIcon className="h-3.5 w-3.5" />
                   <p>This issue has been archived by Plane.</p>
                 </div>
                 <button
-                  className="flex items-center gap-2 p-1.5 text-sm rounded-md border border-custom-border-200"
+                  className="flex items-center gap-2 rounded-md border border-custom-border-200 p-1.5 text-sm"
                   onClick={handleUnArchive}
                   disabled={isRestoring}
                 >
@@ -152,11 +152,11 @@ const ArchivedIssueDetailsPage: NextPageWithLayout = () => {
                 </button>
               </div>
             )}
-            <div className="space-y-5 divide-y-2 divide-custom-border-200 opacity-60 pointer-events-none">
+            <div className="pointer-events-none space-y-5 divide-y-2 divide-custom-border-200 opacity-60">
               <IssueMainContent issueDetails={issueDetails} submitChanges={submitChanges} uneditable />
             </div>
           </div>
-          <div className="w-1/3 h-full space-y-5 border-l border-custom-border-300 p-5 overflow-hidden">
+          <div className="h-full w-1/3 space-y-5 overflow-hidden border-l border-custom-border-300 p-5">
             <IssueDetailsSidebar
               control={control}
               issueDetail={issueDetails}

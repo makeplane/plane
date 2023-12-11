@@ -21,14 +21,14 @@ const ImportsPage: NextPageWithLayout = observer(() => {
 
   if (!isAdmin)
     return (
-      <div className="h-full w-full flex justify-center mt-10 p-4">
-        <p className="text-custom-text-300 text-sm">You are not authorized to access this page.</p>
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
       </div>
     );
 
   return (
-    <section className="pr-9 py-8 w-full overflow-y-auto">
-      <div className="flex items-center py-3.5 border-b border-custom-border-100">
+    <section className="w-full overflow-y-auto py-8 pr-9">
+      <div className="flex items-center border-b border-custom-border-100 py-3.5">
         <h3 className="text-xl font-medium">Imports</h3>
       </div>
       <IntegrationGuide />

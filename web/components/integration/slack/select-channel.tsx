@@ -89,7 +89,7 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
       {projectIntegration ? (
         <button
           type="button"
-          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700`}
+          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none`}
           role="switch"
           aria-checked
           onClick={() => {
@@ -98,7 +98,7 @@ export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
         >
           <span
             aria-hidden="true"
-            className={`self-center inline-block h-2 w-2 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+            className={`inline-block h-2 w-2 transform self-center rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
               slackChannelAvailabilityToggle ? "translate-x-3" : "translate-x-0"
             }`}
           />

@@ -4,12 +4,7 @@ import { CoreEditorProps } from "../props";
 import { CoreEditorExtensions } from "../extensions";
 import { EditorProps } from "@tiptap/pm/view";
 import { getTrimmedHTML } from "../../lib/utils";
-import {
-  DeleteImage,
-  IMentionSuggestion,
-  RestoreImage,
-  UploadImage,
-} from "@plane/editor-types";
+import { DeleteImage, IMentionSuggestion, RestoreImage, UploadImage } from "@plane/editor-types";
 
 interface CustomEditorProps {
   uploadFile: UploadImage;
@@ -20,9 +15,7 @@ interface CustomEditorProps {
   };
   deleteFile: DeleteImage;
   cancelUploadImage?: () => any;
-  setIsSubmitting?: (
-    isSubmitting: "submitting" | "submitted" | "saved",
-  ) => void;
+  setIsSubmitting?: (isSubmitting: "submitting" | "submitted" | "saved") => void;
   setShouldShowAlert?: (showAlert: boolean) => void;
   value: string;
   debouncedUpdatesEnabled?: boolean;
@@ -66,12 +59,11 @@ export const useEditor = ({
           },
           deleteFile,
           restoreFile,
-          cancelUploadImage,
+          cancelUploadImage
         ),
         ...extensions,
       ],
-      content:
-        typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
+      content: typeof value === "string" && value.trim() !== "" ? value : "<p></p>",
       onCreate: async ({ editor }) => {
         onStart?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
@@ -82,7 +74,7 @@ export const useEditor = ({
         onChange?.(editor.getJSON(), getTrimmedHTML(editor.getHTML()));
       },
     },
-    [rerenderOnPropsChange],
+    [rerenderOnPropsChange]
   );
 
   const editorRef: MutableRefObject<Editor | null> = useRef(null);

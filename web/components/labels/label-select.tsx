@@ -84,13 +84,13 @@ export const LabelSelect: React.FC<Props> = (props) => {
         <button ref={setReferenceElement} type="button" className="h-full w-full">
           {value.length > 0 ? (
             value.length <= maxRender ? (
-              <div className="flex items-center gap-2 px-4 overflow-x-scroll">
+              <div className="flex items-center gap-2 overflow-x-scroll px-4">
                 {labels
                   ?.filter((l) => value.includes(l.id))
                   .map((label) => (
                     <div
                       key={label.id}
-                      className="flex items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs h-full"
+                      className="flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs"
                     >
                       <div className="flex items-center gap-1.5 text-custom-text-200">
                         <span
@@ -106,7 +106,7 @@ export const LabelSelect: React.FC<Props> = (props) => {
               </div>
             ) : (
               <div
-                className={`h-full flex items-center flex-shrink-0 rounded border-[0.5px] border-custom-border-300 px-4 text-xs ${buttonClassName}`}
+                className={`flex h-full flex-shrink-0 items-center rounded border-[0.5px] border-custom-border-300 px-4 text-xs ${buttonClassName}`}
               >
                 <Tooltip
                   position="top"
@@ -116,7 +116,7 @@ export const LabelSelect: React.FC<Props> = (props) => {
                     .map((l) => l.name)
                     .join(", ")}
                 >
-                  <div className="h-full flex items-center gap-1.5 text-custom-text-200">
+                  <div className="flex h-full items-center gap-1.5 text-custom-text-200">
                     <span className="h-2 w-2 flex-shrink-0 rounded-full bg-custom-primary" />
                     {`${value.length} Labels`}
                   </div>
@@ -125,7 +125,7 @@ export const LabelSelect: React.FC<Props> = (props) => {
             )
           ) : (
             <div
-              className={`flex items-center justify-between gap-1 w-full text-xs px-4 ${
+              className={`flex w-full items-center justify-between gap-1 px-4 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               }  ${buttonClassName}`}
             >
@@ -138,7 +138,7 @@ export const LabelSelect: React.FC<Props> = (props) => {
 
       <Combobox.Options>
         <div
-          className={`z-10 border border-custom-border-300 px-2 py-2.5 rounded bg-custom-background-100 text-xs shadow-custom-shadow-rg focus:outline-none w-48 whitespace-nowrap my-1 ${optionsClassName}`}
+          className={`z-10 my-1 w-48 whitespace-nowrap rounded border border-custom-border-300 bg-custom-background-100 px-2 py-2.5 text-xs shadow-custom-shadow-rg focus:outline-none ${optionsClassName}`}
           ref={setPopperElement}
           style={styles.popper}
           {...attributes.popper}
@@ -146,14 +146,14 @@ export const LabelSelect: React.FC<Props> = (props) => {
           <div className="flex w-full items-center justify-start rounded border border-custom-border-200 bg-custom-background-90 px-2">
             <Search className="h-3.5 w-3.5 text-custom-text-300" />
             <Combobox.Input
-              className="w-full bg-transparent py-1 px-2 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
+              className="w-full bg-transparent px-2 py-1 text-xs text-custom-text-200 placeholder:text-custom-text-400 focus:outline-none"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search"
               displayValue={(assigned: any) => assigned?.name}
             />
           </div>
-          <div className={`mt-2 space-y-1 max-h-48 overflow-y-scroll`}>
+          <div className={`mt-2 max-h-48 space-y-1 overflow-y-scroll`}>
             {filteredOptions ? (
               filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
@@ -161,7 +161,7 @@ export const LabelSelect: React.FC<Props> = (props) => {
                     key={option.value}
                     value={option.value}
                     className={({ active, selected }) =>
-                      `flex items-center justify-between gap-2 cursor-pointer select-none truncate rounded px-1 py-1.5 ${
+                      `flex cursor-pointer select-none items-center justify-between gap-2 truncate rounded px-1 py-1.5 ${
                         active ? "bg-custom-background-80" : ""
                       } ${selected ? "text-custom-text-100" : "text-custom-text-200"}`
                     }

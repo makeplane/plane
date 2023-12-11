@@ -136,7 +136,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   onChange={onChange}
                   hasError={Boolean(errors.label)}
                   placeholder="Token title"
-                  className="text-sm font-medium w-full"
+                  className="w-full text-sm font-medium"
                 />
               )}
             />
@@ -151,7 +151,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                 onChange={onChange}
                 hasError={Boolean(errors.description)}
                 placeholder="Token description"
-                className="text-sm h-24 w-full"
+                className="h-24 w-full text-sm"
               />
             )}
           />
@@ -167,7 +167,7 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     <CustomSelect
                       customButton={
                         <div
-                          className={`flex items-center gap-2 border-[0.5px] border-custom-border-200 rounded py-1 px-2 ${
+                          className={`flex items-center gap-2 rounded border-[0.5px] border-custom-border-200 px-2 py-1 ${
                             neverExpires ? "text-custom-text-400" : ""
                           }`}
                         >
@@ -175,8 +175,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                           {value === "custom"
                             ? "Custom date"
                             : selectedOption
-                            ? selectedOption.label
-                            : "Set expiration date"}
+                              ? selectedOption.label
+                              : "Set expiration date"}
                         </div>
                       }
                       value={value}
@@ -200,9 +200,9 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                   minDate={tomorrow}
                   customInput={
                     <div
-                      className={`flex items-center gap-2 py-1 px-2 text-xs cursor-pointer !rounded border-[0.5px] border-custom-border-200 !shadow-none !duration-0 ${
+                      className={`flex cursor-pointer items-center gap-2 !rounded border-[0.5px] border-custom-border-200 px-2 py-1 text-xs !shadow-none !duration-0 ${
                         customDate ? "w-[7.5rem]" : ""
-                      } ${neverExpires ? "text-custom-text-400 !cursor-not-allowed" : "hover:bg-custom-background-80"}`}
+                      } ${neverExpires ? "!cursor-not-allowed text-custom-text-400" : "hover:bg-custom-background-80"}`}
                     >
                       <Calendar className="h-3 w-3" />
                       {customDate ? renderFormattedDate(customDate) : "Set date"}
@@ -219,8 +219,8 @@ export const CreateApiTokenForm: React.FC<Props> = (props) => {
                     ? `Expires ${renderFormattedDate(customDate)}`
                     : null
                   : watch("expired_at")
-                  ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
-                  : null}
+                    ? `Expires ${getExpiryDate(watch("expired_at") ?? "")}`
+                    : null}
               </span>
             )}
           </div>

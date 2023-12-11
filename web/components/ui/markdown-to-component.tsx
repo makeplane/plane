@@ -44,11 +44,11 @@ const HeadingSecondary: CustomComponent = ({ children }) => (
 const Paragraph: CustomComponent = ({ children }) => <p className="text-sm text-custom-text-200">{children}</p>;
 
 const OrderedList: CustomComponent = ({ children }) => (
-  <ol className="ml-8 mb-4 list-decimal text-sm text-custom-text-200">{children}</ol>
+  <ol className="mb-4 ml-8 list-decimal text-sm text-custom-text-200">{children}</ol>
 );
 
 const UnorderedList: CustomComponent = ({ children }) => (
-  <ul className="ml-8 mb-4 list-disc text-sm text-custom-text-200">{children}</ul>
+  <ul className="mb-4 ml-8 list-disc text-sm text-custom-text-200">{children}</ul>
 );
 
 const Link: CustomComponent = ({ href, children }) => (

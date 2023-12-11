@@ -117,11 +117,11 @@ export const GptAssistantModal: React.FC<Props> = (props) => {
 
   return (
     <div
-      className={`absolute ${inset} z-20 w-full flex flex-col space-y-4 rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow overflow-hidden ${
+      className={`absolute ${inset} z-20 flex w-full flex-col space-y-4 overflow-hidden rounded-[10px] border border-custom-border-200 bg-custom-background-100 p-4 shadow ${
         isOpen ? "block" : "hidden"
       }`}
     >
-      <div className="max-h-72 overflow-y-auto space-y-4 vertical-scroll-enable">
+      <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
         {((content && content !== "") || (htmlContent && htmlContent !== "<p></p>")) && (
           <div className="text-sm">
             Content:

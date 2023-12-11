@@ -103,7 +103,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                   >
                     <div className="relative m-1">
                       <Search
-                        className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-custom-text-100 text-opacity-40"
+                        className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-custom-text-100 text-opacity-40"
                         aria-hidden="true"
                       />
                       <input
@@ -121,7 +121,7 @@ export const SelectDuplicateInboxIssueModal: React.FC<Props> = (props) => {
                       {filteredIssues.length > 0 ? (
                         <li className="p-2">
                           {query === "" && (
-                            <h2 className="mt-4 mb-2 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
+                            <h2 className="mb-2 mt-4 px-3 text-xs font-semibold text-custom-text-100">Select issue</h2>
                           )}
                           <ul className="text-sm text-custom-text-100">
                             {filteredIssues.map((issue) => (

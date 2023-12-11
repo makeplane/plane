@@ -24,10 +24,10 @@ export const IssueReactionSelector: FC<IIssueReactionSelector> = (props) => {
             <Popover.Button
               className={`${
                 open ? "" : "bg-custom-background-80"
-              } group inline-flex items-center rounded-md bg-custom-background-80 focus:outline-none transition-all hover:bg-custom-background-90`}
+              } group inline-flex items-center rounded-md bg-custom-background-80 transition-all hover:bg-custom-background-90 focus:outline-none`}
             >
-              <span className={`flex justify-center items-center rounded px-2 py-1.5`}>
-                <SmilePlus className={`${size === "sm" ? "w-3 h-3" : size === "md" ? "w-3.5 h-3.5" : "w-4 h-4"}`} />
+              <span className={`flex items-center justify-center rounded px-2 py-1.5`}>
+                <SmilePlus className={`${size === "sm" ? "h-3 w-3" : size === "md" ? "h-3.5 w-3.5" : "h-4 w-4"}`} />
               </span>
             </Popover.Button>
             <Transition
@@ -40,7 +40,7 @@ export const IssueReactionSelector: FC<IIssueReactionSelector> = (props) => {
               leaveTo="opacity-0 translate-y-1"
             >
               <Popover.Panel
-                className={`bg-custom-sidebar-background-100 border border-custom-border-200 shadow-custom-shadow-sm rounded p-1 overflow-hidden absolute -left-2 z-10 ${
+                className={`absolute -left-2 z-10 overflow-hidden rounded border border-custom-border-200 bg-custom-sidebar-background-100 p-1 shadow-custom-shadow-sm ${
                   position === "top" ? "-top-10" : "-bottom-10"
                 }`}
               >
@@ -53,9 +53,9 @@ export const IssueReactionSelector: FC<IIssueReactionSelector> = (props) => {
                         if (onSelect) onSelect(emoji);
                         closePopover();
                       }}
-                      className="select-none rounded text-sm p-1 hover:bg-custom-sidebar-background-80 transition-all w-6 h-6 flex justify-center items-center"
+                      className="flex h-6 w-6 select-none items-center justify-center rounded p-1 text-sm transition-all hover:bg-custom-sidebar-background-80"
                     >
-                      <div className="w-4 h-4">{renderEmoji(emoji)}</div>
+                      <div className="h-4 w-4">{renderEmoji(emoji)}</div>
                     </button>
                   ))}
                 </div>

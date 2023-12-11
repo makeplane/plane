@@ -15,7 +15,7 @@ export interface ILabelHeader {
 }
 
 const Icon = ({ color }: any) => (
-  <div className="w-[12px] h-[12px] rounded-full" style={{ backgroundColor: color ? color : "#666" }} />
+  <div className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: color ? color : "#666" }} />
 );
 
 export const LabelHeader: FC<ILabelHeader> = observer((props) => {

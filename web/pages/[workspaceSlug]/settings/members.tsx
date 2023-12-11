@@ -68,13 +68,13 @@ const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
-      <section className="pr-9 py-8 w-full overflow-y-auto">
-        <div className="flex items-center justify-between gap-4 py-3.5 border-b border-custom-border-100">
+      <section className="w-full overflow-y-auto py-8 pr-9">
+        <div className="flex items-center justify-between gap-4 border-b border-custom-border-100 py-3.5">
           <h4 className="text-xl font-medium">Members</h4>
-          <div className="flex items-center gap-1.5 ml-auto rounded-md px-2.5 py-1.5 border border-custom-border-200 bg-custom-background-100">
+          <div className="ml-auto flex items-center gap-1.5 rounded-md border border-custom-border-200 bg-custom-background-100 px-2.5 py-1.5">
             <Search className="h-3.5 w-3.5 text-custom-text-400" />
             <input
-              className="max-w-[234px] w-full border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
+              className="w-full max-w-[234px] border-none bg-transparent text-sm outline-none placeholder:text-custom-text-400"
               placeholder="Search..."
               value={searchQuery}
               autoFocus
