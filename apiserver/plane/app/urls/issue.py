@@ -21,6 +21,7 @@ from plane.app.views import (
     IssueArchiveViewSet,
     IssueRelationViewSet,
     IssueDraftViewSet,
+    TransferProjectIssueEndpoint,
 )
 
 
@@ -311,5 +312,10 @@ urlpatterns = [
             }
         ),
         name="project-issue-draft",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/transfer-issues/",
+        TransferProjectIssueEndpoint.as_view(),
+        name="transfer-project-issue",
     ),
 ]

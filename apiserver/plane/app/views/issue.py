@@ -217,7 +217,9 @@ class IssueViewSet(WebhookMixin, BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(issue_dict, status=status.HTTP_200_OK)
 
@@ -1062,7 +1064,9 @@ class IssueArchiveViewSet(BaseViewSet):
             else issue_queryset.filter(parent__isnull=True)
         )
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(issue_dict, status=status.HTTP_200_OK)
 
@@ -1547,7 +1551,9 @@ class IssueDraftViewSet(BaseViewSet):
         else:
             issue_queryset = issue_queryset.order_by(order_by_param)
 
-        issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
+        issues = IssueLiteSerializer(
+            issue_queryset, many=True, fields=fields if fields else None
+        ).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
         return Response(issue_dict, status=status.HTTP_200_OK)
 
@@ -1627,3 +1633,60 @@ class IssueDraftViewSet(BaseViewSet):
             epoch=int(timezone.now().timestamp()),
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TransferProjectIssueEndpoint(BaseAPIView):
+    permission_classes = [
+        ProjectEntityPermission,
+    ]
+
+    def get(self, request, slug, project_id, issue_id):
+        transfer_project = request.GET.get("transfer_project", False)
+
+        if not transfer_project:
+            return Response(
+                {"error": "Transfer project id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get the issue
+        issue = Issue.objects.get(
+            workspace__slug=slug, project_id=project_id, pk=issue_id
+        )
+
+        # Get the transfered state
+        state = State.objects.filter(
+            workspace__slug=slug, project_id=transfer_project, group=issue.state.group
+        ).first()
+
+        # Get all the labels attached to issues
+        label_names = [label.name.lower() for label in issue.labels.all()]
+
+        query = Q()
+        for name in label_names:
+            query |= Q(name__iexact=name)
+
+        matching_labels = (
+            Label.objects.filter(workspace__slug=slug, project_id=transfer_project)
+            .filter(query)
+            .values("name", "color")
+        )
+
+        # assignees
+        assignee_ids = [assignee.id for assignee in issue.assignees.all()]
+
+        assignees = ProjectMember.objects.filter(
+            workspace__slug=slug, project_id=project_id, member_id__in=assignee_ids
+        ).values("member__display_name", "member__id", "member__avatar")
+
+        return Response(
+            {
+                "state": {
+                    "name": state.name,
+                    "id": state.id,
+                    "group": state.group,
+                },
+                "lables": matching_labels,
+                "members": assignees,
+            }
+        )
