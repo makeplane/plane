@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 // ui
-import { ChevronDown, PenSquare, Search } from "lucide-react";
+import { ChevronUp, PenSquare, Search } from "lucide-react";
 // hooks
 import useLocalStorage from "hooks/use-local-storage";
 // components
@@ -37,7 +37,6 @@ export const WorkspaceSidebarQuickAction = observer(() => {
         }}
         fieldsToShow={["all"]}
       />
-
       <div
         className={`mt-4 flex w-full cursor-pointer items-center justify-between px-4 ${
           isSidebarCollapsed ? "flex-col gap-1" : "gap-2"
@@ -74,10 +73,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                   isSidebarCollapsed ? "hidden" : "block"
                 }`}
               >
-                <ChevronDown
-                  size={16}
-                  className="rotate-0 transform !text-custom-sidebar-text-300 transition-transform duration-300 group-hover:rotate-180"
-                />
+                <ChevronUp className="h-4 w-4 transform !text-custom-sidebar-text-300 transition-transform duration-300 rotate-180 group-hover:rotate-0" />
               </button>
 
               <div
