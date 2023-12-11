@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root.store";
 import { IAppConfig } from "types/app";
 // services
 import { AppConfigService } from "services/app_config.service";

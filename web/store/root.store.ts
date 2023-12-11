@@ -5,7 +5,7 @@ import { AppRootStore } from "./application";
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
-  app;
+  app: AppRootStore;
   user;
   workspace;
   project;

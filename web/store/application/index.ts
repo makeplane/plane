@@ -1,3 +1,5 @@
+import { RootStore } from "../root.store";
+
 export class AppRootStore {
   config;
   commandPalette;
@@ -5,11 +7,11 @@ export class AppRootStore {
   instance;
   theme;
 
-  constructor() {
-    this.config = new ConfigStore();
-    this.commandPalette = new CommandPaletteStore();
-    this.eventTracker = new EventTrackerStore();
-    this.instance = new InstanceStore();
-    this.theme = new ThemeStore();
+  constructor(rootStore: RootStore) {
+    this.config = new ConfigStore(rootStore);
+    this.commandPalette = new CommandPaletteStore(rootStore);
+    this.eventTracker = new EventTrackerStore(rootStore);
+    this.instance = new InstanceStore(rootStore);
+    this.theme = new ThemeStore(rootStore);
   }
 }
