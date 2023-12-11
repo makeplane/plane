@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 import { usePopper } from "react-popper";
 import { Combobox } from "@headlessui/react";
-import { Check, ChevronDown, Search, User2 } from "lucide-react";
+import { Check, ChevronDown, CircleUser, Search } from "lucide-react";
 // ui
 import { Avatar, AvatarGroup, Tooltip } from "@plane/ui";
 // types
@@ -110,8 +110,8 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
             })}
           </AvatarGroup>
         ) : (
-          <span className="flex h-5 w-5 items-end justify-center rounded-full border border-dashed border-custom-text-400 bg-custom-background-80">
-            <User2 className="h-4 w-4 text-custom-text-400" />
+          <span className="h-5 w-5 grid place-items-center">
+            <CircleUser className="h-4 w-4" strokeWidth={1.5} />
           </span>
         )}
       </div>
@@ -140,7 +140,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
           ref={setReferenceElement}
           type="button"
           className={`flex w-full items-center justify-between gap-1 text-xs ${
-            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
+            disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer"
           } ${buttonClassName}`}
           onClick={() => !projectMembers && getWorkspaceMembers()}
         >
