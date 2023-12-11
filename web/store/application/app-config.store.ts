@@ -11,7 +11,7 @@ export interface IAppConfigStore {
   fetchAppConfig: () => Promise<any>;
 }
 
-class AppConfigStore implements IAppConfigStore {
+export class AppConfigStore implements IAppConfigStore {
   // observables
   envConfig: IAppConfig | null = null;
 
@@ -43,5 +43,3 @@ class AppConfigStore implements IAppConfigStore {
     }
   };
 }
-
-export default AppConfigStore;

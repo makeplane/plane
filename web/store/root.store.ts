@@ -1,6 +1,7 @@
 import { enableStaticRendering } from "mobx-react-lite";
 // root stores
 import { AppRootStore } from "./application";
+import { UserStore } from "./user";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -14,8 +15,8 @@ export class RootStore {
   projectView;
 
   constructor() {
-    this.app = new AppRootStore();
-    this.user = new UserRootStore();
+    this.app = new AppRootStore(this);
+    this.user = new UserStore(this);
     this.workspace = new WorkspaceRootStore();
     this.project = new ProjectRootStore();
     this.cycle = new CycleRootStore();
