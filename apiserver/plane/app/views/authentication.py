@@ -343,13 +343,6 @@ class MagicSignInEndpoint(BaseAPIView):
 
             if str(token) == str(user_token):
                 user = User.objects.get(email=email)
-                if not user.is_active:
-                    return Response(
-                        {
-                            "error": "Your account has been deactivated. Please contact your site administrator."
-                        },
-                        status=status.HTTP_403_FORBIDDEN,
-                    )
                 # Send event
                 auth_events.delay(
                     user=user.id,
