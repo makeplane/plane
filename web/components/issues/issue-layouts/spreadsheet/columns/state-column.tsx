@@ -22,7 +22,6 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
-  console.log(44 * (subIssues.length > 0 ? subIssues.length + 1 : 1));
   return (
     <>
       <IssuePropertyState
