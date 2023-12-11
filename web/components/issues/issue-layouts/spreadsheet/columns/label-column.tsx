@@ -29,7 +29,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         value={issue.labels}
         defaultOptions={issue?.label_details ? issue.label_details : []}
         onChange={(data) => onChange({ labels: data })}
-        className="h-11 w-full"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
         buttonClassName="px-2.5 h-full"
         hideDropdownArrow
         maxRender={1}

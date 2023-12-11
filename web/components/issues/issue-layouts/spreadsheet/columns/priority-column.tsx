@@ -24,8 +24,8 @@ export const SpreadsheetPriorityColumn: React.FC<Props> = ({ issue, onChange, ex
       <PrioritySelect
         value={issue.priority}
         onChange={(data) => onChange({ priority: data })}
-        className="h-11 w-full"
-        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
+        buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1"
         showTitle
         highlightUrgentPriority={false}
         hideDropdownArrow
