@@ -84,10 +84,10 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
     disabled: isLoading || disabled,
   });
 
+  const maxFileSize = envConfig?.file_size_limit ?? MAX_FILE_SIZE;
+
   const fileError =
-    fileRejections.length > 0
-      ? `Invalid file type or size (max ${envConfig?.file_size_limit ?? MAX_FILE_SIZE / 1024 / 1024} MB)`
-      : null;
+    fileRejections.length > 0 ? `Invalid file type or size (max ${maxFileSize / 1024 / 1024} MB)` : null;
 
   return (
     <div

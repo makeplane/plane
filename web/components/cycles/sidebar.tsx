@@ -281,10 +281,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
     cycleDetails.total_issues === 0
       ? "0 Issue"
       : cycleDetails.total_issues === cycleDetails.completed_issues
-        ? cycleDetails.total_issues > 1
-          ? `${cycleDetails.total_issues}`
-          : `${cycleDetails.total_issues}`
-        : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
+      ? cycleDetails.total_issues > 1
+        ? `${cycleDetails.total_issues}`
+        : `${cycleDetails.total_issues}`
+      : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
   return (
     <>
@@ -468,7 +468,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
 
                     <div className="flex items-center gap-2.5">
                       {progressPercentage ? (
-                        <span className="flex h-5 w-9 items-center justify-center rounded bg-amber-50 text-xs font-medium text-amber-500">
+                        <span className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-xs font-medium text-amber-500">
                           {progressPercentage ? `${progressPercentage}%` : ""}
                         </span>
                       ) : (
