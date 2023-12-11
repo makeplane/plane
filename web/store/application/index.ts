@@ -1,18 +1,27 @@
 import { RootStore } from "../root.store";
-import { AppConfigStore } from "./app-config.store";
-import { CommandPaletteStore } from "./command-palette.store";
-import { EventTrackerStore } from "./event-tracker.store";
-import { InstanceStore } from "./instance.store";
-import { RouterStore } from "./router.store";
-import { ThemeStore } from "./theme.store";
+import { AppConfigStore, IAppConfigStore } from "./app-config.store";
+import { CommandPaletteStore, ICommandPaletteStore } from "./command-palette.store";
+import { EventTrackerStore, IEventTrackerStore } from "./event-tracker.store";
+import { InstanceStore, IInstanceStore } from "./instance.store";
+import { RouterStore, IRouterStore } from "./router.store";
+import { ThemeStore, IThemeStore } from "./theme.store";
 
-export class AppRootStore {
-  config: AppConfigStore;
-  commandPalette: CommandPaletteStore;
-  eventTracker: EventTrackerStore;
-  instance: InstanceStore;
-  theme: ThemeStore;
-  router: RouterStore;
+export interface IAppRootStore {
+  config: IAppConfigStore;
+  commandPalette: ICommandPaletteStore;
+  eventTracker: IEventTrackerStore;
+  instance: IInstanceStore;
+  theme: IThemeStore;
+  router: IRouterStore;
+}
+
+export class AppRootStore implements IAppRootStore {
+  config: IAppConfigStore;
+  commandPalette: ICommandPaletteStore;
+  eventTracker: IEventTrackerStore;
+  instance: IInstanceStore;
+  theme: IThemeStore;
+  router: IRouterStore;
 
   constructor(rootStore: RootStore) {
     this.config = new AppConfigStore(rootStore);
