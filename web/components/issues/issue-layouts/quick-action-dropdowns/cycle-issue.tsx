@@ -75,7 +75,6 @@ export const CycleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log("issue", issue);
             setIssueToEdit({
               ...issue,
               cycle: cycleId?.toString() ?? null,
