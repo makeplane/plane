@@ -31,10 +31,10 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         onChange={(data) => onChange({ labels: data })}
         className="h-full w-full"
         buttonClassName="px-2.5 h-full"
-        noLabelBorder
         hideDropdownArrow
         maxRender={1}
         disabled={disabled}
+        placeholderText="Select labels"
       />
 
       {isExpanded &&
