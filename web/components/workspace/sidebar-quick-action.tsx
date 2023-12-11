@@ -73,7 +73,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
                   isSidebarCollapsed ? "hidden" : "block"
                 }`}
               >
-                <ChevronUp className="h-4 w-4 transform !text-custom-sidebar-text-300 transition-transform duration-300 rotate-180 group-hover:rotate-0" />
+                <ChevronUp className="h-4 w-4 rotate-180 transform !text-custom-sidebar-text-300 transition-transform duration-300 group-hover:rotate-0" />
               </button>
 
               <div

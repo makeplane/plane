@@ -73,7 +73,7 @@ export const OAuthOptions: React.FC<Props> = observer((props) => {
         <p className="mx-3 flex-shrink-0 text-center text-sm text-onboarding-text-400">Or continue with</p>
         <hr className="w-full border-onboarding-border-100" />
       </div>
-      <div className="mx-auto space-y-4 overflow-hidden mt-7 sm:w-96">
+      <div className="mx-auto mt-7 space-y-4 overflow-hidden sm:w-96">
         {envConfig?.google_client_id && (
           <GoogleSignInButton clientId={envConfig?.google_client_id} handleSignIn={handleGoogleSignIn} />
         )}
