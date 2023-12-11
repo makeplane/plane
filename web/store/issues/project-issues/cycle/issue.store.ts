@@ -257,6 +257,7 @@ export class CycleIssuesStore extends IssueBaseStore implements ICycleIssuesStor
       if (!_issues) _issues = {};
       if (!_issues[cycleId]) _issues[cycleId] = {};
       delete _issues?.[cycleId]?.[issueId];
+      _issues[cycleId] = { ..._issues[cycleId] };
 
       runInAction(() => {
         this.issues = _issues;
