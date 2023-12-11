@@ -100,7 +100,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                 activityItem.field !== "estimate" ? (
                   <span className="text-custom-text-200">
                     created{" "}
-                    <Link href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}>
+                    <Link
+                      href={`/${activityItem.workspace_detail.slug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
+                    >
                       <span className="inline-flex items-center hover:underline">
                         this issue. <ExternalLinkIcon className="ml-1 h-3.5 w-3.5" />
                       </span>
