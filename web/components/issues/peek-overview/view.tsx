@@ -17,7 +17,7 @@ import {
 // ui
 import { Button, CenterPanelIcon, CustomSelect, FullScreenPanelIcon, SidePanelIcon, Spinner } from "@plane/ui";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueLink, ILinkDetails } from "types";
 
 interface IIssueView {
   workspaceSlug: string;
@@ -38,6 +38,9 @@ interface IIssueView {
   issueCommentReactionRemove: (commentId: string, reaction: string) => void;
   issueSubscriptionCreate: () => void;
   issueSubscriptionRemove: () => void;
+  issueLinkCreate: (formData: IIssueLink) => Promise<ILinkDetails>;
+  issueLinkUpdate: (formData: IIssueLink, linkId: string) => Promise<ILinkDetails>;
+  issueLinkDelete: (linkId: string) => Promise<void>;
   handleDeleteIssue: () => Promise<void>;
   children: ReactNode;
   disableUserActions?: boolean;
@@ -84,6 +87,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
     issueCommentReactionRemove,
     issueSubscriptionCreate,
     issueSubscriptionRemove,
+    issueLinkCreate,
+    issueLinkUpdate,
+    issueLinkDelete,
     handleDeleteIssue,
     children,
     disableUserActions = false,
@@ -286,6 +292,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                         <PeekOverviewProperties
                           issue={issue}
                           issueUpdate={issueUpdate}
+                          issueLinkCreate={issueLinkCreate}
+                          issueLinkUpdate={issueLinkUpdate}
+                          issueLinkDelete={issueLinkDelete}
                           disableUserActions={disableUserActions}
                         />
 
@@ -342,6 +351,9 @@ export const IssueView: FC<IIssueView> = observer((props) => {
                           <PeekOverviewProperties
                             issue={issue}
                             issueUpdate={issueUpdate}
+                            issueLinkCreate={issueLinkCreate}
+                            issueLinkUpdate={issueLinkUpdate}
+                            issueLinkDelete={issueLinkDelete}
                             disableUserActions={disableUserActions}
                           />
                         </div>

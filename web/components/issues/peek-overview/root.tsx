@@ -10,7 +10,7 @@ import { IssueView } from "components/issues";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 // types
-import { IIssue } from "types";
+import { IIssue, IIssueLink } from "types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -42,6 +42,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
       removeIssueReaction,
       createIssueSubscription,
       removeIssueSubscription,
+      createIssueLink,
+      updateIssueLink,
+      deleteIssueLink,
       getIssue,
       loader,
       fetchPeekIssueDetails,
@@ -121,6 +124,13 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
 
   const issueSubscriptionRemove = () => removeIssueSubscription(workspaceSlug, projectId, issueId);
 
+  const issueLinkCreate = (formData: IIssueLink) => createIssueLink(workspaceSlug, projectId, issueId, formData);
+
+  const issueLinkUpdate = (formData: IIssueLink, linkId: string) =>
+    updateIssueLink(workspaceSlug, projectId, issueId, linkId, formData);
+
+  const issueLinkDelete = (linkId: string) => deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
+
   const handleDeleteIssue = async () => {
     if (isArchived) await deleteArchivedIssue(workspaceSlug, projectId, issue!);
     else removeIssueFromStructure(workspaceSlug, projectId, issue!);
@@ -159,6 +169,9 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
         issueCommentReactionRemove={issueCommentReactionRemove}
         issueSubscriptionCreate={issueSubscriptionCreate}
         issueSubscriptionRemove={issueSubscriptionRemove}
+        issueLinkCreate={issueLinkCreate}
+        issueLinkUpdate={issueLinkUpdate}
+        issueLinkDelete={issueLinkDelete}
         handleDeleteIssue={handleDeleteIssue}
         disableUserActions={[5, 10].includes(userRole)}
         showCommentAccessSpecifier={currentProjectDetails?.is_deployed}
