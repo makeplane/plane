@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "./root";
+import { RootStore } from "../root.store";
 import { IAppConfig } from "types/app";
 // services
 import { AppConfigService } from "services/app_config.service";
@@ -11,7 +11,7 @@ export interface IAppConfigStore {
   fetchAppConfig: () => Promise<any>;
 }
 
-class AppConfigStore implements IAppConfigStore {
+export class AppConfigStore implements IAppConfigStore {
   // observables
   envConfig: IAppConfig | null = null;
 
@@ -43,5 +43,3 @@ class AppConfigStore implements IAppConfigStore {
     }
   };
 }
-
-export default AppConfigStore;

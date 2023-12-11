@@ -147,7 +147,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     setIsDragStarted(true);
   };
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     setIsDragStarted(false);
 
     if (!result) return;
@@ -171,7 +171,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         });
         setDeleteIssueModal(true);
       } else {
-        handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds);
+        await handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds).catch(
+          (err) => {
+            setToastAlert({
+              title: "Error",
+              type: "error",
+              message: err.detail ?? "Failed to perform this action",
+            });
+          }
+        );
       }
     }
   };

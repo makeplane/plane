@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import type { FieldError } from "react-hook-form";
 // mobx store
@@ -23,9 +22,6 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
   const { value, onChange } = props;
   const [query, setQuery] = useState("");
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
 
@@ -33,13 +29,13 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
     placement: "bottom-start",
   });
 
-  const { project: projectStore } = useMobxStore();
+  const {
+    project: { joinedProjects },
+  } = useMobxStore();
 
-  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+  const selectedProject = joinedProjects?.find((i) => i.id === value);
 
-  const selectedProject = projects?.find((i) => i.id === value);
-
-  const options = projects?.map((project) => ({
+  const options = joinedProjects?.map((project) => ({
     value: project.id,
     query: project.name,
     content: (
@@ -61,8 +57,8 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
         {selectedProject.emoji
           ? renderEmoji(selectedProject.emoji)
           : selectedProject.icon_prop
-            ? renderEmoji(selectedProject.icon_prop)
-            : null}
+          ? renderEmoji(selectedProject.icon_prop)
+          : null}
       </span>
       <div className="truncate">{selectedProject.identifier}</div>
     </div>

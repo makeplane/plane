@@ -10,11 +10,17 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-
 // store
 import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import useDraggableInPortal from "hooks/use-draggable-portal";
 // components
-import { CreateUpdateLabelInline, DeleteLabelModal, ProjectSettingLabelGroup } from "components/labels";
+import {
+  CreateUpdateLabelInline,
+  DeleteLabelModal,
+  ProjectSettingLabelGroup,
+  ProjectSettingLabelItem,
+} from "components/labels";
 // ui
 import { Button, Loader } from "@plane/ui";
 import { EmptyState } from "components/common";
@@ -22,9 +28,6 @@ import { EmptyState } from "components/common";
 import emptyLabel from "public/empty-state/label.svg";
 // types
 import { IIssueLabel } from "types";
-//component
-import { ProjectSettingLabelItem } from "./project-setting-label-item";
-import useDraggableInPortal from "hooks/use-draggable-portal";
 
 const LABELS_ROOT = "labels.root";
 
@@ -137,7 +140,7 @@ export const ProjectSettingsLabelList: React.FC = observer(() => {
                 isDropDisabled={isUpdating}
               >
                 {(droppableProvided, droppableSnapshot) => (
-                  <div className={`mt-3`} ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
+                  <div className="mt-3" ref={droppableProvided.innerRef} {...droppableProvided.droppableProps}>
                     {projectLabelsTree.map((label, index) => {
                       if (label.children && label.children.length) {
                         return (

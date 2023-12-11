@@ -108,7 +108,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
           value={issue?.start_date || null}
           onChange={(date: string) => handleStartDate(date)}
           disabled={isReadonly}
-          placeHolder="Start date"
+          type="start_date"
         />
       )}
 
@@ -118,7 +118,7 @@ export const ListProperties: FC<IListProperties> = observer((props) => {
           value={issue?.target_date || null}
           onChange={(date: string) => handleTargetDate(date)}
           disabled={isReadonly}
-          placeHolder="Target date"
+          type="target_date"
         />
       )}
 

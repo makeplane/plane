@@ -24,7 +24,7 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = ({ issue, onChange, exp
       <ViewDueDateSelect
         issue={issue}
         onChange={(val) => onChange({ target_date: val })}
-        className="flex !h-full !w-full max-w-full items-center px-2.5 py-1"
+        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1"
         noBorder
         disabled={disabled}
       />
@@ -34,13 +34,15 @@ export const SpreadsheetDueDateColumn: React.FC<Props> = ({ issue, onChange, exp
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetDueDateColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetDueDateColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );

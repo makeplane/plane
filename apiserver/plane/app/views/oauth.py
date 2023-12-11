@@ -167,12 +167,6 @@ class OauthEndpoint(BaseAPIView):
                 ]
             )
 
-            if not GOOGLE_CLIENT_ID or not GITHUB_CLIENT_ID:
-                return Response(
-                    {"error": "Github or Google login is not configured"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             if not medium or not id_token:
                 return Response(
                     {

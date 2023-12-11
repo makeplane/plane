@@ -5,11 +5,12 @@ import { ProjectRootStore } from "./project";
 import { CycleStore } from "./cycle.store";
 import { ProjectViewsStore } from "./project-view.store";
 import { ModulesStore } from "./module.store";
+import { UserStore } from "./user";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
-  app;
+  app: AppRootStore;
   user;
   workspace;
   project;
@@ -18,8 +19,8 @@ export class RootStore {
   projectView;
 
   constructor() {
-    this.app = new AppRootStore();
-    // this.user = new UserRootStore();
+    this.app = new AppRootStore(this);
+    this.user = new UserStore(this);
     // this.workspace = new WorkspaceRootStore();
     this.project = new ProjectRootStore(this);
     this.cycle = new CycleStore(this);

@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 // components
 import { CalendarChart, IssuePeekOverview } from "components/issues";
+// hooks
+import useToast from "hooks/use-toast";
 // types
 import { IIssue } from "types";
 import {
@@ -34,7 +36,7 @@ interface IBaseCalendarRoot {
     [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
   };
   viewId?: string;
-  handleDragDrop: (source: any, destination: any, issues: any, issueWithIds: any) => void;
+  handleDragDrop: (source: any, destination: any, issues: any, issueWithIds: any) => Promise<void>;
 }
 
 export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
@@ -44,12 +46,15 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
 
+  // hooks
+  const { setToastAlert } = useToast();
+
   const displayFilters = issuesFilterStore.issueFilters?.displayFilters;
 
   const issues = issueStore.getIssues;
   const groupedIssueIds = (issueStore.getIssuesIds ?? {}) as IGroupedIssues;
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     if (!result) return;
 
     // return if not dropped on the correct place
@@ -58,7 +63,15 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
     // return if dropped on the same date
     if (result.destination.droppableId === result.source.droppableId) return;
 
-    if (handleDragDrop) handleDragDrop(result.source, result.destination, issues, groupedIssueIds);
+    if (handleDragDrop) {
+      await handleDragDrop(result.source, result.destination, issues, groupedIssueIds).catch((err) => {
+        setToastAlert({
+          title: "Error",
+          type: "error",
+          message: err.detail ?? "Failed to perform this action",
+        });
+      });
+    }
   };
 
   const handleIssues = useCallback(

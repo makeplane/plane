@@ -94,7 +94,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
 
   const label = (
     <Tooltip tooltipHeading="State" tooltipContent={selectedOption?.name ?? ""} position="top">
-      <div className="flex w-full cursor-pointer items-center gap-2 text-custom-text-200">
+      <div className="flex w-full items-center gap-2 text-custom-text-200">
         {selectedOption && <StateGroupIcon stateGroup={selectedOption?.group as any} color={selectedOption?.color} />}
         <span className="line-clamp-1 inline-block truncate">{selectedOption?.name ?? "State"}</span>
       </div>

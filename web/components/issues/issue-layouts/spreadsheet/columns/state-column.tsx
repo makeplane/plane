@@ -29,7 +29,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
         value={issue.state}
         defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
         onChange={(data) => onChange({ state: data.id, state_detail: data })}
-        className="h-full w-full"
+        className="w-full !h-11"
         buttonClassName="!shadow-none !border-0 h-full w-full"
         hideDropdownArrow
         disabled={disabled}
@@ -40,14 +40,16 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue) => (
-          <SpreadsheetStateColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            states={states}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className="h-11">
+            <SpreadsheetStateColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              states={states}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );
