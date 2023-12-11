@@ -121,8 +121,9 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     });
 
     try {
-      quickAddCallback && quickAddCallback(workspaceSlug, projectId, payload, viewId);
-
+      if (quickAddCallback) {
+        await quickAddCallback(workspaceSlug, projectId, payload, viewId);
+      }
       setToastAlert({
         type: "success",
         title: "Success!",
