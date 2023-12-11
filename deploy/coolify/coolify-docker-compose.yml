@@ -7,7 +7,6 @@ services:
     restart: always
     command: /usr/local/bin/start.sh web/server.js web
     environment:
-      - NEXT_PUBLIC_ENABLE_OAUTH=${NEXT_PUBLIC_ENABLE_OAUTH:-0}
       - NEXT_PUBLIC_DEPLOY_URL=$SERVICE_FQDN_SPACE_8082
     depends_on:
       - api
@@ -21,7 +20,6 @@ services:
     command: /usr/local/bin/start.sh space/server.js space
     environment:
       - SERVICE_FQDN_SPACE_8082=/api
-      - NEXT_PUBLIC_ENABLE_OAUTH=${NEXT_PUBLIC_ENABLE_OAUTH:-0}
     depends_on:
       - api
       - worker
