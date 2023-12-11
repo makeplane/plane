@@ -250,6 +250,7 @@ export class ModuleIssuesStore extends IssueBaseStore implements IModuleIssuesSt
       if (!_issues) _issues = {};
       if (!_issues[moduleId]) _issues[moduleId] = {};
       delete _issues?.[moduleId]?.[issueId];
+      _issues[moduleId] = { ..._issues[moduleId] };
 
       runInAction(() => {
         this.issues = _issues;

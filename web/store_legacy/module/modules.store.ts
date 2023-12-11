@@ -3,15 +3,15 @@ import { action, computed, observable, makeObservable, runInAction } from "mobx"
 import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
 // types
-
-import { IIssue, IModule, ILinkDetails } from "types";
+import { RootStore } from "../root";
+import { IIssue, IModule, ILinkDetails, ModuleLink } from "types";
 import {
   IIssueGroupWithSubGroupsStructure,
   IIssueGroupedStructure,
   IIssueUnGroupedStructure,
 } from "../issue/issue.store";
 import { IBlockUpdateData } from "components/gantt-chart";
-import { RootStore } from "store/root.store";
+// import { RootStore } from "store/root.store";
 
 export interface IModuleStore {
   // states
@@ -55,14 +55,14 @@ export interface IModuleStore {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: Partial<ILinkDetails>
+    data: ModuleLink
   ) => Promise<ILinkDetails>;
   updateModuleLink: (
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
     linkId: string,
-    data: Partial<ILinkDetails>
+    data: ModuleLink
   ) => Promise<ILinkDetails>;
   deleteModuleLink: (workspaceSlug: string, projectId: string, moduleId: string, linkId: string) => Promise<void>;
 
@@ -310,12 +310,7 @@ export class ModuleStore implements IModuleStore {
     }
   };
 
-  createModuleLink = async (
-    workspaceSlug: string,
-    projectId: string,
-    moduleId: string,
-    data: Partial<ILinkDetails>
-  ) => {
+  createModuleLink = async (workspaceSlug: string, projectId: string, moduleId: string, data: ModuleLink) => {
     try {
       const response = await this.moduleService.createModuleLink(workspaceSlug, projectId, moduleId, data);
 
@@ -355,7 +350,7 @@ export class ModuleStore implements IModuleStore {
     projectId: string,
     moduleId: string,
     linkId: string,
-    data: Partial<ILinkDetails>
+    data: ModuleLink
   ) => {
     try {
       const response = await this.moduleService.updateModuleLink(workspaceSlug, projectId, moduleId, linkId, data);

@@ -4,7 +4,7 @@ import { IssueService, IssueReactionService, IssueCommentService } from "service
 import { NotificationService } from "services/notification.service";
 // types
 import { RootStore } from "../root";
-import type { IIssue, IIssueActivity } from "types";
+import type { IIssue, IIssueActivity, IIssueLink, ILinkDetails } from "types";
 // constants
 import { groupReactionEmojis } from "constants/issue";
 
@@ -50,6 +50,21 @@ export interface IIssueDetailStore {
   fetchIssueReactions: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   createIssueReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<void>;
   removeIssueReaction: (workspaceSlug: string, projectId: string, issueId: string, reaction: string) => Promise<void>;
+
+  createIssueLink: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    data: IIssueLink
+  ) => Promise<ILinkDetails>;
+  updateIssueLink: (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    linkId: string,
+    data: IIssueLink
+  ) => Promise<ILinkDetails>;
+  deleteIssueLink: (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => Promise<void>;
 
   fetchIssueActivity: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   createIssueComment: (workspaceSlug: string, projectId: string, issueId: string, data: any) => Promise<void>;
@@ -146,6 +161,10 @@ export class IssueDetailStore implements IIssueDetailStore {
       fetchIssueReactions: action,
       createIssueReaction: action,
       removeIssueReaction: action,
+
+      createIssueLink: action,
+      updateIssueLink: action,
+      deleteIssueLink: action,
 
       fetchIssueActivity: action,
       createIssueComment: action,
@@ -586,6 +605,91 @@ export class IssueDetailStore implements IIssueDetailStore {
       }
     } catch (error) {
       console.warn("error removing the issue comment", error);
+      throw error;
+    }
+  };
+
+  createIssueLink = async (workspaceSlug: string, projectId: string, issueId: string, data: IIssueLink) => {
+    try {
+      const response = await this.issueService.createIssueLink(workspaceSlug, projectId, issueId, data);
+
+      runInAction(() => {
+        this.issues = {
+          ...this.issues,
+          [issueId]: {
+            ...this.issues[issueId],
+            issue_link: [response, ...this.issues[issueId].issue_link],
+          },
+        };
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Failed to create link in store", error);
+
+      this.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  updateIssueLink = async (
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    linkId: string,
+    data: IIssueLink
+  ) => {
+    try {
+      const response = await this.issueService.updateIssueLink(workspaceSlug, projectId, issueId, linkId, data);
+
+      runInAction(() => {
+        this.issues = {
+          ...this.issues,
+          [issueId]: {
+            ...this.issues[issueId],
+            issue_link: this.issues[issueId].issue_link.map((link) => (link.id === linkId ? response : link)),
+          },
+        };
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Failed to update link in issue store", error);
+
+      this.fetchIssueDetails(workspaceSlug, projectId, issueId);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
+      throw error;
+    }
+  };
+
+  deleteIssueLink = async (workspaceSlug: string, projectId: string, issueId: string, linkId: string) => {
+    try {
+      runInAction(() => {
+        this.issues = {
+          ...this.issues,
+          [issueId]: {
+            ...this.issues[issueId],
+            issue_link: this.issues[issueId].issue_link.filter((link) => link.id !== linkId),
+          },
+        };
+      });
+      await this.issueService.deleteIssueLink(workspaceSlug, projectId, issueId, linkId);
+    } catch (error) {
+      console.error("Failed to delete link in issue store", error);
+
+      runInAction(() => {
+        this.error = error;
+      });
+
       throw error;
     }
   };

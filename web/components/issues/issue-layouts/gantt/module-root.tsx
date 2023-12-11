@@ -7,9 +7,15 @@ import { useRouter } from "next/router";
 
 export const ModuleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { moduleId } = router.query as { moduleId: string };
+  const { moduleId } = router.query;
 
   const { moduleIssues: moduleIssueStore, moduleIssuesFilter: moduleIssueFilterStore } = useMobxStore();
 
-  return <BaseGanttRoot issueFiltersStore={moduleIssueFilterStore} issueStore={moduleIssueStore} viewId={moduleId} />;
+  return (
+    <BaseGanttRoot
+      issueFiltersStore={moduleIssueFilterStore}
+      issueStore={moduleIssueStore}
+      viewId={moduleId?.toString()}
+    />
+  );
 });
