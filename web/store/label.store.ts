@@ -11,7 +11,7 @@ import { buildTree } from "helpers/array.helper";
 import { RootStore } from "./root.store";
 
 export interface ILabelStore {
-  labels: { [key: string]: IIssueLabel };
+  labels: Record<string, IIssueLabel>;
   projectLabels: IIssueLabel[] | undefined;
   projectLabelsTree: IIssueLabelTree[] | undefined;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<IIssueLabel[]>;
@@ -35,7 +35,7 @@ export interface ILabelStore {
 }
 
 export class LabelStore {
-  labels: { [key: string]: IIssueLabel } = {};
+  labels: Record<string, IIssueLabel> = {};
   issueLabelService;
   router;
 
