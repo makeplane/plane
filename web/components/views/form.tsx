@@ -54,7 +54,14 @@ export const ProjectViewForm: React.FC<Props> = observer(({ handleFormSubmit, ha
 
   // for removing filters from a key
   const handleRemoveFilter = (key: keyof IIssueFilterOptions, value: string | null) => {
-    if (!value) return;
+    // If value is null then remove all the filters of that key
+    if (!value) {
+      setValue("query_data", {
+        ...selectedFilters,
+        [key]: null,
+      });
+      return;
+    }
 
     const newValues = selectedFilters?.[key] ?? [];
 
