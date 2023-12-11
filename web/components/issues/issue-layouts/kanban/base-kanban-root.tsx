@@ -21,9 +21,9 @@ import {
   IProjectIssuesStore,
   IViewIssuesFilterStore,
   IViewIssuesStore,
-} from "store/issues";
+} from "store_legacy/issues";
 import { IQuickActionProps } from "../list/list-view-types";
-import { IIssueKanBanViewStore } from "store/issue";
+import { IIssueKanBanViewStore } from "store_legacy/issue";
 // hooks
 import useToast from "hooks/use-toast";
 // constants
@@ -31,7 +31,7 @@ import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { DeleteIssueModal, IssuePeekOverview } from "components/issues";
 import { EUserWorkspaceRoles } from "constants/workspace";
 

@@ -4,11 +4,11 @@ import { ListGroupByHeaderRoot } from "./headers/group-by-root";
 import { IssueBlocksList, ListQuickAddIssueForm } from "components/issues";
 // types
 import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
-import { IIssueResponse, IGroupedIssues, TUnGroupedIssues } from "store/issues/types";
+import { IIssueResponse, IGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 // constants
 import { getValueFromObject } from "constants/issue";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export interface IGroupByList {
   issueIds: IGroupedIssues | TUnGroupedIssues | any;

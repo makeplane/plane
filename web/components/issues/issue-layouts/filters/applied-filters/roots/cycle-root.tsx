@@ -7,7 +7,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { AppliedFiltersList, SaveFilterView } from "components/issues";
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { EFilterType } from "store_legacy/issues/types";
 
 export const CycleAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();

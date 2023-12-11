@@ -9,7 +9,7 @@ import { DisplayFiltersSelection, FiltersDropdown, FilterSelection, LayoutSelect
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EFilterType } from "store/issues/types";
+import { EFilterType } from "store_legacy/issues/types";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 

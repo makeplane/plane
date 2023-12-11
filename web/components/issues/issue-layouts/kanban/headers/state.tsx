@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 import { Icon } from "./state-group";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { IIssue } from "types";
 
 export interface IStateHeader {

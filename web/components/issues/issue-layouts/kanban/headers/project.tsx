@@ -5,7 +5,7 @@ import { HeaderGroupByCard } from "./group-by-card";
 import { HeaderSubGroupByCard } from "./sub-group-by-card";
 // emoji helper
 import { renderEmoji } from "helpers/emoji.helper";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { IIssue } from "types";
 
 export interface IProjectHeader {

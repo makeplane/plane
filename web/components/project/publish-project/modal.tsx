@@ -9,7 +9,7 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { Button, Loader, ToggleSwitch } from "@plane/ui";
 import { Check, CircleDot, Globe2 } from "lucide-react";
 import { CustomPopover } from "./popover";
-import { IProjectPublishSettings, TProjectPublishViews } from "store/project";
+import { IProjectPublishSettings, TProjectPublishViews } from "store_legacy/project";
 // hooks
 import useToast from "hooks/use-toast";
 // types

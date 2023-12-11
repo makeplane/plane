@@ -9,7 +9,7 @@ import { Tooltip } from "@plane/ui";
 import { Check, ChevronDown, Search } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 import { IIssueLabel } from "types";
 
 export interface IIssuePropertyLabels {

@@ -12,10 +12,10 @@ import { AllIssueQuickActions } from "components/issues/issue-layouts/quick-acti
 import { Spinner } from "@plane/ui";
 // types
 import { IIssue, IIssueDisplayFilterOptions, TStaticViewTypes } from "types";
-import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { EIssueActions } from "../types";
 
-import { EFilterType, TUnGroupedIssues } from "store/issues/types";
+import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {

@@ -11,7 +11,7 @@ import {
   IModuleIssuesFilterStore,
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
-} from "store/issues";
+} from "store_legacy/issues";
 
 interface ICalendarHeader {
   issuesFilterStore:

@@ -9,7 +9,7 @@ import { LabelHeader } from "./label";
 import { CreatedByHeader } from "./created-by";
 // mobx
 import { observer } from "mobx-react-lite";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { IIssue } from "types";
 
 export interface IListGroupByHeaderRoot {

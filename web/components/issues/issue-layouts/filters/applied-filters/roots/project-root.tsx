@@ -8,7 +8,7 @@ import { AppliedFiltersList, SaveFilterView } from "components/issues";
 
 // types
 import { IIssueFilterOptions } from "types";
-import { EFilterType } from "store/issues/types";
+import { EFilterType } from "store_legacy/issues/types";
 
 export const ProjectAppliedFiltersRoot: React.FC = observer(() => {
   const router = useRouter();

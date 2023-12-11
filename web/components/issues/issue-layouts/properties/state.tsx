@@ -12,7 +12,7 @@ import { Check, ChevronDown, Search } from "lucide-react";
 // types
 import { IState } from "types";
 import { Placement } from "@popperjs/core";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 
 export interface IIssuePropertyState {
   projectId: string | null;

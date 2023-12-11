@@ -12,7 +12,7 @@ import {
   IssueGanttSidebar,
 } from "components/gantt-chart";
 // types
-import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { IIssue } from "types";
 import {
   ICycleIssuesFilterStore,
@@ -23,8 +23,8 @@ import {
   IProjectIssuesStore,
   IViewIssuesFilterStore,
   IViewIssuesStore,
-} from "store/issues";
-import { TUnGroupedIssues } from "store/issues/types";
+} from "store_legacy/issues";
+import { TUnGroupedIssues } from "store_legacy/issues/types";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IBaseGanttRoot {

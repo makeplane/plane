@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 // icons
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks

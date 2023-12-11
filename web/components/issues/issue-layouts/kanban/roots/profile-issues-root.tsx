@@ -9,7 +9,7 @@ import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
 import { BaseKanBanRoot } from "../base-kanban-root";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProfileIssuesKanBanLayout: React.FC = observer(() => {

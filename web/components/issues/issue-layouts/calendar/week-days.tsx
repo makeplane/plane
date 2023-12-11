@@ -6,13 +6,13 @@ import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { ICalendarDate, ICalendarWeek } from "./types";
 import { IIssue } from "types";
-import { IGroupedIssues, IIssueResponse } from "store/issues/types";
+import { IGroupedIssues, IIssueResponse } from "store_legacy/issues/types";
 import {
   ICycleIssuesFilterStore,
   IModuleIssuesFilterStore,
   IProjectIssuesFilterStore,
   IViewIssuesFilterStore,
-} from "store/issues";
+} from "store_legacy/issues";
 
 type Props = {
   issuesFilterStore:

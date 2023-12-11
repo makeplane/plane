@@ -9,9 +9,9 @@ import { ArchivedIssueQuickActions } from "components/issues";
 import { IIssue } from "types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store/project";
+import { IProjectStore } from "store_legacy/project";
 import { EIssueActions } from "../../types";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ArchivedIssueListLayout: FC = observer(() => {
   const router = useRouter();

@@ -5,10 +5,10 @@ import { useRouter } from "next/router";
 import { DisplayFiltersSelection, FilterSelection, FiltersDropdown, LayoutSelection } from "components/issues";
 // hooks
 import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store/root";
+import { RootStore } from "store_legacy/root";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
+import { EFilterType } from "store_legacy/issues/types";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 
 export const ProfileIssuesFilter = observer(() => {

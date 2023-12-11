@@ -19,8 +19,8 @@ import { renderEmoji } from "helpers/emoji.helper";
 import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOptions, TIssueLayouts } from "types";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
-import { EFilterType } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
+import { EFilterType } from "store_legacy/issues/types";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ModuleIssuesHeader: React.FC = observer(() => {
   const [analyticsModal, setAnalyticsModal] = useState(false);

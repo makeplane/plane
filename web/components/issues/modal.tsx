@@ -16,7 +16,7 @@ import { IssueForm, ConfirmIssueDiscard } from "components/issues";
 import type { IIssue } from "types";
 // fetch-keys
 import { USER_ISSUE, SUB_ISSUES } from "constants/fetch-keys";
-import { EProjectStore } from "store/command-palette.store";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export interface IssuesModalProps {
   data?: IIssue | null;

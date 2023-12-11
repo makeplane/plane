@@ -1,4 +1,4 @@
-import { IIssueUnGroupedStructure } from "store/issue";
+import { IIssueUnGroupedStructure } from "store_legacy/issue";
 import { SpreadsheetView } from "./spreadsheet-view";
 import { FC, useCallback } from "react";
 import { IIssue, IIssueDisplayFilterOptions } from "types";
@@ -13,9 +13,9 @@ import {
   IProjectIssuesStore,
   IViewIssuesFilterStore,
   IViewIssuesStore,
-} from "store/issues";
+} from "store_legacy/issues";
 import { observer } from "mobx-react-lite";
-import { EFilterType, TUnGroupedIssues } from "store/issues/types";
+import { EFilterType, TUnGroupedIssues } from "store_legacy/issues/types";
 import { EIssueActions } from "../types";
 import { IQuickActionProps } from "../list/list-view-types";
 import { EUserWorkspaceRoles } from "constants/workspace";

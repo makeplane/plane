@@ -2,7 +2,7 @@
 import { KanbanIssueBlock } from "components/issues";
 import { IIssueDisplayProperties, IIssue } from "types";
 import { EIssueActions } from "../types";
-import { IIssueResponse } from "store/issues/types";
+import { IIssueResponse } from "store_legacy/issues/types";
 
 interface IssueBlocksListProps {
   sub_group_id: string;

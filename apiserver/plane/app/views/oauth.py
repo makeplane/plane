@@ -182,9 +182,19 @@ class OauthEndpoint(BaseAPIView):
                 )
 
             if medium == "google":
+                if not GOOGLE_CLIENT_ID:
+                    return Response(
+                        {"error": "Google login is not configured"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 data = validate_google_token(id_token, client_id)
 
             if medium == "github":
+                if not GITHUB_CLIENT_ID:
+                    return Response(
+                        {"error": "Github login is not configured"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
                 access_token = get_access_token(id_token, client_id)
                 data = get_user_data(access_token)
 

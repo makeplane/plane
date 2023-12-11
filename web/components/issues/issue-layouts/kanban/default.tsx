@@ -11,8 +11,8 @@ import { IIssueDisplayProperties, IIssue, IState } from "types";
 // constants
 import { getValueFromObject } from "constants/issue";
 import { EIssueActions } from "../types";
-import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store/issues/types";
-import { EProjectStore } from "store/command-palette.store";
+import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
+import { EProjectStore } from "store_legacy/command-palette.store";
 
 export interface IGroupByKanBan {
   issues: IIssueResponse;

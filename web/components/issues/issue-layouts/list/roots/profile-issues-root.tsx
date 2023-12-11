@@ -10,8 +10,8 @@ import { IIssue } from "types";
 import { EIssueActions } from "../../types";
 // constants
 import { BaseListRoot } from "../base-list-root";
-import { IProjectStore } from "store/project";
-import { EProjectStore } from "store/command-palette.store";
+import { IProjectStore } from "store_legacy/project";
+import { EProjectStore } from "store_legacy/command-palette.store";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProfileIssuesListLayout: FC = observer(() => {
