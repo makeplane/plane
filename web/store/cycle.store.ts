@@ -1,5 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
-import { set } from "lodash";
+import set from "lodash/set";
 // types
 import { ICycle, TCycleView, CycleDateCheckData } from "types";
 // mobx

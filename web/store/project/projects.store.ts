@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import set from "lodash/set";
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
 //types
 import { RootStore } from "../root.store";
@@ -54,7 +54,7 @@ export class ProjectsStore implements IProjectsStore {
     [workspaceSlug: string]: {
       [projectId: string]: IProject; // projectId: project Info
     };
-  };
+  } = {};
 
   // root store
   rootStore: RootStore;
@@ -129,7 +129,7 @@ export class ProjectsStore implements IProjectsStore {
 
   get currentProjectDetails() {
     if (!this.rootStore.app.router.projectId || !this.rootStore.app.router.workspaceSlug) return;
-    return this.projectMap[this.rootStore.app.router.workspaceSlug][this.projectId];
+    return this.projectMap[this.rootStore.app.router.workspaceSlug][this.rootStore.app.router.projectId];
   }
 
   get joinedProjects() {

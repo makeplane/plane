@@ -1,7 +1,7 @@
 import { makeObservable, observable, computed, action, runInAction } from "mobx";
 import groupBy from "lodash/groupBy";
 import keyBy from "lodash/keyBy";
-import { set } from "lodash";
+import set from "lodash/set";
 // store
 import { RootStore } from "./root.store";
 // types

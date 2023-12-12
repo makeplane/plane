@@ -1,4 +1,4 @@
-import { set } from "lodash";
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import { ViewService } from "services/view.service";

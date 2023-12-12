@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, runInAction, computed } from "mobx";
 import keyBy from "lodash/keyBy";
-import { set } from "lodash";
+import set from "lodash/set";
 // services
 import { IssueLabelService } from "services/issue";
 // types

@@ -87,33 +87,33 @@ export class UserMembershipStore implements IUserMembershipStore {
   }
 
   get currentWorkspaceMemberInfo() {
-    if (!this.router.query?.workspaceSlug) return;
-    return this.workspaceMemberInfo[this.router.query?.workspaceSlug];
+    if (!this.router.workspaceSlug) return;
+    return this.workspaceMemberInfo[this.router.workspaceSlug];
   }
 
   get currentWorkspaceRole() {
-    if (!this.router.query?.workspaceSlug) return;
-    return this.workspaceMemberInfo[this.router.query?.workspaceSlug]?.role;
+    if (!this.router.workspaceSlug) return;
+    return this.workspaceMemberInfo[this.router.workspaceSlug]?.role;
   }
 
   get currentProjectMemberInfo() {
-    if (!this.router.query?.projectId) return;
-    return this.projectMemberInfo[this.router.query?.projectId];
+    if (!this.router.projectId) return;
+    return this.projectMemberInfo[this.router.projectId];
   }
 
   get currentProjectRole() {
-    if (!this.router.query?.projectId) return;
-    return this.projectMemberInfo[this.router.query?.projectId]?.role;
+    if (!this.router.projectId) return;
+    return this.projectMemberInfo[this.router.projectId]?.role;
   }
 
   get hasPermissionToCurrentWorkspace() {
-    if (!this.router.query?.workspaceSlug) return;
-    return this.hasPermissionToWorkspace[this.router.query?.workspaceSlug];
+    if (!this.router.workspaceSlug) return;
+    return this.hasPermissionToWorkspace[this.router.workspaceSlug];
   }
 
   get hasPermissionToCurrentProject() {
-    if (!this.router.query?.projectId) return;
-    return this.hasPermissionToProject[this.router.query?.projectId];
+    if (!this.router.projectId) return;
+    return this.hasPermissionToProject[this.router.projectId];
   }
 
   fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
