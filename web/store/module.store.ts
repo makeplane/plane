@@ -1,4 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import set from "lodash/set";
 // services
 import { ProjectService } from "services/project";
 import { ModuleService } from "services/module.service";
@@ -79,12 +80,12 @@ export class ModulesStore implements IModuleStore {
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // states
-      loader: observable,
+      loader: observable.ref,
       error: observable.ref,
 
       // observables
       moduleId: observable.ref,
-      moduleMap: observable.ref,
+      moduleMap: observable,
 
       // actions
       getModuleById: action,
@@ -116,12 +117,16 @@ export class ModulesStore implements IModuleStore {
 
   // computed
   get projectModules() {
-    if (!this.rootStore.project.projectId) return null;
+    if (!this.rootStore.app.router.projectId) return null;
 
-    return Object.keys(this.moduleMap[this.rootStore.project.projectId]) || null;
+    return Object.keys(this.moduleMap[this.rootStore.app.router.projectId]) || null;
   }
 
-  getModuleById = (moduleId: string) => this.moduleMap[this.rootStore.project.projectId][moduleId] || null;
+  getModuleById = (moduleId: string) => {
+    if (!this.rootStore.app.router.projectId) return null;
+
+    return this.moduleMap?.[this.rootStore.app.router.projectId]?.[moduleId] || null;
+  };
 
   // actions
 
@@ -134,11 +139,9 @@ export class ModulesStore implements IModuleStore {
 
       const modulesResponse = await this.moduleService.getModules(workspaceSlug, projectId);
 
+      const _moduleMap = set(this.moduleMap, [projectId], modulesResponse);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: modulesResponse,
-        };
+        this.moduleMap = _moduleMap;
         this.loader = false;
         this.error = null;
       });
@@ -161,14 +164,9 @@ export class ModulesStore implements IModuleStore {
 
       const response = await this.moduleService.getModuleDetails(workspaceSlug, projectId, moduleId);
 
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId], response);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: response,
-          },
-        };
+        this.moduleMap = _moduleMap;
         this.loader = false;
         this.error = null;
       });
@@ -190,14 +188,9 @@ export class ModulesStore implements IModuleStore {
     try {
       const response = await this.moduleService.createModule(workspaceSlug, projectId, data);
 
+      const _moduleMap = set(this.moduleMap, [projectId, response?.id], response);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [response.id]: response,
-          },
-        };
+        this.moduleMap = _moduleMap;
         this.loader = false;
         this.error = null;
       });
@@ -219,14 +212,9 @@ export class ModulesStore implements IModuleStore {
     try {
       const currentModule = this.moduleMap[projectId][moduleId];
 
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId], { ...currentModule, ...data });
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, ...data },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
 
       const response = await this.moduleService.patchModule(workspaceSlug, projectId, moduleId, data);
@@ -251,11 +239,9 @@ export class ModulesStore implements IModuleStore {
       const currentProjectModules = this.moduleMap[projectId];
       delete currentProjectModules[moduleId];
 
+      const _moduleMap = set(this.moduleMap, [projectId], currentProjectModules);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: currentProjectModules,
-        };
+        this.moduleMap = _moduleMap;
       });
 
       await this.moduleService.deleteModule(workspaceSlug, projectId, moduleId);
@@ -281,14 +267,13 @@ export class ModulesStore implements IModuleStore {
 
       const currentModule = this.moduleMap[projectId][moduleId];
 
+      const _moduleMap = set(
+        this.moduleMap,
+        [projectId, moduleId, "link_module"],
+        [response, ...currentModule.link_module]
+      );
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, link_module: [response, ...currentModule.link_module] },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
 
       return response;
@@ -319,14 +304,9 @@ export class ModulesStore implements IModuleStore {
       const currentModule = this.moduleMap[projectId][moduleId];
       const linkModules = currentModule.link_module.map((link) => (link.id === linkId ? response : link));
 
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId, "link_module"], linkModules);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, link_module: linkModules },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
 
       return response;
@@ -349,14 +329,9 @@ export class ModulesStore implements IModuleStore {
       const currentModule = this.moduleMap[projectId][moduleId];
       const linkModules = currentModule.link_module.filter((link) => link.id !== linkId);
 
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId, "link_module"], linkModules);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, link_module: linkModules },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
 
       await this.moduleService.deleteModuleLink(workspaceSlug, projectId, moduleId, linkId);
@@ -380,14 +355,9 @@ export class ModulesStore implements IModuleStore {
 
       if (currentModule.is_favorite) return;
 
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId, "is_favorite"], true);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, is_favorite: true },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
 
       await this.moduleService.addModuleToFavorites(workspaceSlug, projectId, {
@@ -396,16 +366,9 @@ export class ModulesStore implements IModuleStore {
     } catch (error) {
       console.error("Failed to add module to favorites in module store", error);
 
-      const currentModule = this.moduleMap[projectId][moduleId];
-
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId, "is_favorite"], false);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, is_favorite: false },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
     }
   };
@@ -416,30 +379,18 @@ export class ModulesStore implements IModuleStore {
 
       if (!currentModule.is_favorite) return;
 
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId, "is_favorite"], false);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, is_favorite: false },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
 
       await this.moduleService.removeModuleFromFavorites(workspaceSlug, projectId, moduleId);
     } catch (error) {
       console.error("Failed to remove module from favorites in module store", error);
 
-      const currentModule = this.moduleMap[projectId][moduleId];
-
+      const _moduleMap = set(this.moduleMap, [projectId, moduleId, "is_favorite"], true);
       runInAction(() => {
-        this.moduleMap = {
-          ...this.moduleMap,
-          [projectId]: {
-            ...this.moduleMap[projectId],
-            [moduleId]: { ...currentModule, is_favorite: true },
-          },
-        };
+        this.moduleMap = _moduleMap;
       });
     }
   };

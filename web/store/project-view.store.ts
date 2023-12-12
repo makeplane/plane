@@ -1,3 +1,4 @@
+import set from "lodash/set";
 import { observable, action, makeObservable, runInAction } from "mobx";
 // services
 import { ViewService } from "services/view.service";
@@ -60,7 +61,7 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       // observables
       viewId: observable.ref,
-      viewMap: observable.ref,
+      viewMap: observable,
 
       // actions
       fetchViews: action,
@@ -89,12 +90,10 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       const response = await this.viewService.getViews(workspaceSlug, projectId);
 
+      const _viewMap = set(this.viewMap, [projectId], response);
       runInAction(() => {
         this.loader = false;
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: response,
-        };
+        this.viewMap = _viewMap;
       });
 
       return response;
@@ -116,15 +115,10 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       const response = await this.viewService.getViewDetails(workspaceSlug, projectId, viewId);
 
+      const _viewMap = set(this.viewMap, [projectId, viewId], response);
       runInAction(() => {
         this.loader = false;
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [response.id]: response,
-          },
-        };
+        this.viewMap = _viewMap;
       });
 
       return response;
@@ -142,15 +136,10 @@ export class ProjectViewsStore implements IProjectViewsStore {
     try {
       const response = await this.viewService.createView(workspaceSlug, projectId, data);
 
+      const _viewMap = set(this.viewMap, [projectId, response.id], response);
       runInAction(() => {
         this.loader = false;
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [response.id]: response,
-          },
-        };
+        this.viewMap = _viewMap;
       });
 
       return response;
@@ -172,14 +161,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
     try {
       const currentView = this.viewMap[projectId][viewId];
 
+      const _viewMap = set(this.viewMap, [projectId, viewId], { ...currentView, ...data });
       runInAction(() => {
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [viewId]: { ...currentView, ...data },
-          },
-        };
+        this.viewMap = _viewMap;
       });
 
       const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
@@ -201,11 +185,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
       const currentProjectViews = this.viewMap[projectId];
       delete currentProjectViews[viewId];
 
+      const _viewMap = set(this.viewMap, [projectId], currentProjectViews);
       runInAction(() => {
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: currentProjectViews,
-        };
+        this.viewMap = _viewMap;
       });
 
       await this.viewService.deleteView(workspaceSlug, projectId, viewId);
@@ -226,14 +208,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       if (currentView.is_favorite) return;
 
+      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], true);
       runInAction(() => {
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [viewId]: { ...currentView, is_favorite: true },
-          },
-        };
+        this.viewMap = _viewMap;
       });
 
       await this.viewService.addViewToFavorites(workspaceSlug, projectId, {
@@ -242,15 +219,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
     } catch (error) {
       console.error("Failed to add view to favorites in view store", error);
 
-      const currentView = this.viewMap[projectId][viewId];
+      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], false);
       runInAction(() => {
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [viewId]: { ...currentView, is_favorite: false },
-          },
-        };
+        this.viewMap = _viewMap;
       });
     }
   };
@@ -261,29 +232,18 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       if (!currentView.is_favorite) return;
 
+      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], false);
       runInAction(() => {
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [viewId]: { ...currentView, is_favorite: false },
-          },
-        };
+        this.viewMap = _viewMap;
       });
 
       await this.viewService.removeViewFromFavorites(workspaceSlug, projectId, viewId);
     } catch (error) {
       console.error("Failed to remove view from favorites in view store", error);
 
-      const currentView = this.viewMap[projectId][viewId];
+      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], true);
       runInAction(() => {
-        this.viewMap = {
-          ...this.viewMap,
-          [projectId]: {
-            ...this.viewMap[projectId],
-            [viewId]: { ...currentView, is_favorite: true },
-          },
-        };
+        this.viewMap = _viewMap;
       });
     }
   };

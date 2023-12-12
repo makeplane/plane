@@ -75,6 +75,7 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.event_tracking_task import workspace_invite_event
 
+
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
@@ -172,6 +173,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
     ]
 
     def get(self, request):
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
         member_count = (
             WorkspaceMember.objects.filter(
                 workspace=OuterRef("id"),
@@ -207,9 +209,13 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             )
             .distinct()
         )
-
-        serializer = WorkSpaceSerializer(self.filter_queryset(workspace), many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        workspaces = WorkSpaceSerializer(
+            self.filter_queryset(workspace),
+            fields=fields if fields else None,
+            many=True,
+        ).data
+        workspace_dict = {str(workspaces["id"]): workspaces for workspace in workspaces}
+        return Response(workspace_dict, status=status.HTTP_200_OK)
 
 
 class WorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
@@ -406,7 +412,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
 
                     # Delete the invitation
                     workspace_invite.delete()
-                
+
                 # Send event
                 workspace_invite_event.delay(
                     user=user.id if user is not None else None,

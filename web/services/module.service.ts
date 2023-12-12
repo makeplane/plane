@@ -132,7 +132,7 @@ export class ModuleService extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: ModuleLink
+    data: Partial<ModuleLink>
   ): Promise<ILinkDetails> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/`, data)
       .then((response) => response?.data)
@@ -146,7 +146,7 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     linkId: string,
-    data: ModuleLink
+    data: Partial<ModuleLink>
   ): Promise<ILinkDetails> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/${linkId}/`,

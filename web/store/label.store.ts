@@ -1,6 +1,6 @@
 import { makeObservable, observable, action, runInAction, computed } from "mobx";
 import keyBy from "lodash/keyBy";
-import omit from "lodash/omit";
+import set from "lodash/set";
 // services
 import { IssueLabelService } from "services/issue";
 // types
@@ -11,7 +11,7 @@ import { buildTree } from "helpers/array.helper";
 import { RootStore } from "./root.store";
 
 export interface ILabelStore {
-  labels: Record<string, IIssueLabel>;
+  labelMap: Record<string, IIssueLabel>;
   projectLabels: IIssueLabel[] | undefined;
   projectLabelsTree: IIssueLabelTree[] | undefined;
   fetchProjectLabels: (workspaceSlug: string, projectId: string) => Promise<IIssueLabel[]>;
@@ -35,14 +35,14 @@ export interface ILabelStore {
 }
 
 export class LabelStore {
-  labels: Record<string, IIssueLabel> = {};
+  labelMap: Record<string, IIssueLabel> = {};
   issueLabelService;
   router;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
-      labels: observable.ref,
+      labelMap: observable,
       // computed
       projectLabels: computed,
       projectLabelsTree: computed,
@@ -57,15 +57,15 @@ export class LabelStore {
   }
 
   /**
-   * Returns the labels belongs to a specific project
+   * Returns the labelMap belongs to a specific project
    */
   get projectLabels() {
     if (!this.router.query?.projectId) return;
-    return Object.values(this.labels).filter((label) => label.project === this.router.query.projectId);
+    return Object.values(this.labelMap).filter((label) => label.project === this.router.query.projectId);
   }
 
   /**
-   * Returns the labels in a tree format
+   * Returns the labelMap in a tree format
    */
   get projectLabelsTree() {
     if (!this.projectLabels) return;
@@ -73,7 +73,7 @@ export class LabelStore {
   }
 
   /**
-   * Fetches all the labels belongs to a specific project
+   * Fetches all the labelMap belongs to a specific project
    * @param workspaceSlug
    * @param projectId
    * @returns Promise<IIssueLabel[]>
@@ -81,8 +81,9 @@ export class LabelStore {
   fetchProjectLabels = async (workspaceSlug: string, projectId: string) => {
     const response = await this.issueLabelService.getProjectIssueLabels(workspaceSlug, projectId);
     runInAction(() => {
-      this.labels = {
-        ...this.labels,
+      //todo add iteratively without modifying original reference
+      this.labelMap = {
+        ...this.labelMap,
         ...keyBy(response, "id"),
       };
     });
@@ -98,11 +99,10 @@ export class LabelStore {
    */
   createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
     const response = await this.issueLabelService.createIssueLabel(workspaceSlug, projectId, data);
+
+    const _labelMap = set(this.labelMap, [response.id], response);
     runInAction(() => {
-      this.labels = {
-        ...this.labels,
-        [response.id]: response,
-      };
+      this.labelMap = _labelMap;
     });
     return response;
   };
@@ -116,22 +116,22 @@ export class LabelStore {
    * @returns Promise<IIssueLabel>
    */
   updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) => {
-    const originalLabel = this.labels[labelId];
+    const originalLabel = this.labelMap[labelId];
     try {
+      const _labelMap = set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
       runInAction(() => {
-        this.labels = {
-          ...this.labels,
-          [labelId]: { ...this.labels[labelId], ...data },
-        };
+        this.labelMap = _labelMap;
       });
+
       const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
       return response;
     } catch (error) {
       console.log("Failed to update label from project store");
+      const _labelMap = set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
       runInAction(() => {
-        this.labels = {
-          ...this.labels,
-          [labelId]: { ...this.labels[labelId], ...originalLabel },
+        this.labelMap = {
+          ...this.labelMap,
+          [labelId]: { ...this.labelMap[labelId], ...originalLabel },
         };
       });
       throw error;
@@ -158,7 +158,7 @@ export class LabelStore {
     isSameParent: boolean,
     prevIndex: number | undefined
   ) => {
-    const currLabel = this.labels?.[labelId];
+    const currLabel = this.labelMap?.[labelId];
     const labelTree = this.projectLabelsTree;
 
     let currentArray: IIssueLabel[];
@@ -189,7 +189,7 @@ export class LabelStore {
 
       let sortOrder: number;
 
-      //based on the next and previous labels calculate current sort order
+      //based on the next and previous labelMap calculate current sort order
       if (prevSortOrder && nextSortOrder) {
         sortOrder = (prevSortOrder + nextSortOrder) / 2;
       } else if (nextSortOrder) {
@@ -205,27 +205,29 @@ export class LabelStore {
   };
 
   /**
-   * Delete the label from the project and remove it from the labels object
+   * Delete the label from the project and remove it from the labelMap object
    * @param workspaceSlug
    * @param projectId
    * @param labelId
    */
   deleteLabel = async (workspaceSlug: string, projectId: string, labelId: string) => {
-    const originalLabel = this.labels[labelId];
-    runInAction(() => {
-      this.labels = omit(this.labels, labelId);
-    });
+    const originalLabel = this.labelMap[labelId];
+
     try {
+      const _labelMap = this.labelMap;
+      delete _labelMap[labelId];
+      runInAction(() => {
+        this.labelMap = _labelMap;
+      });
+
       // deleting using api
       await this.issueLabelService.deleteIssueLabel(workspaceSlug, projectId, labelId);
     } catch (error) {
       console.log("Failed to delete label from project store");
       // reverting back to original label list
+      const labelMap = set(this.labelMap, [labelId], originalLabel);
       runInAction(() => {
-        this.labels = {
-          ...this.labels,
-          [labelId]: originalLabel,
-        };
+        this.labelMap = labelMap;
       });
     }
   };
