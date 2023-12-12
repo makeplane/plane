@@ -1,4 +1,5 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
+import { set } from "lodash";
 // types
 import { ProjectRootStore } from "./";
 // services
@@ -57,12 +58,12 @@ export class ProjectPublishStore implements IProjectPublishStore {
   constructor(_projectRootStore: ProjectRootStore) {
     makeObservable(this, {
       // states
-      generalLoader: observable,
-      fetchSettingsLoader: observable,
-      error: observable,
+      generalLoader: observable.ref,
+      fetchSettingsLoader: observable.ref,
+      error: observable.ref,
 
       // observables
-      project_id: observable,
+      project_id: observable.ref,
       projectPublishSettings: observable.ref,
 
       // actions
@@ -147,18 +148,14 @@ export class ProjectPublishStore implements IProjectPublishStore {
           project: response?.project || null,
         };
 
+        const _projectMap = set(
+          this.projectRootStore.projects.projectMap,
+          [workspaceSlug, projectId, "is_deployed"],
+          true
+        );
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
-          this.projectRootStore.projects.projectsMap = {
-            ...this.projectRootStore.projects.projectsMap,
-            [workspaceSlug]: {
-              ...this.projectRootStore.projects.projectsMap[workspaceSlug],
-              [projectId]: {
-                ...this.projectRootStore.projects.projectsMap[workspaceSlug][projectId],
-                is_deployed: true,
-              },
-            },
-          };
+          this.projectRootStore.projects.projectMap = _projectMap;
           this.generalLoader = false;
           this.error = null;
         });
@@ -236,18 +233,14 @@ export class ProjectPublishStore implements IProjectPublishStore {
         projectPublishId
       );
 
+      const _projectMap = set(
+        this.projectRootStore.projects.projectMap,
+        [workspaceSlug, projectId, "is_deployed"],
+        false
+      );
       runInAction(() => {
         this.projectPublishSettings = "not-initialized";
-        this.projectRootStore.projects.projectsMap = {
-          ...this.projectRootStore.projects.projectsMap,
-          [workspaceSlug]: {
-            ...this.projectRootStore.projects.projectsMap[workspaceSlug],
-            [projectId]: {
-              ...this.projectRootStore.projects.projectsMap[workspaceSlug][projectId],
-              is_deployed: false,
-            },
-          },
-        };
+        this.projectRootStore.projects.projectMap = _projectMap;
         this.generalLoader = false;
         this.error = null;
       });
