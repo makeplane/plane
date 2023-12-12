@@ -1,5 +1,3 @@
-"use client";
-
 import { createContext, useContext } from "react";
 // mobx store
 import { RootStore } from "store_legacy/root";

@@ -10,7 +10,7 @@ import { PageService } from "services/page.service";
 // types
 import { IPage, IRecentPages } from "types";
 // store
-import { RootStore } from "./root.store";
+import { AppRootStore } from "store/application";
 
 export interface IPageStore {
   pages: Record<string, IPage>;
@@ -19,7 +19,7 @@ export interface IPageStore {
   projectPages: IPage[] | undefined;
   favoriteProjectPages: IPage[] | undefined;
   privateProjectPages: IPage[] | undefined;
-  sharedProjectPages: IPage[] | undefined;
+  publicProjectPages: IPage[] | undefined;
   recentProjectPages: IRecentPages | undefined;
   // archived pages computed
   archivedProjectPages: IPage[] | undefined;
@@ -49,7 +49,7 @@ export class PageStore {
   // stores
   router;
 
-  constructor(_rootStore: RootStore) {
+  constructor(appRootStore: AppRootStore) {
     makeObservable(this, {
       pages: observable,
       archivedPages: observable,
@@ -78,7 +78,7 @@ export class PageStore {
       restorePage: action,
     });
     // stores
-    this.router = _rootStore.app.router;
+    this.router = appRootStore.router;
     // services
     this.pageService = new PageService();
   }
