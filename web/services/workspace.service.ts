@@ -16,8 +16,6 @@ import {
   IUserProjectsRole,
 } from "types";
 import { IWorkspaceView } from "types/workspace-views";
-// store
-import { IIssueGroupWithSubGroupsStructure, IIssueGroupedStructure, IIssueUnGroupedStructure } from "store_legacy/issue";
 import { IIssueResponse } from "store_legacy/issues/types";
 
 export class WorkspaceService extends APIService {
@@ -25,7 +23,7 @@ export class WorkspaceService extends APIService {
     super(API_BASE_URL);
   }
 
-  async userWorkspaces(): Promise<IWorkspace[]> {
+  async userWorkspaces(): Promise<Record<string, IWorkspace>> {
     return this.get("/api/users/me/workspaces/")
       .then((response) => response?.data)
       .catch((error) => {
