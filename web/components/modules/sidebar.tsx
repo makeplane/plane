@@ -261,6 +261,8 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
         : `${moduleDetails.total_issues}`
       : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
+  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       <LinkModal
@@ -290,14 +292,16 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             <button onClick={handleCopyText}>
               <LinkIcon className="h-3 w-3 text-custom-text-300" />
             </button>
-            <CustomMenu width="lg" placement="bottom-end" ellipsis>
-              <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
-                <span className="flex items-center justify-start gap-2">
-                  <Trash2 className="h-3 w-3" />
-                  <span>Delete module</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            {isEditingAllowed && (
+              <CustomMenu width="lg" placement="bottom-end" ellipsis>
+                <CustomMenu.MenuItem onClick={() => setModuleDeleteModal(true)}>
+                  <span className="flex items-center justify-start gap-2">
+                    <Trash2 className="h-3 w-3" />
+                    <span>Delete module</span>
+                  </span>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
           </div>
         </div>
 
@@ -311,7 +315,9 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <CustomSelect
                   customButton={
                     <span
-                      className="flex h-6 w-20 cursor-default items-center justify-center rounded-sm text-center text-xs"
+                      className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
+                        isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                      }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
                         backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
@@ -324,6 +330,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   onChange={(value: any) => {
                     submitChanges({ status: value });
                   }}
+                  disabled={!isEditingAllowed}
                 >
                   {MODULE_STATUS.map((status) => (
                     <CustomSelect.Option key={status.value} value={status.value}>
@@ -339,7 +346,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
             <div className="relative flex h-full w-52 items-center gap-2.5">
               <Popover className="flex h-full items-center justify-center rounded-lg">
-                <Popover.Button className="cursor-default text-sm font-medium text-custom-text-300">
+                <Popover.Button
+                  className={`text-sm font-medium text-custom-text-300 ${
+                    isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                  }`}
+                  disabled={!isEditingAllowed}
+                >
                   {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
                 </Popover.Button>
 
@@ -371,7 +383,12 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <MoveRight className="h-4 w-4 text-custom-text-300" />
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <>
-                  <Popover.Button className="cursor-default text-sm font-medium text-custom-text-300">
+                  <Popover.Button
+                    className={`text-sm font-medium text-custom-text-300 ${
+                      isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                    }`}
+                    disabled={!isEditingAllowed}
+                  >
                     {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
                   </Popover.Button>
 
@@ -553,15 +570,17 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                       <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
                         {userRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
-                            <div className="flex w-full items-center justify-end">
-                              <button
-                                className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
-                                onClick={() => setModuleLinkModal(true)}
-                              >
-                                <Plus className="h-3 w-3" />
-                                Add link
-                              </button>
-                            </div>
+                            {isEditingAllowed && (
+                              <div className="flex w-full items-center justify-end">
+                                <button
+                                  className="flex items-center gap-1.5 text-sm font-medium text-custom-primary-100"
+                                  onClick={() => setModuleLinkModal(true)}
+                                >
+                                  <Plus className="h-3 w-3" />
+                                  Add link
+                                </button>
+                              </div>
+                            )}
 
                             <LinksList
                               links={moduleDetails.link_module}
