@@ -28,16 +28,16 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@tiptap/react": "^2.1.7",
-    "@tiptap/core": "^2.1.7",
-    "@tiptap/suggestion": "^2.0.4",
-    "@plane/editor-types": "*",
     "@plane/editor-core": "*",
+    "@plane/editor-types": "*",
+    "@tiptap/core": "^2.1.7",
+    "@tiptap/pm": "^2.1.7",
+    "@tiptap/react": "^2.1.7",
+    "@tiptap/suggestion": "^2.0.4",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
-    "lucide-react": "^0.293.0",
-    "tippy.js": "^6.3.7",
-    "@tiptap/pm": "^2.1.7"
+    "lucide-react": "^0.294.0",
+    "tippy.js": "^6.3.7"
   },
   "devDependencies": {
     "@types/node": "18.15.3",

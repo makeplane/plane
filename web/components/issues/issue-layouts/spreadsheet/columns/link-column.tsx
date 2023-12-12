@@ -18,7 +18,7 @@ export const SpreadsheetLinkColumn: React.FC<Props> = (props) => {
 
   return (
     <>
-      <div className="flex h-full w-full items-center px-2.5 py-1 text-xs">
+      <div className="flex h-11 w-full items-center px-2.5 py-1 text-xs border-b-[0.5px] border-custom-border-200">
         {issue.link_count} {issue.link_count === 1 ? "link" : "links"}
       </div>
 
@@ -27,7 +27,9 @@ export const SpreadsheetLinkColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetLinkColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          <div className={`h-11`}>
+            <SpreadsheetLinkColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          </div>
         ))}
     </>
   );

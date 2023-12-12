@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { mutate } from "swr";
+
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -17,30 +17,25 @@ import {
   SidebarPrioritySelect,
   SidebarStateSelect,
 } from "../sidebar-select";
-// services
-import { IssueService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // components
 import { CustomDatePicker } from "components/ui";
 import { LinkModal, LinksList } from "components/core";
 // types
-import { IIssue, IIssueLink, TIssuePriorities, ILinkDetails } from "types";
-// fetch-keys
-import { ISSUE_DETAILS } from "constants/fetch-keys";
+import { IIssue, TIssuePriorities, ILinkDetails, IIssueLink } from "types";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IPeekOverviewProperties {
   issue: IIssue;
   issueUpdate: (issue: Partial<IIssue>) => void;
+  issueLinkCreate: (data: IIssueLink) => Promise<ILinkDetails>;
+  issueLinkUpdate: (data: IIssueLink, linkId: string) => Promise<ILinkDetails>;
+  issueLinkDelete: (linkId: string) => Promise<void>;
   disableUserActions: boolean;
 }
 
-const issueService = new IssueService();
-
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
-  const { issue, issueUpdate, disableUserActions } = props;
+  const { issue, issueUpdate, issueLinkCreate, issueLinkUpdate, issueLinkDelete, disableUserActions } = props;
   // states
   const [linkModal, setLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
@@ -53,8 +48,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  const { setToastAlert } = useToast();
 
   const handleState = (_state: string) => {
     issueUpdate({ ...issue, state: _state });
@@ -81,61 +74,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
     issueUpdate({ ...issue, ...formData });
   };
 
-  const handleCreateLink = async (formData: IIssueLink) => {
-    if (!workspaceSlug || !projectId || !issue) return;
-
-    const payload = { metadata: {}, ...formData };
-
-    await issueService
-      .createIssueLink(workspaceSlug as string, projectId as string, issue.id, payload)
-      .then(() => mutate(ISSUE_DETAILS(issue.id)))
-      .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "This URL already exists for this issue.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-      });
-  };
-
-  const handleUpdateLink = async (formData: IIssueLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !issue) return;
-
-    const payload = { metadata: {}, ...formData };
-
-    const updatedLinks = issue.issue_link.map((l) =>
-      l.id === linkId
-        ? {
-            ...l,
-            title: formData.title,
-            url: formData.url,
-          }
-        : l
-    );
-
-    mutate<IIssue>(
-      ISSUE_DETAILS(issue.id),
-      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
-      false
-    );
-
-    await issueService
-      .updateIssueLink(workspaceSlug as string, projectId as string, issue.id, linkId, payload)
-      .then(() => {
-        mutate(ISSUE_DETAILS(issue.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
   const handleCycleOrModuleChange = async () => {
     if (!workspaceSlug || !projectId) return;
 
@@ -145,27 +83,6 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const handleEditLink = (link: ILinkDetails) => {
     setSelectedLinkToUpdate(link);
     setLinkModal(true);
-  };
-
-  const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !issue) return;
-
-    const updatedLinks = issue.issue_link.filter((l) => l.id !== linkId);
-
-    mutate<IIssue>(
-      ISSUE_DETAILS(issue.id),
-      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
-      false
-    );
-
-    await issueService
-      .deleteIssueLink(workspaceSlug as string, projectId as string, issue.id, linkId)
-      .then(() => {
-        mutate(ISSUE_DETAILS(issue.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   const projectDetails = workspaceSlug ? getProjectById(workspaceSlug.toString(), issue.project) : null;
@@ -187,8 +104,8 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
         }}
         data={selectedLinkToUpdate}
         status={selectedLinkToUpdate ? true : false}
-        createIssueLink={handleCreateLink}
-        updateIssueLink={handleUpdateLink}
+        createIssueLink={issueLinkCreate}
+        updateIssueLink={issueLinkUpdate}
       />
       <div className="flex flex-col">
         <div className="flex w-full flex-col gap-5 py-5">
@@ -373,7 +290,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
               {issue?.issue_link && issue.issue_link.length > 0 ? (
                 <LinksList
                   links={issue.issue_link}
-                  handleDeleteLink={handleDeleteLink}
+                  handleDeleteLink={issueLinkDelete}
                   handleEditLink={handleEditLink}
                   userAuth={{
                     isGuest: currentProjectRole === EUserWorkspaceRoles.GUEST,

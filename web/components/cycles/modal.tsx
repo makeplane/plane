@@ -49,11 +49,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           state: "SUCCESS",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in creating cycle. Please try again.",
+          message: err.detail ?? "Error in creating cycle. Please try again.",
         });
         postHogEventTracker("CYCLE_CREATE", {
           state: "FAILED",
@@ -73,11 +73,11 @@ export const CycleCreateUpdateModal: React.FC<CycleModalProps> = (props) => {
           message: "Cycle updated successfully.",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Error in updating cycle. Please try again.",
+          message: err.detail ?? "Error in updating cycle. Please try again.",
         });
       });
   };

@@ -49,24 +49,10 @@ NGINX_PORT=80
 ​
 
 ```
-# Enable/Disable OAUTH - default 0 for selfhosted instance
-NEXT_PUBLIC_ENABLE_OAUTH=0
 # Public boards deploy URL
 NEXT_PUBLIC_DEPLOY_URL="http://localhost/spaces"
 ```
 
-​
-
-## {PROJECT_FOLDER}/spaces/.env.example
-
-​
-
-```
-# Flag to toggle OAuth
-NEXT_PUBLIC_ENABLE_OAUTH=0
-```
-
-​
 
 ## {PROJECT_FOLDER}/apiserver/.env
 

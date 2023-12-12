@@ -19,6 +19,7 @@ import { renderShortDate, renderShortMonthDate } from "helpers/date-time.helper"
 import { IModule } from "types";
 // constants
 import { MODULE_STATUS } from "constants/module";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   module: IModule;
@@ -35,7 +36,11 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
 
   const { setToastAlert } = useToast();
 
-  const { module: moduleStore } = useMobxStore();
+  const { module: moduleStore, user: userStore } = useMobxStore();
+
+  const { currentProjectRole } = userStore;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const completionPercentage = ((module.completed_issues + module.cancelled_issues) / module.total_issues) * 100;
 
@@ -194,29 +199,34 @@ export const ModuleListItem: React.FC<Props> = observer((props) => {
               </div>
             </Tooltip>
 
-            {module.is_favorite ? (
-              <button type="button" onClick={handleRemoveFromFavorites} className="z-[1]">
-                <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-              </button>
-            ) : (
-              <button type="button" onClick={handleAddToFavorites} className="z-[1]">
-                <Star className="h-3.5 w-3.5 text-custom-text-300" />
-              </button>
-            )}
+            {isEditingAllowed &&
+              (module.is_favorite ? (
+                <button type="button" onClick={handleRemoveFromFavorites} className="z-[1]">
+                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                </button>
+              ) : (
+                <button type="button" onClick={handleAddToFavorites} className="z-[1]">
+                  <Star className="h-3.5 w-3.5 text-custom-text-300" />
+                </button>
+              ))}
 
             <CustomMenu width="auto" verticalEllipsis buttonClassName="z-[1]">
-              <CustomMenu.MenuItem onClick={handleEditModule}>
-                <span className="flex items-center justify-start gap-2">
-                  <Pencil className="h-3 w-3" />
-                  <span>Edit module</span>
-                </span>
-              </CustomMenu.MenuItem>
-              <CustomMenu.MenuItem onClick={handleDeleteModule}>
-                <span className="flex items-center justify-start gap-2">
-                  <Trash2 className="h-3 w-3" />
-                  <span>Delete module</span>
-                </span>
-              </CustomMenu.MenuItem>
+              {isEditingAllowed && (
+                <>
+                  <CustomMenu.MenuItem onClick={handleEditModule}>
+                    <span className="flex items-center justify-start gap-2">
+                      <Pencil className="h-3 w-3" />
+                      <span>Edit module</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                  <CustomMenu.MenuItem onClick={handleDeleteModule}>
+                    <span className="flex items-center justify-start gap-2">
+                      <Trash2 className="h-3 w-3" />
+                      <span>Delete module</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                </>
+              )}
               <CustomMenu.MenuItem onClick={handleCopyText}>
                 <span className="flex items-center justify-start gap-2">
                   <LinkIcon className="h-3 w-3" />

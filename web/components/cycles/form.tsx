@@ -97,7 +97,7 @@ export const CycleForm: React.FC<Props> = (props) => {
                     id="cycle_description"
                     name="description"
                     placeholder="Description..."
-                    className="h-24 w-full resize-none text-sm"
+                    className="!h-24 w-full resize-none text-sm"
                     hasError={Boolean(errors?.description)}
                     value={value}
                     onChange={onChange}
@@ -135,18 +135,12 @@ export const CycleForm: React.FC<Props> = (props) => {
           </div>
         </div>
       </div>
-      <div className="mt-5 flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
+      <div className="flex items-center justify-end gap-2 border-t-[0.5px] border-custom-border-100 pt-5 ">
         <Button variant="neutral-primary" size="sm" onClick={handleClose}>
           Cancel
         </Button>
         <Button variant="primary" size="sm" type="submit" loading={isSubmitting}>
-          {data
-            ? isSubmitting
-              ? "Updating Cycle..."
-              : "Update Cycle"
-            : isSubmitting
-              ? "Creating Cycle..."
-              : "Create Cycle"}
+          {data ? (isSubmitting ? "Updating" : "Update cycle") : isSubmitting ? "Creating" : "Create cycle"}
         </Button>
       </div>
     </form>

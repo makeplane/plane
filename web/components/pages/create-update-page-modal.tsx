@@ -60,11 +60,11 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           }
         );
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Page could not be created. Please try again.",
+          message: err.detail ?? "Page could not be created. Please try again.",
         });
         postHogEventTracker(
           "PAGE_CREATED",
@@ -104,11 +104,11 @@ export const CreateUpdatePageModal: FC<Props> = (props) => {
           }
         );
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Page could not be updated. Please try again.",
+          message: err.detail ?? "Page could not be updated. Please try again.",
         });
         postHogEventTracker(
           "PAGE_UPDATED",

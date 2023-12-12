@@ -147,7 +147,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     setIsDragStarted(true);
   };
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = async (result: DropResult) => {
     setIsDragStarted(false);
 
     if (!result) return;
@@ -171,7 +171,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
         });
         setDeleteIssueModal(true);
       } else {
-        handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds);
+        await handleDragDrop(result.source, result.destination, sub_group_by, group_by, issues, issueIds).catch(
+          (err) => {
+            setToastAlert({
+              title: "Error",
+              type: "error",
+              message: err.detail ?? "Failed to perform this action",
+            });
+          }
+        );
       }
     }
   };
@@ -187,25 +195,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const handleDeleteIssue = async () => {
     if (!handleDragDrop) return;
-    await handleDragDrop(dragState.source, dragState.destination, sub_group_by, group_by, issues, issueIds)
-      .then(() => {
-        setToastAlert({
-          title: "Success",
-          type: "success",
-          message: "Issue deleted successfully",
-        });
-      })
-      .catch(() => {
-        setToastAlert({
-          title: "Error",
-          type: "error",
-          message: "Failed to delete issue",
-        });
-      })
-      .finally(() => {
+    await handleDragDrop(dragState.source, dragState.destination, sub_group_by, group_by, issues, issueIds).finally(
+      () => {
         setDeleteIssueModal(false);
         setDragState({});
-      });
+      }
+    );
   };
 
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {

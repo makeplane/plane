@@ -1,7 +1,7 @@
 // ui
 import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
-import { CalendarDays } from "lucide-react";
+import { CalendarCheck } from "lucide-react";
 // helpers
 import {
   findHowManyDaysLeft,
@@ -51,8 +51,8 @@ export const ViewDueDateSelect: React.FC<Props> = ({
           issue.target_date === null
             ? ""
             : issue.target_date < new Date().toISOString()
-              ? "text-red-600"
-              : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
+            ? "text-red-600"
+            : findHowManyDaysLeft(issue.target_date) <= 3 && "text-orange-400"
         }`}
       >
         <CustomDatePicker
@@ -67,7 +67,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
             >
               {issue.target_date ? (
                 <>
-                  <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" />
+                  <CalendarCheck className="h-3.5 w-3.5 flex-shrink-0" />
                   <span>
                     {areYearsEqual
                       ? renderShortDate(issue.target_date ?? "", "_ _")
@@ -76,7 +76,7 @@ export const ViewDueDateSelect: React.FC<Props> = ({
                 </>
               ) : (
                 <>
-                  <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" />
+                  <CalendarCheck className="h-3.5 w-3.5 flex-shrink-0" />
                   <span>Due Date</span>
                 </>
               )}

@@ -25,7 +25,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
         projectId={issue.project_detail?.id ?? null}
         value={issue.estimate_point}
         onChange={(data) => onChange({ estimate_point: data })}
-        className="h-full w-full"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
         buttonClassName="h-full w-full px-2.5 py-1 !shadow-none !border-0"
         hideDropdownArrow
         disabled={disabled}
@@ -36,13 +36,15 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetEstimateColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetEstimateColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );
