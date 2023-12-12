@@ -24,7 +24,7 @@ class BaseProjectSerializerMixin:
     def refresh_cover_image(self, instance):
         cover_image = instance.cover_image
 
-        if S3.verify_s3_url(cover_image) and S3.url_file_has_experid(cover_image):
+        if S3.verify_s3_url(cover_image) and S3.url_file_has_expired(cover_image):
             s3 = S3()
             instance.cover_image = s3.refresh_url(cover_image)
             instance.save()

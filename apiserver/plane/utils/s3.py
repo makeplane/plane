@@ -42,7 +42,7 @@ class S3:
         return pattern.search(url)
 
     @staticmethod
-    def url_file_has_experid(url, date_format="%Y%m%dT%H%M%SZ"):
+    def url_file_has_expired(url, date_format="%Y%m%dT%H%M%SZ"):
         parsed_url = urlparse(url)
         query_params = parse_qs(parsed_url.query)
         x_amz_date = query_params.get("X-Amz-Date", [None])[0]
