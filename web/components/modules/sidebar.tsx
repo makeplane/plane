@@ -256,10 +256,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
     moduleDetails.total_issues === 0
       ? "0 Issue"
       : moduleDetails.total_issues === moduleDetails.completed_issues
-        ? moduleDetails.total_issues > 1
-          ? `${moduleDetails.total_issues}`
-          : `${moduleDetails.total_issues}`
-        : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
+      ? moduleDetails.total_issues > 1
+        ? `${moduleDetails.total_issues}`
+        : `${moduleDetails.total_issues}`
+      : `${moduleDetails.completed_issues}/${moduleDetails.total_issues}`;
 
   return (
     <>
@@ -311,7 +311,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <CustomSelect
                   customButton={
                     <span
-                      className={`flex h-6 w-20 cursor-default items-center justify-center rounded-sm text-sm ${moduleStatus?.textColor} ${moduleStatus?.bgColor}`}
+                      className="flex h-6 w-20 cursor-default items-center justify-center rounded-sm text-center text-xs"
+                      style={{
+                        color: moduleStatus ? moduleStatus.color : "#a3a3a2",
+                        backgroundColor: moduleStatus ? `${moduleStatus.color}20` : "#a3a3a220",
+                      }}
                     >
                       {moduleStatus?.label ?? "Backlog"}
                     </span>
@@ -459,7 +463,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
 
                     <div className="flex items-center gap-2.5">
                       {progressPercentage ? (
-                        <span className="flex h-5 w-9 items-center justify-center rounded bg-amber-50 text-xs font-medium text-amber-500">
+                        <span className="flex h-5 w-9 items-center justify-center rounded bg-amber-500/20 text-xs font-medium text-amber-500">
                           {progressPercentage ? `${progressPercentage}%` : ""}
                         </span>
                       ) : (

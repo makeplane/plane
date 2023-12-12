@@ -54,20 +54,19 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const issues = issueIds.map((id) => issuesResponse?.[id]);
 
-  const updateIssue = async (issue: IIssue, payload: IBlockUpdateData) => {
+  const updateIssueBlockStructure = async (issue: IIssue, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
 
-    //Todo fix sort order in the structure
-    await issueStore.updateIssue(
-      workspaceSlug.toString(),
-      issue.project,
-      issue.id,
-      {
-        start_date: payload.start_date,
-        target_date: payload.target_date,
-      },
-      viewId
-    );
+    const payload: any = { ...data };
+    if (data.sort_order) payload.sort_order = data.sort_order.newSortOrder;
+
+    await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, payload, viewId);
+  };
+
+  const updateIssue = async (projectId: string, issueId: string, payload: Partial<IIssue>) => {
+    if (!workspaceSlug) return;
+
+    await issueStore.updateIssue(workspaceSlug.toString(), projectId, issueId, payload, viewId);
   };
 
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
@@ -80,7 +79,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           title="Issues"
           loaderTitle="Issues"
           blocks={issues ? renderIssueBlocksStructure(issues as IIssueUnGroupedStructure) : null}
-          blockUpdateHandler={updateIssue}
+          blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: IIssue) => <IssueGanttBlock data={data} />}
           sidebarToRender={(props) => (
             <IssueGanttSidebar
@@ -102,8 +101,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
           handleIssue={async (issueToUpdate) => {
-            // TODO: update the logic here
-            await updateIssue(issueToUpdate as IIssue, {});
+            await updateIssue(peekProjectId.toString(), peekIssueId.toString(), issueToUpdate);
           }}
         />
       )}

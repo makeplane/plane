@@ -9,12 +9,12 @@ import { useTheme } from "next-themes";
 import githubLightModeImage from "/public/logos/github-black.png";
 import githubDarkModeImage from "/public/logos/github-dark.svg";
 
-export interface GithubLoginButtonProps {
+type Props = {
   handleSignIn: React.Dispatch<string>;
   clientId: string;
-}
+};
 
-export const GithubLoginButton: FC<GithubLoginButtonProps> = (props) => {
+export const GitHubSignInButton: FC<Props> = (props) => {
   const { handleSignIn, clientId } = props;
   // states
   const [loginCallBackURL, setLoginCallBackURL] = useState(undefined);

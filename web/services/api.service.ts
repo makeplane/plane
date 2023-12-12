@@ -10,7 +10,7 @@ export abstract class APIService {
   }
 
   setRefreshToken(token: string) {
-    Cookies.set("refreshToken", token);
+    Cookies.set("refreshToken", token, { expires: 30 });
   }
 
   getRefreshToken() {
@@ -22,7 +22,7 @@ export abstract class APIService {
   }
 
   setAccessToken(token: string) {
-    Cookies.set("accessToken", token);
+    Cookies.set("accessToken", token, { expires: 30 });
   }
 
   getAccessToken() {

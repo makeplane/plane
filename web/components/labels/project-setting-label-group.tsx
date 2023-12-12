@@ -77,7 +77,6 @@ export const ProjectSettingLabelGroup: React.FC<Props> = observer((props) => {
           <Droppable
             key={`label.group.droppable.${label.id}`}
             droppableId={`label.group.droppable.${label.id}`}
-            isCombineEnabled={!groupDragSnapshot.isDragging && !isUpdating}
             isDropDisabled={groupDragSnapshot.isDragging || isUpdating || isDropDisabled}
           >
             {(droppableProvided) => (

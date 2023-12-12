@@ -38,8 +38,8 @@ export const ModuleCalendarLayout: React.FC = observer(() => {
     },
   };
 
-  const handleDragDrop = (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
-    handleCalenderDragDrop(
+  const handleDragDrop = async (source: any, destination: any, issues: IIssue[], issueWithIds: any) => {
+    await handleCalenderDragDrop(
       source,
       destination,
       workspaceSlug,

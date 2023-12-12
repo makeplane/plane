@@ -17,7 +17,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, handleRemoveFromView, customActionButton } = props;
 
   const router = useRouter();
-  const { workspaceSlug } = router.query;
+  const { workspaceSlug, moduleId } = router.query;
 
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
@@ -75,7 +75,7 @@ export const ModuleIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            setIssueToEdit(issue);
+            setIssueToEdit({ ...issue, module: moduleId?.toString() ?? null });
             setCreateUpdateIssueModal(true);
           }}
         >

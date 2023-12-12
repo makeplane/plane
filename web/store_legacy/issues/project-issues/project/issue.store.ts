@@ -175,6 +175,7 @@ export class ProjectIssuesStore extends IssueBaseStore implements IProjectIssues
       if (!_issues) _issues = {};
       if (!_issues[projectId]) _issues[projectId] = {};
       delete _issues?.[projectId]?.[issueId];
+      _issues[projectId] = { ..._issues[projectId] };
 
       runInAction(() => {
         this.issues = _issues;

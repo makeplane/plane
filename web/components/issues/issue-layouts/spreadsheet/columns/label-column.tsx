@@ -29,12 +29,12 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         value={issue.labels}
         defaultOptions={issue?.label_details ? issue.label_details : []}
         onChange={(data) => onChange({ labels: data })}
-        className="h-full w-full"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
         buttonClassName="px-2.5 h-full"
-        noLabelBorder
         hideDropdownArrow
         maxRender={1}
         disabled={disabled}
+        placeholderText="Select labels"
       />
 
       {isExpanded &&
@@ -42,14 +42,16 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetLabelColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            labels={labels}
-            expandedIssues={expandedIssues}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetLabelColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              labels={labels}
+              expandedIssues={expandedIssues}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );

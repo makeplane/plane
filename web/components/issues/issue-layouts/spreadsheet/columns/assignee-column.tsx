@@ -27,7 +27,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
         value={issue.assignees}
         defaultOptions={issue?.assignee_details ? issue.assignee_details : []}
         onChange={(data) => onChange({ assignees: data })}
-        className="h-full w-full"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
         buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
         noLabelBorder
         hideDropdownArrow
@@ -40,14 +40,16 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue) => (
-          <SpreadsheetAssigneeColumn
-            key={subIssue.id}
-            issue={subIssue}
-            onChange={onChange}
-            expandedIssues={expandedIssues}
-            members={members}
-            disabled={disabled}
-          />
+          <div className={`h-11`}>
+            <SpreadsheetAssigneeColumn
+              key={subIssue.id}
+              issue={subIssue}
+              onChange={onChange}
+              expandedIssues={expandedIssues}
+              members={members}
+              disabled={disabled}
+            />
+          </div>
         ))}
     </>
   );

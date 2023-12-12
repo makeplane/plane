@@ -165,7 +165,7 @@ export const SpreadsheetColumn: React.FC<Props> = (props) => {
           return (
             <div
               key={`${property}-${issue.id}`}
-              className={`h-11 border-b-[0.5px] border-custom-border-200 ${
+              className={`h-fit ${
                 disableUserActions ? "" : "cursor-pointer hover:bg-custom-background-80"
               }`}
             >

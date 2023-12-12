@@ -19,7 +19,7 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIss
 
   return (
     <>
-      <div className="flex h-full w-full items-center justify-center text-xs">
+      <div className="flex h-11 w-full items-center justify-center text-xs border-b-[0.5px] border-custom-border-200">
         {renderLongDetailDateFormat(issue.created_at)}
       </div>
 
@@ -28,7 +28,9 @@ export const SpreadsheetCreatedOnColumn: React.FC<Props> = ({ issue, expandedIss
         subIssues &&
         subIssues.length > 0 &&
         subIssues.map((subIssue: IIssue) => (
-          <SpreadsheetCreatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          <div className="h-11">
+            <SpreadsheetCreatedOnColumn key={subIssue.id} issue={subIssue} expandedIssues={expandedIssues} />
+          </div>
         ))}
     </>
   );

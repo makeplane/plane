@@ -84,6 +84,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     user: { currentUser, currentProjectRole },
     projectState: { states },
     projectIssues: { removeIssue },
+    issueDetail: { createIssueLink, updateIssueLink, deleteIssueLink },
   } = useMobxStore();
 
   const router = useRouter();
@@ -129,80 +130,19 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
     [workspaceSlug, projectId, issueId, issueDetail, currentUser]
   );
 
-  const handleCreateLink = async (formData: IIssueLink) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
-
-    const payload = { metadata: {}, ...formData };
-
-    await issueService
-      .createIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, payload)
-      .then(() => mutate(ISSUE_DETAILS(issueDetail.id)))
-      .catch((err) => {
-        if (err.status === 400)
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "This URL already exists for this issue.",
-          });
-        else
-          setToastAlert({
-            type: "error",
-            title: "Error!",
-            message: "Something went wrong. Please try again.",
-          });
-      });
+  const issueLinkCreate = (formData: IIssueLink) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    createIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), formData);
   };
 
-  const handleUpdateLink = async (formData: IIssueLink, linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
-
-    const payload = { metadata: {}, ...formData };
-
-    const updatedLinks = issueDetail.issue_link.map((l) =>
-      l.id === linkId
-        ? {
-            ...l,
-            title: formData.title,
-            url: formData.url,
-          }
-        : l
-    );
-
-    mutate<IIssue>(
-      ISSUE_DETAILS(issueDetail.id),
-      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
-      false
-    );
-
-    await issueService
-      .updateIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId, payload)
-      .then(() => {
-        mutate(ISSUE_DETAILS(issueDetail.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const issueLinkUpdate = (formData: IIssueLink, linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    updateIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId, formData);
   };
 
-  const handleDeleteLink = async (linkId: string) => {
-    if (!workspaceSlug || !projectId || !issueDetail) return;
-
-    const updatedLinks = issueDetail.issue_link.filter((l) => l.id !== linkId);
-
-    mutate<IIssue>(
-      ISSUE_DETAILS(issueDetail.id),
-      (prevData) => ({ ...(prevData as IIssue), issue_link: updatedLinks }),
-      false
-    );
-
-    await issueService
-      .deleteIssueLink(workspaceSlug as string, projectId as string, issueDetail.id, linkId)
-      .then(() => {
-        mutate(ISSUE_DETAILS(issueDetail.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const issueLinkDelete = (linkId: string) => {
+    if (!workspaceSlug || !projectId || !issueId) return;
+    deleteIssueLink(workspaceSlug.toString(), projectId.toString(), issueId.toString(), linkId);
   };
 
   const handleCopyText = () => {
@@ -264,8 +204,8 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
         }}
         data={selectedLinkToUpdate}
         status={selectedLinkToUpdate ? true : false}
-        createIssueLink={handleCreateLink}
-        updateIssueLink={handleUpdateLink}
+        createIssueLink={issueLinkCreate}
+        updateIssueLink={issueLinkUpdate}
       />
       {workspaceSlug && projectId && issueDetail && (
         <DeleteIssueModal
@@ -659,7 +599,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   {
                     <LinksList
                       links={issueDetail.issue_link}
-                      handleDeleteLink={handleDeleteLink}
+                      handleDeleteLink={issueLinkDelete}
                       handleEditLink={handleEditLink}
                       userAuth={{
                         isGuest: currentProjectRole === 5,

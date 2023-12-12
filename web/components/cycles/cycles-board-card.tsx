@@ -23,6 +23,7 @@ import { ICycle } from "types";
 import { useMobxStore } from "lib/mobx/store-provider";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export interface ICyclesBoardCard {
   workspaceSlug: string;
@@ -36,6 +37,7 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const {
     cycle: cycleStore,
     trackEvent: { setTrackElement },
+    user: userStore,
   } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
@@ -48,6 +50,9 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
   const isDateValid = cycle.start_date || cycle.end_date;
+
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const router = useRouter();
 
@@ -68,8 +73,8 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
     ? cycleTotalIssues === 0
       ? "0 Issue"
       : cycleTotalIssues === cycle.completed_issues
-        ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
-        : `${cycle.completed_issues}/${cycleTotalIssues} Issues`
+      ? `${cycleTotalIssues} Issue${cycleTotalIssues > 1 ? "s" : ""}`
+      : `${cycle.completed_issues}/${cycleTotalIssues} Issues`
     : "0 Issue";
 
   const handleCopyText = (e: MouseEvent<HTMLButtonElement>) => {
@@ -235,17 +240,18 @@ export const CyclesBoardCard: FC<ICyclesBoardCard> = (props) => {
                 <span className="text-xs text-custom-text-400">No due date</span>
               )}
               <div className="z-10 flex items-center gap-1.5">
-                {cycle.is_favorite ? (
-                  <button type="button" onClick={handleRemoveFromFavorites}>
-                    <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-                  </button>
-                ) : (
-                  <button type="button" onClick={handleAddToFavorites}>
-                    <Star className="h-3.5 w-3.5 text-custom-text-200" />
-                  </button>
-                )}
+                {isEditingAllowed &&
+                  (cycle.is_favorite ? (
+                    <button type="button" onClick={handleRemoveFromFavorites}>
+                      <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                    </button>
+                  ) : (
+                    <button type="button" onClick={handleAddToFavorites}>
+                      <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                    </button>
+                  ))}
                 <CustomMenu width="auto" ellipsis className="z-10">
-                  {!isCompleted && (
+                  {!isCompleted && isEditingAllowed && (
                     <>
                       <CustomMenu.MenuItem onClick={handleEditCycle}>
                         <span className="flex items-center justify-start gap-2">
