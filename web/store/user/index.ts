@@ -1,4 +1,4 @@
-import { action, observable, runInAction, makeObservable, computed } from "mobx";
+import { action, observable, runInAction, makeObservable } from "mobx";
 // services
 import { UserService } from "services/user.service";
 import { AuthService } from "services/auth.service";
@@ -6,7 +6,7 @@ import { AuthService } from "services/auth.service";
 import { IUser, IUserSettings } from "types/users";
 // store
 import { RootStore } from "../root.store";
-import { UserMembershipStore } from "./user-membership.store";
+import { IUserMembershipStore, UserMembershipStore } from "./user-membership.store";
 
 export interface IUserStore {
   loader: boolean;
@@ -33,7 +33,7 @@ export interface IUserStore {
   deactivateAccount: () => Promise<void>;
   signOut: () => Promise<void>;
 
-  membership: UserMembershipStore;
+  membership: IUserMembershipStore;
 }
 
 export class UserStore implements IUserStore {

@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, computed } from "mobx";
 import { ParsedUrlQuery } from "node:querystring";
 
 export interface IRouterStore {
@@ -12,6 +12,9 @@ export interface IRouterStore {
   viewId: string | undefined;
   userId: string | undefined;
   peekId: string | undefined;
+  issueId: string | undefined;
+  inboxId: string | undefined;
+  webhookId: string | undefined;
 }
 
 export class RouterStore implements IRouterStore {
@@ -23,13 +26,16 @@ export class RouterStore implements IRouterStore {
       setQuery: action,
 
       //computed
-      workspaceSlug: action,
-      projectId: action,
-      cycleId: action,
-      moduleId: action,
-      viewId: action,
-      userId: action,
-      peekId: action,
+      workspaceSlug: computed,
+      projectId: computed,
+      cycleId: computed,
+      moduleId: computed,
+      viewId: computed,
+      userId: computed,
+      peekId: computed,
+      issueId: computed,
+      inboxId: computed,
+      webhookId: computed,
     });
   }
 
@@ -38,7 +44,7 @@ export class RouterStore implements IRouterStore {
   }
 
   get workspaceSlug() {
-    return this.query?.workspace_slug?.toString();
+    return this.query?.workspaceSlug?.toString();
   }
 
   get projectId() {
@@ -60,7 +66,20 @@ export class RouterStore implements IRouterStore {
   get userId() {
     return this.query?.userId?.toString();
   }
+
   get peekId() {
     return this.query?.peekId?.toString();
+  }
+
+  get issueId() {
+    return this.query?.issueId?.toString();
+  }
+
+  get inboxId() {
+    return this.query?.inboxId?.toString();
+  }
+
+  get webhookId() {
+    return this.query?.webhookId?.toString();
   }
 }
