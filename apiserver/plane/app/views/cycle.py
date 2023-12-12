@@ -176,6 +176,7 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
         cycle_view = request.GET.get("cycle_view", "all")
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
 
         queryset = queryset.order_by("-is_favorite","-created_at")
 
@@ -280,45 +281,10 @@ class CycleViewSet(WebhookMixin, BaseViewSet):
                     )
 
             return Response(data, status=status.HTTP_200_OK)
-
-        # Upcoming Cycles
-        if cycle_view == "upcoming":
-            queryset = queryset.filter(start_date__gt=timezone.now())
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Completed Cycles
-        if cycle_view == "completed":
-            queryset = queryset.filter(end_date__lt=timezone.now())
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Draft Cycles
-        if cycle_view == "draft":
-            queryset = queryset.filter(
-                end_date=None,
-                start_date=None,
-            )
-
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # Incomplete Cycles
-        if cycle_view == "incomplete":
-            queryset = queryset.filter(
-                Q(end_date__gte=timezone.now().date()) | Q(end_date__isnull=True),
-            )
-            return Response(
-                CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-            )
-
-        # If no matching view is found return all cycles
-        return Response(
-            CycleSerializer(queryset, many=True).data, status=status.HTTP_200_OK
-        )
+        
+        cycles = CycleSerializer(queryset, many=True, fields=fields if fields else None).data
+        cycle_dict = {str(cycle["id"]): cycle for cycle in cycles}
+        return Response(cycle_dict, status=status.HTTP_200_OK)
 
     def create(self, request, slug, project_id):
         if (
