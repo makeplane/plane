@@ -5,10 +5,10 @@ import { IWorkspace } from "types";
 // services
 import { WorkspaceService } from "services/workspace.service";
 // sub-stores
-import { WebhookStore } from "./webhook.store";
-import { ApiTokenStore } from "./api-token.store";
+import { IWebhookStore, WebhookStore } from "./webhook.store";
+import { ApiTokenStore, IApiTokenStore } from "./api-token.store";
 
-export interface IWorkspaceStore {
+export interface IWorkspaceRootStore {
   // states
   loader: boolean;
   error: any | null;
@@ -31,11 +31,11 @@ export interface IWorkspaceStore {
   deleteWorkspace: (workspaceSlug: string) => Promise<void>;
 
   // sub-stores
-  webhook: WebhookStore;
-  apiToken: ApiTokenStore;
+  webhook: IWebhookStore;
+  apiToken: IApiTokenStore;
 }
 
-export class WorkspaceStore implements IWorkspaceStore {
+export class WorkspaceRootStore implements IWorkspaceRootStore {
   // states
   loader: boolean = false;
   error: any | null = null;
