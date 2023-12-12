@@ -1,12 +1,10 @@
 // mobx
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // services
-import { ProjectMemberService, ProjectService } from "services/project";
+import { ProjectMemberService } from "services/project";
 import { UserService } from "services/user.service";
 import { WorkspaceService } from "services/workspace.service";
-import { AuthService } from "services/auth.service";
 // interfaces
-import { IUser, IUserSettings } from "types/users";
 import { IWorkspaceMemberMe, IProjectMember, TUserProjectRole, TUserWorkspaceRole } from "types";
 import { RootStore } from "../root.store";
 
@@ -53,14 +51,12 @@ export class UserMembershipStore implements IUserMembershipStore {
   hasPermissionToProject: {
     [projectId: string]: boolean;
   } = {};
-  // root store
-  rootStore;
+  // stores
+  router;
   // services
   userService;
   workspaceService;
-  projectService;
   projectMemberService;
-  authService;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -83,42 +79,41 @@ export class UserMembershipStore implements IUserMembershipStore {
       hasPermissionToCurrentWorkspace: computed,
       hasPermissionToCurrentProject: computed,
     });
-    this.rootStore = _rootStore;
+    this.router = _rootStore.app.router;
+    // services
     this.userService = new UserService();
     this.workspaceService = new WorkspaceService();
-    this.projectService = new ProjectService();
     this.projectMemberService = new ProjectMemberService();
-    this.authService = new AuthService();
   }
 
   get currentWorkspaceMemberInfo() {
-    if (!this.rootStore.workspace.workspaceSlug) return;
-    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug];
+    if (!this.router.query?.workspaceSlug) return;
+    return this.workspaceMemberInfo[this.router.query?.workspaceSlug];
   }
 
   get currentWorkspaceRole() {
-    if (!this.rootStore.workspace.workspaceSlug) return;
-    return this.workspaceMemberInfo[this.rootStore.workspace.workspaceSlug]?.role;
+    if (!this.router.query?.workspaceSlug) return;
+    return this.workspaceMemberInfo[this.router.query?.workspaceSlug]?.role;
   }
 
   get currentProjectMemberInfo() {
-    if (!this.rootStore.project.projectId) return;
-    return this.projectMemberInfo[this.rootStore.project.projectId];
+    if (!this.router.query?.projectId) return;
+    return this.projectMemberInfo[this.router.query?.projectId];
   }
 
   get currentProjectRole() {
-    if (!this.rootStore.project.projectId) return;
-    return this.projectMemberInfo[this.rootStore.project.projectId]?.role;
+    if (!this.router.query?.projectId) return;
+    return this.projectMemberInfo[this.router.query?.projectId]?.role;
   }
 
   get hasPermissionToCurrentWorkspace() {
-    if (!this.rootStore.workspace.workspaceSlug) return;
-    return this.hasPermissionToWorkspace[this.rootStore.workspace.workspaceSlug];
+    if (!this.router.query?.workspaceSlug) return;
+    return this.hasPermissionToWorkspace[this.router.query?.workspaceSlug];
   }
 
   get hasPermissionToCurrentProject() {
-    if (!this.rootStore.project.projectId) return;
-    return this.hasPermissionToProject[this.rootStore.project.projectId];
+    if (!this.router.query?.projectId) return;
+    return this.hasPermissionToProject[this.router.query?.projectId];
   }
 
   fetchUserWorkspaceInfo = async (workspaceSlug: string) => {
