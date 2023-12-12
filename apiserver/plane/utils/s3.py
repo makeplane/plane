@@ -8,13 +8,22 @@ from django.conf import settings
 
 class S3:
     def __init__(self):
-        self.client = boto3.client(
-            "s3",
-            region_name=settings.AWS_REGION,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            config=Config(signature_version=settings.AWS_S3_SIGNATURE_VERSION),
-        )
+        if settings.USE_MINIO:
+            self.client = boto3.client(
+                "s3",
+                endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                config=Config(signature_version="s3v4"),
+            )
+        else:
+            self.client = boto3.client(
+                "s3",
+                region_name=settings.AWS_REGION,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                config=Config(signature_version=settings.AWS_S3_SIGNATURE_VERSION),
+            )
 
     def refresh_url(self, old_url, time=settings.AWS_S3_MAX_AGE_SECONDS):
         path = urlparse(str(old_url)).path.lstrip("/")
