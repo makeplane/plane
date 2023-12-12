@@ -35,6 +35,16 @@ from plane.db.models import (
 from plane.utils.parse_html import parse_text_to_html, refresh_url_content
 
 
+class BaseIssueSerializerMixin:
+    def refresh_html_content(self, instance):
+        html = parse_text_to_html(instance.description_html)
+        refreshed, html = refresh_url_content(html)
+
+        if refreshed:
+            instance.description_html = html
+            instance.save()
+
+
 class IssueFlatSerializer(BaseSerializer):
     ## Contain only flat fields
 
@@ -523,7 +533,7 @@ class IssueStateSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class IssueSerializer(BaseSerializer):
+class IssueSerializer(BaseSerializer, BaseIssueSerializerMixin):
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateSerializer(read_only=True, source="state")
     parent_detail = IssueStateFlatSerializer(read_only=True, source="parent")
@@ -555,15 +565,12 @@ class IssueSerializer(BaseSerializer):
         ]
 
     def to_representation(self, instance):
+        self.refresh_html_content(instance)
         data = super().to_representation(instance)
-
-        html = parse_text_to_html(instance.description_html)
-        data["description_html"] = str(refresh_url_content(html))
-
         return data
 
 
-class IssueLiteSerializer(BaseSerializer):
+class IssueLiteSerializer(BaseSerializer, BaseIssueSerializerMixin):
     workspace_detail = WorkspaceLiteSerializer(read_only=True, source="workspace")
     project_detail = ProjectLiteSerializer(read_only=True, source="project")
     state_detail = StateLiteSerializer(read_only=True, source="state")
@@ -592,11 +599,8 @@ class IssueLiteSerializer(BaseSerializer):
         ]
 
     def to_representation(self, instance):
+        self.refresh_html_content(instance)
         data = super().to_representation(instance)
-
-        html = parse_text_to_html(instance.description_html)
-        data["description_html"] = str(refresh_url_content(html))
-
         return data
 
 
