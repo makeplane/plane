@@ -42,6 +42,7 @@ from plane.app.permissions import (
     WorkspaceUserPermission,
     ProjectBasePermission,
     ProjectMemberPermission,
+    ProjectLitePermission,
 )
 
 from plane.db.models import (
@@ -601,6 +602,18 @@ class ProjectMemberViewSet(BaseViewSet):
     permission_classes = [
         ProjectMemberPermission,
     ]
+
+    def get_permissions(self):
+        if self.action == "leave":
+            self.permission_classes = [
+                ProjectLitePermission,
+            ]
+        else:
+            self.permission_classes = [
+                ProjectMemberPermission,
+            ]
+
+        return super(ProjectMemberViewSet, self).get_permissions()
 
     search_fields = [
         "member__display_name",

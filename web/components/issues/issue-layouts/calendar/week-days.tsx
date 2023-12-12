@@ -25,6 +25,7 @@ type Props = {
   week: ICalendarWeek | undefined;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
+  disableIssueCreation?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -42,6 +43,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
     week,
     quickActions,
     enableQuickIssueCreate,
+    disableIssueCreation,
     quickAddCallback,
     viewId,
   } = props;
@@ -69,6 +71,7 @@ export const CalendarWeekDays: React.FC<Props> = observer((props) => {
             groupedIssueIds={groupedIssueIds}
             quickActions={quickActions}
             enableQuickIssueCreate={enableQuickIssueCreate}
+            disableIssueCreation={disableIssueCreation}
             quickAddCallback={quickAddCallback}
             viewId={viewId}
           />
