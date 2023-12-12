@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
 
 from plane.db.models import (
@@ -16,7 +16,7 @@ from plane.db.models import (
 )
 
 
-class WorkSpaceSerializer(BaseSerializer):
+class WorkSpaceSerializer(DynamicBaseSerializer):
     owner = UserLiteSerializer(read_only=True)
     total_members = serializers.IntegerField(read_only=True)
     total_issues = serializers.IntegerField(read_only=True)

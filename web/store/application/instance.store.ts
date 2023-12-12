@@ -1,6 +1,4 @@
 import { observable, action, computed, makeObservable, runInAction } from "mobx";
-// store
-import { RootStore } from "../root.store";
 // types
 import { IInstance, IInstanceConfiguration, IFormattedInstanceConfiguration, IInstanceAdmin } from "types/instance";
 // services
@@ -31,9 +29,8 @@ export class InstanceStore implements IInstanceStore {
   configurations: IInstanceConfiguration[] | null = null;
   // service
   instanceService;
-  rootStore;
 
-  constructor(_rootStore: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
       loader: observable.ref,
@@ -51,7 +48,6 @@ export class InstanceStore implements IInstanceStore {
       updateInstanceConfigurations: action,
     });
 
-    this.rootStore = _rootStore;
     this.instanceService = new InstanceService();
   }
 

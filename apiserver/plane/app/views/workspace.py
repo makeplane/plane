@@ -214,7 +214,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             fields=fields if fields else None,
             many=True,
         ).data
-        workspace_dict = {str(workspaces["id"]): workspaces for workspace in workspaces}
+        workspace_dict = {str(workspace["id"]): workspace for workspace in workspaces}
         return Response(workspace_dict, status=status.HTTP_200_OK)
 
 

@@ -1,5 +1,6 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
 import { RootStore } from "../root.store";
+import { set } from "lodash";
 // types
 import { IWorkspace } from "types";
 // services
@@ -12,24 +13,19 @@ export interface IWorkspaceRootStore {
   // states
   loader: boolean;
   error: any | null;
-
   // observables
-  workspaces: IWorkspace[] | undefined;
-
+  workspaces: Record<string, IWorkspace>;
   // computed
   currentWorkspace: IWorkspace | null;
   workspacesCreatedByCurrentUser: IWorkspace[] | null;
-
   // computed actions
   getWorkspaceBySlug: (workspaceSlug: string) => IWorkspace | null;
   getWorkspaceById: (workspaceId: string) => IWorkspace | null;
-
   // actions
-  fetchWorkspaces: () => Promise<IWorkspace[]>;
+  fetchWorkspaces: () => Promise<Record<string, IWorkspace>>;
   createWorkspace: (data: Partial<IWorkspace>) => Promise<IWorkspace>;
   updateWorkspace: (workspaceSlug: string, data: Partial<IWorkspace>) => Promise<IWorkspace>;
   deleteWorkspace: (workspaceSlug: string) => Promise<void>;
-
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
@@ -39,10 +35,8 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   // states
   loader: boolean = false;
   error: any | null = null;
-
   // observables
-  workspaces: IWorkspace[] | undefined = [];
-
+  workspaces: Record<string, IWorkspace> = {};
   // services
   workspaceService;
   // root store
@@ -56,18 +50,14 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       // states
       loader: observable.ref,
       error: observable.ref,
-
       // observables
       workspaces: observable,
-
       // computed
       currentWorkspace: computed,
       workspacesCreatedByCurrentUser: computed,
-
       // computed actions
       getWorkspaceBySlug: action,
       getWorkspaceById: action,
-
       // actions
       fetchWorkspaces: action,
       createWorkspace: action,
@@ -92,7 +82,9 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
     if (!workspaceSlug) return null;
 
-    return this.workspaces?.find((workspace) => workspace.slug === workspaceSlug) || null;
+    const workspaceDetails = Object.values(this.workspaces ?? {})?.find((w) => w.slug === workspaceSlug);
+
+    return workspaceDetails || null;
   }
 
   /**
@@ -105,20 +97,23 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
     if (!user) return null;
 
-    return this.workspaces.filter((w) => w.created_by === user?.id);
+    const userWorkspaces = Object.values(this.workspaces ?? {})?.filter((w) => w.created_by === user?.id);
+
+    return userWorkspaces || null;
   }
 
   /**
    * get workspace info from the array of workspaces in the store using workspace slug
    * @param workspaceSlug
    */
-  getWorkspaceBySlug = (workspaceSlug: string) => this.workspaces?.find((w) => w.slug == workspaceSlug) || null;
+  getWorkspaceBySlug = (workspaceSlug: string) =>
+    Object.values(this.workspaces ?? {})?.find((w) => w.slug == workspaceSlug) || null;
 
   /**
    * get workspace info from the array of workspaces in the store using workspace id
    * @param workspaceId
    */
-  getWorkspaceById = (workspaceId: string) => this.workspaces?.find((w) => w.id == workspaceId) || null;
+  getWorkspaceById = (workspaceId: string) => this.workspaces?.[workspaceId] || null;
 
   /**
    * fetch user workspaces from API
@@ -143,7 +138,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       runInAction(() => {
         this.loader = false;
         this.error = error;
-        this.workspaces = [];
+        this.workspaces = {};
       });
 
       throw error;
@@ -163,10 +158,12 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
       const response = await this.workspaceService.createWorkspace(data);
 
+      const updatedWorkspacesList = set(this.workspaces, response.id, response);
+
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.workspaces = [...(this.workspaces ?? []), response];
+        this.workspaces = updatedWorkspacesList;
       });
 
       return response;
@@ -186,8 +183,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param data
    */
   updateWorkspace = async (workspaceSlug: string, data: Partial<IWorkspace>) => {
-    const newWorkspaces = this.workspaces?.map((w) => (w.slug === workspaceSlug ? { ...w, ...data } : w));
-
     try {
       runInAction(() => {
         this.loader = true;
@@ -196,10 +191,12 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
       const response = await this.workspaceService.updateWorkspace(workspaceSlug, data);
 
+      const updatedWorkspacesList = set(this.workspaces, response.id, data);
+
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.workspaces = newWorkspaces;
+        this.workspaces = updatedWorkspacesList;
       });
 
       return response;
@@ -218,8 +215,6 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    * @param workspaceSlug
    */
   deleteWorkspace = async (workspaceSlug: string) => {
-    const newWorkspaces = this.workspaces?.filter((w) => w.slug !== workspaceSlug);
-
     try {
       runInAction(() => {
         this.loader = true;
@@ -228,10 +223,15 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
       await this.workspaceService.deleteWorkspace(workspaceSlug);
 
+      const updatedWorkspacesList = this.workspaces;
+      const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
+
+      delete updatedWorkspacesList[`${workspaceId}`];
+
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.workspaces = newWorkspaces;
+        this.workspaces = updatedWorkspacesList;
       });
     } catch (error) {
       runInAction(() => {

@@ -158,8 +158,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                                ? value
-                                : currentUser?.email
+                              ? value
+                              : currentUser?.email
                           }
                           src={currentUser?.avatar}
                           size={35}
@@ -174,8 +174,8 @@ const OnboardingPage: NextPageWithLayout = observer(() => {
                             {currentUser?.first_name
                               ? `${currentUser?.first_name} ${currentUser?.last_name ?? ""}`
                               : value.length > 0
-                                ? value
-                                : null}
+                              ? value
+                              : null}
                           </p>
                         )}
 

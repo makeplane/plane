@@ -149,7 +149,7 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
               </Droppable>
 
               <div className="sticky bottom-0 z-[0] w-full flex-shrink-0 bg-custom-background-90 py-1">
-                {enableQuickIssueCreate && (
+                {enableQuickIssueCreate && !disableIssueCreation && (
                   <KanBanQuickAddIssueForm
                     formKey="name"
                     groupId={getValueFromObject(_list, listKey) as string}

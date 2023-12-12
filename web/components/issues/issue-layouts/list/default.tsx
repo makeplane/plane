@@ -109,7 +109,7 @@ const GroupByList: React.FC<IGroupByList> = (props) => {
                   />
                 )}
 
-                {enableIssueQuickAdd && (
+                {enableIssueQuickAdd && !disableIssueCreation && (
                   <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
                     <ListQuickAddIssueForm
                       prePopulatedData={prePopulateQuickAddData(group_by, getValueFromObject(_list, listKey))}
