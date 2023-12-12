@@ -1,7 +1,8 @@
 import re
 import boto3
 from botocore.client import Config
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
+from datetime import datetime, timezone
 
 from django.conf import settings
 
@@ -39,3 +40,17 @@ class S3:
     def verify_s3_url(url):
         pattern = re.compile(r"amazonaws\.com")
         return pattern.search(url)
+
+    @staticmethod
+    def url_file_has_experid(url, date_format="%Y%m%dT%H%M%SZ"):
+        parsed_url = urlparse(url)
+        query_params = parse_qs(parsed_url.query)
+        x_amz_date = query_params.get("X-Amz-Date", [None])[0]
+
+        x_amz_date_to_date = datetime.strptime(x_amz_date, date_format).replace(
+            tzinfo=timezone.utc
+        )
+        actual_date = datetime.now(timezone.utc)
+        seconds_difference = (actual_date - x_amz_date_to_date).total_seconds()
+
+        return seconds_difference >= (settings.AWS_S3_MAX_AGE_SECONDS - 20)
