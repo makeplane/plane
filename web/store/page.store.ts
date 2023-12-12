@@ -1,5 +1,6 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import keyBy from "lodash/keyBy";
+import set from "lodash/set";
 import isToday from "date-fns/isToday";
 import isThisWeek from "date-fns/isThisWeek";
 import isYesterday from "date-fns/isYesterday";
@@ -32,8 +33,8 @@ export class PageStore {
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
-      pages: observable.ref,
-      archivedPages: observable.ref,
+      pages: observable,
+      archivedPages: observable,
       // computed
       projectPages: computed,
       favoriteProjectPages: computed,
@@ -189,6 +190,43 @@ export class PageStore {
           ...this.pages,
           [pageId]: { ...this.pages[pageId], is_favorite: true },
         };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * Creates a new page using the api and updated the local state in store
+   * @param workspaceSlug
+   * @param projectId
+   * @param data
+   */
+  createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
+    const response = await this.pageService.createPage(workspaceSlug, projectId, data);
+    runInAction(() => {
+      this.pages = set(this.pages, [response.id], response);
+    });
+  };
+
+  /**
+   * updates the page using the api and updates the local state in store
+   * @param workspaceSlug
+   * @param projectId
+   * @param pageId
+   * @param data
+   * @returns
+   */
+  updatePage = async (workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>) => {
+    const originalPage = this.pages[pageId];
+    try {
+      runInAction(() => {
+        this.pages[pageId] = { ...originalPage, ...data };
+      });
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, data);
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.pages[pageId] = originalPage;
       });
       throw error;
     }
