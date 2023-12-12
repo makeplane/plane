@@ -104,9 +104,9 @@ export class ProjectsStore implements IProjectsStore {
   }
 
   get searchedProjects() {
-    if (!this.rootStore.workspace.workspaceSlug) return [];
+    if (!this.rootStore.app.router.query.workspaceSlug) return [];
 
-    const currentProjectsMap = this.projectsMap[this.rootStore.workspace.workspaceSlug];
+    const currentProjectsMap = this.projectsMap[this.rootStore.app.router.query.workspaceSlug.toString()];
     const projectIds = Object.keys(currentProjectsMap);
     return this.searchQuery === ""
       ? projectIds
@@ -117,8 +117,8 @@ export class ProjectsStore implements IProjectsStore {
   }
 
   get workspaceProjects() {
-    if (!this.rootStore.workspace.workspaceSlug) return null;
-    const currentProjectsMap = this.projectsMap[this.rootStore.workspace.workspaceSlug];
+    if (!this.rootStore.app.router.workspaceSlug) return null;
+    const currentProjectsMap = this.projectsMap[this.rootStore.app.router.query.workspaceSlug.toString()];
 
     const projectIds = Object.keys(currentProjectsMap);
     if (!projectIds) return null;
@@ -126,8 +126,8 @@ export class ProjectsStore implements IProjectsStore {
   }
 
   get currentProjectDetails() {
-    if (!this.projectId || !this.rootStore.workspace.workspaceSlug) return;
-    return this.projectsMap[this.rootStore.workspace.workspaceSlug][this.projectId];
+    if (!this.rootStore.app.router.query.projectId || !this.rootStore.app.router.query.workspaceSlug) return;
+    return this.projectsMap[!this.rootStore.app.router.query.workspaceSlug][this.projectId];
   }
 
   get joinedProjects() {
