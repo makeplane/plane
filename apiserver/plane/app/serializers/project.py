@@ -159,6 +159,11 @@ class ProjectMemberAdminSerializer(BaseSerializer):
         model = ProjectMember
         fields = "__all__"
 
+class ProjectMemberRoleSerializer(DynamicBaseSerializer):
+
+    class Meta:
+        model = ProjectMember
+        fields = ("id", "role", "member", "project")
 
 class ProjectMemberInviteSerializer(BaseSerializer):
     project = ProjectLiteSerializer(read_only=True)

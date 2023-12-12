@@ -36,6 +36,7 @@ from plane.app.serializers import (
     ProjectFavoriteSerializer,
     ProjectDeployBoardSerializer,
     ProjectMemberAdminSerializer,
+    ProjectMemberRoleSerializer,
 )
 
 from plane.app.permissions import (
@@ -681,13 +682,7 @@ class ProjectMemberViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def list(self, request, slug, project_id):
-        project_member = ProjectMember.objects.get(
-            member=request.user,
-            workspace__slug=slug,
-            project_id=project_id,
-            is_active=True,
-        )
-
+        # Get the list of project members for the project
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             workspace__slug=slug,
@@ -695,10 +690,7 @@ class ProjectMemberViewSet(BaseViewSet):
             is_active=True,
         ).select_related("project", "member", "workspace")
 
-        if project_member.role > 10:
-            serializer = ProjectMemberAdminSerializer(project_members, many=True)
-        else:
-            serializer = ProjectMemberSerializer(project_members, many=True)
+        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update(self, request, slug, project_id, pk):

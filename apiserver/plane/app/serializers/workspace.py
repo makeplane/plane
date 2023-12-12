@@ -2,7 +2,7 @@
 from rest_framework import serializers
 
 # Module imports
-from .base import BaseSerializer
+from .base import BaseSerializer, DynamicBaseSerializer
 from .user import UserLiteSerializer, UserAdminLiteSerializer
 
 from plane.db.models import (
@@ -62,7 +62,7 @@ class WorkspaceLiteSerializer(BaseSerializer):
 
 
 
-class WorkSpaceMemberSerializer(BaseSerializer):
+class WorkSpaceMemberSerializer(DynamicBaseSerializer):
     member = UserLiteSerializer(read_only=True)
     workspace = WorkspaceLiteSerializer(read_only=True)
 
@@ -78,7 +78,7 @@ class WorkspaceMemberMeSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class WorkspaceMemberAdminSerializer(BaseSerializer):
+class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
     member = UserAdminLiteSerializer(read_only=True)
     workspace = WorkspaceLiteSerializer(read_only=True)
 

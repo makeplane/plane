@@ -44,6 +44,7 @@ from plane.app.serializers import (
     IssueLiteSerializer,
     WorkspaceMemberAdminSerializer,
     WorkspaceMemberMeSerializer,
+    ProjectMemberRoleSerializer,
 )
 from plane.app.views.base import BaseAPIView
 from . import BaseViewSet
@@ -524,10 +525,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_members = self.get_queryset()
 
         if workspace_member.role > 10:
-            serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
+            serializer = WorkspaceMemberAdminSerializer(
+                workspace_members,
+                fields=("id", "member", "role"),
+                many=True,
+            )
         else:
             serializer = WorkSpaceMemberSerializer(
                 workspace_members,
+                fields=("id", "member", "role"),
                 many=True,
             )
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -690,6 +696,43 @@ class WorkSpaceMemberViewSet(BaseViewSet):
         workspace_member.is_active = False
         workspace_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class WorkspaceProjectMemberEndpoint(BaseAPIView):
+    serializer_class = ProjectMemberRoleSerializer
+    model = ProjectMember
+
+    permission_classes = [
+        WorkspaceEntityPermission,
+    ]
+
+    def get(self, request, slug):
+        # Fetch all project IDs where the user is involved
+        project_ids = ProjectMember.objects.filter(
+            member=request.user,
+            member__is_bot=False,
+            is_active=True,
+        ).values_list('project_id', flat=True).distinct()
+
+        # Get all the project members in which the user is involved
+        project_members = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member__is_bot=False,
+            project_id__in=project_ids,
+            is_active=True,
+        ).select_related("project", "member", "workspace")
+        project_members = ProjectMemberRoleSerializer(project_members, many=True).data
+
+        project_members_dict = dict()
+
+        # Construct a dictionary with project_id as key and project_members as value
+        for project_member in project_members:
+            project_id = project_member.pop("project")
+            if str(project_id) not in project_members_dict:
+                project_members_dict[str(project_id)] = []
+            project_members_dict[str(project_id)].append(project_member)
+
+        return Response(project_members_dict, status=status.HTTP_200_OK)
 
 
 class TeamMemberViewSet(BaseViewSet):
