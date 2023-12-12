@@ -1,4 +1,5 @@
 import { action, computed, observable, makeObservable, runInAction } from "mobx";
+import set from "lodash/set";
 // types
 import { ICycle, TCycleView, CycleDateCheckData } from "types";
 // mobx
@@ -87,8 +88,8 @@ export class CycleStore implements ICycleStore {
       error: observable.ref,
 
       cycleId: observable.ref,
-      cycleMap: observable.ref,
-      cycles: observable.ref,
+      cycleMap: observable,
+      cycles: observable,
 
       // computed
       projectCycles: computed,
@@ -118,14 +119,14 @@ export class CycleStore implements ICycleStore {
 
   // computed
   get projectCycles() {
-    const projectId = this.rootStore.project.projectId;
+    const projectId = this.rootStore.app.router.projectId;
 
     if (!projectId) return null;
     return this.cycles[projectId]?.all || null;
   }
 
   get projectCompletedCycles() {
-    const projectId = this.rootStore.project.projectId;
+    const projectId = this.rootStore.app.router.projectId;
 
     if (!projectId) return null;
 
@@ -133,7 +134,7 @@ export class CycleStore implements ICycleStore {
   }
 
   get projectUpcomingCycles() {
-    const projectId = this.rootStore.project.projectId;
+    const projectId = this.rootStore.app.router.projectId;
 
     if (!projectId) return null;
 
@@ -141,18 +142,22 @@ export class CycleStore implements ICycleStore {
   }
 
   get projectDraftCycles() {
-    const projectId = this.rootStore.project.projectId;
+    const projectId = this.rootStore.app.router.projectId;
 
     if (!projectId) return null;
 
     return this.cycles[projectId]?.draft || null;
   }
 
-  getCycleById = (cycleId: string) => this.cycleMap[this.rootStore.project][cycleId] || null;
+  getCycleById = (cycleId: string) => {
+    const projectId = this.rootStore.app.router.projectId;
+
+    if (!projectId) return null;
+
+    return this.cycleMap?.[projectId]?.[cycleId] || null;
+  };
 
   // actions
-  setCycleView = (_cycleView: TCycleView) => (this.cycleView = _cycleView);
-
   validateDate = async (workspaceSlug: string, projectId: string, payload: CycleDateCheckData) => {
     try {
       const response = await this.cycleService.cycleDateCheck(workspaceSlug, projectId, payload);
@@ -174,18 +179,12 @@ export class CycleStore implements ICycleStore {
 
       const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, params);
 
+      const _cycleMap = set(this.cycleMap, [projectId], cyclesResponse);
+      const _cycles = set(this.cycles, [projectId, params], Object.keys(cyclesResponse));
+
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            ...cyclesResponse,
-          },
-        };
-        this.cycles = {
-          ...this.cycles,
-          [projectId]: { ...this.cycles[projectId], [params]: Object.keys(cyclesResponse) },
-        };
+        this.cycleMap = _cycleMap;
+        this.cycles = _cycles;
         this.loader = false;
         this.error = null;
       });
@@ -200,14 +199,9 @@ export class CycleStore implements ICycleStore {
     try {
       const response = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);
 
+      const _cycleMap = set(this.cycleMap, [projectId, response?.id], response);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [response?.id]: response,
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
 
       return response;
@@ -221,14 +215,9 @@ export class CycleStore implements ICycleStore {
     try {
       const response = await this.cycleService.createCycle(workspaceSlug, projectId, data);
 
+      const _cycleMap = set(this.cycleMap, [projectId, response?.id], response);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [response?.id]: response,
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
 
       const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
@@ -247,14 +236,9 @@ export class CycleStore implements ICycleStore {
 
       const currentCycle = this.cycleMap[projectId][cycleId];
 
+      const _cycleMap = set(this.cycleMap, [projectId, cycleId], { ...currentCycle, ...data });
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [cycleId]: { ...currentCycle, ...data },
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
 
       const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
@@ -272,11 +256,9 @@ export class CycleStore implements ICycleStore {
       const currentProjectCycles = this.cycleMap[projectId];
       delete currentProjectCycles[cycleId];
 
+      const _cycleMap = set(this.cycleMap, [projectId], currentProjectCycles);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: currentProjectCycles,
-        };
+        this.cycleMap = _cycleMap;
       });
 
       const _response = await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId);
@@ -294,17 +276,11 @@ export class CycleStore implements ICycleStore {
   addCycleToFavorites = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
       const currentCycle = this.cycleMap[projectId][cycleId];
-
       if (currentCycle.is_favorite) return;
 
+      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], true);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [cycleId]: { ...currentCycle, is_favorite: true },
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
 
       // updating through api.
@@ -315,16 +291,9 @@ export class CycleStore implements ICycleStore {
       console.log("Failed to add cycle to favorites in the cycles store", error);
 
       // reset on error
-      const currentCycle = this.cycleMap[projectId][cycleId];
-
+      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], false);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [cycleId]: { ...currentCycle, is_favorite: false },
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
 
       throw error;
@@ -337,14 +306,9 @@ export class CycleStore implements ICycleStore {
 
       if (!currentCycle.is_favorite) return;
 
+      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], false);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [cycleId]: { ...currentCycle, is_favorite: false },
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
 
       const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
@@ -354,16 +318,11 @@ export class CycleStore implements ICycleStore {
       console.log("Failed to remove cycle from favorites - Cycle Store", error);
 
       // reset on error
-      const currentCycle = this.cycleMap[projectId][cycleId];
+      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], true);
       runInAction(() => {
-        this.cycleMap = {
-          ...this.cycleMap,
-          [projectId]: {
-            ...this.cycleMap[projectId],
-            [cycleId]: { ...currentCycle, is_favorite: true },
-          },
-        };
+        this.cycleMap = _cycleMap;
       });
+
       throw error;
     }
   };

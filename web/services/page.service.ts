@@ -50,6 +50,14 @@ export class PageService extends APIService {
       });
   }
 
+  async getProjectPages(workspaceSlug: string, projectId: string) {
+    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   async getPagesWithParams(
     workspaceSlug: string,
     projectId: string,
