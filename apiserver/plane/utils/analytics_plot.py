@@ -12,34 +12,47 @@ from django.db.models.functions import Coalesce, ExtractMonth, ExtractYear, Conc
 from plane.db.models import Issue
 
 
-def build_graph_plot(queryset, x_axis, y_axis, segment=None):
+def annotate_with_monthly_dimension(queryset, field_name, attribute):
+    # Get the year and the months
+    year = ExtractYear(field_name)
+    month = ExtractMonth(field_name)
+    # Concat the year and month
+    dimension = Concat(year, Value("-"), month, output_field=CharField())
+    # Annotate the dimension
+    return queryset.annotate(**{attribute: dimension})
 
-    temp_axis = x_axis
-
+def extract_axis(queryset, x_axis):
+    # Format the dimension when the axis is in date
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
-        year = ExtractYear(x_axis)
-        month = ExtractMonth(x_axis)
-        dimension = Concat(year, Value("-"), month, output_field=CharField())
-        queryset = queryset.annotate(dimension=dimension)
-        x_axis = "dimension"
+        queryset = annotate_with_monthly_dimension(queryset, x_axis, "dimension")
+        return queryset, "dimension"
     else:
-        queryset = queryset.annotate(dimension=F(x_axis))
-        x_axis = "dimension"
+        return queryset.annotate(dimension=F(x_axis)), "dimension"
 
-    if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
-        queryset = queryset.exclude(x_axis__is_null=True)
+def sort_data(data, temp_axis):
+    # When the axis is in priority order by
+    if temp_axis == "priority":
+        order = ["low", "medium", "high", "urgent", "none"]
+        return {key: data[key] for key in order if key in data}
+    else:
+        return dict(sorted(data.items(), key=lambda x: (x[0] == "none", x[0])))
 
+def build_graph_plot(queryset, x_axis, y_axis, segment=None):
+    # temp x_axis
+    temp_axis = x_axis
+    # Extract the x_axis and queryset
+    queryset, x_axis = extract_axis(queryset, x_axis)
+    if x_axis == "dimension":
+        queryset = queryset.exclude(dimension__isnull=True)
+
+    # 
     if segment in ["created_at", "start_date", "target_date", "completed_at"]:
-        year = ExtractYear(segment)
-        month = ExtractMonth(segment)
-        dimension = Concat(year, Value("-"), month, output_field=CharField())
-        queryset = queryset.annotate(segmented=dimension)
+        queryset = annotate_with_monthly_dimension(queryset, segment, "segmented")
         segment = "segmented"
 
     queryset = queryset.values(x_axis)
 
-    # Group queryset by x_axis field
-
+    # Issue count
     if y_axis == "issue_count":
         queryset = queryset.annotate(
             is_null=Case(
@@ -49,42 +62,24 @@ def build_graph_plot(queryset, x_axis, y_axis, segment=None):
             ),
             dimension_ex=Coalesce("dimension", Value("null")),
         ).values("dimension")
-        if segment:
-            queryset = queryset.annotate(segment=F(segment)).values(
-                "dimension", "segment"
-            )
-        else:
-            queryset = queryset.values("dimension")
-
+        queryset = queryset.annotate(segment=F(segment)) if segment else queryset
+        queryset = queryset.values("dimension", "segment") if segment else queryset.values("dimension")
         queryset = queryset.annotate(count=Count("*")).order_by("dimension")
 
-    if y_axis == "estimate":
+    # Estimate
+    else:
         queryset = queryset.annotate(estimate=Sum("estimate_point")).order_by(x_axis)
-        if segment:
-            queryset = queryset.annotate(segment=F(segment)).values(
-                "dimension", "segment", "estimate"
-            )
-        else:
-            queryset = queryset.values("dimension", "estimate")
+        queryset = queryset.annotate(segment=F(segment)) if segment else queryset
+        queryset = queryset.values("dimension", "segment", "estimate") if segment else queryset.values("dimension", "estimate")
 
     result_values = list(queryset)
-    grouped_data = {}
-    for key, items in groupby(result_values, key=lambda x: x[str("dimension")]):
-        grouped_data[str(key)] = list(items)
+    grouped_data = {str(key): list(items) for key, items in groupby(result_values, key=lambda x: x[str("dimension")])}
 
-    sorted_data = grouped_data
-    if temp_axis == "priority":
-        order = ["low", "medium", "high", "urgent", "none"]
-        sorted_data = {key: grouped_data[key] for key in order if key in grouped_data}
-    else:
-        sorted_data = dict(sorted(grouped_data.items(), key=lambda x: (x[0] == "none", x[0])))
-    return sorted_data
-
+    return sort_data(grouped_data, temp_axis)
 
 def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
     # Total Issues in Cycle or Module
     total_issues = queryset.total_issues
-
 
     if cycle_id:
         # Get all dates between the two dates
@@ -107,7 +102,7 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .values("date", "total_completed")
             .order_by("date")
         )
-    
+
     if module_id:
         # Get all dates between the two dates
         date_range = [
@@ -130,16 +125,13 @@ def burndown_plot(queryset, slug, project_id, cycle_id=None, module_id=None):
             .order_by("date")
         )
 
-
     for date in date_range:
         cumulative_pending_issues = total_issues
         total_completed = 0
         total_completed = sum(
-            [
-                item["total_completed"]
-                for item in completed_issues_distribution
-                if item["date"] is not None and item["date"] <= date
-            ]
+            item["total_completed"]
+            for item in completed_issues_distribution
+            if item["date"] is not None and item["date"] <= date
         )
         cumulative_pending_issues -= total_completed
         chart_data[str(date)] = cumulative_pending_issues

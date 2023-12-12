@@ -1,20 +1,13 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
-// services
-import stateService from "services/state.service";
+import { observer } from "mobx-react-lite";
+// store
+import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { CustomSearchSelect } from "components/ui";
+import { CustomSearchSelect, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
 // icons
-import { PlusIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
-import { StateGroupIcon } from "components/icons";
-// helpers
-import { getStatesList } from "helpers/state.helper";
-// fetch keys
-import { STATES_LIST } from "constants/fetch-keys";
+import { Plus } from "lucide-react";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,18 +16,23 @@ type Props = {
   projectId: string;
 };
 
-export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, projectId }) => {
+export const IssueStateSelect: React.FC<Props> = observer((props) => {
+  const { setIsOpen, value, onChange, projectId } = props;
+
   // states
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
-  const { data: stateGroups } = useSWR(
-    workspaceSlug && projectId ? STATES_LIST(projectId) : null,
-    workspaceSlug && projectId
-      ? () => stateService.getStates(workspaceSlug as string, projectId)
-      : null
+  const {
+    projectState: { states: projectStates, fetchProjectStates },
+  } = useMobxStore();
+
+  useSWR(
+    workspaceSlug && projectId ? `STATES_LIST_${projectId.toUpperCase()}` : null,
+    workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId) : null
   );
-  const states = getStatesList(stateGroups);
+
+  const states = projectStates?.[projectId] || [];
 
   const options = states?.map((state) => ({
     value: state.id,
@@ -56,20 +54,15 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
       onChange={onChange}
       options={options}
       label={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 text-custom-text-200">
           {selectedOption ? (
             <StateGroupIcon stateGroup={selectedOption.group} color={selectedOption.color} />
           ) : currentDefaultState ? (
-            <StateGroupIcon
-              stateGroup={currentDefaultState.group}
-              color={currentDefaultState.color}
-            />
+            <StateGroupIcon stateGroup={currentDefaultState.group} color={currentDefaultState.color} />
           ) : (
-            <Squares2X2Icon className="h-3.5 w-3.5 text-custom-text-200" />
+            <DoubleCircleIcon className="h-3 w-3" />
           )}
-          {selectedOption?.name
-            ? selectedOption.name
-            : currentDefaultState?.name ?? <span className="text-custom-text-200">State</span>}
+          {selectedOption?.name ? selectedOption.name : currentDefaultState?.name ?? <span>State</span>}
         </div>
       }
       footerOption={
@@ -78,11 +71,11 @@ export const IssueStateSelect: React.FC<Props> = ({ setIsOpen, value, onChange, 
           className="flex w-full select-none items-center gap-2 rounded px-1 py-1.5 text-xs text-custom-text-200 hover:bg-custom-background-80"
           onClick={() => setIsOpen(true)}
         >
-          <PlusIcon className="h-4 w-4" aria-hidden="true" />
+          <Plus className="h-4 w-4" aria-hidden="true" />
           Create New State
         </button>
       }
       noChevron
     />
   );
-};
+});

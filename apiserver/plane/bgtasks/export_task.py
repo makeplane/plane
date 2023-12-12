@@ -4,7 +4,6 @@ import io
 import json
 import boto3
 import zipfile
-from urllib.parse import urlparse, urlunparse
 
 # Django imports
 from django.conf import settings
@@ -72,7 +71,7 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
     file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
     expires_in = 7 * 24 * 60 * 60
 
-    if settings.DOCKERIZED and settings.USE_MINIO:
+    if settings.USE_MINIO:
         s3 = boto3.client(
             "s3",
             endpoint_url=settings.AWS_S3_ENDPOINT_URL,
@@ -106,14 +105,14 @@ def upload_to_s3(zip_file, workspace_id, token_id, slug):
         )
         s3.upload_fileobj(
             zip_file,
-            settings.AWS_S3_BUCKET_NAME,
+            settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
             ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
         )
 
         presigned_url = s3.generate_presigned_url(
             "get_object",
-            Params={"Bucket": settings.AWS_S3_BUCKET_NAME, "Key": file_name},
+            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
             ExpiresIn=expires_in,
         )
 

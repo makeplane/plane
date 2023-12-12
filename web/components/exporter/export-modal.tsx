@@ -1,39 +1,41 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-// headless ui
+import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // services
-import CSVIntegrationService from "services/integration/csv.services";
+import { ProjectExportService } from "services/project";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
-import { SecondaryButton, PrimaryButton, CustomSearchSelect } from "components/ui";
+import { Button, CustomSearchSelect } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IImporterService } from "types";
-// fetch-keys
-import useProjects from "hooks/use-projects";
+import { IUser, IImporterService } from "types";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
   data: IImporterService | null;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   provider: string | string[];
   mutateServices: () => void;
 };
 
-export const Exporter: React.FC<Props> = ({
-  isOpen,
-  handleClose,
-  user,
-  provider,
-  mutateServices,
-}) => {
+const projectExportService = new ProjectExportService();
+
+export const Exporter: React.FC<Props> = observer((props) => {
+  const { isOpen, handleClose, user, provider, mutateServices } = props;
+
   const [exportLoading, setExportLoading] = useState(false);
+
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  const { projects } = useProjects();
+
+  const { project: projectStore } = useMobxStore();
+
+  const projects = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : undefined;
+
   const { setToastAlert } = useToast();
 
   const options = projects?.map((project) => ({
@@ -41,7 +43,7 @@ export const Exporter: React.FC<Props> = ({
     query: project.name + project.identifier,
     content: (
       <div className="flex items-center gap-2">
-        <span className="text-custom-text-200 text-[0.65rem]">{project.identifier}</span>
+        <span className="text-[0.65rem] text-custom-text-200">{project.identifier}</span>
         {project.name}
       </div>
     ),
@@ -60,7 +62,8 @@ export const Exporter: React.FC<Props> = ({
         project: value,
         multiple: multiple,
       };
-      await CSVIntegrationService.exportCSVService(workspaceSlug as string, payload, user)
+      await projectExportService
+        .csvExport(workspaceSlug as string, payload)
         .then(() => {
           mutateServices();
           router.push(`/${workspaceSlug}/settings/exports`);
@@ -69,13 +72,7 @@ export const Exporter: React.FC<Props> = ({
             type: "success",
             title: "Export Successful",
             message: `You will be able to download the exported ${
-              provider === "csv"
-                ? "CSV"
-                : provider === "xlsx"
-                ? "Excel"
-                : provider === "json"
-                ? "JSON"
-                : ""
+              provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""
             } from the previous export.`,
           });
         })
@@ -102,7 +99,7 @@ export const Exporter: React.FC<Props> = ({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-custom-backdrop bg-opacity-50 transition-opacity" />
+          <div className="fixed inset-0 bg-custom-backdrop transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-20 overflow-y-auto">
@@ -116,19 +113,13 @@ export const Exporter: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform rounded-lg border border-custom-border-200 bg-custom-background-100 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform rounded-lg bg-custom-background-100 text-left shadow-custom-shadow-md transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                 <div className="flex flex-col gap-6 gap-y-4 p-6">
                   <div className="flex w-full items-center justify-start gap-6">
                     <span className="flex items-center justify-start">
                       <h3 className="text-xl font-medium 2xl:text-2xl">
                         Export to{" "}
-                        {provider === "csv"
-                          ? "CSV"
-                          : provider === "xlsx"
-                          ? "Excel"
-                          : provider === "json"
-                          ? "JSON"
-                          : ""}
+                        {provider === "csv" ? "CSV" : provider === "xlsx" ? "Excel" : provider === "json" ? "JSON" : ""}
                       </h3>
                     </span>
                   </div>
@@ -137,7 +128,7 @@ export const Exporter: React.FC<Props> = ({
                       value={value ?? []}
                       onChange={(val: string[]) => onChange(val)}
                       options={options}
-                      input={true}
+                      input
                       label={
                         value && value.length > 0
                           ? projects &&
@@ -153,26 +144,24 @@ export const Exporter: React.FC<Props> = ({
                   </div>
                   <div
                     onClick={() => setMultiple(!multiple)}
-                    className="flex items-center gap-2 max-w-min cursor-pointer"
+                    className="flex max-w-min cursor-pointer items-center gap-2"
                   >
-                    <input
-                      type="checkbox"
-                      checked={multiple}
-                      onChange={() => setMultiple(!multiple)}
-                    />
-                    <div className="text-sm whitespace-nowrap">
-                      Export the data into separate files
-                    </div>
+                    <input type="checkbox" checked={multiple} onChange={() => setMultiple(!multiple)} />
+                    <div className="whitespace-nowrap text-sm">Export the data into separate files</div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <SecondaryButton onClick={handleClose}>Cancel</SecondaryButton>
-                    <PrimaryButton
+                    <Button variant="neutral-primary" size="sm" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
                       onClick={ExportCSVToMail}
                       disabled={exportLoading}
                       loading={exportLoading}
                     >
                       {exportLoading ? "Exporting..." : "Export"}
-                    </PrimaryButton>
+                    </Button>
                   </div>
                 </div>
               </Dialog.Panel>
@@ -182,4 +171,4 @@ export const Exporter: React.FC<Props> = ({
       </Dialog>
     </Transition.Root>
   );
-};
+});

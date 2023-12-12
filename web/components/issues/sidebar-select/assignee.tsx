@@ -1,14 +1,10 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
 import useSWR from "swr";
-
 // services
-import projectService from "services/project.service";
+import { ProjectMemberService } from "services/project";
 // ui
-import { CustomSearchSelect } from "components/ui";
-import { AssigneesList, Avatar } from "components/ui/avatar";
+import { Avatar, AvatarGroup, CustomSearchSelect } from "@plane/ui";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
 
@@ -18,6 +14,9 @@ type Props = {
   disabled?: boolean;
 };
 
+// services
+const projectMemberService = new ProjectMemberService();
+
 export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
@@ -25,7 +24,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
     workspaceSlug && projectId
-      ? () => projectService.projectMembers(workspaceSlug as string, projectId as string)
+      ? () => projectMemberService.fetchProjectMembers(workspaceSlug as string, projectId as string)
       : null
   );
 
@@ -34,7 +33,7 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
     query: member.member.display_name,
     content: (
       <div className="flex items-center gap-2">
-        <Avatar user={member.member} />
+        <Avatar name={member?.member.display_name} src={member?.member.avatar} />
         {member.member.display_name}
       </div>
     ),
@@ -47,13 +46,21 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
         <>
           {value && value.length > 0 && Array.isArray(value) ? (
             <div className="-my-0.5 flex items-center gap-2">
-              <AssigneesList userIds={value} length={3} showLength={false} />
-              <span className="text-custom-text-100 text-xs">{value.length} Assignees</span>
+              <AvatarGroup>
+                {value.map((assigneeId) => {
+                  const member = members?.find((m) => m.member.id === assigneeId)?.member;
+
+                  if (!member) return null;
+
+                  return <Avatar key={member.id} name={member.display_name} src={member.avatar} />;
+                })}
+              </AvatarGroup>
+              <span className="text-xs text-custom-text-100">{value.length} Assignees</span>
             </div>
           ) : (
             <button
               type="button"
-              className="bg-custom-background-80 px-2.5 py-0.5 text-xs rounded text-custom-text-200"
+              className="rounded bg-custom-background-80 px-2.5 py-0.5 text-xs text-custom-text-200"
             >
               No assignees
             </button>

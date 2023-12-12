@@ -1,58 +1,47 @@
-import { useRouter } from "next/router";
-
-import useSWR from "swr";
-
-// services
-import workspaceService from "services/workspace.service";
+import { observer } from "mobx-react-lite";
+// mobx store
+import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
-import { WorkspaceAuthorizationLayout } from "layouts/auth-layout";
+import { WorkspaceSettingLayout } from "layouts/settings-layout";
+import { AppLayout } from "layouts/app-layout";
 // components
 import IntegrationGuide from "components/integration/guide";
-import { SettingsSidebar } from "components/project";
-// ui
-import { BreadcrumbItem, Breadcrumbs } from "components/breadcrumbs";
+import { WorkspaceSettingHeader } from "components/headers";
 // types
-import type { NextPage } from "next";
-// fetch-keys
-import { WORKSPACE_DETAILS } from "constants/fetch-keys";
-// helper
-import { truncateText } from "helpers/string.helper";
+import { NextPageWithLayout } from "types/app";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
-const ImportExport: NextPage = () => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
+const ImportsPage: NextPageWithLayout = observer(() => {
+  const {
+    user: { currentWorkspaceRole },
+  } = useMobxStore();
 
-  const { data: activeWorkspace } = useSWR(
-    workspaceSlug ? WORKSPACE_DETAILS(workspaceSlug as string) : null,
-    () => (workspaceSlug ? workspaceService.getWorkspace(workspaceSlug as string) : null)
-  );
+  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+
+  if (!isAdmin)
+    return (
+      <div className="mt-10 flex h-full w-full justify-center p-4">
+        <p className="text-sm text-custom-text-300">You are not authorized to access this page.</p>
+      </div>
+    );
 
   return (
-    <WorkspaceAuthorizationLayout
-      breadcrumbs={
-        <Breadcrumbs>
-          <BreadcrumbItem
-            title={`${truncateText(activeWorkspace?.name ?? "Workspace", 32)}`}
-            link={`/${workspaceSlug}`}
-            linkTruncate
-          />
-          <BreadcrumbItem title="Import/ Export Settings" unshrinkTitle />
-        </Breadcrumbs>
-      }
-    >
-      <div className="flex flex-row gap-2 h-full">
-        <div className="w-80 pt-8 overflow-y-hidden flex-shrink-0">
-          <SettingsSidebar />
-        </div>
-        <section className="pr-9 py-8 w-full overflow-y-auto">
-          <div className="flex items-center py-3.5 border-b border-custom-border-200">
-            <h3 className="text-xl font-medium">Imports</h3>
-          </div>
-          <IntegrationGuide />
-        </section>
+    <section className="w-full overflow-y-auto py-8 pr-9">
+      <div className="flex items-center border-b border-custom-border-100 py-3.5">
+        <h3 className="text-xl font-medium">Imports</h3>
       </div>
-    </WorkspaceAuthorizationLayout>
+      <IntegrationGuide />
+    </section>
+  );
+});
+
+ImportsPage.getLayout = function getLayout(page: React.ReactElement) {
+  return (
+    <AppLayout header={<WorkspaceSettingHeader title="Import Settings" />}>
+      <WorkspaceSettingLayout>{page}</WorkspaceSettingLayout>
+    </AppLayout>
   );
 };
 
-export default ImportExport;
+export default ImportsPage;

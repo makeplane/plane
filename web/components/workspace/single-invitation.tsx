@@ -9,11 +9,7 @@ type Props = {
   handleInvitation: any;
 };
 
-const SingleInvitation: React.FC<Props> = ({
-  invitation,
-  invitationsRespond,
-  handleInvitation,
-}) => (
+const SingleInvitation: React.FC<Props> = ({ invitation, invitationsRespond, handleInvitation }) => (
   <li>
     <label
       className={`group relative flex cursor-pointer items-start space-x-3 border-2 border-transparent py-4`}
@@ -51,12 +47,9 @@ const SingleInvitation: React.FC<Props> = ({
             invitationsRespond.includes(invitation.id)
               ? "bg-custom-background-80 text-custom-text-200"
               : "bg-custom-primary text-white"
-          } text-sm px-4 py-2 border border-custom-border-200 rounded-3xl`}
+          } rounded-3xl border border-custom-border-200 px-4 py-2 text-sm`}
           onClick={() => {
-            handleInvitation(
-              invitation,
-              invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted"
-            );
+            handleInvitation(invitation, invitationsRespond.includes(invitation.id) ? "withdraw" : "accepted");
           }}
         >
           {invitationsRespond.includes(invitation.id) ? "Invitation Accepted" : "Accept Invitation"}

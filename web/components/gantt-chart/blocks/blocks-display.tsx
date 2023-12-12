@@ -8,23 +8,27 @@ import { renderDateFormat } from "helpers/date-time.helper";
 // types
 import { IBlockUpdateData, IGanttBlock } from "../types";
 
-export const GanttChartBlocks: FC<{
+export type GanttChartBlocksProps = {
   itemsContainerWidth: number;
   blocks: IGanttBlock[] | null;
-  BlockRender: React.FC<any>;
+  blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   enableBlockLeftResize: boolean;
   enableBlockRightResize: boolean;
   enableBlockMove: boolean;
-}> = ({
-  itemsContainerWidth,
-  blocks,
-  BlockRender,
-  blockUpdateHandler,
-  enableBlockLeftResize,
-  enableBlockRightResize,
-  enableBlockMove,
-}) => {
+};
+
+export const GanttChartBlocks: FC<GanttChartBlocksProps> = (props) => {
+  const {
+    itemsContainerWidth,
+    blocks,
+    blockToRender,
+    blockUpdateHandler,
+    enableBlockLeftResize,
+    enableBlockRightResize,
+    enableBlockMove,
+  } = props;
+
   const { activeBlock, dispatch } = useChart();
 
   // update the active block on hover
@@ -49,11 +53,9 @@ export const GanttChartBlocks: FC<{
     const updatedTargetDate = new Date(originalTargetDate);
 
     // update the start date on left resize
-    if (dragDirection === "left")
-      updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
+    if (dragDirection === "left") updatedStartDate.setDate(originalStartDate.getDate() - totalBlockShifts);
     // update the target date on right resize
-    else if (dragDirection === "right")
-      updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
+    else if (dragDirection === "right") updatedTargetDate.setDate(originalTargetDate.getDate() + totalBlockShifts);
     // update both the dates on x-axis move
     else if (dragDirection === "move") {
       updatedStartDate.setDate(originalStartDate.getDate() + totalBlockShifts);
@@ -86,7 +88,7 @@ export const GanttChartBlocks: FC<{
               >
                 <ChartDraggable
                   block={block}
-                  BlockRender={BlockRender}
+                  blockToRender={blockToRender}
                   handleBlock={(...args) => handleChartBlockPosition(block, ...args)}
                   enableBlockLeftResize={enableBlockLeftResize}
                   enableBlockRightResize={enableBlockRightResize}

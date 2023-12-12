@@ -7,16 +7,10 @@ import type {
   IWorkspaceLite,
   IProjectLite,
   IIssueFilterOptions,
-  linkDetails,
+  ILinkDetails,
 } from "types";
 
-export type TModuleStatus =
-  | "backlog"
-  | "planned"
-  | "in-progress"
-  | "paused"
-  | "completed"
-  | "cancelled";
+export type TModuleStatus = "backlog" | "planned" | "in-progress" | "paused" | "completed" | "cancelled";
 
 export interface IModule {
   backlog_issues: number;
@@ -35,10 +29,9 @@ export interface IModule {
   id: string;
   lead: string | null;
   lead_detail: IUserLite | null;
-  link_module: linkDetails[];
+  link_module: ILinkDetails[];
   links_list: ModuleLink[];
   members: string[];
-  members_list: string[];
   members_detail: IUserLite[];
   is_favorite: boolean;
   name: string;
@@ -80,8 +73,6 @@ export type ModuleLink = {
   url: string;
 };
 
-export type SelectModuleType =
-  | (IModule & { actionType: "edit" | "delete" | "create-issue" })
-  | undefined;
+export type SelectModuleType = (IModule & { actionType: "edit" | "delete" | "create-issue" }) | undefined;
 
 export type SelectIssue = (IIssue & { actionType: "edit" | "delete" | "create" }) | undefined;

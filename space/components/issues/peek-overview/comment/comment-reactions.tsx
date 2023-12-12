@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useMobxStore } from "lib/mobx/store-provider";
 // ui
-import { ReactionSelector, Tooltip } from "components/ui";
+import { ReactionSelector } from "components/ui";
+import { Tooltip } from "@plane/ui";
 // helpers
 import { groupReactions, renderEmoji } from "helpers/emoji.helper";
 
@@ -65,7 +66,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
   };
 
   return (
-    <div className="flex gap-1.5 items-center mt-2">
+    <div className="mt-2 flex items-center gap-1.5">
       <ReactionSelector
         onSelect={(value) => {
           userStore.requiredLogin(() => {
@@ -102,7 +103,7 @@ export const CommentReactions: React.FC<Props> = observer((props) => {
                     handleReactionClick(reaction);
                   });
                 }}
-                className={`flex items-center gap-1 text-custom-text-100 text-sm h-full px-2 py-1 rounded-md ${
+                className={`flex h-full items-center gap-1 rounded-md px-2 py-1 text-sm text-custom-text-100 ${
                   commentReactions?.some(
                     (r) => r.actor_detail.id === userStore.currentUser?.id && r.reaction === reaction
                   )

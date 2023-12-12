@@ -1,29 +1,15 @@
-import React from "react";
-// next imports
 import { useRouter } from "next/router";
-// swr
-import { mutate } from "swr";
-// lucide icons
-import {
-  ChevronDown,
-  ChevronRight,
-  X,
-  Pencil,
-  Trash,
-  Link as LinkIcon,
-  Loader,
-} from "lucide-react";
+import React from "react";
+import { ChevronDown, ChevronRight, X, Pencil, Trash, Link as LinkIcon, Loader } from "lucide-react";
 // components
-import { IssuePeekOverview } from "components/issues/peek-overview";
 import { SubIssuesRootList } from "./issues-list";
 import { IssueProperty } from "./properties";
+import { IssuePeekOverview } from "components/issues";
 // ui
-import { Tooltip, CustomMenu } from "components/ui";
+import { CustomMenu, Tooltip } from "@plane/ui";
 // types
-import { ICurrentUserResponse, IIssue } from "types";
+import { IUser, IIssue } from "types";
 import { ISubIssuesRootLoaders, ISubIssuesRootLoadersHandler } from "./root";
-// fetch keys
-import { SUB_ISSUES } from "constants/fetch-keys";
 
 export interface ISubIssues {
   workspaceSlug: string;
@@ -31,7 +17,7 @@ export interface ISubIssues {
   parentIssue: IIssue;
   issue: any;
   spacingLeft?: number;
-  user: ICurrentUserResponse | undefined;
+  user: IUser | undefined;
   editable: boolean;
   removeIssueFromSubIssues: (parentIssueId: string, issue: IIssue) => void;
   issuesLoader: ISubIssuesRootLoaders;
@@ -42,6 +28,7 @@ export interface ISubIssues {
     issueId: string,
     issue?: IIssue | null
   ) => void;
+  handleUpdateIssue: (issue: IIssue, data: Partial<IIssue>) => void;
 }
 
 export const SubIssues: React.FC<ISubIssues> = ({
@@ -57,162 +44,153 @@ export const SubIssues: React.FC<ISubIssues> = ({
   handleIssuesLoader,
   copyText,
   handleIssueCrudOperation,
+  handleUpdateIssue,
 }) => {
   const router = useRouter();
-  const { query } = router;
-  const { peekIssue } = query as { peekIssue: string };
+  const { peekProjectId, peekIssueId } = router.query;
 
-  const openPeekOverview = (issue_id: string) => {
+  const handleIssuePeekOverview = () => {
+    const { query } = router;
+
     router.push({
       pathname: router.pathname,
-      query: { ...query, peekIssue: issue_id },
+      query: { ...query, peekIssueId: issue?.id, peekProjectId: issue?.project },
     });
   };
 
   return (
-    <div>
-      {issue && (
-        <div
-          className="relative flex items-center gap-2 py-1 px-2 w-full h-full hover:bg-custom-background-90 group transition-all border-b border-custom-border-100"
-          style={{ paddingLeft: `${spacingLeft}px` }}
-        >
-          <div className="flex-shrink-0 w-[22px] h-[22px]">
-            {issue?.sub_issues_count > 0 && (
+    <>
+      {workspaceSlug && peekProjectId && peekIssueId && peekIssueId === issue.id && (
+        <IssuePeekOverview
+          workspaceSlug={workspaceSlug}
+          projectId={peekProjectId.toString()}
+          issueId={peekIssueId.toString()}
+          handleIssue={async (issueToUpdate) => await handleUpdateIssue(issue, { ...issue, ...issueToUpdate })}
+        />
+      )}
+      <div>
+        {issue && (
+          <div
+            className="group relative flex h-full w-full items-center gap-2 border-b border-custom-border-100 px-2 py-1 transition-all hover:bg-custom-background-90"
+            style={{ paddingLeft: `${spacingLeft}px` }}
+          >
+            <div className="h-[22px] w-[22px] flex-shrink-0">
+              {issue?.sub_issues_count > 0 && (
+                <>
+                  {issuesLoader.sub_issues.includes(issue?.id) ? (
+                    <div className="flex h-full w-full cursor-not-allowed items-center justify-center rounded-sm bg-custom-background-80 transition-all">
+                      <Loader width={14} strokeWidth={2} className="animate-spin" />
+                    </div>
+                  ) : (
+                    <div
+                      className="flex h-full w-full cursor-pointer items-center justify-center rounded-sm transition-all hover:bg-custom-background-80"
+                      onClick={() => handleIssuesLoader({ key: "visibility", issueId: issue?.id })}
+                    >
+                      {issuesLoader && issuesLoader.visibility.includes(issue?.id) ? (
+                        <ChevronDown width={14} strokeWidth={2} />
+                      ) : (
+                        <ChevronRight width={14} strokeWidth={2} />
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="flex w-full cursor-pointer items-center gap-2" onClick={handleIssuePeekOverview}>
+              <div
+                className="h-[6px] w-[6px] flex-shrink-0 rounded-full"
+                style={{
+                  backgroundColor: issue.state_detail.color,
+                }}
+              />
+              <div className="flex-shrink-0 text-xs text-custom-text-200">
+                {issue.project_detail.identifier}-{issue?.sequence_id}
+              </div>
+              <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
+                <div className="line-clamp-1 pr-2 text-xs text-custom-text-100">{issue?.name}</div>
+              </Tooltip>
+            </div>
+
+            <div className="flex-shrink-0 text-sm">
+              <IssueProperty
+                workspaceSlug={workspaceSlug}
+                parentIssue={parentIssue}
+                issue={issue}
+                editable={editable}
+              />
+            </div>
+
+            <div className="flex-shrink-0 text-sm">
+              <CustomMenu width="auto" placement="bottom-end" ellipsis>
+                {editable && (
+                  <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("edit", parentIssue?.id, issue)}>
+                    <div className="flex items-center gap-2">
+                      <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
+                      <span>Edit issue</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+
+                {editable && (
+                  <CustomMenu.MenuItem onClick={() => handleIssueCrudOperation("delete", parentIssue?.id, issue)}>
+                    <div className="flex items-center gap-2">
+                      <Trash className="h-3.5 w-3.5" strokeWidth={2} />
+                      <span>Delete issue</span>
+                    </div>
+                  </CustomMenu.MenuItem>
+                )}
+
+                <CustomMenu.MenuItem
+                  onClick={() => copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)}
+                >
+                  <div className="flex items-center gap-2">
+                    <LinkIcon className="h-3.5 w-3.5" strokeWidth={2} />
+                    <span>Copy issue link</span>
+                  </div>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            </div>
+
+            {editable && (
               <>
-                {issuesLoader.sub_issues.includes(issue?.id) ? (
-                  <div className="w-full h-full flex justify-center items-center rounded-sm bg-custom-background-80 transition-all cursor-not-allowed">
+                {issuesLoader.delete.includes(issue?.id) ? (
+                  <div className="flex h-[22px] w-[22px] flex-shrink-0 cursor-not-allowed items-center justify-center overflow-hidden rounded-sm bg-red-200/10 text-red-500 transition-all">
                     <Loader width={14} strokeWidth={2} className="animate-spin" />
                   </div>
                 ) : (
                   <div
-                    className="w-full h-full flex justify-center items-center rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer"
-                    onClick={() => handleIssuesLoader({ key: "visibility", issueId: issue?.id })}
+                    className="invisible flex h-[22px] w-[22px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-custom-background-80 group-hover:visible"
+                    onClick={() => {
+                      handleIssuesLoader({ key: "delete", issueId: issue?.id });
+                      removeIssueFromSubIssues(parentIssue?.id, issue);
+                    }}
                   >
-                    {issuesLoader && issuesLoader.visibility.includes(issue?.id) ? (
-                      <ChevronDown width={14} strokeWidth={2} />
-                    ) : (
-                      <ChevronRight width={14} strokeWidth={2} />
-                    )}
+                    <X width={14} strokeWidth={2} />
                   </div>
                 )}
               </>
             )}
           </div>
+        )}
 
-          <div
-            className="w-full flex items-center gap-2 cursor-pointer"
-            onClick={() => openPeekOverview(issue?.id)}
-          >
-            <div
-              className="flex-shrink-0 w-[6px] h-[6px] rounded-full"
-              style={{
-                backgroundColor: issue.state_detail.color,
-              }}
-            />
-            <div className="flex-shrink-0 text-xs text-custom-text-200">
-              {issue.project_detail.identifier}-{issue?.sequence_id}
-            </div>
-            <Tooltip tooltipHeading="Title" tooltipContent={`${issue?.name}`}>
-              <div className="line-clamp-1 text-xs text-custom-text-100 pr-2">{issue?.name}</div>
-            </Tooltip>
-          </div>
-
-          <div className="flex-shrink-0 text-sm">
-            <IssueProperty
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              parentIssue={parentIssue}
-              issue={issue}
-              user={user}
-              editable={editable}
-            />
-          </div>
-
-          <div className="flex-shrink-0 text-sm">
-            <CustomMenu width="auto" ellipsis>
-              {editable && (
-                <CustomMenu.MenuItem
-                  onClick={() => handleIssueCrudOperation("edit", parentIssue?.id, issue)}
-                >
-                  <div className="flex items-center justify-start gap-2">
-                    <Pencil width={14} strokeWidth={2} />
-                    <span>Edit issue</span>
-                  </div>
-                </CustomMenu.MenuItem>
-              )}
-
-              {editable && (
-                <CustomMenu.MenuItem
-                  onClick={() => handleIssueCrudOperation("delete", parentIssue?.id, issue)}
-                >
-                  <div className="flex items-center justify-start gap-2">
-                    <Trash width={14} strokeWidth={2} />
-                    <span>Delete issue</span>
-                  </div>
-                </CustomMenu.MenuItem>
-              )}
-
-              <CustomMenu.MenuItem
-                onClick={() =>
-                  copyText(`${workspaceSlug}/projects/${issue.project}/issues/${issue.id}`)
-                }
-              >
-                <div className="flex items-center justify-start gap-2">
-                  <LinkIcon width={14} strokeWidth={2} />
-                  <span>Copy issue link</span>
-                </div>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
-          </div>
-
-          {editable && (
-            <>
-              {issuesLoader.delete.includes(issue?.id) ? (
-                <div className="flex-shrink-0 w-[22px] h-[22px] rounded-sm bg-red-200/10 text-red-500 transition-all cursor-not-allowed overflow-hidden flex justify-center items-center">
-                  <Loader width={14} strokeWidth={2} className="animate-spin" />
-                </div>
-              ) : (
-                <div
-                  className="flex-shrink-0 invisible group-hover:visible w-[22px] h-[22px] rounded-sm hover:bg-custom-background-80 transition-all cursor-pointer overflow-hidden flex justify-center items-center"
-                  onClick={() => {
-                    handleIssuesLoader({ key: "delete", issueId: issue?.id });
-                    removeIssueFromSubIssues(parentIssue?.id, issue);
-                  }}
-                >
-                  <X width={14} strokeWidth={2} />
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
-
-      {issuesLoader.visibility.includes(issue?.id) && issue?.sub_issues_count > 0 && (
-        <SubIssuesRootList
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          parentIssue={issue}
-          spacingLeft={spacingLeft + 22}
-          user={user}
-          editable={editable}
-          removeIssueFromSubIssues={removeIssueFromSubIssues}
-          issuesLoader={issuesLoader}
-          handleIssuesLoader={handleIssuesLoader}
-          copyText={copyText}
-          handleIssueCrudOperation={handleIssueCrudOperation}
-        />
-      )}
-
-      {peekIssue && peekIssue === issue?.id && (
-        <IssuePeekOverview
-          handleMutation={() =>
-            parentIssue && parentIssue?.id && mutate(SUB_ISSUES(parentIssue?.id))
-          }
-          projectId={issue?.project ?? ""}
-          workspaceSlug={workspaceSlug ?? ""}
-          readOnly={!editable}
-        />
-      )}
-    </div>
+        {issuesLoader.visibility.includes(issue?.id) && issue?.sub_issues_count > 0 && (
+          <SubIssuesRootList
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            parentIssue={issue}
+            spacingLeft={spacingLeft + 22}
+            user={user}
+            editable={editable}
+            removeIssueFromSubIssues={removeIssueFromSubIssues}
+            issuesLoader={issuesLoader}
+            handleIssuesLoader={handleIssuesLoader}
+            copyText={copyText}
+            handleIssueCrudOperation={handleIssueCrudOperation}
+            handleUpdateIssue={handleUpdateIssue}
+          />
+        )}
+      </div>
+    </>
   );
 };

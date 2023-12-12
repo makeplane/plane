@@ -10,7 +10,7 @@ import useSWR from "swr";
 import { useFormContext, Controller } from "react-hook-form";
 
 // services
-import jiraImporterService from "services/integration/jira.service";
+import { JiraImporterService } from "services/integrations";
 
 // fetch keys
 import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
@@ -18,7 +18,7 @@ import { JIRA_IMPORTER_DETAIL } from "constants/fetch-keys";
 import { IJiraImporterForm, IJiraMetadata } from "types";
 
 // components
-import { Spinner, ToggleSwitch } from "components/ui";
+import { ToggleSwitch, Spinner } from "@plane/ui";
 
 import type { IJiraIntegrationData, TJiraIntegrationSteps } from ".";
 
@@ -26,6 +26,9 @@ type Props = {
   setCurrentStep: React.Dispatch<React.SetStateAction<IJiraIntegrationData>>;
   setDisableTopBarAfter: React.Dispatch<React.SetStateAction<TJiraIntegrationSteps | null>>;
 };
+
+// services
+const jiraImporterService = new JiraImporterService();
 
 export const JiraProjectDetail: React.FC<Props> = (props) => {
   const { setCurrentStep, setDisableTopBarAfter } = props;
@@ -157,9 +160,7 @@ export const JiraProjectDetail: React.FC<Props> = (props) => {
           <Controller
             control={control}
             name="config.epics_to_modules"
-            render={({ field: { value, onChange } }) => (
-              <ToggleSwitch onChange={onChange} value={value} />
-            )}
+            render={({ field: { value, onChange } }) => <ToggleSwitch onChange={onChange} value={value} />}
           />
         </div>
       </div>

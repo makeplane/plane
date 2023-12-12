@@ -1,21 +1,23 @@
 import { useEffect } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 // mobx
 import { observer } from "mobx-react-lite";
 // components
-import { NavbarSearch } from "./search";
+// import { NavbarSearch } from "./search";
 import { NavbarIssueBoardView } from "./issue-board-view";
 import { NavbarTheme } from "./theme";
+import { IssueFiltersDropdown } from "components/issues/filters";
 // ui
-import { PrimaryButton } from "components/ui";
+import { Avatar, Button } from "@plane/ui";
+import { Briefcase } from "lucide-react";
 // lib
 import { useMobxStore } from "lib/mobx/store-provider";
 // store
 import { RootStore } from "store/root";
+import { TIssueBoardKeys } from "types/issue";
 
 const renderEmoji = (emoji: string | { name: string; color: string }) => {
   if (!emoji) return;
@@ -30,10 +32,22 @@ const renderEmoji = (emoji: string | { name: string; color: string }) => {
 };
 
 const IssueNavbar = observer(() => {
-  const { project: projectStore, user: userStore }: RootStore = useMobxStore();
+  const {
+    project: projectStore,
+    user: userStore,
+    issuesFilter: { updateFilters },
+  }: RootStore = useMobxStore();
   // router
   const router = useRouter();
-  const { workspace_slug, project_slug, board } = router.query;
+  const { workspace_slug, project_slug, board, peekId, states, priorities, labels } = router.query as {
+    workspace_slug: string;
+    project_slug: string;
+    peekId: string;
+    board: string;
+    states: string;
+    priorities: string;
+    labels: string;
+  };
 
   const user = userStore?.currentUser;
 
@@ -46,7 +60,7 @@ const IssueNavbar = observer(() => {
   useEffect(() => {
     if (workspace_slug && project_slug && projectStore?.deploySettings) {
       const viewsAcceptable: string[] = [];
-      let currentBoard: string | null = null;
+      let currentBoard: TIssueBoardKeys | null = null;
 
       if (projectStore?.deploySettings?.views?.list) viewsAcceptable.push("list");
       if (projectStore?.deploySettings?.views?.kanban) viewsAcceptable.push("kanban");
@@ -56,85 +70,112 @@ const IssueNavbar = observer(() => {
 
       if (board) {
         if (viewsAcceptable.includes(board.toString())) {
-          currentBoard = board.toString();
+          currentBoard = board.toString() as TIssueBoardKeys;
         } else {
           if (viewsAcceptable && viewsAcceptable.length > 0) {
-            currentBoard = viewsAcceptable[0];
+            currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
           }
         }
       } else {
         if (viewsAcceptable && viewsAcceptable.length > 0) {
-          currentBoard = viewsAcceptable[0];
+          currentBoard = viewsAcceptable[0] as TIssueBoardKeys;
         }
       }
 
       if (currentBoard) {
         if (projectStore?.activeBoard === null || projectStore?.activeBoard !== currentBoard) {
+          let params: any = { board: currentBoard };
+          if (peekId && peekId.length > 0) params = { ...params, peekId: peekId };
+          if (priorities && priorities.length > 0) params = { ...params, priorities: priorities };
+          if (states && states.length > 0) params = { ...params, states: states };
+          if (labels && labels.length > 0) params = { ...params, labels: labels };
+
+          let storeParams: any = {};
+          if (priorities && priorities.length > 0) storeParams = { ...storeParams, priority: priorities.split(",") };
+          if (states && states.length > 0) storeParams = { ...storeParams, state: states.split(",") };
+          if (labels && labels.length > 0) storeParams = { ...storeParams, labels: labels.split(",") };
+
+          if (storeParams) updateFilters(project_slug, storeParams);
+
           projectStore.setActiveBoard(currentBoard);
           router.push({
             pathname: `/${workspace_slug}/${project_slug}`,
-            query: {
-              board: currentBoard,
-            },
+            query: { ...params },
           });
         }
       }
     }
-  }, [board, workspace_slug, project_slug, router, projectStore, projectStore?.deploySettings]);
+  }, [
+    board,
+    workspace_slug,
+    project_slug,
+    router,
+    projectStore,
+    projectStore?.deploySettings,
+    updateFilters,
+    labels,
+    states,
+    priorities,
+    peekId,
+  ]);
 
   return (
-    <div className="px-5 relative w-full flex items-center gap-4">
+    <div className="relative flex w-full items-center gap-4 px-5">
       {/* project detail */}
-      <div className="flex-shrink-0 flex items-center gap-2">
-        <div className="w-4 h-4 flex justify-center items-center">
-          {projectStore?.project && projectStore?.project?.emoji ? (
-            renderEmoji(projectStore?.project?.emoji)
+      <div className="flex flex-shrink-0 items-center gap-2">
+        <div className="flex h-4 w-4 items-center justify-center">
+          {projectStore.project ? (
+            projectStore.project?.emoji ? (
+              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+                {renderEmoji(projectStore.project.emoji)}
+              </span>
+            ) : projectStore.project?.icon_prop ? (
+              <div className="grid h-7 w-7 flex-shrink-0 place-items-center">
+                {renderEmoji(projectStore.project.icon_prop)}
+              </div>
+            ) : (
+              <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded bg-gray-700 uppercase text-white">
+                {projectStore.project?.name.charAt(0)}
+              </span>
+            )
           ) : (
-            <Image src="/plane-logo.webp" alt="plane logo" className="w-[24px] h-[24px]" height="24" width="24" />
+            <span className="grid h-7 w-7 flex-shrink-0 place-items-center rounded uppercase">
+              <Briefcase className="h-4 w-4" />
+            </span>
           )}
         </div>
-        <div className="font-medium text-lg max-w-[300px] line-clamp-1 overflow-hidden">
+        <div className="line-clamp-1 max-w-[300px] overflow-hidden text-lg font-medium">
           {projectStore?.project?.name || `...`}
         </div>
       </div>
 
       {/* issue search bar */}
-      <div className="w-full">
-        <NavbarSearch />
-      </div>
+      <div className="w-full">{/* <NavbarSearch /> */}</div>
 
       {/* issue views */}
-      <div className="flex-shrink-0 relative flex items-center gap-1 transition-all ease-in-out delay-150">
+      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
         <NavbarIssueBoardView />
       </div>
 
+      {/* issue filters */}
+      <div className="relative flex flex-shrink-0 items-center gap-1 transition-all delay-150 ease-in-out">
+        <IssueFiltersDropdown />
+      </div>
+
       {/* theming */}
-      <div className="flex-shrink-0 relative">
+      <div className="relative flex-shrink-0">
         <NavbarTheme />
       </div>
 
       {user ? (
-        <div className="border border-custom-border-200 rounded flex items-center gap-2 p-2">
-          {user.avatar && user.avatar !== "" ? (
-            <div className="h-5 w-5 rounded-full">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={user.avatar} alt={user.display_name ?? ""} className="rounded-full" />
-            </div>
-          ) : (
-            <div className="bg-custom-background-80 h-5 w-5 rounded-full grid place-items-center text-[10px] capitalize">
-              {(user.display_name ?? "A")[0]}
-            </div>
-          )}
+        <div className="flex items-center gap-2 rounded border border-custom-border-200 p-2">
+          <Avatar name={user?.display_name} src={user?.avatar} shape="square" size="sm" />
           <h6 className="text-xs font-medium">{user.display_name}</h6>
         </div>
       ) : (
         <div className="flex-shrink-0">
-          <Link href={`/login/?next_path=${router.asPath}`}>
-            <a>
-              <PrimaryButton className="flex-shrink-0" outline>
-                Sign in
-              </PrimaryButton>
-            </a>
+          <Link href={`/?next_path=${router.asPath}`}>
+            <Button variant="outline-primary">Sign in</Button>
           </Link>
         </div>
       )}

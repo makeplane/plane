@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // react beautiful dnd
-import { Droppable, DroppableProps } from "react-beautiful-dnd";
+import { Droppable, DroppableProps } from "@hello-pangea/dnd";
 
 const StrictModeDroppable = ({ children, ...props }: DroppableProps) => {
   const [enabled, setEnabled] = useState(false);

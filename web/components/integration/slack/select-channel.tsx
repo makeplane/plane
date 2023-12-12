@@ -1,33 +1,44 @@
-import React, { useState, useEffect } from "react";
-
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-
 import useSWR, { mutate } from "swr";
+import { observer } from "mobx-react-lite";
 // services
-import appinstallationsService from "services/app-installations.service";
+import { AppInstallationService } from "services/app_installation.service";
 // ui
-import { Loader } from "components/ui";
+import { Loader } from "@plane/ui";
 // hooks
-import useToast from "hooks/use-toast";
 import useIntegrationPopup from "hooks/use-integration-popup";
 // types
 import { IWorkspaceIntegration, ISlackIntegration } from "types";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
+// lib
+import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   integration: IWorkspaceIntegration;
 };
 
-export const SelectChannel: React.FC<Props> = ({ integration }) => {
-  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] =
-    useState<boolean>(false);
+const appInstallationService = new AppInstallationService();
+
+export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
+  // store
+  const {
+    appConfig: { envConfig },
+  } = useMobxStore();
+  // states
+  const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);
 
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { startAuth } = useIntegrationPopup("slackChannel", integration.id);
+  const { startAuth } = useIntegrationPopup({
+    provider: "slackChannel",
+    stateParams: integration.id,
+    github_app_name: envConfig?.github_client_id || "",
+    slack_client_id: envConfig?.slack_client_id || "",
+  });
 
   const { data: projectIntegration } = useSWR(
     workspaceSlug && projectId && integration.id
@@ -35,7 +46,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       : null,
     () =>
       workspaceSlug && projectId && integration.id
-        ? appinstallationsService.getSlackChannelDetail(
+        ? appInstallationService.getSlackChannelDetail(
             workspaceSlug as string,
             projectId as string,
             integration.id as string
@@ -64,13 +75,8 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       setSlackChannelAvailabilityToggle(false);
       setSlackChannel(null);
     });
-    appinstallationsService
-      .removeSlackChannel(
-        workspaceSlug as string,
-        projectId as string,
-        integration.id as string,
-        slackChannel?.id
-      )
+    appInstallationService
+      .removeSlackChannel(workspaceSlug as string, projectId as string, integration.id as string, slackChannel?.id)
       .catch((err) => console.log(err));
   };
 
@@ -83,7 +89,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       {projectIntegration ? (
         <button
           type="button"
-          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-gray-700`}
+          className={`relative inline-flex h-4 w-6 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-700 transition-colors duration-200 ease-in-out focus:outline-none`}
           role="switch"
           aria-checked
           onClick={() => {
@@ -92,7 +98,7 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
         >
           <span
             aria-hidden="true"
-            className={`self-center inline-block h-2 w-2 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+            className={`inline-block h-2 w-2 transform self-center rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
               slackChannelAvailabilityToggle ? "translate-x-3" : "translate-x-0"
             }`}
           />
@@ -104,4 +110,4 @@ export const SelectChannel: React.FC<Props> = ({ integration }) => {
       )}
     </>
   );
-};
+});

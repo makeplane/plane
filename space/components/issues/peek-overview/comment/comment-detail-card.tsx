@@ -1,22 +1,21 @@
 import React, { useState } from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
-// react-hook-form
 import { Controller, useForm } from "react-hook-form";
-// headless ui
 import { Menu, Transition } from "@headlessui/react";
-// lib
+import { Check, MessageSquare, MoreVertical, X } from "lucide-react";
+// mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { TipTapEditor } from "components/tiptap";
+import { LiteReadOnlyEditorWithRef, LiteTextEditorWithRef } from "@plane/lite-text-editor";
+
 import { CommentReactions } from "components/issues/peek-overview";
-// icons
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, XMarkIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 // helpers
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import { Comment } from "types/issue";
+// services
+import fileService from "services/file.service";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 type Props = {
   workspaceSlug: string;
@@ -29,6 +28,8 @@ export const CommentCard: React.FC<Props> = observer((props) => {
   const { user: userStore, issueDetails: issueDetailStore } = useMobxStore();
   // states
   const [isEditing, setIsEditing] = useState(false);
+
+  const mentionsConfig = useEditorSuggestions();
 
   const editorRef = React.useRef<any>(null);
 
@@ -78,7 +79,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
         )}
 
         <span className="absolute -bottom-0.5 -right-1 rounded-tl bg-custom-background-80 px-0.5 py-px">
-          <ChatBubbleLeftEllipsisIcon className="h-3.5 w-3.5 text-custom-text-200" aria-hidden="true" />
+          <MessageSquare className="h-3 w-3 text-custom-text-200" aria-hidden="true" strokeWidth={2} />
         </span>
       </div>
       <div className="min-w-0 flex-1">
@@ -100,8 +101,12 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 control={control}
                 name="comment_html"
                 render={({ field: { onChange, value } }) => (
-                  <TipTapEditor
-                    workspaceSlug={workspaceSlug as string}
+                  <LiteTextEditorWithRef
+                    onEnterKeyPress={handleSubmit(handleCommentUpdate)}
+                    cancelUploadImage={fileService.cancelUpload}
+                    uploadFile={fileService.getUploadFileFunction(workspaceSlug)}
+                    deleteFile={fileService.deleteImage}
+                    restoreFile={fileService.restoreImage}
                     ref={editorRef}
                     value={value}
                     debouncedUpdatesEnabled={false}
@@ -119,24 +124,23 @@ export const CommentCard: React.FC<Props> = observer((props) => {
                 disabled={isSubmitting}
                 className="group rounded border border-green-500 bg-green-500/20 p-2 shadow-md duration-300 hover:bg-green-500"
               >
-                <CheckIcon className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" />
+                <Check className="h-3 w-3 text-green-500 duration-300 group-hover:text-white" strokeWidth={2} />
               </button>
               <button
                 type="button"
                 className="group rounded border border-red-500 bg-red-500/20 p-2 shadow-md duration-300 hover:bg-red-500"
                 onClick={() => setIsEditing(false)}
               >
-                <XMarkIcon className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" />
+                <X className="h-3 w-3 text-red-500 duration-300 group-hover:text-white" strokeWidth={2} />
               </button>
             </div>
           </form>
           <div className={`${isEditing ? "hidden" : ""}`}>
-            <TipTapEditor
-              workspaceSlug={workspaceSlug as string}
+            <LiteReadOnlyEditorWithRef
               ref={showEditorRef}
               value={comment.comment_html}
-              editable={false}
               customClassName="text-xs border border-custom-border-200 bg-custom-background-100"
+              mentionHighlights={mentionsConfig.mentionHighlights}
             />
             <CommentReactions commentId={comment.id} projectId={comment.project} />
           </div>
@@ -148,9 +152,9 @@ export const CommentCard: React.FC<Props> = observer((props) => {
           <Menu.Button
             type="button"
             onClick={() => {}}
-            className="relative grid place-items-center rounded p-1 text-custom-text-200 hover:text-custom-text-100 outline-none cursor-pointer hover:bg-custom-background-80"
+            className="relative grid cursor-pointer place-items-center rounded p-1 text-custom-text-200 outline-none hover:bg-custom-background-80 hover:text-custom-text-100"
           >
-            <EllipsisVerticalIcon className="h-5 w-5 text-custom-text-200 duration-300" />
+            <MoreVertical className="h-4 w-4 text-custom-text-200 duration-300" strokeWidth={2} />
           </Menu.Button>
 
           <Transition
@@ -162,7 +166,7 @@ export const CommentCard: React.FC<Props> = observer((props) => {
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute z-10 overflow-y-scroll whitespace-nowrap rounded-md max-h-36 border right-0 origin-top-right mt-1 overflow-auto min-w-[8rem] border-custom-border-300 p-1 text-xs shadow-lg focus:outline-none bg-custom-background-90">
+            <Menu.Items className="absolute right-0 z-10 mt-1 max-h-36 min-w-[8rem] origin-top-right overflow-auto overflow-y-scroll whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 p-1 text-xs shadow-lg focus:outline-none">
               <Menu.Item>
                 {({ active }) => (
                   <div className="py-1">

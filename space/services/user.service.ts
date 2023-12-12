@@ -1,13 +1,16 @@
 // services
 import APIService from "services/api.service";
+// helpers
 import { API_BASE_URL } from "helpers/common.helper";
+// types
+import { IUser } from "types/user";
 
-class UserService extends APIService {
+export class UserService extends APIService {
   constructor() {
     super(API_BASE_URL);
   }
 
-  async currentUser(): Promise<any> {
+  async currentUser(): Promise<IUser> {
     return this.get("/api/users/me/")
       .then((response) => response?.data)
       .catch((error) => {
@@ -23,5 +26,3 @@ class UserService extends APIService {
       });
   }
 }
-
-export default UserService;

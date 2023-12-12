@@ -2,6 +2,8 @@ name: Create PR in Plane EE Repository to sync the changes
 
 on:
   pull_request:
+    branches:
+      - master
     types:
       - closed
 

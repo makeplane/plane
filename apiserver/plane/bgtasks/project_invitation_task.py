@@ -1,5 +1,8 @@
+# Python import
+import os
+
 # Django imports
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, get_connection
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -10,26 +13,25 @@ from sentry_sdk import capture_exception
 
 # Module imports
 from plane.db.models import Project, User, ProjectMemberInvite
-
+from plane.license.utils.instance_value import get_email_configuration
 
 @shared_task
-def project_invitation(email, project_id, token, current_site):
+def project_invitation(email, project_id, token, current_site, invitor):
     try:
+        user = User.objects.get(email=invitor)
         project = Project.objects.get(pk=project_id)
         project_member_invite = ProjectMemberInvite.objects.get(
             token=token, email=email
         )
 
-        relativelink = f"/project-member-invitation/{project_member_invite.id}"
+        relativelink = f"/project-invitations/?invitation_id={project_member_invite.id}&email={email}&slug={project.workspace.slug}&project_id={str(project_id)}"
         abs_url = current_site + relativelink
 
-        from_email_string = settings.EMAIL_FROM
-
-        subject = f"{project.created_by.first_name or project.created_by.email} invited you to join {project.name} on Plane"
+        subject = f"{user.first_name or user.display_name or user.email} invited you to join {project.name} on Plane"
 
         context = {
             "email": email,
-            "first_name": project.created_by.first_name,
+            "first_name": user.first_name,
             "project_name": project.name,
             "invitation_url": abs_url,
         }
@@ -43,7 +45,32 @@ def project_invitation(email, project_id, token, current_site):
         project_member_invite.message = text_content
         project_member_invite.save()
 
-        msg = EmailMultiAlternatives(subject, text_content, from_email_string, [email])
+        # Configure email connection from the database
+        (
+            EMAIL_HOST,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            EMAIL_PORT,
+            EMAIL_USE_TLS,
+            EMAIL_FROM,
+        ) = get_email_configuration()
+
+        connection = get_connection(
+            host=EMAIL_HOST,
+            port=int(EMAIL_PORT),
+            username=EMAIL_HOST_USER,
+            password=EMAIL_HOST_PASSWORD,
+            use_tls=bool(EMAIL_USE_TLS),
+        )
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=EMAIL_FROM,
+            to=[email],
+            connection=connection,
+        )
+
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         return

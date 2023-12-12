@@ -1,15 +1,11 @@
 import React from "react";
-
-// mobx
 import { observer } from "mobx-react-lite";
-// headless ui
 import { Listbox, Transition } from "@headlessui/react";
+import { MoveRight } from "lucide-react";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
 import { Icon } from "components/ui";
-// icons
-import { East } from "@mui/icons-material";
 // helpers
 import { copyTextToClipboard } from "helpers/string.helper";
 // store
@@ -44,7 +40,7 @@ const peekModes: {
 ];
 
 export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
-  const { handleClose, issueDetails } = props;
+  const { handleClose } = props;
 
   const { issueDetails: issueDetailStore }: RootStore = useMobxStore();
 
@@ -64,15 +60,11 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {issueDetailStore.peekMode === "side" && (
             <button type="button" onClick={handleClose}>
-              <East
-                sx={{
-                  fontSize: "14px",
-                }}
-              />
+              <MoveRight className="h-3.5 w-3.5" strokeWidth={2} />
             </button>
           )}
           <Listbox
@@ -96,7 +88,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Listbox.Options className="absolute z-10 border border-custom-border-300 mt-1 overflow-y-auto rounded-md bg-custom-background-90 text-xs shadow-lg focus:outline-none left-0 origin-top-left min-w-[8rem] whitespace-nowrap">
+              <Listbox.Options className="absolute left-0 z-10 mt-1 min-w-[8rem] origin-top-left overflow-y-auto whitespace-nowrap rounded-md border border-custom-border-300 bg-custom-background-90 text-xs shadow-lg focus:outline-none">
                 <div className="space-y-1 p-2">
                   {peekModes.map((mode) => (
                     <Listbox.Option
@@ -114,7 +106,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
                             <div className="flex items-center gap-1.5">
                               <Icon
                                 iconName={mode.icon}
-                                className={`!text-base flex-shrink-0 -my-1 ${mode.key === "full" ? "rotate-45" : ""}`}
+                                className={`-my-1 flex-shrink-0 !text-base ${mode.key === "full" ? "rotate-45" : ""}`}
                               />
                               {mode.label}
                             </div>
@@ -130,7 +122,7 @@ export const PeekOverviewHeader: React.FC<Props> = observer((props) => {
           </Listbox>
         </div>
         {(issueDetailStore.peekMode === "side" || issueDetailStore.peekMode === "modal") && (
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center gap-2">
             <button type="button" onClick={handleCopyLink} className="-rotate-45 focus:outline-none" tabIndex={1}>
               <Icon iconName="link" />
             </button>

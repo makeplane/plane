@@ -127,7 +127,7 @@ def group_results(results_data, group_by, sub_group_by=False):
         return main_responsive_dict            
 
     else:
-        response_dict = dict()
+        response_dict = {}
 
         if group_by == "priority":
             response_dict = {
