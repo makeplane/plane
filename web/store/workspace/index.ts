@@ -88,11 +88,11 @@ export class WorkspaceStore implements IWorkspaceStore {
    * computed value of current workspace based on workspace slug saved in the query store
    */
   get currentWorkspace() {
-    const workspaceSlug = this.rootStore.app.router.query?.workspaceSlug;
+    const workspaceSlug = this.rootStore.app.router.workspaceSlug;
 
     if (!workspaceSlug) return null;
 
-    return this.workspaces?.find((workspace) => workspace.slug === workspaceSlug.toString()) || null;
+    return this.workspaces?.find((workspace) => workspace.slug === workspaceSlug) || null;
   }
 
   /**

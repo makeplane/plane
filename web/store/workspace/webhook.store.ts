@@ -8,17 +8,13 @@ export interface IWebhookStore {
   // states
   loader: boolean;
   error: any | null;
-
   // observables
   webhooks: Record<string, IWebhook> | null;
   webhookSecretKey: string | null;
-
   // computed
   currentWebhook: IWebhook | null;
-
   // computed actions
   getWebhookById: (webhookId: string) => IWebhook | null;
-
   // actions
   fetchWebhooks: (workspaceSlug: string) => Promise<IWebhook[]>;
   fetchWebhookById: (workspaceSlug: string, webhookId: string) => Promise<IWebhook>;
@@ -39,11 +35,9 @@ export class WebhookStore implements IWebhookStore {
   // states
   loader: boolean = false;
   error: any | null = null;
-
   // observables
   webhooks: Record<string, IWebhook> | null = null;
   webhookSecretKey: string | null = null;
-
   // services
   webhookService;
   // root store
@@ -54,17 +48,13 @@ export class WebhookStore implements IWebhookStore {
       // states
       loader: observable.ref,
       error: observable.ref,
-
       // observables
       webhooks: observable,
       webhookSecretKey: observable.ref,
-
       // computed
       currentWebhook: computed,
-
       // computed actions
       getWebhookById: action,
-
       // actions
       fetchWebhooks: action,
       fetchWebhookById: action,
@@ -85,7 +75,7 @@ export class WebhookStore implements IWebhookStore {
    * computed value of current webhook based on webhook id saved in the query store
    */
   get currentWebhook() {
-    const webhookId = this.rootStore.app.router.query?.webhookId;
+    const webhookId = this.rootStore.app.router.webhookId;
 
     if (!webhookId) return null;
 
