@@ -51,6 +51,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
   const issuesResponse = issueStore.getIssues;
   const issueIds = (issueStore.getIssuesIds ?? []) as TUnGroupedIssues;
+  const { enableIssueCreation } = issueStore?.viewFlags || {};
 
   const issues = issueIds.map((id) => issuesResponse?.[id]);
 
@@ -87,6 +88,7 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
               quickAddCallback={issueStore.quickAddIssue}
               viewId={viewId}
               enableQuickIssueCreate
+              disableIssueCreation={!enableIssueCreation || !isAllowed}
             />
           )}
           enableBlockLeftResize={isAllowed}

@@ -50,7 +50,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
     user: userStore,
   } = useMobxStore();
 
-  const { enableInlineEditing, enableQuickAdd } = issueStore?.viewFlags || {};
+  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
 
   const { currentProjectRole } = userStore;
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
@@ -120,6 +120,7 @@ export const BaseSpreadsheetRoot = observer((props: IBaseSpreadsheetRoot) => {
       quickAddCallback={issueStore.quickAddIssue}
       viewId={viewId}
       enableQuickCreateIssue={enableQuickAdd}
+      disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
     />
   );
 });

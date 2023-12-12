@@ -168,7 +168,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
               );
             })}
           </CustomSelect>
-          {isAdmin && (
+          {(isAdmin || memberDetails.id === currentProjectMemberInfo?.member.id) && (
             <Tooltip
               tooltipContent={
                 memberDetails.id === currentProjectMemberInfo?.member.id ? "Leave project" : "Remove member"
