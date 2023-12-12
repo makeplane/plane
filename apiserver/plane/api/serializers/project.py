@@ -20,7 +20,17 @@ from plane.db.models import (
 from plane.utils.s3 import S3
 
 
-class ProjectSerializer(BaseSerializer):
+class BaseProjectSerializerMixin:
+    def refresh_cover_image(self, instance):
+        cover_image = instance.cover_image
+
+        if S3.verify_s3_url(cover_image) and S3.url_file_has_experid(cover_image):
+            s3 = S3()
+            instance.cover_image = s3.refresh_url(cover_image)
+            instance.save()
+
+
+class ProjectSerializer(BaseSerializer, BaseProjectSerializerMixin):
     workspace_detail = WorkspaceLiteSerializer(source="workspace", read_only=True)
 
     class Meta:
@@ -80,14 +90,11 @@ class ProjectSerializer(BaseSerializer):
         raise serializers.ValidationError(detail="Project Identifier is already taken")
 
     def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if S3.verify_s3_url(instance.cover_image):
-            s3 = S3()
-            data["cover_image"] = s3.refresh_url(instance.cover_image)
-        return data
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
 
-class ProjectLiteSerializer(BaseSerializer):
+class ProjectLiteSerializer(BaseSerializer, BaseProjectSerializerMixin):
     class Meta:
         model = Project
         fields = [
@@ -102,14 +109,11 @@ class ProjectLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
     def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if S3.verify_s3_url(instance.cover_image):
-            s3 = S3()
-            data["cover_image"] = s3.refresh_url(instance.cover_image)
-        return data
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
 
-class ProjectDetailSerializer(BaseSerializer):
+class ProjectDetailSerializer(BaseSerializer, BaseProjectSerializerMixin):
     workspace = WorkSpaceSerializer(read_only=True)
     default_assignee = UserLiteSerializer(read_only=True)
     project_lead = UserLiteSerializer(read_only=True)
@@ -127,11 +131,8 @@ class ProjectDetailSerializer(BaseSerializer):
         fields = "__all__"
 
     def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if S3.verify_s3_url(instance.cover_image):
-            s3 = S3()
-            data["cover_image"] = s3.refresh_url(instance.cover_image)
-        return data
+        self.refresh_cover_image(instance)
+        return super().to_representation(instance)
 
 
 class ProjectMemberSerializer(BaseSerializer):
