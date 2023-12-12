@@ -30,7 +30,6 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
   const { peekIssueId } = router.query;
 
   const {
-    user: { currentProjectRole },
     issue: { removeIssueFromStructure },
     issueDetail: {
       createIssueComment,
@@ -58,6 +57,7 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     },
     archivedIssues: { deleteArchivedIssue },
     project: { currentProjectDetails },
+    workspaceMember: { currentWorkspaceUserProjectsRole },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -146,7 +146,8 @@ export const IssuePeekOverview: FC<IIssuePeekOverview> = observer((props) => {
     }
   };
 
-  const userRole = currentProjectRole ?? EUserWorkspaceRoles.GUEST;
+  const userRole =
+    (currentWorkspaceUserProjectsRole && currentWorkspaceUserProjectsRole[projectId]) ?? EUserWorkspaceRoles.GUEST;
 
   return (
     <Fragment>

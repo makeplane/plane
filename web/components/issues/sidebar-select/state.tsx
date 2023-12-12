@@ -24,7 +24,9 @@ const stateService = new ProjectStateService();
 
 export const SidebarStateSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId, inboxIssueId } = router.query;
+  const { workspaceSlug, projectId: _projectId, peekProjectId, inboxIssueId } = router.query;
+
+  const projectId = _projectId ?? peekProjectId;
 
   const { data: states } = useSWR(
     workspaceSlug && projectId ? STATES_LIST(projectId as string) : null,

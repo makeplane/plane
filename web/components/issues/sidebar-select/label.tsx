@@ -35,7 +35,7 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
   const [createLabelForm, setCreateLabelForm] = useState(false);
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId: _projectId, peekProjectId } = router.query;
   // toast
   const { setToastAlert } = useToast();
   // mobx store
@@ -52,6 +52,8 @@ export const SidebarLabelSelect: React.FC<Props> = observer((props) => {
   } = useForm<Partial<IIssueLabel>>({
     defaultValues,
   });
+
+  const projectId = _projectId ?? peekProjectId;
 
   const handleNewLabel = async (formData: Partial<IIssueLabel>) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;

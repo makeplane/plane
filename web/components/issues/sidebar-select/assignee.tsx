@@ -19,7 +19,9 @@ const projectMemberService = new ProjectMemberService();
 
 export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabled = false }) => {
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query;
+  const { workspaceSlug, projectId: _projectId, peekProjectId } = router.query;
+
+  const projectId = _projectId ?? peekProjectId;
 
   const { data: members } = useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId as string) : null,
