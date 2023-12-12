@@ -60,7 +60,9 @@ export const SidebarAssigneeSelect: React.FC<Props> = ({ value, onChange, disabl
           ) : (
             <button
               type="button"
-              className="rounded bg-custom-background-80 px-2.5 py-0.5 text-xs text-custom-text-200"
+              className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs text-custom-text-200 ${
+                disabled ? "cursor-not-allowed" : ""
+              }`}
             >
               No assignees
             </button>
