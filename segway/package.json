@@ -1,0 +1,34 @@
+{
+  "name": "segway",
+  "version": "0.0.1",
+  "description": "An integration service syncs plane data with external sources.",
+  "author": "plane team",
+  "license": "ISC",
+  "private": true,
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/start.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/start.js\""
+  },
+  "dependencies": {
+    "@overnightjs/core": "^1.7.6",
+    "@sentry/node": "^7.73.0",
+    "@sentry/tracing": "^7.73.0",
+    "amqplib": "^0.10.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "postgres": "^3.4.1",
+    "winston": "^3.10.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.4",
+    "@types/cors": "^2.8.14",
+    "@types/express": "^4.17.18",
+    "@types/node": "^20.8.3",
+    "concurrently": "^8.2.1",
+    "nodemon": "^3.0.1",
+    "typescript": "^5.2.2"
+  }
+}
