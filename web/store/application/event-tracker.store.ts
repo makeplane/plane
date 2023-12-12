@@ -9,7 +9,7 @@ export interface IEventTrackerStore {
   postHogEventTracker: (
     eventName: string,
     payload: object | [] | null,
-    group?: { isGrouping: boolean | null; groupType: string | null; gorupId: string | null } | null
+    group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
   ) => void;
 }
 
@@ -32,16 +32,19 @@ export class EventTrackerStore implements IEventTrackerStore {
   postHogEventTracker = (
     eventName: string,
     payload: object | [] | null,
-    group?: { isGrouping: boolean | null; groupType: string | null; gorupId: string | null } | null
+    group?: { isGrouping: boolean | null; groupType: string | null; groupId: string | null } | null
   ) => {
     try {
+      const currentWorkspaceDetails = this.rootStore.workspace.currentWorkspace;
+      const currentProjectDetails = this.rootStore.project.projects.currentProjectDetails;
+
       let extras: any = {
-        workspace_name: this.rootStore.workspace.currentWorkspace?.name ?? "",
-        workspace_id: this.rootStore.workspace.currentWorkspace?.id ?? "",
-        workspace_slug: this.rootStore.workspace.currentWorkspace?.slug ?? "",
-        project_name: this.rootStore.project.currentProjectDetails?.name ?? "",
-        project_id: this.rootStore.project.currentProjectDetails?.id ?? "",
-        project_identifier: this.rootStore.project.currentProjectDetails?.identifier ?? "",
+        workspace_name: currentWorkspaceDetails?.name ?? "",
+        workspace_id: currentWorkspaceDetails?.id ?? "",
+        workspace_slug: currentWorkspaceDetails?.slug ?? "",
+        project_name: currentProjectDetails?.name ?? "",
+        project_id: currentProjectDetails?.id ?? "",
+        project_identifier: currentProjectDetails?.identifier ?? "",
       };
       if (["PROJECT_CREATED", "PROJECT_UPDATED"].includes(eventName)) {
         const project_details: any = payload as object;
@@ -54,9 +57,9 @@ export class EventTrackerStore implements IEventTrackerStore {
       }
 
       if (group && group!.isGrouping === true) {
-        posthog?.group(group!.groupType!, group!.gorupId!, {
+        posthog?.group(group!.groupType!, group!.groupId!, {
           date: new Date(),
-          workspace_id: group!.gorupId,
+          workspace_id: group!.groupId,
         });
         posthog?.capture(eventName, {
           ...payload,
