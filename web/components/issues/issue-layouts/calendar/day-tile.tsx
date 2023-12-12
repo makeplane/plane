@@ -26,6 +26,7 @@ type Props = {
   groupedIssueIds: IGroupedIssues;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   enableQuickIssueCreate?: boolean;
+  disableIssueCreation?: boolean;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -43,6 +44,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     groupedIssueIds,
     quickActions,
     enableQuickIssueCreate,
+    disableIssueCreation,
     quickAddCallback,
     viewId,
   } = props;
@@ -86,7 +88,7 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 ref={provided.innerRef}
               >
                 <CalendarIssueBlocks issues={issues} issueIdList={issueIdList} quickActions={quickActions} />
-                {enableQuickIssueCreate && (
+                {enableQuickIssueCreate && !disableIssueCreation && (
                   <div className="px-2 py-1">
                     <CalendarQuickAddIssueForm
                       formKey="target_date"

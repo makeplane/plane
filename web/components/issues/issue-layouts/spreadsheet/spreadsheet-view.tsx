@@ -33,6 +33,7 @@ type Props = {
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;
+  disableIssueCreation?: boolean;
 };
 
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
@@ -50,6 +51,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     viewId,
     canEditProperties,
     enableQuickCreateIssue,
+    disableIssueCreation,
   } = props;
   // states
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
@@ -147,7 +149,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
 
         <div className="border-t border-custom-border-100">
           <div className="z-5 sticky bottom-0 left-0 mb-3">
-            {enableQuickCreateIssue && (
+            {enableQuickCreateIssue && !disableIssueCreation && (
               <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
             )}
           </div>
