@@ -1,6 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import keyBy from "lodash/keyBy";
 import set from "lodash/set";
+import omit from "lodash/omit";
 import isToday from "date-fns/isToday";
 import isThisWeek from "date-fns/isThisWeek";
 import isYesterday from "date-fns/isYesterday";
@@ -14,13 +15,30 @@ import { RootStore } from "./root.store";
 export interface IPageStore {
   pages: Record<string, IPage>;
   archivedPages: Record<string, IPage>;
-
+  // project computed
   projectPages: IPage[] | undefined;
   favoriteProjectPages: IPage[] | undefined;
   privateProjectPages: IPage[] | undefined;
   sharedProjectPages: IPage[] | undefined;
-
+  recentProjectPages: IRecentPages | undefined;
+  // archived pages computed
+  archivedProjectPages: IPage[] | undefined;
+  // fetch actions
   fetchProjectPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
+  fetchArchivedProjectPages: (workspaceSlug: string, projectId: string) => Promise<IPage[]>;
+  // favorites actions
+  addToFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  removeFromFavorites: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  // crud
+  createPage: (workspaceSlug: string, projectId: string, data: Partial<IPage>) => Promise<void>;
+  updatePage: (workspaceSlug: string, projectId: string, pageId: string, data: Partial<IPage>) => Promise<void>;
+  deletePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  // access control actions
+  makePublic: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  makePrivate: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  // archive actions
+  archivePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
+  restorePage: (workspaceSlug: string, projectId: string, pageId: string) => Promise<void>;
 }
 
 export class PageStore {
@@ -35,13 +53,29 @@ export class PageStore {
     makeObservable(this, {
       pages: observable,
       archivedPages: observable,
-      // computed
+      // project computed
       projectPages: computed,
       favoriteProjectPages: computed,
-      sharedProjectPages: computed,
+      publicProjectPages: computed,
       privateProjectPages: computed,
-      // actions
+      // archived pages in current project computed
+      archivedProjectPages: computed,
+      // fetch actions
       fetchProjectPages: action,
+      fetchArchivedProjectPages: action,
+      // favorites actions
+      addToFavorites: action,
+      removeFromFavorites: action,
+      // crud
+      createPage: action,
+      updatePage: action,
+      deletePage: action,
+      // access control actions
+      makePublic: action,
+      makePrivate: action,
+      // archive actions
+      archivePage: action,
+      restorePage: action,
     });
     // stores
     this.router = _rootStore.app.router;
@@ -76,7 +110,7 @@ export class PageStore {
   /**
    * retrieves all shared pages which are public to everyone in the project for a projectId that is available in the url.
    */
-  get sharedProjectPages() {
+  get publicProjectPages() {
     if (!this.projectPages) return;
     return this.projectPages.filter((page) => page.access === 0);
   }
@@ -230,5 +264,97 @@ export class PageStore {
       });
       throw error;
     }
+  };
+
+  /**
+   * delete a page using the api and updates the local state in store
+   * @param workspaceSlug
+   * @param projectId
+   * @param pageId
+   * @returns
+   */
+  deletePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
+      const response = await this.pageService.deletePage(workspaceSlug, projectId, pageId);
+      runInAction(() => {
+        this.archivedPages = set(this.archivedPages, [pageId], this.pages[pageId]);
+        delete this.pages[pageId];
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * make a page public
+   * @param workspaceSlug
+   * @param projectId
+   * @param pageId
+   * @returns
+   */
+  makePublic = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
+      runInAction(() => {
+        this.pages[pageId] = { ...this.pages[pageId], access: 0 };
+      });
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 0 });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.pages[pageId] = { ...this.pages[pageId], access: 1 };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * Make a page private
+   * @param workspaceSlug
+   * @param projectId
+   * @param pageId
+   * @returns
+   */
+  makePrivate = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    try {
+      runInAction(() => {
+        this.pages[pageId] = { ...this.pages[pageId], access: 1 };
+      });
+      const response = await this.pageService.patchPage(workspaceSlug, projectId, pageId, { access: 1 });
+      return response;
+    } catch (error) {
+      runInAction(() => {
+        this.pages[pageId] = { ...this.pages[pageId], access: 0 };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * Mark a page archived
+   * @param workspaceSlug
+   * @param projectId
+   * @param pageId
+   */
+  archivePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    await this.pageService.archivePage(workspaceSlug, projectId, pageId);
+    runInAction(() => {
+      this.archivedPages[pageId] = this.pages[pageId];
+      this.pages = omit(this.pages, [pageId]);
+    });
+  };
+
+  /**
+   * Restore a page from archived pages to pages
+   * @param workspaceSlug
+   * @param projectId
+   * @param pageId
+   */
+  restorePage = async (workspaceSlug: string, projectId: string, pageId: string) => {
+    await this.pageService.restorePage(workspaceSlug, projectId, pageId);
+    runInAction(() => {
+      this.pages[pageId] = this.archivedPages[pageId];
+      this.archivedPages = omit(this.archivedPages, [pageId]);
+    });
   };
 }
