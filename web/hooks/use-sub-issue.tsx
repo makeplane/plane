@@ -19,31 +19,28 @@ const useSubIssue = (projectId: string, issueId: string, isExpanded: boolean) =>
 
   const { data: subIssuesResponse, isLoading } = useSWR<ISubIssueResponse>(
     shouldFetch ? SUB_ISSUES(issueId as string) : null,
-    shouldFetch ? () => issueService.subIssues(workspaceSlug as string, projectId as string, issueId as string) : null,
-    {
-      revalidateOnMount: true,
-    }
+    shouldFetch ? () => issueService.subIssues(workspaceSlug as string, projectId as string, issueId as string) : null
   );
 
   const mutateSubIssues = (issue: IIssue, data: Partial<IIssue>) => {
+    if (!issue.parent) return;
+
     mutate(
-      issue.parent ? SUB_ISSUES(issue.parent) : null,
-      issue.parent
-        ? (prev_data: any) => {
-            return {
-              ...prev_data,
-              sub_issues: prev_data.sub_issues.map((sub_issue: any) => {
-                if (sub_issue.id === issue.id) {
-                  return {
-                    ...sub_issue,
-                    ...data,
-                  };
-                }
-                return sub_issue;
-              }),
-            };
-          }
-        : null,
+      SUB_ISSUES(issue.parent!),
+      (prev_data: any) => {
+        return {
+          ...prev_data,
+          sub_issues: prev_data.sub_issues.map((sub_issue: any) => {
+            if (sub_issue.id === issue.id) {
+              return {
+                ...sub_issue,
+                ...data,
+              };
+            }
+            return sub_issue;
+          }),
+        };
+      },
       false
     );
   };
