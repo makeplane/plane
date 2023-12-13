@@ -13,6 +13,8 @@ import { CustomMenu, PhotoFilterIcon } from "@plane/ui";
 import { calculateTotalFilters } from "helpers/filter.helper";
 // types
 import { IProjectView } from "types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   view: IProjectView;
@@ -27,7 +29,10 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
 
-  const { projectViews: projectViewsStore } = useMobxStore();
+  const {
+    projectViews: projectViewsStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug || !projectId) return;
@@ -42,6 +47,9 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
   };
 
   const totalFilters = calculateTotalFilters(view.query_data ?? {});
+
+  const isEditingAllowed =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <>
@@ -73,58 +81,62 @@ export const ProjectViewListItem: React.FC<Props> = observer((props) => {
                   <p className="hidden rounded bg-custom-background-80 px-2 py-1 text-xs text-custom-text-200 group-hover:block">
                     {totalFilters} {totalFilters === 1 ? "filter" : "filters"}
                   </p>
+                  {isEditingAllowed && (
+                    <>
+                      {view.is_favorite ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleRemoveFromFavorites();
+                          }}
+                          className="grid place-items-center"
+                        >
+                          <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleAddToFavorites();
+                          }}
+                          className="grid place-items-center"
+                        >
+                          <StarIcon size={14} strokeWidth={2} />
+                        </button>
+                      )}
 
-                  {view.is_favorite ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleRemoveFromFavorites();
-                      }}
-                      className="grid place-items-center"
-                    >
-                      <StarIcon className="h-3.5 w-3.5 fill-orange-400 text-orange-400" strokeWidth={2} />
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleAddToFavorites();
-                      }}
-                      className="grid place-items-center"
-                    >
-                      <StarIcon size={14} strokeWidth={2} />
-                    </button>
+                      <CustomMenu width="auto" ellipsis>
+                        <CustomMenu.MenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setCreateUpdateViewModal(true);
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <PencilIcon size={14} strokeWidth={2} />
+                            <span>Edit View</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                        <CustomMenu.MenuItem
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setDeleteViewModal(true);
+                          }}
+                        >
+                          <span className="flex items-center justify-start gap-2">
+                            <TrashIcon size={14} strokeWidth={2} />
+                            <span>Delete View</span>
+                          </span>
+                        </CustomMenu.MenuItem>
+                      </CustomMenu>
+                    </>
                   )}
-                  <CustomMenu width="auto" ellipsis>
-                    <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setCreateUpdateViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <PencilIcon size={14} strokeWidth={2} />
-                        <span>Edit View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                    <CustomMenu.MenuItem
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setDeleteViewModal(true);
-                      }}
-                    >
-                      <span className="flex items-center justify-start gap-2">
-                        <TrashIcon size={14} strokeWidth={2} />
-                        <span>Delete View</span>
-                      </span>
-                    </CustomMenu.MenuItem>
-                  </CustomMenu>
                 </div>
               </div>
             </div>
