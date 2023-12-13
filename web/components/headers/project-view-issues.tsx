@@ -173,7 +173,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
             handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>
-        {
+        {canUserCreateIssue && (
           <Button
             onClick={() => {
               setTrackElement("PROJECT_VIEW_PAGE_HEADER");
@@ -184,7 +184,7 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           >
             Add Issue
           </Button>
-        }
+        )}
       </div>
     </div>
   );
