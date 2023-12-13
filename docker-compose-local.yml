@@ -57,8 +57,7 @@ services:
     networks:
       - dev_env
     volumes:
-      - .:/app
-    command: yarn dev --filter=web
+      - ./web:/app/web
     env_file:
       - ./web/.env
     depends_on:
@@ -73,8 +72,7 @@ services:
     networks:
       - dev_env
     volumes:
-      - .:/app
-    command: yarn dev --filter=space
+      - ./space:/app/space
     depends_on:
       - api
       - worker
@@ -91,7 +89,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
+    # command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -139,7 +137,7 @@ services:
   proxy:
     build:
       context: ./nginx
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
       - dev_env
