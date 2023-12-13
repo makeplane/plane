@@ -27,11 +27,19 @@ export abstract class BaseWorker {
     }
   }
 
+  protected async publish(queueName: string, content: Buffer): Promise<void> {
+    try {
+      this.mq?.sendToQueue(queueName, content);
+    } catch (error) {
+      logger.error("Error sending to queue");
+    }
+  }
+
   protected abstract onMessage(msg: ConsumeMessage | null): void;
 
   protected isRelevantMessage(msg: ConsumeMessage): boolean {
     // Check if the message's routing key matches this worker's routing key
-    const messageRoutingKey = msg.properties.headers['routingKey'];
+    const messageRoutingKey = msg.properties.headers["routingKey"];
     return messageRoutingKey === this.routingKey;
   }
 }

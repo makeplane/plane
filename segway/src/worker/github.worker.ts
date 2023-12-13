@@ -3,9 +3,9 @@ import { ConsumeMessage } from "amqplib";
 // base worker
 import { BaseWorker } from "./base.worker";
 
-export class JiraImportWorker extends BaseWorker {
+export class GithubImportWorker extends BaseWorker {
   constructor() {
-    super("importer", "jira");
+    super("importer", "github");
   }
 
   protected onMessage(msg: ConsumeMessage | null): void {
@@ -14,7 +14,6 @@ export class JiraImportWorker extends BaseWorker {
       const data = JSON.parse(msg.content.toString());
       const jsonString = JSON.stringify(data);
       const buffer = Buffer.from(jsonString, "utf-8");
-
       this.publish("importer", buffer);
     }
   }

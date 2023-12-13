@@ -189,7 +189,7 @@ def service_importer(service, importer_id):
 
         with Connection(rabbit_url) as conn:
             exchange = Exchange("", type="direct", durable=True)
-            queue = Queue(name="importer", exchange=exchange, routing_key="jira")
+            queue = Queue(name="importer", exchange=exchange, routing_key=service)
             queue.maybe_bind(conn)
             queue.declare()
 
@@ -200,7 +200,7 @@ def service_importer(service, importer_id):
                     exchange=exchange,
                     routing_key="importer",
                     declare=[queue],
-                    headers={"routingKey": "jira"},
+                    headers={"routingKey": service},
                 )
         # if settings.PROXY_BASE_URL:
         #     headers = {"Content-Type": "application/json"}
