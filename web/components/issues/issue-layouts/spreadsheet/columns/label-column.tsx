@@ -34,7 +34,7 @@ export const SpreadsheetLabelColumn: React.FC<Props> = (props) => {
             mutateSubIssues(issue, { assignees: data });
           }
         }}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
         buttonClassName="px-2.5 h-full"
         hideDropdownArrow
         maxRender={1}

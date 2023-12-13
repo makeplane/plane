@@ -32,7 +32,7 @@ export const SpreadsheetAssigneeColumn: React.FC<Props> = ({ issue, members, onC
             mutateSubIssues(issue, { assignees: data });
           }
         }}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
         buttonClassName="!shadow-none !border-0 h-full w-full px-2.5 py-1 "
         noLabelBorder
         hideDropdownArrow

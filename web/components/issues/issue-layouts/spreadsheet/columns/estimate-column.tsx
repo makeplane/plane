@@ -30,7 +30,7 @@ export const SpreadsheetEstimateColumn: React.FC<Props> = (props) => {
             mutateSubIssues(issue, { estimate_point: data });
           }
         }}
-        className="h-11 w-full border-b-[0.5px] border-custom-border-200"
+        className="h-11 w-full border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
         buttonClassName="h-full w-full px-2.5 py-1 !shadow-none !border-0"
         hideDropdownArrow
         disabled={disabled}

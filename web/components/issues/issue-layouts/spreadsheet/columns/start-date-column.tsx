@@ -29,7 +29,7 @@ export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, e
             mutateSubIssues(issue, { start_date: val });
           }
         }}
-        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200"
+        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
         noBorder
         disabled={disabled}
       />
