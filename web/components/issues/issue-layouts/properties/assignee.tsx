@@ -100,7 +100,7 @@ export const IssuePropertyAssignee: React.FC<IIssuePropertyAssignee> = observer(
 
   const label = (
     <Tooltip tooltipHeading="Assignee" tooltipContent={getTooltipContent()} position="top">
-      <div className="flex h-full w-full cursor-pointer items-center gap-2 text-custom-text-200">
+      <div className="flex h-full w-full items-center gap-2 text-custom-text-200">
         {value && value.length > 0 && Array.isArray(value) ? (
           <AvatarGroup showTooltip={false}>
             {value.map((assigneeId) => {
