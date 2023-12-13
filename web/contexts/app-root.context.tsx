@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 // mobx store
 import { AppRootStore, IAppRootStore } from "store/application";
 
@@ -16,4 +16,10 @@ const initializeStore = () => {
 export const AppRootStoreProvider = ({ children }: any) => {
   const store: IAppRootStore = initializeStore();
   return <AppRootStoreContext.Provider value={store}>{children}</AppRootStoreContext.Provider>;
+};
+
+export const useAppRootStore = () => {
+  const context = useContext(AppRootStoreContext);
+  if (context === undefined) throw new Error("useMobxStore must be used within MobxStoreProvider");
+  return context;
 };

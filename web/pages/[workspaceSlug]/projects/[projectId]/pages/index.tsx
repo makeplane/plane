@@ -17,6 +17,7 @@ import { PagesHeader } from "components/headers";
 import { NextPageWithLayout } from "types/app";
 // constants
 import { PAGE_TABS_LIST } from "constants/page";
+import { PageStoreProvider } from "contexts/page.context";
 
 const AllPagesList = dynamic<any>(() => import("components/pages").then((a) => a.AllPagesList), {
   ssr: false,
@@ -82,81 +83,83 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   };
 
   return (
-    <>
-      {workspaceSlug && projectId && (
-        <CreateUpdatePageModal
-          isOpen={createUpdatePageModal}
-          handleClose={() => setCreateUpdatePageModal(false)}
-          projectId={projectId.toString()}
-        />
-      )}
-      <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">
-        <div className="flex justify-between gap-4">
-          <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
+    <PageStoreProvider>
+      <>
+        {workspaceSlug && projectId && (
+          <CreateUpdatePageModal
+            isOpen={createUpdatePageModal}
+            handleClose={() => setCreateUpdatePageModal(false)}
+            projectId={projectId.toString()}
+          />
+        )}
+        <div className="flex h-full flex-col space-y-5 overflow-hidden p-6">
+          <div className="flex justify-between gap-4">
+            <h3 className="text-2xl font-semibold text-custom-text-100">Pages</h3>
+          </div>
+          <Tab.Group
+            as={Fragment}
+            defaultIndex={currentTabValue(pageTab)}
+            onChange={(i) => {
+              switch (i) {
+                case 0:
+                  return setPageTab("Recent");
+                case 1:
+                  return setPageTab("All");
+                case 2:
+                  return setPageTab("Favorites");
+                case 3:
+                  return setPageTab("Private");
+                case 4:
+                  return setPageTab("Shared");
+                case 5:
+                  return setPageTab("Archived");
+                default:
+                  return setPageTab("All");
+              }
+            }}
+          >
+            <Tab.List as="div" className="mb-6 flex items-center justify-between">
+              <div className="flex flex-wrap items-center gap-4">
+                {PAGE_TABS_LIST.map((tab) => (
+                  <Tab
+                    key={tab.key}
+                    className={({ selected }) =>
+                      `rounded-full border px-5 py-1.5 text-sm outline-none ${
+                        selected
+                          ? "border-custom-primary bg-custom-primary text-white"
+                          : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
+                      }`
+                    }
+                  >
+                    {tab.title}
+                  </Tab>
+                ))}
+              </div>
+            </Tab.List>
+            <Tab.Panels as={Fragment}>
+              <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
+                <RecentPagesList />
+              </Tab.Panel>
+              <Tab.Panel as="div" className="h-full overflow-hidden">
+                <AllPagesList />
+              </Tab.Panel>
+              <Tab.Panel as="div" className="h-full overflow-hidden">
+                <FavoritePagesList />
+              </Tab.Panel>
+              <Tab.Panel as="div" className="h-full overflow-hidden">
+                <PrivatePagesList />
+              </Tab.Panel>
+              <Tab.Panel as="div" className="h-full overflow-hidden">
+                <SharedPagesList />
+              </Tab.Panel>
+              <Tab.Panel as="div" className="h-full overflow-hidden">
+                <ArchivedPagesList />
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
         </div>
-        <Tab.Group
-          as={Fragment}
-          defaultIndex={currentTabValue(pageTab)}
-          onChange={(i) => {
-            switch (i) {
-              case 0:
-                return setPageTab("Recent");
-              case 1:
-                return setPageTab("All");
-              case 2:
-                return setPageTab("Favorites");
-              case 3:
-                return setPageTab("Private");
-              case 4:
-                return setPageTab("Shared");
-              case 5:
-                return setPageTab("Archived");
-              default:
-                return setPageTab("All");
-            }
-          }}
-        >
-          <Tab.List as="div" className="mb-6 flex items-center justify-between">
-            <div className="flex flex-wrap items-center gap-4">
-              {PAGE_TABS_LIST.map((tab) => (
-                <Tab
-                  key={tab.key}
-                  className={({ selected }) =>
-                    `rounded-full border px-5 py-1.5 text-sm outline-none ${
-                      selected
-                        ? "border-custom-primary bg-custom-primary text-white"
-                        : "border-custom-border-200 bg-custom-background-100 hover:bg-custom-background-90"
-                    }`
-                  }
-                >
-                  {tab.title}
-                </Tab>
-              ))}
-            </div>
-          </Tab.List>
-          <Tab.Panels as={Fragment}>
-            <Tab.Panel as="div" className="h-full space-y-5 overflow-y-auto">
-              <RecentPagesList />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <AllPagesList />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <FavoritePagesList />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <PrivatePagesList />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <SharedPagesList />
-            </Tab.Panel>
-            <Tab.Panel as="div" className="h-full overflow-hidden">
-              <ArchivedPagesList />
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
-      </div>
-    </>
+      </>
+    </PageStoreProvider>
   );
 });
 
