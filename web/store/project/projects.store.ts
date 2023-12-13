@@ -164,9 +164,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const currentProjectMap = await this.projectService.getProjects(workspaceSlug);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug], currentProjectMap);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug], currentProjectMap);
       });
     } catch (error) {
       console.log("Failed to fetch project from workspace store");
@@ -178,9 +177,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const response = await this.projectService.getProject(workspaceSlug, projectId);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId], response);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId], response);
       });
       return response;
     } catch (error) {
@@ -203,9 +201,8 @@ export class ProjectsStore implements IProjectsStore {
 
       if (currentProject.is_favorite) return;
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], true);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], true);
       });
 
       const response = await this.projectService.addProjectToFavorites(workspaceSlug, projectId);
@@ -213,9 +210,8 @@ export class ProjectsStore implements IProjectsStore {
     } catch (error) {
       console.log("Failed to add project to favorite");
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], false);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], false);
       });
 
       throw error;
@@ -228,9 +224,8 @@ export class ProjectsStore implements IProjectsStore {
 
       if (!currentProject.is_favorite) return;
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], false);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], false);
       });
 
       const response = await this.projectService.removeProjectFromFavorites(workspaceSlug, projectId);
@@ -239,9 +234,8 @@ export class ProjectsStore implements IProjectsStore {
     } catch (error) {
       console.log("Failed to add project to favorite");
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], true);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], true);
       });
       throw error;
     }
@@ -268,9 +262,8 @@ export class ProjectsStore implements IProjectsStore {
         updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
       }
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "sort_order"], updatedSortOrder);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId, "sort_order"], updatedSortOrder);
       });
 
       return updatedSortOrder;
@@ -296,9 +289,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const response = await this.projectService.createProject(workspaceSlug, data);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, response.id], response);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, response.id], response);
       });
 
       return response;
@@ -312,9 +304,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const currentProject = this.projectMap?.[workspaceSlug]?.[projectId];
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId], { ...currentProject, ...data });
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [workspaceSlug, projectId], { ...currentProject, ...data });
       });
 
       const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
@@ -330,13 +321,10 @@ export class ProjectsStore implements IProjectsStore {
 
   deleteProject = async (workspaceSlug: string, projectId: string) => {
     try {
-      const workspaceProjects = { ...this.projectMap[workspaceSlug] };
+      if (!this.projectMap?.[workspaceSlug]?.[projectId]) return;
 
-      delete workspaceProjects[projectId];
-
-      const _projectMap = set(this.projectMap, [workspaceSlug], workspaceProjects);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        delete this.projectMap[workspaceSlug][projectId];
       });
 
       await this.projectService.deleteProject(workspaceSlug, projectId);

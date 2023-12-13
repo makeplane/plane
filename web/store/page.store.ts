@@ -238,7 +238,7 @@ export class PageStore {
   createPage = async (workspaceSlug: string, projectId: string, data: Partial<IPage>) => {
     const response = await this.pageService.createPage(workspaceSlug, projectId, data);
     runInAction(() => {
-      this.pages = set(this.pages, [response.id], response);
+      set(this.pages, [response.id], response);
     });
   };
 
@@ -277,7 +277,7 @@ export class PageStore {
     try {
       const response = await this.pageService.deletePage(workspaceSlug, projectId, pageId);
       runInAction(() => {
-        this.archivedPages = set(this.archivedPages, [pageId], this.pages[pageId]);
+        set(this.archivedPages, [pageId], this.pages[pageId]);
         delete this.pages[pageId];
       });
       return response;

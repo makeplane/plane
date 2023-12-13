@@ -158,12 +158,10 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
       const response = await this.workspaceService.createWorkspace(data);
 
-      const updatedWorkspacesList = set(this.workspaces, response.id, response);
-
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.workspaces = updatedWorkspacesList;
+        set(this.workspaces, response.id, response);
       });
 
       return response;
@@ -191,12 +189,10 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
 
       const response = await this.workspaceService.updateWorkspace(workspaceSlug, data);
 
-      const updatedWorkspacesList = set(this.workspaces, response.id, data);
-
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.workspaces = updatedWorkspacesList;
+        set(this.workspaces, response.id, data);
       });
 
       return response;
@@ -216,22 +212,16 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
    */
   deleteWorkspace = async (workspaceSlug: string) => {
     try {
-      runInAction(() => {
-        this.loader = true;
-        this.error = null;
-      });
-
       await this.workspaceService.deleteWorkspace(workspaceSlug);
 
       const updatedWorkspacesList = this.workspaces;
       const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
 
-      delete updatedWorkspacesList[`${workspaceId}`];
-
+      if (!this.workspaces?.[workspaceId]) return;
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        this.workspaces = updatedWorkspacesList;
+        delete updatedWorkspacesList[workspaceId];
       });
     } catch (error) {
       runInAction(() => {

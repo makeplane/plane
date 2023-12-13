@@ -90,10 +90,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       const response = await this.viewService.getViews(workspaceSlug, projectId);
 
-      const _viewMap = set(this.viewMap, [projectId], response);
       runInAction(() => {
         this.loader = false;
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId], response);
       });
 
       return response;
@@ -115,10 +114,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       const response = await this.viewService.getViewDetails(workspaceSlug, projectId, viewId);
 
-      const _viewMap = set(this.viewMap, [projectId, viewId], response);
       runInAction(() => {
         this.loader = false;
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, viewId], response);
       });
 
       return response;
@@ -136,10 +134,9 @@ export class ProjectViewsStore implements IProjectViewsStore {
     try {
       const response = await this.viewService.createView(workspaceSlug, projectId, data);
 
-      const _viewMap = set(this.viewMap, [projectId, response.id], response);
       runInAction(() => {
         this.loader = false;
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, response.id], response);
       });
 
       return response;
@@ -161,9 +158,8 @@ export class ProjectViewsStore implements IProjectViewsStore {
     try {
       const currentView = this.viewMap[projectId][viewId];
 
-      const _viewMap = set(this.viewMap, [projectId, viewId], { ...currentView, ...data });
       runInAction(() => {
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, viewId], { ...currentView, ...data });
       });
 
       const response = await this.viewService.patchView(workspaceSlug, projectId, viewId, data);
@@ -182,12 +178,10 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
   deleteView = async (workspaceSlug: string, projectId: string, viewId: string): Promise<any> => {
     try {
-      const currentProjectViews = this.viewMap[projectId];
-      delete currentProjectViews[viewId];
+      if (!this.viewMap?.[projectId]?.[viewId]) return;
 
-      const _viewMap = set(this.viewMap, [projectId], currentProjectViews);
       runInAction(() => {
-        this.viewMap = _viewMap;
+        delete this.viewMap[projectId][viewId];
       });
 
       await this.viewService.deleteView(workspaceSlug, projectId, viewId);
@@ -208,9 +202,8 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       if (currentView.is_favorite) return;
 
-      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], true);
       runInAction(() => {
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, viewId, "is_favorite"], true);
       });
 
       await this.viewService.addViewToFavorites(workspaceSlug, projectId, {
@@ -219,9 +212,8 @@ export class ProjectViewsStore implements IProjectViewsStore {
     } catch (error) {
       console.error("Failed to add view to favorites in view store", error);
 
-      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], false);
       runInAction(() => {
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, viewId, "is_favorite"], false);
       });
     }
   };
@@ -232,18 +224,16 @@ export class ProjectViewsStore implements IProjectViewsStore {
 
       if (!currentView.is_favorite) return;
 
-      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], false);
       runInAction(() => {
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, viewId, "is_favorite"], false);
       });
 
       await this.viewService.removeViewFromFavorites(workspaceSlug, projectId, viewId);
     } catch (error) {
       console.error("Failed to remove view from favorites in view store", error);
 
-      const _viewMap = set(this.viewMap, [projectId, viewId, "is_favorite"], true);
       runInAction(() => {
-        this.viewMap = _viewMap;
+        set(this.viewMap, [projectId, viewId, "is_favorite"], true);
       });
     }
   };
