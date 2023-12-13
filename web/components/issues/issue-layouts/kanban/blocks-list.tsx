@@ -11,13 +11,8 @@ interface IssueBlocksListProps {
   issueIds: string[];
   isDragDisabled: boolean;
   showEmptyGroup: boolean;
-  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    customActionButton?: React.ReactElement
-  ) => React.ReactNode;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
@@ -62,13 +57,7 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
             );
           })}
         </>
-      ) : (
-        !isDragDisabled && (
-          <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
-            {/* <div className="text-custom-text-300 text-sm">Drop here</div> */}
-          </div>
-        )
-      )}
+      ) : null}
     </>
   );
 };

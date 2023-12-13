@@ -26,8 +26,6 @@ import { IQuickActionProps } from "../list/list-view-types";
 import { IIssueKanBanViewStore } from "store_legacy/issue";
 // hooks
 import useToast from "hooks/use-toast";
-// constants
-import { ISSUE_STATE_GROUPS, ISSUE_PRIORITIES } from "constants/issue";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -95,13 +93,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
   // mobx store
-  const {
-    project: { workspaceProjects },
-    projectLabel: { projectLabels },
-    projectMember: { projectMembers },
-    projectState: projectStateStore,
-    user: userStore,
-  } = useMobxStore();
+  const { user: userStore } = useMobxStore();
 
   // hooks
   const { setToastAlert } = useToast();
@@ -185,12 +177,26 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   };
 
   const handleIssues = useCallback(
-    async (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => {
+    async (issue: IIssue, action: EIssueActions) => {
       if (issueActions[action]) {
         await issueActions[action]!(issue);
       }
     },
     [issueActions]
+  );
+
+  const renderQuickActions = (issue: IIssue, customActionButton?: React.ReactElement) => (
+    <QuickActions
+      customActionButton={customActionButton}
+      issue={issue}
+      handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+      handleUpdate={
+        issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
+      }
+      handleRemoveFromView={
+        issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
+      }
+    />
   );
 
   const handleDeleteIssue = async () => {
@@ -206,10 +212,6 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const handleKanBanToggle = (toggle: "groupByHeaderMinMax" | "subgroupByIssuesVisibility", value: string) => {
     kanbanViewStore.handleKanBanToggle(toggle, value);
   };
-
-  const states = projectStateStore?.projectStates || null;
-  const priorities = ISSUE_PRIORITIES || null;
-  const stateGroups = ISSUE_STATE_GROUPS || null;
 
   return (
     <>
@@ -256,37 +258,13 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               issueIds={issueIds}
               sub_group_by={sub_group_by}
               group_by={group_by}
-              order_by={order_by}
               handleIssues={handleIssues}
-              quickActions={(sub_group_by, group_by, issue, customActionButton) => (
-                <QuickActions
-                  customActionButton={customActionButton}
-                  issue={issue}
-                  handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
-                  handleUpdate={
-                    issueActions[EIssueActions.UPDATE]
-                      ? async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)
-                      : undefined
-                  }
-                  handleRemoveFromView={
-                    issueActions[EIssueActions.REMOVE]
-                      ? async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)
-                      : undefined
-                  }
-                />
-              )}
+              quickActions={renderQuickActions}
               displayProperties={displayProperties}
               kanBanToggle={kanbanViewStore?.kanBanToggle}
               handleKanBanToggle={handleKanBanToggle}
-              states={states}
-              stateGroups={stateGroups}
-              priorities={priorities}
-              labels={projectLabels}
-              members={projectMembers?.map((m) => m.member) ?? null}
-              projects={workspaceProjects}
               enableQuickIssueCreate={enableQuickAdd}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-              isDragStarted={isDragStarted}
               quickAddCallback={issueStore?.quickAddIssue}
               viewId={viewId}
               disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
@@ -302,32 +280,10 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
               group_by={group_by}
               order_by={order_by}
               handleIssues={handleIssues}
-              quickActions={(sub_group_by, group_by, issue, customActionButton) => (
-                <QuickActions
-                  customActionButton={customActionButton}
-                  issue={issue}
-                  handleDelete={async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.DELETE)}
-                  handleUpdate={
-                    issueActions[EIssueActions.UPDATE]
-                      ? async (data) => handleIssues(sub_group_by, group_by, data, EIssueActions.UPDATE)
-                      : undefined
-                  }
-                  handleRemoveFromView={
-                    issueActions[EIssueActions.REMOVE]
-                      ? async () => handleIssues(sub_group_by, group_by, issue, EIssueActions.REMOVE)
-                      : undefined
-                  }
-                />
-              )}
+              quickActions={renderQuickActions}
               displayProperties={displayProperties}
               kanBanToggle={kanbanViewStore?.kanBanToggle}
               handleKanBanToggle={handleKanBanToggle}
-              states={states}
-              stateGroups={stateGroups}
-              priorities={priorities}
-              labels={projectLabels}
-              members={projectMembers?.map((m) => m.member) ?? null}
-              projects={workspaceProjects}
               showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
               isDragStarted={isDragStarted}
               disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
@@ -346,9 +302,7 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) =>
-            await handleIssues(sub_group_by, group_by, issueToUpdate as IIssue, EIssueActions.UPDATE)
-          }
+          handleIssue={async (issueToUpdate) => await handleIssues(issueToUpdate as IIssue, EIssueActions.UPDATE)}
         />
       )}
     </>

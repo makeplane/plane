@@ -13,72 +13,42 @@ import { Tooltip } from "@plane/ui";
 import { IIssue, IIssueDisplayProperties, IState, TIssuePriorities } from "types";
 
 export interface IKanBanProperties {
-  sub_group_id: string;
-  columnId: string;
   issue: IIssue;
-  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue) => void;
+  handleIssues: (issue: IIssue) => void;
   displayProperties: IIssueDisplayProperties | null;
   showEmptyGroup: boolean;
   isReadOnly: boolean;
 }
 
 export const KanBanProperties: React.FC<IKanBanProperties> = observer((props) => {
-  const { sub_group_id, columnId: group_id, issue, handleIssues, displayProperties, isReadOnly } = props;
+  const { issue, handleIssues, displayProperties, isReadOnly } = props;
 
   const handleState = (state: IState) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, state: state.id }
-    );
+    handleIssues({ ...issue, state: state.id });
   };
 
   const handlePriority = (value: TIssuePriorities) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, priority: value }
-    );
+    handleIssues({ ...issue, priority: value });
   };
 
   const handleLabel = (ids: string[]) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, labels: ids }
-    );
+    handleIssues({ ...issue, labels: ids });
   };
 
   const handleAssignee = (ids: string[]) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, assignees: ids }
-    );
+    handleIssues({ ...issue, assignees: ids });
   };
 
   const handleStartDate = (date: string) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, start_date: date }
-    );
+    handleIssues({ ...issue, start_date: date });
   };
 
   const handleTargetDate = (date: string) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, target_date: date }
-    );
+    handleIssues({ ...issue, target_date: date });
   };
 
   const handleEstimate = (value: number | null) => {
-    handleIssues(
-      !sub_group_id && sub_group_id === "null" ? null : sub_group_id,
-      !group_id && group_id === "null" ? null : group_id,
-      { ...issue, estimate_point: value }
-    );
+    handleIssues({ ...issue, estimate_point: value });
   };
 
   return (

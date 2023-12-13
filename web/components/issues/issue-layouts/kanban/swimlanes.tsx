@@ -1,71 +1,50 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 // components
-import { KanBanGroupByHeaderRoot } from "./headers/group-by-root";
-import { KanBanSubGroupByHeaderRoot } from "./headers/sub-group-by-root";
 import { KanBan } from "./default";
+import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
+import { HeaderGroupByCard } from "./headers/group-by-card";
 // types
-import { IIssue, IIssueDisplayProperties, IIssueLabel, IProject, IState, IUserLite } from "types";
+import { IIssue, IIssueDisplayProperties } from "types";
 import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 // constants
-import { getValueFromObject } from "constants/issue";
 import { EIssueActions } from "../types";
 import { EProjectStore } from "store_legacy/command-palette.store";
+import { IKanbanColumn, columnTypes, getKanbanColumns } from "./utils";
+import { useMobxStore } from "lib/mobx/store-provider";
 
 interface ISubGroupSwimlaneHeader {
-  issues: IIssueResponse;
   issueIds: any;
   sub_group_by: string | null;
   group_by: string | null;
-  list: any;
-  listKey: string;
+  list: IKanbanColumn[];
   kanBanToggle: any;
   handleKanBanToggle: any;
-  disableIssueCreation?: boolean;
-  currentStore?: EProjectStore;
-  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
 }
 const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   issueIds,
   sub_group_by,
   group_by,
   list,
-  listKey,
   kanBanToggle,
   handleKanBanToggle,
-  disableIssueCreation,
-  currentStore,
-  addIssuesToView,
 }) => {
-  const calculateIssueCount = (column_id: string) => {
-    let issueCount = 0;
-    issueIds &&
-      Object.keys(issueIds)?.forEach((_issueKey: any) => {
-        issueCount += issueIds?.[_issueKey]?.[column_id]?.length || 0;
-      });
-    return issueCount;
-  };
-
   return (
     <div className="relative flex h-max min-h-full w-full items-center">
       {list &&
         list.length > 0 &&
-        list.map((_list: any) => (
-          <div
-            key={`${sub_group_by}_${getValueFromObject(_list, listKey) as string}`}
-            className="flex w-[340px] flex-shrink-0 flex-col"
-          >
-            <KanBanGroupByHeaderRoot
-              column_id={getValueFromObject(_list, listKey) as string}
-              column_value={_list}
+        list.map((_list: IKanbanColumn) => (
+          <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
+            <HeaderGroupByCard
               sub_group_by={sub_group_by}
               group_by={group_by}
-              issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
+              column_id={_list.id}
+              icon={_list.Icon}
+              title={_list.name}
+              count={issueIds?.[_list.id]?.length || 0}
               kanBanToggle={kanBanToggle}
               handleKanBanToggle={handleKanBanToggle}
-              disableIssueCreation={disableIssueCreation}
-              currentStore={currentStore}
-              addIssuesToView={addIssuesToView}
+              issuePayload={_list.payload}
             />
           </div>
         ))}
@@ -78,19 +57,8 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issueIds: any;
   order_by: string | null;
   showEmptyGroup: boolean;
-  states: IState[] | null;
-  stateGroups: any;
-  priorities: any;
-  labels: IIssueLabel[] | null;
-  members: IUserLite[] | null;
-  projects: IProject[] | null;
-  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    customActionButton?: React.ReactElement
-  ) => React.ReactNode;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
@@ -99,6 +67,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   currentStore?: EProjectStore;
   enableQuickIssueCreate: boolean;
   canEditProperties: (projectId: string | undefined) => boolean;
+  addIssuesToView?: (issueIds: string[]) => Promise<IIssue>;
   quickAddCallback?: (
     workspaceSlug: string,
     projectId: string,
@@ -112,23 +81,13 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     issueIds,
     sub_group_by,
     group_by,
-    order_by,
     list,
-    listKey,
     handleIssues,
     quickActions,
     displayProperties,
     kanBanToggle,
     handleKanBanToggle,
     showEmptyGroup,
-    states,
-    stateGroups,
-    priorities,
-    labels,
-    members,
-    projects,
-    isDragStarted,
-    disableIssueCreation,
     enableQuickIssueCreate,
     canEditProperties,
     addIssuesToView,
@@ -152,43 +111,32 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
           <div className="flex flex-shrink-0 flex-col">
             <div className="sticky top-[50px] z-[1] flex w-full items-center bg-custom-background-90 py-1">
               <div className="sticky left-0 flex-shrink-0 bg-custom-background-90 pr-2">
-                <KanBanSubGroupByHeaderRoot
-                  column_id={getValueFromObject(_list, listKey) as string}
-                  column_value={_list}
-                  sub_group_by={sub_group_by}
-                  group_by={group_by}
-                  issues_count={calculateIssueCount(getValueFromObject(_list, listKey) as string)}
+                <HeaderSubGroupByCard
+                  column_id={_list.id}
+                  icon={_list.Icon}
+                  title={_list.name || ""}
+                  count={calculateIssueCount(_list.id)}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
-                  disableIssueCreation={disableIssueCreation}
-                  addIssuesToView={addIssuesToView}
                 />
               </div>
               <div className="w-full border-b border-dashed border-custom-border-400" />
             </div>
-            {!kanBanToggle?.subgroupByIssuesVisibility.includes(getValueFromObject(_list, listKey) as string) && (
+            {!kanBanToggle?.subgroupByIssuesVisibility.includes(_list.id) && (
               <div className="relative">
                 <KanBan
                   issues={issues}
-                  issueIds={issueIds?.[getValueFromObject(_list, listKey) as string]}
+                  issueIds={issueIds?.[_list.id]}
                   sub_group_by={sub_group_by}
                   group_by={group_by}
-                  order_by={order_by}
-                  sub_group_id={getValueFromObject(_list, listKey) as string}
+                  sub_group_id={_list.id}
                   handleIssues={handleIssues}
                   quickActions={quickActions}
                   displayProperties={displayProperties}
                   kanBanToggle={kanBanToggle}
                   handleKanBanToggle={handleKanBanToggle}
                   showEmptyGroup={showEmptyGroup}
-                  states={states}
-                  stateGroups={stateGroups}
-                  priorities={priorities}
-                  labels={labels}
-                  members={members}
-                  projects={projects}
                   enableQuickIssueCreate={enableQuickIssueCreate}
-                  isDragStarted={isDragStarted}
                   canEditProperties={canEditProperties}
                   addIssuesToView={addIssuesToView}
                   quickAddCallback={quickAddCallback}
@@ -207,23 +155,12 @@ export interface IKanBanSwimLanes {
   sub_group_by: string | null;
   group_by: string | null;
   order_by: string | null;
-  handleIssues: (sub_group_by: string | null, group_by: string | null, issue: IIssue, action: EIssueActions) => void;
-  quickActions: (
-    sub_group_by: string | null,
-    group_by: string | null,
-    issue: IIssue,
-    customActionButton?: React.ReactElement
-  ) => React.ReactNode;
+  handleIssues: (issue: IIssue, action: EIssueActions) => void;
+  quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
   kanBanToggle: any;
   handleKanBanToggle: any;
   showEmptyGroup: boolean;
-  states: IState[] | null;
-  stateGroups: any;
-  priorities: any;
-  labels: IIssueLabel[] | null;
-  members: IUserLite[] | null;
-  projects: IProject[] | null;
   isDragStarted?: boolean;
   disableIssueCreation?: boolean;
   currentStore?: EProjectStore;
@@ -251,363 +188,58 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     kanBanToggle,
     handleKanBanToggle,
     showEmptyGroup,
-    states,
-    stateGroups,
-    priorities,
-    labels,
-    members,
-    projects,
     isDragStarted,
     disableIssueCreation,
     enableQuickIssueCreate,
     canEditProperties,
-    currentStore,
     addIssuesToView,
     quickAddCallback,
   } = props;
 
+  const { project, projectLabel, projectMember, projectState } = useMobxStore();
+
+  const groupByList = getKanbanColumns(group_by as columnTypes, project, projectLabel, projectMember, projectState);
+  const subGroupByList = getKanbanColumns(
+    sub_group_by as columnTypes,
+    project,
+    projectLabel,
+    projectMember,
+    projectState
+  );
+
+  if (!groupByList || !subGroupByList) return null;
+
   return (
     <div className="relative">
       <div className="sticky top-0 z-[2] h-[50px] bg-custom-background-90">
-        {group_by && group_by === "project" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={projects}
-            listKey={`id`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            disableIssueCreation={disableIssueCreation}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
-
-        {group_by && group_by === "state" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={states}
-            listKey={`id`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            disableIssueCreation={disableIssueCreation}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
-
-        {group_by && group_by === "state_detail.group" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={stateGroups}
-            listKey={`key`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            disableIssueCreation={disableIssueCreation}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
-
-        {group_by && group_by === "priority" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={priorities}
-            listKey={`key`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
-
-        {group_by && group_by === "labels" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={labels ? [...labels, { id: "None", name: "None" }] : labels}
-            listKey={`id`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            disableIssueCreation={disableIssueCreation}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
-
-        {group_by && group_by === "assignees" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={members ? [...members, { id: "None", display_name: "None" }] : members}
-            listKey={`id`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            disableIssueCreation={disableIssueCreation}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
-
-        {group_by && group_by === "created_by" && (
-          <SubGroupSwimlaneHeader
-            issues={issues}
-            issueIds={issueIds}
-            sub_group_by={sub_group_by}
-            group_by={group_by}
-            list={members}
-            listKey={`id`}
-            kanBanToggle={kanBanToggle}
-            handleKanBanToggle={handleKanBanToggle}
-            disableIssueCreation={disableIssueCreation}
-            currentStore={currentStore}
-            addIssuesToView={addIssuesToView}
-          />
-        )}
+        <SubGroupSwimlaneHeader
+          issueIds={issueIds}
+          group_by={group_by}
+          sub_group_by={sub_group_by}
+          kanBanToggle={kanBanToggle}
+          handleKanBanToggle={handleKanBanToggle}
+          list={groupByList}
+        />
       </div>
 
-      {sub_group_by && sub_group_by === "project" && (
+      {sub_group_by && (
         <SubGroupSwimlane
           issues={issues}
+          list={subGroupByList}
           issueIds={issueIds}
-          sub_group_by={sub_group_by}
           group_by={group_by}
+          sub_group_by={sub_group_by}
           order_by={order_by}
-          list={projects}
-          listKey={`id`}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
           kanBanToggle={kanBanToggle}
           handleKanBanToggle={handleKanBanToggle}
           showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
           isDragStarted={isDragStarted}
           disableIssueCreation={disableIssueCreation}
           enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "state" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={states}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "state" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={states}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "state_detail.group" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={stateGroups}
-          listKey={`key`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "priority" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={priorities}
-          listKey={`key`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "labels" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={labels ? [...labels, { id: "None", name: "None" }] : labels}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "assignees" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={members ? [...members, { id: "None", display_name: "None" }] : members}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
-          canEditProperties={canEditProperties}
-          quickAddCallback={quickAddCallback}
-        />
-      )}
-
-      {sub_group_by && sub_group_by === "created_by" && (
-        <SubGroupSwimlane
-          issues={issues}
-          issueIds={issueIds}
-          sub_group_by={sub_group_by}
-          group_by={group_by}
-          order_by={order_by}
-          list={members}
-          listKey={`id`}
-          handleIssues={handleIssues}
-          quickActions={quickActions}
-          displayProperties={displayProperties}
-          kanBanToggle={kanBanToggle}
-          handleKanBanToggle={handleKanBanToggle}
-          showEmptyGroup={showEmptyGroup}
-          states={states}
-          stateGroups={stateGroups}
-          priorities={priorities}
-          labels={labels}
-          members={members}
-          projects={projects}
-          isDragStarted={isDragStarted}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
+          addIssuesToView={addIssuesToView}
           canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
         />
