@@ -5,7 +5,7 @@ import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // TODO: update this
-// import useStoreIssues from "hooks/use-store-issues";
+import useStoreIssues from "hooks/use-store-issues";
 // components
 import {
   ListLayout,
@@ -38,7 +38,12 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
 
   // TODO: update this
   // const {
-  //   issues: { loader: issueLoader, getIssuesIds: issueGetIssuesIds, fetchIssues: issueFetchIssues },
+  //   issues: {
+  //     loader: issueLoader,
+  //     getIssues: issueGetIssues,
+  //     getIssuesIds: issueGetIssuesIds,
+  //     fetchIssues: issueFetchIssues,
+  //   },
   //   issuesFilter: { issueFilters: issueIssueFilters, fetchFilters: issueFetchFilters },
   // } = useStoreIssues("project");
 
@@ -48,6 +53,11 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
   //     await issueFetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
   //   }
   // });
+
+  // console.log("---");
+  // console.log("issueGetIssuesIds", issueGetIssuesIds);
+  // console.log("issueGetIssues", issueGetIssues);
+  // console.log("---");
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 

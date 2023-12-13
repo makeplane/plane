@@ -1,7 +1,6 @@
 // issue store provider
 import { useMobxIssueStore } from "lib/mobx/store-issues-provider";
 // types
-import { IIssueStore } from "store/issue/issue.store";
 import { IWorkspaceIssues, IWorkspaceIssuesFilter } from "store/issue/workspace";
 import { IProfileIssues, IProfileIssuesFilter } from "store/issue/profile";
 import { IProjectIssues, IProjectIssuesFilter } from "store/issue/project";
@@ -21,7 +20,6 @@ interface IStoreIssues {
   //   issuesFilter: IProfileIssuesFilter;
   // };
   project: {
-    allIssues: IIssueStore;
     issues: IProjectIssues;
     issuesFilter: IProjectIssuesFilter;
   };
@@ -86,7 +84,6 @@ const useStoreIssues = (issueSpace: keyof IStoreIssues) => {
     //   issuesFilter: profileIssuesFilter,
     // },
     project: {
-      allIssues: issues,
       issues: projectIssues,
       issuesFilter: projectIssuesFilter,
     },
@@ -113,7 +110,6 @@ const useStoreIssues = (issueSpace: keyof IStoreIssues) => {
   };
 
   return {
-    allIssues: storeIssues[issueSpace].allIssues,
     issues: storeIssues[issueSpace].issues,
     issuesFilter: storeIssues[issueSpace].issuesFilter,
   };

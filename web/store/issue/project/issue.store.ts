@@ -20,6 +20,7 @@ export interface IProjectIssues {
   loader: TLoader;
   issues: { [project_id: string]: string[] };
   // computed
+  getIssues: { [issue_id: string]: IIssue } | undefined;
   getIssuesIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues | undefined;
   // action
   fetchIssues: (workspaceSlug: string, projectId: string, loadType: TLoader) => Promise<IIssueResponse>;
@@ -46,6 +47,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
       loader: observable.ref,
       issues: observable,
       // computed
+      getIssues: computed,
       getIssuesIds: computed,
       // action
       fetchIssues: action,
@@ -65,7 +67,7 @@ export class ProjectIssues extends IssueHelperStore implements IProjectIssues {
     const projectId = this.rootStore?.projectId;
     if (!projectId) return undefined;
 
-    const _issues = this.rootStore.issues.getIssuesByProject(projectId);
+    const _issues = this.rootStore.issues.getIssuesByKey("project", projectId);
     if (!_issues) return undefined;
 
     return _issues;

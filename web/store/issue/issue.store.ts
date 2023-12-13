@@ -1,3 +1,4 @@
+import get from "lodash/get";
 // store
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { IIssueRootStore } from "./root.store";
@@ -5,21 +6,18 @@ import { IIssueRootStore } from "./root.store";
 import { IIssue } from "types";
 
 export interface IIssueStore {
-  issues: { [key: string]: IIssue };
+  allIssues: { [key: string]: IIssue };
   // actions
   addIssue(issues: IIssue[]): void;
   updateIssue(issueId: string, issue: Partial<IIssue>): void;
   removeIssue(issueId: string): void;
   // helper Methods
   getIssueById(id: string): undefined | IIssue;
-  getIssuesByWorkspace(workspaceSlug: string): undefined | { [key: string]: IIssue };
-  getIssuesByProject(projectId: string): undefined | { [key: string]: IIssue };
-  getIssuesByCycle(cycleId: string): undefined | { [key: string]: IIssue };
-  getIssuesByModule(moduleId: string): undefined | { [key: string]: IIssue };
+  getIssuesByKey(issueKey: string, value: string): undefined | { [key: string]: IIssue };
 }
 
 export class IssueStore implements IIssueStore {
-  issues: { [key: string]: IIssue } = {};
+  allIssues: { [key: string]: IIssue } = {};
   // root store
   rootStore: IIssueRootStore;
 
@@ -28,7 +26,7 @@ export class IssueStore implements IIssueStore {
 
     makeObservable(this, {
       // observable
-      issues: observable,
+      allIssues: observable.ref,
       // actions
       addIssue: action,
       updateIssue: action,
@@ -39,68 +37,43 @@ export class IssueStore implements IIssueStore {
   addIssue = (issues: IIssue[]) => {
     if (issues && issues.length <= 0) return;
 
-    const _issues = { ...this.issues };
+    const _issues = { ...this.allIssues };
     issues.forEach((issue) => {
       _issues[issue.id] = issue;
     });
+
     runInAction(() => {
-      this.issues = _issues;
+      this.allIssues = _issues;
     });
   };
 
   updateIssue = (issueId: string, issue: Partial<IIssue>) => {
-    if (!issue || !issueId || !this.issues[issueId]) return;
-    this.issues[issueId] = { ...this.issues[issueId], ...issue };
+    if (!issue || !issueId || !this.allIssues[issueId]) return;
+    this.allIssues[issueId] = { ...this.allIssues[issueId], ...issue };
   };
 
   removeIssue = (issueId: string) => {
     if (issueId) return;
-    delete this.issues[issueId];
+    delete this.allIssues[issueId];
   };
 
   // helper methods
   getIssueById = (id: string) => {
     if (!id) return undefined;
-    return this.issues[id];
+    return this.allIssues[id];
   };
 
-  getIssuesByWorkspace = (workspaceSlug: string) => {
-    if (!workspaceSlug || !this.issues) return undefined;
-    const projectIssues = Object.values(this.issues).filter((issue) => issue?.workspace === workspaceSlug);
+  getIssuesByKey = (issueKey: keyof IIssue, value: string) => {
+    if (!issueKey || !value || !this.allIssues) return undefined;
     const filteredIssues: { [key: string]: IIssue } = {};
-    projectIssues.map((issue) => {
-      filteredIssues[issue.id] = issue;
-    });
-    return filteredIssues;
-  };
 
-  getIssuesByProject = (projectId: string) => {
-    if (!projectId || !this.issues) return undefined;
-    const projectIssues = Object.values(this.issues).filter((issue) => issue?.project === projectId);
-    const filteredIssues: { [key: string]: IIssue } = {};
-    projectIssues.map((issue) => {
-      filteredIssues[issue.id] = issue;
+    Object.values(this.allIssues).forEach((issue) => {
+      const issueKeyValue = get(issue, issueKey);
+      if (issueKeyValue == value) {
+        filteredIssues[issue.id] = issue;
+      }
     });
-    return filteredIssues;
-  };
 
-  getIssuesByCycle = (projectId: string) => {
-    if (!projectId || !this.issues) return undefined;
-    const projectIssues = Object.values(this.issues).filter((issue) => issue?.project === projectId);
-    const filteredIssues: { [key: string]: IIssue } = {};
-    projectIssues.map((issue) => {
-      filteredIssues[issue.id] = issue;
-    });
-    return filteredIssues;
-  };
-
-  getIssuesByModule = (projectId: string) => {
-    if (!projectId || !this.issues) return undefined;
-    const projectIssues = Object.values(this.issues).filter((issue) => issue?.project === projectId);
-    const filteredIssues: { [key: string]: IIssue } = {};
-    projectIssues.map((issue) => {
-      filteredIssues[issue.id] = issue;
-    });
     return filteredIssues;
   };
 }
