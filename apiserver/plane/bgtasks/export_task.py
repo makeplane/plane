@@ -18,6 +18,7 @@ from openpyxl import Workbook
 
 # Module imports
 from plane.db.models import Issue, ExporterHistory
+from plane.utils.s3 import S3
 
 
 def dateTimeConverter(time):
@@ -71,51 +72,18 @@ def create_zip_file(files):
 def upload_to_s3(zip_file, workspace_id, token_id, slug):
     file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{timezone.now()}.zip"
     expires_in = 7 * 24 * 60 * 60
+    s3 = S3()
 
-    if settings.DOCKERIZED and settings.USE_MINIO:
-        s3 = boto3.client(
-            "s3",
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            config=Config(signature_version="s3v4"),
-        )
-        s3.upload_fileobj(
-            zip_file,
-            settings.AWS_STORAGE_BUCKET_NAME,
-            file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
-        )
-        presigned_url = s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": file_name},
-            ExpiresIn=expires_in,
-        )
-        # Create the new url with updated domain and protocol
-        presigned_url = presigned_url.replace(
-            "http://plane-minio:9000/uploads/",
-            f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/",
-        )
-    else:
-        s3 = boto3.client(
-            "s3",
-            region_name=settings.AWS_REGION,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-            config=Config(signature_version="s3v4"),
-        )
-        s3.upload_fileobj(
-            zip_file,
-            settings.AWS_S3_BUCKET_NAME,
-            file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
-        )
-
-        presigned_url = s3.generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_S3_BUCKET_NAME, "Key": file_name},
-            ExpiresIn=expires_in,
-        )
+    s3.upload_file(
+        zip_file,
+        settings.AWS_STORAGE_BUCKET_NAME
+        if settings.USE_MINIO
+        else settings.AWS_S3_BUCKET_NAME,
+        file_name,
+        "public-read",
+        "application/zip",
+    )
+    presigned_url = s3.refresh_url(file_name, expires_in)
 
     exporter_instance = ExporterHistory.objects.get(token=token_id)
 
