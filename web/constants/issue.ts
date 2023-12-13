@@ -13,6 +13,12 @@ import {
   TStateGroups,
 } from "types";
 
+export enum EFilterType {
+  FILTERS = "filters",
+  DISPLAY_FILTERS = "display_filters",
+  DISPLAY_PROPERTIES = "display_properties",
+}
+
 export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
   title: string;

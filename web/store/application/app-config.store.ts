@@ -1,6 +1,5 @@
 import { observable, action, makeObservable, runInAction } from "mobx";
 // types
-import { RootStore } from "../root.store";
 import { IAppConfig } from "types/app";
 // services
 import { AppConfigService } from "services/app_config.service";
@@ -14,13 +13,10 @@ export interface IAppConfigStore {
 export class AppConfigStore implements IAppConfigStore {
   // observables
   envConfig: IAppConfig | null = null;
-
-  // root store
-  rootStore;
   // service
   appConfigService;
 
-  constructor(_rootStore: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observables
       envConfig: observable.ref,
@@ -28,9 +24,8 @@ export class AppConfigStore implements IAppConfigStore {
       fetchAppConfig: action,
     });
     this.appConfigService = new AppConfigService();
-
-    this.rootStore = _rootStore;
   }
+
   fetchAppConfig = async () => {
     try {
       const config = await this.appConfigService.envConfig();

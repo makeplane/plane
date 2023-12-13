@@ -4,6 +4,8 @@ import { observer } from "mobx-react-lite";
 import useSWR from "swr";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// TODO: update this
+import useStoreIssues from "hooks/use-store-issues";
 // components
 import {
   ListLayout,
@@ -15,6 +17,7 @@ import {
   ProjectEmptyState,
 } from "components/issues";
 import { Spinner } from "@plane/ui";
+// hooks
 
 export const ProjectLayoutRoot: React.FC = observer(() => {
   // router
@@ -32,6 +35,29 @@ export const ProjectLayoutRoot: React.FC = observer(() => {
       await fetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
     }
   });
+
+  // TODO: update this
+  // const {
+  //   issues: {
+  //     loader: issueLoader,
+  //     getIssues: issueGetIssues,
+  //     getIssuesIds: issueGetIssuesIds,
+  //     fetchIssues: issueFetchIssues,
+  //   },
+  //   issuesFilter: { issueFilters: issueIssueFilters, fetchFilters: issueFetchFilters },
+  // } = useStoreIssues("project");
+
+  // useSWR(workspaceSlug && projectId ? `PROJECT_ISSUES_V3_UPGRADED_${workspaceSlug}_${projectId}` : null, async () => {
+  //   if (workspaceSlug && projectId) {
+  //     await issueFetchFilters(workspaceSlug, projectId);
+  //     await issueFetchIssues(workspaceSlug, projectId, getIssues ? "mutation" : "init-loader");
+  //   }
+  // });
+
+  // console.log("---");
+  // console.log("issueGetIssuesIds", issueGetIssuesIds);
+  // console.log("issueGetIssues", issueGetIssues);
+  // console.log("---");
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 

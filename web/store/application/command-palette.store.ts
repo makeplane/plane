@@ -1,6 +1,4 @@
 import { observable, action, makeObservable, computed } from "mobx";
-// types
-import { RootStore } from "../root.store";
 // services
 import { ProjectService } from "services/project";
 import { PageService } from "services/page.service";
@@ -58,15 +56,13 @@ export class CommandPaletteStore implements ICommandPaletteStore {
   isCreateIssueModalOpen: boolean = false;
   isDeleteIssueModalOpen: boolean = false;
   isBulkDeleteIssueModalOpen: boolean = false;
-  // root store
-  rootStore;
   // service
   projectService;
   pageService;
 
   createIssueStoreType: EProjectStore = EProjectStore.PROJECT;
 
-  constructor(_rootStore: RootStore) {
+  constructor() {
     makeObservable(this, {
       // observable
       isCommandPaletteOpen: observable.ref,
@@ -95,7 +91,6 @@ export class CommandPaletteStore implements ICommandPaletteStore {
       toggleBulkDeleteIssueModal: action,
     });
 
-    this.rootStore = _rootStore;
     this.projectService = new ProjectService();
     this.pageService = new PageService();
   }

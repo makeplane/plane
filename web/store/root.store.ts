@@ -8,6 +8,7 @@ import { IModuleStore, ModulesStore } from "./module.store";
 import { IUserStore, UserStore } from "./user";
 import { ILabelStore, LabelStore } from "./label.store";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
+import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -20,9 +21,10 @@ export class RootStore {
   module: IModuleStore;
   projectView: IProjectViewsStore;
   label: ILabelStore;
+  issue: IIssueRootStore;
 
   constructor() {
-    this.app = new AppRootStore(this);
+    this.app = new AppRootStore();
     this.user = new UserStore(this);
     this.workspace = new WorkspaceRootStore(this);
     this.project = new ProjectRootStore(this);
@@ -30,9 +32,9 @@ export class RootStore {
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewsStore(this);
     // this.page = new PageRootStore();
-    // this.issue = new IssueRootStore();
     // independent stores
     this.label = new LabelStore(this);
     // this.state = new stateStore();
+    this.issue = new IssueRootStore(this);
   }
 }

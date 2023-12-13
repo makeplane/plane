@@ -1,6 +1,8 @@
+"use client";
+
 import { createContext, useContext } from "react";
 // mobx store
-import { RootStore } from "store_legacy/root";
+import { RootStore } from "store/root.store";
 
 let rootStore: RootStore = new RootStore();
 
@@ -13,14 +15,14 @@ const initializeStore = () => {
   return _rootStore;
 };
 
-export const MobxStoreProvider = ({ children }: any) => {
+export const MobxIssueStoreProvider = ({ children }: any) => {
   const store: RootStore = initializeStore();
   return <MobxStoreContext.Provider value={store}>{children}</MobxStoreContext.Provider>;
 };
 
 // hook
-export const useMobxStore = () => {
+export const useMobxIssueStore = () => {
   const context = useContext(MobxStoreContext);
-  if (context === undefined) throw new Error("useMobxStore must be used within MobxStoreProvider");
+  if (context === undefined) throw new Error("useMobxIssueStore must be used within MobxIssueStoreProvider");
   return context;
 };
