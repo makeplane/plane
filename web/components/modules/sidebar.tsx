@@ -144,7 +144,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   };
 
   const handleCopyText = () => {
-    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${module?.id}`)
+    copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/modules/${moduleId}`)
       .then(() => {
         setToastAlert({
           type: "success",

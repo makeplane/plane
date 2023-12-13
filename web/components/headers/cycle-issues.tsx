@@ -155,7 +155,10 @@ export const CycleIssuesHeader: React.FC = observer(() => {
                       key={cycle.id}
                       onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/cycles/${cycle.id}`)}
                     >
-                      {truncateText(cycle.name, 40)}
+                      <div className="flex items-center gap-1.5">
+                        <ContrastIcon className="h-3 w-3" />
+                        {truncateText(cycle.name, 40)}
+                      </div>
                     </CustomMenu.MenuItem>
                   ))}
                 </CustomMenu>
