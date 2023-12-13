@@ -192,20 +192,23 @@ export const CycleIssuesHeader: React.FC = observer(() => {
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
+
           {canUserCreateIssue && (
-            <Button
-              onClick={() => {
-                setTrackElement("CYCLE_PAGE_HEADER");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
-              }}
-              size="sm"
-              prependIcon={<Plus />}
-            >
-              Add Issue
-            </Button>
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("CYCLE_PAGE_HEADER");
+                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.CYCLE);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                Add Issue
+              </Button>
+            </>
           )}
           <button
             type="button"
