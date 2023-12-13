@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 
 // components
 import { ParentIssuesListModal } from "components/issues";
+// icons
+import { X } from "lucide-react";
 // types
 import { IIssue, ISearchIssueResponse } from "types";
 
@@ -32,22 +34,33 @@ export const SidebarParentSelect: React.FC<Props> = ({ onChange, issueDetails, d
         issueId={issueId as string}
         projectId={projectId as string}
       />
-      <button
-        type="button"
-        className={`rounded bg-custom-background-80 px-2.5 py-0.5 text-xs ${
-          disabled ? "cursor-not-allowed" : "cursor-pointer "
-        }`}
-        onClick={() => setIsParentModalOpen(true)}
-        disabled={disabled}
-      >
-        {selectedParentIssue && issueDetails?.parent ? (
-          `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
-        ) : !selectedParentIssue && issueDetails?.parent ? (
-          `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
-        ) : (
-          <span className="text-custom-text-200">Select issue</span>
+
+      <div className="flex items-center gap-2 rounded bg-custom-background-80 px-2.5 py-0.5 text-xs max-w-max">
+        <button
+          type="button"
+          className={`${disabled ? "cursor-not-allowed" : "cursor-pointer "}`}
+          onClick={() => setIsParentModalOpen(true)}
+          disabled={disabled}
+        >
+          {selectedParentIssue && issueDetails?.parent ? (
+            `${selectedParentIssue.project__identifier}-${selectedParentIssue.sequence_id}`
+          ) : !selectedParentIssue && issueDetails?.parent ? (
+            `${issueDetails.parent_detail?.project_detail.identifier}-${issueDetails.parent_detail?.sequence_id}`
+          ) : (
+            <span className="text-custom-text-200">Select issue</span>
+          )}
+        </button>
+        {selectedParentIssue && issueDetails?.parent && (
+          <button
+            type="button"
+            className={`${disabled ? "cursor-not-allowed" : "cursor-pointer "}`}
+            onClick={() => onChange("")}
+            disabled={disabled}
+          >
+            <X className="h-2.5 w-2.5" />
+          </button>
         )}
-      </button>
+      </div>
     </>
   );
 };
