@@ -80,8 +80,6 @@ services:
     volumes:
       - .:/app
     command: yarn dev --filter=space
-    env_file:
-      - ./space/.env
     depends_on:
       - api
       - worker
