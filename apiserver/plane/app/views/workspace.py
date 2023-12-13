@@ -70,6 +70,7 @@ from plane.app.permissions import (
     WorkSpaceAdminPermission,
     WorkspaceEntityPermission,
     WorkspaceViewerPermission,
+    WorkspaceUserPermission,
 )
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.utils.issue_filters import issue_filters
@@ -494,6 +495,18 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     permission_classes = [
         WorkspaceEntityPermission,
     ]
+
+    def get_permissions(self):
+        if self.action == "leave":
+            self.permission_classes = [
+                WorkspaceUserPermission,
+            ]
+        else:
+            self.permission_classes = [
+                WorkspaceEntityPermission,
+            ]
+
+        return super(WorkSpaceMemberViewSet, self).get_permissions()
 
     search_fields = [
         "member__display_name",
