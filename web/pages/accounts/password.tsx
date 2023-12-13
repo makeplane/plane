@@ -16,7 +16,7 @@ import DefaultLayout from "layouts/default-layout";
 import { Button, Input } from "@plane/ui";
 // images
 import BluePlaneLogoWithoutText from "public/plane-logos/blue-without-text.png";
-import latestFeatures from "public/onboarding/onboarding-pages.svg";
+import latestFeatures from "public/onboarding/onboarding-pages.webp";
 // helpers
 import { checkEmailValidity } from "helpers/string.helper";
 // type
