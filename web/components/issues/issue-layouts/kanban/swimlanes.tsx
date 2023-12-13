@@ -51,7 +51,10 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
       {list &&
         list.length > 0 &&
         list.map((_list: any) => (
-          <div className="flex w-[340px] flex-shrink-0 flex-col">
+          <div
+            key={`${sub_group_by}_${getValueFromObject(_list, listKey) as string}`}
+            className="flex w-[340px] flex-shrink-0 flex-col"
+          >
             <KanBanGroupByHeaderRoot
               column_id={getValueFromObject(_list, listKey) as string}
               column_value={_list}

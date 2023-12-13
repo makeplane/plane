@@ -254,3 +254,21 @@ export interface IIssueViewProps {
 }
 
 export type TIssuePriorities = "urgent" | "high" | "medium" | "low" | "none";
+
+export type TLoader = "init-loader" | "mutation" | undefined;
+
+export interface IGroupedIssues {
+  [group_id: string]: string[];
+}
+
+export interface ISubGroupedIssues {
+  [sub_grouped_id: string]: {
+    [group_id: string]: string[];
+  };
+}
+
+export type TUnGroupedIssues = string[];
+
+export interface IIssueResponse {
+  [issue_id: string]: IIssue;
+}
