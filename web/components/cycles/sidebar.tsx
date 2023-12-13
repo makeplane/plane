@@ -30,6 +30,8 @@ import {
 } from "helpers/date-time.helper";
 // types
 import { ICycle } from "types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // fetch-keys
 import { CYCLE_STATUS } from "constants/cycle";
 
@@ -53,6 +55,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
   const {
     cycle: cycleDetailsStore,
     trackEvent: { setTrackElement },
+    user: { currentProjectRole },
   } = useMobxStore();
 
   const cycleDetails = cycleDetailsStore.cycle_details[cycleId] ?? undefined;
@@ -286,6 +289,8 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
         : `${cycleDetails.total_issues}`
       : `${cycleDetails.completed_issues}/${cycleDetails.total_issues}`;
 
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
   return (
     <>
       {cycleDetails && workspaceSlug && projectId && (
@@ -312,7 +317,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             <button onClick={handleCopyText}>
               <LinkIcon className="h-3 w-3 text-custom-text-300" />
             </button>
-            {!isCompleted && (
+            {!isCompleted && isEditingAllowed && (
               <CustomMenu width="lg" placement="bottom-end" ellipsis>
                 <CustomMenu.MenuItem
                   onClick={() => {
@@ -349,8 +354,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
             <div className="relative flex h-full w-52 items-center gap-2.5">
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <Popover.Button
-                  disabled={isCompleted ?? false}
-                  className="cursor-default text-sm font-medium text-custom-text-300"
+                  className={`text-sm font-medium text-custom-text-300 ${
+                    isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                  }`}
+                  disabled={isCompleted || !isEditingAllowed}
                 >
                   {areYearsEqual ? renderShortDate(startDate, "_ _") : renderShortMonthDate(startDate, "_ _")}
                 </Popover.Button>
@@ -385,8 +392,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <>
                   <Popover.Button
-                    disabled={isCompleted ?? false}
-                    className="cursor-default text-sm font-medium text-custom-text-300"
+                    className={`text-sm font-medium text-custom-text-300 ${
+                      isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                    }`}
+                    disabled={isCompleted ?? !isEditingAllowed}
                   >
                     {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
                   </Popover.Button>
