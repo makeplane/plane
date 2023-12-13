@@ -107,6 +107,7 @@ if DOCKERIZED and USE_MINIO:
     AWS_DEFAULT_ACL = "public-read"
     AWS_QUERYSTRING_AUTH = False
     AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_MAX_AGE_SECONDS = 60 * 60
 
     # Custom Domain settings
     parsed_url = urlparse(os.environ.get("WEB_URL", "http://localhost"))
@@ -278,4 +279,3 @@ SCOUT_NAME = "Plane"
 
 # Unsplash Access key
 UNSPLASH_ACCESS_KEY = os.environ.get("UNSPLASH_ACCESS_KEY")
-
