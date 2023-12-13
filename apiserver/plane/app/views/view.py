@@ -181,10 +181,7 @@ class GlobalViewIssuesViewSet(BaseViewSet):
 
         issues = IssueLiteSerializer(issue_queryset, many=True, fields=fields if fields else None).data
         issue_dict = {str(issue["id"]): issue for issue in issues}
-        return Response(
-            issue_dict,
-            status=status.HTTP_200_OK,
-        )
+        return Response(issue_dict, status=status.HTTP_200_OK)
 
 
 class IssueViewViewSet(BaseViewSet):
@@ -216,6 +213,13 @@ class IssueViewViewSet(BaseViewSet):
             .order_by("-is_favorite", "name")
             .distinct()
         )
+    
+    def list(self, request, slug, project_id):
+        queryset = self.get_queryset()
+        fields = [field for field in request.GET.get("fields", "").split(",") if field]
+        views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
+        views_dict = {str(view["id"]): view for view in views}
+        return Response(views_dict, status=status.HTTP_200_OK)
 
 
 class IssueViewFavoriteViewSet(BaseViewSet):
