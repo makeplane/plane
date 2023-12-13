@@ -10,12 +10,19 @@ export class MQSingleton {
 
     private constructor() {}
 
+    // Get the current instance
     public static getInstance(): MQSingleton {
         if (!this.instance) {
             this.instance = new MQSingleton();
-            this.instance.init();
         }
         return this.instance;
+    }
+
+    // Initialize instance
+    public async initialize(): Promise<void> {
+        if (!this.connection || !this.channel) {
+            await this.init();
+        }
     }
 
     private async init(): Promise<void> {
@@ -44,7 +51,8 @@ export class MQSingleton {
         if (!this.channel) {
             throw new Error('Channel not initialized');
         }
-        await this.channel.assertQueue(queue, { durable: false });
+        logger.info("👂 Listening for incoming events")
+        await this.channel.assertQueue(queue, { durable: true });
         await this.channel.consume(queue, callback, { noAck: true });
     }
 

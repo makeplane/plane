@@ -5,8 +5,14 @@ import { BaseWorker } from "./base.worker";
 
 export class JiraImportWorker extends BaseWorker {
   constructor() {
-    super("importer");
+    super("importer", "jira");
   }
 
-  protected onMessage(msg: ConsumeMessage | null): void {}
+  protected onMessage(msg: ConsumeMessage | null): void {
+    if (msg && this.isRelevantMessage(msg)) {
+      // Process Jira message
+      const data = JSON.parse(msg.content.toString())
+      console.log(data)
+    }
+  }
 }

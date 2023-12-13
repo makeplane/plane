@@ -8,8 +8,15 @@ import { logger } from "../utils/logger";
 export abstract class BaseWorker {
   mq: MQSingleton | null = null;
 
-  constructor(protected queueName: string) {
+  protected routingKey: string;
+
+  constructor(
+    protected queueName: string,
+    routingKey: string
+  ) {
     this.mq = MQSingleton.getInstance();
+    this.routingKey = routingKey;
+    this.onMessage = this.onMessage.bind(this);
   }
 
   public async start(): Promise<void> {
@@ -21,4 +28,10 @@ export abstract class BaseWorker {
   }
 
   protected abstract onMessage(msg: ConsumeMessage | null): void;
+
+  protected isRelevantMessage(msg: ConsumeMessage): boolean {
+    // Check if the message's routing key matches this worker's routing key
+    const messageRoutingKey = msg.properties.headers['routingKey'];
+    return messageRoutingKey === this.routingKey;
+  }
 }

@@ -2,6 +2,7 @@
 import json
 import requests
 import uuid
+from kombu import Connection, Exchange, Queue
 
 # Django imports
 from django.conf import settings
@@ -28,7 +29,7 @@ from plane.db.models import (
 from plane.bgtasks.user_welcome_task import send_welcome_slack
 
 
-@shared_task(queue='internal_tasks')
+@shared_task(queue="internal_tasks")
 def service_importer(service, importer_id):
     try:
         importer = Importer.objects.get(pk=importer_id)
@@ -176,17 +177,42 @@ def service_importer(service, importer_id):
                 project_id=importer.project_id,
             )
 
-        if settings.PROXY_BASE_URL:
-            headers = {"Content-Type": "application/json"}
-            import_data_json = json.dumps(
-                ImporterSerializer(importer).data,
-                cls=DjangoJSONEncoder,
-            )
-            _ = requests.post(
-                f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
-                json=import_data_json,
-                headers=headers,
-            )
+
+        import_data_json = json.dumps(
+            ImporterSerializer(importer).data,
+            cls=DjangoJSONEncoder,
+        )
+
+        rabbit_url = settings.RABBITMQ_URL
+
+        print(rabbit_url)
+
+        with Connection(rabbit_url) as conn:
+            exchange = Exchange("", type="direct", durable=True)
+            queue = Queue(name="importer", exchange=exchange, routing_key="jira")
+            queue.maybe_bind(conn)
+            queue.declare()
+
+            # Create a producer and send the message
+            with conn.Producer() as producer:
+                producer.publish(
+                    json.dumps(import_data_json),
+                    exchange=exchange,
+                    routing_key="importer",
+                    declare=[queue],
+                    headers={"routingKey": "jira"},
+                )
+        # if settings.PROXY_BASE_URL:
+        #     headers = {"Content-Type": "application/json"}
+        #     import_data_json = json.dumps(
+        #         ImporterSerializer(importer).data,
+        #         cls=DjangoJSONEncoder,
+        #     )
+        #     _ = requests.post(
+        #         f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
+        #         json=import_data_json,
+        #         headers=headers,
+        #     )
 
         return
     except Exception as e:
