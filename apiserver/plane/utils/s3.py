@@ -28,13 +28,36 @@ class S3:
 
     def refresh_url(self, old_url, time=settings.AWS_S3_MAX_AGE_SECONDS):
         path = urlparse(str(old_url)).path.lstrip("/")
+        bucket_name = (
+            settings.AWS_STORAGE_BUCKET_NAME
+            if settings.USE_MINIO
+            else settings.AWS_S3_BUCKET_NAME
+        )
+
         url = self.client.generate_presigned_url(
             ClientMethod="get_object",
             ExpiresIn=time,
-            Params={"Bucket": settings.AWS_S3_BUCKET_NAME, "Key": path},
+            Params={"Bucket": bucket_name, "Key": path},
         )
 
+        if settings.USE_MINIO:
+            url = url.replace(
+                "http://plane-minio:9000/uploads/",
+                f"{settings.AWS_S3_URL_PROTOCOL}//{settings.AWS_S3_CUSTOM_DOMAIN}/",
+            )
+
         return url
+
+    def upload_file(self, file, bucket_name, file_name, acl, content_type):
+        self.client.upload_fileobj(
+            file,
+            bucket_name,
+            file_name,
+            ExtraArgs={"ACL": acl, "ContentType": content_type},
+        )
+
+    def delete_file(self, bucket_name, path):
+        self.client.delete_object(Bucket=bucket_name, Key=path)
 
     @staticmethod
     def verify_s3_url(url):
