@@ -216,7 +216,7 @@ export class ModuleIssuesFilterStore extends IssueFilterBaseStore implements IMo
       await this.fetchModuleFilters(workspaceSlug, projectId, moduleId);
       return;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, moduleId);
+      console.log("error in projectFetchFilters", error);
       throw error;
     }
   };

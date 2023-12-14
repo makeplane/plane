@@ -170,7 +170,7 @@ export class CycleIssuesFilterStore extends IssueFilterBaseStore implements ICyc
 
       return filters;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
+      console.log("error in fetchCycleFilters", error);
       throw error;
     }
   };
