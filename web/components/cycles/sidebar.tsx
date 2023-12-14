@@ -273,10 +273,11 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const endDate = new Date(cycleDetails.end_date ?? "");
-  const startDate = new Date(cycleDetails.start_date ?? "");
+  const endDate = new Date(watch("end_date") ?? cycleDetails.end_date ?? "");
+  const startDate = new Date(watch("start_date") ?? cycleDetails.start_date ?? "");
 
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+  const areYearsEqual =
+    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
 
@@ -380,10 +381,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                           handleStartDateChange(val);
                         }
                       }}
-                      startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                      endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                      startDate={watch("start_date") ?? watch("end_date") ?? null}
+                      endDate={watch("end_date") ?? watch("start_date") ?? null}
                       maxDate={new Date(`${watch("end_date")}`)}
-                      selectsStart
+                      selectsStart={watch("end_date") ? true : false}
                     />
                   </Popover.Panel>
                 </Transition>
@@ -418,10 +419,10 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                             handleEndDateChange(val);
                           }
                         }}
-                        startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                        endDate={watch("end_date") ? `${watch("end_date")}` : null}
+                        startDate={watch("start_date") ?? watch("end_date") ?? null}
+                        endDate={watch("end_date") ?? watch("start_date") ?? null}
                         minDate={new Date(`${watch("start_date")}`)}
-                        selectsEnd
+                        selectsEnd={watch("start_date") ? true : false}
                       />
                     </Popover.Panel>
                   </Transition>
