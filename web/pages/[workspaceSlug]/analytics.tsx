@@ -15,6 +15,7 @@ import { Plus } from "lucide-react";
 import emptyAnalytics from "public/empty-state/empty_analytics.webp";
 // constants
 import { ANALYTICS_TABS } from "constants/analytics";
+import { EUserWorkspaceRoles } from "constants/workspace";
 // type
 import { NextPageWithLayout } from "types/app";
 
@@ -24,7 +25,10 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
     project: { workspaceProjects },
     commandPalette: { toggleCreateProjectModal },
     trackEvent: { setTrackElement },
+    user: { currentProjectRole },
   } = useMobxStore();
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -77,6 +81,7 @@ const AnalyticsPage: NextPageWithLayout = observer(() => {
                 toggleCreateProjectModal(true);
               },
             }}
+            disabled={!isEditingAllowed}
           />
         </>
       )}

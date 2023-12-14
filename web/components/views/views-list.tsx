@@ -13,6 +13,8 @@ import { Input, Loader } from "@plane/ui";
 import emptyView from "public/empty-state/empty_view.webp";
 // icons
 import { Plus, Search } from "lucide-react";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectViewsList = observer(() => {
   const [query, setQuery] = useState("");
@@ -20,9 +22,15 @@ export const ProjectViewsList = observer(() => {
   const router = useRouter();
   const { projectId } = router.query;
 
-  const { projectViews: projectViewsStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    projectViews: projectViewsStore,
+    commandPalette: commandPaletteStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!viewsList)
     return (
@@ -73,6 +81,7 @@ export const ProjectViewsList = observer(() => {
             text: "Build your first view",
             onClick: () => commandPaletteStore.toggleCreateViewModal(true),
           }}
+          disabled={!isEditingAllowed}
         />
       )}
     </>

@@ -6,10 +6,12 @@ import { IssuePropertyState } from "../../properties";
 import useSubIssue from "hooks/use-sub-issue";
 // types
 import { IIssue, IState } from "types";
+import { mutate } from "swr";
+import { SUB_ISSUES } from "constants/fetch-keys";
 
 type Props = {
   issue: IIssue;
-  onChange: (data: Partial<IIssue>) => void;
+  onChange: (issue: IIssue, data: Partial<IIssue>) => void;
   states: IState[] | undefined;
   expandedIssues: string[];
   disabled: boolean;
@@ -20,7 +22,7 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
 
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
@@ -28,7 +30,12 @@ export const SpreadsheetStateColumn: React.FC<Props> = (props) => {
         projectId={issue.project_detail?.id ?? null}
         value={issue.state}
         defaultOptions={issue?.state_detail ? [issue.state_detail] : []}
-        onChange={(data) => onChange({ state: data.id, state_detail: data })}
+        onChange={(data) => {
+          onChange(issue, { state: data.id, state_detail: data });
+          if (issue.parent) {
+            mutateSubIssues(issue, { state: data.id, state_detail: data });
+          }
+        }}
         className="w-full !h-11 border-b-[0.5px] border-custom-border-200"
         buttonClassName="!shadow-none !border-0 h-full w-full"
         hideDropdownArrow
