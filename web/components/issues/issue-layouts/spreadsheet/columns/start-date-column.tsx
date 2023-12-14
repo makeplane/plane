@@ -9,7 +9,7 @@ import { IIssue } from "types";
 
 type Props = {
   issue: IIssue;
-  onChange: (formData: Partial<IIssue>) => void;
+  onChange: (issue: IIssue, formData: Partial<IIssue>) => void;
   expandedIssues: string[];
   disabled: boolean;
 };
@@ -17,14 +17,19 @@ type Props = {
 export const SpreadsheetStartDateColumn: React.FC<Props> = ({ issue, onChange, expandedIssues, disabled }) => {
   const isExpanded = expandedIssues.indexOf(issue.id) > -1;
 
-  const { subIssues, isLoading } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
+  const { subIssues, isLoading, mutateSubIssues } = useSubIssue(issue.project_detail?.id, issue.id, isExpanded);
 
   return (
     <>
       <ViewStartDateSelect
         issue={issue}
-        onChange={(val) => onChange({ start_date: val })}
-        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200"
+        onChange={(val) => {
+          onChange(issue, { start_date: val });
+          if (issue.parent) {
+            mutateSubIssues(issue, { start_date: val });
+          }
+        }}
+        className="flex !h-11 !w-full max-w-full items-center px-2.5 py-1 border-b-[0.5px] border-custom-border-200 hover:bg-custom-background-80"
         noBorder
         disabled={disabled}
       />

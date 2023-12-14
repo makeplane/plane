@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 // hooks
-import { useApplication, useProject } from "hooks/store";
+import { useApplication, useProject, useUser } from "hooks/store";
 // components
 import { ProjectCard } from "components/project";
 import { Loader } from "@plane/ui";
@@ -8,6 +8,8 @@ import { Loader } from "@plane/ui";
 import emptyProject from "public/empty-state/empty_project.webp";
 // icons
 import { NewEmptyState } from "components/common/new-empty-state";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectCardList = observer(() => {
   // store hooks
@@ -15,9 +17,14 @@ export const ProjectCardList = observer(() => {
     commandPalette: commandPaletteStore,
     eventTracker: { setTrackElement },
   } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const { workspaceProjects, searchedProjects, getProjectById } = useProject();
 
-  if (!workspaceProjects) {
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+
+  if (!workspaceProjects)
     return (
       <Loader className="grid grid-cols-3 gap-4">
         <Loader.Item height="100px" />
@@ -28,7 +35,6 @@ export const ProjectCardList = observer(() => {
         <Loader.Item height="100px" />
       </Loader>
     );
-  }
 
   return (
     <>
@@ -65,6 +71,7 @@ export const ProjectCardList = observer(() => {
               commandPaletteStore.toggleCreateProjectModal(true);
             },
           }}
+          disabled={!isEditingAllowed}
         />
       )}
     </>

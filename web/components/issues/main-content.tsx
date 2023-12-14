@@ -216,7 +216,7 @@ export const IssueMainContent: React.FC<Props> = observer((props) => {
             </CustomMenu>
           </div>
         ) : null}
-        <div className="mb-5 flex items-center">
+        <div className="mb-2.5 flex items-center">
           {currentIssueState && (
             <StateGroupIcon
               className="mr-3 h-4 w-4"

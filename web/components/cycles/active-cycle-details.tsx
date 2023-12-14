@@ -78,7 +78,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   // toast alert
   const { setToastAlert } = useToast();
 
-  useSWR(
+  const { isLoading } = useSWR(
     workspaceSlug && projectId ? `ACTIVE_CYCLE_ISSUE_${projectId}_CURRENT` : null,
     workspaceSlug && projectId ? () => cycleStore.fetchCycles(workspaceSlug, projectId, "current") : null
   );
@@ -97,7 +97,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
   //     : null
   // ) as { data: IIssue[] | undefined };
 
-  if (!cycle)
+  if (!cycle && isLoading)
     return (
       <Loader>
         <Loader.Item height="250px" />

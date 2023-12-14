@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Droppable } from "@hello-pangea/dnd";
 // components
@@ -48,11 +49,12 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
     quickAddCallback,
     viewId,
   } = props;
-
+  const [showAllIssues, setShowAllIssues] = useState(false);
   const calendarLayout = issuesFilterStore?.issueFilters?.displayFilters?.calendar?.layout ?? "month";
 
   const issueIdList = groupedIssueIds ? groupedIssueIds[renderDateFormat(date.date)] : null;
 
+  const totalIssues = issueIdList?.length ?? 0;
   return (
     <>
       <div className="group relative flex h-full w-full flex-col bg-custom-background-90">
@@ -87,7 +89,13 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                 {...provided.droppableProps}
                 ref={provided.innerRef}
               >
-                <CalendarIssueBlocks issues={issues} issueIdList={issueIdList} quickActions={quickActions} />
+                <CalendarIssueBlocks
+                  issues={issues}
+                  issueIdList={issueIdList}
+                  quickActions={quickActions}
+                  showAllIssues={showAllIssues}
+                />
+
                 {enableQuickIssueCreate && !disableIssueCreation && (
                   <div className="px-2 py-1">
                     <CalendarQuickAddIssueForm
@@ -98,9 +106,23 @@ export const CalendarDayTile: React.FC<Props> = observer((props) => {
                       }}
                       quickAddCallback={quickAddCallback}
                       viewId={viewId}
+                      onOpen={() => setShowAllIssues(true)}
                     />
                   </div>
                 )}
+
+                {totalIssues > 4 && (
+                  <div className="flex items-center px-2.5 py-1">
+                    <button
+                      type="button"
+                      className="w-min whitespace-nowrap rounded text-xs px-1.5 py-1 text-custom-text-400 font-medium  hover:bg-custom-background-80 hover:text-custom-text-300"
+                      onClick={() => setShowAllIssues((prevData) => !prevData)}
+                    >
+                      {showAllIssues ? "Hide" : totalIssues - 4 + " more"}
+                    </button>
+                  </div>
+                )}
+
                 {provided.placeholder}
               </div>
             )}

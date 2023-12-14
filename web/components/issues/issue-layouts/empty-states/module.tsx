@@ -10,6 +10,8 @@ import { useMobxStore } from "lib/mobx/store-provider";
 import { ISearchIssueResponse } from "types";
 import useToast from "hooks/use-toast";
 import { useState } from "react";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   workspaceSlug: string | undefined;
@@ -26,6 +28,7 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
     moduleIssues: moduleIssueStore,
     commandPalette: commandPaletteStore,
     trackEvent: { setTrackElement },
+    user: { currentProjectRole: userRole },
   } = useMobxStore();
 
   const { setToastAlert } = useToast();
@@ -43,6 +46,8 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
       })
     );
   };
+
+  const isEditingAllowed = !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -70,10 +75,12 @@ export const ModuleEmptyState: React.FC<Props> = observer((props) => {
               variant="neutral-primary"
               prependIcon={<PlusIcon className="h-3 w-3" strokeWidth={2} />}
               onClick={() => setModuleIssuesListModal(true)}
+              disabled={!isEditingAllowed}
             >
               Add an existing issue
             </Button>
           }
+          disabled={!isEditingAllowed}
         />
       </div>
     </>

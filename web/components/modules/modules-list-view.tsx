@@ -2,12 +2,14 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
 // hooks
-import { useApplication, useModule } from "hooks/store";
+import { useApplication, useModule, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 // ui
 import { Loader } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // assets
 import emptyModule from "public/empty-state/empty_modules.webp";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -18,9 +20,14 @@ export const ModulesListView: React.FC = observer(() => {
   const { workspaceSlug, projectId, peekModule } = router.query;
   // store hooks
   const { commandPalette: commandPaletteStore } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const { projectModules } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!projectModules)
     return (
@@ -92,6 +99,7 @@ export const ModulesListView: React.FC = observer(() => {
             text: "Build your first module",
             onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
           }}
+          disabled={!isEditingAllowed}
         />
       )}
     </>

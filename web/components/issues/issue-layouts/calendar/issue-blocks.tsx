@@ -15,10 +15,11 @@ type Props = {
   issues: IIssueResponse | undefined;
   issueIdList: string[] | null;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
+  showAllIssues?: boolean;
 };
 
 export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
-  const { issues, issueIdList, quickActions } = props;
+  const { issues, issueIdList, quickActions, showAllIssues = false } = props;
   // router
   const router = useRouter();
 
@@ -52,7 +53,7 @@ export const CalendarIssueBlocks: React.FC<Props> = observer((props) => {
 
   return (
     <>
-      {issueIdList?.map((issueId, index) => {
+      {issueIdList?.slice(0, showAllIssues ? issueIdList.length : 4).map((issueId, index) => {
         if (!issues?.[issueId]) return null;
 
         const issue = issues?.[issueId];
