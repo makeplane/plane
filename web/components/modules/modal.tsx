@@ -69,11 +69,11 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           state: "SUCCESS",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Module could not be created. Please try again.",
+          message: err.detail ?? "Module could not be created. Please try again.",
         });
         postHogEventTracker("MODULE_CREATED", {
           state: "FAILED",
@@ -99,11 +99,11 @@ export const CreateUpdateModuleModal: React.FC<Props> = observer((props) => {
           state: "SUCCESS",
         });
       })
-      .catch(() => {
+      .catch((err) => {
         setToastAlert({
           type: "error",
           title: "Error!",
-          message: "Module could not be updated. Please try again.",
+          message: err.detail ?? "Module could not be updated. Please try again.",
         });
         postHogEventTracker("MODULE_UPDATED", {
           state: "FAILED",

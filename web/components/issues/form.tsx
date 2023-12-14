@@ -226,10 +226,9 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
 
     reset({
       ...defaultValues,
-      project: projectId,
       ...initialData,
     });
-  }, [setFocus, initialData, projectId, reset]);
+  }, [setFocus, initialData, reset]);
 
   // update projectId in form when projectId changes
   useEffect(() => {
@@ -629,8 +628,8 @@ export const IssueForm: FC<IssueFormProps> = observer((props) => {
                   ? "Updating Issue..."
                   : "Update Issue"
                 : isSubmitting
-                  ? "Adding Issue..."
-                  : "Add Issue"}
+                ? "Adding Issue..."
+                : "Add Issue"}
             </Button>
           </div>
         </div>

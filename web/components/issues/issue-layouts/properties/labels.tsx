@@ -6,7 +6,7 @@ import { usePopper } from "react-popper";
 // components
 import { Combobox } from "@headlessui/react";
 import { Tooltip } from "@plane/ui";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search, Tags } from "lucide-react";
 // types
 import { Placement } from "@popperjs/core";
 import { RootStore } from "store/root";
@@ -25,6 +25,7 @@ export interface IIssuePropertyLabels {
   placement?: Placement;
   maxRender?: number;
   noLabelBorder?: boolean;
+  placeholderText?: string;
 }
 
 export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((props) => {
@@ -41,6 +42,7 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
     placement,
     maxRender = 2,
     noLabelBorder = false,
+    placeholderText,
   } = props;
 
   const {
@@ -144,11 +146,12 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
         )
       ) : (
         <div
-          className={`flex h-full items-center justify-center rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
+          className={`h-full flex items-center justify-center gap-2 rounded px-2.5 py-1 text-xs hover:bg-custom-background-80 ${
             noLabelBorder ? "" : "border-[0.5px] border-custom-border-300"
           }`}
         >
-          Select labels
+          <Tags className="h-3.5 w-3.5" strokeWidth={2} />
+          {placeholderText}
         </div>
       )}
     </div>
@@ -171,8 +174,8 @@ export const IssuePropertyLabels: React.FC<IIssuePropertyLabels> = observer((pro
             disabled
               ? "cursor-not-allowed text-custom-text-200"
               : value.length <= maxRender
-                ? "cursor-pointer"
-                : "cursor-pointer hover:bg-custom-background-80"
+              ? "cursor-pointer"
+              : "cursor-pointer hover:bg-custom-background-80"
           }  ${buttonClassName}`}
           onClick={() => !storeLabels && fetchLabels()}
         >

@@ -49,5 +49,5 @@ USER captain
 # Expose container port and run entry point script
 EXPOSE 8000
 
-# CMD [ "./bin/takeoff" ]
+CMD [ "./bin/takeoff.local" ]
 

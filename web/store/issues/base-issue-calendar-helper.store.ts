@@ -45,8 +45,8 @@ export class CalendarHelpers implements ICalendarHelpers {
           target_date: destinationColumnId,
         };
 
-        if (viewId) store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue, viewId);
-        else store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
+        if (viewId) return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue, viewId);
+        else return await store?.updateIssue(workspaceSlug, projectId, updateIssue.id, updateIssue);
       }
     }
   };

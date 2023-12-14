@@ -7,9 +7,15 @@ import { useRouter } from "next/router";
 
 export const CycleGanttLayout: React.FC = observer(() => {
   const router = useRouter();
-  const { cycleId } = router.query as { cycleId: string };
+  const { cycleId } = router.query;
 
   const { cycleIssues: cycleIssueStore, cycleIssuesFilter: cycleIssueFilterStore } = useMobxStore();
 
-  return <BaseGanttRoot issueFiltersStore={cycleIssueFilterStore} issueStore={cycleIssueStore} viewId={cycleId} />;
+  return (
+    <BaseGanttRoot
+      issueFiltersStore={cycleIssueFilterStore}
+      issueStore={cycleIssueStore}
+      viewId={cycleId?.toString()}
+    />
+  );
 });

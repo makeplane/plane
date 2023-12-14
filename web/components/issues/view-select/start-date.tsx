@@ -1,7 +1,7 @@
 // ui
 import { CustomDatePicker } from "components/ui";
 import { Tooltip } from "@plane/ui";
-import { CalendarDays } from "lucide-react";
+import { CalendarClock } from "lucide-react";
 // helpers
 import { renderShortDate, renderShortDateWithYearFormat, renderShortMonthDate } from "helpers/date-time.helper";
 // types
@@ -55,7 +55,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
             >
               {issue?.start_date ? (
                 <>
-                  <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" />
+                  <CalendarClock className="h-3.5 w-3.5 flex-shrink-0" />
                   <span>
                     {areYearsEqual
                       ? renderShortDate(issue?.start_date, "_ _")
@@ -64,7 +64,7 @@ export const ViewStartDateSelect: React.FC<Props> = ({
                 </>
               ) : (
                 <>
-                  <CalendarDays className="h-3.5 w-3.5 flex-shrink-0" />
+                  <CalendarClock className="h-3.5 w-3.5 flex-shrink-0" />
                   <span>Start Date</span>
                 </>
               )}

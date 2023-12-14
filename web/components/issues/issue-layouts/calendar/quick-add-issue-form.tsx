@@ -27,6 +27,7 @@ type Props = {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   viewId?: string;
+  onOpen?: () => void;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -57,7 +58,7 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
 
   // router
   const router = useRouter();
@@ -146,6 +147,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     }
   };
 
+  const handleOpen = () => {
+    setIsOpen(true);
+    if (onOpen) onOpen();
+  };
+
   return (
     <>
       {isOpen && (
@@ -169,7 +175,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           <button
             type="button"
             className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
-            onClick={() => setIsOpen(true)}
+            onClick={handleOpen}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>

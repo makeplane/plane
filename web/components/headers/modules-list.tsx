@@ -11,16 +11,24 @@ import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { MODULE_VIEW_LAYOUTS } from "constants/module";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
   // store
-  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    project: projectStore,
+    commandPalette: commandPaletteStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
   const { currentProjectDetails } = projectStore;
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
+
+  const canUserCreateModule =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full flex-shrink-0 flex-row items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
@@ -72,14 +80,16 @@ export const ModulesListHeader: React.FC = observer(() => {
             </Tooltip>
           ))}
         </div>
-        <Button
-          variant="primary"
-          size="sm"
-          prependIcon={<Plus />}
-          onClick={() => commandPaletteStore.toggleCreateModuleModal(true)}
-        >
-          Add Module
-        </Button>
+        {canUserCreateModule && (
+          <Button
+            variant="primary"
+            size="sm"
+            prependIcon={<Plus />}
+            onClick={() => commandPaletteStore.toggleCreateModuleModal(true)}
+          >
+            Add Module
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import { ReactElement } from "react";
 import useSWR from "swr";
-import { useRouter } from "next/router";
 import Link from "next/link";
 // services
 import { UserService } from "services/user.service";
@@ -23,9 +22,6 @@ import { NextPageWithLayout } from "types/app";
 const userService = new UserService();
 
 const ProfileActivityPage: NextPageWithLayout = () => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
   const { data: userActivity } = useSWR(USER_ACTIVITY, () => userService.getUserActivity());
 
   return (
@@ -100,7 +96,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                 activityItem.field !== "estimate" ? (
                   <span className="text-custom-text-200">
                     created{" "}
-                    <Link href={`/${workspaceSlug}/projects/${activityItem.project}/issues/${activityItem.issue}`}>
+                    <Link
+                      href={`/${activityItem.workspace_detail.slug}/projects/${activityItem.project}/issues/${activityItem.issue}`}
+                    >
                       <span className="inline-flex items-center hover:underline">
                         this issue. <ExternalLinkIcon className="ml-1 h-3.5 w-3.5" />
                       </span>
@@ -156,7 +154,9 @@ const ProfileActivityPage: NextPageWithLayout = () => {
                                   {activityItem.actor_detail.first_name} Bot
                                 </span>
                               ) : (
-                                <Link href={`/${workspaceSlug}/profile/${activityItem.actor_detail.id}`}>
+                                <Link
+                                  href={`/${activityItem.workspace_detail.slug}/profile/${activityItem.actor_detail.id}`}
+                                >
                                   <span className="text-gray font-medium">
                                     {activityItem.actor_detail.display_name}
                                   </span>

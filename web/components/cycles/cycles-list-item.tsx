@@ -24,6 +24,7 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { ICycle } from "types";
 // constants
 import { CYCLE_STATUS } from "constants/cycle";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type TCyclesListItem = {
   cycle: ICycle;
@@ -41,6 +42,7 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const {
     cycle: cycleStore,
     trackEvent: { setTrackElement },
+    user: userStore,
   } = useMobxStore();
   // toast
   const { setToastAlert } = useToast();
@@ -52,6 +54,9 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
   const isCompleted = cycleStatus === "completed";
   const endDate = new Date(cycle.end_date ?? "");
   const startDate = new Date(cycle.start_date ?? "");
+
+  const { currentProjectRole } = userStore;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   const router = useRouter();
 
@@ -226,19 +231,19 @@ export const CyclesListItem: FC<TCyclesListItem> = (props) => {
                 )}
               </div>
             </Tooltip>
-
-            {cycle.is_favorite ? (
-              <button type="button" onClick={handleRemoveFromFavorites}>
-                <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
-              </button>
-            ) : (
-              <button type="button" onClick={handleAddToFavorites}>
-                <Star className="h-3.5 w-3.5 text-custom-text-200" />
-              </button>
-            )}
+            {isEditingAllowed &&
+              (cycle.is_favorite ? (
+                <button type="button" onClick={handleRemoveFromFavorites}>
+                  <Star className="h-3.5 w-3.5 fill-current text-amber-500" />
+                </button>
+              ) : (
+                <button type="button" onClick={handleAddToFavorites}>
+                  <Star className="h-3.5 w-3.5 text-custom-text-200" />
+                </button>
+              ))}
 
             <CustomMenu width="auto" ellipsis>
-              {!isCompleted && (
+              {!isCompleted && isEditingAllowed && (
                 <>
                   <CustomMenu.MenuItem onClick={handleEditCycle}>
                     <span className="flex items-center justify-start gap-2">

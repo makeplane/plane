@@ -14,7 +14,7 @@ import { IUser } from "types";
 // services
 import { FileService } from "services/file.service";
 // assets
-import IssuesSvg from "public/onboarding/onboarding-issues.svg";
+import IssuesSvg from "public/onboarding/onboarding-issues.webp";
 
 const defaultValues: Partial<IUser> = {
   first_name: "",
