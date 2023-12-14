@@ -215,7 +215,7 @@ export class CycleIssuesFilterStore extends IssueFilterBaseStore implements ICyc
       await this.fetchCycleFilters(workspaceSlug, projectId, cycleId);
       return;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, cycleId);
+      console.log("error in cycleFetchFilters", error);
       throw error;
     }
   };

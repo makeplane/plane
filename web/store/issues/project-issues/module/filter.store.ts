@@ -170,7 +170,7 @@ export class ModuleIssuesFilterStore extends IssueFilterBaseStore implements IMo
 
       return filters;
     } catch (error) {
-      this.fetchFilters(workspaceSlug, projectId, moduleId);
+      console.log("error in moduleFetchFilters", error);
       throw error;
     }
   };
