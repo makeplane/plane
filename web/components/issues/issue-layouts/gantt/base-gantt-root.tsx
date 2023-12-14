@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // mobx store
@@ -25,6 +25,8 @@ import {
   IViewIssuesStore,
 } from "store/issues";
 import { TUnGroupedIssues } from "store/issues/types";
+import { EIssueActions } from "../types";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 interface IBaseGanttRoot {
@@ -35,13 +37,18 @@ interface IBaseGanttRoot {
     | IViewIssuesFilterStore;
   issueStore: IProjectIssuesStore | IModuleIssuesStore | ICycleIssuesStore | IViewIssuesStore;
   viewId?: string;
+  issueActions: {
+    [EIssueActions.DELETE]: (issue: IIssue) => Promise<void>;
+    [EIssueActions.UPDATE]?: (issue: IIssue) => Promise<void>;
+    [EIssueActions.REMOVE]?: (issue: IIssue) => Promise<void>;
+  };
 }
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
-  const { issueFiltersStore, issueStore, viewId } = props;
+  const { issueFiltersStore, issueStore, viewId, issueActions } = props;
 
   const router = useRouter();
-  const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
+  const { workspaceSlug, projectId, peekIssueId, peekProjectId } = router.query;
 
   const {
     user: { currentProjectRole },
@@ -63,6 +70,15 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
 
     await issueStore.updateIssue(workspaceSlug.toString(), issue.project, issue.id, payload, viewId);
   };
+
+  const handleIssues = useCallback(
+    async (issue: IIssue, action: EIssueActions) => {
+      if (issueActions[action]) {
+        await issueActions[action]!(issue);
+      }
+    },
+    [issueActions]
+  );
 
   const updateIssue = async (projectId: string, issueId: string, payload: Partial<IIssue>) => {
     if (!workspaceSlug) return;
@@ -102,8 +118,8 @@ export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGan
           workspaceSlug={workspaceSlug.toString()}
           projectId={peekProjectId.toString()}
           issueId={peekIssueId.toString()}
-          handleIssue={async (issueToUpdate) => {
-            await updateIssue(peekProjectId.toString(), peekIssueId.toString(), issueToUpdate);
+          handleIssue={async (issueToUpdate, action) => {
+            await handleIssues(issueToUpdate as IIssue, action);
           }}
         />
       )}
