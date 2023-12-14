@@ -15,6 +15,7 @@ import { ModuleService } from "services/module.service";
 
 type Props = {
   issueDetail: IIssue | undefined;
+  projectId: string;
   handleModuleChange?: (moduleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
@@ -24,18 +25,16 @@ type Props = {
 const moduleService = new ModuleService();
 
 export const SidebarModuleSelect: React.FC<Props> = observer((props) => {
-  const { issueDetail, disabled = false, handleIssueUpdate, handleModuleChange } = props;
+  const { issueDetail, projectId, disabled = false, handleIssueUpdate, handleModuleChange } = props;
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId: _projectId, peekProjectId } = router.query;
+  const { workspaceSlug } = router.query;
   // mobx store
   const {
     moduleIssues: { removeIssueFromModule, addIssueToModule },
   } = useMobxStore();
 
   const [isUpdating, setIsUpdating] = useState(false);
-
-  const projectId = _projectId ?? peekProjectId;
 
   const { data: projectModules } = useSWR(
     workspaceSlug && projectId ? MODULE_LIST(projectId as string) : null,

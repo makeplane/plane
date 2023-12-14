@@ -14,6 +14,7 @@ import { CYCLE_ISSUES, INCOMPLETE_CYCLES_LIST, ISSUE_DETAILS } from "constants/f
 
 type Props = {
   issueDetail: IIssue | undefined;
+  projectId: string;
   handleCycleChange?: (cycleId: string) => void;
   disabled?: boolean;
   handleIssueUpdate?: () => void;
