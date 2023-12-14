@@ -1,1 +1,1 @@
-from .import_create_task import issue_create_task
+from .issue_sync_task import issue_sync

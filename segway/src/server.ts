@@ -7,19 +7,12 @@ import * as Sentry from "@sentry/node";
 import * as Tracing from "@sentry/tracing";
 // controllers
 import * as controllers from "./controller";
-// workers
-import * as workers from "./worker";
-import { BaseWorker } from "./worker/base.worker";
 // middlewares
 import loggerMiddleware from "./middleware/logger.middleware";
 // utils
 import { logger } from "./utils/logger";
 // mq
 import { MQSingleton } from "./queue/mq.singleton";
-
-type WorkerClasses = {
-  [key: string]: { new (): BaseWorker }; // Type assertion that each key is a constructor for a BaseWorker
-};
 
 class ApiServer extends Server {
   private readonly SERVER_STARTED = "🚀 Api server started on port: ";
@@ -95,23 +88,8 @@ class ApiServer extends Server {
   private async startMQAndWorkers(): Promise<void> {
     try {
       await this.mq?.initialize();
-      this.startWorkers();
     } catch (error) {
       logger.error("Failed to initialize MQ:", error);
-    }
-  }
-
-  // start all the workers to listen
-  private startWorkers(): void {
-    const workerClasses: WorkerClasses = workers;
-    for (const key in workerClasses) {
-      if (Object.prototype.hasOwnProperty.call(workerClasses, key)) {
-        const WorkerClass = workerClasses[key];
-        const worker = new WorkerClass();
-        worker
-          .start()
-          .catch((err) => logger.error(`Error starting ${key}:`, err));
-      }
     }
   }
 

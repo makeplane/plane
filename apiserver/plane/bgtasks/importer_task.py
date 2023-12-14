@@ -2,7 +2,6 @@
 import json
 import requests
 import uuid
-from kombu import Connection, Exchange, Queue, Producer
 
 # Django imports
 from django.conf import settings
@@ -177,40 +176,21 @@ def service_importer(service, importer_id):
                 project_id=importer.project_id,
             )
 
-        import_data_json = json.dumps(
-            ImporterSerializer(importer).data,
-            cls=DjangoJSONEncoder,
-        )
+        import_data = ImporterSerializer(importer).data
 
-        rabbit_url = settings.RABBITMQ_URL
+        import_data_json = json.dumps(import_data, cls=DjangoJSONEncoder)
 
-        # Establish a connection and send a message
-        with Connection(rabbit_url) as conn:
-            queue_name = "django_to_node_queue"
-            routing_key = "django.node"
-            exchange = Exchange("django_exchange", type="direct")
-            queue = Queue(name=queue_name, exchange=exchange, routing_key=routing_key)
-            queue.maybe_bind(conn)
-            queue.declare()
-            producer = Producer(conn)
-            producer.publish(
-                import_data_json,
-                exchange=exchange,
-                routing_key=routing_key,
-                declare=[queue],
+        if settings.SEGWAY_BASE_URL:
+            headers = {
+                "Content-Type": "application/json",
+                "x-api-key": settings.SEGWAY_KEY,
+            }
+            res = requests.post(
+                f"{settings.SEGWAY_BASE_URL}/api/jira",
+                data=import_data_json,
+                headers=headers,
             )
-        # if settings.PROXY_BASE_URL:
-        #     headers = {"Content-Type": "application/json"}
-        #     import_data_json = json.dumps(
-        #         ImporterSerializer(importer).data,
-        #         cls=DjangoJSONEncoder,
-        #     )
-        #     _ = requests.post(
-        #         f"{settings.PROXY_BASE_URL}/hooks/workspaces/{str(importer.workspace_id)}/projects/{str(importer.project_id)}/importers/{str(service)}/",
-        #         json=import_data_json,
-        #         headers=headers,
-        #     )
-
+            print(res.json())
         return
     except Exception as e:
         print(e)

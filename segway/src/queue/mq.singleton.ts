@@ -1,3 +1,5 @@
+//uuid
+import { v4 as uuidv4 } from "uuid"
 // mq
 import { Connection, Channel, connect, ConsumeMessage } from "amqplib";
 // utils
@@ -38,32 +40,35 @@ export class MQSingleton {
   }
 
   // Send the message to the given queue
-  public async sendToQueue(queue: string, content: Buffer): Promise<void> {
+  public async publish(body: object, taskName: string): Promise<void> {
+
+    // Check if the channel exists
     if (!this.channel) {
       throw new Error("Channel not initialized");
     }
-    const exchange = "node_exchange";
-    const routingKey = "node.celery";
 
-    const body = {
-      args: ["Petr", 30], // args
-      kwargs: {}, // kwargs
-      other_data: {}, // other data
-    };
+    // Initialize the queue variables
+    const queue = "segway_tasks";
+    const exchange = "segway_exchange";
+    const routingKey = "segway";
 
+    // Create this message
     const msg = {
       contentType: "application/json",
       contentEncoding: "utf-8",
       headers: {
-        id: "3149beef-be66-4b0e-ba47-2fc46e4edac3",
-        task: "plane.bgtasks.import_create_task.issue_create_task",
+        id: uuidv4(),
+        task: taskName,
       },
       body: JSON.stringify(body),
     };
 
+    // Assert the queue
     await this.channel.assertExchange(exchange, "direct", { durable: true });
     await this.channel.assertQueue(queue, { durable: true });
     await this.channel.bindQueue(queue, exchange, routingKey);
+
+    // Try publishing the message
     try {
       this.channel.publish(exchange, routingKey, Buffer.from(msg.body), {
         contentType: msg.contentType,

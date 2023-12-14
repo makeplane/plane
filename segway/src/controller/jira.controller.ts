@@ -1,8 +1,45 @@
+// overnight js
 import { Request, Response } from "express";
-import { Controller, Get } from "@overnightjs/core";
+import { Controller, Post, Middleware } from "@overnightjs/core";
+// mq
+import { MQSingleton } from "../queue/mq.singleton";
+// middleware
+import AuthKeyMiddlware from "../middleware/authkey.middleware";
+
 @Controller("api/jira")
-export class JiraController  {
-    /**
-     * This controller houses all routes for the Jira Importer
-     */
+export class JiraController {
+  /**
+   * This controller houses all routes for the Jira Importer
+   */
+  mq: MQSingleton;
+  constructor(mq: MQSingleton) {
+    this.mq = mq;
+  }
+
+  @Post("")
+  @Middleware([AuthKeyMiddlware])
+  private home(req: Request, res: Response) {
+    try {
+      res.status(200).json({ message: "Hello, Plane Users" });
+
+      // Process Jira message
+      const body = {
+        args: [], // args
+        kwargs: {
+          data: {
+            type: "issue.create",
+            data: {
+              message: "Segway say's Hi",
+            },
+          },
+        }, // kwargs
+        other_data: {}, // other data
+      };
+
+      this.mq?.publish(body, "plane.bgtasks.issue_sync_task.issue_sync");
+      return;
+    } catch (error) {
+      return res.json({ message: "Server error" });
+    }
+  }
 }

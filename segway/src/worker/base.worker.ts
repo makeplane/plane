@@ -19,6 +19,7 @@ export abstract class BaseWorker {
     this.onMessage = this.onMessage.bind(this);
   }
 
+  // Start the consumer
   public async start(): Promise<void> {
     try {
       this.mq?.consume(this.queueName, this.onMessage);
@@ -27,9 +28,10 @@ export abstract class BaseWorker {
     }
   }
 
-  protected async publish(queueName: string, content: Buffer): Promise<void> {
+  // Publish this to queue
+  protected async publish(body: object, taskName: string): Promise<void> {
     try {
-      this.mq?.sendToQueue(queueName, content);
+      this.mq?.publish(body, taskName);
     } catch (error) {
       logger.error("Error sending to queue");
     }
@@ -37,10 +39,4 @@ export abstract class BaseWorker {
 
   protected abstract onMessage(msg: ConsumeMessage | null): void;
 
-  protected isRelevantMessage(msg: ConsumeMessage): boolean {
-    console.log(msg)
-    // Check if the message's routing key matches this worker's routing key
-    const messageRoutingKey = msg.properties.headers["routingKey"];
-    return messageRoutingKey === this.routingKey;
-  }
 }
