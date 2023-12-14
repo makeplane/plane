@@ -1,7 +1,7 @@
 // services
 import { APIService } from "services/api.service";
 // types
-import type { IModule, IIssue, ILinkDetails } from "types";
+import type { IModule, IIssue, ILinkDetails, ModuleLink } from "types";
 import { IIssueResponse } from "store/issues/types";
 import { API_BASE_URL } from "helpers/common.helper";
 
@@ -132,7 +132,7 @@ export class ModuleService extends APIService {
     workspaceSlug: string,
     projectId: string,
     moduleId: string,
-    data: Partial<ILinkDetails>
+    data: ModuleLink
   ): Promise<ILinkDetails> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/`, data)
       .then((response) => response?.data)
@@ -146,7 +146,7 @@ export class ModuleService extends APIService {
     projectId: string,
     moduleId: string,
     linkId: string,
-    data: Partial<ILinkDetails>
+    data: ModuleLink
   ): Promise<ILinkDetails> {
     return this.patch(
       `/api/workspaces/${workspaceSlug}/projects/${projectId}/modules/${moduleId}/module-links/${linkId}/`,

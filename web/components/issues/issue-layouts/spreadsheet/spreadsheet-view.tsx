@@ -33,6 +33,7 @@ type Props = {
   viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
   enableQuickCreateIssue?: boolean;
+  disableIssueCreation?: boolean;
 };
 
 export const SpreadsheetView: React.FC<Props> = observer((props) => {
@@ -50,6 +51,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     viewId,
     canEditProperties,
     enableQuickCreateIssue,
+    disableIssueCreation,
   } = props;
   // states
   const [expandedIssues, setExpandedIssues] = useState<string[]>([]);
@@ -77,6 +79,13 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
     };
   }, []);
 
+  if (!issues || issues.length === 0)
+    return (
+      <div className="grid h-full w-full place-items-center">
+        <Spinner />
+      </div>
+    );
+
   return (
     <div className="relative flex h-full w-full overflow-x-auto whitespace-nowrap rounded-lg bg-custom-background-200 text-custom-text-200">
       <div className="flex h-full w-full flex-col">
@@ -84,7 +93,7 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
           ref={containerRef}
           className="horizontal-scroll-enable flex divide-x-[0.5px] divide-custom-border-200 overflow-y-auto"
         >
-          {issues && issues.length > 0 ? (
+          {issues && issues.length > 0 && (
             <>
               <div className="sticky left-0 z-[2] w-[28rem]">
                 <div
@@ -134,17 +143,13 @@ export const SpreadsheetView: React.FC<Props> = observer((props) => {
                 states={states}
               />
             </>
-          ) : (
-            <div className="grid h-full w-full place-items-center">
-              <Spinner />
-            </div>
           )}
           <div /> {/* empty div to show right most border */}
         </div>
 
         <div className="border-t border-custom-border-100">
           <div className="z-5 sticky bottom-0 left-0 mb-3">
-            {enableQuickCreateIssue && (
+            {enableQuickCreateIssue && !disableIssueCreation && (
               <SpreadsheetQuickAddIssueForm formKey="name" quickAddCallback={quickAddCallback} viewId={viewId} />
             )}
           </div>

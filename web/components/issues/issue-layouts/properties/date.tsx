@@ -2,7 +2,7 @@ import React from "react";
 // headless ui
 import { Popover } from "@headlessui/react";
 // lucide icons
-import { Calendar, X } from "lucide-react";
+import { CalendarCheck2, CalendarClock, X } from "lucide-react";
 // react date picker
 import DatePicker from "react-datepicker";
 // mobx
@@ -18,11 +18,24 @@ export interface IIssuePropertyDate {
   value: any;
   onChange: (date: any) => void;
   disabled?: boolean;
-  placeHolder?: string;
+  type: "start_date" | "target_date";
 }
 
+const DATE_OPTIONS = {
+  start_date: {
+    key: "start_date",
+    placeholder: "Start date",
+    icon: CalendarClock,
+  },
+  target_date: {
+    key: "target_date",
+    placeholder: "Target date",
+    icon: CalendarCheck2,
+  },
+};
+
 export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) => {
-  const { value, onChange, disabled, placeHolder } = props;
+  const { value, onChange, disabled, type } = props;
 
   const dropdownBtn = React.useRef<any>(null);
   const dropdownOptions = React.useRef<any>(null);
@@ -30,6 +43,8 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   useDynamicDropdownPosition(isOpen, () => setIsOpen(false), dropdownBtn, dropdownOptions);
+
+  const dateOptionDetails = DATE_OPTIONS[type];
 
   return (
     <Popover as="div" className="relative">
@@ -49,10 +64,10 @@ export const IssuePropertyDate: React.FC<IIssuePropertyDate> = observer((props) 
               }`}
             >
               <div className="flex items-center justify-center gap-2 overflow-hidden">
-                <Calendar className="h-3 w-3" strokeWidth={2} />
+                <dateOptionDetails.icon className="h-3 w-3" strokeWidth={2} />
                 {value && (
                   <>
-                    <Tooltip tooltipHeading={placeHolder} tooltipContent={value ?? "None"}>
+                    <Tooltip tooltipHeading={dateOptionDetails.placeholder} tooltipContent={value ?? "None"}>
                       <div className="text-xs">{value}</div>
                     </Tooltip>
 

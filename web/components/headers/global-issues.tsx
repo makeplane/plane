@@ -16,6 +16,7 @@ import { IIssueDisplayFilterOptions, IIssueDisplayProperties, IIssueFilterOption
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "constants/issue";
 import { EFilterType } from "store/issues/types";
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const GLOBAL_VIEW_LAYOUTS = [
   { key: "list", title: "List", link: "/workspace-views", icon: List },
@@ -38,7 +39,7 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     workspace: { workspaceLabels },
     workspaceMember: { workspaceMembers },
     project: { workspaceProjects },
-
+    user: { currentWorkspaceRole },
     workspaceGlobalIssuesFilter: { issueFilters, updateFilters },
   } = useMobxStore();
 
@@ -76,6 +77,8 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
     },
     [workspaceSlug, updateFilters]
   );
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <>
@@ -142,10 +145,11 @@ export const GlobalIssuesHeader: React.FC<Props> = observer((props) => {
               </FiltersDropdown>
             </>
           )}
-
-          <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
-            New View
-          </Button>
+          {isAuthorizedUser && (
+            <Button variant="primary" size="sm" prependIcon={<PlusIcon />} onClick={() => setCreateViewModal(true)}>
+              New View
+            </Button>
+          )}
         </div>
       </div>
     </>

@@ -9,6 +9,8 @@ import useLocalStorage from "hooks/use-local-storage";
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 // ui
 import { Loader } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // assets
 import emptyModule from "public/empty-state/empty_modules.webp";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -17,11 +19,17 @@ export const ModulesListView: React.FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
 
-  const { module: moduleStore, commandPalette: commandPaletteStore } = useMobxStore();
+  const {
+    module: moduleStore,
+    commandPalette: commandPaletteStore,
+    user: { currentProjectRole },
+  } = useMobxStore();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
   const modulesList = moduleStore.projectModules;
+
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
   if (!modulesList)
     return (
@@ -93,6 +101,7 @@ export const ModulesListView: React.FC = observer(() => {
             text: "Build your first module",
             onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
           }}
+          disabled={!isEditingAllowed}
         />
       )}
     </>

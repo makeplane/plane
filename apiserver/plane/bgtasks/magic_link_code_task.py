@@ -41,7 +41,7 @@ def magic_link(email, key, token, current_site):
             port=int(EMAIL_PORT),
             username=EMAIL_HOST_USER,
             password=EMAIL_HOST_PASSWORD,
-            use_tls=bool(EMAIL_USE_TLS),
+            use_tls=EMAIL_USE_TLS == "1",
         )
 
         msg = EmailMultiAlternatives(

@@ -15,7 +15,6 @@ import { IGanttBlock, IBlockUpdateData } from "components/gantt-chart/types";
 import { IIssue } from "types";
 
 type Props = {
-  title: string;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   blocks: IGanttBlock[] | null;
   enableReorder: boolean;
@@ -27,11 +26,20 @@ type Props = {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   viewId?: string;
+  disableIssueCreation?: boolean;
 };
 
 export const IssueGanttSidebar: React.FC<Props> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { title, blockUpdateHandler, blocks, enableReorder, enableQuickIssueCreate, quickAddCallback, viewId } = props;
+  const {
+    blockUpdateHandler,
+    blocks,
+    enableReorder,
+    enableQuickIssueCreate,
+    quickAddCallback,
+    viewId,
+    disableIssueCreation,
+  } = props;
 
   const router = useRouter();
   const { cycleId } = router.query;
@@ -160,7 +168,7 @@ export const IssueGanttSidebar: React.FC<Props> = (props) => {
               )}
               {droppableProvided.placeholder}
             </>
-            {enableQuickIssueCreate && (
+            {enableQuickIssueCreate && !disableIssueCreation && (
               <GanttInlineCreateIssueForm quickAddCallback={quickAddCallback} viewId={viewId} />
             )}
           </div>
