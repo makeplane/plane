@@ -145,6 +145,16 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
                     )
                 )
             )
+            .prefetch_related(
+                Prefetch(
+                    "project_projectmember",
+                    queryset=ProjectMember.objects.filter(
+                        workspace__slug=self.kwargs.get("slug"),
+                        is_active=True,
+                    ).select_related("member"),
+                    to_attr="members_list",
+                )
+            )
             .distinct()
         )
 
@@ -160,16 +170,6 @@ class ProjectViewSet(WebhookMixin, BaseViewSet):
         projects = (
             self.get_queryset()
             .annotate(sort_order=Subquery(sort_order_query))
-            .prefetch_related(
-                Prefetch(
-                    "project_projectmember",
-                    queryset=ProjectMember.objects.filter(
-                        workspace__slug=slug,
-                        is_active=True,
-                    ).select_related("member"),
-                    to_attr="members_list",
-                )
-            )
             .order_by("sort_order", "name")
         )
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
