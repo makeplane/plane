@@ -12,6 +12,9 @@ import { THEMES } from "constants/themes";
 import InstanceLayout from "layouts/instance-layout";
 // contexts
 import { ToastContextProvider } from "contexts/toast.context";
+import { SWRConfig } from "swr";
+// constants
+import { SWR_CONFIG } from "constants/swr-config";
 // dynamic imports
 const StoreWrapper = dynamic(() => import("lib/wrappers/store-wrapper"), { ssr: false });
 const PosthogWrapper = dynamic(() => import("lib/wrappers/posthog-wrapper"), { ssr: false });
@@ -48,7 +51,7 @@ export const AppProvider: FC<IAppProvider> = observer((props) => {
                 posthogAPIKey={envConfig?.posthog_api_key || null}
                 posthogHost={envConfig?.posthog_host || null}
               >
-                {children}
+                <SWRConfig value={SWR_CONFIG}>{children}</SWRConfig>
               </PosthogWrapper>
             </CrispWrapper>
           </StoreWrapper>
