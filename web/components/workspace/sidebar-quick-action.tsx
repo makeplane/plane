@@ -115,7 +115,7 @@ export const WorkspaceSidebarQuickAction = observer(() => {
           onClick={() => commandPaletteStore.toggleCommandPaletteModal(true)}
         >
           <Search className="h-4 w-4 text-custom-sidebar-text-300" />
-          <span className="text-xs font-medium">Open command menu</span>
+          {!isAuthorizedUser && !isSidebarCollapsed && <span className="text-xs font-medium">Open command menu</span>}
         </button>
       </div>
     </>
