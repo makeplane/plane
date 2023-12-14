@@ -12,7 +12,6 @@ volumes:
 
 services:
   plane-redis:
-    container_name: plane-redis
     image: redis:6.2.7-alpine
     restart: unless-stopped
     networks:
@@ -21,7 +20,6 @@ services:
       - redisdata:/data
  
   plane-minio:
-    container_name: plane-minio
     image: minio/minio
     restart: unless-stopped
     networks:
@@ -36,7 +34,6 @@ services:
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
  
   plane-db:
-    container_name: plane-db
     image: postgres:15.2-alpine
     restart: unless-stopped
     networks:
@@ -53,7 +50,6 @@ services:
       PGDATA: /var/lib/postgresql/data
 
   web:
-    container_name: web
     build:
       context: .
       dockerfile: ./web/Dockerfile.dev
@@ -61,8 +57,7 @@ services:
     networks:
       - dev_env
     volumes:
-      - .:/app
-    command: yarn dev --filter=web
+      - ./web:/app/web
     env_file:
       - ./web/.env
     depends_on:
@@ -73,22 +68,17 @@ services:
     build:
       context: .
       dockerfile: ./space/Dockerfile.dev
-    container_name: space
     restart: unless-stopped
     networks:
       - dev_env
     volumes:
-      - .:/app
-    command: yarn dev --filter=space
-    env_file:
-      - ./space/.env
+      - ./space:/app/space
     depends_on:
       - api
       - worker
       - web
 
   api:
-    container_name: api
     build:
       context: ./apiserver
       dockerfile: Dockerfile.dev
@@ -99,7 +89,7 @@ services:
       - dev_env
     volumes:
       - ./apiserver:/code
-    command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
+    # command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000 --settings=plane.settings.local"
     env_file:
       - ./apiserver/.env
     depends_on:
@@ -107,7 +97,6 @@ services:
       - plane-redis
   
   worker:
-    container_name: bgworker
     build:
       context: ./apiserver
       dockerfile: Dockerfile.dev
@@ -127,7 +116,6 @@ services:
       - plane-redis
 
   beat-worker:
-    container_name: beatworker
     build:
       context: ./apiserver
       dockerfile: Dockerfile.dev
@@ -147,10 +135,9 @@ services:
       - plane-redis
 
   proxy:
-    container_name: proxy
     build:
       context: ./nginx
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     restart: unless-stopped
     networks:
       - dev_env

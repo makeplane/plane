@@ -78,7 +78,7 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
           projectId={issue?.project_detail?.id || null}
           value={issue?.state || null}
           onChange={(data) => handleStateChange(data)}
-          disabled={false}
+          disabled={!editable}
           hideDropdownArrow
         />
       </div>
@@ -89,7 +89,7 @@ export const IssueProperty: React.FC<IIssueProperty> = (props) => {
           value={issue?.assignees || null}
           hideDropdownArrow
           onChange={(val) => handleAssigneeChange(val)}
-          disabled={false}
+          disabled={!editable}
         />
       </div>
     </div>

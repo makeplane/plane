@@ -572,7 +572,7 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
                   labelList={issueDetail?.labels ?? []}
                   submitChanges={submitChanges}
                   isNotAllowed={!isAllowed}
-                  uneditable={uneditable ?? false}
+                  uneditable={uneditable || !isAllowed}
                 />
               </div>
             </div>

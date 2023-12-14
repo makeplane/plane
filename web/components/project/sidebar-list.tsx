@@ -17,6 +17,8 @@ import { orderArrayBy } from "helpers/array.helper";
 import { IProject } from "types";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -31,6 +33,7 @@ export const ProjectSidebarList: FC = observer(() => {
     project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
     commandPalette: { toggleCreateProjectModal },
     trackEvent: { setTrackElement },
+    user: { currentWorkspaceRole },
   } = useMobxStore();
   // router
   const router = useRouter();
@@ -38,6 +41,8 @@ export const ProjectSidebarList: FC = observer(() => {
 
   // toast
   const { setToastAlert } = useToast();
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -138,16 +143,18 @@ export const ProjectSidebarList: FC = observer(() => {
                                 <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               )}
                             </Disclosure.Button>
-                            <button
-                              className="opacity-0 group-hover:opacity-100"
-                              onClick={() => {
-                                setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
-                                setIsFavoriteProjectCreate(true);
-                                setIsProjectModalOpen(true);
-                              }}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
+                            {isAuthorizedUser && (
+                              <button
+                                className="opacity-0 group-hover:opacity-100"
+                                onClick={() => {
+                                  setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
+                                  setIsFavoriteProjectCreate(true);
+                                  setIsProjectModalOpen(true);
+                                }}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            )}
                           </div>
                         )}
                         <Transition
@@ -213,15 +220,17 @@ export const ProjectSidebarList: FC = observer(() => {
                                 <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               )}
                             </Disclosure.Button>
-                            <button
-                              className="opacity-0 group-hover:opacity-100"
-                              onClick={() => {
-                                setIsFavoriteProjectCreate(false);
-                                setIsProjectModalOpen(true);
-                              }}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
+                            {isAuthorizedUser && (
+                              <button
+                                className="opacity-0 group-hover:opacity-100"
+                                onClick={() => {
+                                  setIsFavoriteProjectCreate(false);
+                                  setIsProjectModalOpen(true);
+                                }}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            )}
                           </div>
                         )}
                         <Transition
@@ -260,7 +269,7 @@ export const ProjectSidebarList: FC = observer(() => {
           </Droppable>
         </DragDropContext>
 
-        {joinedProjects && joinedProjects.length === 0 && (
+        {isAuthorizedUser && joinedProjects && joinedProjects.length === 0 && (
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"
