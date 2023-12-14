@@ -44,11 +44,32 @@ export class MQSingleton {
     }
     const exchange = "node_exchange";
     const routingKey = "node.celery";
+
+    const body = {
+      args: ["Petr", 30], // args
+      kwargs: {}, // kwargs
+      other_data: {}, // other data
+    };
+
+    const msg = {
+      contentType: "application/json",
+      contentEncoding: "utf-8",
+      headers: {
+        id: "3149beef-be66-4b0e-ba47-2fc46e4edac3",
+        task: "plane.bgtasks.import_create_task.issue_create_task",
+      },
+      body: JSON.stringify(body),
+    };
+
     await this.channel.assertExchange(exchange, "direct", { durable: true });
     await this.channel.assertQueue(queue, { durable: true });
     await this.channel.bindQueue(queue, exchange, routingKey);
     try {
-      this.channel.publish(exchange, routingKey, content);
+      this.channel.publish(exchange, routingKey, Buffer.from(msg.body), {
+        contentType: msg.contentType,
+        contentEncoding: msg.contentEncoding,
+        headers: msg.headers
+      });
     } catch (error) {
       console.error("Error publishing message:", error);
     }
