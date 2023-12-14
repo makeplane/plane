@@ -87,7 +87,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
   const viewsList = projectId ? projectViewsStore.viewsList[projectId.toString()] : undefined;
   const viewDetails = viewId ? projectViewsStore.viewDetails[viewId.toString()] : undefined;
 
-  const canUserCreateIssue = currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
+  const canUserCreateIssue =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="relative z-10 flex h-[3.75rem] w-full items-center justify-between gap-x-2 gap-y-4 border-b border-custom-border-200 bg-custom-sidebar-background-100 p-4">
