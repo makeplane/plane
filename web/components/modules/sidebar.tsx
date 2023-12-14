@@ -317,7 +317,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   customButton={
                     <span
                       className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
-                        isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
