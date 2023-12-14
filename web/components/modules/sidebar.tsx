@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
 import { Disclosure, Popover, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useModule, useUser } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // components
@@ -46,27 +46,20 @@ type Props = {
 // TODO: refactor this component
 export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
   const { moduleId, handleClose } = props;
-
+  // states
   const [moduleDeleteModal, setModuleDeleteModal] = useState(false);
   const [moduleLinkModal, setModuleLinkModal] = useState(false);
   const [selectedLinkToUpdate, setSelectedLinkToUpdate] = useState<ILinkDetails | null>(null);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
-
+  // store hooks
   const {
-    module: {
-      moduleDetails: _moduleDetails,
-      updateModuleDetails,
-      createModuleLink,
-      updateModuleLink,
-      deleteModuleLink,
-    },
-    user: userStore,
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
 
-  const userRole = userStore.currentProjectRole;
-  const moduleDetails = _moduleDetails[moduleId] ?? undefined;
+  const moduleDetails = getModuleById(moduleId);
 
   const { setToastAlert } = useToast();
 
@@ -551,7 +544,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   <Transition show={open}>
                     <Disclosure.Panel>
                       <div className="mt-2 flex h-72 w-full flex-col space-y-3 overflow-y-auto">
-                        {userRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+                        {currentProjectRole && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
                           <>
                             <div className="flex w-full items-center justify-end">
                               <button
@@ -568,10 +561,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                               handleEditLink={handleEditLink}
                               handleDeleteLink={handleDeleteLink}
                               userAuth={{
-                                isGuest: userRole === EUserWorkspaceRoles.GUEST,
-                                isViewer: userRole === EUserWorkspaceRoles.VIEWER,
-                                isMember: userRole === EUserWorkspaceRoles.MEMBER,
-                                isOwner: userRole === EUserWorkspaceRoles.ADMIN,
+                                isGuest: currentProjectRole === EUserWorkspaceRoles.GUEST,
+                                isViewer: currentProjectRole === EUserWorkspaceRoles.VIEWER,
+                                isMember: currentProjectRole === EUserWorkspaceRoles.MEMBER,
+                                isOwner: currentProjectRole === EUserWorkspaceRoles.ADMIN,
                               }}
                             />
                           </>

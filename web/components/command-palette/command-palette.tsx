@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useApplication, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CommandModal, ShortcutsModal } from "components/command-palette";
@@ -19,8 +20,6 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { IssueService } from "services/issue";
 // fetch keys
 import { ISSUE_DETAILS } from "constants/fetch-keys";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 // services
 const issueService = new IssueService();
@@ -28,14 +27,14 @@ const issueService = new IssueService();
 export const CommandPalette: FC = observer(() => {
   const router = useRouter();
   const { workspaceSlug, projectId, issueId, cycleId, moduleId } = router.query;
-  // store
+
   const {
     commandPalette,
     theme: { toggleSidebar },
-    user: { currentUser },
-    trackEvent: { setTrackElement },
-    projectIssues: { removeIssue },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { currentUser } = useUser();
+
   const {
     toggleCommandPaletteModal,
     isCreateIssueModalOpen,

@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, usePage } from "hooks/store";
 // components
 import { PagesListView } from "components/pages/pages-list";
 import { NewEmptyState } from "components/common/new-empty-state";
@@ -14,11 +14,9 @@ import emptyPage from "public/empty-state/empty_page.png";
 import { replaceUnderscoreIfSnakeCase } from "helpers/string.helper";
 
 export const RecentPagesList: FC = observer(() => {
-  // store
-  const {
-    commandPalette: commandPaletteStore,
-    page: { recentProjectPages },
-  } = useMobxStore();
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { recentProjectPages } = usePage();
 
   const isEmpty = recentProjectPages && Object.values(recentProjectPages).every((value) => value.length === 0);
 

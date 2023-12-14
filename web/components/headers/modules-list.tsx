@@ -1,9 +1,8 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // ui
 import { Breadcrumbs, Button, Tooltip, DiceIcon } from "@plane/ui";
@@ -17,13 +16,12 @@ export const ModulesListHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
   const {
-    project: projectStore,
-    commandPalette: commandPaletteStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const { storedValue: modulesView, setValue: setModulesView } = useLocalStorage("modules_view", "grid");
 

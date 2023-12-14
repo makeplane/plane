@@ -2,12 +2,10 @@ import { useState, useEffect, Fragment, FC, ChangeEvent } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// icons
 import { X } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
-import { useWorkspaceMyMembership } from "contexts/workspace-member.context";
 // ui
 import { Button, CustomSelect, Input, TextArea } from "@plane/ui";
 // components
@@ -20,6 +18,8 @@ import { getRandomEmoji, renderEmoji } from "helpers/emoji.helper";
 import { IWorkspaceMember } from "types";
 // constants
 import { NETWORK_CHOICES, PROJECT_UNSPLASH_COVERS } from "constants/project";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   isOpen: boolean;
@@ -64,11 +64,13 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const { isOpen, onClose, setToFavorite = false, workspaceSlug } = props;
   // store
   const {
-    project: projectStore,
-    workspaceMember: { workspaceMembers },
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const { addProjectToFavorites, createProject } = useProject();
   // states
   const [isChangeInIdentifierRequired, setIsChangeInIdentifierRequired] = useState(true);
   // toast
@@ -95,11 +97,10 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
     reValidateMode: "onChange",
   });
 
-  const { memberDetails } = useWorkspaceMyMembership();
-
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === watch("network"));
 
-  if (memberDetails && isOpen) if (memberDetails.role <= 10) return <IsGuestCondition onClose={onClose} />;
+  if (currentWorkspaceRole && isOpen)
+    if (currentWorkspaceRole <= EUserWorkspaceRoles.MEMBER) return <IsGuestCondition onClose={onClose} />;
 
   const handleClose = () => {
     onClose();
@@ -110,7 +111,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
   const handleAddToFavorites = (projectId: string) => {
     if (!workspaceSlug) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), projectId).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -128,8 +129,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
 
     payload.project_lead = formData.project_lead_member;
 
-    return projectStore
-      .createProject(workspaceSlug.toString(), payload)
+    return createProject(workspaceSlug.toString(), payload)
       .then((res) => {
         const newPayload = {
           ...res,
@@ -138,7 +138,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
         postHogEventTracker("PROJECT_CREATED", newPayload, {
           isGrouping: true,
           groupType: "Workspace_metrics",
-          gorupId: res.workspace,
+          groupId: res.workspace,
         });
         setToastAlert({
           type: "success",
@@ -165,7 +165,7 @@ export const CreateProjectModal: FC<Props> = observer((props) => {
             {
               isGrouping: true,
               groupType: "Workspace_metrics",
-              gorupId: currentWorkspace?.id!,
+              groupId: currentWorkspace?.id!,
             }
           );
         });

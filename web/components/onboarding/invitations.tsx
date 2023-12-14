@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import useSWR, { mutate } from "swr";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // components
 import { Button } from "@plane/ui";
-
 // helpers
 import { truncateText } from "helpers/string.helper";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { WorkspaceService } from "services/workspace.service";
-
-// contants
+// constants
 import { USER_WORKSPACES, USER_WORKSPACE_INVITATIONS } from "constants/fetch-keys";
 import { ROLE } from "constants/workspace";
 // types
@@ -26,14 +24,17 @@ const workspaceService = new WorkspaceService();
 
 export const Invitations: React.FC<Props> = (props) => {
   const { handleNextStep, setTryDiffAccount } = props;
+  // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
-
+  // store hooks
   const {
-    workspace: workspaceStore,
-    user: { currentUser, updateCurrentUser },
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentUser, updateCurrentUser } = useUser();
+  const { workspaces, fetchWorkspaces } = useWorkspace();
+
+  const workspacesList = Object.values(workspaces);
 
   const { data: invitations, mutate: mutateInvitations } = useSWR(USER_WORKSPACE_INVITATIONS, () =>
     workspaceService.userWorkspaceInvitations()
@@ -48,9 +49,9 @@ export const Invitations: React.FC<Props> = (props) => {
   };
 
   const updateLastWorkspace = async () => {
-    if (!workspaceStore.workspaces) return;
+    if (!workspacesList) return;
     await updateCurrentUser({
-      last_workspace_id: workspaceStore.workspaces[0].id,
+      last_workspace_id: workspacesList[0]?.id,
     });
   };
 
@@ -63,7 +64,7 @@ export const Invitations: React.FC<Props> = (props) => {
       .joinWorkspaces({ invitations: invitationsRespond })
       .then(async (res) => {
         postHogEventTracker("MEMBER_ACCEPTED", { ...res, state: "SUCCESS", accepted_from: "App" });
-        await workspaceStore.fetchWorkspaces();
+        await fetchWorkspaces();
         await mutate(USER_WORKSPACES);
         await updateLastWorkspace();
         await handleNextStep();

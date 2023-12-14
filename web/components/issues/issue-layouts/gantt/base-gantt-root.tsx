@@ -1,8 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import { IssueGanttBlock, IssuePeekOverview } from "components/issues";
 import {
@@ -39,13 +39,13 @@ interface IBaseGanttRoot {
 
 export const BaseGanttRoot: React.FC<IBaseGanttRoot> = observer((props: IBaseGanttRoot) => {
   const { issueFiltersStore, issueStore, viewId } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
-
+  // store hooks
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
   const appliedDisplayFilters = issueFiltersStore.issueFilters?.displayFilters;
 

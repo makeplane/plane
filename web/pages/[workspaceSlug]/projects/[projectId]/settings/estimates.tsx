@@ -1,4 +1,7 @@
 import { ReactElement } from "react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -7,14 +10,12 @@ import { ProjectSettingHeader } from "components/headers";
 import { EstimatesList } from "components/estimates";
 // types
 import { NextPageWithLayout } from "types/app";
-import { useMobxStore } from "lib/mobx/store-provider";
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { observer } from "mobx-react-lite";
 
 const EstimatesSettingsPage: NextPageWithLayout = observer(() => {
   const {
-    user: { currentProjectRole },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
 
   const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
 

@@ -3,14 +3,12 @@ import { observer } from "mobx-react-lite";
 // components
 import { PagesListView } from "components/pages/pages-list";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { usePage } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 
 export const FavoritePagesList: FC = observer(() => {
-  const {
-    page: { favoriteProjectPages },
-  } = useMobxStore();
+  const { favoriteProjectPages } = usePage();
 
   if (!favoriteProjectPages)
     return (

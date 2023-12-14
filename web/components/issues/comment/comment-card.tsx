@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
 import { FileService } from "services/file.service";
 // icons
 import { Check, Globe2, Lock, MessageSquare, Pencil, Trash2, X } from "lucide-react";
-// hooks
-import useUser from "hooks/use-user";
 // ui
 import { CustomMenu } from "@plane/ui";
 import { CommentReaction } from "components/issues";
@@ -15,7 +16,6 @@ import { LiteTextEditorWithRef, LiteReadOnlyEditorWithRef } from "@plane/lite-te
 import { timeAgo } from "helpers/date-time.helper";
 // types
 import type { IIssueActivity } from "types";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
 
 // services
 const fileService = new FileService();
@@ -28,22 +28,18 @@ type Props = {
   workspaceSlug: string;
 };
 
-export const CommentCard: React.FC<Props> = ({
-  comment,
-  handleCommentDeletion,
-  onSubmit,
-  showAccessSpecifier = false,
-  workspaceSlug,
-}) => {
-  const { user } = useUser();
-
+export const CommentCard: React.FC<Props> = observer((props) => {
+  const { comment, handleCommentDeletion, onSubmit, showAccessSpecifier = false, workspaceSlug } = props;
+  // states
+  const [isEditing, setIsEditing] = useState(false);
+  // refs
   const editorRef = React.useRef<any>(null);
   const showEditorRef = React.useRef<any>(null);
 
   const editorSuggestions = useEditorSuggestions();
-
-  const [isEditing, setIsEditing] = useState(false);
-
+  // store hooks
+  const { currentUser } = useUser();
+  // form info
   const {
     formState: { isSubmitting },
     handleSubmit,
@@ -152,7 +148,7 @@ export const CommentCard: React.FC<Props> = ({
           </div>
         </div>
       </div>
-      {user?.id === comment.actor && (
+      {currentUser?.id === comment.actor && (
         <CustomMenu ellipsis>
           <CustomMenu.MenuItem onClick={() => setIsEditing(true)} className="flex items-center gap-1">
             <Pencil className="h-3 w-3" />
@@ -192,4 +188,4 @@ export const CommentCard: React.FC<Props> = ({
       )}
     </div>
   );
-};
+});

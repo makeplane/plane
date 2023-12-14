@@ -1,16 +1,15 @@
+import { useState } from "react";
 import { mutate } from "swr";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 import { Activity, ChevronLeft, CircleUser, KeyRound, LogOut, MoveLeft, Plus, Settings2, UserPlus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Tooltip } from "@plane/ui";
-// hooks
-import useToast from "hooks/use-toast";
-import { useState } from "react";
 
 const PROFILE_ACTION_LINKS = [
   {
@@ -63,12 +62,14 @@ export const ProfileLayoutSidebar = observer(() => {
   const { setTheme } = useTheme();
   // toast
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
     theme: { sidebarCollapsed, toggleSidebar },
-    workspace: { workspaces },
-    user: { currentUser, currentUserSettings, signOut },
-  } = useMobxStore();
+  } = useApplication();
+  const { currentUser, currentUserSettings, signOut } = useUser();
+  const { workspaces } = useWorkspace();
+
+  const workspacesList = Object.values(workspaces ?? {});
 
   // redirect url for normal mode
   const redirectWorkspaceSlug =
@@ -147,9 +148,9 @@ export const ProfileLayoutSidebar = observer(() => {
           {!sidebarCollapsed && (
             <h6 className="rounded px-1.5 text-sm font-semibold text-custom-sidebar-text-400">Workspaces</h6>
           )}
-          {workspaces && workspaces.length > 0 && (
+          {workspacesList && workspacesList.length > 0 && (
             <div className="mt-2 h-full space-y-1.5 overflow-y-auto">
-              {workspaces.map((workspace) => (
+              {workspacesList.map((workspace) => (
                 <Link
                   key={workspace.id}
                   href={`/${workspace.slug}`}

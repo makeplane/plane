@@ -1,8 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // constants
 import { EUserWorkspaceRoles, WORKSPACE_SETTINGS_LINKS } from "constants/workspace";
 
@@ -12,8 +12,8 @@ export const WorkspaceSettingsSidebar = () => {
   const { workspaceSlug } = router.query;
   // mobx store
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const workspaceMemberInfo = currentWorkspaceRole || EUserWorkspaceRoles.GUEST;
 

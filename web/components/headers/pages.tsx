@@ -2,10 +2,10 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { FileText, Plus } from "lucide-react";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helper
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
@@ -14,12 +14,14 @@ export const PagesHeader = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // mobx store
+  // store hooks
   const {
-    user: { currentProjectRole },
-    project: { currentProjectDetails },
     commandPalette: { toggleCreatePageModal },
-  } = useMobxStore();
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const canUserCreatePage =
     currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);

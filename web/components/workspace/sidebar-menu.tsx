@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+// hooks
+import { useApplication } from "hooks/store";
 // components
 import { NotificationPopover } from "components/notifications";
+// ui
 import { Tooltip } from "@plane/ui";
-// icons
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
@@ -34,7 +34,8 @@ const workspaceLinks = (workspaceSlug: string) => [
 ];
 
 export const WorkspaceSidebarMenu = observer(() => {
-  const { theme: themeStore } = useMobxStore();
+  // store hooks
+  const { theme: themeStore } = useApplication();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

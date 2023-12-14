@@ -18,17 +18,16 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 // hooks
+import { useApplication, useProject } from "hooks/store";
+import useOutsideClickDetector from "hooks/use-outside-click-detector";
 import useToast from "hooks/use-toast";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import { IProject } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { CustomMenu, Tooltip, ArchiveIcon, PhotoFilterIcon, DiceIcon, ContrastIcon, LayersIcon } from "@plane/ui";
 import { LeaveProjectModal, PublishProjectModal } from "components/project";
-import useOutsideClickDetector from "hooks/use-outside-click-detector";
 
 type Props = {
   project: IProject;
@@ -74,16 +73,16 @@ const navigation = (workspaceSlug: string, projectId: string) => [
 export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { project, provided, snapshot, handleCopyText, shortContextMenu = false } = props;
-  // store
+  // store hooks
   const {
-    project: projectStore,
     theme: themeStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // toast
+  // toast alert
   const { setToastAlert } = useToast();
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -100,7 +99,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -112,7 +111,7 @@ export const ProjectSidebarListItem: React.FC<Props> = observer((props) => {
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug) return;
 
-    projectStore.removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",

@@ -1,9 +1,7 @@
-import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Control, Controller, UseFormSetValue } from "react-hook-form";
-
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject } from "hooks/store";
 // components
 import { SelectProject, SelectSegment, SelectXAxis, SelectYAxis } from "components/analytics";
 // types
@@ -20,12 +18,7 @@ type Props = {
 export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
   const { control, setValue, params, fullScreen, isProjectLevel } = props;
 
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-
-  const projectsList = workspaceSlug ? projectStore.projects[workspaceSlug.toString()] : null;
+  const { workspaceProjects } = useProject();
 
   return (
     <div
@@ -40,7 +33,11 @@ export const CustomAnalyticsSelectBar: React.FC<Props> = observer((props) => {
             name="project"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <SelectProject value={value ?? undefined} onChange={onChange} projects={projectsList ?? undefined} />
+              <SelectProject
+                value={value ?? undefined}
+                onChange={onChange}
+                projectIds={workspaceProjects ?? undefined}
+              />
             )}
           />
         </div>

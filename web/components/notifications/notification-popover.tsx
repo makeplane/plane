@@ -3,6 +3,7 @@ import { Popover, Transition } from "@headlessui/react";
 import { Bell } from "lucide-react";
 import { observer } from "mobx-react-lite";
 // hooks
+import { useApplication } from "hooks/store";
 import useUserNotification from "hooks/use-user-notifications";
 // components
 import { EmptyState } from "components/common";
@@ -12,11 +13,10 @@ import { Loader, Tooltip } from "@plane/ui";
 import emptyNotification from "public/empty-state/notification.svg";
 // helpers
 import { getNumberCount } from "helpers/string.helper";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export const NotificationPopover = observer(() => {
-  const { theme: themeStore } = useMobxStore();
+  // store hooks
+  const { theme: themeStore } = useApplication();
 
   const {
     notifications,

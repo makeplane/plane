@@ -2,9 +2,8 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication } from "hooks/store";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // icons
 import { FileText, HelpCircle, MessagesSquare, MoveLeft, Zap } from "lucide-react";
@@ -41,11 +40,11 @@ export interface WorkspaceHelpSectionProps {
 }
 
 export const WorkspaceHelpSection: React.FC<WorkspaceHelpSectionProps> = observer(() => {
-  // store
+  // store hooks
   const {
     theme: { sidebarCollapsed, toggleSidebar },
     commandPalette: { toggleShortcutModal },
-  } = useMobxStore();
+  } = useApplication();
   // states
   const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   // refs

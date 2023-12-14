@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser, useWebhook } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -21,9 +21,9 @@ const WebhooksListPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug } = router.query;
 
   const {
-    webhook: { fetchWebhooks, webhooks },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { fetchWebhooks, webhooks } = useWebhook();
 
   const isAdmin = currentWorkspaceRole === 20;
 

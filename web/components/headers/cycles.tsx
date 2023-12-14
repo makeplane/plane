@@ -2,8 +2,8 @@ import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 // ui
 import { Breadcrumbs, Button, ContrastIcon } from "@plane/ui";
 // helpers
@@ -14,14 +14,15 @@ export const CyclesHeader: FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    user: { currentProjectRole },
-    commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+    commandPalette: { toggleCreateCycleModal },
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   const canUserCreateCycle =
     currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
@@ -63,7 +64,7 @@ export const CyclesHeader: FC = observer(() => {
             prependIcon={<Plus />}
             onClick={() => {
               setTrackElement("CYCLES_PAGE_HEADER");
-              commandPaletteStore.toggleCreateCycleModal(true);
+              toggleCreateCycleModal(true);
             }}
           >
             Add Cycle

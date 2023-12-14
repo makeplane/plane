@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-import { RootStore } from "store_legacy/root";
-// icons
 import { LinkIcon, Lock, Pencil, Star } from "lucide-react";
 // hooks
+import { useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { DeleteProjectModal, JoinProjectModal } from "components/project";
@@ -16,6 +14,8 @@ import { copyTextToClipboard } from "helpers/string.helper";
 import { renderEmoji } from "helpers/emoji.helper";
 // types
 import type { IProject } from "types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export type ProjectCardProps = {
   project: IProject;
@@ -26,21 +26,21 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // toast
+  // toast alert
   const { setToastAlert } = useToast();
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
+  // store hooks
+  const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
 
-  const { project: projectStore }: RootStore = useMobxStore();
-
-  const isOwner = project.member_role === 20;
-  const isMember = project.member_role === 15;
+  const isOwner = project.member_role === EUserWorkspaceRoles.ADMIN;
+  const isMember = project.member_role === EUserWorkspaceRoles.MEMBER;
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
 
-    projectStore.addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    addProjectToFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -52,7 +52,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
   const handleRemoveFromFavorites = () => {
     if (!workspaceSlug || !project) return;
 
-    projectStore.removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
+    removeProjectFromFavorites(workspaceSlug.toString(), project.id).catch(() => {
       setToastAlert({
         type: "error",
         title: "Error!",
@@ -120,8 +120,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = observer((props) => {
                   {project.emoji
                     ? renderEmoji(project.emoji)
                     : project.icon_prop
-                      ? renderEmoji(project.icon_prop)
-                      : null}
+                    ? renderEmoji(project.icon_prop)
+                    : null}
                 </span>
               </div>
 

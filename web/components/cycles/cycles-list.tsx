@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // components
 import { CyclePeekOverview, CyclesListItem } from "components/cycles";
 // ui
@@ -18,11 +18,11 @@ export interface ICyclesList {
 
 export const CyclesList: FC<ICyclesList> = observer((props) => {
   const { cycles, filter, workspaceSlug, projectId } = props;
-
+  // store hooks
   const {
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   return (
     <>

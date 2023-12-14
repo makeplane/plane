@@ -3,12 +3,11 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { mutate } from "swr";
 import { useDropzone } from "react-dropzone";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
+import useToast from "hooks/use-toast";
 // services
 import { IssueAttachmentService } from "services/issue";
-// hooks
-import useToast from "hooks/use-toast";
 // types
 import { IIssueAttachment } from "types";
 // fetch-keys
@@ -29,12 +28,12 @@ export const IssueAttachmentUpload: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId, issueId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // store hooks
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (!acceptedFiles[0] || !workspaceSlug) return;

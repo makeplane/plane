@@ -27,11 +27,11 @@ export interface IPage {
 }
 
 export interface IRecentPages {
-  today: IPage[];
-  yesterday: IPage[];
-  this_week: IPage[];
-  older: IPage[];
-  [key: string]: IPage[];
+  today: string[];
+  yesterday: string[];
+  this_week: string[];
+  older: string[];
+  [key: string]: string[];
 }
 
 export interface RecentPagesResponse {

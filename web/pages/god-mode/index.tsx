@@ -5,18 +5,18 @@ import { observer } from "mobx-react-lite";
 import { InstanceAdminLayout } from "layouts/admin-layout";
 // types
 import { NextPageWithLayout } from "types/app";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // ui
 import { Loader } from "@plane/ui";
 // components
 import { InstanceGeneralForm } from "components/instance";
 
 const InstanceAdminPage: NextPageWithLayout = observer(() => {
-  // store
+  // store hooks
   const {
     instance: { fetchInstanceInfo, instance, fetchInstanceAdmins, instanceAdmins },
-  } = useMobxStore();
+  } = useApplication();
 
   useSWR("INSTANCE_INFO", () => fetchInstanceInfo());
   useSWR("INSTANCE_ADMINS", () => fetchInstanceAdmins());

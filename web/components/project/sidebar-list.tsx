@@ -3,20 +3,17 @@ import { useRouter } from "next/router";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
+import { useApplication, useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-
-// icons
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -28,10 +25,10 @@ export const ProjectSidebarList: FC = observer(() => {
 
   const {
     theme: { sidebarCollapsed },
-    project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  // const { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

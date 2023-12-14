@@ -6,9 +6,8 @@ import { Eye, EyeOff } from "lucide-react";
 // types
 import { IFormattedInstanceConfiguration } from "types/instance";
 // hooks
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IInstanceEmailForm {
   config: IFormattedInstanceConfiguration;
@@ -27,8 +26,8 @@ export const InstanceEmailForm: FC<IInstanceEmailForm> = (props) => {
   const { config } = props;
   // states
   const [showPassword, setShowPassword] = useState(false);
-  // store
-  const { instance: instanceStore } = useMobxStore();
+  // store hooks
+  const { instance: instanceStore } = useApplication();
   // toast
   const { setToastAlert } = useToast();
   // form data

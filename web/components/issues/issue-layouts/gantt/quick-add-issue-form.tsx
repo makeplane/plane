@@ -3,12 +3,10 @@ import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
-import useProjectDetails from "hooks/use-project-details";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
 // helpers
 import { renderDateFormat } from "helpers/date-time.helper";
@@ -55,16 +53,13 @@ const Inputs = (props: any) => {
 
 export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { prePopulatedData, quickAddCallback, viewId } = props;
-
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  // store
-  const { workspace: workspaceStore } = useMobxStore();
-
-  const { projectDetails } = useProjectDetails();
-
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { currentProjectDetails } = useProject();
+  // form info
   const {
     reset,
     handleSubmit,
@@ -87,7 +82,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
   const { setToastAlert } = useToast();
 
   // derived values
-  const workspaceDetail = workspaceStore.getWorkspaceBySlug(workspaceSlug?.toString()!);
+  const workspaceDetail = getWorkspaceBySlug(workspaceSlug?.toString()!);
 
   useEffect(() => {
     if (!isOpen) reset({ ...defaultValues });
@@ -113,7 +108,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
     // resetting the form so that user can add another issue quickly
     reset({ ...defaultValues, ...(prePopulatedData ?? {}) });
 
-    const payload = createIssuePayload(workspaceDetail!, projectDetails!, {
+    const payload = createIssuePayload(workspaceDetail!, currentProjectDetails!, {
       ...(prePopulatedData ?? {}),
       ...formData,
       start_date: renderDateFormat(new Date()),
@@ -122,7 +117,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
 
     try {
       if (quickAddCallback) {
-        await quickAddCallback(workspaceSlug, projectId, payload, viewId);
+        await quickAddCallback(workspaceSlug.toString(), projectId.toString(), payload, viewId);
       }
       setToastAlert({
         type: "success",
@@ -152,7 +147,7 @@ export const GanttInlineCreateIssueForm: React.FC<Props> = observer((props) => {
           onSubmit={handleSubmit(onSubmitHandler)}
         >
           <div className="h-3 w-3 flex-shrink-0 rounded-full border border-custom-border-1000" />
-          <h4 className="text-xs text-custom-text-400">{projectDetails?.identifier ?? "..."}</h4>
+          <h4 className="text-xs text-custom-text-400">{currentProjectDetails?.identifier ?? "..."}</h4>
           <Inputs register={register} setFocus={setFocus} />
         </form>
       )}

@@ -5,8 +5,8 @@ import { Command } from "cmdk";
 import { Dialog, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
 import { FolderPlus, Search, Settings } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // services
 import { WorkspaceService } from "services/workspace.service";
 import { IssueService } from "services/issue";
@@ -62,8 +62,8 @@ export const CommandModal: React.FC = observer(() => {
       toggleCreateIssueModal,
       toggleCreateProjectModal,
     },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   // router
   const router = useRouter();
