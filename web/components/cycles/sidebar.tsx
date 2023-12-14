@@ -356,7 +356,7 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <Popover.Button
                   className={`text-sm font-medium text-custom-text-300 ${
-                    isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                    isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={isCompleted || !isEditingAllowed}
                 >
@@ -394,9 +394,9 @@ export const CycleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <>
                   <Popover.Button
                     className={`text-sm font-medium text-custom-text-300 ${
-                      isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                      isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
-                    disabled={isCompleted ?? !isEditingAllowed}
+                    disabled={isCompleted || !isEditingAllowed}
                   >
                     {areYearsEqual ? renderShortDate(endDate, "_ _") : renderShortMonthDate(endDate, "_ _")}
                   </Popover.Button>
