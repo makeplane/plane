@@ -1,14 +1,15 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import { useMemo } from "react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { ProjectIssueQuickActions } from "components/issues";
+import { BaseKanBanRoot } from "../base-kanban-root";
 // types
 import { IIssue } from "types";
 // constants
 import { EIssueActions } from "../../types";
-import { BaseKanBanRoot } from "../base-kanban-root";
 import { EProjectStore } from "store_legacy/command-palette.store";
 import { IGroupedIssues, IIssueResponse, ISubGroupedIssues, TUnGroupedIssues } from "store_legacy/issues/types";
 
@@ -25,18 +26,21 @@ export const KanBanLayout: React.FC = observer(() => {
     kanBanHelpers: kanBanHelperStore,
   } = useMobxStore();
 
-  const issueActions = {
-    [EIssueActions.UPDATE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+  const issueActions = useMemo(
+    () => ({
+      [EIssueActions.UPDATE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
-    },
-    [EIssueActions.DELETE]: async (issue: IIssue) => {
-      if (!workspaceSlug) return;
+        await issueStore.updateIssue(workspaceSlug, issue.project, issue.id, issue);
+      },
+      [EIssueActions.DELETE]: async (issue: IIssue) => {
+        if (!workspaceSlug) return;
 
-      await issueStore.removeIssue(workspaceSlug, issue.project, issue.id);
-    },
-  };
+        await issueStore.removeIssue(workspaceSlug, issue.project, issue.id);
+      },
+    }),
+    [issueStore]
+  );
 
   const handleDragDrop = async (
     source: any,

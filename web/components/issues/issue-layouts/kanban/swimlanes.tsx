@@ -1,5 +1,7 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
+//mobx
+import { useMobxStore } from "lib/mobx/store-provider";
 // components
 import { KanBan } from "./default";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
@@ -11,7 +13,6 @@ import { IIssueResponse, IGroupedIssues, ISubGroupedIssues, TUnGroupedIssues } f
 import { EIssueActions } from "../types";
 import { EProjectStore } from "store_legacy/command-palette.store";
 import { IKanbanColumn, columnTypes, getKanbanColumns } from "./utils";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 interface ISubGroupSwimlaneHeader {
   issueIds: any;
@@ -28,29 +29,27 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
   list,
   kanBanToggle,
   handleKanBanToggle,
-}) => {
-  return (
-    <div className="relative flex h-max min-h-full w-full items-center">
-      {list &&
-        list.length > 0 &&
-        list.map((_list: IKanbanColumn) => (
-          <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
-            <HeaderGroupByCard
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              column_id={_list.id}
-              icon={_list.Icon}
-              title={_list.name}
-              count={issueIds?.[_list.id]?.length || 0}
-              kanBanToggle={kanBanToggle}
-              handleKanBanToggle={handleKanBanToggle}
-              issuePayload={_list.payload}
-            />
-          </div>
-        ))}
-    </div>
-  );
-};
+}) => (
+  <div className="relative flex h-max min-h-full w-full items-center">
+    {list &&
+      list.length > 0 &&
+      list.map((_list: IKanbanColumn) => (
+        <div key={`${sub_group_by}_${_list.id}`} className="flex w-[340px] flex-shrink-0 flex-col">
+          <HeaderGroupByCard
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            column_id={_list.id}
+            icon={_list.Icon}
+            title={_list.name}
+            count={issueIds?.[_list.id]?.length || 0}
+            kanBanToggle={kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
+            issuePayload={_list.payload}
+          />
+        </div>
+      ))}
+  </div>
+);
 
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issues: IIssueResponse;

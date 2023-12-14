@@ -125,12 +125,15 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
-  const canEditProperties = (projectId: string | undefined) => {
-    const isEditingAllowedBasedOnProject =
-      canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
+  const canEditProperties = useCallback(
+    (projectId: string | undefined) => {
+      const isEditingAllowedBasedOnProject =
+        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
 
-    return enableInlineEditing && isEditingAllowedBasedOnProject;
-  };
+      return enableInlineEditing && isEditingAllowedBasedOnProject;
+    },
+    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
+  );
 
   const onDragStart = (dragStart: DragStart) => {
     setDragState({
@@ -185,18 +188,21 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
     [issueActions]
   );
 
-  const renderQuickActions = (issue: IIssue, customActionButton?: React.ReactElement) => (
-    <QuickActions
-      customActionButton={customActionButton}
-      issue={issue}
-      handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
-      handleUpdate={
-        issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
-      }
-      handleRemoveFromView={
-        issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
-      }
-    />
+  const renderQuickActions = useCallback(
+    (issue: IIssue, customActionButton?: React.ReactElement) => (
+      <QuickActions
+        customActionButton={customActionButton}
+        issue={issue}
+        handleDelete={async () => handleIssues(issue, EIssueActions.DELETE)}
+        handleUpdate={
+          issueActions[EIssueActions.UPDATE] ? async (data) => handleIssues(data, EIssueActions.UPDATE) : undefined
+        }
+        handleRemoveFromView={
+          issueActions[EIssueActions.REMOVE] ? async () => handleIssues(issue, EIssueActions.REMOVE) : undefined
+        }
+      />
+    ),
+    [issueActions, handleIssues]
   );
 
   const handleDeleteIssue = async () => {

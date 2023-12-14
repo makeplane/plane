@@ -1,8 +1,10 @@
-// components
-import { KanbanIssueBlock } from "components/issues";
+import { memo } from "react";
+//types
 import { IIssueDisplayProperties, IIssue } from "types";
 import { EIssueActions } from "../types";
 import { IIssueResponse } from "store_legacy/issues/types";
+// components
+import { KanbanIssueBlock } from "components/issues";
 
 interface IssueBlocksListProps {
   sub_group_id: string;
@@ -17,7 +19,7 @@ interface IssueBlocksListProps {
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
-export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => {
+const KanbanIssueBlocksListMemo: React.FC<IssueBlocksListProps> = (props) => {
   const {
     sub_group_id,
     columnId,
@@ -61,3 +63,5 @@ export const KanbanIssueBlocksList: React.FC<IssueBlocksListProps> = (props) => 
     </>
   );
 };
+
+export const KanbanIssueBlocksList = memo(KanbanIssueBlocksListMemo);
