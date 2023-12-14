@@ -9,7 +9,9 @@ import { IssueService } from "services/issue/issue.service";
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
 // hooks
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
 import { GptAssistantModal } from "components/core";
 import { Button, TextArea } from "@plane/ui";
@@ -18,8 +20,6 @@ import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 import { IUser, IPageBlock } from "types";
 // fetch-keys
 import { PAGE_BLOCKS_LIST } from "constants/fetch-keys";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   handleClose: () => void;
@@ -48,8 +48,8 @@ export const CreateUpdateBlockInline: FC<Props> = (props) => {
   const [gptAssistantModal, setGptAssistantModal] = useState(false);
   // store
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
   // refs
   const editorRef = useRef<any>(null);
   // router

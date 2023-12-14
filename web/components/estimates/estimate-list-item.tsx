@@ -1,11 +1,8 @@
 import React from "react";
-
 import { useRouter } from "next/router";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomMenu } from "@plane/ui";
@@ -27,10 +24,8 @@ export const EstimateListItem: React.FC<Props> = observer((props) => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
-  const {
-    project: { currentProjectDetails, updateProject },
-  } = useMobxStore();
+  // store hooks
+  const { currentProjectDetails, updateProject } = useProject();
   // hooks
   const { setToastAlert } = useToast();
 

@@ -148,14 +148,9 @@ export class ProjectPublishStore implements IProjectPublishStore {
           project: response?.project || null,
         };
 
-        const _projectMap = set(
-          this.projectRootStore.projects.projectMap,
-          [workspaceSlug, projectId, "is_deployed"],
-          true
-        );
         runInAction(() => {
           this.projectPublishSettings = _projectPublishSettings;
-          this.projectRootStore.projects.projectMap = _projectMap;
+          set(this.projectRootStore.projects.projectMap, [workspaceSlug, projectId, "is_deployed"], true);
           this.generalLoader = false;
           this.error = null;
         });
@@ -233,14 +228,9 @@ export class ProjectPublishStore implements IProjectPublishStore {
         projectPublishId
       );
 
-      const _projectMap = set(
-        this.projectRootStore.projects.projectMap,
-        [workspaceSlug, projectId, "is_deployed"],
-        false
-      );
       runInAction(() => {
         this.projectPublishSettings = "not-initialized";
-        this.projectRootStore.projects.projectMap = _projectMap;
+        set(this.projectRootStore.projects.projectMap, [workspaceSlug, projectId, "is_deployed"], false);
         this.generalLoader = false;
         this.error = null;
       });

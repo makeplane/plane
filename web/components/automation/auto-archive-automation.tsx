@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject, useUser } from "hooks/store";
 // component
 import { CustomSelect, Loader, ToggleSwitch } from "@plane/ui";
 import { SelectMonthModal } from "components/automation";
@@ -23,13 +23,13 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
   const { handleChange } = props;
   // states
   const [monthModal, setmonthModal] = useState(false);
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
-  const { user: userStore, project: projectStore } = useMobxStore();
-
-  const projectDetails = projectStore.currentProjectDetails;
-  const userRole = userStore.currentProjectRole;
-
-  const isAdmin = userRole === EUserWorkspaceRoles.ADMIN;
+  const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
 
   return (
     <>
@@ -54,24 +54,28 @@ export const AutoArchiveAutomation: React.FC<Props> = observer((props) => {
             </div>
           </div>
           <ToggleSwitch
-            value={projectDetails?.archive_in !== 0}
+            value={currentProjectDetails?.archive_in !== 0}
             onChange={() =>
-              projectDetails?.archive_in === 0 ? handleChange({ archive_in: 1 }) : handleChange({ archive_in: 0 })
+              currentProjectDetails?.archive_in === 0
+                ? handleChange({ archive_in: 1 })
+                : handleChange({ archive_in: 0 })
             }
             size="sm"
             disabled={!isAdmin}
           />
         </div>
 
-        {projectDetails ? (
-          projectDetails.archive_in !== 0 && (
+        {currentProjectDetails ? (
+          currentProjectDetails.archive_in !== 0 && (
             <div className="ml-12">
               <div className="flex w-full items-center justify-between gap-2 rounded border border-custom-border-200 bg-custom-background-90 px-5 py-4">
                 <div className="w-1/2 text-sm font-medium">Auto-archive issues that are closed for</div>
                 <div className="w-1/2">
                   <CustomSelect
-                    value={projectDetails?.archive_in}
-                    label={`${projectDetails?.archive_in} ${projectDetails?.archive_in === 1 ? "Month" : "Months"}`}
+                    value={currentProjectDetails?.archive_in}
+                    label={`${currentProjectDetails?.archive_in} ${
+                      currentProjectDetails?.archive_in === 1 ? "Month" : "Months"
+                    }`}
                     onChange={(val: number) => {
                       handleChange({ archive_in: val });
                     }}

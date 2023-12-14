@@ -36,7 +36,7 @@ export class ProjectService extends APIService {
       });
   }
 
-  async getProjects(workspaceSlug: string): Promise<IProject[]> {
+  async getProjects(workspaceSlug: string): Promise<Record<string, IProject>> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/`)
       .then((response) => response?.data)
       .catch((error) => {

@@ -1,17 +1,15 @@
 import { FC } from "react";
 import { observer } from "mobx-react-lite";
+// hooks
+import { usePage } from "hooks/store";
 // components
 import { PagesListView } from "components/pages/pages-list";
-// fetch-keys
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Loader } from "@plane/ui";
 
 export const AllPagesList: FC = observer(() => {
   // store
-  const {
-    page: { projectPages },
-  } = useMobxStore();
+  const { projectPages } = usePage();
 
   if (!projectPages)
     return (

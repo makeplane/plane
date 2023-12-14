@@ -2,9 +2,8 @@ import React, { FC, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useWebhook, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import {
@@ -44,11 +43,9 @@ export const WebhookForm: FC<Props> = observer((props) => {
   const { workspaceSlug } = router.query;
   // toast
   const { setToastAlert } = useToast();
-  // mobx store
-  const {
-    webhook: { createWebhook, updateWebhook },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
+  // store hooks
+  const { currentWorkspace } = useWorkspace();
+  const { createWebhook, updateWebhook } = useWebhook();
   // use form
   const {
     handleSubmit,
@@ -92,8 +89,10 @@ export const WebhookForm: FC<Props> = observer((props) => {
           message: "Webhook created successfully.",
         });
 
-        const csvData = getCurrentHookAsCSV(currentWorkspace, webHook, secretKey);
-        csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
+        if (secretKey) {
+          const csvData = getCurrentHookAsCSV(currentWorkspace, webHook, secretKey);
+          csvDownload(csvData, `webhook-secret-key-${Date.now()}`);
+        }
 
         if (webHook && webHook.id)
           router.push({ pathname: `/${workspaceSlug}/settings/webhooks/${webHook.id}`, query: { isCreated: true } });

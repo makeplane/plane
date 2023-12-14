@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-
-// ui
-import { ChevronUp, PenSquare, Search } from "lucide-react";
+import { observer } from "mobx-react-lite";
 // hooks
+import { useApplication } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { CreateUpdateDraftIssueModal } from "components/issues";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
+// ui
+import { ChevronUp, PenSquare, Search } from "lucide-react";
+// constants
 import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const WorkspaceSidebarQuickAction = observer(() => {
@@ -18,8 +17,8 @@ export const WorkspaceSidebarQuickAction = observer(() => {
   const {
     theme: themeStore,
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   const { storedValue, clearValue } = useLocalStorage<any>("draftedIssue", JSON.stringify({}));
 

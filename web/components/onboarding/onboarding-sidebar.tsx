@@ -17,9 +17,8 @@ import {
   Bell,
 } from "lucide-react";
 import { Avatar, DiceIcon, PhotoFilterIcon } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-
+// hooks
+import { useUser, useWorkspace } from "hooks/store";
 // types
 import { IWorkspace } from "types";
 // assets
@@ -92,11 +91,10 @@ var lastWorkspaceName: string = "";
 
 export const OnboardingSidebar: React.FC<Props> = (props) => {
   const { workspaceName, showProject, control, setValue, watch, userFullName } = props;
-  const {
-    workspace: workspaceStore,
-    user: { currentUser },
-  } = useMobxStore();
-  const workspace = workspaceStore.workspaces ? workspaceStore.workspaces[0] : null;
+  // store hooks
+  const { currentUser } = useUser();
+  const { workspaces } = useWorkspace();
+  const workspaceDetails = Object.values(workspaces ?? {})?.[0];
 
   const { resolvedTheme } = useTheme();
 
@@ -170,7 +168,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
                 <div className="flex w-full items-center gap-y-2 truncate border border-transparent px-4 pt-6 transition-all">
                   <div className="flex flex-shrink-0">
                     <Avatar
-                      name={value.length > 0 ? value : workspace ? workspace.name : "New Workspace"}
+                      name={value.length > 0 ? value : workspaceDetails ? workspaceDetails.name : "New Workspace"}
                       src={""}
                       size={24}
                       shape="square"
@@ -200,7 +198,7 @@ export const OnboardingSidebar: React.FC<Props> = (props) => {
           <div className="flex w-full items-center gap-y-2 truncate px-4 pt-6 transition-all">
             <div className="flex flex-shrink-0">
               <Avatar
-                name={workspace ? workspace.name : "New Workspace"}
+                name={workspaceDetails ? workspaceDetails.name : "New Workspace"}
                 src={""}
                 size={24}
                 shape="square"

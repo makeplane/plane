@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject } from "hooks/store";
 // components
 import { Breadcrumbs, PhotoFilterIcon, Button } from "@plane/ui";
 // helpers
@@ -12,9 +12,11 @@ export const ProjectViewsHeader: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { project: projectStore, commandPalette } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  // store hooks
+  const {
+    commandPalette: { toggleCreateViewModal },
+  } = useApplication();
+  const { currentProjectDetails } = useProject();
 
   return (
     <>
@@ -56,7 +58,7 @@ export const ProjectViewsHeader: React.FC = observer(() => {
               variant="primary"
               size="sm"
               prependIcon={<Plus className="h-3.5 w-3.5 stroke-2" />}
-              onClick={() => commandPalette.toggleCreateViewModal(true)}
+              onClick={() => toggleCreateViewModal(true)}
             >
               Create View
             </Button>

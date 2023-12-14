@@ -1,11 +1,11 @@
 import { FC, ReactNode } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR from "swr";
+// hooks
+import { useUser, useWorkspace } from "hooks/store";
 // ui
 import { Spinner } from "@plane/ui";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
 
 export interface IUserAuthWrapper {
   children: ReactNode;
@@ -13,17 +13,15 @@ export interface IUserAuthWrapper {
 
 export const UserAuthWrapper: FC<IUserAuthWrapper> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
   const {
-    user: {
-      currentUser,
-      currentUserError,
-      fetchCurrentUser,
-      fetchCurrentUserInstanceAdminStatus,
-      fetchCurrentUserSettings,
-    },
-    workspace: { fetchWorkspaces },
-  } = useMobxStore();
+    currentUser,
+    currentUserError,
+    fetchCurrentUser,
+    fetchCurrentUserInstanceAdminStatus,
+    fetchCurrentUserSettings,
+  } = useUser();
+  const { fetchWorkspaces } = useWorkspace();
   // router
   const router = useRouter();
   // fetching user information

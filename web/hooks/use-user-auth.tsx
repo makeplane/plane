@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
-// next imports
 import { useRouter } from "next/router";
-// swr
 import useSWR from "swr";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// mobx
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 
 const workspaceService = new WorkspaceService();
 
 const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "admin") => {
+  // states
+  const [isRouteAccess, setIsRouteAccess] = useState(true);
+  // router
   const router = useRouter();
   const { next_url } = router.query;
-
-  const [isRouteAccess, setIsRouteAccess] = useState(true);
-  const {
-    user: { fetchCurrentUser },
-  } = useMobxStore();
-
+  const { fetchCurrentUser } = useUser();
+  // form info
   const {
     data: user,
     isLoading,
@@ -32,12 +29,16 @@ const useUserAuth = (routeAuth: "sign-in" | "onboarding" | "admin" | null = "adm
   useEffect(() => {
     const handleWorkSpaceRedirection = async () => {
       workspaceService.userWorkspaces().then(async (userWorkspaces) => {
-        const lastActiveWorkspace = userWorkspaces.find((workspace) => workspace.id === user?.last_workspace_id);
+        if (!user) return;
+
+        const firstWorkspace = Object.values(userWorkspaces ?? {})?.[0];
+        const lastActiveWorkspace = userWorkspaces[user?.last_workspace_id];
+
         if (lastActiveWorkspace) {
           router.push(`/${lastActiveWorkspace.slug}`);
           return;
-        } else if (userWorkspaces.length > 0) {
-          router.push(`/${userWorkspaces[0].slug}`);
+        } else if (firstWorkspace) {
+          router.push(`/${firstWorkspace.slug}`);
           return;
         } else {
           router.push(`/profile`);

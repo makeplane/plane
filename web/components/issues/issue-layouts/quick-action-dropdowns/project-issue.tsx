@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { CustomMenu } from "@plane/ui";
 import { Copy, Link, Pencil, Trash2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateUpdateIssueModal, DeleteIssueModal } from "components/issues";
@@ -19,18 +18,17 @@ import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectIssueQuickActions: React.FC<IQuickActionProps> = (props) => {
   const { issue, handleDelete, handleUpdate, customActionButton } = props;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<IIssue | null>(null);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
-
-  const { user: userStore } = useMobxStore();
-
-  const { currentProjectRole } = userStore;
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 

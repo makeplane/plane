@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // components
 import { ProfileNavbar, ProfileSidebar } from "components/profile";
 
@@ -14,10 +14,10 @@ const AUTHORIZED_ROLES = [20, 15, 10];
 
 export const ProfileAuthWrapper: React.FC<Props> = observer((props) => {
   const { children, className, showProfileIssuesFilter } = props;
-
+  // store hooks
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   if (!currentWorkspaceRole) return null;
 

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProjectState } from "hooks/store";
 // components
 import { CreateUpdateStateInline, DeleteStateModal, ProjectSettingListItem, StateGroup } from "components/states";
 // ui
@@ -22,9 +22,9 @@ export const ProjectSettingStateList: React.FC = observer(() => {
   const { workspaceSlug, projectId } = router.query;
   // store
   const {
-    projectState: { groupedProjectStates, projectStates, fetchProjectStates },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { groupedProjectStates, projectStates, fetchProjectStates } = useProjectState();
   // state
   const [activeGroup, setActiveGroup] = useState<StateGroup>(null);
   const [selectedState, setSelectedState] = useState<string | null>(null);

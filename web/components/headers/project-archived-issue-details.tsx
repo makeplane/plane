@@ -3,7 +3,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useProject } from "hooks/store";
 // ui
 import { Breadcrumbs, LayersIcon } from "@plane/ui";
 // types
@@ -18,12 +18,11 @@ import { renderEmoji } from "helpers/emoji.helper";
 const issueArchiveService = new IssueArchiveService();
 
 export const ProjectArchivedIssueDetailsHeader: FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, archivedIssueId } = router.query;
-
-  const { project: projectStore } = useMobxStore();
-
-  const { currentProjectDetails } = projectStore;
+  // store hooks
+  const { currentProjectDetails } = useProject();
 
   const { data: issueDetails } = useSWR<IIssue | undefined>(
     workspaceSlug && projectId && archivedIssueId ? ISSUE_DETAILS(archivedIssueId as string) : null,

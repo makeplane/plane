@@ -3,9 +3,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { SingleProgressStats } from "components/core";
@@ -67,12 +67,15 @@ interface IActiveCycleDetails {
 }
 
 export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props) => {
+  // router
   const router = useRouter();
-
   const { workspaceSlug, projectId } = props;
-
-  const { cycle: cycleStore, commandPalette: commandPaletteStore } = useMobxStore();
-
+  // store hooks
+  const { cycle: cycleStore } = useMobxStore();
+  const {
+    commandPalette: { toggleCreateCycleModal },
+  } = useApplication();
+  // toast alert
   const { setToastAlert } = useToast();
 
   useSWR(
@@ -118,7 +121,7 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
           <button
             type="button"
             className="text-sm text-custom-primary-100 outline-none"
-            onClick={() => commandPaletteStore.toggleCreateCycleModal(true)}
+            onClick={() => toggleCreateCycleModal(true)}
           >
             Create a new cycle
           </button>
@@ -187,12 +190,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                         cycleStatus === "current"
                           ? "#09A953"
                           : cycleStatus === "upcoming"
-                            ? "#F7AE59"
-                            : cycleStatus === "completed"
-                              ? "#3F76FF"
-                              : cycleStatus === "draft"
-                                ? "rgb(var(--color-text-200))"
-                                : ""
+                          ? "#F7AE59"
+                          : cycleStatus === "completed"
+                          ? "#3F76FF"
+                          : cycleStatus === "draft"
+                          ? "rgb(var(--color-text-200))"
+                          : ""
                       }`}
                     />
                   </span>
@@ -207,12 +210,12 @@ export const ActiveCycleDetails: React.FC<IActiveCycleDetails> = observer((props
                       cycleStatus === "current"
                         ? "bg-green-600/5 text-green-600"
                         : cycleStatus === "upcoming"
-                          ? "bg-orange-300/5 text-orange-300"
-                          : cycleStatus === "completed"
-                            ? "bg-blue-500/5 text-blue-500"
-                            : cycleStatus === "draft"
-                              ? "bg-neutral-400/5 text-neutral-400"
-                              : ""
+                        ? "bg-orange-300/5 text-orange-300"
+                        : cycleStatus === "completed"
+                        ? "bg-blue-500/5 text-blue-500"
+                        : cycleStatus === "draft"
+                        ? "bg-neutral-400/5 text-neutral-400"
+                        : ""
                     }`}
                   >
                     {cycleStatus === "current" ? (

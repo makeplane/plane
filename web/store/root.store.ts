@@ -9,32 +9,36 @@ import { IUserStore, UserStore } from "./user";
 import { ILabelStore, LabelStore } from "./label.store";
 import { IWorkspaceRootStore, WorkspaceRootStore } from "./workspace";
 import { IssueRootStore, IIssueRootStore } from "./issue/root.store";
+import { IStateStore, StateStore } from "./state.store";
+import { IPageStore, PageStore } from "./page.store";
 
 enableStaticRendering(typeof window === "undefined");
 
 export class RootStore {
   app: IAppRootStore;
   user: IUserStore;
-  workspace: IWorkspaceRootStore;
-  project: IProjectRootStore;
+  workspaceRoot: IWorkspaceRootStore;
+  projectRoot: IProjectRootStore;
   cycle: ICycleStore;
   module: IModuleStore;
   projectView: IProjectViewsStore;
+  page: IPageStore;
   label: ILabelStore;
   issue: IIssueRootStore;
+  state: IStateStore;
 
   constructor() {
-    this.app = new AppRootStore();
+    this.app = new AppRootStore(this);
     this.user = new UserStore(this);
-    this.workspace = new WorkspaceRootStore(this);
-    this.project = new ProjectRootStore(this);
+    this.workspaceRoot = new WorkspaceRootStore(this);
+    this.projectRoot = new ProjectRootStore(this);
+    // independent stores
+    this.label = new LabelStore(this);
+    this.state = new StateStore(this);
+    this.issue = new IssueRootStore(this);
     this.cycle = new CycleStore(this);
     this.module = new ModulesStore(this);
     this.projectView = new ProjectViewsStore(this);
-    // this.page = new PageRootStore();
-    // independent stores
-    this.label = new LabelStore(this);
-    // this.state = new stateStore();
-    this.issue = new IssueRootStore(this);
+    this.page = new PageStore(this);
   }
 }

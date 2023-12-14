@@ -100,9 +100,8 @@ export class LabelStore {
   createLabel = async (workspaceSlug: string, projectId: string, data: Partial<IIssueLabel>) => {
     const response = await this.issueLabelService.createIssueLabel(workspaceSlug, projectId, data);
 
-    const _labelMap = set(this.labelMap, [response.id], response);
     runInAction(() => {
-      this.labelMap = _labelMap;
+      set(this.labelMap, [response.id], response);
     });
     return response;
   };
@@ -118,21 +117,16 @@ export class LabelStore {
   updateLabel = async (workspaceSlug: string, projectId: string, labelId: string, data: Partial<IIssueLabel>) => {
     const originalLabel = this.labelMap[labelId];
     try {
-      const _labelMap = set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
       runInAction(() => {
-        this.labelMap = _labelMap;
+        set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
       });
 
       const response = await this.issueLabelService.patchIssueLabel(workspaceSlug, projectId, labelId, data);
       return response;
     } catch (error) {
       console.log("Failed to update label from project store");
-      const _labelMap = set(this.labelMap, [labelId], { ...this.labelMap[labelId], ...data });
       runInAction(() => {
-        this.labelMap = {
-          ...this.labelMap,
-          [labelId]: { ...this.labelMap[labelId], ...originalLabel },
-        };
+        set(this.labelMap, [labelId], originalLabel);
       });
       throw error;
     }
@@ -214,10 +208,10 @@ export class LabelStore {
     const originalLabel = this.labelMap[labelId];
 
     try {
-      const _labelMap = this.labelMap;
-      delete _labelMap[labelId];
+      if (!this.labelMap[labelId]) return;
+
       runInAction(() => {
-        this.labelMap = _labelMap;
+        delete this.labelMap[labelId];
       });
 
       // deleting using api
@@ -225,9 +219,8 @@ export class LabelStore {
     } catch (error) {
       console.log("Failed to delete label from project store");
       // reverting back to original label list
-      const labelMap = set(this.labelMap, [labelId], originalLabel);
       runInAction(() => {
-        this.labelMap = labelMap;
+        set(this.labelMap, [labelId], originalLabel);
       });
     }
   };

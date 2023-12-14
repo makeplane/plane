@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { ContrastIcon, FileText, Inbox, Layers } from "lucide-react";
 import { DiceIcon, ToggleSwitch } from "@plane/ui";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProject, useUser, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 // types
 import { IProject } from "types";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {};
@@ -50,15 +50,18 @@ export const ProjectFeaturesList: FC<Props> = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
+  // store hooks
   const {
-    workspace: { currentWorkspace },
-    project: { currentProjectDetails, updateProject },
-    user: { currentUser, currentProjectRole },
-    trackEvent: { setTrackElement, postHogEventTracker },
-  } = useMobxStore();
+    eventTracker: { setTrackElement, postHogEventTracker },
+  } = useApplication();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentWorkspace } = useWorkspace();
+  const { currentProjectDetails, updateProject } = useProject();
   const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
-  // hooks
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleSubmit = async (formData: Partial<IProject>) => {

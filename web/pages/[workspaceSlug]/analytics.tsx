@@ -1,8 +1,8 @@
 import React, { Fragment, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { Tab } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useProject } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -19,12 +19,12 @@ import { ANALYTICS_TABS } from "constants/analytics";
 import { NextPageWithLayout } from "types/app";
 
 const AnalyticsPage: NextPageWithLayout = observer(() => {
-  // store
+  // store hooks
   const {
-    project: { workspaceProjects },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { workspaceProjects } = useProject();
 
   return (
     <>

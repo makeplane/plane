@@ -1,12 +1,16 @@
 import React, { FC, useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+import { Sparkle, X } from "lucide-react";
+// hooks
+import { useApplication } from "hooks/store";
+import useToast from "hooks/use-toast";
+import useLocalStorage from "hooks/use-local-storage";
+import useEditorSuggestions from "hooks/use-editor-suggestions";
 // services
 import { AIService } from "services/ai.service";
 import { FileService } from "services/file.service";
-// hooks
-import useToast from "hooks/use-toast";
-import useLocalStorage from "hooks/use-local-storage";
 // components
 import { GptAssistantModal } from "components/core";
 import { ParentIssuesListModal } from "components/issues";
@@ -21,18 +25,11 @@ import {
 } from "components/issues/select";
 import { CreateStateModal } from "components/states";
 import { CreateLabelModal } from "components/labels";
+import { RichTextEditorWithRef } from "@plane/rich-text-editor";
 // ui
-import {} from "components/ui";
 import { Button, CustomMenu, Input, ToggleSwitch } from "@plane/ui";
-// icons
-import { Sparkle, X } from "lucide-react";
 // types
 import type { IUser, IIssue, ISearchIssueResponse } from "types";
-// components
-import { RichTextEditorWithRef } from "@plane/rich-text-editor";
-import useEditorSuggestions from "hooks/use-editor-suggestions";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 const aiService = new AIService();
 const fileService = new FileService();
@@ -123,8 +120,8 @@ export const DraftIssueForm: FC<IssueFormProps> = observer((props) => {
   const { workspaceSlug } = router.query;
   // store
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
   // form info
   const {
     formState: { errors, isSubmitting },

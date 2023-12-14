@@ -2,12 +2,11 @@ import React from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { Plus } from "lucide-react";
+// hooks
+import { useProjectState } from "hooks/store";
 // ui
 import { CustomSearchSelect, DoubleCircleIcon, StateGroupIcon } from "@plane/ui";
-// icons
-import { Plus } from "lucide-react";
 
 type Props = {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,23 +17,18 @@ type Props = {
 
 export const IssueStateSelect: React.FC<Props> = observer((props) => {
   const { setIsOpen, value, onChange, projectId } = props;
-
-  // states
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const {
-    projectState: { states: projectStates, fetchProjectStates },
-  } = useMobxStore();
+  // store hooks
+  const { projectStates, fetchProjectStates } = useProjectState();
 
   useSWR(
     workspaceSlug && projectId ? `STATES_LIST_${projectId.toUpperCase()}` : null,
     workspaceSlug && projectId ? () => fetchProjectStates(workspaceSlug.toString(), projectId) : null
   );
 
-  const states = projectStates?.[projectId] || [];
-
-  const options = states?.map((state) => ({
+  const options = projectStates?.map((state) => ({
     value: state.id,
     query: state.name,
     content: (
@@ -45,8 +39,8 @@ export const IssueStateSelect: React.FC<Props> = observer((props) => {
     ),
   }));
 
-  const selectedOption = states?.find((s) => s.id === value);
-  const currentDefaultState = states?.find((s) => s.default);
+  const selectedOption = projectStates?.find((s) => s.id === value);
+  const currentDefaultState = projectStates?.find((s) => s.default);
 
   return (
     <CustomSearchSelect

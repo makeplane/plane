@@ -5,9 +5,9 @@ import { Tab } from "@headlessui/react";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
 // hooks
+import { usePage } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 import useUserAuth from "hooks/use-user-auth";
-import { useMobxStore } from "lib/mobx/store-provider";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
@@ -44,9 +44,7 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // states
   const [createUpdatePageModal, setCreateUpdatePageModal] = useState(false);
   // store
-  const {
-    page: { fetchPages, fetchArchivedPages },
-  } = useMobxStore();
+  const { fetchProjectPages, fetchArchivedProjectPages } = usePage();
   // hooks
   const {} = useUserAuth();
   // local storage
@@ -54,12 +52,12 @@ const ProjectPagesPage: NextPageWithLayout = observer(() => {
   // fetching pages from API
   useSWR(
     workspaceSlug && projectId ? `ALL_PAGES_LIST_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchPages(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchProjectPages(workspaceSlug.toString(), projectId.toString()) : null
   );
   // fetching archived pages from API
   useSWR(
     workspaceSlug && projectId ? `ALL_ARCHIVED_PAGES_LIST_${projectId}` : null,
-    workspaceSlug && projectId ? () => fetchArchivedPages(workspaceSlug.toString(), projectId.toString()) : null
+    workspaceSlug && projectId ? () => fetchArchivedProjectPages(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   const currentTabValue = (tab: string | null) => {

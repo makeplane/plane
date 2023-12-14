@@ -1,18 +1,25 @@
 import React, { useEffect, useRef, useState, ReactElement, useCallback } from "react";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
 import useSWR, { MutatorOptions } from "swr";
 import { Controller, useForm } from "react-hook-form";
+import { Sparkle } from "lucide-react";
+import debounce from "lodash/debounce";
+// hooks
+import { useApplication, useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
+import useToast from "hooks/use-toast";
+import useReloadConfirmations from "hooks/use-reload-confirmation";
 // services
 import { PageService } from "services/page.service";
 import { FileService } from "services/file.service";
-// hooks
-import useUser from "hooks/use-user";
-import debounce from "lodash/debounce";
-import { useMobxStore } from "lib/mobx/store-provider";
+import { IssueService } from "services/issue";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 // components
+import { GptAssistantModal } from "components/core";
 import { PageDetailsHeader } from "components/headers/page-details";
+import { IssuePeekOverview } from "components/issues/peek-overview";
 import { EmptyState } from "components/common";
 // ui
 import { DocumentEditorWithRef, DocumentReadOnlyEditorWithRef } from "@plane/document-editor";
@@ -26,14 +33,8 @@ import { NextPageWithLayout } from "types/app";
 import { IPage, IIssue } from "types";
 // fetch-keys
 import { PAGE_DETAILS, PROJECT_ISSUES_LIST } from "constants/fetch-keys";
-import { IssuePeekOverview } from "components/issues/peek-overview";
-import { IssueService } from "services/issue";
-import useToast from "hooks/use-toast";
-import useReloadConfirmations from "hooks/use-reload-confirmation";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
-import { GptAssistantModal } from "components/core";
-import { Sparkle } from "lucide-react";
-import { observer } from "mobx-react-lite";
 
 // services
 const fileService = new FileService();
@@ -41,23 +42,29 @@ const pageService = new PageService();
 const issueService = new IssueService();
 
 const PageDetailsPage: NextPageWithLayout = observer(() => {
-  const {
-    projectIssues: { updateIssue },
-    appConfig: { envConfig },
-    user: { currentProjectRole },
-  } = useMobxStore();
-
-  const editorRef = useRef<any>(null);
-
+  // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [gptModalOpen, setGptModal] = useState(false);
-
-  const { setShowAlert } = useReloadConfirmations();
+  // refs
+  const editorRef = useRef<any>(null);
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, pageId, peekIssueId } = router.query;
+  // store hooks
+  const {
+    projectIssues: { updateIssue },
+  } = useMobxStore();
+  const {
+    config: { envConfig },
+  } = useApplication();
+  const {
+    currentUser,
+    membership: { currentProjectRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
 
-  const { user } = useUser();
+  const { setShowAlert } = useReloadConfirmations();
 
   const { handleSubmit, setValue, watch, getValues, control } = useForm<IPage>({
     defaultValues: { name: "", description_html: "" },
@@ -102,7 +109,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
   );
 
   const handleUpdateIssue = (issueId: string, data: Partial<IIssue>) => {
-    if (!workspaceSlug || !projectId || !user) return;
+    if (!workspaceSlug || !projectId || !currentUser) return;
 
     updateIssue(workspaceSlug.toString(), projectId.toString(), issueId, data);
   };
@@ -357,7 +364,7 @@ const PageDetailsPage: NextPageWithLayout = observer(() => {
     pageDetails?.archived_at ||
     (currentProjectRole && [EUserWorkspaceRoles.VIEWER, EUserWorkspaceRoles.GUEST].includes(currentProjectRole));
 
-  const isCurrentUserOwner = pageDetails?.owned_by === user?.id;
+  const isCurrentUserOwner = pageDetails?.owned_by === currentUser?.id;
 
   const userCanDuplicate =
     currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);

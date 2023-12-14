@@ -1,11 +1,10 @@
 import { FC } from "react";
 import { useForm, Controller } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+import { XCircle } from "lucide-react";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Input, Button } from "@plane/ui";
-// icons
-import { XCircle } from "lucide-react";
 // services
 import { AuthService } from "services/auth.service";
 const authService = new AuthService();
@@ -25,9 +24,8 @@ export interface IInstanceSetupEmailForm {
 
 export const InstanceSetupSignInForm: FC<IInstanceSetupEmailForm> = (props) => {
   const { handleNextStep } = props;
-  const {
-    user: { fetchCurrentUser },
-  } = useMobxStore();
+  // store hooks
+  const { fetchCurrentUser } = useUser();
   // form info
   const {
     control,

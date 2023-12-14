@@ -3,10 +3,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import useSWR from "swr";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useProject, useUser } from "hooks/store";
+import { useMobxStore } from "lib/mobx/store-provider";
 // icons
 import { Button, Spinner } from "@plane/ui";
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IWorkspaceAuthWrapper {
   children: ReactNode;
@@ -14,14 +15,15 @@ export interface IWorkspaceAuthWrapper {
 
 export const WorkspaceAuthWrapper: FC<IWorkspaceAuthWrapper> = observer((props) => {
   const { children } = props;
-  // store
+  // store hooks
   const {
-    user: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
-    project: { fetchProjects },
     workspace: { fetchWorkspaceLabels },
     workspaceMember: { fetchWorkspaceMembers, fetchWorkspaceUserProjectsRole },
   } = useMobxStore();
-
+  const {
+    membership: { currentWorkspaceMemberInfo, hasPermissionToCurrentWorkspace, fetchUserWorkspaceInfo },
+  } = useUser();
+  const { fetchProjects } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;

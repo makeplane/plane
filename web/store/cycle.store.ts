@@ -179,12 +179,9 @@ export class CycleStore implements ICycleStore {
 
       const cyclesResponse = await this.cycleService.getCyclesWithParams(workspaceSlug, projectId, params);
 
-      const _cycleMap = set(this.cycleMap, [projectId], cyclesResponse);
-      const _cycles = set(this.cycles, [projectId, params], Object.keys(cyclesResponse));
-
       runInAction(() => {
-        this.cycleMap = _cycleMap;
-        this.cycles = _cycles;
+        set(this.cycleMap, [projectId], cyclesResponse);
+        set(this.cycles, [projectId, params], Object.keys(cyclesResponse));
         this.loader = false;
         this.error = null;
       });
@@ -199,9 +196,8 @@ export class CycleStore implements ICycleStore {
     try {
       const response = await this.cycleService.getCycleDetails(workspaceSlug, projectId, cycleId);
 
-      const _cycleMap = set(this.cycleMap, [projectId, response?.id], response);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, response?.id], response);
       });
 
       return response;
@@ -215,9 +211,8 @@ export class CycleStore implements ICycleStore {
     try {
       const response = await this.cycleService.createCycle(workspaceSlug, projectId, data);
 
-      const _cycleMap = set(this.cycleMap, [projectId, response?.id], response);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, response?.id], response);
       });
 
       const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
@@ -236,9 +231,8 @@ export class CycleStore implements ICycleStore {
 
       const currentCycle = this.cycleMap[projectId][cycleId];
 
-      const _cycleMap = set(this.cycleMap, [projectId, cycleId], { ...currentCycle, ...data });
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, cycleId], { ...currentCycle, ...data });
       });
 
       const _currentView = this.cycleView === "active" ? "current" : this.cycleView;
@@ -253,12 +247,10 @@ export class CycleStore implements ICycleStore {
 
   deleteCycle = async (workspaceSlug: string, projectId: string, cycleId: string) => {
     try {
-      const currentProjectCycles = this.cycleMap[projectId];
-      delete currentProjectCycles[cycleId];
+      if (!this.cycleMap?.[projectId]?.[cycleId]) return;
 
-      const _cycleMap = set(this.cycleMap, [projectId], currentProjectCycles);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        delete this.cycleMap[projectId][cycleId];
       });
 
       const _response = await this.cycleService.deleteCycle(workspaceSlug, projectId, cycleId);
@@ -278,9 +270,8 @@ export class CycleStore implements ICycleStore {
       const currentCycle = this.cycleMap[projectId][cycleId];
       if (currentCycle.is_favorite) return;
 
-      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], true);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, cycleId, "is_favorite"], true);
       });
 
       // updating through api.
@@ -290,10 +281,8 @@ export class CycleStore implements ICycleStore {
     } catch (error) {
       console.log("Failed to add cycle to favorites in the cycles store", error);
 
-      // reset on error
-      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], false);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, cycleId, "is_favorite"], false);
       });
 
       throw error;
@@ -306,9 +295,8 @@ export class CycleStore implements ICycleStore {
 
       if (!currentCycle.is_favorite) return;
 
-      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], false);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, cycleId, "is_favorite"], false);
       });
 
       const response = await this.cycleService.removeCycleFromFavorites(workspaceSlug, projectId, cycleId);
@@ -317,10 +305,8 @@ export class CycleStore implements ICycleStore {
     } catch (error) {
       console.log("Failed to remove cycle from favorites - Cycle Store", error);
 
-      // reset on error
-      const _cycleMap = set(this.cycleMap, [projectId, cycleId, "is_favorite"], true);
       runInAction(() => {
-        this.cycleMap = _cycleMap;
+        set(this.cycleMap, [projectId, cycleId, "is_favorite"], true);
       });
 
       throw error;

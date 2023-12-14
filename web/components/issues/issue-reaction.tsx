@@ -1,11 +1,11 @@
+import { observer } from "mobx-react-lite";
 // hooks
+import { useUser } from "hooks/store";
 import useIssueReaction from "hooks/use-issue-reaction";
 // components
 import { ReactionSelector } from "components/core";
 // string helpers
 import { renderEmoji } from "helpers/emoji.helper";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 // types
 type Props = {
@@ -17,9 +17,7 @@ type Props = {
 export const IssueReaction: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId, issueId } = props;
 
-  const {
-    user: { currentUser },
-  } = useMobxStore();
+  const { currentUser } = useUser();
 
   const { reactions, groupedReactions, handleReactionCreate, handleReactionDelete } = useIssueReaction(
     workspaceSlug,

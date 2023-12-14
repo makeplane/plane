@@ -1,10 +1,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 import { Controller, useForm } from "react-hook-form";
 
@@ -15,6 +14,7 @@ import { Loader } from "@plane/ui";
 import { IProject, IUserLite, IWorkspace } from "types";
 // fetch-keys
 import { PROJECT_MEMBERS } from "constants/fetch-keys";
+// constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const defaultValues: Partial<IProject> = {
@@ -26,10 +26,12 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-  // store
-  const { user: userStore, project: projectStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
-  const { currentProjectRole } = userStore;
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails, fetchProjectDetails, updateProject } = useProject();
+
   const isAdmin = currentProjectRole === EUserWorkspaceRoles.ADMIN;
   // hooks
   const { setToastAlert } = useToast();
@@ -38,9 +40,7 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
   // fetching user members
   useSWR(
     workspaceSlug && projectId ? PROJECT_MEMBERS(projectId.toString()) : null,
-    workspaceSlug && projectId
-      ? () => projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString())
-      : null
+    workspaceSlug && projectId ? () => fetchProjectDetails(workspaceSlug.toString(), projectId.toString()) : null
   );
 
   useEffect(() => {
@@ -64,13 +64,12 @@ export const ProjectSettingsMemberDefaults: React.FC = observer(() => {
       ...formData,
     });
 
-    await projectStore
-      .updateProject(workspaceSlug.toString(), projectId.toString(), {
-        default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
-        project_lead: formData.project_lead === "none" ? null : formData.project_lead,
-      })
+    await updateProject(workspaceSlug.toString(), projectId.toString(), {
+      default_assignee: formData.default_assignee === "none" ? null : formData.default_assignee,
+      project_lead: formData.project_lead === "none" ? null : formData.project_lead,
+    })
       .then(() => {
-        projectStore.fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
+        fetchProjectDetails(workspaceSlug.toString(), projectId.toString());
         setToastAlert({
           title: "Success",
           type: "success",

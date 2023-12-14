@@ -1,5 +1,6 @@
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject } from "hooks/store";
 // components
 import { SpreadsheetColumn } from "components/issues";
 // types
@@ -31,10 +32,8 @@ export const SpreadsheetColumnsList: React.FC<Props> = observer((props) => {
     labels,
     states,
   } = props;
-
-  const {
-    project: { currentProjectDetails },
-  } = useMobxStore();
+  // store hooks
+  const { currentProjectDetails } = useProject();
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 

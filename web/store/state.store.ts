@@ -10,9 +10,31 @@ import { IState } from "types";
 import { ProjectStateService } from "services/project";
 
 export interface IStateStore {
+  // observables
   stateMap: Record<string, IState>;
+  // computed
   projectStates: IState[] | undefined;
   groupedProjectStates: Record<string, IState[]> | undefined;
+  // computed actions
+  getProjectStates: (projectId: string) => IState[];
+  // actions
+  fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
+  createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
+  updateState: (
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    data: Partial<IState>
+  ) => Promise<IState | undefined>;
+  deleteState: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
+  markStateAsDefault: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
+  moveStatePosition: (
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    direction: "up" | "down",
+    groupIndex: number
+  ) => Promise<void>;
 }
 
 export class StateStore implements IStateStore {
@@ -27,12 +49,15 @@ export class StateStore implements IStateStore {
       // computed
       projectStates: computed,
       groupedProjectStates: computed,
-      // actions
+      // computed actions
       getProjectStates: action,
+      // actions
       fetchProjectStates: action,
       createState: action,
       updateState: action,
       deleteState: action,
+      markStateAsDefault: action,
+      moveStatePosition: action,
     });
     this.stateService = new ProjectStateService();
     this.router = _rootStore.app.router;
@@ -91,9 +116,8 @@ export class StateStore implements IStateStore {
   createState = async (workspaceSlug: string, projectId: string, data: Partial<IState>) => {
     const response = await this.stateService.createState(workspaceSlug, projectId, data);
 
-    const _stateMap = set(this.stateMap, [response?.id], response);
     runInAction(() => {
-      this.stateMap = _stateMap;
+      set(this.stateMap, [response?.id], response);
     });
     return response;
   };
@@ -109,9 +133,8 @@ export class StateStore implements IStateStore {
   updateState = async (workspaceSlug: string, projectId: string, stateId: string, data: Partial<IState>) => {
     const originalState = this.stateMap[stateId];
     try {
-      const _stateMap = set(this.stateMap, [stateId], { ...this.stateMap?.[stateId], ...data });
       runInAction(() => {
-        this.stateMap = _stateMap;
+        set(this.stateMap, [stateId], { ...this.stateMap?.[stateId], ...data });
       });
       const response = await this.stateService.patchState(workspaceSlug, projectId, stateId, data);
       return response;
@@ -135,12 +158,12 @@ export class StateStore implements IStateStore {
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
     const originalStates = this.stateMap;
     try {
-      const _stateMap = this.stateMap;
-      delete this.stateMap[stateId];
+      if (!this.stateMap?.[stateId]) return;
 
       runInAction(() => {
-        this.stateMap = _stateMap;
+        delete this.stateMap[stateId];
       });
+
       await this.stateService.deleteState(workspaceSlug, projectId, stateId);
     } catch (error) {
       runInAction(() => {
@@ -159,9 +182,8 @@ export class StateStore implements IStateStore {
   markStateAsDefault = async (workspaceSlug: string, projectId: string, stateId: string) => {
     const originalStates = this.stateMap;
     try {
-      const _stateMap = set(this.stateMap, [stateId, "default"], true);
       runInAction(() => {
-        this.stateMap = _stateMap;
+        set(this.stateMap, [stateId, "default"], true);
       });
 
       await this.stateService.markDefault(workspaceSlug, projectId, stateId);
@@ -204,9 +226,8 @@ export class StateStore implements IStateStore {
         else newSequence = (groupStates[groupIndex + 2].sequence + groupStates[groupIndex + 1].sequence) / 2;
       }
 
-      const _stateMap = set(this.stateMap, [stateId, "sequence"], newSequence);
       runInAction(() => {
-        this.stateMap = _stateMap;
+        set(this.stateMap, [stateId, "sequence"], newSequence);
       });
 
       // updating using api

@@ -1,12 +1,12 @@
 import React from "react";
-// next
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
-// hooks
-import useUser from "hooks/use-user";
 // images
 import ProjectNotAuthorizedImg from "public/auth/project-not-authorized.svg";
 import WorkspaceNotAuthorizedImg from "public/auth/workspace-not-authorized.svg";
@@ -16,9 +16,12 @@ type Props = {
   type: "project" | "workspace";
 };
 
-export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
-  const { user } = useUser();
+export const NotAuthorizedView: React.FC<Props> = observer((props) => {
+  const { actionButton, type } = props;
+  // router
   const { asPath: currentPath } = useRouter();
+  // store hooks
+  const { currentUser } = useUser();
 
   return (
     <DefaultLayout>
@@ -34,9 +37,9 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
         <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
 
         <div className="w-full max-w-md text-base text-custom-text-200">
-          {user ? (
+          {currentUser ? (
             <p>
-              You have signed in as {user.email}. <br />
+              You have signed in as {currentUser.email}. <br />
               <Link href={`/?next=${currentPath}`}>
                 <span className="font-medium text-custom-text-100">Sign in</span>
               </Link>{" "}
@@ -57,4 +60,4 @@ export const NotAuthorizedView: React.FC<Props> = ({ actionButton, type }) => {
       </div>
     </DefaultLayout>
   );
-};
+});

@@ -1,8 +1,8 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useProject, useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { ProjectSettingLayout } from "layouts/settings-layout";
@@ -17,16 +17,16 @@ import { IProject } from "types";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const AutomationSettingsPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
-
-  // store
+  // store hooks
   const {
-    user: { currentProjectRole },
-    project: { currentProjectDetails: projectDetails, updateProject },
-  } = useMobxStore();
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails: projectDetails, updateProject } = useProject();
 
   const handleChange = async (formData: Partial<IProject>) => {
     if (!workspaceSlug || !projectId || !projectDetails) return;

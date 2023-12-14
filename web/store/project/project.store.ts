@@ -7,16 +7,14 @@ import { IProject } from "types";
 import { IssueLabelService, IssueService } from "services/issue";
 import { ProjectService, ProjectStateService } from "services/project";
 
-export interface IProjectsStore {
+export interface IProjectStore {
   loader: boolean;
   error: any | null;
 
   searchQuery: string;
   projectId: string | null;
   projectMap: {
-    [workspaceSlug: string]: {
-      [projectId: string]: IProject; // projectId: project Info
-    };
+    [projectId: string]: IProject; // projectId: project Info
   };
 
   // computed
@@ -28,7 +26,7 @@ export interface IProjectsStore {
 
   // actions
   setSearchQuery: (query: string) => void;
-  getProjectById: (workspaceSlug: string, projectId: string) => IProject | null;
+  getProjectById: (projectId: string) => IProject | null;
 
   fetchProjects: (workspaceSlug: string) => Promise<void>;
   fetchProjectDetails: (workspaceSlug: string, projectId: string) => Promise<any>;
@@ -44,16 +42,14 @@ export interface IProjectsStore {
   deleteProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
-export class ProjectsStore implements IProjectsStore {
+export class ProjectStore implements IProjectStore {
   loader: boolean = false;
   error: any | null = null;
 
   projectId: string | null = null;
   searchQuery: string = "";
   projectMap: {
-    [workspaceSlug: string]: {
-      [projectId: string]: IProject; // projectId: project Info
-    };
+    [projectId: string]: IProject; // projectId: project Info
   } = {};
 
   // root store
@@ -108,46 +104,42 @@ export class ProjectsStore implements IProjectsStore {
   get searchedProjects() {
     if (!this.rootStore.app.router.workspaceSlug) return [];
 
-    const currentProjectMap = this.projectMap[this.rootStore.app.router.workspaceSlug];
-    const projectIds = Object.keys(currentProjectMap);
+    const projectIds = Object.keys(this.projectMap);
     return this.searchQuery === ""
       ? projectIds
       : projectIds?.filter((projectId) => {
-          currentProjectMap[projectId].name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            currentProjectMap[projectId].identifier.toLowerCase().includes(this.searchQuery.toLowerCase());
+          this.projectMap[projectId].name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            this.projectMap[projectId].identifier.toLowerCase().includes(this.searchQuery.toLowerCase());
         });
   }
 
   get workspaceProjects() {
     if (!this.rootStore.app.router.workspaceSlug) return null;
-    const currentProjectMap = this.projectMap[this.rootStore.app.router.workspaceSlug];
 
-    const projectIds = Object.keys(currentProjectMap);
+    const projectIds = Object.keys(this.projectMap);
     if (!projectIds) return null;
     return projectIds;
   }
 
   get currentProjectDetails() {
-    if (!this.rootStore.app.router.projectId || !this.rootStore.app.router.workspaceSlug) return;
-    return this.projectMap[this.rootStore.app.router.workspaceSlug][this.rootStore.app.router.projectId];
+    if (!this.rootStore.app.router.projectId) return;
+    return this.projectMap[this.rootStore.app.router.projectId];
   }
 
   get joinedProjects() {
     if (!this.rootStore.app.router.workspaceSlug) return [];
 
-    const currentProjectMap = this.projectMap[this.rootStore.app.router.workspaceSlug];
-    const projectIds = Object.keys(currentProjectMap);
+    const projectIds = Object.keys(this.projectMap);
 
-    return projectIds?.filter((projectId) => currentProjectMap[projectId].is_member);
+    return projectIds?.filter((projectId) => this.projectMap[projectId].is_member);
   }
 
   get favoriteProjects() {
     if (!this.rootStore.app.router.workspaceSlug) return [];
 
-    const currentProjectMap = this.projectMap[this.rootStore.app.router.workspaceSlug];
-    const projectIds = Object.keys(currentProjectMap);
+    const projectIds = Object.keys(this.projectMap);
 
-    return projectIds?.filter((projectId) => currentProjectMap[projectId].is_favorite);
+    return projectIds?.filter((projectId) => this.projectMap[projectId].is_favorite);
   }
 
   setSearchQuery = (query: string) => {
@@ -164,9 +156,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const currentProjectMap = await this.projectService.getProjects(workspaceSlug);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug], currentProjectMap);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        this.projectMap = currentProjectMap;
       });
     } catch (error) {
       console.log("Failed to fetch project from workspace store");
@@ -178,9 +169,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const response = await this.projectService.getProject(workspaceSlug, projectId);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId], response);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId], response);
       });
       return response;
     } catch (error) {
@@ -189,23 +179,19 @@ export class ProjectsStore implements IProjectsStore {
     }
   };
 
-  getProjectById = (workspaceSlug: string, projectId: string) => {
-    const currentProjectMap = this.projectMap?.[workspaceSlug];
-    if (!currentProjectMap) return null;
-
-    const projectInfo: IProject | null = currentProjectMap[projectId] || null;
+  getProjectById = (projectId: string) => {
+    const projectInfo = this.projectMap[projectId] || null;
     return projectInfo;
   };
 
   addProjectToFavorites = async (workspaceSlug: string, projectId: string) => {
     try {
-      const currentProject = this.projectMap?.[workspaceSlug]?.[projectId];
+      const currentProject = this.getProjectById(projectId);
 
       if (currentProject.is_favorite) return;
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], true);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId, "is_favorite"], true);
       });
 
       const response = await this.projectService.addProjectToFavorites(workspaceSlug, projectId);
@@ -213,9 +199,8 @@ export class ProjectsStore implements IProjectsStore {
     } catch (error) {
       console.log("Failed to add project to favorite");
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], false);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId, "is_favorite"], false);
       });
 
       throw error;
@@ -224,13 +209,12 @@ export class ProjectsStore implements IProjectsStore {
 
   removeProjectFromFavorites = async (workspaceSlug: string, projectId: string) => {
     try {
-      const currentProject = this.projectMap?.[workspaceSlug]?.[projectId];
+      const currentProject = this.getProjectById(projectId);
 
       if (!currentProject.is_favorite) return;
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], false);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId, "is_favorite"], false);
       });
 
       const response = await this.projectService.removeProjectFromFavorites(workspaceSlug, projectId);
@@ -239,9 +223,8 @@ export class ProjectsStore implements IProjectsStore {
     } catch (error) {
       console.log("Failed to add project to favorite");
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "is_favorite"], true);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId, "is_favorite"], true);
       });
       throw error;
     }
@@ -252,7 +235,7 @@ export class ProjectsStore implements IProjectsStore {
       const workspaceSlug = this.rootStore.app.router.workspaceSlug;
       if (!workspaceSlug) return 0;
 
-      const projectsList = Object.values(this.projectMap[workspaceSlug] || {}) || [];
+      const projectsList = Object.values(this.projectMap || {}) || [];
       let updatedSortOrder = projectsList[sortIndex].sort_order;
 
       if (destinationIndex === 0) updatedSortOrder = (projectsList[0].sort_order as number) - 1000;
@@ -268,9 +251,8 @@ export class ProjectsStore implements IProjectsStore {
         updatedSortOrder = (destinationSortingOrder + relativeDestinationSortingOrder) / 2;
       }
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId, "sort_order"], updatedSortOrder);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId, "sort_order"], updatedSortOrder);
       });
 
       return updatedSortOrder;
@@ -296,9 +278,8 @@ export class ProjectsStore implements IProjectsStore {
     try {
       const response = await this.projectService.createProject(workspaceSlug, data);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, response.id], response);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [response.id], response);
       });
 
       return response;
@@ -310,11 +291,10 @@ export class ProjectsStore implements IProjectsStore {
 
   updateProject = async (workspaceSlug: string, projectId: string, data: Partial<IProject>) => {
     try {
-      const currentProject = this.projectMap?.[workspaceSlug]?.[projectId];
+      const currentProject = this.getProjectById(projectId);
 
-      const _projectMap = set(this.projectMap, [workspaceSlug, projectId], { ...currentProject, ...data });
       runInAction(() => {
-        this.projectMap = _projectMap;
+        set(this.projectMap, [projectId], { ...currentProject, ...data });
       });
 
       const response = await this.projectService.updateProject(workspaceSlug, projectId, data);
@@ -330,17 +310,13 @@ export class ProjectsStore implements IProjectsStore {
 
   deleteProject = async (workspaceSlug: string, projectId: string) => {
     try {
-      const workspaceProjects = { ...this.projectMap[workspaceSlug] };
+      if (!this.projectMap?.[projectId]) return;
 
-      delete workspaceProjects[projectId];
-
-      const _projectMap = set(this.projectMap, [workspaceSlug], workspaceProjects);
       runInAction(() => {
-        this.projectMap = _projectMap;
+        delete this.projectMap[projectId];
       });
 
       await this.projectService.deleteProject(workspaceSlug, projectId);
-      await this.fetchProjects(workspaceSlug);
     } catch (error) {
       console.log("Failed to delete project from project store");
       this.fetchProjects(workspaceSlug);

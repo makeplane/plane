@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// store hooks
+import { useUser } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -28,10 +28,10 @@ const ApiTokensPage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // mobx store
+  // store hooks
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
 
   const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 

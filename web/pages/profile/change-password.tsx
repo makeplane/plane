@@ -2,8 +2,8 @@ import { ReactElement, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Controller, useForm } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { UserService } from "services/user.service";
 // hooks
@@ -32,9 +32,7 @@ const userService = new UserService();
 const ChangePasswordPage: NextPageWithLayout = observer(() => {
   const [isPageLoading, setIsPageLoading] = useState(true);
 
-  const {
-    user: { currentUser },
-  } = useMobxStore();
+  const { currentUser } = useUser();
 
   const router = useRouter();
 

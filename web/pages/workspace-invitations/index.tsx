@@ -1,12 +1,12 @@
 import React, { ReactElement } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-// swr
 import { Boxes, Check, Share2, Star, User2, X } from "lucide-react";
+import { observer } from "mobx-react-lite";
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { WorkspaceService } from "services/workspace.service";
-// hooks
-import useUser from "hooks/use-user";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 // ui
@@ -21,12 +21,12 @@ import { WORKSPACE_INVITATION } from "constants/fetch-keys";
 // services
 const workspaceService = new WorkspaceService();
 
-const WorkspaceInvitationPage: NextPageWithLayout = () => {
+const WorkspaceInvitationPage: NextPageWithLayout = observer(() => {
+  // router
   const router = useRouter();
-
   const { invitation_id, email, slug } = router.query;
-
-  const { user } = useUser();
+  // store hooks
+  const { currentUser } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
     invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
@@ -43,7 +43,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
         email: invitationDetail.email,
       })
       .then(() => {
-        if (email === user?.email) {
+        if (email === currentUser?.email) {
           router.push("/invitations");
         } else {
           router.push("/");
@@ -95,7 +95,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
           description="Your workspace is where you'll create projects, collaborate on your issues, and organize different streams of work in your Plane account."
           link={{ text: "Or start from an empty project", href: "/" }}
         >
-          {!user ? (
+          {!currentUser ? (
             <EmptySpaceItem
               Icon={User2}
               title="Sign in to continue"
@@ -134,7 +134,7 @@ const WorkspaceInvitationPage: NextPageWithLayout = () => {
       )}
     </div>
   );
-};
+});
 
 WorkspaceInvitationPage.getLayout = function getLayout(page: ReactElement) {
   return <DefaultLayout>{page}</DefaultLayout>;

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import useSWR from "swr";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser, useWebhook } from "hooks/store";
 // layouts
 import { AppLayout } from "layouts/app-layout";
 import { WorkspaceSettingLayout } from "layouts/settings-layout";
@@ -23,9 +23,9 @@ const WebhookDetailsPage: NextPageWithLayout = observer(() => {
   const { workspaceSlug, webhookId, isCreated } = router.query;
   // mobx store
   const {
-    webhook: { currentWebhook, clearSecretKey, fetchWebhookById },
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  const { currentWebhook, clearSecretKey, fetchWebhookById } = useWebhook();
 
   useEffect(() => {
     if (isCreated !== "true") clearSecretKey();

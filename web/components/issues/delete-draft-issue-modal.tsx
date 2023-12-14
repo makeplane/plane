@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // services
 import { IssueDraftService } from "services/issue";
 // hooks
@@ -24,17 +21,14 @@ type Props = {
 
 const issueDraftService = new IssueDraftService();
 
-export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
+export const DeleteDraftIssueModal: React.FC<Props> = (props) => {
   const { isOpen, handleClose, data, onSubmit } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
-  const { user: userStore } = useMobxStore();
-  const user = userStore.currentUser;
-
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
+  // toast alert
   const { setToastAlert } = useToast();
 
   useEffect(() => {
@@ -47,12 +41,12 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
   };
 
   const handleDeletion = async () => {
-    if (!workspaceSlug || !data || !user) return;
+    if (!workspaceSlug || !data) return;
 
     setIsDeleteLoading(true);
 
     await issueDraftService
-      .deleteDraftIssue(workspaceSlug as string, data.project, data.id)
+      .deleteDraftIssue(workspaceSlug.toString(), data.project, data.id)
       .then(() => {
         setIsDeleteLoading(false);
         handleClose();
@@ -138,4 +132,4 @@ export const DeleteDraftIssueModal: React.FC<Props> = observer((props) => {
       </Dialog>
     </Transition.Root>
   );
-});
+};

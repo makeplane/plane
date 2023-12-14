@@ -1,13 +1,12 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 // ui
 import { Breadcrumbs } from "@plane/ui";
 // helper
 import { renderEmoji } from "helpers/emoji.helper";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
+import { useProject, useUser } from "hooks/store";
 // constants
 import { EUserWorkspaceRoles } from "constants/workspace";
 
@@ -17,14 +16,14 @@ export interface IProjectSettingHeader {
 
 export const ProjectSettingHeader: FC<IProjectSettingHeader> = observer((props) => {
   const { title } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    user: { currentProjectRole },
-  } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+    membership: { currentProjectRole },
+  } = useUser();
+  const { currentProjectDetails } = useProject();
 
   if (currentProjectRole && currentProjectRole <= EUserWorkspaceRoles.VIEWER) return null;
 

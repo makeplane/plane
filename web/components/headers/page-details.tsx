@@ -1,21 +1,18 @@
 import { FC } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
+import useSWR from "swr";
 import { FileText, Plus } from "lucide-react";
+// hooks
+import { useApplication, useProject } from "hooks/store";
 // services
 import { PageService } from "services/page.service";
-
-// constants
-import { PAGE_DETAILS } from "constants/fetch-keys";
-
-// hooks
-import { useMobxStore } from "lib/mobx/store-provider";
 // ui
 import { Breadcrumbs, Button } from "@plane/ui";
-// helper
+// helpers
 import { renderEmoji } from "helpers/emoji.helper";
-
-import useSWR from "swr";
+// fetch-keys
+import { PAGE_DETAILS } from "constants/fetch-keys";
 
 export interface IPagesHeaderProps {
   showButton?: boolean;
@@ -28,8 +25,8 @@ export const PageDetailsHeader: FC<IPagesHeaderProps> = observer((props) => {
   const router = useRouter();
   const { workspaceSlug, pageId } = router.query;
 
-  const { project: projectStore, commandPalette: commandPaletteStore } = useMobxStore();
-  const { currentProjectDetails } = projectStore;
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const { currentProjectDetails } = useProject();
 
   const { data: pageDetails } = useSWR(
     workspaceSlug && currentProjectDetails?.id && pageId ? PAGE_DETAILS(pageId as string) : null,
