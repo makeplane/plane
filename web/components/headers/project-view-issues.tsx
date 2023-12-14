@@ -155,7 +155,8 @@ export const ProjectViewIssuesHeader: React.FC = observer(() => {
           onChange={(layout) => handleLayoutChange(layout)}
           selectedLayout={activeLayout}
         />
-        <FiltersDropdown title="Filters" placement="bottom-end">
+
+        <FiltersDropdown title="Filters" placement="bottom-end" disabled={!canUserCreateIssue}>
           <FilterSelection
             filters={issueFilters?.filters ?? {}}
             handleFiltersUpdate={handleFiltersUpdate}

@@ -245,10 +245,11 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
       </Loader>
     );
 
-  const startDate = new Date(moduleDetails.start_date ?? "");
-  const endDate = new Date(moduleDetails.target_date ?? "");
+  const startDate = new Date(watch("start_date") ?? moduleDetails.start_date ?? "");
+  const endDate = new Date(watch("target_date") ?? moduleDetails.target_date ?? "");
 
-  const areYearsEqual = startDate.getFullYear() === endDate.getFullYear();
+  const areYearsEqual =
+    startDate.getFullYear() === endDate.getFullYear() || isNaN(startDate.getFullYear()) || isNaN(endDate.getFullYear());
 
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
 
@@ -316,7 +317,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                   customButton={
                     <span
                       className={`flex h-6 w-20 items-center justify-center rounded-sm text-center text-xs ${
-                        isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                        isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
@@ -348,7 +349,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
               <Popover className="flex h-full items-center justify-center rounded-lg">
                 <Popover.Button
                   className={`text-sm font-medium text-custom-text-300 ${
-                    isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                    isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                   disabled={!isEditingAllowed}
                 >
@@ -372,10 +373,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                           handleStartDateChange(val);
                         }
                       }}
-                      startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                      endDate={watch("target_date") ? `${watch("target_date")}` : null}
+                      startDate={watch("start_date") ?? watch("target_date") ?? null}
+                      endDate={watch("target_date") ?? watch("start_date") ?? null}
                       maxDate={new Date(`${watch("target_date")}`)}
-                      selectsStart
+                      selectsStart={watch("target_date") ? true : false}
                     />
                   </Popover.Panel>
                 </Transition>
@@ -385,7 +386,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                 <>
                   <Popover.Button
                     className={`text-sm font-medium text-custom-text-300 ${
-                      isEditingAllowed ? "cursor-default" : "cursor-not-allowed"
+                      isEditingAllowed ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                     disabled={!isEditingAllowed}
                   >
@@ -409,10 +410,10 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
                             handleEndDateChange(val);
                           }
                         }}
-                        startDate={watch("start_date") ? `${watch("start_date")}` : null}
-                        endDate={watch("target_date") ? `${watch("target_date")}` : null}
+                        startDate={watch("start_date") ?? watch("target_date") ?? null}
+                        endDate={watch("target_date") ?? watch("start_date") ?? null}
                         minDate={new Date(`${watch("start_date")}`)}
-                        selectsEnd
+                        selectsEnd={watch("start_date") ? true : false}
                       />
                     </Popover.Panel>
                   </Transition>
@@ -434,6 +435,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             name="lead"
             render={({ field: { value } }) => (
               <SidebarLeadSelect
+                disabled={!isEditingAllowed}
                 value={value}
                 onChange={(val: string) => {
                   submitChanges({ lead: val });
@@ -446,6 +448,7 @@ export const ModuleDetailsSidebar: React.FC<Props> = observer((props) => {
             name="members"
             render={({ field: { value } }) => (
               <SidebarMembersSelect
+                disabled={!isEditingAllowed}
                 value={value}
                 onChange={(val: string[]) => {
                   submitChanges({ members: val });
