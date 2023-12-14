@@ -1,18 +1,18 @@
-import { IProjectsStore, ProjectsStore } from "./projects.store";
+import { IProjectStore, ProjectStore } from "./project.store";
 import { IProjectPublishStore, ProjectPublishStore } from "./project-publish.store";
 import { RootStore } from "store/root.store";
 
 export interface IProjectRootStore {
-  projects: IProjectsStore;
+  project: IProjectStore;
   publish: IProjectPublishStore;
 }
 
 export class ProjectRootStore {
-  projects: IProjectsStore;
+  project: IProjectStore;
   publish: IProjectPublishStore;
 
   constructor(_root: RootStore) {
-    this.projects = new ProjectsStore(_root);
+    this.project = new ProjectStore(_root);
     this.publish = new ProjectPublishStore(this);
   }
 }

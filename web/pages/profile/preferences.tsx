@@ -2,7 +2,7 @@ import { useEffect, useState, ReactElement } from "react";
 import { observer } from "mobx-react-lite";
 import { useTheme } from "next-themes";
 // hooks
-import { useMobxStore } from "lib/mobx/store-provider";
+import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { ProfileSettingsLayout } from "layouts/settings-layout";
@@ -16,11 +16,10 @@ import { I_THEME_OPTION, THEME_OPTIONS } from "constants/themes";
 import { NextPageWithLayout } from "types/app";
 
 const ProfilePreferencesPage: NextPageWithLayout = observer(() => {
-  const {
-    user: { currentUser, updateCurrentUserTheme },
-  } = useMobxStore();
   // states
   const [currentTheme, setCurrentTheme] = useState<I_THEME_OPTION | null>(null);
+  // store hooks
+  const { currentUser, updateCurrentUserTheme } = useUser();
   // computed
   const userTheme = currentUser?.theme;
   // hooks

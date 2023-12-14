@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-// react-hook-form
 import { UseFormWatch } from "react-hook-form";
+import { observer } from "mobx-react-lite";
+import { X } from "lucide-react";
 // hooks
+import { useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
 // services
 import { IssueService } from "services/issue";
 // components
 import { ExistingIssuesListModal } from "components/core";
 // icons
-import { X } from "lucide-react";
 import { BlockedIcon } from "@plane/ui";
 // types
 import { BlockeIssueDetail, IIssue, ISearchIssueResponse } from "types";
@@ -26,14 +25,17 @@ type Props = {
 // services
 const issueService = new IssueService();
 
-export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, watch, disabled = false }) => {
+export const SidebarBlockedSelect: React.FC<Props> = observer((props) => {
+  const { issueId, submitChanges, watch, disabled = false } = props;
+  // states
   const [isBlockedModalOpen, setIsBlockedModalOpen] = useState(false);
-
-  const { user } = useUser();
-  const { setToastAlert } = useToast();
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // toast alert
+  const { setToastAlert } = useToast();
+  // store hooks
+  const { currentUser } = useUser();
 
   const handleClose = () => {
     setIsBlockedModalOpen(false);
@@ -65,7 +67,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
       },
     }));
 
-    if (!user) return;
+    if (!currentUser) return;
 
     issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, {
@@ -128,7 +130,7 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
                           related_issues: updatedRelations,
                         });
 
-                        if (!user) return;
+                        if (!currentUser) return;
 
                         issueService.deleteIssueRelation(
                           workspaceSlug as string,
@@ -158,4 +160,4 @@ export const SidebarBlockedSelect: React.FC<Props> = ({ issueId, submitChanges, 
       </div>
     </>
   );
-};
+});

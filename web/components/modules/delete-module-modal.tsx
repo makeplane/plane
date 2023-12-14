@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
+import { observer } from "mobx-react-lite";
 // hooks
+import { useApplication, useModule } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
@@ -9,8 +11,6 @@ import { Button } from "@plane/ui";
 import { AlertTriangle } from "lucide-react";
 // types
 import type { IModule } from "types";
-import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   data: IModule;
@@ -20,17 +20,17 @@ type Props = {
 
 export const DeleteModuleModal: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose } = props;
-
+  // states
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, moduleId, peekModule } = router.query;
-
+  // store hooks
   const {
-    module: moduleStore,
-    trackEvent: { postHogEventTracker },
-  } = useMobxStore();
-
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { deleteModule } = useModule();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleClose = () => {
@@ -43,8 +43,7 @@ export const DeleteModuleModal: React.FC<Props> = observer((props) => {
 
     setIsDeleteLoading(true);
 
-    await moduleStore
-      .deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
+    await deleteModule(workspaceSlug.toString(), projectId.toString(), data.id)
       .then(() => {
         if (moduleId || peekModule) router.push(`/${workspaceSlug}/projects/${data.project}/modules`);
         handleClose();

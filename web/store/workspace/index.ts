@@ -217,11 +217,12 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
       const updatedWorkspacesList = this.workspaces;
       const workspaceId = this.getWorkspaceBySlug(workspaceSlug)?.id;
 
-      if (!this.workspaces?.[workspaceId]) return;
+      delete updatedWorkspacesList[`${workspaceId}`];
+
       runInAction(() => {
         this.loader = false;
         this.error = null;
-        delete updatedWorkspacesList[workspaceId];
+        this.workspaces = updatedWorkspacesList;
       });
     } catch (error) {
       runInAction(() => {

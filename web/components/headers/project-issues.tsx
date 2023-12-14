@@ -202,20 +202,23 @@ export const ProjectIssuesHeader: React.FC = observer(() => {
               </span>
             </Link>
           )}
-          <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
-            Analytics
-          </Button>
+
           {canUserCreateIssue && (
-            <Button
-              onClick={() => {
-                setTrackElement("PROJECT_PAGE_HEADER");
-                commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
-              }}
-              size="sm"
-              prependIcon={<Plus />}
-            >
-              Add Issue
-            </Button>
+            <>
+              <Button onClick={() => setAnalyticsModal(true)} variant="neutral-primary" size="sm">
+                Analytics
+              </Button>
+              <Button
+                onClick={() => {
+                  setTrackElement("PROJECT_PAGE_HEADER");
+                  commandPaletteStore.toggleCreateIssueModal(true, EProjectStore.PROJECT);
+                }}
+                size="sm"
+                prependIcon={<Plus />}
+              >
+                Add Issue
+              </Button>
+            </>
           )}
         </div>
       </div>

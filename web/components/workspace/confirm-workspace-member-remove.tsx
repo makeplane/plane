@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Button } from "@plane/ui";
 
@@ -16,12 +16,10 @@ type Props = {
 
 export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) => {
   const { data, isOpen, onClose, onSubmit } = props;
-
+  // states
   const [isRemoving, setIsRemoving] = useState(false);
-
-  const {
-    user: { currentUser },
-  } = useMobxStore();
+  // store hooks
+  const { currentUser } = useUser();
 
   const handleClose = () => {
     onClose();
@@ -99,8 +97,8 @@ export const ConfirmWorkspaceMemberRemove: React.FC<Props> = observer((props) =>
                         ? "Leaving..."
                         : "Leave"
                       : isRemoving
-                        ? "Removing..."
-                        : "Remove"}
+                      ? "Removing..."
+                      : "Remove"}
                   </Button>
                 </div>
               </Dialog.Panel>

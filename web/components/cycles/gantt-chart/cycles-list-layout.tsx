@@ -1,19 +1,18 @@
 import { FC } from "react";
-
 import { useRouter } from "next/router";
-
+import { observer } from "mobx-react-lite";
 import { KeyedMutator } from "swr";
-
+// hooks
+import { useUser } from "hooks/store";
 // services
 import { CycleService } from "services/cycle.service";
-// hooks
-import useUser from "hooks/use-user";
-import useProjectDetails from "hooks/use-project-details";
 // components
 import { GanttChartRoot, IBlockUpdateData, CycleGanttSidebar } from "components/gantt-chart";
 import { CycleGanttBlock } from "components/cycles";
 // types
 import { ICycle } from "types";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 type Props = {
   workspaceSlug: string;
@@ -24,15 +23,18 @@ type Props = {
 // services
 const cycleService = new CycleService();
 
-export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) => {
+export const CyclesListGanttChartView: FC<Props> = observer((props) => {
+  const { cycles, mutateCycles } = props;
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-
-  const { user } = useUser();
-  const { projectDetails } = useProjectDetails();
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
 
   const handleCycleUpdate = (cycle: ICycle, payload: IBlockUpdateData) => {
-    if (!workspaceSlug || !user) return;
+    if (!workspaceSlug) return;
     mutateCycles &&
       mutateCycles((prevData: any) => {
         if (!prevData) return prevData;
@@ -76,7 +78,8 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
           }))
       : [];
 
-  const isAllowed = projectDetails?.member_role === 20 || projectDetails?.member_role === 15;
+  const isAllowed =
+    currentProjectRole && [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentProjectRole);
 
   return (
     <div className="h-full w-full overflow-y-auto">
@@ -94,4 +97,4 @@ export const CyclesListGanttChartView: FC<Props> = ({ cycles, mutateCycles }) =>
       />
     </div>
   );
-};
+});

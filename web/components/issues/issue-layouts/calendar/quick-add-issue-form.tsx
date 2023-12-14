@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useForm } from "react-hook-form";
 import { observer } from "mobx-react-lite";
-// store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useProject, useWorkspace } from "hooks/store";
 import useToast from "hooks/use-toast";
 import useKeypress from "hooks/use-keypress";
 import useOutsideClickDetector from "hooks/use-outside-click-detector";
@@ -13,7 +12,7 @@ import { createIssuePayload } from "helpers/issue.helper";
 // icons
 import { PlusIcon } from "lucide-react";
 // types
-import { IIssue, IProject } from "types";
+import { IIssue } from "types";
 
 type Props = {
   formKey: keyof IIssue;
@@ -27,6 +26,7 @@ type Props = {
     viewId?: string
   ) => Promise<IIssue | undefined>;
   viewId?: string;
+  onOpen?: () => void;
 };
 
 const defaultValues: Partial<IIssue> = {
@@ -57,26 +57,24 @@ const Inputs = (props: any) => {
 };
 
 export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
-  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId } = props;
+  const { formKey, groupId, prePopulatedData, quickAddCallback, viewId, onOpen } = props;
 
   // router
   const router = useRouter();
-  const { workspaceSlug, projectId } = router.query as { workspaceSlug: string; projectId: string };
-
-  const { workspace: workspaceStore, project: projectStore } = useMobxStore();
-
-  // ref
+  const { workspaceSlug, projectId } = router.query;
+  // store hooks
+  const { getProjectById } = useProject();
+  const { getWorkspaceBySlug } = useWorkspace();
+  // refs
   const ref = useRef<HTMLDivElement>(null);
-
   // states
   const [isOpen, setIsOpen] = useState(false);
-
+  // toast alert
   const { setToastAlert } = useToast();
 
   // derived values
-  const workspaceDetail = (workspaceSlug && workspaceStore.getWorkspaceBySlug(workspaceSlug)) || null;
-  const projectDetail: IProject | null =
-    (workspaceSlug && projectId && projectStore.getProjectById(workspaceSlug, projectId)) || null;
+  const workspaceDetail = (workspaceSlug && getWorkspaceBySlug(workspaceSlug.toString())) || null;
+  const projectDetail = projectId ? getProjectById(projectId.toString()) : null;
 
   const {
     reset,
@@ -112,7 +110,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
   }, [errors, setToastAlert]);
 
   const onSubmitHandler = async (formData: IIssue) => {
-    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail) return;
+    if (isSubmitting || !groupId || !workspaceDetail || !projectDetail || !workspaceSlug || !projectId) return;
 
     reset({ ...defaultValues });
 
@@ -124,8 +122,8 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
     try {
       quickAddCallback &&
         (await quickAddCallback(
-          workspaceSlug,
-          projectId,
+          workspaceSlug.toString(),
+          projectId.toString(),
           {
             ...payload,
           },
@@ -144,6 +142,11 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
         message: err?.message || "Some error occurred. Please try again.",
       });
     }
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    if (onOpen) onOpen();
   };
 
   return (
@@ -169,7 +172,7 @@ export const CalendarQuickAddIssueForm: React.FC<Props> = observer((props) => {
           <button
             type="button"
             className="flex w-full items-center gap-x-[6px] rounded-md px-2 py-1.5 text-custom-primary-100"
-            onClick={() => setIsOpen(true)}
+            onClick={handleOpen}
           >
             <PlusIcon className="h-3.5 w-3.5 stroke-2" />
             <span className="text-sm font-medium text-custom-primary-100">New Issue</span>

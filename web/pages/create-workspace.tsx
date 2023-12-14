@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // layouts
 import DefaultLayout from "layouts/default-layout";
 import { UserAuthWrapper } from "layouts/auth-layout";
@@ -20,10 +20,8 @@ import { NextPageWithLayout } from "types/app";
 const CreateWorkspacePage: NextPageWithLayout = observer(() => {
   // router
   const router = useRouter();
-  // store
-  const {
-    user: { currentUser, updateCurrentUser },
-  } = useMobxStore();
+  // store hooks
+  const { currentUser, updateCurrentUser } = useUser();
   // states
   const [defaultValues, setDefaultValues] = useState({
     name: "",

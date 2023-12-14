@@ -2,9 +2,9 @@ import { useState, ReactElement } from "react";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Search } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useMobxStore } from "lib/mobx/store-provider";
+import { useApplication, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // layouts
 import { AppLayout } from "layouts/app-layout";
@@ -21,18 +21,23 @@ import { IWorkspaceBulkInviteFormData } from "types";
 import { EUserWorkspaceRoles } from "constants/workspace";
 
 const WorkspaceMembersSettingsPage: NextPageWithLayout = observer(() => {
-  const router = useRouter();
-  const { workspaceSlug } = router.query;
-  // store
-  const {
-    user: { currentWorkspaceRole },
-    workspaceMember: { inviteMembersToWorkspace },
-    trackEvent: { postHogEventTracker, setTrackElement },
-  } = useMobxStore();
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
-  // hooks
+  // router
+  const router = useRouter();
+  const { workspaceSlug } = router.query;
+  // store hooks
+  const {
+    workspaceMember: { inviteMembersToWorkspace },
+  } = useMobxStore();
+  const {
+    eventTracker: { postHogEventTracker, setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
 
   const handleWorkspaceInvite = (data: IWorkspaceBulkInviteFormData) => {

@@ -2,8 +2,9 @@ import { FC, useCallback, useState } from "react";
 import { DragDropContext, DragStart, DraggableLocation, DropResult, Droppable } from "@hello-pangea/dnd";
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
 // ui
 import { Spinner } from "@plane/ui";
 // types
@@ -24,8 +25,6 @@ import {
 } from "store_legacy/issues";
 import { IQuickActionProps } from "../list/list-view-types";
 import { IIssueKanBanViewStore } from "store_legacy/issue";
-// hooks
-import useToast from "hooks/use-toast";
 //components
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
@@ -92,13 +91,12 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   // router
   const router = useRouter();
   const { workspaceSlug, peekIssueId, peekProjectId } = router.query;
-  // mobx store
-  const { user: userStore } = useMobxStore();
-
-  // hooks
+  // store hooks
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  // toast alert
   const { setToastAlert } = useToast();
-
-  const { currentProjectRole } = userStore;
 
   const issues = issueStore?.getIssues || {};
   const issueIds = issueStore?.getIssuesIds || [];

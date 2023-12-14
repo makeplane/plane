@@ -1,5 +1,8 @@
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
+// hooks
+import { useApplication, useProject, useWorkspace } from "hooks/store";
+import useToast from "hooks/use-toast";
 // components
 import EmojiIconPicker from "components/emoji-icon-picker";
 import { ImagePickerPopover } from "components/core";
@@ -13,9 +16,6 @@ import { renderShortDateWithYearFormat } from "helpers/date-time.helper";
 import { NETWORK_CHOICES } from "constants/project";
 // services
 import { ProjectService } from "services/project";
-// hooks
-import useToast from "hooks/use-toast";
-import { useMobxStore } from "lib/mobx/store-provider";
 
 export interface IProjectDetailsForm {
   project: IProject;
@@ -27,15 +27,15 @@ const projectService = new ProjectService();
 
 export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
   const { project, workspaceSlug, isAdmin } = props;
-  // store
+  // store hooks
   const {
-    project: projectStore,
-    trackEvent: { postHogEventTracker },
-    workspace: { currentWorkspace },
-  } = useMobxStore();
-  // toast
+    eventTracker: { postHogEventTracker },
+  } = useApplication();
+  const { currentWorkspace } = useWorkspace();
+  const { updateProject } = useProject();
+  // toast alert
   const { setToastAlert } = useToast();
-  // form data
+  // form info
   const {
     handleSubmit,
     watch,
@@ -60,11 +60,10 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
     setValue("identifier", formattedValue);
   };
 
-  const updateProject = async (payload: Partial<IProject>) => {
+  const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
 
-    return projectStore
-      .updateProject(workspaceSlug.toString(), project.id, payload)
+    return updateProject(workspaceSlug.toString(), project.id, payload)
       .then((res) => {
         postHogEventTracker(
           "PROJECT_UPDATED",
@@ -72,7 +71,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: res.workspace,
+            groupId: res.workspace,
           }
         );
         setToastAlert({
@@ -90,7 +89,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
           {
             isGrouping: true,
             groupType: "Workspace_metrics",
-            gorupId: currentWorkspace?.id!,
+            groupId: currentWorkspace?.id!,
           }
         );
         setToastAlert({
@@ -125,9 +124,9 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         .checkProjectIdentifierAvailability(workspaceSlug as string, payload.identifier ?? "")
         .then(async (res) => {
           if (res.exists) setError("identifier", { message: "Identifier already exists" });
-          else await updateProject(payload);
+          else await handleUpdateChange(payload);
         });
-    else await updateProject(payload);
+    else await handleUpdateChange(payload);
   };
 
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);

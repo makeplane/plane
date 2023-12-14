@@ -1,25 +1,33 @@
+import { observer } from "mobx-react-lite";
+// hooks
+import { useProject } from "hooks/store";
 // ui
 import { CustomSearchSelect } from "@plane/ui";
-// types
-import { IProject } from "types";
 
 type Props = {
   value: string[] | undefined;
   onChange: (val: string[] | null) => void;
-  projects: IProject[] | undefined;
+  projectIds: string[] | undefined;
 };
 
-export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) => {
-  const options = projects?.map((project) => ({
-    value: project.id,
-    query: project.name + project.identifier,
-    content: (
-      <div className="flex items-center gap-2">
-        <span className="text-[0.65rem] text-custom-text-200">{project.identifier}</span>
-        {project.name}
-      </div>
-    ),
-  }));
+export const SelectProject: React.FC<Props> = observer((props) => {
+  const { value, onChange, projectIds } = props;
+  const { getProjectById } = useProject();
+
+  const options = projectIds?.map((projectId) => {
+    const projectDetails = getProjectById(projectId);
+
+    return {
+      value: projectDetails?.id,
+      query: `${projectDetails?.name} ${projectDetails?.identifier}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <span className="text-[0.65rem] text-custom-text-200">{projectDetails?.identifier}</span>
+          {projectDetails?.name}
+        </div>
+      ),
+    };
+  });
 
   return (
     <CustomSearchSelect
@@ -28,9 +36,9 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
       options={options}
       label={
         value && value.length > 0
-          ? projects
-              ?.filter((p) => value.includes(p.id))
-              .map((p) => p.identifier)
+          ? projectIds
+              ?.filter((p) => value.includes(p))
+              .map((p) => getProjectById(p)?.name)
               .join(", ")
           : "All projects"
       }
@@ -38,4 +46,4 @@ export const SelectProject: React.FC<Props> = ({ value, onChange, projects }) =>
       multiple
     />
   );
-};
+});

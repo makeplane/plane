@@ -1,14 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { observer } from "mobx-react-lite";
+import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
+// hooks
+import { useApplication, useUser } from "hooks/store";
 // components
 import { NotificationPopover } from "components/notifications";
+// ui
 import { Tooltip } from "@plane/ui";
-// icons
-import { BarChart2, Briefcase, CheckCircle, LayoutGrid } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-import { observer } from "mobx-react-lite";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 const workspaceLinks = (workspaceSlug: string) => [
   {
@@ -34,16 +36,22 @@ const workspaceLinks = (workspaceSlug: string) => [
 ];
 
 export const WorkspaceSidebarMenu = observer(() => {
-  const { theme: themeStore } = useMobxStore();
+  // store hooks
+  const { theme: themeStore } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   return (
     <div className="w-full cursor-pointer space-y-1 p-4">
       {workspaceLinks(workspaceSlug as string).map((link, index) => {
         const isActive = link.name === "Settings" ? router.asPath.includes(link.href) : router.asPath === link.href;
-
+        if (!isAuthorizedUser && link.name === "Analytics") return;
         return (
           <Link key={index} href={link.href}>
             <span className="block w-full">

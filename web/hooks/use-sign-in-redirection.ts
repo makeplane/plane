@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { useRouter } from "next/router";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // types
 import { IUser, IUserSettings } from "types";
 
@@ -19,9 +19,7 @@ const useSignInRedirection = (): UseSignInRedirectionProps => {
   const router = useRouter();
   const { next_url } = router.query;
   // mobx store
-  const {
-    user: { fetchCurrentUser, fetchCurrentUserSettings },
-  } = useMobxStore();
+  const { fetchCurrentUser, fetchCurrentUserSettings } = useUser();
 
   const handleSignInRedirection = useCallback(
     async (user: IUser) => {

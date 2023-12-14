@@ -4,11 +4,9 @@ import { mutate } from "swr";
 import { useForm, Controller } from "react-hook-form";
 import { TwitterPicker } from "react-color";
 import { Popover, Transition } from "@headlessui/react";
-
-// store
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useProjectState } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button, CustomSelect, Input, Tooltip } from "@plane/ui";
@@ -37,20 +35,17 @@ const defaultValues: Partial<IState> = {
 
 export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const { data, onClose, selectedGroup, groupLength } = props;
-
   // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
-
-  // store
+  // store hooks
   const {
-    projectState: projectStateStore,
-    trackEvent: { postHogEventTracker, setTrackElement },
-  } = useMobxStore();
-
-  // hooks
+    eventTracker: { postHogEventTracker, setTrackElement },
+  } = useApplication();
+  const { createState, updateState } = useProjectState();
+  // toast alert
   const { setToastAlert } = useToast();
-
+  // form info
   const {
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -88,8 +83,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const handleCreate = async (formData: IState) => {
     if (!workspaceSlug || !projectId || isSubmitting) return;
 
-    await projectStateStore
-      .createState(workspaceSlug.toString(), projectId.toString(), formData)
+    await createState(workspaceSlug.toString(), projectId.toString(), formData)
       .then((res) => {
         handleClose();
         setToastAlert({
@@ -124,8 +118,7 @@ export const CreateUpdateStateInline: React.FC<Props> = observer((props) => {
   const handleUpdate = async (formData: IState) => {
     if (!workspaceSlug || !projectId || !data || isSubmitting) return;
 
-    await projectStateStore
-      .updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
+    await updateState(workspaceSlug.toString(), projectId.toString(), data.id, formData)
       .then((res) => {
         mutate(STATES_LIST(projectId.toString()));
         handleClose();

@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import type { FieldError } from "react-hook-form";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// popper js
 import { usePopper } from "react-popper";
-// ui
 import { Combobox } from "@headlessui/react";
+import { Check, Clipboard, Search } from "lucide-react";
+// hooks
+import { useProject } from "hooks/store";
 // helpers
 import { renderEmoji } from "helpers/emoji.helper";
-// icons
-import { Check, Clipboard, Search } from "lucide-react";
 
 export interface IssueProjectSelectProps {
   value: string;
@@ -28,25 +25,31 @@ export const IssueProjectSelect: React.FC<IssueProjectSelectProps> = observer((p
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });
+  // store hooks
+  const { joinedProjects, getProjectById } = useProject();
 
-  const {
-    project: { joinedProjects },
-  } = useMobxStore();
+  const selectedProject = getProjectById(value);
 
-  const selectedProject = joinedProjects?.find((i) => i.id === value);
+  const options = joinedProjects?.map((projectId) => {
+    const projectDetails = getProjectById(projectId);
 
-  const options = joinedProjects?.map((project) => ({
-    value: project.id,
-    query: project.name,
-    content: (
-      <div className="flex items-center gap-1.5 truncate">
-        <span className="grid flex-shrink-0 place-items-center">
-          {project.emoji ? renderEmoji(project.emoji) : project.icon_prop ? renderEmoji(project.icon_prop) : null}
-        </span>
-        <span className="flex-grow truncate">{project.name}</span>
-      </div>
-    ),
-  }));
+    return {
+      value: `${projectDetails?.id}`,
+      query: `${projectDetails?.name}`,
+      content: (
+        <div className="flex items-center gap-1.5 truncate">
+          <span className="grid flex-shrink-0 place-items-center">
+            {projectDetails?.emoji
+              ? renderEmoji(projectDetails?.emoji)
+              : projectDetails?.icon_prop
+              ? renderEmoji(projectDetails?.icon_prop)
+              : null}
+          </span>
+          <span className="flex-grow truncate">{projectDetails?.name}</span>
+        </div>
+      ),
+    };
+  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));

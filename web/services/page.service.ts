@@ -50,7 +50,7 @@ export class PageService extends APIService {
       });
   }
 
-  async getProjectPages(workspaceSlug: string, projectId: string) {
+  async getProjectPages(workspaceSlug: string, projectId: string): Promise<Record<string, IPage>> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/pages/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -189,7 +189,7 @@ export class PageService extends APIService {
       });
   }
 
-  async getArchivedPages(workspaceSlug: string, projectId: string): Promise<IPage[]> {
+  async getArchivedPages(workspaceSlug: string, projectId: string): Promise<Record<string, IPage>> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/archived-pages/`)
       .then((response) => response?.data)
       .catch((error) => {

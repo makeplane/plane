@@ -5,6 +5,8 @@ import { LinkIcon, Signal, Trash2, UserMinus2, UserPlus2 } from "lucide-react";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useUser } from "hooks/store";
+// hooks
 import useToast from "hooks/use-toast";
 // ui
 import { DoubleCircleIcon, UserGroupIcon } from "@plane/ui";
@@ -29,10 +31,12 @@ export const CommandPaletteIssueActions: React.FC<Props> = observer((props) => {
   const { workspaceSlug, projectId } = router.query;
 
   const {
-    commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
     projectIssues: { updateIssue },
-    user: { currentUser },
   } = useMobxStore();
+  const {
+    commandPalette: { toggleCommandPaletteModal, toggleDeleteIssueModal },
+  } = useApplication();
+  const { currentUser } = useUser();
 
   const { setToastAlert } = useToast();
 

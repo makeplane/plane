@@ -3,9 +3,8 @@ import { Controller, useForm } from "react-hook-form";
 import debounce from "lodash/debounce";
 // packages
 import { RichTextEditor } from "@plane/rich-text-editor";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useUser } from "hooks/store";
 import useReloadConfirmations from "hooks/use-reload-confirmation";
 import useEditorSuggestions from "hooks/use-editor-suggestions";
 // components
@@ -46,8 +45,9 @@ export const PeekOverviewIssueDetails: FC<IPeekOverviewIssueDetails> = (props) =
     setIsSubmitting,
   } = props;
   // store
-  const { user: userStore } = useMobxStore();
-  const { currentProjectRole } = userStore;
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
   const isAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
   // states
   const [characterLimit, setCharacterLimit] = useState(false);

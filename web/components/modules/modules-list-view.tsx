@@ -1,29 +1,35 @@
 import { useRouter } from "next/router";
 import { observer } from "mobx-react-lite";
 import { Plus } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useApplication, useModule, useUser } from "hooks/store";
 import useLocalStorage from "hooks/use-local-storage";
 // components
 import { ModuleCardItem, ModuleListItem, ModulePeekOverview, ModulesListGanttChartView } from "components/modules";
 // ui
 import { Loader } from "@plane/ui";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 // assets
 import emptyModule from "public/empty-state/empty_modules.webp";
 import { NewEmptyState } from "components/common/new-empty-state";
 
 export const ModulesListView: React.FC = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId, peekModule } = router.query;
-
-  const { module: moduleStore, commandPalette: commandPaletteStore } = useMobxStore();
+  // store hooks
+  const { commandPalette: commandPaletteStore } = useApplication();
+  const {
+    membership: { currentProjectRole },
+  } = useUser();
+  const { projectModules } = useModule();
 
   const { storedValue: modulesView } = useLocalStorage("modules_view", "grid");
 
-  const modulesList = moduleStore.projectModules;
+  const isEditingAllowed = !!currentProjectRole && currentProjectRole >= EUserWorkspaceRoles.MEMBER;
 
-  if (!modulesList)
+  if (!projectModules)
     return (
       <Loader className="grid grid-cols-3 gap-4 p-8">
         <Loader.Item height="176px" />
@@ -37,14 +43,14 @@ export const ModulesListView: React.FC = observer(() => {
 
   return (
     <>
-      {modulesList.length > 0 ? (
+      {projectModules.length > 0 ? (
         <>
           {modulesView === "list" && (
             <div className="h-full overflow-y-auto">
               <div className="flex h-full w-full justify-between">
                 <div className="flex h-full w-full flex-col overflow-y-auto">
-                  {modulesList.map((module) => (
-                    <ModuleListItem key={module.id} module={module} />
+                  {projectModules.map((moduleId) => (
+                    <ModuleListItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
                 <ModulePeekOverview
@@ -64,8 +70,8 @@ export const ModulesListView: React.FC = observer(() => {
                       : "lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4"
                   } auto-rows-max transition-all `}
                 >
-                  {modulesList.map((module) => (
-                    <ModuleCardItem key={module.id} module={module} />
+                  {projectModules.map((moduleId) => (
+                    <ModuleCardItem key={moduleId} moduleId={moduleId} />
                   ))}
                 </div>
                 <ModulePeekOverview
@@ -93,6 +99,7 @@ export const ModulesListView: React.FC = observer(() => {
             text: "Build your first module",
             onClick: () => commandPaletteStore.toggleCreateModuleModal(true),
           }}
+          disabled={!isEditingAllowed}
         />
       )}
     </>

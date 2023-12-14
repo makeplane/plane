@@ -2,18 +2,17 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import { observer } from "mobx-react-lite";
+// hooks
+import { useApplication } from "hooks/store";
+import useIntegrationPopup from "hooks/use-integration-popup";
 // services
 import { AppInstallationService } from "services/app_installation.service";
 // ui
 import { Loader } from "@plane/ui";
-// hooks
-import useIntegrationPopup from "hooks/use-integration-popup";
 // types
 import { IWorkspaceIntegration, ISlackIntegration } from "types";
 // fetch-keys
 import { SLACK_CHANNEL_INFO } from "constants/fetch-keys";
-// lib
-import { useMobxStore } from "lib/mobx/store-provider";
 
 type Props = {
   integration: IWorkspaceIntegration;
@@ -22,10 +21,10 @@ type Props = {
 const appInstallationService = new AppInstallationService();
 
 export const SelectChannel: React.FC<Props> = observer(({ integration }) => {
-  // store
+  // store hooks
   const {
-    appConfig: { envConfig },
-  } = useMobxStore();
+    config: { envConfig },
+  } = useApplication();
   // states
   const [slackChannelAvailabilityToggle, setSlackChannelAvailabilityToggle] = useState<boolean>(false);
   const [slackChannel, setSlackChannel] = useState<ISlackIntegration | null>(null);

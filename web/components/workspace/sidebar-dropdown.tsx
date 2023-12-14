@@ -6,8 +6,8 @@ import { useTheme } from "next-themes";
 import { Menu, Transition } from "@headlessui/react";
 import { mutate } from "swr";
 import { Check, ChevronDown, LogOut, Plus, Settings, UserCircle2 } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication, useUser, useWorkspace } from "hooks/store";
 // hooks
 import useToast from "hooks/use-toast";
 // ui
@@ -45,15 +45,16 @@ const profileLinks = (workspaceSlug: string, userId: string) => [
 ];
 
 export const WorkspaceSidebarDropdown = observer(() => {
+  // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
-  // store
+  // store hooks
   const {
     theme: { sidebarCollapsed },
-    workspace: { workspaces, currentWorkspace: activeWorkspace },
-    user: { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const { currentUser, updateCurrentUser, isUserInstanceAdmin, signOut } = useUser();
+  const { currentWorkspace: activeWorkspace, workspaces } = useWorkspace();
   // hooks
   const { setToastAlert } = useToast();
   const { setTheme } = useTheme();
@@ -89,6 +90,8 @@ export const WorkspaceSidebarDropdown = observer(() => {
         })
       );
   };
+
+  const workspacesList = Object.values(workspaces ?? {});
 
   return (
     <div className="flex items-center gap-x-3 gap-y-2 px-4 pt-4">
@@ -149,10 +152,10 @@ export const WorkspaceSidebarDropdown = observer(() => {
                   <span className="sticky top-0 z-10 h-full w-full bg-custom-background-100 pt-3 text-sm font-medium text-custom-sidebar-text-200">
                     Workspace
                   </span>
-                  {workspaces ? (
+                  {workspacesList ? (
                     <div className="flex h-full w-full flex-col items-start justify-start gap-1.5">
-                      {workspaces.length > 0 ? (
-                        workspaces.map((workspace: IWorkspace) => (
+                      {workspacesList.length > 0 ? (
+                        workspacesList.map((workspace) => (
                           <Menu.Item key={workspace.id}>
                             {() => (
                               <button
@@ -202,7 +205,7 @@ export const WorkspaceSidebarDropdown = observer(() => {
                           as="button"
                           type="button"
                           onClick={() => {
-                            setTrackElement("APP_SIEDEBAR_WORKSPACE_DROPDOWN");
+                            setTrackElement("APP_SIDEBAR_WORKSPACE_DROPDOWN");
                             router.push("/create-workspace");
                           }}
                           className="flex w-full items-center gap-2 px-2 py-1 text-sm text-custom-sidebar-text-200 hover:bg-custom-sidebar-background-80"

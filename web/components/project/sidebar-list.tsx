@@ -3,20 +3,19 @@ import { useRouter } from "next/router";
 import { DragDropContext, Draggable, DropResult, Droppable } from "@hello-pangea/dnd";
 import { Disclosure, Transition } from "@headlessui/react";
 import { observer } from "mobx-react-lite";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // hooks
+import { useApplication, useProject, useUser } from "hooks/store";
 import useToast from "hooks/use-toast";
 // components
 import { CreateProjectModal, ProjectSidebarListItem } from "components/project";
-
-// icons
-import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 // helpers
 import { copyUrlToClipboard } from "helpers/string.helper";
 import { orderArrayBy } from "helpers/array.helper";
 // types
 import { IProject } from "types";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// constants
+import { EUserWorkspaceRoles } from "constants/workspace";
 
 export const ProjectSidebarList: FC = observer(() => {
   // states
@@ -28,16 +27,21 @@ export const ProjectSidebarList: FC = observer(() => {
 
   const {
     theme: { sidebarCollapsed },
-    project: { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView },
     commandPalette: { toggleCreateProjectModal },
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
+  const {
+    membership: { currentWorkspaceRole },
+  } = useUser();
+  // const { joinedProjects, favoriteProjects, orderProjectsWithSortOrder, updateProjectView } = useProject();
   // router
   const router = useRouter();
   const { workspaceSlug } = router.query;
 
   // toast
   const { setToastAlert } = useToast();
+
+  const isAuthorizedUser = !!currentWorkspaceRole && currentWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
 
   const orderedJoinedProjects: IProject[] | undefined = joinedProjects
     ? orderArrayBy(joinedProjects, "sort_order", "ascending")
@@ -138,16 +142,18 @@ export const ProjectSidebarList: FC = observer(() => {
                                 <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               )}
                             </Disclosure.Button>
-                            <button
-                              className="opacity-0 group-hover:opacity-100"
-                              onClick={() => {
-                                setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
-                                setIsFavoriteProjectCreate(true);
-                                setIsProjectModalOpen(true);
-                              }}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
+                            {isAuthorizedUser && (
+                              <button
+                                className="opacity-0 group-hover:opacity-100"
+                                onClick={() => {
+                                  setTrackElement("APP_SIDEBAR_FAVORITES_BLOCK");
+                                  setIsFavoriteProjectCreate(true);
+                                  setIsProjectModalOpen(true);
+                                }}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            )}
                           </div>
                         )}
                         <Transition
@@ -213,15 +219,17 @@ export const ProjectSidebarList: FC = observer(() => {
                                 <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-100" />
                               )}
                             </Disclosure.Button>
-                            <button
-                              className="opacity-0 group-hover:opacity-100"
-                              onClick={() => {
-                                setIsFavoriteProjectCreate(false);
-                                setIsProjectModalOpen(true);
-                              }}
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
+                            {isAuthorizedUser && (
+                              <button
+                                className="opacity-0 group-hover:opacity-100"
+                                onClick={() => {
+                                  setIsFavoriteProjectCreate(false);
+                                  setIsProjectModalOpen(true);
+                                }}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            )}
                           </div>
                         )}
                         <Transition
@@ -260,7 +268,7 @@ export const ProjectSidebarList: FC = observer(() => {
           </Droppable>
         </DragDropContext>
 
-        {joinedProjects && joinedProjects.length === 0 && (
+        {isAuthorizedUser && joinedProjects && joinedProjects.length === 0 && (
           <button
             type="button"
             className="flex w-full items-center gap-2 px-3 text-sm text-custom-sidebar-text-200"

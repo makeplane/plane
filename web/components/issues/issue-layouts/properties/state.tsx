@@ -1,18 +1,15 @@
 import { Fragment, useState } from "react";
-
 import { observer } from "mobx-react-lite";
-import { useMobxStore } from "lib/mobx/store-provider";
-
-// hooks
 import { usePopper } from "react-popper";
-// ui
+import { Placement } from "@popperjs/core";
 import { Combobox } from "@headlessui/react";
-import { StateGroupIcon, Tooltip } from "@plane/ui";
 import { Check, ChevronDown, Search } from "lucide-react";
+// hooks
+import { useApplication, useProjectState } from "hooks/store";
+// ui
+import { StateGroupIcon, Tooltip } from "@plane/ui";
 // types
 import { IState } from "types";
-import { Placement } from "@popperjs/core";
-import { RootStore } from "store_legacy/root";
 
 export interface IIssuePropertyState {
   projectId: string | null;
@@ -40,25 +37,24 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
     optionsClassName = "",
     placement,
   } = props;
-
-  const { workspace: workspaceStore, projectState: projectStateStore }: RootStore = useMobxStore();
-  const workspaceSlug = workspaceStore?.workspaceSlug;
-
+  // states
   const [query, setQuery] = useState("");
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  // store hooks
+  const {
+    router: { workspaceSlug },
+  } = useApplication();
+  const { projectStates: storeStates, fetchProjectStates } = useProjectState();
 
   let projectStates: IState[] = defaultOptions;
-  const storeStates = projectId ? projectStateStore.states[projectId] : [];
   if (storeStates && storeStates.length > 0) projectStates = storeStates;
 
-  const fetchProjectStates = () => {
+  const handleFetchProjectStates = () => {
     setIsLoading(true);
     if (workspaceSlug && projectId)
-      workspaceSlug &&
-        projectId &&
-        projectStateStore.fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
+      workspaceSlug && projectId && fetchProjectStates(workspaceSlug, projectId).then(() => setIsLoading(false));
   };
 
   const selectedOption: IState | undefined =
@@ -121,7 +117,7 @@ export const IssuePropertyState: React.FC<IIssuePropertyState> = observer((props
               className={`flex h-5 w-full items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2.5 py-1 text-xs ${
                 disabled ? "cursor-not-allowed text-custom-text-200" : "cursor-pointer hover:bg-custom-background-80"
               } ${buttonClassName}`}
-              onClick={() => !storeStates && fetchProjectStates()}
+              onClick={() => !storeStates && handleFetchProjectStates()}
             >
               {label}
               {!hideDropdownArrow && !disabled && <ChevronDown className="h-3 w-3" aria-hidden="true" />}

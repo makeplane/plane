@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { usePopper } from "react-popper";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
-// ui
 import { Combobox } from "@headlessui/react";
+import { Check, Search } from "lucide-react";
+// hooks
+import { useModule } from "hooks/store";
 // icons
 import { DiceIcon } from "@plane/ui";
-// icons
-import { Check, Search } from "lucide-react";
 
 export interface IssueModuleSelectProps {
   workspaceSlug: string;
@@ -19,37 +17,39 @@ export interface IssueModuleSelectProps {
 
 export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((props) => {
   const { workspaceSlug, projectId, value, onChange } = props;
+  // states
   const [query, setQuery] = useState("");
-
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
+  // store hooks
+  const { projectModules, getModuleById, fetchModules } = useModule();
+  // popper-js
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-start",
   });
 
-  const { module: moduleStore } = useMobxStore();
-
-  const fetchModules = () => {
-    if (workspaceSlug && projectId) moduleStore.fetchModules(workspaceSlug, projectId);
+  const handleFetchModules = () => {
+    if (workspaceSlug && projectId) fetchModules(workspaceSlug, projectId);
   };
 
-  const modules = projectId ? moduleStore.modules[projectId] : undefined;
+  const selectedModule = value ? getModuleById(value) : null;
 
-  const selectedModule = modules ? modules?.find((i) => i.id === value) : undefined;
+  const options = projectModules?.map((moduleId) => {
+    const moduleDetails = getModuleById(moduleId);
 
-  const options = modules?.map((module) => ({
-    value: module.id,
-    query: module.name,
-    content: (
-      <div className="flex items-center gap-1.5 truncate">
-        <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
-          <DiceIcon />
-        </span>
-        <span className="flex-grow truncate">{module.name}</span>
-      </div>
-    ),
-  }));
+    return {
+      value: `${moduleDetails?.id}`,
+      query: `${moduleDetails?.name}`,
+      content: (
+        <div className="flex items-center gap-1.5 truncate">
+          <span className="flex h-3.5 w-3.5 flex-shrink-0 items-center justify-center">
+            <DiceIcon />
+          </span>
+          <span className="flex-grow truncate">{moduleDetails?.name}</span>
+        </div>
+      ),
+    };
+  });
 
   const filteredOptions =
     query === "" ? options : options?.filter((option) => option.query.toLowerCase().includes(query.toLowerCase()));
@@ -73,7 +73,7 @@ export const IssueModuleSelect: React.FC<IssueModuleSelectProps> = observer((pro
           ref={setReferenceElement}
           type="button"
           className="flex w-full cursor-pointer items-center justify-between gap-1 rounded border-[0.5px] border-custom-border-300 px-2 py-1 text-xs text-custom-text-200  hover:bg-custom-background-80"
-          onClick={fetchModules}
+          onClick={handleFetchModules}
         >
           {label}
         </button>

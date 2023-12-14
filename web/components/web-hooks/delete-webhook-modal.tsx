@@ -2,9 +2,8 @@ import React, { FC, useState } from "react";
 import { useRouter } from "next/router";
 import { Dialog, Transition } from "@headlessui/react";
 import { AlertTriangle } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
 // hooks
+import { useWebhook } from "hooks/store";
 import useToast from "hooks/use-toast";
 // ui
 import { Button } from "@plane/ui";
@@ -22,10 +21,8 @@ export const DeleteWebhookModal: FC<IDeleteWebhook> = (props) => {
   const router = useRouter();
   // toast
   const { setToastAlert } = useToast();
-  // mobx store
-  const {
-    webhook: { removeWebhook },
-  } = useMobxStore();
+  // store hooks
+  const { removeWebhook } = useWebhook();
 
   const { workspaceSlug, webhookId } = router.query;
 

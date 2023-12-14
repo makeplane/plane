@@ -44,7 +44,7 @@ urlpatterns = [
         name="project-module-issues",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:pk>/",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/modules/<uuid:module_id>/module-issues/<uuid:issue_id>/",
         ModuleIssueViewSet.as_view(
             {
                 "get": "retrieve",

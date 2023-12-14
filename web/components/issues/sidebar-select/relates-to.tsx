@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-
 import { useRouter } from "next/router";
-// react-hook-form
 import { UseFormWatch } from "react-hook-form";
-// hooks
-import useToast from "hooks/use-toast";
-import useUser from "hooks/use-user";
-// icons
+import { observer } from "mobx-react-lite";
 import { X } from "lucide-react";
+// hooks
+import { useUser } from "hooks/store";
+import useToast from "hooks/use-toast";
+// icons
 import { RelatedIcon } from "@plane/ui";
 // components
 import { ExistingIssuesListModal } from "components/core";
@@ -26,16 +25,17 @@ type Props = {
 // services
 const issueService = new IssueService();
 
-export const SidebarRelatesSelect: React.FC<Props> = (props) => {
+export const SidebarRelatesSelect: React.FC<Props> = observer((props) => {
   const { issueId, submitChanges, watch, disabled = false } = props;
-
+  // states
   const [isRelatesToModalOpen, setIsRelatesToModalOpen] = useState(false);
-
-  const { user } = useUser();
-  const { setToastAlert } = useToast();
-
+  // router
   const router = useRouter();
   const { workspaceSlug, projectId } = router.query;
+  // toast alert
+  const { setToastAlert } = useToast();
+  // store hooks
+  const { currentUser } = useUser();
 
   const handleClose = () => {
     setIsRelatesToModalOpen(false);
@@ -65,7 +65,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
       },
     }));
 
-    if (!user) return;
+    if (!currentUser) return;
 
     issueService
       .createIssueRelation(workspaceSlug as string, projectId as string, issueId as string, {
@@ -131,7 +131,7 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
                       type="button"
                       className="opacity-0 duration-300 group-hover:opacity-100"
                       onClick={() => {
-                        if (!user) return;
+                        if (!currentUser) return;
 
                         issueService
                           .deleteIssueRelation(
@@ -165,4 +165,4 @@ export const SidebarRelatesSelect: React.FC<Props> = (props) => {
       </div>
     </>
   );
-};
+});

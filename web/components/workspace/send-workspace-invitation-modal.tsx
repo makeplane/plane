@@ -3,8 +3,8 @@ import { observer } from "mobx-react-lite";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { Plus, X } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useUser } from "hooks/store";
 // ui
 import { Button, CustomSelect, Input } from "@plane/ui";
 // types
@@ -40,8 +40,8 @@ export const SendWorkspaceInvitationModal: React.FC<Props> = observer((props) =>
   const { isOpen, onClose, onSubmit } = props;
   // mobx store
   const {
-    user: { currentWorkspaceRole },
-  } = useMobxStore();
+    membership: { currentWorkspaceRole },
+  } = useUser();
   // form info
   const {
     control,

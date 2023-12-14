@@ -10,9 +10,31 @@ import { IState } from "types";
 import { ProjectStateService } from "services/project";
 
 export interface IStateStore {
+  // observables
   stateMap: Record<string, IState>;
+  // computed
   projectStates: IState[] | undefined;
   groupedProjectStates: Record<string, IState[]> | undefined;
+  // computed actions
+  getProjectStates: (projectId: string) => IState[];
+  // actions
+  fetchProjectStates: (workspaceSlug: string, projectId: string) => Promise<IState[]>;
+  createState: (workspaceSlug: string, projectId: string, data: Partial<IState>) => Promise<IState>;
+  updateState: (
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    data: Partial<IState>
+  ) => Promise<IState | undefined>;
+  deleteState: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
+  markStateAsDefault: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
+  moveStatePosition: (
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    direction: "up" | "down",
+    groupIndex: number
+  ) => Promise<void>;
 }
 
 export class StateStore implements IStateStore {
@@ -27,12 +49,15 @@ export class StateStore implements IStateStore {
       // computed
       projectStates: computed,
       groupedProjectStates: computed,
-      // actions
+      // computed actions
       getProjectStates: action,
+      // actions
       fetchProjectStates: action,
       createState: action,
       updateState: action,
       deleteState: action,
+      markStateAsDefault: action,
+      moveStatePosition: action,
     });
     this.stateService = new ProjectStateService();
     this.router = _rootStore.app.router;

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { PlusIcon } from "lucide-react";
-// mobx store
-import { useMobxStore } from "lib/mobx/store-provider";
+// hooks
+import { useApplication } from "hooks/store";
 // components
 import { EmptyState } from "components/common";
 // assets
@@ -9,10 +9,11 @@ import emptyIssue from "public/empty-state/issue.svg";
 import { EProjectStore } from "store_legacy/command-palette.store";
 
 export const ProjectViewEmptyState: React.FC = observer(() => {
+  // store hooks
   const {
     commandPalette: commandPaletteStore,
-    trackEvent: { setTrackElement },
-  } = useMobxStore();
+    eventTracker: { setTrackElement },
+  } = useApplication();
 
   return (
     <div className="grid h-full w-full place-items-center">
