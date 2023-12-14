@@ -107,14 +107,11 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
   const displayProperties = issuesFilterStore?.issueFilters?.displayProperties || null;
 
   const sub_group_by: string | null = displayFilters?.sub_group_by || null;
-
   const group_by: string | null = displayFilters?.group_by || null;
-
-  const order_by: string | null = displayFilters?.order_by || null;
 
   const userDisplayFilters = displayFilters || null;
 
-  const currentKanBanView: "swimlanes" | "default" = sub_group_by ? "swimlanes" : "default";
+  const KanBanView = sub_group_by ? KanBanSwimLanes : KanBan;
 
   const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issueStore?.viewFlags || {};
 
@@ -258,48 +255,25 @@ export const BaseKanBanRoot: React.FC<IBaseKanBanLayout> = observer((props: IBas
             </Droppable>
           </div>
 
-          {currentKanBanView === "default" ? (
-            <KanBan
-              issues={issues}
-              issueIds={issueIds}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              handleIssues={handleIssues}
-              quickActions={renderQuickActions}
-              displayProperties={displayProperties}
-              kanBanToggle={kanbanViewStore?.kanBanToggle}
-              handleKanBanToggle={handleKanBanToggle}
-              enableQuickIssueCreate={enableQuickAdd}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-              quickAddCallback={issueStore?.quickAddIssue}
-              viewId={viewId}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-              canEditProperties={canEditProperties}
-              currentStore={currentStore}
-              addIssuesToView={addIssuesToView}
-            />
-          ) : (
-            <KanBanSwimLanes
-              issues={issues}
-              issueIds={issueIds}
-              sub_group_by={sub_group_by}
-              group_by={group_by}
-              order_by={order_by}
-              handleIssues={handleIssues}
-              quickActions={renderQuickActions}
-              displayProperties={displayProperties}
-              kanBanToggle={kanbanViewStore?.kanBanToggle}
-              handleKanBanToggle={handleKanBanToggle}
-              showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
-              isDragStarted={isDragStarted}
-              disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
-              enableQuickIssueCreate={enableQuickAdd}
-              currentStore={currentStore}
-              quickAddCallback={issueStore?.quickAddIssue}
-              addIssuesToView={addIssuesToView}
-              canEditProperties={canEditProperties}
-            />
-          )}
+          <KanBanView
+            issues={issues}
+            issueIds={issueIds}
+            sub_group_by={sub_group_by}
+            group_by={group_by}
+            handleIssues={handleIssues}
+            quickActions={renderQuickActions}
+            displayProperties={displayProperties}
+            kanBanToggle={kanbanViewStore?.kanBanToggle}
+            handleKanBanToggle={handleKanBanToggle}
+            enableQuickIssueCreate={enableQuickAdd}
+            showEmptyGroup={userDisplayFilters?.show_empty_groups || true}
+            quickAddCallback={issueStore?.quickAddIssue}
+            viewId={viewId}
+            disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+            canEditProperties={canEditProperties}
+            currentStore={currentStore}
+            addIssuesToView={addIssuesToView}
+          />
         </DragDropContext>
       </div>
 

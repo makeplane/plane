@@ -1,4 +1,3 @@
-import React from "react";
 import { observer } from "mobx-react-lite";
 //mobx
 import { useMobxStore } from "lib/mobx/store-provider";
@@ -54,7 +53,6 @@ const SubGroupSwimlaneHeader: React.FC<ISubGroupSwimlaneHeader> = ({
 interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   issues: IIssueResponse;
   issueIds: any;
-  order_by: string | null;
   showEmptyGroup: boolean;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
@@ -73,6 +71,7 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
     data: IIssue,
     viewId?: string
   ) => Promise<IIssue | undefined>;
+  viewId?: string;
 }
 const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
   const {
@@ -91,6 +90,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
+    viewId,
   } = props;
 
   const calculateIssueCount = (column_id: string) => {
@@ -139,6 +139,7 @@ const SubGroupSwimlane: React.FC<ISubGroupSwimlane> = observer((props) => {
                   canEditProperties={canEditProperties}
                   addIssuesToView={addIssuesToView}
                   quickAddCallback={quickAddCallback}
+                  viewId={viewId}
                 />
               </div>
             )}
@@ -153,7 +154,6 @@ export interface IKanBanSwimLanes {
   issueIds: IGroupedIssues | ISubGroupedIssues | TUnGroupedIssues;
   sub_group_by: string | null;
   group_by: string | null;
-  order_by: string | null;
   handleIssues: (issue: IIssue, action: EIssueActions) => void;
   quickActions: (issue: IIssue, customActionButton?: React.ReactElement) => React.ReactNode;
   displayProperties: IIssueDisplayProperties | null;
@@ -171,6 +171,7 @@ export interface IKanBanSwimLanes {
     data: IIssue,
     viewId?: string
   ) => Promise<IIssue | undefined>;
+  viewId?: string;
   canEditProperties: (projectId: string | undefined) => boolean;
 }
 
@@ -180,7 +181,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     issueIds,
     sub_group_by,
     group_by,
-    order_by,
     handleIssues,
     quickActions,
     displayProperties,
@@ -193,6 +193,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
     canEditProperties,
     addIssuesToView,
     quickAddCallback,
+    viewId,
   } = props;
 
   const { project, projectLabel, projectMember, projectState } = useMobxStore();
@@ -228,7 +229,6 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           issueIds={issueIds}
           group_by={group_by}
           sub_group_by={sub_group_by}
-          order_by={order_by}
           handleIssues={handleIssues}
           quickActions={quickActions}
           displayProperties={displayProperties}
@@ -241,6 +241,7 @@ export const KanBanSwimLanes: React.FC<IKanBanSwimLanes> = observer((props) => {
           addIssuesToView={addIssuesToView}
           canEditProperties={canEditProperties}
           quickAddCallback={quickAddCallback}
+          viewId={viewId}
         />
       )}
     </div>
