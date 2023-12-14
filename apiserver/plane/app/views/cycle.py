@@ -516,7 +516,6 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
-            .annotate(bridge_id=F("issue_cycle__id"))
             .filter(project_id=project_id)
             .filter(workspace__slug=slug)
             .select_related("project")
@@ -636,11 +635,10 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def destroy(self, request, slug, project_id, cycle_id, pk):
+    def destroy(self, request, slug, project_id, cycle_id, issue_id):
         cycle_issue = CycleIssue.objects.get(
-            pk=pk, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
+            issue_id=issue_id, workspace__slug=slug, project_id=project_id, cycle_id=cycle_id
         )
-        issue_id = cycle_issue.issue_id
         issue_activity.delay(
             type="cycle.activity.deleted",
             requested_data=json.dumps(
@@ -650,7 +648,7 @@ class CycleIssueViewSet(WebhookMixin, BaseViewSet):
                 }
             ),
             actor_id=str(self.request.user.id),
-            issue_id=str(cycle_issue.issue_id),
+            issue_id=str(issue_id),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=None,
             epoch=int(timezone.now().timestamp()),
