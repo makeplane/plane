@@ -1,11 +1,10 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
-import { Droppable } from "@hello-pangea/dnd";
 // mobx store
 import { useMobxStore } from "lib/mobx/store-provider";
 // components
-import { KanbanIssueBlocksList, KanBanQuickAddIssueForm } from "components/issues";
 import { HeaderGroupByCard } from "./headers/group-by-card";
+import { KanbanGroup } from "./kanban-group";
 // types
 import { IIssueDisplayProperties, IIssue } from "types";
 // constants
@@ -76,81 +75,51 @@ const GroupByKanBan: React.FC<IGroupByKanBan> = observer((props) => {
     <div className="relative flex h-full w-full gap-3">
       {list &&
         list.length > 0 &&
-        list.map((_list: IKanbanColumn) => (
-          <div
-            className={`relative flex flex-shrink-0 flex-col ${!verticalAlignPosition(_list) ? `w-[340px]` : ``} group`}
-          >
-            {sub_group_by === null && (
-              <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
-                <HeaderGroupByCard
-                  sub_group_by={sub_group_by}
-                  group_by={group_by}
-                  column_id={_list.id}
-                  icon={_list.Icon}
-                  title={_list.name}
-                  count={issueIds?.[_list.id]?.length || 0}
-                  kanBanToggle={kanBanToggle}
-                  handleKanBanToggle={handleKanBanToggle}
-                  issuePayload={_list.payload}
-                  disableIssueCreation={disableIssueCreation}
-                  currentStore={currentStore}
-                  addIssuesToView={addIssuesToView}
-                />
-              </div>
-            )}
+        list.map((_list: IKanbanColumn) => {
+          const verticalPosition = verticalAlignPosition(_list);
 
-            <div
-              className={`${
-                verticalAlignPosition(_list) ? `min-h-[150px] w-[0px] overflow-hidden` : `w-full transition-all`
-              }`}
-            >
-              <Droppable droppableId={`${_list.id}__${sub_group_id}`}>
-                {(provided: any, snapshot: any) => (
-                  <div
-                    className={`relative h-full w-full transition-all ${
-                      snapshot.isDraggingOver ? `bg-custom-background-80` : ``
-                    }`}
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                  >
-                    {issues && !verticalAlignPosition(_list) ? (
-                      <KanbanIssueBlocksList
-                        sub_group_id={sub_group_id}
-                        columnId={_list.id}
-                        issues={issues}
-                        issueIds={issueIds?.[_list.id] || []}
-                        isDragDisabled={isDragDisabled}
-                        showEmptyGroup={showEmptyGroup}
-                        handleIssues={handleIssues}
-                        quickActions={quickActions}
-                        displayProperties={displayProperties}
-                        canEditProperties={canEditProperties}
-                      />
-                    ) : null}
-
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-
-              <div className="sticky bottom-0 z-[0] w-full flex-shrink-0 bg-custom-background-90 py-1">
-                {enableQuickIssueCreate && !disableIssueCreation && (
-                  <KanBanQuickAddIssueForm
-                    formKey="name"
-                    groupId={_list.id}
-                    subGroupId={sub_group_id}
-                    prePopulatedData={{
-                      ...(group_by && { [group_by]: _list.id }),
-                      ...(sub_group_by && sub_group_id !== "null" && { [sub_group_by]: sub_group_id }),
-                    }}
-                    quickAddCallback={quickAddCallback}
-                    viewId={viewId}
+          return (
+            <div className={`relative flex flex-shrink-0 flex-col ${!verticalPosition ? `w-[340px]` : ``} group`}>
+              {sub_group_by === null && (
+                <div className="sticky top-0 z-[2] w-full flex-shrink-0 bg-custom-background-90 py-1">
+                  <HeaderGroupByCard
+                    sub_group_by={sub_group_by}
+                    group_by={group_by}
+                    column_id={_list.id}
+                    icon={_list.Icon}
+                    title={_list.name}
+                    count={issueIds?.[_list.id]?.length || 0}
+                    kanBanToggle={kanBanToggle}
+                    handleKanBanToggle={handleKanBanToggle}
+                    issuePayload={_list.payload}
+                    disableIssueCreation={disableIssueCreation}
+                    currentStore={currentStore}
+                    addIssuesToView={addIssuesToView}
                   />
-                )}
-              </div>
+                </div>
+              )}
+              <KanbanGroup
+                groupId={_list.id}
+                issues={issues}
+                issueIds={issueIds}
+                sub_group_by={sub_group_by}
+                group_by={group_by}
+                sub_group_id={sub_group_id}
+                isDragDisabled={isDragDisabled}
+                handleIssues={handleIssues}
+                showEmptyGroup={showEmptyGroup}
+                quickActions={quickActions}
+                displayProperties={displayProperties}
+                enableQuickIssueCreate={enableQuickIssueCreate}
+                quickAddCallback={quickAddCallback}
+                viewId={viewId}
+                disableIssueCreation={disableIssueCreation}
+                canEditProperties={canEditProperties}
+                verticalPosition={verticalPosition}
+              />
             </div>
-          </div>
-        ))}
+          );
+        })}
     </div>
   );
 });
